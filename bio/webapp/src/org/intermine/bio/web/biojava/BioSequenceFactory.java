@@ -12,6 +12,7 @@ package org.intermine.bio.web.biojava;
 
 import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.ProteinTools;
+import org.biojava.bio.seq.RNATools;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.SequenceFeature;
@@ -90,17 +91,18 @@ public abstract class BioSequenceFactory
      * @return a new BioSequence object or null if the BioEntity doesn't have a Sequence
      * @throws IllegalSymbolException if any of the residues of the BioEntity can't be
      * turned into symbols of the given SequenceType.
-	 * @author Sam Hokin
-	 *
-	 * NOTE: this has been rewritten by Sam Hokin, NCGR. It didn't formerly use the type parameter,
-	 * and simply polled the input BioEntity as to whether it was SequenceFeature or Protein, and
-	 * assumed DNA if SequenceFeature. The purpose of this version of make should be to force DNA
-	 * or Protein residues based on the type parameter, regardless of the type of BioEntity. 
-	 * I added RNA support as well.
+     * @author Sam Hokin
+     *
+     * NOTE: this has been rewritten by Sam Hokin, NCGR. It didn't formerly use the type parameter,
+     * and simply polled the input BioEntity as to whether it was SequenceFeature or Protein, and
+     * assumed DNA if SequenceFeature. The purpose of this version of make should be to force DNA
+     * or Protein residues based on the type parameter, regardless of the type of BioEntity.
+     * I added RNA support as well.
      */
-    public static BioSequence make(BioEntity bioEnt, SequenceType type) throws IllegalSymbolException {
-		if (bioEnt instanceof Protein) {
-			// it really is a protein, which is not a SequenceFeature
+    public static BioSequence make(BioEntity bioEnt, SequenceType type)
+        throws IllegalSymbolException {
+        if (bioEnt instanceof Protein) {
+            // it really is a protein, which is not a SequenceFeature
             Protein protein = (Protein) bioEnt;
             if (protein.getSequence() == null || protein.getSequence().getResidues() == null) {
                 return null;
@@ -108,8 +110,8 @@ public abstract class BioSequenceFactory
                 String residues = protein.getSequence().getResidues().toString();
                 return new BioSequence(ProteinTools.createProtein(residues), protein);
             }
-		} else if (type.equals(SequenceType.PROTEIN)) {
-			// it's an amino acid SequenceFeature, like a polypeptide from chado
+        } else if (type.equals(SequenceType.PROTEIN)) {
+            // it's an amino acid SequenceFeature, like a polypeptide from chado
             SequenceFeature feature = (SequenceFeature) bioEnt;
             if (feature.getSequence() == null || feature.getSequence().getResidues() == null) {
                 return null;
@@ -118,7 +120,7 @@ public abstract class BioSequenceFactory
                 return new BioSequence(ProteinTools.createProtein(residues), feature);
             }
         } else if (type.equals(SequenceType.DNA)) {
-			// it's a DNA sequence
+            // it's a DNA sequence
             SequenceFeature feature = (SequenceFeature) bioEnt;
             if (feature.getSequence() == null || feature.getSequence().getResidues() == null) {
                 return null;
@@ -126,8 +128,8 @@ public abstract class BioSequenceFactory
                 String residues = feature.getSequence().getResidues().toString();
                 return new BioSequence(DNATools.createDNA(residues), feature);
             }
-		} else if (type.equals(SequenceType.RNA)) {
-			// we want an RNA sequence
+        } else if (type.equals(SequenceType.RNA)) {
+            // we want an RNA sequence
             SequenceFeature feature = (SequenceFeature) bioEnt;
             if (feature.getSequence() == null || feature.getSequence().getResidues() == null) {
                 return null;
@@ -139,5 +141,5 @@ public abstract class BioSequenceFactory
             throw new RuntimeException("Sequence type not defined. Choices are PROTEIN, DNA, RNA.");
         }
     }
-    
+
 }
