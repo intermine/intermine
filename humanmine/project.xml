@@ -10,7 +10,7 @@
       <property name="src.data.dir" location="/micklem/data/ncbi/current" />
       <property name="organisms" value="9606" />
     </source>
-    <source name="ncbi-summaries" type="ncbi-summaries" dump="true">
+    <source name="ncbi-summaries" type="ncbi-summaries">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>
     <source name="pubmed-gene" type="pubmed-gene">
@@ -21,7 +21,7 @@
     <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
     </source>
-    <source name="mgi-alleles" type="mgi-alleles" dump="true">
+    <source name="mgi-alleles" type="mgi-alleles">
       <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/current" />
     </source>
     <source name="rgd-identifiers" type="rgd-identifiers">
@@ -141,7 +141,7 @@
       <property name="src.data.file" location="build/publications.xml" />
       <property name="loadFullRecord" value="true"/>
     </source>
-    <source name="update-data-sources" type="update-data-sources">
+    <source name="update-data-sources" type="update-data-sources" dump="true">
       <property name="src.data.file" location="build/datasources.xml"/>
       <property name="dataSourceFile" value="/micklem/data/uniprot/xrefs/current/dbxref.txt"/>
     </source>
@@ -152,7 +152,7 @@
 
   <post-processing>
     <post-process name="create-references" />
-    <post-process name="transfer-sequences" dump="true" />
+    <post-process name="transfer-sequences"/>
 
     <!-- this runs the postprocessing steps in all sources -->
     <post-process name="do-sources" />
