@@ -132,6 +132,8 @@
     <source name="ncbi-gff" type="ncbi-gff">
       <property name="gff3.taxonId" value="9606"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.dataSourceName" value="NCBI"/>
+      <property name="gff3.dataSetTitle" value="NCBI gff3 data set"/>
       <property name="src.data.dir" location="/micklem/data/human/gff/current"/>
     </source>
 
