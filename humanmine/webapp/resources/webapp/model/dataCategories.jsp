@@ -97,7 +97,7 @@
                <td><a href="http://www.ebi.ac.uk/intact/">IntAct</a></td>
                <td>Human, Mouse</td>
                <td>October 2015</td>
-       </tr>  
+       </tr>
        <tr>
                <td>Interactions</td>
                <td><a href="http://thebiogrid.org/">BioGRID</a></td>
@@ -115,13 +115,13 @@
                <td><a href="http://www.omim.org/">OMIM</a></td>
                <td>Human</td>
                <td>November 2015</td>
-       </tr>  
+       </tr>
        <tr>
                <td>Phenotypes</td>
                <td><a href="http://www.human-phenotype-ontology.org/">HPO</a></td>
                <td>Human</td>
                <td>November 2015</td>
-       </tr>  
+       </tr>
        <tr>
                <td>Orthologues</td>
                <td><a href="http://www.pantherdb.org/>Panther</a></td>
@@ -133,9 +133,7 @@
                <td><a href="http://www.informatics.jax.org/">MGI</a></td>
                <td>Mouse</td>
                <td>November 2015</td>
-       </tr>  
+       </tr>
 </table>
-
-</div>
 </div>
 <!-- /dataCategories -->

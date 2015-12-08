@@ -187,7 +187,7 @@ public class OmimConverter extends BioDirectoryConverter
         int noMapType = 0;
         int diseaseMatches = 0;
 
-        File f = new File("build/omim_not_loaded.txt");
+        File f = new File("/tmp/omim_not_loaded.txt");
         FileWriter fw = new FileWriter(f);
 
         // extract e.g. (3)
