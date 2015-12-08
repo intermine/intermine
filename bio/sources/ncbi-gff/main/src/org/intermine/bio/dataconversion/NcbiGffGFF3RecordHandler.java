@@ -28,6 +28,8 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
      */
     public NcbiGffGFF3RecordHandler (Model model) {
         super(model);
+        refsAndCollections.put("Exon", "transcripts");
+        refsAndCollections.put("Transcript", "gene");
     }
 
     /**
@@ -53,7 +55,40 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
         //
         // You should make sure that new Items you create are unique, i.e. by storing in a map by
         // some identifier.
+        Item feature = getFeature();
 
+        String type = record.getType();
+
+        if ("gene".equals(type)) {
+            feature.setClassName("Gene");
+            for (String identifier : record.getDbxrefs()) {
+                if (identifier.contains("GeneID")) {
+                    String[] bits = identifier.split(":");
+                    feature.setAttribute("primaryIdentifier", bits[1]);
+                }
+            }
+            String symbol = record.getAttributes().get("Name").iterator().next();
+            feature.setAttribute("symbol", symbol);
+            if (record.getAttributes().get("description") != null) {
+                String description = record.getAttributes().get("description").iterator().next();
+                feature.setAttribute("briefDescription", description);
+            }
+        } else if ("transcript".equals(type)) {
+            feature.setClassName("Transcript");
+            String identifier = record.getAttributes().get("transcript_id").iterator().next();
+            feature.setAttribute("primaryIdentifier", identifier);
+            if (record.getAttributes().get("product") != null) {
+                String description = record.getAttributes().get("product").iterator().next();
+                feature.setAttribute("name", description);
+            }
+        } else if ("exon".equals(type)) {
+            feature.setClassName("Exon");
+            String identifier = record.getAttributes().get("transcript_id").iterator().next();
+            feature.setAttribute("primaryIdentifier", identifier);
+            if (record.getAttributes().get("product") != null) {
+                String description = record.getAttributes().get("product").iterator().next();
+                feature.setAttribute("name", description);
+            }
+        }
     }
-
 }
