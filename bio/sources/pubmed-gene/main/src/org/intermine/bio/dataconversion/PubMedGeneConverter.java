@@ -103,11 +103,6 @@ public class PubMedGeneConverter extends BioFileConverter
                 taxonIds.remove("6239");
                 rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
                 taxonIds.add("6239");
-            } else if (taxonIds.contains("9606")) {
-                IdResolverService.getHumanIdResolver();
-                taxonIds.remove("9606");
-                rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
-                taxonIds.add("9606");
             } else {
                 rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
             }
@@ -226,13 +221,7 @@ public class PubMedGeneConverter extends BioFileConverter
                 genesResolved.add(pid);
             }
         }
-
-        if ("9606".equals(taxonId)) {
-            gene.setAttribute("symbol", pid);
-        } else {
-            gene.setAttribute("primaryIdentifier", pid);
-        }
-
+        gene.setAttribute("primaryIdentifier", pid);
         gene.setReference("organism", organismRefId);
         gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
         return gene;
