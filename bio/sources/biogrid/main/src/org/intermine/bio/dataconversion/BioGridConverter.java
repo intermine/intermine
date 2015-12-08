@@ -617,9 +617,6 @@ public class BioGridConverter extends BioFileConverter
             }
 
             String identifierField = config.getIdentifierName();
-            if (StringUtils.isEmpty(identifierField)) {
-                identifierField = DEFAULT_IDENTIFIER_FIELD;
-            }
 
             if (rslv != null && rslv.hasTaxon(taxonId)) {
                 identifier = resolveGene(taxonId, identifier);
@@ -981,7 +978,7 @@ public class BioGridConverter extends BioFileConverter
         private String taxonId;
         private String prefix;
         private String xref;
-        private String identifierName;
+        private String identifierName = DEFAULT_IDENTIFIER_FIELD;
         private String nameSource;
 
         /**

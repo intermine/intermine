@@ -10,7 +10,6 @@ package org.intermine.webservice.server.template;
  *
  */
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -112,14 +111,8 @@ public class TemplateToListService extends QueryToListService
         }
 
         PathQuery pq = populatedTemplate.getQueryToExecute();
-
-        List<String> oldView = new ArrayList(pq.getView());
-        oldView.remove(newViewString);
         pq.clearView();
         pq.addView(newViewString);
-        // Make sure these are added back to keep the query structure the same
-        pq.addViews(oldView);
-
         return pq;
     }
 }

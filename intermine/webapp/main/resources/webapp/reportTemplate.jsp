@@ -70,7 +70,6 @@
         $(function() {
             $SERVICE.count(query).then(
                 function(c) {
-                    var cstr = intermine.utils.numToString(c, ",", 3);
                     if (typeof c === 'undefined') {c = 0;}
                     cstr = c.toString()
                     $('#${elemId} h3 span.name').after('<span class="count">(' + cstr + ' rows)</span>');
