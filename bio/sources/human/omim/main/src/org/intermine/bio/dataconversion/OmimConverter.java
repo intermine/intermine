@@ -82,7 +82,9 @@ public class OmimConverter extends BioDirectoryConverter
 
         organism = getOrganism(HUMAN_TAXON);
 
-        rslv = IdResolverService.getHumanIdResolver();
+        if (rslv == null) {
+            rslv = IdResolverService.getHumanIdResolver();
+        }
 
         String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
         Set<String> missingFiles = new HashSet<String>();
@@ -220,22 +222,12 @@ public class OmimConverter extends BioDirectoryConverter
                 counts.get(geneMapType).total++;
             }
 
-            // String symbolStr = bits[1];
-            // String[] symbols = symbolStr.split(",");
+            String symbolStr = bits[1];
+            String[] symbols = symbolStr.split(",");
             // main HGNC symbols is first, others are synonyms
-            // String symbolFromFile = symbols[0].trim();
+            String symbolFromFile = symbols[0].trim();
 
-            String mimId = bits[2];
-            String geneSymbol = resolveGene(OMIM_PREFIX + mimId);
-            if (geneSymbol != null) {
-                resolvedCount++;
-                //String gene = getGeneId(symbol);
-                if (geneMapType != null) {
-                    counts.get(geneMapType).resolved++;
-                }
-            }
-
-            String geneItemId = getGeneItemId(geneSymbol);
+            String geneItemId = getGeneItemId(symbolFromFile);
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;
             while (m.find()) {
@@ -277,17 +269,6 @@ public class OmimConverter extends BioDirectoryConverter
         LOG.info(mapTypesMessage);
         LOG.info("Found " + diseaseMatches + " to " + diseaseNumbers.size()
                 + " unique diseases from " + lineCount + " line file.");
-    }
-
-    private String resolveGene(String mimId) {
-        int resCount = rslv.countResolutions("" + HUMAN_TAXON, mimId);
-        if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene - MIM:"
-                     + mimId + " count: " + resCount + " - "
-                     + rslv.resolveId("" + HUMAN_TAXON, mimId));
-            return null;
-        }
-        return rslv.resolveId("" + HUMAN_TAXON, mimId).iterator().next();
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
