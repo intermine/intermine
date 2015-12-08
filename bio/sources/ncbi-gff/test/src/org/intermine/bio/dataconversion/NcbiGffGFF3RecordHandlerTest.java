@@ -66,7 +66,7 @@ public class NcbiGffGFF3RecordHandlerTest extends ItemsTestCase
         converter.storeAll();
 
         // uncomment to write a new tgt items file
-        writeItemsFile(writer.getItems(), "ncbi-gff-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "ncbi-gff-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("NcbiGffGFF3RecordHandler-tgt.xml"));
         //System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
