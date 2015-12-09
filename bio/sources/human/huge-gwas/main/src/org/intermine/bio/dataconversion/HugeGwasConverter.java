@@ -68,7 +68,7 @@ public class HugeGwasConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
 
         if (rslv == null) {
-            rslv = IdResolverService.getHumanIdResolver();
+            rslv = IdResolverService.getIdResolverByTaxonId(HUMAN_TAXON, false);
         }
 
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -261,15 +261,15 @@ public class HugeGwasConverter extends BioFileConverter
                 continue;
             }
 
-            symbol = resolveGene(symbol);
-            if (symbol == null) {
+            String identifier = resolveGene(symbol);
+            if (identifier == null) {
                 continue;
             }
 
             String geneIdentifier = genes.get(symbol);
             if (geneIdentifier == null) {
                 Item gene = createItem("Gene");
-                gene.setAttribute("symbol", symbol);
+                gene.setAttribute("primaryIdentifier", identifier);
                 gene.setReference("organism", getOrganism(HUMAN_TAXON));
                 geneIdentifier = gene.getIdentifier();
 
