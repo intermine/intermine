@@ -1,17 +1,390 @@
 <items>
-<item id="3_3" class="Gene">
-<attribute name="primaryIdentifier" value="acdh-10"/>
-<reference name="organism" ref_id="4_3"/>
+<item id="6_5" class="Synonym">
+<attribute name="value" value="uc002qsd.4"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_50" class="Synonym">
+<attribute name="value" value="OTTHUMG00000168289"/>
+<reference name="subject" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_57" class="Synonym">
+<attribute name="value" value="144568"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_45" class="Synonym">
+<attribute name="value" value="HGNC:27057"/>
+<reference name="subject" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_75" class="Synonym">
+<attribute name="value" value="alpha-2-macroglobulin pseudogene"/>
+<reference name="subject" ref_id="3_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_61" class="Synonym">
+<attribute name="value" value="AK057908"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_73" class="Synonym">
+<attribute name="value" value="HGNC:8"/>
+<reference name="subject" ref_id="3_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_41" class="Synonym">
+<attribute name="value" value="BX647329"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_34" class="Synonym">
+<attribute name="value" value="FWP007"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_19" class="Synonym">
+<attribute name="value" value="BC040926"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_79" class="Synonym">
+<attribute name="value" value="uc021qum.1"/>
+<reference name="subject" ref_id="3_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_17" class="Synonym">
+<attribute name="value" value="OTTHUMG00000183508"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="HGNC"/>
+</item>
+<item id="6_59" class="Synonym">
+<attribute name="value" value="OTTHUMG00000128499"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_2" class="Gene">
+<attribute name="symbol" value="A1BG-AS1"/>
+<reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_2" class="Organism">
-<attribute name="taxonId" value="10090"/>
+<item id="6_33" class="Synonym">
+<attribute name="value" value="HGNC:7"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_60" class="Synonym">
+<attribute name="value" value="uc001quz.5"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_12" class="Synonym">
+<attribute name="value" value="non-protein coding RNA 181"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_48" class="Synonym">
+<attribute name="value" value="144571"/>
+<reference name="subject" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_25" class="Synonym">
+<attribute name="value" value="ACF65"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_6" class="Synonym">
+<attribute name="value" value="NM_130786"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="HGNC identifiers"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="6_81" class="Synonym">
+<attribute name="value" value="NG_001067"/>
+<reference name="subject" ref_id="3_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_10" class="Synonym">
+<attribute name="value" value="A1BGAS"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_68" class="Synonym">
+<attribute name="value" value="HGNC:41523"/>
+<reference name="subject" ref_id="3_8"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_14" class="Synonym">
+<attribute name="value" value="A1BG antisense RNA 1 (non-protein coding)"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_8" class="Synonym">
+<attribute name="value" value="FLJ23569"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_27" class="Synonym">
+<attribute name="value" value="29974"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_26" class="Synonym">
+<attribute name="value" value="APOBEC1CF"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_22" class="Synonym">
+<attribute name="value" value="ACF"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_16" class="Synonym">
+<attribute name="value" value="ENSG00000268895"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_44" class="Synonym">
+<attribute name="value" value="NM_000014"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_62" class="Synonym">
+<attribute name="value" value="NM_144670"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_3" class="Synonym">
+<attribute name="value" value="ENSG00000121410"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_77" class="Synonym">
+<attribute name="value" value="ENSG00000256069"/>
+<reference name="subject" ref_id="3_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_5" class="Gene">
+<attribute name="symbol" value="A2M-AS1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_1" class="Synonym">
+<attribute name="value" value="HGNC:5"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_63" class="Synonym">
+<attribute name="value" value="HGNC:41022"/>
+<reference name="subject" ref_id="3_7"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_32" class="Synonym">
+<attribute name="value" value="NM_014576"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_52" class="Synonym">
+<attribute name="value" value="NR_026971"/>
+<reference name="subject" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_74" class="Synonym">
+<attribute name="value" value="A2MP"/>
+<reference name="subject" ref_id="3_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_29" class="Synonym">
+<attribute name="value" value="OTTHUMG00000018240"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_72" class="Synonym">
+<attribute name="value" value="OTTHUMG00000168274"/>
+<reference name="subject" ref_id="3_8"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_35" class="Synonym">
+<attribute name="value" value="S863-7"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_18" class="Synonym">
+<attribute name="value" value="uc002qsg.3"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_24" class="Synonym">
+<attribute name="value" value="ACF64"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_42" class="Synonym">
+<attribute name="value" value="X68728"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_46" class="Synonym">
+<attribute name="value" value="A2M antisense RNA 1 (non-protein coding)"/>
+<reference name="subject" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_64" class="Synonym">
+<attribute name="value" value="A2ML1 antisense RNA 1 (non-protein coding)"/>
+<reference name="subject" ref_id="3_7"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_3" class="Gene">
+<attribute name="symbol" value="A1CF"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_78" class="Synonym">
+<attribute name="value" value="OTTHUMG00000168334"/>
+<reference name="subject" ref_id="3_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_76" class="Synonym">
+<attribute name="value" value="3"/>
+<reference name="subject" ref_id="3_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_23" class="Synonym">
+<attribute name="value" value="ASP"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_15" class="Synonym">
+<attribute name="value" value="503538"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_30" class="Synonym">
+<attribute name="value" value="uc001jjj.3"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_70" class="Synonym">
+<attribute name="value" value="106478979"/>
+<reference name="subject" ref_id="3_8"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_54" class="Synonym">
+<attribute name="value" value="FLJ25179"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_28" class="Synonym">
+<attribute name="value" value="ENSG00000148584"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_56" class="Synonym">
+<attribute name="value" value="C3 and PZP-like, alpha-2-macroglobulin domain containing 9"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_36" class="Synonym">
+<attribute name="value" value="CPAMD5"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_20" class="Synonym">
+<attribute name="value" value="NR_015380"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_39" class="Synonym">
+<attribute name="value" value="OTTHUMG00000150267"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_9" class="Gene">
+<attribute name="symbol" value="A2MP1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_66" class="Synonym">
+<attribute name="value" value="ENSG00000256661"/>
+<reference name="subject" ref_id="3_7"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_69" class="Synonym">
+<attribute name="value" value="A2ML1 antisense RNA 2 (non-protein coding)"/>
+<reference name="subject" ref_id="3_8"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_11" class="Synonym">
+<attribute name="value" value="A1BG-AS"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="symbol" value="A1BG"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_65" class="Synonym">
+<attribute name="value" value="100874108"/>
+<reference name="subject" ref_id="3_7"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="6_21" class="Synonym">
+<attribute name="value" value="HGNC:24086"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_7" class="Gene">
+<attribute name="symbol" value="A2ML1-AS1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_38" class="Synonym">
+<attribute name="value" value="ENSG00000175899"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_51" class="Synonym">
+<attribute name="value" value="uc009zgj.1"/>
+<reference name="subject" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_4" class="Gene">
-<attribute name="primaryIdentifier" value="acdh-8"/>
-<reference name="organism" ref_id="4_3"/>
+<attribute name="symbol" value="A2M"/>
+<reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_7" class="Synonym">
+<attribute name="value" value="HGNC:37133"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_4" class="Synonym">
+<attribute name="value" value="OTTHUMG00000183507"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_37" class="Synonym">
+<attribute name="value" value="2"/>
+<reference name="subject" ref_id="3_4"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_1" class="SOTerm">
@@ -19,39 +392,89 @@
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_2" class="Gene">
-<attribute name="primaryIdentifier" value="Acadm"/>
-<reference name="organism" ref_id="4_2"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<item id="6_43" class="Synonym">
+<attribute name="value" value="M11313"/>
+<reference name="subject" ref_id="3_4"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="0_1" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
-<attribute name="url" value="http://www.sequenceontology.org"/>
-</item>
-<item id="2_1" class="DataSet">
-<attribute name="name" value="HomoloGene data set"/>
-<reference name="dataSource" ref_id="1_1"/>
-</item>
-<item id="3_5" class="Gene">
-<attribute name="primaryIdentifier" value="acdh-7"/>
-<reference name="organism" ref_id="4_3"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<item id="6_53" class="Synonym">
+<attribute name="value" value="HGNC:23336"/>
+<reference name="subject" ref_id="3_6"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_1" class="Gene">
-<attribute name="primaryIdentifier" value="34"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<item id="6_55" class="Synonym">
+<attribute name="value" value="CPAMD9"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_47" class="Synonym">
+<attribute name="value" value="A2M antisense RNA 1"/>
+<reference name="subject" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_13" class="Synonym">
+<attribute name="value" value="A1BG antisense RNA (non-protein coding)"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_9" class="Synonym">
+<attribute name="value" value="NCRNA00181"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_67" class="Synonym">
+<attribute name="value" value="OTTHUMG00000168273"/>
+<reference name="subject" ref_id="3_7"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_40" class="Synonym">
+<attribute name="value" value="uc001qvk.1"/>
+<reference name="subject" ref_id="3_4"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="4_1" class="Organism">
 <attribute name="taxonId" value="9606"/>
 </item>
-<item id="4_3" class="Organism">
-<attribute name="taxonId" value="6239"/>
+<item id="6_58" class="Synonym">
+<attribute name="value" value="ENSG00000166535"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="1_1" class="DataSource">
-<attribute name="name" value="HomoloGene"/>
+<item id="3_8" class="Gene">
+<attribute name="symbol" value="A2ML1-AS2"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_80" class="Synonym">
+<attribute name="value" value="M24415"/>
+<reference name="subject" ref_id="3_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_49" class="Synonym">
+<attribute name="value" value="ENSG00000245105"/>
+<reference name="subject" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_71" class="Synonym">
+<attribute name="value" value="ENSG00000256904"/>
+<reference name="subject" ref_id="3_8"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_6" class="Gene">
+<attribute name="symbol" value="A2ML1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_31" class="Synonym">
+<attribute name="value" value="AF271790"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_2" class="Synonym">
+<attribute name="value" value="1"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 </items>

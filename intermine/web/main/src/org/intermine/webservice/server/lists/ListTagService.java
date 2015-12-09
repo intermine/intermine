@@ -25,6 +25,7 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.JSONFormatter;
@@ -59,11 +60,15 @@ public class ListTagService extends AbstractListService
         Profile profile = getPermission().getProfile();
         String listName = getOptionalParameter("name", null);
 
-        Set<String> tags;
-        if (listName == null) {
-            tags = getAllTags(profile);
-        } else {
-            tags = getTagsForSingleList(listName, profile);
+
+        Set<String> tags = new HashSet<String>();
+        // if not logged in, return empty. See #1222
+        if (!AnonProfile.USERNAME.equals(profile.getUsername())) {
+            if (listName == null) {
+                tags = getAllTags(profile);
+            } else {
+                tags = getTagsForSingleList(listName, profile);
+            }
         }
 
         output.addResultItem(new ArrayList<String>(tags));

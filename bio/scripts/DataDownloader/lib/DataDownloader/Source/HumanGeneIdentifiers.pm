@@ -10,32 +10,24 @@ use Ouch;
 use constant {
     TITLE       => 'Human Gene Identifiers',
     DESCRIPTION => 'Human Gene identifiers from HGNC biomart',
-    SOURCE_LINK => 'http://www.genenames.org/',
+    SOURCE_LINK => 'http://www.ensembl.org/',
     SOURCE_DIR  => 'human/identifiers',
-    BIOMART_SERVER => 'http://www.genenames.org/biomart/martservice',
+    BIOMART_SERVER => 'http://www.ensembl.org/biomart/martview',
     COMPARE     => 1,
 };
 
 use constant BIOMART_QUERY => q{<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Query>
-<Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.7" >
-            
-    <Dataset name = "hgnc" interface = "default" >
-        <Filter name = "gd_record" value = "primary"/>
-        <Filter name = "gd_status" value = "Approved"/>
-        <Attribute name = "gd_app_sym" />
-        <Attribute name = "gd_hgnc_id_key" />
-        <Attribute name = "md_eg_id" />
-        <Attribute name = "md_ensembl_id" />
-        <Attribute name = "md_mim_id" />
-        <Attribute name = "gd_app_name" />
-        <Attribute name = "gd_prev_sym" />
-        <Attribute name = "gd_prev_name" />
-        <Attribute name = "gd_name_aliases" />
-        <Attribute name = "gd_aliases" />
-        <Attribute name = "gd_pub_chrom_map" />
-    </Dataset>
+<Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" >
+			
+	<Dataset name = "hsapiens_gene_ensembl" interface = "default" >
+		<Attribute name = "ensembl_gene_id" />
+		<Attribute name = "description" />
+		<Attribute name = "source" />
+		<Attribute name = "hgnc_symbol" />
+	</Dataset>
 </Query>
+
 };
 
 sub BUILD {
