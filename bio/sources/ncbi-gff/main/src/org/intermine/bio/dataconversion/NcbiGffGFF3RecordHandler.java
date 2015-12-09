@@ -86,8 +86,13 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
             String identifier = record.getId();
             String[] bits = identifier.split("id");
             String exonNumber = bits[1];
-            String transcriptId = record.getAttributes().get("transcript_id").iterator().next();
-            feature.setAttribute("primaryIdentifier", transcriptId + "." + exonNumber);
+            if (record.getAttributes().get("transcript_id") != null) {
+                String transcriptId = record.getAttributes().get("transcript_id").iterator().next();
+                feature.setAttribute("primaryIdentifier", transcriptId + "." + exonNumber);
+            } else {
+                // ncRNA
+            }
+
             if (record.getAttributes().get("product") != null) {
                 String description = record.getAttributes().get("product").iterator().next();
                 feature.setAttribute("name", description);
