@@ -39,7 +39,6 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
                 for (String anotherString : furtherBits) {
                     if (anotherString.startsWith(CHROMOSOME_HEADER)) {
                         String identifier = anotherString.substring(CHROMOSOME_HEADER.length());
-                        System.out.println(identifier);
                         return identifier;
                     }
                 }
