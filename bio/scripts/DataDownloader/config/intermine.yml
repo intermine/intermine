@@ -29,6 +29,7 @@ default_sources:
   - "HumanGeneIdentifiers"
   - "HPO"
   - "NCBIFasta"
+  - "NCBIGff"
 
 UniProt:
     organisms:
