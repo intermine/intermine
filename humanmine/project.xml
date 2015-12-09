@@ -129,6 +129,18 @@
       <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
     </source>
 
+    <source name="ncbi-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="9606"/>
+      <property name="fasta.dataSetTitle" value="NCBI fasta data set for Homo sapiens"/>
+      <property name="fasta.dataSourceName" value="NCBI"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="src.data.dir" location="/micklem/data/human/fasta/current"/>
+      <property name="fasta.includes" value="*.fa"/>
+    </source>
+
     <source name="ncbi-gff" type="ncbi-gff">
       <property name="gff3.taxonId" value="9606"/>
       <property name="gff3.seqClsName" value="Chromosome"/>

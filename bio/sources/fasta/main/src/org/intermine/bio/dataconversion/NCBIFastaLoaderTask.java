@@ -10,10 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
+import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Sequence;
 
 /**
@@ -24,37 +21,31 @@ import org.biojava.bio.seq.Sequence;
  */
 public class NCBIFastaLoaderTask extends FastaLoaderTask
 {
-    protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
-
-    private static final Pattern NCBI_DB_PATTERN =
-            Pattern.compile(
-                    "^gi\\|([^\\|]*)\\|(gb|emb|dbj|ref)\\|([^\\|]*?)(\\.\\d+\\.?(\\d+)?)?\\|.*");
-    // private static final Pattern PROT_DB_PATTERN =
-    //    Pattern.compile("^(ref|pir|prf)\\|([^\\|]*)\\|([^\\|]*).*");
-    private static final Pattern UNIPROT_PATTERN =
-        Pattern.compile("^([^\\|]+)\\|([^\\|\\s]*).*");
+    //protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
+    private static final String CHROMOSOME_HEADER = " Homo sapiens chromosome ";
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected String getIdentifier(Sequence bioJavaSequence) {
-        String seqIdentifier = bioJavaSequence.getName();
-
-        Matcher ncbiMatcher = NCBI_DB_PATTERN.matcher(seqIdentifier);
-        if (ncbiMatcher.matches()) {
-            // pattern such as U00096.2 (group(3): "U00096", group(4): ".2")
-            if (ncbiMatcher.group(4) == null) {
-                return ncbiMatcher.group(3);
-            } else {
-                return ncbiMatcher.group(3) + ncbiMatcher.group(4);
+        Annotation anno = bioJavaSequence.getAnnotation();
+        String header = anno.getProperty("description_line").toString();
+        // >gi|568815597|ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p2 Primary Assembly
+        String[] bits = header.split("\\|");
+        for (String bit : bits) {
+            if (bit.contains("chromosome")) {
+                String[] furtherBits = bit.split(",");
+                for (String anotherString : furtherBits) {
+                    if (anotherString.startsWith(CHROMOSOME_HEADER)) {
+                        String identifier = anotherString.substring(CHROMOSOME_HEADER.length());
+                        System.out.println(identifier);
+                        return identifier;
+                    }
+                }
             }
         }
-        Matcher uniprotMatcher = UNIPROT_PATTERN.matcher(seqIdentifier);
-        if (uniprotMatcher.matches()) {
-            return uniprotMatcher.group(2);
-        }
-        throw new RuntimeException("can't parse FASTA identifier: " + seqIdentifier);
-
+        // nothing found
+        throw new RuntimeException("Couldn't find chromosome identifier " + header);
     }
 }
