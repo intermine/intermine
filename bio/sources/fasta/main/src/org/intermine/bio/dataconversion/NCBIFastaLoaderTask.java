@@ -22,7 +22,8 @@ import org.biojava.bio.seq.Sequence;
 public class NCBIFastaLoaderTask extends FastaLoaderTask
 {
     //protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
-    private static final String CHROMOSOME_HEADER = " Homo sapiens chromosome ";
+    private static final String ORG_HEADER = " Homo sapiens ";
+    private static final String CHROMOSOME_HEADER = "chromosome";
 
     /**
      * {@inheritDoc}
@@ -32,16 +33,20 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
         Annotation anno = bioJavaSequence.getAnnotation();
         String header = anno.getProperty("description_line").toString();
         // >gi|568815597|ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p2 Primary Assembly
-        String[] bits = header.split("\\|");
-        for (String bit : bits) {
-            if (bit.contains("chromosome")) {
-                String[] furtherBits = bit.split(",");
-                for (String anotherString : furtherBits) {
-                    if (anotherString.startsWith(CHROMOSOME_HEADER)) {
-                        String identifier = anotherString.substring(CHROMOSOME_HEADER.length());
-                        return identifier;
-                    }
-                }
+        // gi|251831106|ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
+        for (String headerString : header.split("\\|")) {
+            if (headerString.contains("mitochondrion")) {
+                return "MT";
+            }
+            // we want the phrase with "chromosome" in it
+            if (headerString.contains(CHROMOSOME_HEADER)) {
+                // chop off the part after the comma
+                String[] headerSubStrings = headerString.split(",");
+                // chop off everything but the chromosome number
+                String identifier = headerSubStrings[0].substring(ORG_HEADER.length()
+                        + CHROMOSOME_HEADER.length());
+                return identifier.trim();
+
             }
         }
         // nothing found
