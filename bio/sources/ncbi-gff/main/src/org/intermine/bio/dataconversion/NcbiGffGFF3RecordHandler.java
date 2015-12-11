@@ -21,7 +21,7 @@ import org.intermine.xml.full.Item;
 
 public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
 {
-
+    private static final String CHROMOSOME_PREFIX = "NC_";
     /**
      * Create a new NcbiGffGFF3RecordHandler for the given data model.
      * @param model the model for which items will be created
@@ -37,26 +37,19 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
-        // This method is called for every line of GFF3 file(s) being read.  Features and their
-        // locations are already created but not stored so you can make changes here.  Attributes
-        // are from the last column of the file are available in a map with the attribute name as
-        // the key.   For example:
-        //
-        //     Item feature = getFeature();
-        //     String symbol = record.getAttributes().get("symbol");
-        //     feature.setAttribute("symbol", symbol);
-        //
-        // Any new Items created can be stored by calling addItem().  For example:
-        //
-        //     String geneIdentifier = record.getAttributes().get("gene");
-        //     gene = createItem("Gene");
-        //     gene.setAttribute("primaryIdentifier", geneIdentifier);
-        //     addItem(gene);
-        //
-        // You should make sure that new Items you create are unique, i.e. by storing in a map by
-        // some identifier.
-        Item feature = getFeature();
 
+        // only want chromsomes of interest
+        if (!record.getSequenceID().startsWith(CHROMOSOME_PREFIX)) {
+            /**
+             * We have genes on multiple chromosomes. We are only interested in the "good" ones.
+             * Thus some genes processed by this parser will not have a location.
+             * In this case, we do not want to store the gene. See #1259
+             */
+            removeFeature();
+            return;
+        }
+
+        Item feature = getFeature();
         String type = record.getType();
 
         if ("gene".equals(type)) {
@@ -90,7 +83,7 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
                 String transcriptId = record.getAttributes().get("transcript_id").iterator().next();
                 feature.setAttribute("primaryIdentifier", transcriptId + "." + exonNumber);
             } else {
-                // ncRNA
+                // TODO ncRNA
             }
 
             if (record.getAttributes().get("product") != null) {

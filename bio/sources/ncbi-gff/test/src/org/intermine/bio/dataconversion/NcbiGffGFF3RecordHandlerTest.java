@@ -49,8 +49,11 @@ public class NcbiGffGFF3RecordHandlerTest extends ItemsTestCase
         tgtModel = Model.getInstanceByName("genomic");
         handler = new NcbiGffGFF3RecordHandler(tgtModel);
         // call the GFF3Converter constructor to initialise the handler
+
+        NcbiGffGFF3SeqHandler seqHandler = new NcbiGffGFF3SeqHandler();
+
         converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
-                          dataSetTitle, tgtModel, handler, null);
+                          dataSetTitle, tgtModel, handler, seqHandler);
     }
 
     public void tearDown() throws Exception {
@@ -69,7 +72,6 @@ public class NcbiGffGFF3RecordHandlerTest extends ItemsTestCase
         //writeItemsFile(writer.getItems(), "ncbi-gff-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("NcbiGffGFF3RecordHandler-tgt.xml"));
-        //System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
         assertEquals(expected, writer.getItems());
     }
 }

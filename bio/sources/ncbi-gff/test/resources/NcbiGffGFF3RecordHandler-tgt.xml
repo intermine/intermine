@@ -1,4 +1,10 @@
 <items>
+<item id="4_1" class="Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="3_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
@@ -112,12 +118,6 @@
 <reference name="sequenceOntologyTerm" ref_id="5_4"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="transcripts"><reference ref_id="9_2"/></collection>
-</item>
-<item id="4_1" class="Chromosome">
-<attribute name="primaryIdentifier" value="NC_000001.11"/>
-<reference name="organism" ref_id="0_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_4" class="SOTerm">
 <attribute name="name" value="exon"/>

@@ -10,9 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.xml.full.Item;
 
@@ -25,6 +28,7 @@ public class NcbiGffGFF3SeqHandler extends GFF3SeqHandler
 {
     protected static final Logger LOG = Logger.getLogger(NcbiGffGFF3SeqHandler.class);
     private static final Map<String, String> CHROMOSOMES = new LinkedHashMap<String, String>();
+    private Set<String> resolvedIds = new HashSet<String>();
 
     /**
      * Construct the seq handler.
@@ -40,7 +44,6 @@ public class NcbiGffGFF3SeqHandler extends GFF3SeqHandler
         CHROMOSOMES.put("NC_000004.12", "4");
         CHROMOSOMES.put("NC_000005.10", "5");
         CHROMOSOMES.put("NC_000006.12", "6");
-
         CHROMOSOMES.put("NC_000007.14", "7");
         CHROMOSOMES.put("NC_000008.11", "8");
         CHROMOSOMES.put("NC_000009.12", "9");
@@ -68,24 +71,16 @@ public class NcbiGffGFF3SeqHandler extends GFF3SeqHandler
      */
     @Override
     public String getSeqIdentifier(String id) {
-        return CHROMOSOMES.get(id);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Item makeSequenceItem(GFF3Converter converter, String identifier) {
-        Item seq = null;
-        String primaryIdentifier = getSeqIdentifier(identifier);
-        if (primaryIdentifier != null) {
-            seq = createItem(converter);
-            seq.setAttribute("primaryIdentifier", primaryIdentifier);
-            LOG.info("RESOLVER: updated " + identifier + " to " + primaryIdentifier);
-        } else {
-            LOG.info("Could not resolve " + identifier + " to one identifier.");
+        if (resolvedIds.contains(id)) {
+            // we've already seen and resolved this ID
+            return id;
         }
 
-        return seq;
+        String resolvedIdentifier = CHROMOSOMES.get(id);
+        if (StringUtils.isNotEmpty(resolvedIdentifier)) {
+            // SUCCESS add to IDs we've seen
+            resolvedIds.add(resolvedIdentifier);
+        }
+        return resolvedIdentifier;
     }
 }

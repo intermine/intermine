@@ -352,10 +352,17 @@ public class GFF3Converter extends DataConverter
             feature.setAttribute("score", String.valueOf(score));
             feature.setAttribute("scoreType", record.getSource());
         }
+
         for (Item synonym : synonymsToAdd) {
             handler.addItem(synonym);
+            // this is just to keep track of the synonyms for this record.
+            // if we end up removing this entry, we need to delete these too.
+            handler.addSynonym(synonym);
         }
+        handler.addSynonyms(synonyms);
+
         handler.process(record);
+
         if (handler.getDataSetReferenceList().getRefIds().size() > 0) {
             feature.addCollection(handler.getDataSetReferenceList());
         }
@@ -436,7 +443,8 @@ public class GFF3Converter extends DataConverter
                             .hasNext();) {
                         String xref = (String) i.next();
                         if (xref.contains(synonymAttrPrefix)) {
-                            synSet.add(xref.split(":")[1]);
+                            String synonym = xref.split(":")[1];
+                            synSet.add(synonym);
                         }
                     }
                     synonyms.addAll(synSet);
@@ -796,10 +804,10 @@ public class GFF3Converter extends DataConverter
     private String getRefId(String identifier) {
         String refId = identifierMap.get(identifier);
         if (refId == null) {
-//            identifierMap.put(identifier, refId);
-            String msg = "Failed setting setRefsAndCollections() in GFF3Converter - processing"
-                + " child before parent - " + identifier;
-            throw new RuntimeException(msg);
+            // parents are usually first in the GFF file but that's not in the specification
+            // parents will not be present if they are ignored in the config file. See #1267
+            throw new RuntimeException("Failed setting setRefsAndCollections() in GFF3Converter "
+                    + "- processing child before parent - " + identifier);
         }
         return refId;
     }
