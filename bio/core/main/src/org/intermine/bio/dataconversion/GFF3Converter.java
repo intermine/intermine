@@ -443,8 +443,7 @@ public class GFF3Converter extends DataConverter
                             .hasNext();) {
                         String xref = (String) i.next();
                         if (xref.contains(synonymAttrPrefix)) {
-                            String synonym = xref.split(":")[1];
-                            synSet.add(synonym);
+                            synSet.add(xref.split(":")[1]);
                         }
                     }
                     synonyms.addAll(synSet);
