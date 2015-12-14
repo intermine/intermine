@@ -6,12 +6,6 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
 
   <sources>
-    <!--
-    <source name="ensembl-snp" type="ensembl-snp" dump="true">
-     <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/variation/current" />
-      <property name="ensembl-snp.includes" value="Homo_sapiens_incl_consequences.gvf" />
-    </source>
-  -->
     <source name="ensembl-human" type="ensembl-core">
       <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/core/current" />
       <property name="src.data.dir.includes" value="9606.xml" />
@@ -25,8 +19,12 @@
       <property name="fasta.includes" value="*.fa" />
       <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/core/current/fasta" />
     </source>
-    <source name="human-gene" type="human-gene">
-      <property name="src.data.dir" location="/micklem/data/human/identifiers/current" />
+    <source name="hgnc" type="hgnc">
+      <property name="src.data.dir" location="/micklem/data/human/hgnc/current" />
+    </source>
+    <source name="ncbi-gene" type="ncbi-gene">
+      <property name="src.data.dir" location="/micklem/data/ncbi/current" />
+      <property name="organisms" value="9606" />
     </source>
     <source name="ncbi-summaries" type="ncbi-summaries" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
