@@ -55,6 +55,7 @@
 <comment type="similarity">
   <text evidence="EC1 EC2">Contains 1 homeobox DNA-binding domain.</text>
 </comment>
+<comment type="disease"><disease id="DI-01221"><name>Obesity</name><acronym>OBESITY</acronym><description>A condition characterized by an increase of body weight beyond the limitation of skeletal and physical requirements, as the result of excessive accumulation of body fat.</description><dbReference type="MIM" id="601665"/></disease><text>Disease susceptibility may be associated with variations affecting the gene represented in this entry.</text></comment>
 <comment type="alternative products">
 <event type="alternative splicing"/>
 <isoform>

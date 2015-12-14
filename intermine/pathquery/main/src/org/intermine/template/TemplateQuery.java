@@ -537,6 +537,7 @@ public class TemplateQuery extends PathQuery
         Map<String, Object> retVal = super.getHeadAttributes();
         retVal.put("name", getName());
         retVal.put("comment", getComment());
+
         return retVal;
     }
 

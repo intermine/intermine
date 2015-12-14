@@ -311,6 +311,7 @@ public class UniprotConverter extends BioDirectoryConverter
         private String attName = null;
         private StringBuffer attValue = null;
         private int entryCount = 0;
+        private DiseaseHolder disease = null;
 
         /**
          * {@inheritDoc}
@@ -361,11 +362,6 @@ public class UniprotConverter extends BioDirectoryConverter
                     entry.addCanonicalIsoform(entry.getAttribute());
                 } else if ("described".equals(sequenceType)) {
                     entry.addIsoform(entry.getAttribute());
-                    //>>> test code
-                    if (entry.getIsoforms().size() == 1) {
-                        // Stop adding new isoforms
-                    }
-                    //<<< test code
                 }
             } else if ("sequence".equals(qName)) {
                 String strLength = getAttrValue(attrs, "length");
@@ -426,9 +422,19 @@ public class UniprotConverter extends BioDirectoryConverter
                     String pubRefId = getEvidence(pubmedString);
                     entry.addPubEvidence(evidenceCode, pubRefId);
                 }
+            } else if ("disease".equals(previousQName) && ("name".equals(qName)
+                    || "acronym".equals(qName) || "description".equals(qName))) {
+                attName = "disease";
+            // <dbReference type="MIM" id="601665"/>
+            } else if ("dbReference".equals(qName) && "disease".equals(previousQName)) {
+                if (disease == null) {
+                    disease = new DiseaseHolder();
+                }
+                String type = getAttrValue(attrs, "type");
+                String id = getAttrValue(attrs, "id");
+                disease.setIdentifier(type + ":" + id);
             } else if ("dbreference".equals(qName) || "comment".equals(qName)
-                    || "isoform".equals(qName)
-                    || "gene".equals(qName)) {
+                    || "isoform".equals(qName) || "gene".equals(qName) || "disease".equals(qName)) {
                 // set temporary holder variables to null
                 entry.reset();
             }
@@ -471,10 +477,12 @@ public class UniprotConverter extends BioDirectoryConverter
             } else if (StringUtils.isNotEmpty(attName) && "ecNumber".equals(attName)) {
                 entry.addECNumber(attValue.toString());
             } else if ("text".equals(qName) && "comment".equals(previousQName)) {
-                String commentText = attValue.toString();
-                if (StringUtils.isNotEmpty(commentText)) {
+                StringBuilder commentText = new StringBuilder();
+                commentText.append(attValue.toString());
+                if (commentText.length() > 0) {
                     Item item = createItem("Comment");
-                    item.setAttribute("type", entry.getCommentType());
+                    String commentType = entry.getCommentType();
+                    item.setAttribute("type", commentType);
                     if (commentText.length() > POSTGRES_INDEX_SIZE) {
                         // comment text is a string
                         String ellipses = "...";
@@ -482,7 +490,10 @@ public class UniprotConverter extends BioDirectoryConverter
                                 0, POSTGRES_INDEX_SIZE - ellipses.length());
                         item.setAttribute("description", choppedComment + ellipses);
                     } else {
-                        item.setAttribute("description", commentText);
+                        if ("disease".equals(commentType) && disease != null) {
+                            commentText.append(" " + disease.toString());
+                        }
+                        item.setAttribute("description", commentText.toString());
                     }
                     String refId = item.getIdentifier();
                     try {
@@ -510,6 +521,11 @@ public class UniprotConverter extends BioDirectoryConverter
                     && "recommendedName".equals(previousQName)
                     && stack.search("component") == 2) {
                 entry.addComponent(attValue.toString());
+            } else if (StringUtils.isNotEmpty(attName) && "disease".equals(attName)
+                    && ("name".equals(qName) || "acronym".equals(qName)
+                            || "description".equals(qName))
+                    && "disease".equals(previousQName)) {
+                String value = attValue.toString();
             } else if ("id".equals(qName) && "isoform".equals(previousQName)) {
                 String accession = attValue.toString();
 
@@ -1332,5 +1348,68 @@ public class UniprotConverter extends BioDirectoryConverter
         }
         identifiers.add(identifier);
         return true;
+    }
+
+    /**
+     * temporarily hold disease item until stored
+     */
+    protected class DiseaseHolder
+    {
+        private String name;
+        private String acronym;
+        private String description;
+        private String identifier;
+
+        /**
+         * Constructor
+         */
+        protected DiseaseHolder() {
+
+        }
+
+        /**
+         * @return name of disease
+         */
+        protected String getName() {
+            return name;
+        }
+
+        /**
+         * @param field which field to update
+         * @param value to assign
+         */
+        protected void setDisease(String field, String value) {
+            if ("name".equals(field)) {
+                name = value;
+            } else if ("acronym".equals(field)) {
+                acronym = value;
+            } else if ("description".equals(field)) {
+                description = value;
+            }
+        }
+
+        /**
+         * @param identifier MI identifier
+         */
+        protected void setIdentifier(String identifier) {
+            this.identifier = identifier;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(identifier);
+
+            if (StringUtils.isNotEmpty(name)) {
+                sb.append(name);
+            }
+            if (StringUtils.isNotEmpty(acronym)) {
+                sb.append(acronym);
+            }
+            if (StringUtils.isNotEmpty(description)) {
+                sb.append(description);
+            }
+            return sb.toString();
+        }
     }
 }

@@ -1,0 +1,4 @@
+<project name="arrayexpress-atlas-tasks" default="default" basedir=".">
+  <description>build arrayexpress-atlas tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

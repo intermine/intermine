@@ -10,11 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,12 +23,15 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.biojava.bio.structure.Structure;
-import org.biojava.bio.structure.io.PDBFileParser;
+import org.biojava.nbio.structure.DBRef;
+import org.biojava.nbio.structure.ExperimentalTechnique;
+import org.biojava.nbio.structure.PDBHeader;
+import org.biojava.nbio.structure.Structure;
+import org.biojava.nbio.structure.io.PDBFileReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.StringUtil;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.xml.sax.SAXException;
 
@@ -119,44 +119,55 @@ public class PdbConverter extends BioDirectoryConverter
 
     private void processPDBFile(File file, String taxonId)
         throws Exception {
+        PDBFileReader reader = new PDBFileReader();
+        Structure structure = null;
+        LOG.error("parsing " + file.getName());
+        try {
+            structure = reader.getStructure(file);
+        } catch (IOException e) {
+            // see #1179
+            throw new BuildException("Couldn't open file for: " + taxonId);
+        }
         Item proteinStructure = createItem("ProteinStructure");
-        PDBFileParser pdbfileparser = new PDBFileParser();
-        Reader reader = new FileReader(file);
-        PdbBufferedReader pdbBuffReader = new PdbBufferedReader(reader);
-        Structure structure = pdbfileparser.parsePDBFile(pdbBuffReader);
-        String idCode = (String) structure.getHeader().get("idCode");
+
+        PDBHeader header =  structure.getPDBHeader();
+
+        String idCode = header.getIdCode();
         if (StringUtils.isNotEmpty(idCode)) {
             proteinStructure.setAttribute("identifier", idCode);
         } else {
             throw new BuildException("No value for title in structure: " + idCode);
         }
 
-        List<String> dbrefs = pdbBuffReader.getDbrefs();
-        for (String accnum: dbrefs) {
-            String proteinRefId = getProtein(accnum, taxonId);
+        List<DBRef> dbrefs = structure.getDBRefs();
+        for (DBRef dbref: dbrefs) {
+            String proteinRefId = getProtein(dbref.getDbAccession(), taxonId);
             proteinStructure.addToCollection("proteins", proteinRefId);
         }
 
-        String title = (((String) structure.getHeader().get("title"))).trim();
+        String title = header.getTitle();
         if (StringUtils.isNotEmpty(title)) {
             proteinStructure.setAttribute("title", title);
         } else {
             LOG.warn("No value for title in structure: " + idCode);
         }
-        String technique = ((String) structure.getHeader().get("technique")).trim();
-        if (StringUtils.isNotEmpty(technique)) {
-            proteinStructure.setAttribute("technique", technique);
+        Set<ExperimentalTechnique> techniques = header.getExperimentalTechniques();
+        if (techniques != null && !techniques.isEmpty()) {
+            StringBuffer sb = new StringBuffer();
+            for (ExperimentalTechnique technique : techniques) {
+                sb.append(technique.getName());
+            }
+            proteinStructure.setAttribute("technique", sb.toString());
         } else {
             LOG.warn("No value for technique in structure: " + idCode);
         }
-        String classification = ((String) structure.getHeader().get("classification")).trim();
-        proteinStructure.setAttribute("classification",
-                                      classification);
-        Object resolution = structure.getHeader().get("resolution");
-        if (resolution instanceof Float) {
-            final Float resolutionFloat = (Float) structure.getHeader().get("resolution");
+        String classification = header.getClassification();
+        proteinStructure.setAttribute("classification", classification);
+
+        final Float resolutionFloat = header.getResolution();
+        if (resolutionFloat != null) {
             proteinStructure.setAttribute("resolution",
-                                          Float.toString(resolutionFloat.floatValue()));
+                    Float.toString(resolutionFloat.floatValue()));
         }
         try {
             proteinStructure.setAttribute("atm", structure.toPDB());
@@ -183,48 +194,5 @@ public class PdbConverter extends BioDirectoryConverter
             }
         }
         return refId;
-    }
-
-    /**
-     * BioJava doesn't support getting DBREF so we get it as the file is read.
-     *
-     * @author Xavier Watkins
-     *
-     */
-    public class PdbBufferedReader extends BufferedReader
-    {
-
-        private List<String> dbrefs = new ArrayList<String>();
-
-        /**
-         * Create a new PdbBufferedReader object.
-         * @param reader the underlying Reader object
-         */
-        public PdbBufferedReader(Reader reader) {
-            super(reader);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String readLine() throws IOException {
-            String line = super.readLine();
-            if (line != null && line.matches("^DBREF.*")) {
-                String [] split = line.split("\\s+");
-                if ("SWS".equals(split[5]) || "UNP".equals(split[5])) {
-                    dbrefs.add(split[6]);
-                }
-            }
-            return line;
-        }
-
-        /**
-         * Return the db refs read from the Reader.
-         * @return the List of db refs
-         */
-        public List<String> getDbrefs() {
-            return dbrefs;
-        }
     }
 }

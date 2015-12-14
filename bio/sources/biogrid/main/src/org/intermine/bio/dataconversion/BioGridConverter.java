@@ -81,6 +81,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
     private static final String SPOKE_MODEL = "prey";
     private static final String BLANK_EXPERIMENT_NAME = "NAME NOT AVAILABLE";
+    private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
     // interactions are duplicated across XML files -- don't store dupes
     private Set<Integer> interactionDetails = new HashSet<Integer>();
 
@@ -603,7 +604,7 @@ public class BioGridConverter extends BioFileConverter
 
             String identifier = null;
 
-            if ("shortLabel".equals(config.getNameSource())) {
+            if ("shortLabel".equalsIgnoreCase(config.getNameSource())) {
                 identifier = ih.shortLabel;
             } else {
                 identifier = ih.xrefs.get(config.getIdentifierSource());
@@ -617,9 +618,8 @@ public class BioGridConverter extends BioFileConverter
 
             String identifierField = config.getIdentifierName();
 
-            if (rslv != null) {
+            if (rslv != null && rslv.hasTaxon(taxonId)) {
                 identifier = resolveGene(taxonId, identifier);
-                identifierField = "primaryIdentifier";
             }
 
             // no valid identifiers
@@ -978,7 +978,7 @@ public class BioGridConverter extends BioFileConverter
         private String taxonId;
         private String prefix;
         private String xref;
-        private String identifierName;
+        private String identifierName = DEFAULT_IDENTIFIER_FIELD;
         private String nameSource;
 
         /**
