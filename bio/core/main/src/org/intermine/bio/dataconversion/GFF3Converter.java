@@ -54,6 +54,10 @@ public class GFF3Converter extends DataConverter
     private Model tgtModel;
     private Map<String, Item> seqs = new HashMap<String, Item>();
     private Map<String, String> identifierMap = new HashMap<String, String>();
+    // map from identifier to GFF garbage ID
+    // only used if there is config to set the identifier to something else.
+    // so that we can map to parents. See #1270
+    private Map<String, String> identifiersToIds = new HashMap<String, String>();
     private GFF3RecordHandler handler;
     private GFF3SeqHandler sequenceHandler;
     private boolean dontCreateLocations;
@@ -258,6 +262,7 @@ public class GFF3Converter extends DataConverter
      * @throws IOException
      */
     public void process(GFF3Record record) throws ObjectStoreException {
+
         String term = record.getType();
         // don't process terms in the exclude list
         if (configExclude != null && !configExclude.isEmpty()) {
@@ -426,6 +431,10 @@ public class GFF3Converter extends DataConverter
                     primaryIdentifier = record.getAttributes().get(pidAttr).get(0);
                 }
             }
+        }
+        // only store if the identifier has been reset
+        if (!primaryIdentifier.equals(record.getId())) {
+            identifiersToIds.put(record.getId(), primaryIdentifier);
         }
         return primaryIdentifier;
     }
@@ -805,10 +814,16 @@ public class GFF3Converter extends DataConverter
     private String getRefId(String identifier) {
         String refId = identifierMap.get(identifier);
         if (refId == null) {
-            // parents are usually first in the GFF file but that's not in the specification
-            // parents will not be present if they are ignored in the config file. See #1267
-            throw new RuntimeException("Failed setting setRefsAndCollections() in GFF3Converter "
-                    + "- processing child before parent - " + identifier);
+            // couldn't find parent. try again. identifier might have been switched with ID.
+            String id = identifiersToIds.get(identifier);
+            refId = identifierMap.get(id);
+
+            if (refId == null) {
+                // parents are usually first in the GFF file but that's not in the specification
+                // parents will not be present if they are ignored in the config file. See #1267
+                throw new RuntimeException("Failed setting setRefsAndCollections() "
+                        + "in GFF3Converter - processing child before parent - " + identifier);
+            }
         }
         return refId;
     }
