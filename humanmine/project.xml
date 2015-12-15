@@ -149,7 +149,7 @@
       <property name="src.data.dir" location="/micklem/data/human/gff/current"/>
     </source>
 
-    <source name="update-publications" type="update-publications">
+    <source name="update-publications" type="update-publications" dump="true">
       <property name="src.data.file" location="build/publications.xml" />
       <property name="loadFullRecord" value="true"/>
     </source>
@@ -163,10 +163,9 @@
   </sources>
 
   <post-processing>
-    <post-process name="create-references" />
+    <post-process name="create-references" dump="true" />
+    <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="transfer-sequences"/>
-
-    <!-- this runs the postprocessing steps in all sources -->
     <post-process name="do-sources" />
     <post-process name="create-gene-flanking-features" />
     <post-process name="create-bioseg-location-index" />
