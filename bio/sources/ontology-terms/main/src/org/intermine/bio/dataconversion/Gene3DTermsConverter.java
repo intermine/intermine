@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
@@ -21,10 +22,12 @@ import org.intermine.xml.full.Item;
  */
 public class Gene3DTermsConverter extends OntologyTermsFileConverter {
 
-  // a second file that maps accession numbers to names
+  // a second file that maps names in the hmm file to accession number
   String srcMapFile = null;
   HashMap<String,String> nameMap;
   HashMap<String,String> descMap;
+  // since multiple reps may have the same accession
+  HashSet<String> beenThereDoneThat;
   
   /**
    * @param writer
@@ -43,13 +46,22 @@ public class Gene3DTermsConverter extends OntologyTermsFileConverter {
     super.process(reader);
   }
   public String storeRecord() throws ObjectStoreException {
-    if (nameMap.containsKey(cleanId(identifierLine)) ) {
-      nameLine = nameMap.get(cleanId(identifierLine));
-    }
+    // the identifier line is the representative member.
     if (descMap.containsKey(cleanId(identifierLine)) ) {
-      descriptionLine = descMap.get(cleanId(identifierLine));
+      // put this in the name field
+      nameLine = descMap.get(cleanId(identifierLine));
     }
-    return super.storeRecord();
+    if (nameMap.containsKey(cleanId(identifierLine)) ) {
+      // now we change it to the accession number
+      identifierLine = nameMap.get(cleanId(identifierLine));
+      if (!beenThereDoneThat.contains(identifierLine)) {
+        beenThereDoneThat.add(identifierLine);
+        return super.storeRecord();
+      } else {
+        return null;
+      }
+    }
+    return null;
   }
   public void setSrcMapFile(String file) {
     srcMapFile = file;
@@ -61,6 +73,7 @@ public class Gene3DTermsConverter extends OntologyTermsFileConverter {
       String line;
       nameMap = new HashMap<String,String>();
       descMap = new HashMap<String,String>();
+      beenThereDoneThat = new HashSet<String>();
       while( (line= br.readLine()) != null ) {
         String[] fields = line.split("\\t",3);
         if (fields.length < 2) {
@@ -72,7 +85,7 @@ public class Gene3DTermsConverter extends OntologyTermsFileConverter {
         } else if (!fields[1].isEmpty()) {
           nameMap.put(fields[0], "G3DSA:"+fields[1]);
         }
-        if (fields[2] != null && !fields[2].isEmpty()) {
+        if (fields[2] != null && !fields[2].isEmpty() && !fields[2].equals("null") ) {
           descMap.put(fields[0],fields[2]);
         }
       }

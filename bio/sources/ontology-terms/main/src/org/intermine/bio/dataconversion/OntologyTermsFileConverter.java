@@ -184,6 +184,10 @@ public class OntologyTermsFileConverter extends BioFileConverter
      *  store the term using the current ontology
      */
     public String storeRecord() throws ObjectStoreException {
+      if (termMap.containsKey(cleanId(identifierLine))) {
+        // we've seen this before.
+        return null;
+      }
       Item ontTerm = createItem("OntologyTerm");
       ontTerm.setAttribute("identifier",cleanId(identifierLine));
       setIfNotNull(ontTerm,"name", cleanName(nameLine));

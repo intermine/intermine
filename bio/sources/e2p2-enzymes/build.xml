@@ -1,0 +1,5 @@
+<project name="e2p2-enzymes" default="default" basedir=".">
+  <description>build, test, package e2p2-enzymes</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

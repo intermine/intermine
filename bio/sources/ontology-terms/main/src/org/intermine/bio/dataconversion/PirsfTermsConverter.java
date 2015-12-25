@@ -18,9 +18,9 @@ import org.intermine.xml.full.Reference;
  * @author jcarlson
  *
  */
-public class PirTermsConverter extends OntologyTermsFileConverter {
+public class PirsfTermsConverter extends OntologyTermsFileConverter {
 
-  private static final Logger LOG = Logger.getLogger(PirTermsConverter.class);
+  private static final Logger LOG = Logger.getLogger(PirsfTermsConverter.class);
   protected HashMap<String,String> idMap = new HashMap<String,String>();
   protected HashMap<String,String> parentMap = new HashMap<String,String>();
   protected Pattern parentPattern = Pattern.compile("\\[Parent=(\\w+)\\]$");
@@ -28,7 +28,7 @@ public class PirTermsConverter extends OntologyTermsFileConverter {
    * @param writer
    * @param model
    */
-  public PirTermsConverter(ItemWriter writer, Model model) {
+  public PirsfTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
     identifierKey = "^>.*";
     identifierReplacement = "^>\\s*";

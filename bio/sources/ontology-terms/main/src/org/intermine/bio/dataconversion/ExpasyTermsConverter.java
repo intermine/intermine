@@ -27,6 +27,12 @@ public class ExpasyTermsConverter extends OntologyTermsFileConverter {
   }
   //@Override
   String cleanDescription(String desc) {
-    return desc.replace("\\.$", "");
+    if (desc==null) return null;
+    return desc.trim().replaceAll("\\.$", "");
+  }
+  //@Override
+  String cleanName(String name) {
+    if (name==null) return null;
+    return name.trim().replaceAll("\\.$", "");
   }
 }

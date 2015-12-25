@@ -153,7 +153,7 @@ public class TransferGOAnnotations {
       ResultsRow<?> rr = (ResultsRow<?>) res.next();
       proteomes.add((Integer)rr.get(0));
     }
-    LOG.info("Going to query "+proteomes.size()+" different proteoms.");
+    LOG.info("Going to query "+proteomes.size()+" different proteomes.");
 
     for(Integer proteomeId : proteomes ) {
 
@@ -465,10 +465,9 @@ public class TransferGOAnnotations {
       cs.addConstraint(new SimpleConstraint(qcProt,ConstraintOp.EQUALS,qcProtV));
     }
 
-
-    LOG.info("About to query: "+q);
     q.setConstraint(cs);
-
+    LOG.info("About to query: "+q);
+    
     ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
     Results res = os.execute(q, 500000, true, true, true);
     return res.iterator();

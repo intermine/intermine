@@ -255,12 +255,13 @@ public class CufflinksConverter extends BioFileConverter
                 " expected experimentName"+ expectedSuffices[0] +" in "+getCurrentFile());
           }
           experimentName = headers[i].substring(0,headers[i].lastIndexOf(expectedSuffices[0]));
-          experimentColGroupMap.put(colGroup,experimentName);
-          if (!experimentMap.containsKey(experimentName) ) {
+          String cleanedExperimentName = cleanUpExperimentName(experimentName);
+          experimentColGroupMap.put(colGroup,cleanedExperimentName);
+          if (!experimentMap.containsKey(cleanedExperimentName) ) {
             try {
-              experimentMap.put(experimentName, createExperiment(experimentName));
+              experimentMap.put(cleanedExperimentName, createExperiment(cleanedExperimentName));
             } catch (ObjectStoreException e) {
-              throw new BuildException("Cannot save experiment " + experimentName);
+              throw new BuildException("Cannot save experiment " + cleanedExperimentName);
             }
           }
         }
@@ -270,6 +271,27 @@ public class CufflinksConverter extends BioFileConverter
         }
       }
     }
+  }
+  /*
+   * convert from a cufflinks style name (with underscores) to a more readable form.
+   * convert single underscores to spaces
+   * convert N (N>1) underscore to N-1 underscores and no space.
+   */
+  private String cleanUpExperimentName(String s) {
+    String[] bits = s.split("_");
+    StringBuffer sb = new StringBuffer();
+    for( String bit: s.split("_") ) {
+      // a bit of zero-length means there were 2 underscores. Replace
+      // this with 1
+      if(bit.length()==0) {
+        sb.append("_");
+      } else {
+        if (sb.length() > 0) sb.append(" ");
+        sb.append(bit);
+      }
+    }
+    System.out.println("chaning "+s+" to "+sb.toString());
+    return sb.toString();
   }
   
   /*

@@ -82,8 +82,8 @@ public class PhytozomeDbProcessor {
     //fillSynonyms();
     System.out.println("Relationships...");
     fillRelationships();
-    System.out.println("Analyses...");
-    fillAnalyses();
+    //System.out.println("Analyses...");
+    //fillAnalyses();
     System.out.println("Done.");
     converter.getDatabase().getConnection().createStatement().execute(
         "DROP TABLE "+ tempChromosomeTableName);

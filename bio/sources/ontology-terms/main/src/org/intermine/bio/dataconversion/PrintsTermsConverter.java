@@ -21,9 +21,13 @@ public class PrintsTermsConverter extends OntologyTermsFileConverter {
     // prints.dat does not have an end of record indicator. But it looks
     // like there are always 3 entries and the description comes last.
     identifierKey = "^gx;.*";
+    identifierReplacement = "^gx;\\s*";
     nameKey = "^gc;.*";
+    nameReplacement = "^gc;\\s*";
     descKey = "^gt;.*";
+    descReplacement = "^gt;\\s*";
     endOfRecord = null;
+    
   }
   void parseDescription(String line) {
     // parse normally. then store

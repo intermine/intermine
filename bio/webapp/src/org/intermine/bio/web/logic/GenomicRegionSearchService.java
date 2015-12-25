@@ -97,7 +97,6 @@ public class GenomicRegionSearchService
     private static Map<String, Integer> orgTaxonIdMap = null;
     private List<String> selectionInfo = new ArrayList<String>();
 
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
     /**
      * Default batch size to be used for region search initialisation queries.
      */
@@ -234,7 +233,8 @@ public class GenomicRegionSearchService
         }
         return excludedFeatureTypes;
     }
-
+/*
+ * problem in the merge
     @SuppressWarnings("unchecked")
     private String prepareWebData(List<String> orgList, List<String> excludedFeatureTypeList) {
 
@@ -337,6 +337,72 @@ public class GenomicRegionSearchService
           LOG.warn("Exception thrown while writing featureMapOrg: "+e.getMessage()+".");
         }
       }
+*/
+      // build a map of feature types that exist per organism in the database, NOTE this also
+      // populates global featureTypesInOrgs set.
+      private Map<String, Set<String>> getFeatureTypesForOrgs(List<String> orgList,
+              List<String> excludedFeatureTypes) {
+          Query q = new Query();
+          q.setDistinct(true);
+
+          QueryClass qcOrg = new QueryClass(Organism.class);
+          QueryClass qcFeature = new QueryClass(SequenceFeature.class);
+
+          QueryField qfOrgName = new QueryField(qcOrg, "shortName");
+          QueryField qfFeatureClass = new QueryField(qcFeature, "class");
+
+          q.addToSelect(qfOrgName);
+          q.addToSelect(qfFeatureClass);
+
+          q.addFrom(qcOrg);
+          q.addFrom(qcFeature);
+
+          q.addToOrderBy(qfOrgName, "ascending");
+
+          ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
+
+          q.setConstraint(constraints);
+
+          // SequenceFeature.organism = Organism
+          QueryObjectReference organism = new QueryObjectReference(qcFeature,
+                  "organism");
+          ContainsConstraint ccOrg = new ContainsConstraint(organism,
+                  ConstraintOp.CONTAINS, qcOrg);
+          constraints.addConstraint(ccOrg);
+
+          // constraints.addConstraint(new BagConstraint(qfOrgName,
+          // ConstraintOp.IN, orgList));
+
+          Results results = objectStore.execute(q, initBatchSize, true, true, true);
+
+          // Parse results data to a map
+          Map<String, Set<String>> orgFeatureMap = new LinkedHashMap<String, Set<String>>();
+          Set<String> featureTypeSet = new LinkedHashSet<String>();
+
+          // TODO this will be very slow when query too many features
+          if (results != null && results.size() > 0) {
+              for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+                  ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+                  String org = (String) row.get(0);
+                  @SuppressWarnings("rawtypes")
+                  // TODO exception - feature type is NULL
+                  String featureType = ((Class) row.get(1)).getSimpleName();
+                  if (!"Chromosome".equals(featureType) && orgList.contains(org)) {
+                      if (orgFeatureMap.size() < 1) {
+                          featureTypeSet.add(featureType);
+                          orgFeatureMap.put(org, featureTypeSet);
+                      } else {
+                          if (orgFeatureMap.keySet().contains(org)) {
+                              orgFeatureMap.get(org).add(featureType);
+                          } else {
+                              Set<String> s = new LinkedHashSet<String>();
+                              s.add(featureType);
+                              orgFeatureMap.put(org, s);
+                          }
+                      }
+                  }
+              }
 
             // Get all feature types
             for (Set<String> ftSet : orgFeatureMap.values()) {
@@ -353,13 +419,14 @@ public class GenomicRegionSearchService
         }
         return orgFeatureMap;
     }
-
+/*
+ * problem with the merge
         long elapsed = (new Date()).getTime() - start;
         LOG.info("Created featureTypeInOrgMap in "+elapsed+" milliseconds.");
 
         getFeatureTypeToSOTermMap();
         getOrganismToTaxonMap();
-
+*/
     // build JSON string to display region search options
     private String buildJSONString(List<String> orgList, Map<String, Set<String>> resultsMap) {
         // Parse data to JSON string
@@ -833,7 +900,7 @@ public class GenomicRegionSearchService
             return featureTypeToSOTermMap;
           }
           featureTypeToSOTermMap = GenomicRegionSearchQueryRunner
-              .getFeatureAndSOInfo(interMineAPI, classDescrs);
+              .getFeatureAndSOInfo(interMineAPI, classDescrs, initBatchSize);
 
           if (!(featureTypesInOrgs.size() == featureTypeToSOTermMap.size() && featureTypesInOrgs
               .containsAll(featureTypeToSOTermMap.keySet()))) {

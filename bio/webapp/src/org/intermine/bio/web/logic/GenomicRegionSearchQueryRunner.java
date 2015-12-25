@@ -56,6 +56,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -76,7 +77,6 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
     private static Map<String, Map<String, ChromosomeInfo>> chrInfoMap = null;
 
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchQueryRunner.class);
 
     /**
      * Constructor
@@ -242,7 +242,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
     @SuppressWarnings("unchecked")
     public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
 
-        return getChromosomeInfo(im, GenomicRegionSearchService.DEFAULT_REGION_INIT_BATCH_SIZE);
+      return getChromosomeInfo(im, GenomicRegionSearchService.DEFAULT_REGION_INIT_BATCH_SIZE);
     }
 
     /**
@@ -254,92 +254,101 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * @param batchSize - the query batch size to use
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im,
-            int batchSize) {
-        if (chrInfoMap != null) {
-            return chrInfoMap;
-        } else {
+        int batchSize) {
+      if (chrInfoMap != null) {
+        return chrInfoMap;
+      } else {
 
-          long start = (new Date()).getTime();
-          
-          //TODO: figure out how to configure this path more better.
-          File chrMapFile = new File("webapps/phytomine/chrMapInfo.obj");
-          if (chrMapFile.exists() && chrMapFile.canRead()) {
-            try {
-              ObjectInputStream ois = new ObjectInputStream(new FileInputStream(chrMapFile));
-              chrInfoMap = (Map<String, Map<String, ChromosomeInfo>>)ois.readObject();
-              ois.close();
-            } catch( Exception e) {
-              LOG.warn("Exception thrown while reading chrInfoMap: "+e.getMessage()+". Regenerating...");
-              chrMapFile.delete();
-            }
-            long elapsed = (new Date()).getTime() - start;
-            LOG.info("Read chrInfoMap in "+elapsed+" milliseconds.");
-            return chrInfoMap;
+        long start = (new Date()).getTime();
+
+        //TODO: figure out how to configure this path more better.
+        File chrMapFile = new File("webapps/phytomine/chrMapInfo.obj");
+        if (chrMapFile.exists() && chrMapFile.canRead()) {
+          try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(chrMapFile));
+            chrInfoMap = (Map<String, Map<String, ChromosomeInfo>>)ois.readObject();
+            ois.close();
+          } catch( Exception e) {
+            LOG.warn("Exception thrown while reading chrInfoMap: "+e.getMessage()+". Regenerating...");
+            chrMapFile.delete();
           }
-        
-          
-            // a Map contains orgName and its chrInfo accordingly
-            // e.g. <D.Melanogaster, <X, (D.Melanogaster, X, x, 5000)>>
-            chrInfoMap = new HashMap<String, Map<String, ChromosomeInfo>>();
-
-
-            Query q = new Query();
-            q.setDistinct(true);
-
-                // Add orderby
-                query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
-                PathQueryExecutor pQE = im.getPathQueryExecutor();
-                // JWC bigger batch size.
-                pQE.setBatchSize(200000);
-                ExportResultsIterator results = pQE.execute(query);
-
-                // a List contains all the chrInfo (organism, chrPID, length)
-                //List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>(500000);
-                // a Set contains all the orgName
-                //Set<String> orgSet = new HashSet<String>();
-
-            q.addToSelect(qfOrgName);
-            q.addToSelect(qfChrIdentifier);
-            q.addToSelect(qfChrLength);
-
-            QueryObjectReference orgRef = new QueryObjectReference(qcChr, "organism");
-            ContainsConstraint ccOrg = new ContainsConstraint(orgRef,
-                    ConstraintOp.CONTAINS, qcOrg);
-            q.setConstraint(ccOrg);
-
-                    // Have we seen this organism before?
-                    // Put a key in the chrInfoMap is not.
-                    if (!chrInfoMap.containsKey(org)) {
-                      chrInfoMap.put(org,new HashMap<String, ChromosomeInfo>());
-                    }
-
-                    ChromosomeInfo chrInfo = new ChromosomeInfo();
-                    chrInfo.setOrgName(org);
-                    chrInfo.setChrPID(chrPID);
-                    if (chrLength != null) {
-                        chrInfo.setChrLength(chrLength);
-                    }
-                    // Add ChromosomeInfo to map
-                    chrInfoMap.get(org).put(chrPID.toLowerCase(),chrInfo);
-
-                }
-            }
-
-            long elapsed = (new Date()).getTime() - start;
-            LOG.info("Created chrInfoMap in "+elapsed+" milliseconds.");
-            
-            try {
-              ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(chrMapFile));
-              oos.writeObject(chrInfoMap);
-              oos.flush();
-              oos.close();
-            } catch( IOException e) {
-              LOG.warn("Exception thrown while writing chrInfoMap: "+e.getMessage()+".");
-            }
-
-            return chrInfoMap;
+          long elapsed = (new Date()).getTime() - start;
+          LOG.info("Read chrInfoMap in "+elapsed+" milliseconds.");
+          return chrInfoMap;
         }
+
+
+        // a Map contains orgName and its chrInfo accordingly
+        // e.g. <D.Melanogaster, <X, (D.Melanogaster, X, x, 5000)>>
+        chrInfoMap = new HashMap<String, Map<String, ChromosomeInfo>>();
+
+
+        try {
+          PathQuery query = new PathQuery(im.getModel());
+
+          // Add views
+          query.addViews(
+              "Chromosome.organism.shortName",
+              "Chromosome.primaryIdentifier",
+              "Chromosome.length"
+              );
+
+          // Add orderby
+          query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
+          PathQueryExecutor pQE = im.getPathQueryExecutor();
+          // JWC bigger batch size.
+          pQE.setBatchSize(200000);
+          ExportResultsIterator results = pQE.execute(query);
+
+          // a List contains all the chrInfo (organism, chrPID, length)
+          //List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>(500000);
+          // a Set contains all the orgName
+          //Set<String> orgSet = new HashSet<String>();
+
+          while (results.hasNext()) {
+            List<ResultElement> row = results.next();
+
+            String org = (String) row.get(0).getField();
+            String chrPID = (String) row.get(1).getField();
+            Integer chrLength = (Integer) row.get(2).getField();
+
+            // Have we seen this organism before?
+            // Put a key in the chrInfoMap is not.
+            if (!chrInfoMap.containsKey(org)) {
+              chrInfoMap.put(org,new HashMap<String, ChromosomeInfo>());
+            }
+
+            ChromosomeInfo chrInfo = new ChromosomeInfo();
+            chrInfo.setOrgName(org);
+            chrInfo.setChrPID(chrPID);
+            if (chrLength != null) {
+              chrInfo.setChrLength(chrLength);
+            }
+            // Add ChromosomeInfo to map
+            chrInfoMap.get(org).put(chrPID.toLowerCase(),chrInfo);
+
+          }
+
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+
+        long elapsed = (new Date()).getTime() - start;
+        LOG.info("Created chrInfoMap in "+elapsed+" milliseconds.");
+
+        try {
+          ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(chrMapFile));
+          oos.writeObject(chrInfoMap);
+          oos.flush();
+          oos.close();
+        } catch( IOException e) {
+          LOG.warn("Exception thrown while writing chrInfoMap: "+e.getMessage()+".");
+        }
+
+        return chrInfoMap;
+      }
     }
 
     /**

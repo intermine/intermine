@@ -1,38 +1,19 @@
 package org.intermine.bio.dataconversion;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataloader.IntegrationWriterDataTrackingImpl;
-import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Homolog;
-import org.intermine.model.bio.Consequence;
-import org.intermine.model.bio.ConsequenceType;
-import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.DataSource;
-import org.intermine.model.bio.DiversitySample;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Location;
-import org.intermine.model.bio.MRNA;
-import org.intermine.model.bio.Ontology;
 import org.intermine.model.bio.Organism;
-import org.intermine.model.bio.SNP;
-import org.intermine.model.bio.SNPDiversitySample;
-import org.intermine.model.bio.SOTerm;
+import org.intermine.model.bio.Gene;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.Query;
@@ -59,7 +40,7 @@ import org.intermine.util.FormattedTextParser;
 public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoaderTask {
   //
   private static final String DATASET_TITLE = "Phytozome Homologs";
-  private static final String DATA_SOURCE_NAME = "Phytozome v10";
+  private static final String DATA_SOURCE_NAME = "Phytozome v11";
   private static final Logger LOG =
       Logger.getLogger(InparanoidHomologsDirectDataLoaderTask.class);
 
@@ -67,7 +48,8 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
   Pattern filePattern;
   int orthoRegistered;
   int paraRegistered;
-  
+  HashMap<Integer,ProxyReference> orgProxys = new HashMap<Integer,ProxyReference>();
+
   /**
    * Called by parent process method for each file found
    *
@@ -94,6 +76,23 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
         throw new BuildException("Cannot parse proteome ids from string "+theFile.getName());
       }
 
+      // be sure the organism proxy references are loaded
+      for( Integer prot : proteomeId ) {
+        if (!orgProxys.containsKey(prot)) {
+          Organism org;
+          try {
+            org = getDirectDataLoader().createObject(Organism.class);
+
+            org.setProteomeId(prot);
+            getDirectDataLoader().store(org);
+            orgProxys.put(prot,new ProxyReference(getIntegrationWriter().getObjectStore(),
+                org.getId(), Organism.class));      
+          } catch (ObjectStoreException e) {
+            throw new BuildException("Problem storing organism for proteome "+prot);
+          }
+        }
+      }
+
       Iterator<?> tsvIter;
       try {
         FileReader reader = new FileReader(theFile);
@@ -109,7 +108,7 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
         String id = fields[0];
         String genes1 = fields[2];
         String genes2 = fields[3];
-        
+
         // sometimes things are duplicated!
         HashSet<String> uniquedGenes1 = new HashSet<String>();
         HashSet<String> uniquedGenes2 = new HashSet<String>();
@@ -145,7 +144,7 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
     return registerPairs(groupName,g1,p1.toString(),g2,p2.toString(),relationship);
   }
   private int registerPairs(String groupName,HashSet<String> g1,String p1,HashSet<String> g2,String p2,String relationship) {
-   
+
     int registered = 0;
 
     for( String gene1 : g1 ) {
@@ -165,6 +164,8 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
               String pacGene2 = "PAC:"+gene2;
               o.proxyGene1(getGene(pacGene1,p1));
               o.proxyGene2(getGene(pacGene2,p2));
+              o.proxyOrganism1(orgProxys.get(Integer.parseInt(p1)));
+              o.proxyOrganism2(orgProxys.get(Integer.parseInt(p2)));
               o.setGroupName(groupName);
               o.setMethod("inParanoid");
               o.setRelationship(relationship);
@@ -194,7 +195,7 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
     }
     return geneMap.get(geneName);
   }
-  
+
   private void prefillGeneMap() {
     geneMap = new HashMap<String,ProxyReference>();
     Query q = new Query();

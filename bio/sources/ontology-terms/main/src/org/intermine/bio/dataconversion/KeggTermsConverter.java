@@ -68,8 +68,13 @@ public class KeggTermsConverter extends OntologyTermsFileConverter {
       String[] fields = lineFields[1].split("[;\\[]");
       // there are multiple names.
       nameLine = fields[0].trim();
-      if(fields.length > 1)
+      if(fields.length > 1  && !fields[1].endsWith("]")) {
         descriptionLine = fields[1].trim();
+      }
+    } else {
+      // A and B levels do not have a name. Only a (long) identifier.
+      // copy this into the name
+      nameLine = identifierLine;
     }
     // identifiers occur in multiple sections. We're just going to insert
     // them uniquely

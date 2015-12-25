@@ -30,6 +30,7 @@ import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.Ontology;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SNP;
+import org.intermine.model.bio.SNPSampleGroup;
 import org.intermine.model.bio.Genotype;
 import org.intermine.model.bio.SOTerm;
 import org.intermine.objectstore.ObjectStoreException;
@@ -69,7 +70,9 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 	private static final Logger LOG = Logger.getLogger(GatkvcfConverter.class);
 
 	// the one organism we're working on. proteomeId is set by setter.
-	private Integer proteomeId;
+	private Integer proteomeId=null;
+	// the sample group (vcf file) name
+	private String sampleGroupName=null;
 	
 	// we'll get this from the header. When parsing, we need to keep these in order
 	final static String[] expectedHeaders = { "#CHROM", "POS", "ID", "REF",
@@ -82,6 +85,8 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 	// keep ids of created objects. ProxyReference is a wrapper for a stored object id and is
 	// sufficient to create a reference to that object, saves keeping full objects in memory.
 	private ProxyReference orgRef = null;
+	private Organism org = null;
+	private ProxyReference groupRef = null;
 	private DataSet dataSet = null;
 	private DataSource dataSource = null;
 	private ProxyReference ontologyRef;
@@ -133,6 +138,9 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 					"Cannot find numerical proteome id for: " + proteome);
 		}
 	}
+	public void setSampleGroup(String groupName) {
+	  sampleGroupName = groupName;
+	}
 
 	/**
 	 * Called by parent process method for each file found
@@ -148,6 +156,10 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 			LOG.info("Ignoring file " + theFile.getName()
 					+ ". Not a SnpEff-processed GATK vcf file.");
 		} else {
+		  // make sure proteome id and group name are not null
+		  if (proteomeId == null || sampleGroupName == null) {
+		    throw new BuildException("Sample Group Name and proteome Id must be set.");
+		  }
 		  // prefill the gene/mrna/chromsome proxy references.
 		  preFill(genes,Gene.class);
 		  preFill(mrnas,MRNA.class);
@@ -268,9 +280,10 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 	  ProxyReference chrRef = getChromosome(chr);
 
 	  SNP snp = getDirectDataLoader().createObject(SNP.class);
-	  snp.proxyOrganism(getOrganism());
+	  snp.setOrganism(getOrganism());
 	  snp.setReference(ref);
 	  snp.setAlternate(alt);
+	  snp.proxySampleGroup(getSampleGroup());
 	  try {
 	    // only add if a number
 	    snp.setQuality(Double.parseDouble(quality));
@@ -279,9 +292,9 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 	  snp.setName(name);
 	  snp.setFilter(filter);
 	  Integer nSamples = parseInfo(snp, info);
-	  if (nSamples != null && nSamples > 0) {
+/*	  if (nSamples != null && nSamples > 0) {
 	    snp.setSampleCount(nSamples);
-	  }
+	  }*/
 	  // create and store the location
 	  // SNP isn't a SequenceFeature so we don't set chromosomeLocation
 	  makeLocation(chrRef, snp, pos, pos + ref.length(), "1");
@@ -300,7 +313,7 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 	    String genotype = null;
 	    StringBuffer sampleInfo = new StringBuffer();
 	    if ((valBits.length != attBits.length)
-	        && !fields[col].equals("./."))
+	        && !fields[col].startsWith("."))
 	      LOG.warn("Genotype fields have unexpected length.");
 	    for (int i = 0; i < attBits.length && i < valBits.length; i++) {
 	      if (attBits[i].equals("GT")) {
@@ -503,8 +516,8 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 	// Create and store referenced objects, keeping ProxyRefererences in maps for
 	// reuse where needed.
 
-	
-	protected ProxyReference getOrganism() throws ObjectStoreException {
+
+	protected ProxyReference getOrganismRef() throws ObjectStoreException {
         if (orgRef == null) {
             Organism org = getDirectDataLoader().createObject(Organism.class);
             org.setProteomeId(proteomeId);
@@ -514,6 +527,26 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
         }
         return orgRef;
     }
+  protected Organism getOrganism() throws ObjectStoreException {
+    if (org == null) {
+        org = getDirectDataLoader().createObject(Organism.class);
+        org.setProteomeId(proteomeId);
+        getDirectDataLoader().store(org);
+        orgRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                org.getId(), Organism.class);
+    }
+    return org;
+}
+	 protected ProxyReference getSampleGroup() throws ObjectStoreException {
+     if (groupRef == null) {
+         SNPSampleGroup sam = getDirectDataLoader().createObject(SNPSampleGroup.class);
+         sam.setName(sampleGroupName);
+         getDirectDataLoader().store(sam);
+         groupRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                 sam.getId(), SNPSampleGroup.class);
+     }
+     return groupRef;
+ }
     
     protected ProxyReference getConsequenceType(String type) throws ObjectStoreException {
 		ProxyReference conRef = consequenceTypes.get(type);
@@ -534,7 +567,7 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
     protected ProxyReference getDiversitySample(String name) throws ObjectStoreException {
     	DiversitySample sam = getDirectDataLoader().createObject(DiversitySample.class);
     	sam.setName(name);
-    	sam.proxyOrganism(getOrganism());
+    	sam.setOrganism(getOrganism());
     	getDirectDataLoader().store(sam);
     	return new ProxyReference(getIntegrationWriter().getObjectStore(),
     			sam.getId(), DiversitySample.class);
@@ -546,7 +579,7 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
     	  LOG.info("Getting new proxy ref for gene "+identifier);
     		Gene gene = getDirectDataLoader().createObject(Gene.class);
             gene.setPrimaryIdentifier(identifier);
-            gene.proxyOrganism(getOrganism());
+            gene.setOrganism(getOrganism());
             gene.addDataSets(getDataSet());
             gene.proxySequenceOntologyTerm(getSOTerm("gene"));
             getDirectDataLoader().store(gene);
@@ -564,7 +597,7 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
         LOG.info("Getting new proxy ref for mrna "+identifier);
     		MRNA mrna = getDirectDataLoader().createObject(MRNA.class);
             mrna.setPrimaryIdentifier(identifier);
-            mrna.proxyOrganism(getOrganism());
+            mrna.setOrganism(getOrganism());
             mrna.addDataSets(getDataSet());
             mrna.proxySequenceOntologyTerm(getSOTerm("mRNA"));
             getDirectDataLoader().store(mrna);
@@ -581,7 +614,7 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
         LOG.info("Getting new proxy ref for chromosome "+identifier);
     		Chromosome chr = getDirectDataLoader().createObject(Chromosome.class);
             chr.setPrimaryIdentifier(identifier);
-            chr.proxyOrganism(getOrganism());
+            chr.setOrganism(getOrganism());
             chr.addDataSets(getDataSet());
             chr.proxySequenceOntologyTerm(getSOTerm("chromosome"));
             getDirectDataLoader().store(chr);

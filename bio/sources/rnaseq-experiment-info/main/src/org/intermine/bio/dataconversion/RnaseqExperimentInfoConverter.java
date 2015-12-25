@@ -87,7 +87,7 @@ public class RnaseqExperimentInfoConverter extends BioFileConverter
           } else {
             if (fields.length > 1) {
               Item sample = createItem("RNAseqExperiment");
-              sample.setAttribute("name",fields[0]);
+              sample.setAttribute("name",cleanUpExperimentName(fields[0]));
               setIfNotNull(sample,"experimentGroup",fields[1]);
               if (fields.length > 2) setIfNotNull(sample,"description",fields[2]);
               if (fields.length > 3) setIfNotNull(sample,"url",fields[3]);
@@ -106,6 +106,30 @@ public class RnaseqExperimentInfoConverter extends BioFileConverter
         }
         LOG.info("Processed " + ctr + " lines.");
       }
+    }
+    
+    /*
+     * convert from a cufflinks style name (with underscores) to a more readable form.
+     * convert single underscores to spaces
+     * convert N (N>1) underscore to N-1 underscores and no space.
+     * 
+     * NOTE: this code is repeated in the cufflinks loader. May want to
+     * consolidate
+     */
+    private String cleanUpExperimentName(String s) {
+      String[] bits = s.split("_");
+      StringBuffer sb = new StringBuffer();
+      for( String bit: s.split("_") ) {
+        // a bit of zero-length means there were 2 underscores. Replace
+        // this with 1
+        if(bit.length()==0) {
+          sb.append("_");
+        } else {
+          if (sb.length() > 0) sb.append(" ");
+          sb.append(bit);
+        }
+      }
+      return sb.toString();
     }
     void setIfNotNull(Item s,String field,String value) {
       if (value != null && value.trim().length() > 0) {
