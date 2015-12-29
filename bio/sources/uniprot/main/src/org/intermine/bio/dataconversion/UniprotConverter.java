@@ -68,6 +68,7 @@ public class UniprotConverter extends BioDirectoryConverter
     // don't allow duplicate identifiers
     private Set<String> identifiers = null;
 
+    private boolean creategenes = true;
     private boolean creatego = false;
     private boolean loadfragments = false;
     private boolean allowduplicates = false;
@@ -230,6 +231,18 @@ public class UniprotConverter extends BioDirectoryConverter
         final String msg = "UniProt data source does not create protein domains any longer. "
                 + "Please use the InterPro data source instead.";
         throw new IllegalArgumentException(msg);
+    }
+
+    /**
+     * Toggle whether or not to create genes and protein/gene associations.
+     * @param creategenes whether or not to create genes and protein/gene associations.
+     */
+    public void setCreategenes(String creategenes) {
+        if ("true".equalsIgnoreCase(creategenes)) {
+            this.creategenes = true;
+        } else {
+            this.creategenes = false;
+        }
     }
 
     /**
@@ -700,7 +713,9 @@ public class UniprotConverter extends BioDirectoryConverter
                     processDbrefs(protein, uniprotEntry);
 
                     /* genes */
-                    processGene(protein, uniprotEntry);
+		    if(creategenes) {
+			processGene(protein, uniprotEntry);
+		    }
 
                     store(protein);
 
