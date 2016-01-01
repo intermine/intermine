@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +34,6 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.webservice.server.core.JSONService;
@@ -166,6 +166,7 @@ public class Config extends JSONService
         fileName = parts[1];
         dataset = webProperties.getProperty("project.title") + "-" + domain;
 
+        /*
         // Parse any track configuration found.
         final List<String> userConfiguredFeatures = new ArrayList<String>();
         final String tracksRegex = prefix + ".track\\.([^.]+)\\.feature";
@@ -181,6 +182,31 @@ public class Config extends JSONService
                 userConfiguredFeatures.add(value);
             }
         }
+        */
+
+        // Parse any track configuration found.
+        final Map<String, Map<String, String>> userConfiguredFeatures = new HashMap<String, Map<String, String>>();
+        final String tracksRegex = prefix + ".track\\.([^.]+)\\.(.+)";
+        final Pattern p = Pattern.compile(tracksRegex);
+
+        // FIXME: namespaced is broken for iterating through properties
+        for (Map.Entry<Object, Object> entry : webProperties.entrySet()) {
+            final String key = (String)entry.getKey();
+            final String value = (String)entry.getValue();
+
+            Matcher matcher = p.matcher(key);
+
+            if (matcher.matches()) {
+                final String trackName = matcher.group(1);
+                final String propertyName = matcher.group(2);
+
+                if (!userConfiguredFeatures.containsKey(trackName)) {
+                    userConfiguredFeatures.put(trackName, new HashMap<String, String>());
+                }
+
+                userConfiguredFeatures.get(trackName).put(propertyName, value);
+            }
+        }
 
         initTracks(userConfiguredFeatures);
     }
@@ -191,31 +217,37 @@ public class Config extends JSONService
      * @param userConfiguredFeatureTracks - If given then only these tracks will be displayed.
      * If empty then all InterMine classes that are descendants of SequenceFeature (including SequenceFeature) will have a jbrowse track.
      */
-    private void initTracks(List<String> userConfiguredFeatures) {
+    private void initTracks(Map<String, Map<String, String>> userConfiguredFeatures) {
         tracks = new ArrayList<Map<String, Object>>();
         Model m = im.getModel();
 
         if (userConfiguredFeatures.size() > 0) {
-            for (String feature : userConfiguredFeatures) {
-                ClassDescriptor fcd = m.getClassDescriptorByName(feature);
+            for (Entry<String, Map<String, String>> entry : userConfiguredFeatures.entrySet()) {
+                final Map<String, String> trackProperties = entry.getValue();
 
-                if (fcd == null) {
-                    throw new ResourceNotFoundException("No class found for user configured feature " + feature);
+                if (!trackProperties.containsKey("class")) {
+                    throw new ResourceNotFoundException("Track named " + entry.getKey() + " has no class property");
                 }
 
-                tracks.add(featureTrack(fcd));
+                final String className = trackProperties.get("class");
+                ClassDescriptor fcd = m.getClassDescriptorByName(className);
+
+                if (fcd == null) {
+                    throw new ResourceNotFoundException("No class found for user configured track " + className);
+                }
+
+                tracks.add(makeFeatureTrack(fcd, trackProperties));
             }
-        }
-        else {
+        } else {
             ClassDescriptor fcd = m.getClassDescriptorByName(featType);
-            tracks.add(featureTrack(fcd));
+            tracks.add(makeFeatureTrack(fcd, null));
 
             for (ClassDescriptor cd: m.getAllSubs(fcd)) {
-                tracks.add(featureTrack(cd));
+                tracks.add(makeFeatureTrack(cd, null));
             }
         }
 
-        tracks.add(referenceTrack());
+        tracks.add(makeReferenceTrack());
     }
 
     /** Get the URL we can give to others to tell them where our resources are. **/
@@ -283,7 +315,7 @@ public class Config extends JSONService
      * </pre>
      * @return A description of the reference track.
      */
-    private Map<String, Object> referenceTrack() {
+    private Map<String, Object> makeReferenceTrack() {
         Map<String, Object> ret = new HashMap<String, Object>();
         ret.put("type", "SequenceTrack");
         ret.put("storeClass", "JBrowse/Store/SeqFeature/REST");
@@ -313,9 +345,11 @@ public class Config extends JSONService
      * }
      * </pre>
      * @param feature The type of feature to build a track for.
+     * @param trackProperties User-configured track properties.  If null then defaults are used.
      * @return A representation of the track configuration.
      */
-    private Map<String, Object> featureTrack(ClassDescriptor feature) {
+    private Map<String, Object> makeFeatureTrack(ClassDescriptor feature, Map<String, String> trackProperties) {
+
         Map<String, Object> ret = new HashMap<String, Object>();
         ret.put("type", "JBrowse/View/Track/CanvasFeatures");
         ret.put("storeClass", "JBrowse/Store/SeqFeature/REST");
@@ -330,6 +364,43 @@ public class Config extends JSONService
         ret.put("query", query);
         ret.put("autocomplete", "all");
         ret.put("region_feature_densities", true);
+
+        if (trackProperties != null) {
+            for (Entry<String, String> entry : trackProperties.entrySet()) {
+                String key = entry.getKey();
+                Map<String, Object> currentMap = ret;
+
+                // Mask out class property - this is just used for retrieving the ClassDescriptor and we don't want it
+                // passed to jbrowse
+                if (key.equals("class"))
+                    continue;
+
+                String[] keyComponents = key.split("\\.");
+
+                for (int i = 0; i < keyComponents.length; i++) {
+                    String keyComponent = keyComponents[i];
+
+                    if (i == keyComponents.length - 1) {
+                        currentMap.put(keyComponent, entry.getValue());
+                    } else {
+                        if (currentMap.containsKey(keyComponent)) {
+                            currentMap = (Map<String, Object>)currentMap.get(keyComponent);
+                        } else {
+                            HashMap<String, Object> newMap = new HashMap<String, Object>();
+                            currentMap.put(keyComponent, newMap);
+                            currentMap = newMap;
+                        }
+                    }
+                }
+            }
+
+            /*
+            Map<String, Object> style = new HashMap<String, Object>();
+            style.put("color", "red");
+            ret.put("style", style);
+            */
+        }
+
         return ret;
     }
 
@@ -381,7 +452,4 @@ public class Config extends JSONService
         ret.put("end", resolveValue(referenceSequence, lengthPath));
         return ret;
     }
-
-
-
 }
