@@ -31,6 +31,7 @@
     <attribute name="name" type="java.lang.String" />
     <reference name="protein" referenced-type="Protein" reverse-reference="components" />
   </class>
+<!-- 
 <class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true">
   <collection name="evidence" referenced-type="GOEvidence"/>
 </class>
@@ -45,6 +46,7 @@
 <class name="Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
 </class>
+-->
 <class name="Comment" is-interface="true">
   <collection name="publications" referenced-type="Publication"/>
 </class>
