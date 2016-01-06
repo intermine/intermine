@@ -168,7 +168,20 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Interaction">
+    <fields>
+      <fieldconfig fieldExpr="participant1.primaryIdentifier"/>
+      <fieldconfig fieldExpr="participant2.primaryIdentifier"/>
+    </fields>
+  </class>
 
+  <class className="org.intermine.model.bio.InteractionDetail">
+    <fields>
+      <fieldconfig fieldExpr="participant1.primaryIdentifier"/>
+      <fieldconfig fieldExpr="participant2.primaryIdentifier"/>
+    </fields>
+  </class>
+  
  <class className="org.intermine.model.bio.Location">
     <fields>
       <fieldconfig fieldExpr="feature.primaryIdentifier"/>
