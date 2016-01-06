@@ -177,8 +177,11 @@
 
   <class className="org.intermine.model.bio.InteractionDetail">
     <fields>
-      <fieldconfig fieldExpr="participant1.primaryIdentifier"/>
-      <fieldconfig fieldExpr="participant2.primaryIdentifier"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="role1"/>
+      <fieldconfig fieldExpr="role2"/>
+      <fieldconfig fieldExpr="relationshipType"/>
     </fields>
   </class>
   
