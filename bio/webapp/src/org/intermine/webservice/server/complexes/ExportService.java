@@ -209,7 +209,7 @@ public class ExportService extends JSONService
             complex.addParticipant(participant);
 
             // interactions -- not all complexes will have them!
-            if (row.get(9).getField() != null) {
+            if (row.get(9) != null && row.get(9).getField() != null) {
                 String featureIdentifier = (String) row.get(9).getField();
                 //String locatedOn = (String) row.get(10).getField();
                 Integer start = (Integer) row.get(11).getField();
