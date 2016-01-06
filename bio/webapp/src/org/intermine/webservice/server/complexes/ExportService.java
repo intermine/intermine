@@ -263,7 +263,7 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.interactions.details.interactingRegions.location.start",
                 "Complex.allInteractors.interactions.details.interactingRegions.location.end");
         query.setOuterJoinStatus("Complex.allInteractors.interactions", OuterJoinStatus.OUTER);
-        query.setOuterJoinStatus("Complex.allInteractors.participant.organism.taxonId", 
+        query.setOuterJoinStatus("Complex.allInteractors.participant.organism", 
         		OuterJoinStatus.OUTER);
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
         query.addOrderBy("Complex.allInteractors.participant.primaryIdentifier",
