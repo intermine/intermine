@@ -166,7 +166,7 @@ public class ExportService extends JSONService
             // String function = (String) row.get(3).getField();
             String primaryIdentifier = (String) row.get(4).getField();
             Integer stoichiometry = (Integer) row.get(5).getField();
-            Integer taxonId = (Integer) row.get(6).getField();
+
             String biologicalRole = (String) row.get(7).getField();
             // e.g. protein, SmallMolecule
             String moleculeType = (String) row.get(8).getField();
@@ -180,7 +180,11 @@ public class ExportService extends JSONService
             CvTerm type = getInteractorType(moleculeType);
 
             // organism
-            DefaultOrganism organism = new DefaultOrganism(taxonId);
+            DefaultOrganism organism = null;
+            if (row.get(6) != null && row.get(6).getField() != null) {
+                Integer taxonId = (Integer) row.get(6).getField();
+            	organism = new DefaultOrganism(taxonId);
+            }
 
             // cv term
             CvTerm db = new DefaultCvTerm("intermine");
@@ -259,6 +263,8 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.interactions.details.interactingRegions.location.start",
                 "Complex.allInteractors.interactions.details.interactingRegions.location.end");
         query.setOuterJoinStatus("Complex.allInteractors.interactions", OuterJoinStatus.OUTER);
+        query.setOuterJoinStatus("Complex.allInteractors.participant.organism.taxonId", 
+        		OuterJoinStatus.OUTER);
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
         query.addOrderBy("Complex.allInteractors.participant.primaryIdentifier",
                 OrderDirection.ASC);
