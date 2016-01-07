@@ -277,9 +277,6 @@ public class PsiComplexesConverter extends BioFileConverter
             Position endPosition = range.getEnd();
             Long start = startPosition.getStart();
             Long end = endPosition.getStart();
-            if (start + end == 0) {
-                continue;
-            }
             location.setAttribute("start", String.valueOf(start));
             location.setAttribute("end", String.valueOf(end));
             location.setReference("locatedOn", locatedOn);
