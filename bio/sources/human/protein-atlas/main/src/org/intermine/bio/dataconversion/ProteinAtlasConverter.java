@@ -262,14 +262,14 @@ public class ProteinAtlasConverter extends BioFileConverter
         if (StringUtils.isEmpty(resolvedIdentifier)) {
             return null;
         }
-        String geneId = genes.get(primaryIdentifier);
+        String geneId = genes.get(resolvedIdentifier);
         if (geneId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", primaryIdentifier);
+            gene.setAttribute("primaryIdentifier", resolvedIdentifier);
             gene.setReference("organism", getOrganism(TAXON_ID));
             store(gene);
             geneId = gene.getIdentifier();
-            genes.put(primaryIdentifier, geneId);
+            genes.put(resolvedIdentifier, geneId);
         }
         return geneId;
     }
