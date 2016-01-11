@@ -8,7 +8,6 @@
   <sources>
     <source name="uniprot-malaria" type="uniprot">
       <property name="uniprot.organisms" value="36329"/>
-      <property name="createinterpro" value="true"/>
       <property name="creatego" value="true"/>
       <property name="src.data.dir" location="DATA_DIR/malaria/uniprot/"/>
     </source>
@@ -27,9 +26,6 @@
       <property name="fasta.taxonId" value="36329"/>
       <property name="fasta.includes" value="MAL*.fasta"/>
       <property name="src.data.dir" location="DATA_DIR/malaria/genome/fasta"/>
-    </source>
-    <source name="interpro" type="interpro">
-      <property name="src.data.dir" location="DATA_DIR/malaria/interpro"/>
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="DATA_DIR/malaria/go/gene_ontology.obo"/>

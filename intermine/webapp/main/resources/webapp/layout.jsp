@@ -116,15 +116,15 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
         "token": "${PROFILE.dayToken}",
         "help": "${WEB_PROPERTIES['feedback.destination']}"
     });
-    
+
     var notification = new FailureNotification({message: $SERVICE.root + " is incorrect"});
 
     $SERVICE.fetchVersion().then(reportVersion, notification.render);
     if (typeof imtables !== 'undefined') {
         console.debug('Using imtables: ' + (imtables.version || 'UNKNOWN'));
     }
-  
-    // Load list widgets.  
+
+    // Load list widgets.
     (function() {
       if (window['list-widgets'] != null) {
         // Make sure we have all deps required in `global.web.properties`, otherwise we fail!!!
@@ -132,7 +132,7 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
         window.widgets = new ListWidgets({ 'root': $SERVICE.root, 'token': $SERVICE.token });
       }
     })();
-    
+
     var ua = jQuery.browser; // kinda evil, but best way to do this for now
     if (ua && ua.msie && parseInt(ua.version, 10) < 9) { // removed in 1.9.1
         new Notification({message: '<fmt:message key="old.browser"/>'}).render();

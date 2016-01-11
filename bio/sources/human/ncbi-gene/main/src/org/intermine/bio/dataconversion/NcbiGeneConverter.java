@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,6 +45,7 @@ public class NcbiGeneConverter extends BioFileConverter
     private Properties props = new Properties();
     private Map<String, String> configXref = new HashMap<String, String>();
     private Map<String, String> configPrefix = new HashMap<String, String>();
+    private Set<String> genes = new HashSet<String>();
 
     /**
      * Constructor
@@ -105,20 +106,21 @@ public class NcbiGeneConverter extends BioFileConverter
     private void createGeneByTaxonId(String taxonId, GeneInfoRecord record,
             NcbiGeneInfoParser parser) throws ObjectStoreException {
         Item gene = createItem("Gene");
-        gene.setReference("organism", getOrganism(taxonId));
-        createCrossReference(gene.getIdentifier(), record.entrez, "NCBI", true);
-
         // primaryIdentifier
         if (record.xrefs.get(configXref.get(taxonId)) != null) {
-            gene.setAttribute(
-                    "primaryIdentifier",
-                    (configPrefix.get(taxonId) != null ? configPrefix
-                            .get(taxonId) : "")
-                            + record.xrefs.get(configXref.get(taxonId))
-                                    .iterator().next());
+            String identifier = record.xrefs.get(configXref.get(taxonId)).iterator().next();
+            // if we aren't using entrez ID as unique ID, then there will be dupes
+            if (genes.contains(identifier)) {
+                return;
+            } else {
+                genes.add(identifier);
+            }
+            gene.setAttribute("primaryIdentifier", identifier);
         } else {
             gene.setAttribute("primaryIdentifier", record.entrez);
         }
+        gene.setReference("organism", getOrganism(taxonId));
+        createCrossReference(gene.getIdentifier(), record.entrez, "NCBI", true);
 
         // symbol
         if (record.officialSymbol != null) {
@@ -142,9 +144,6 @@ public class NcbiGeneConverter extends BioFileConverter
                     + record.defaultSymbol);
         }
 
-        // ncbiGeneNumber - removed from model addition
-//        gene.setAttribute("ncbiGeneNumber", record.entrez);
-
         // name
         if (record.officialName != null) {
             gene.setAttribute("name", record.officialName);
@@ -164,8 +163,7 @@ public class NcbiGeneConverter extends BioFileConverter
         }
 
         for (String ensemblId : record.ensemblIds) {
-            createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl",
-                    true);
+            createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl", true);
         }
 
         if (record.mapLocation != null) {

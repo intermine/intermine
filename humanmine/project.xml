@@ -6,10 +6,6 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
 
   <sources>
-    <source name="ensembl-snp" type="ensembl-snp" dump="true">
-     <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/variation/current" />
-      <property name="ensembl-snp.includes" value="Homo_sapiens_incl_consequences.gvf" />
-    </source>
     <source name="ensembl-human" type="ensembl-core">
       <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/core/current" />
       <property name="src.data.dir.includes" value="9606.xml" />
@@ -23,13 +19,13 @@
       <property name="fasta.includes" value="*.fa" />
       <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/core/current/fasta" />
     </source>
-    <source name="human-gene" type="human-gene">
-      <property name="src.data.dir" location="/micklem/data/human/identifiers/current" />
+    <source name="hgnc" type="hgnc">
+      <property name="src.data.dir" location="/micklem/data/human/hgnc/current" />
     </source>
-<source name="ncbi-gene" type="ncbi-gene">
-     <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
-     <property name="organisms" value="9606"/>
-</source>
+    <source name="ncbi-gene" type="ncbi-gene">
+      <property name="src.data.dir" location="/micklem/data/ncbi/current" />
+      <property name="organisms" value="9606" />
+    </source>
     <source name="ncbi-summaries" type="ncbi-summaries" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>
@@ -70,6 +66,9 @@
  </source>
     <source name="protein-atlas" type="protein-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
+    </source>
+    <source name="atlas-express" type="atlas-express">
+      <property name="src.data.dir" location="/micklem/data/atlas-express/" />
     </source>
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="9606 10090" />
@@ -127,6 +126,12 @@
     <source name="hpo-annotation" type="hpo-annotation" dump="true">
       <property name="src.data.dir" location="/micklem/data/hpo/current" />
     </source>
+
+    <source name="pdb" type="pdb">
+      <property name="src.data.dir" location="/micklem/data/pdb/current"/>
+      <property name="pdb.organisms" value="9606"/>
+    </source>
+
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
       <property name="intact.organisms" value="9606 10090" />
@@ -153,7 +158,8 @@
     </source>
     <source name="panther" type="panther">
         <property name="src.data.dir" location="/micklem/data/panther/current"/>
-        <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955 4932"/>
+        <property name="panther.organisms" value="9606"/>
+        <property name="panther.homologues" value="7227 10090 6239 10116 7955 4932"/>
     </source>
     <source name="huge-gwas" type="huge-gwas">
       <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />

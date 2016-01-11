@@ -1,0 +1,108 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Getopt::Std;
+use Sys::Hostname;
+
+sub usage
+{
+  die <<'EOF'
+usage:
+  $0 [-p postgres_port_on_mirror] dump_file_prefix mirror_server
+
+The path to dump_file_prefix must be visible on mirror_server
+EOF
+}
+
+my $mirror_port;
+
+if (@ARGV >= 2 && $ARGV[0] eq '-p') {
+  shift;
+  $mirror_port = shift;
+}
+
+if (@ARGV != 1 && @ARGV != 2) {
+  usage;
+}
+
+my $dump_file_prefix = shift;
+my $mirror_server = shift;
+
+my $HOST_NAME = hostname();
+
+my $prod_db_username = 'humanbuild';
+my $userprofile_db_username = 'humanbuild';
+my @dump_command = ("pg_dump", "-h", $HOST_NAME, "-c", "-U");
+my @psql_command = qw[psql -q -U];
+my $userprofile_db = "userprofile-human";
+my $prod_db = "humanmine-release-2015-28-oct";
+
+sub get_max_version {
+  my $max_version = -1;
+
+  open REMOTE, qq{psql -l|}
+  or die "can't open pipe to read list of databases";
+
+  while (my $line = <REMOTE>) {
+    if ($line =~ /$prod_db([\d\.]+)/) {
+      my $this_version = $1;
+      if ($this_version > $max_version) {
+        $max_version = $this_version;
+      }
+    }
+  }
+
+  close REMOTE;
+
+  if ($max_version == -1) {
+      my ($d,$m,$y) = (localtime)[3,4,5];
+      my $mdy = sprintf '%d-%d-%d', $m+1, $d, $y+1900;
+      return $mdy;
+  }
+
+  return $max_version;
+}
+
+sub write_version {
+  my $version = shift;
+  my $version_file = "$ENV{HOME}/.userprofile_latest_version";
+  my $db_ver_handle;
+  open $db_ver_handle, '>', $version_file or die "can't open $version_file for writing\n";
+  print $db_ver_handle "$version";
+  close $db_ver_handle;
+}
+
+sub make_dump {
+  my $db_name = shift;
+  my $dump_file = shift;
+  my $write_bags = shift;
+
+  my @params = ("-f", $mirror_server . $dump_file, $db_name);
+
+  my $username;
+
+  if ($write_bags) {
+    unshift @params, ('-t', 'osbag_int');
+    $username = $prod_db_username;
+  } else {
+    $username = $userprofile_db_username;
+  }
+
+  print "dumping " . ($write_bags ? 'bags ' : '') . "with: @dump_command $username @params\n";
+
+  system qw[pg_dump --version];
+  system @dump_command, $username, @params;
+
+}
+
+my $max_version = get_max_version();
+
+write_version($max_version);
+
+my $dump_file = "$dump_file_prefix.$max_version";
+
+make_dump($userprofile_db, $dump_file, 0);
+make_dump($prod_db, $dump_file . '.bags', 1);
+

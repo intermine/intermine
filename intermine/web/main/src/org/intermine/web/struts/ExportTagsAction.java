@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -71,8 +71,7 @@ public class ExportTagsAction extends InterMineAction
         writer.writeEndElement();
         writer.close();
 
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ", "inline; filename=tags.xml");
+        response.setContentType("text/plain; charset=utf-8");
         response.getWriter().print(XmlUtil.indentXmlSimple(sw.getBuffer().toString()));
         return null;
     }

@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -128,8 +128,7 @@ public class ModifyTemplateAction extends InterMineAction
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
 //        ServletContext servletContext = session.getServletContext();
 
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
+        response.setContentType("text/plain; charset=utf-8");
 
         PrintStream out = new PrintStream(response.getOutputStream());
 
