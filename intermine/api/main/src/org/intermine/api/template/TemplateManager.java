@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -287,6 +287,25 @@ public class TemplateManager
             }
         }
         return aspectTemplates;
+    }
+
+    /**
+     * For a (public or private) template, return all the tags.
+     *
+     * Used in stepZ to put the template in the right data category. If profile is NULL, uses the
+     * superuser profile.
+     *
+     * @param template template with tags
+     * @param profile profile of owner of template
+     * @return the list of tags for the template of interest
+     */
+    public List<Tag> getTags(ApiTemplate template, Profile profile) {
+        // user template
+        if (getUserTemplate(profile, template.getName()) != null) {
+            return tagManager.getObjectTags(template, profile);
+        }
+        // global template
+        return tagManager.getObjectTags(template, superProfile);
     }
 
     /**

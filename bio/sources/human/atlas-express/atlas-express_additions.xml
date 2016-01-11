@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+
+<class name="AtlasExpression" is-interface="true">
+  <attribute name="type" type="java.lang.String"/>
+  <attribute name="condition" type="java.lang.String"/>
+  <attribute name="expression" type="java.lang.String"/>
+  <reference name="gene" referenced-type="Gene" reverse-reference="atlasExpression"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
+</class>
+<class name="Gene" is-interface="true">
+  <collection name="atlasExpression" referenced-type="AtlasExpression"  reverse-reference="gene"/>
+</class>
+</classes>

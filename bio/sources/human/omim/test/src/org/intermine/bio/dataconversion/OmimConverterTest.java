@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -47,7 +47,7 @@ public class OmimConverterTest extends ItemsTestCase
         converter = new OmimConverter(itemWriter, model);
 
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("9606", "PEX6", new HashSet<String>(Arrays.asList("100070", "OMIM:100070", "MIM:OMIM:100070")));
+        converter.rslv.addResolverEntry("9606", "PEX6", new HashSet<String>(Arrays.asList("609300", "OMIM:609300", "MIM:OMIM:609300")));
         converter.rslv.addResolverEntry("9606", "PEX6", new HashSet<String>(Arrays.asList("601498", "OMIM:601498", "MIM:OMIM:601498")));
         super.setUp();
     }

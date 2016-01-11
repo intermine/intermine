@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -187,7 +187,7 @@ public class OmimConverter extends BioDirectoryConverter
         int noMapType = 0;
         int diseaseMatches = 0;
 
-        File f = new File("build/omim_not_loaded.txt");
+        File f = new File("/tmp/omim_not_loaded.txt");
         FileWriter fw = new FileWriter(f);
 
         // extract e.g. (3)

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -111,14 +111,8 @@ public class TemplateToListService extends QueryToListService
         }
 
         PathQuery pq = populatedTemplate.getQueryToExecute();
-
-        List<String> oldView = pq.getView();
-        oldView.remove(newViewString);
         pq.clearView();
         pq.addView(newViewString);
-        // Make sure these are added back to keep the query structure the same
-        pq.addViews(oldView);
-
         return pq;
     }
 }

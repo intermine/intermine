@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,6 +7,44 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+InterMine 1.6.5
+
+#1255 - Restore missing template counts
+#1253 - Web service: error running template to list
+#1244 - MyMine: export tags fails
+#1240 - Keyword search: remove link to entire index
+#1232 - uniprot-fasta loading problem
+#1222 - Web service: /list/tags doesn't work
+#1202 - UniProt: comments not capturing disease
+#1194 - Add human data to KEGG unit test
+#1188 - Properly generate sequences based on type
+#1080 - BioGRID config doesn't work correctly for symbols
+#929 - PDB hardcoded for FlyMine
+#565 - OMIM - add unit test
+
+InterMine 1.6.4
+
+#1221 - Template queries in my mine: can't export 
+
+InterMine 1.6.3
+
+#1236 - Keyword Search: don't show entire index if no keyword provided. 
+#1179 - PDB failing 
+#1190 - Atlas express source 
+
+InterMine 1.6.2
+
+#1228 - Fix tutorial, remove interpro
+#1184 - Keyword search: first search takes you to home page
+#1168 - PSI-Complexes -- allow for more data types
+#1154 - Web services: tags for templates
+
+InterMine 1.6.1
+
+#1216 - Make region.start and end integers instead of strings
+#1209 - Fix Panther for Drosophila
+#1205 - Cytoscape fix for protein report page
 
 InterMine 1.6 (Halloween 2015)
 
