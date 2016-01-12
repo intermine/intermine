@@ -1423,10 +1423,14 @@ to will also be returned.
                 domain ranked by p-value (low to high).
             </description>
             <param type="String"
-                required="true"
-                description="The name of the list to investigate"
+                required="false"
+                description="The name of the list to investigate, optional unless identifiers is NULL."
                 options="/lists|lists{status=CURRENT}"
                 default="{name}">list</param>
+            <param type="String"
+                required="false"
+                description="Comma-separated list of identifiers, optional unless list name is NULL."
+                default="{name}">identifiers</param>
             <param type="String"
                 required="true"
                 description="The name of the enrichment widget to display"
