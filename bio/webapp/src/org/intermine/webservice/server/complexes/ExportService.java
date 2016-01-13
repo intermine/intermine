@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.complexes;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -225,15 +225,20 @@ public class ExportService extends JSONService
 
                 DefaultRange range = new DefaultRange(startPosition, endPosition);
 
+                // feature - i have no idea what this is for
+                DefaultModelledFeature feature = new DefaultModelledFeature();
+
                 // binding feature
                 DefaultModelledFeature bindingFeature = new DefaultModelledFeature();
-
+                
                 bindingFeature.getRanges().add(range);
 
                 // TODO set as the identifier instead. How to do that?
                 bindingFeature.setShortName(featureIdentifier);
+                
+                feature.getLinkedFeatures().add(bindingFeature);
 
-                participant.addAllFeatures(Collections.singleton(bindingFeature));
+                participant.addFeature(feature);
             }
         }
         return complex;
