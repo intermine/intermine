@@ -159,6 +159,7 @@ public class NcbiGeneConverter extends BioFileConverter
         for (String key : record.xrefs.keySet()) {
             for (String id : record.xrefs.get(key)) {
                 createCrossReference(gene.getIdentifier(), id, key, true);
+                createSynonym(gene, id, true);
             }
         }
 
