@@ -199,11 +199,8 @@ public class ExportService extends JSONService
             DefaultInteractor interactor = getInteractor(primaryIdentifier, type, organism, xref);
 
             // participant
-            DefaultModelledParticipant participant
-                = getParticipant(primaryIdentifier, interactor, biologicalRole, stoichiometry);
-
-            // set relationship to complex
-            complex.addParticipant(participant);
+            DefaultModelledParticipant participant = getParticipant(complex, primaryIdentifier,
+                    interactor, biologicalRole, stoichiometry);
 
             // interactions -- not all complexes will have them!
             if (row.get(9) != null && row.get(9).getField() != null) {
@@ -225,7 +222,7 @@ public class ExportService extends JSONService
                         null);
 
                 DefaultModelledParticipant bindingParticipant
-                    = getParticipant(featureIdentifier, bindingInteractor, null, null);
+                    = getParticipant(complex, featureIdentifier, bindingInteractor, null, null);
 
                 // binding feature
                 DefaultModelledFeature bindingFeature = getFeature(featureIdentifier,
@@ -251,12 +248,14 @@ public class ExportService extends JSONService
         return interactor;
     }
 
-    private DefaultModelledParticipant getParticipant(String primaryIdentifier,
-            DefaultInteractor interactor, String biologicalRole, Integer stoichiometry) {
+    private DefaultModelledParticipant getParticipant(DefaultComplex complex,
+            String primaryIdentifier, DefaultInteractor interactor, String biologicalRole,
+            Integer stoichiometry) {
         DefaultModelledParticipant participant = participants.get(primaryIdentifier);
         if (participant == null) {
             participant = new DefaultModelledParticipant(interactor);
             participants.put(primaryIdentifier, participant);
+            complex.addParticipant(participant);
         }
         // we may or may not have the information when it's processed
         if (biologicalRole != null) {
