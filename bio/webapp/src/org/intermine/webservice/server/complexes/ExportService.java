@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
@@ -61,6 +62,9 @@ public class ExportService extends JSONService
     private static final String EBI = "intact";
     // private static final String BINDING_SITE = "binding region";
     private static final Map<String, String> MOLECULE_TYPES = new HashMap<String, String>();
+    private Map<String, DefaultInteractor> interactors = new HashMap<String, DefaultInteractor>();
+    private Map<MultiKey, DefaultModelledParticipant> participants
+        = new HashMap<MultiKey, DefaultModelledParticipant>();
 
     /**
      * Default constructor.
@@ -182,7 +186,7 @@ public class ExportService extends JSONService
             DefaultOrganism organism = null;
             if (row.get(6) != null && row.get(6).getField() != null) {
                 Integer taxonId = (Integer) row.get(6).getField();
-            	organism = new DefaultOrganism(taxonId);
+                organism = new DefaultOrganism(taxonId);
             }
 
             // cv term
@@ -192,21 +196,11 @@ public class ExportService extends JSONService
             Xref xref = new DefaultXref(db, primaryIdentifier);
 
             // interactor
-            DefaultInteractor interactor = new DefaultInteractor(primaryIdentifier, type, organism,
-                    xref);
-
-            // stoichiometry
-            Stoichiometry stoichTerm = null;
-            if (stoichiometry != null) {
-                stoichTerm = new DefaultStoichiometry(stoichiometry.intValue());
-            }
-
-            // role
-            DefaultCvTerm bioRole = new DefaultCvTerm(biologicalRole);
+            DefaultInteractor interactor = getInteractor(primaryIdentifier, type, organism, xref);
 
             // participant
             DefaultModelledParticipant participant
-                = new DefaultModelledParticipant(interactor, bioRole, stoichTerm);
+                = getParticipant(interactor, biologicalRole, stoichiometry.intValue());
 
             // set relationship to complex
             complex.addParticipant(participant);
@@ -227,20 +221,47 @@ public class ExportService extends JSONService
                 // feature - i have no idea what this is for
                 DefaultModelledFeature feature = new DefaultModelledFeature();
 
+                DefaultInteractor bindingInteractor = getInteractor(featureIdentifier, null, null,
+                        null);
+
+                DefaultModelledParticipant bindingParticipant
+                    = getParticipant(bindingInteractor, null, 1);
+
                 // binding feature
-                DefaultModelledFeature bindingFeature = new DefaultModelledFeature();
-                
+                DefaultModelledFeature bindingFeature
+                    = new DefaultModelledFeature(bindingParticipant);
+
                 bindingFeature.getRanges().add(range);
 
-                // TODO set as the identifier instead. How to do that?
-                bindingFeature.setShortName(featureIdentifier);
-                
                 feature.getLinkedFeatures().add(bindingFeature);
 
                 participant.addFeature(feature);
             }
         }
         return complex;
+    }
+
+    private DefaultInteractor getInteractor(String primaryIdentifier, CvTerm type,
+            DefaultOrganism organism, Xref xref) {
+        DefaultInteractor interactor = interactors.get(primaryIdentifier);
+        if (interactor == null) {
+            interactor = new DefaultInteractor(primaryIdentifier, type, organism, xref);
+            interactors.put(primaryIdentifier, interactor);
+        }
+        return interactor;
+    }
+
+    private DefaultModelledParticipant getParticipant(DefaultInteractor interactor, String bioRole,
+            int stoich) {
+        MultiKey key = new MultiKey(interactor, bioRole, stoich);
+        DefaultModelledParticipant participant = participants.get(key);
+        if (participant == null) {
+            Stoichiometry stoichTerm = new DefaultStoichiometry(stoich);
+            DefaultCvTerm role = new DefaultCvTerm(bioRole);
+            participant = new DefaultModelledParticipant(interactor, role, stoichTerm);
+            participants.put(key, participant);
+        }
+        return participant;
     }
 
     private DefaultCvTerm getInteractorType(String moleculeType) {
@@ -267,8 +288,8 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.interactions.details.interactingRegions.location.start",
                 "Complex.allInteractors.interactions.details.interactingRegions.location.end");
         query.setOuterJoinStatus("Complex.allInteractors.interactions", OuterJoinStatus.OUTER);
-        query.setOuterJoinStatus("Complex.allInteractors.participant.organism", 
-        		OuterJoinStatus.OUTER);
+        query.setOuterJoinStatus("Complex.allInteractors.participant.organism",
+            OuterJoinStatus.OUTER);
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
         query.addOrderBy("Complex.allInteractors.participant.primaryIdentifier",
                 OrderDirection.ASC);
