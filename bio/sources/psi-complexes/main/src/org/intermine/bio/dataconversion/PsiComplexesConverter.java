@@ -374,8 +374,6 @@ public class PsiComplexesConverter extends BioFileConverter
         return refId;
     }
 
-
-
     private String getChebiName(String identifier) {
         try {
             ChebiWebServiceClient client = new ChebiWebServiceClient();
@@ -488,7 +486,7 @@ public class PsiComplexesConverter extends BioFileConverter
         protected String relationshipType;
         protected List<String> allInteractors;
 
-        public DetailHolder() {
+        protected DetailHolder() {
             allInteractors = new ArrayList<String>();
         }
 

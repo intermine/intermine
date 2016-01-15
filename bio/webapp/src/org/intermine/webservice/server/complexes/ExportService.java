@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
@@ -37,7 +36,6 @@ import psidev.psi.mi.jami.json.MIJsonOptionFactory;
 import psidev.psi.mi.jami.json.MIJsonType;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.InteractionCategory;
-import psidev.psi.mi.jami.model.Stoichiometry;
 import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.model.impl.DefaultComplex;
 import psidev.psi.mi.jami.model.impl.DefaultCvTerm;
@@ -63,8 +61,10 @@ public class ExportService extends JSONService
     // private static final String BINDING_SITE = "binding region";
     private static final Map<String, String> MOLECULE_TYPES = new HashMap<String, String>();
     private Map<String, DefaultInteractor> interactors = new HashMap<String, DefaultInteractor>();
-    private Map<MultiKey, DefaultModelledParticipant> participants
-        = new HashMap<MultiKey, DefaultModelledParticipant>();
+    private Map<String, DefaultModelledParticipant> participants
+        = new HashMap<String, DefaultModelledParticipant>();
+    private Map<String, DefaultModelledFeature> features
+        = new HashMap<String, DefaultModelledFeature>();
 
     /**
      * Default constructor.
@@ -200,7 +200,7 @@ public class ExportService extends JSONService
 
             // participant
             DefaultModelledParticipant participant
-                = getParticipant(interactor, biologicalRole, stoichiometry.intValue());
+                = getParticipant(primaryIdentifier, interactor, biologicalRole, stoichiometry);
 
             // set relationship to complex
             complex.addParticipant(participant);
@@ -225,11 +225,11 @@ public class ExportService extends JSONService
                         null);
 
                 DefaultModelledParticipant bindingParticipant
-                    = getParticipant(bindingInteractor, null, 1);
+                    = getParticipant(featureIdentifier, bindingInteractor, null, null);
 
                 // binding feature
-                DefaultModelledFeature bindingFeature
-                    = new DefaultModelledFeature(bindingParticipant);
+                DefaultModelledFeature bindingFeature = getFeature(featureIdentifier,
+                        bindingParticipant);
 
                 bindingFeature.getRanges().add(range);
 
@@ -251,17 +251,29 @@ public class ExportService extends JSONService
         return interactor;
     }
 
-    private DefaultModelledParticipant getParticipant(DefaultInteractor interactor, String bioRole,
-            int stoich) {
-        MultiKey key = new MultiKey(interactor, bioRole, stoich);
-        DefaultModelledParticipant participant = participants.get(key);
+    private DefaultModelledParticipant getParticipant(String primaryIdentifier,
+            DefaultInteractor interactor, String biologicalRole, Integer stoichiometry) {
+        DefaultModelledParticipant participant = participants.get(primaryIdentifier);
         if (participant == null) {
-            Stoichiometry stoichTerm = new DefaultStoichiometry(stoich);
-            DefaultCvTerm role = new DefaultCvTerm(bioRole);
-            participant = new DefaultModelledParticipant(interactor, role, stoichTerm);
-            participants.put(key, participant);
+            participant = new DefaultModelledParticipant(interactor);
+            participants.put(primaryIdentifier, participant);
+        }
+        // we may or may not have the information when it's processed
+        if (biologicalRole != null) {
+            participant.setBiologicalRole(new DefaultCvTerm(biologicalRole));
+            participant.setStoichiometry(new DefaultStoichiometry(stoichiometry));
         }
         return participant;
+    }
+
+    private DefaultModelledFeature getFeature(String primaryIdentifier,
+            DefaultModelledParticipant participant) {
+        DefaultModelledFeature feature = features.get(participant);
+        if (feature == null) {
+            feature = new DefaultModelledFeature(participant);
+            features.put(primaryIdentifier, feature);
+        }
+        return feature;
     }
 
     private DefaultCvTerm getInteractorType(String moleculeType) {
