@@ -216,7 +216,7 @@ public class ExportService extends JSONService
                 DefaultRange range = new DefaultRange(startPosition, endPosition);
 
                 // feature - i have no idea what this is for
-                DefaultModelledFeature feature = new DefaultModelledFeature();
+                DefaultModelledFeature feature =  getFeature(primaryIdentifier, participant);
 
                 DefaultInteractor bindingInteractor = getInteractor(featureIdentifier, null, null,
                         null);
@@ -267,7 +267,7 @@ public class ExportService extends JSONService
 
     private DefaultModelledFeature getFeature(String primaryIdentifier,
             DefaultModelledParticipant participant) {
-        DefaultModelledFeature feature = features.get(participant);
+        DefaultModelledFeature feature = features.get(primaryIdentifier);
         if (feature == null) {
             feature = new DefaultModelledFeature(participant);
             features.put(primaryIdentifier, feature);
