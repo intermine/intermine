@@ -538,7 +538,10 @@ public class UniprotConverter extends BioDirectoryConverter
                     && ("name".equals(qName) || "acronym".equals(qName)
                             || "description".equals(qName))
                     && "disease".equals(previousQName)) {
-                String value = attValue.toString();
+                if (disease == null) {
+                    disease = new DiseaseHolder();
+                }
+                disease.setDisease("name", attValue.toString());
             } else if ("id".equals(qName) && "isoform".equals(previousQName)) {
                 String accession = attValue.toString();
 
@@ -713,9 +716,9 @@ public class UniprotConverter extends BioDirectoryConverter
                     processDbrefs(protein, uniprotEntry);
 
                     /* genes */
-		    if(creategenes) {
-			processGene(protein, uniprotEntry);
-		    }
+                    if (creategenes) {
+                        processGene(protein, uniprotEntry);
+                    }
 
                     store(protein);
 
