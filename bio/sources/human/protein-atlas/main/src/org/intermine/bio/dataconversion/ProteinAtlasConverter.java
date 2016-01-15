@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -151,13 +150,13 @@ public class ProteinAtlasConverter extends BioFileConverter
             if (StringUtils.isEmpty(geneId)) {
                 continue;
             }
-            String capitalisedTissueName = StringUtils.capitalize(line[1]);
+            String capitalisedTissueName = StringUtils.capitalize(line[2]);
             Item tissueId = getTissue(capitalisedTissueName);
 
-            String cellType = line[2];
-            String level = line[3];
-            String expressionType = line[4];
-            String reliability = line[5];
+            String cellType = line[3];
+            String level = line[4];
+            String expressionType = line[5];
+            String reliability = line[6];
 
             level = alterLevel(level, expressionType);
             reliability = alterReliability(reliability, expressionType);
