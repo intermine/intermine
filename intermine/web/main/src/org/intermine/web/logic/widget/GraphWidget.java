@@ -73,15 +73,6 @@ public class GraphWidget extends Widget
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public List getElementInList() {
-        return new Vector();
-    }
-
-    /**
      * Validate the bag type using the attribute typeClass set in the config file.
      * Throws a ResourceNotFoundException if it's not valid
      */
@@ -267,4 +258,3 @@ public class GraphWidget extends Widget
         }
     }
 }
-

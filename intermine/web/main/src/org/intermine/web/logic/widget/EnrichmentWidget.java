@@ -161,14 +161,6 @@ public class EnrichmentWidget extends Widget
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List getElementInList() {
-        return new Vector();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public boolean getHasResults() {
         checkProcessed();
         return results.getPValues().size() > 0;
