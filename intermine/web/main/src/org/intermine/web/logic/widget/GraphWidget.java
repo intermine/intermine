@@ -13,7 +13,6 @@ package org.intermine.web.logic.widget;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
