@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
@@ -55,6 +56,7 @@ import psidev.psi.mi.jami.model.impl.DefaultXref;
  */
 public class ExportService extends JSONService
 {
+//    private static final Logger LOG = Logger.getLogger(ExportService.class);
     private static final String FORMAT_PARAMETER = "format";
     private static final String DEFAULT_FORMAT = "JSON";
     private static final String EBI = "intact";
@@ -63,8 +65,7 @@ public class ExportService extends JSONService
     private Map<String, DefaultInteractor> interactors = new HashMap<String, DefaultInteractor>();
     private Map<String, DefaultModelledParticipant> participants
         = new HashMap<String, DefaultModelledParticipant>();
-    private Map<String, DefaultModelledFeature> features
-        = new HashMap<String, DefaultModelledFeature>();
+    private Map<String, FeatureHolder> features = new HashMap<String, FeatureHolder>();
 
     /**
      * Default constructor.
@@ -215,8 +216,8 @@ public class ExportService extends JSONService
 
                 DefaultRange range = new DefaultRange(startPosition, endPosition);
 
-                // feature - i have no idea what this is for
-                DefaultModelledFeature feature =  getFeature(primaryIdentifier, participant);
+                DefaultModelledFeature feature = getFeature(primaryIdentifier, participant,
+                        featureIdentifier);
 
                 DefaultInteractor bindingInteractor = getInteractor(featureIdentifier, null, null,
                         null);
@@ -226,13 +227,13 @@ public class ExportService extends JSONService
 
                 // binding feature
                 DefaultModelledFeature bindingFeature = getFeature(featureIdentifier,
-                        bindingParticipant);
+                        bindingParticipant, primaryIdentifier);
 
-                bindingFeature.getRanges().add(range);
+                feature.getRanges().add(range);
 
                 feature.getLinkedFeatures().add(bindingFeature);
 
-                participant.addFeature(feature);
+
             }
         }
         return complex;
@@ -266,11 +267,34 @@ public class ExportService extends JSONService
     }
 
     private DefaultModelledFeature getFeature(String primaryIdentifier,
-            DefaultModelledParticipant participant) {
-        DefaultModelledFeature feature = features.get(primaryIdentifier);
-        if (feature == null) {
-            feature = new DefaultModelledFeature(participant);
-            features.put(primaryIdentifier, feature);
+            DefaultModelledParticipant participant, String otherIdentifier) {
+        FeatureHolder holder = features.get(primaryIdentifier);
+        DefaultModelledFeature feature = null;
+        if (holder == null) {
+            // new feature
+            feature = new DefaultModelledFeature(participant, primaryIdentifier, primaryIdentifier);
+
+            participant.addFeature(feature);
+
+            // new holder
+            holder = new FeatureHolder(primaryIdentifier, participant);
+
+            // store this linked feature for reuse when we process the other side of this
+            // interaction
+            holder.addLinkedFeature(otherIdentifier, feature);
+
+            // store for later
+            features.put(primaryIdentifier, holder);
+        } else {
+            // see if we have this relationship already
+            feature = holder.getLinkedFeature(otherIdentifier);
+            // we might have the protein but we have not seen the other interactor before
+            if (feature == null) {
+                feature = new DefaultModelledFeature(participant, primaryIdentifier,
+                        primaryIdentifier);
+                holder.addLinkedFeature(otherIdentifier, feature);
+                participant.addFeature(feature);
+            }
         }
         return feature;
     }
@@ -305,5 +329,54 @@ public class ExportService extends JSONService
         query.addOrderBy("Complex.allInteractors.participant.primaryIdentifier",
                 OrderDirection.ASC);
         return query;
+    }
+
+    /**
+     * hold the feature / linked feature relationships here
+     * @author julie
+     */
+    protected class FeatureHolder
+    {
+        // primary of the protein that has the feature
+        protected String primaryIdentifier = null;
+        // map from the primary identifier of the protein that has a linked feature
+        // to the linked feature
+        protected Map<String, DefaultModelledFeature> binderToFeatures
+            = new HashMap<String, DefaultModelledFeature>();
+
+        protected DefaultModelledParticipant participant = null;
+
+        /**
+         * @param primaryIdentifier primary identifier for the protein
+         * @param participant participant for this protein
+         */
+        protected FeatureHolder(String primaryIdentifier, DefaultModelledParticipant participant) {
+            this.primaryIdentifier = primaryIdentifier;
+            this.participant = participant;
+        }
+
+        /**
+         * @param identifier primary identifier for the protein that resident protein is
+         * interacting with
+         * @param linkedFeature feature object created for this relationship
+         */
+        protected void addLinkedFeature(String identifier, DefaultModelledFeature linkedFeature) {
+            binderToFeatures.put(identifier, linkedFeature);
+        }
+
+        /**
+         * @param identifier primary identifier for other protein in this interaction
+         * @return the feature associated with this binding protein
+         */
+        protected DefaultModelledFeature getLinkedFeature(String identifier) {
+            return binderToFeatures.get(identifier);
+        }
+
+        /**
+         * @return participant for this feature
+         */
+        protected DefaultModelledParticipant getParticipant() {
+            return participant;
+        }
     }
 }
