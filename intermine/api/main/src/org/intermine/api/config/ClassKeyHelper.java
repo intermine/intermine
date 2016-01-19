@@ -80,12 +80,12 @@ public final class ClassKeyHelper
                                     + " for class " + clsName);
                         }
                     }
-                } else {
-                    LOG.warn("No key defined for " + clsName);
                 }
+
                 CLASS_KEYS.put(model, theseKeys);
             }
         }
+
         return CLASS_KEYS.get(model);
     }
 
