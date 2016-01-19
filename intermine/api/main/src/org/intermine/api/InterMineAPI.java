@@ -199,7 +199,7 @@ public class InterMineAPI
         synchronized (pqeCache) {
             PathQueryExecutor retval = pqeCache.get(profile);
             if (retval == null) {
-                retval = new PathQueryExecutor(objectStore, classKeys, profile,
+                retval = new PathQueryExecutor(objectStore, profile,
                         bagQueryRunner, bagManager);
                 pqeCache.put(profile, retval);
             }
