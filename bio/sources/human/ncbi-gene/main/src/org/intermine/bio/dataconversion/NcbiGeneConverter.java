@@ -91,14 +91,7 @@ public class NcbiGeneConverter extends BioFileConverter
                 // gene type -
                 //http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/objects/
                 //entrezgene/entrezgene.asn
-                if (record.geneType == null) {
-                    continue;
-                } else if ("tRNA".equals(record.geneType)
-                        || "protein-coding".equals(record.geneType)
-                        || "miscRNA".equals(record.geneType)
-                        || "rRNA".equals(record.geneType)) { // ecolimine case
-                    createGeneByTaxonId(taxonId, record, parser);
-                }
+                createGeneByTaxonId(taxonId, record, parser);
             }
         }
     }
