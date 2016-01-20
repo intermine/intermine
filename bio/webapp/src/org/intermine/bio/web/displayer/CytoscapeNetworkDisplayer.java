@@ -13,6 +13,7 @@ package org.intermine.bio.web.displayer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.model.InterMineObject;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
@@ -36,6 +37,7 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
-
+         InterMineObject object = reportObject.getObject();
+         request.setAttribute("cytoscapeInteractionObjectId", object.getId());
     }
 }
