@@ -138,7 +138,7 @@ public class HpoConverter extends BioDirectoryConverter
             String diseaseId = line[0];
             //String geneSymbol = line[1];
             // entrez id
-            String identifier = line[1];
+            String identifier = line[2];
             String hpoId = line[3];
 
             if (geneToHpoTermMap.get(identifier) == null) {
