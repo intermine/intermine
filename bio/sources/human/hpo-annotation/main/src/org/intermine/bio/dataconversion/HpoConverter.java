@@ -220,7 +220,7 @@ public class HpoConverter extends BioDirectoryConverter
     private void storeGene(Map<String, Set<String>> geneDisease) throws ObjectStoreException {
         for (Entry<String, Set<String>> e : geneDisease.entrySet()) {
             Item gene = createItem("Gene");
-            gene.setAttribute("symbol", e.getKey());
+            gene.setAttribute("primaryIdentifier", e.getKey());
             gene.setReference("organism", organism);
 
             List<String> dList = new ArrayList<String>();
