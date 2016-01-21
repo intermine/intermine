@@ -447,7 +447,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 String id = getAttrValue(attrs, "id");
                 disease.setIdentifier(type + ":" + id);
             } else if ("dbreference".equals(qName) || "comment".equals(qName)
-                    || "isoform".equals(qName) || "gene".equals(qName) || "disease".equals(qName)) {
+                    || "isoform".equals(qName) || "gene".equals(qName)) {
                 // set temporary holder variables to null
                 entry.reset();
             }
@@ -504,10 +504,13 @@ public class UniprotConverter extends BioDirectoryConverter
                         item.setAttribute("description", choppedComment + ellipses);
                     } else {
                         if ("disease".equals(commentType) && disease != null) {
-                            commentText.append(" " + disease.toString());
+                            item.setAttribute("description", disease.toString()
+                                    + commentText.toString());
+                        } else {
+                            item.setAttribute("description", commentText.toString());
                         }
-                        item.setAttribute("description", commentText.toString());
                     }
+
                     String refId = item.getIdentifier();
                     try {
                         Integer objectId = store(item);
@@ -541,7 +544,13 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (disease == null) {
                     disease = new DiseaseHolder();
                 }
-                disease.setDisease("name", attValue.toString());
+                if ("name".equals(qName)) {
+                    disease.setDisease("name", attValue.toString());
+                } else if ("description".equals(qName)) {
+                    disease.setDisease("description", attValue.toString());
+                } else if ("acronym".equals(qName)) {
+                    disease.setDisease("acronym", attValue.toString());
+                }
             } else if ("id".equals(qName) && "isoform".equals(previousQName)) {
                 String accession = attValue.toString();
 
@@ -561,6 +570,9 @@ public class UniprotConverter extends BioDirectoryConverter
                     // second <id> value is ignored and added as a synonym
                     entry.addIsoformSynonym(accession);
                 }
+            } else if ("comment".equals(qName)) {
+                // on closing a comment, make sure the disease holder is empty
+                disease = null;
             } else if ("entry".equals(qName)) {
                 try {
                     processCommentEvidence(entry);
@@ -1373,10 +1385,10 @@ public class UniprotConverter extends BioDirectoryConverter
      */
     protected class DiseaseHolder
     {
-        private String name;
-        private String acronym;
-        private String description;
-        private String identifier;
+        private String name = null;
+        private String acronym = null;
+        private String description = null;
+        private String identifier = null;
 
         /**
          * Constructor
@@ -1415,17 +1427,18 @@ public class UniprotConverter extends BioDirectoryConverter
 
         @Override
         public String toString() {
+            // MIM id; name; acronym; description: text
             StringBuilder sb = new StringBuilder();
-            sb.append(identifier);
+            sb.append(identifier + "; ");
 
             if (StringUtils.isNotEmpty(name)) {
-                sb.append(name);
+                sb.append(name + "; ");
             }
             if (StringUtils.isNotEmpty(acronym)) {
-                sb.append(acronym);
+                sb.append(acronym + "; ");
             }
             if (StringUtils.isNotEmpty(description)) {
-                sb.append(description);
+                sb.append(description + " ");
             }
             return sb.toString();
         }
