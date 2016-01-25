@@ -55,7 +55,28 @@
     </td>
   </tr>
 
-  
+  <!-- ******************************************************* -->
+  <tr>
+    <td rowspan="2" class="leftcol">
+    <h2><p>Proteins</p></h2>
+    </td>
+    <td>
+    Mouse proteins and protein fragments, including sequences, keywords, identifiers, etc.
+    </td>
+    <td> 
+    <a href="http://www.uniprot.org/" target="_new">UniProt</a>
+    </td>
+  </tr>
+
+  <tr>
+    <td> 
+    Protein domains annotated to specific protein regions.
+    </td>
+    <td> 
+    <a href="http://www.ebi.ac.uk/interpro/"  target="_new">InterPro</a>
+    </td>
+  </tr>
+
   <!-- ******************************************************* -->
   <tr>
     <td rowspan="2"  class="leftcol">
@@ -123,6 +144,19 @@
     </td>
     <td>
 	<a href="http://www.informatics.jax.org/" target="_new">MGI</a>
+    </td>
+  </tr>
+
+  <!-- ******************************************************* -->
+  <tr>
+    <td class="leftcol">
+    <h2><p>Pathways</p></h2>
+    </td>
+    <td>
+    Pathway information and the proteins/genes involved in them.
+    </td>
+    <td> 
+    <a href="http://www.reactome.org/" target="_new">Reactome</a>
     </td>
   </tr>
 
