@@ -79,12 +79,6 @@ public abstract class Widget
     public abstract boolean getHasResults();
 
     /**
-     * checks if elem is in bag
-     * @return true if elem is in bag
-     */
-    public abstract List<String> getElementInList();
-
-    /**
      * Get the ID of the corresponding WidgetConfig
      * @return the WidgetConfig ID
      */
