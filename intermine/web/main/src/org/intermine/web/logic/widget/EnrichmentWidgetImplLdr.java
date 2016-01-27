@@ -9,6 +9,7 @@ package org.intermine.web.logic.widget;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +47,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     private InterMineBag populationBag;
     private boolean extraCorrectionCoefficient;
     private CorrectionCoefficient correctionCoefficient;
+    private String ids;
+    private String populationIds;
 
     /**
      * Construct an Enrichment widget loader, which performs the queries needed for
@@ -60,16 +63,21 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
      * @param extraCorrectionCoefficient if true correction coefficient has been selected
      * @param correctionCoefficient a instance of correction coefficient
      * @param applyCorrectionCoefficient
+     * @param ids list of IDs to analyse, use instead of intermine bag
+     * @param populationIds use instead of populationBag
      */
     public EnrichmentWidgetImplLdr(InterMineBag bag, InterMineBag populationBag,
                                    ObjectStore os, EnrichmentWidgetConfig config,
                                    String filter, boolean extraCorrectionCoefficient,
-                                   CorrectionCoefficient correctionCoefficient) {
+                                   CorrectionCoefficient correctionCoefficient,
+                                   String ids, String populationIds) {
         super(bag, os, filter, config);
         this.populationBag = populationBag;
         this.extraCorrectionCoefficient = extraCorrectionCoefficient;
         this.correctionCoefficient = correctionCoefficient;
         this.config = config;
+        this.ids = ids;
+        this.populationIds = populationIds;
     }
 
     /**
@@ -132,10 +140,22 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
 
         QueryField qfStartClassId = new QueryField(startClass, "id");
         if (!action.startsWith("population")) {
-            cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
-        } else if (populationBag != null) {
-            cs.addConstraint(new BagConstraint(qfStartClassId,
+            if (bag == null) {
+                String[] idArray = ids.split(",");
+                List<String> idCollection = Arrays.asList(idArray);
+                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, idCollection));
+            } else {
+                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
+            }
+        } else if (populationBag != null || populationIds != null) {
+            if (populationBag == null) {
+                String[] idArray = populationIds.split(",");
+                List<String> idCollection = Arrays.asList(idArray);
+                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, idCollection));
+            } else {
+                cs.addConstraint(new BagConstraint(qfStartClassId,
                              ConstraintOp.IN, populationBag.getOsb()));
+            }
         }
 
         for (PathConstraint pathConstraint : config.getPathConstraints()) {

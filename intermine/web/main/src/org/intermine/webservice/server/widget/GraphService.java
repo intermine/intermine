@@ -73,11 +73,12 @@ public class GraphService extends WidgetService
             filterSelectedValue = getDefaultFilterValue(widgetConfig, imBag);
         }
         addOutputFilter(widgetConfig, filterSelectedValue, imBag);
-
+        String ids = input.getIds();
+        String populationIds = input.getPopulationIds();
         GraphWidget widget = null;
         try {
             widget = (GraphWidget) widgetConfig.getWidget(imBag, null,
-                    im.getObjectStore(), input);
+                    im.getObjectStore(), input, ids, populationIds);
             if (filterSelectedValue != null) {
                 widget.setFilter(filterSelectedValue);
             }

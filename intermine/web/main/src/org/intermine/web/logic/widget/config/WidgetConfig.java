@@ -294,13 +294,17 @@ public abstract class WidgetConfig
      * @param populationBag the population bag
      * @param os The objectstore where all the data is.
      * @param options the options for this widget.
+     * @param ids list of IDs to analyse, use instead of intermine bag
+     * @param populationIds use instead of populationBag
      * @return the widget
      */
     public abstract Widget getWidget(
             InterMineBag imBag,
             InterMineBag populationBag,
             ObjectStore os,
-            WidgetOptions options);
+            WidgetOptions options,
+            String ids,
+            String populationIds);
 
 
 }

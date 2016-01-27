@@ -55,7 +55,8 @@ public class EnrichmentWidget extends Widget
     private EnrichmentWidgetImplLdr ldr;
     private String pathConstraint;
     private ClassDescriptor typeDescriptor;
-
+    private String ids;
+    private String populationIds;
 
     /**
      * @param config widget config
@@ -63,13 +64,17 @@ public class EnrichmentWidget extends Widget
      * @param populationBag the reference population
      * @param os object storegene
      * @param options the options for this widget.
+     * @param ids list of IDs to analyse, use instead of intermine bag
+     * @param populationIds use instead of populationBag
      *
      */
     public EnrichmentWidget(EnrichmentWidgetConfig config,
                             InterMineBag interMineBag,
                             InterMineBag populationBag,
                             ObjectStore os,
-                            EnrichmentOptions options) {
+                            EnrichmentOptions options,
+                            String ids,
+                            String populationIds) {
         super(config);
         this.bag = interMineBag;
         this.populationBag = populationBag;
@@ -78,6 +83,8 @@ public class EnrichmentWidget extends Widget
         this.errorCorrection = options.getCorrection();
         this.max = options.getMaxPValue();
         this.filter = options.getFilter();
+        this.ids = ids;
+        this.populationIds = populationIds;
 
         validateBagType();
         String correctionCoefficientClassName = (config.getCorrectionCoefficient() != null)
@@ -147,7 +154,7 @@ public class EnrichmentWidget extends Widget
         try {
             ldr = new EnrichmentWidgetImplLdr(bag, populationBag, os,
                   (EnrichmentWidgetConfig) config, filter, extraCorrectionCoefficient,
-                  correctionCoefficient);
+                  correctionCoefficient, ids, populationIds);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             results = EnrichmentCalculation.calculate(input, max, errorCorrection,
                                            extraCorrectionCoefficient, correctionCoefficient);

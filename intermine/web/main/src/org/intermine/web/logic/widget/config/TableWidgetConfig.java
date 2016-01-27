@@ -181,7 +181,8 @@ public class TableWidgetConfig extends WidgetConfig
             InterMineBag imBag,
             InterMineBag populationBag,
             ObjectStore os,
-            WidgetOptions options) {
+            WidgetOptions options,
+            String ids, String populationIds) {
         return new TableWidget(this, imBag, os);
     }
 

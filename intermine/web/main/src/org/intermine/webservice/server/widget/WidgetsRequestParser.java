@@ -47,6 +47,10 @@ public class WidgetsRequestParser
     static final String EXTRA_ATTRIBUTE = "gene_length_correction";
     /* But this parameter is also accessed in the EnrichmentWidgetResultService */
     static final String POPULATION_BAG_NAME = "current_population";
+    /* can use list for widgets, or a list of object IDs */
+    static final String IDS = "ids";
+    /* can use list for widgets populations, or a list of object IDs */
+    static final String POPULATION_IDS = "populationIds";
 
     private Set<String> requiredParameters;
     private Map<String, String> defaults;
