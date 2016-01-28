@@ -223,7 +223,7 @@ public class GraphWidgetConfig extends WidgetConfig
             ObjectStore os,
             WidgetOptions options,
             String ids, String populationIds) {
-        return new GraphWidget(this, imBag, os, options);
+        return new GraphWidget(this, imBag, os, options, ids);
     }
 
 }

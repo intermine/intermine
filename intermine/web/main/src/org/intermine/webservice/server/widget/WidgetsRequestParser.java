@@ -54,14 +54,18 @@ public class WidgetsRequestParser
 
     private Set<String> requiredParameters;
     private Map<String, String> defaults;
+    private Set<String> conditionalParameters;
 
     /**
      * ListsRequestProcessor constructor.
      */
     public WidgetsRequestParser() {
         this.requiredParameters = new HashSet<String>();
+        this.conditionalParameters = new HashSet<String>();
         defaults = new HashMap<String, String>();
-        requiredParameters.add(BAG_NAME);
+        // we only need one, either the list name OR the ids in the list
+        conditionalParameters.add(BAG_NAME);
+        conditionalParameters.add(IDS);
         requiredParameters.add(WIDGET_ID);
     }
 
@@ -96,6 +100,19 @@ public class WidgetsRequestParser
     public WidgetsServiceInput getInput(HttpServletRequest request) {
 
         Set<String> missingParameters = new HashSet<String>();
+        Set<String> foundParameters = new HashSet<String>();
+        for (String param: conditionalParameters) {
+            if (isBlank(request.getParameter(param))) {
+                missingParameters.add(param);
+            } else {
+                foundParameters.add(param);
+            }
+        }
+        // we have at least one of our conditional params, so we are fine
+        if (!foundParameters.isEmpty()) {
+            missingParameters = new HashSet<String>();
+        }
+
         for (String param: requiredParameters) {
             if (isBlank(request.getParameter(param))) {
                 missingParameters.add(param);
@@ -103,7 +120,7 @@ public class WidgetsRequestParser
         }
         if (!missingParameters.isEmpty()) {
             throw new BadRequestException("Bad parameters. I expected a value for each of "
-                    + requiredParameters
+                    + requiredParameters + " and one of " + conditionalParameters
                     + " but I didn't get any values for "
                     + missingParameters);
         }

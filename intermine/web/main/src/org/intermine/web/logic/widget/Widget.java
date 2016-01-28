@@ -33,6 +33,7 @@ public abstract class Widget
 {
     protected WidgetConfig config;
     protected InterMineBag bag;
+    protected String ids;
     protected ObjectStore os;
     protected int notAnalysed = 0;
 

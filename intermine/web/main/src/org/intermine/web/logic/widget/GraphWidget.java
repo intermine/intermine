@@ -43,13 +43,15 @@ public class GraphWidget extends Widget
      * @param config config for widget
      * @param interMineBag bag for widget
      * @param os objectstore
+     * @param ids intermine IDs, required if bag is NULL
      * @param options The options for this widget.
      */
     public GraphWidget(GraphWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
-                       WidgetOptions options) {
+                       WidgetOptions options, String ids) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
+        this.ids = ids;
         this.filter = options.getFilter();
         validateBagType();
     }
@@ -103,7 +105,7 @@ public class GraphWidget extends Widget
     @Override
     public void process() {
         checkNotProcessed();
-        grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter);
+        grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter, ids);
         if (grapgWidgetLdr == null || grapgWidgetLdr.getResults() == null) {
             LOG.warn("No data found for graph widget");
             return;

@@ -183,7 +183,7 @@ public class TableWidgetConfig extends WidgetConfig
             ObjectStore os,
             WidgetOptions options,
             String ids, String populationIds) {
-        return new TableWidget(this, imBag, os);
+        return new TableWidget(this, imBag, os, ids);
     }
 
 }

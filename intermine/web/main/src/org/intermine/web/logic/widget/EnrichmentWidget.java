@@ -86,7 +86,9 @@ public class EnrichmentWidget extends Widget
         this.ids = ids;
         this.populationIds = populationIds;
 
-        validateBagType();
+        if (bag != null) {
+            validateBagType();
+        }
         String correctionCoefficientClassName = (config.getCorrectionCoefficient() != null)
                                                ? config.getCorrectionCoefficient().trim()
                                                : "";

@@ -74,8 +74,11 @@ public abstract class WidgetService extends JSONService
      */
     @SuppressWarnings("deprecation")
     protected void addOutputListInfo(InterMineBag imBag) {
-        addOutputInfo("type", imBag.getType());
-        addOutputInfo("list", imBag.getName());
+        if (imBag != null) {
+            addOutputInfo("type", imBag.getType());
+            addOutputInfo("list", imBag.getName());
+        }
+
         // TODO: remove requestedAt - we already output this info.
         addOutputInfo("requestedAt", new Date().toGMTString());
     }

@@ -47,7 +47,6 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     private InterMineBag populationBag;
     private boolean extraCorrectionCoefficient;
     private CorrectionCoefficient correctionCoefficient;
-    private String ids;
     private String populationIds;
 
     /**
@@ -63,7 +62,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
      * @param extraCorrectionCoefficient if true correction coefficient has been selected
      * @param correctionCoefficient a instance of correction coefficient
      * @param applyCorrectionCoefficient
-     * @param ids list of IDs to analyse, use instead of intermine bag
+     * @param ids list of IDs to analyse, use instead of intermine bag if bag is NULL
      * @param populationIds use instead of populationBag
      */
     public EnrichmentWidgetImplLdr(InterMineBag bag, InterMineBag populationBag,
@@ -71,12 +70,11 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                                    String filter, boolean extraCorrectionCoefficient,
                                    CorrectionCoefficient correctionCoefficient,
                                    String ids, String populationIds) {
-        super(bag, os, filter, config);
+        super(bag, os, filter, config, ids);
         this.populationBag = populationBag;
         this.extraCorrectionCoefficient = extraCorrectionCoefficient;
         this.correctionCoefficient = correctionCoefficient;
         this.config = config;
-        this.ids = ids;
         this.populationIds = populationIds;
     }
 
@@ -140,21 +138,23 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
 
         QueryField qfStartClassId = new QueryField(startClass, "id");
         if (!action.startsWith("population")) {
-            if (bag == null) {
+            if (bag != null) {
+                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
+            } else if (ids != null) {
+                // use list of IDs instead of bag
                 String[] idArray = ids.split(",");
                 List<String> idCollection = Arrays.asList(idArray);
                 cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, idCollection));
-            } else {
-                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
             }
         } else if (populationBag != null || populationIds != null) {
-            if (populationBag == null) {
+            if (populationBag != null) {
+                cs.addConstraint(new BagConstraint(qfStartClassId,
+                        ConstraintOp.IN, populationBag.getOsb()));
+            } else if (populationIds != null) {
+                // use list of IDs instead of bag
                 String[] idArray = populationIds.split(",");
                 List<String> idCollection = Arrays.asList(idArray);
                 cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, idCollection));
-            } else {
-                cs.addConstraint(new BagConstraint(qfStartClassId,
-                             ConstraintOp.IN, populationBag.getOsb()));
             }
         }
 
@@ -252,8 +252,16 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                         subQuery.addFrom(startClass);
                         subQuery.addFrom(qcConstraint);
                         QueryField qfStartClassId = new QueryField(startClass, "id");
-                        csSubQuery.addConstraint(new BagConstraint(qfStartClassId,
+                        if (bag != null) {
+                            csSubQuery.addConstraint(new BagConstraint(qfStartClassId,
                                                  ConstraintOp.IN, bag.getOsb()));
+                        } else if (ids != null) {
+                            // use list of IDs instead of bag
+                            String[] idArray = ids.split(",");
+                            List<String> idCollection = Arrays.asList(idArray);
+                            csSubQuery.addConstraint(new BagConstraint(qfStartClassId,
+                                    ConstraintOp.IN, idCollection));
+                        }
                         QueryField outerQFConstraint = new QueryField(subQuery, qfConstraint);
                         cs.addConstraint(new SimpleConstraint(qfConstraint, ConstraintOp.EQUALS,
                                                               outerQFConstraint));
