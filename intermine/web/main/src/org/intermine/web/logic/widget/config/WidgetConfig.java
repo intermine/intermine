@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -107,9 +108,10 @@ public abstract class WidgetConfig
     /**
      * @param os The database to look in for dynamically defined values.
      * @param bag The bag to constrain by for sensible dynamic filters.
+     * @param ids The ids to constrain by for sensible dynamic filters, required if bag is null
      * @return the filter values
      */
-    public List<String> getFiltersValues(ObjectStore os, InterMineBag bag) {
+    public List<String> getFiltersValues(ObjectStore os, InterMineBag bag, String ids) {
         if (filters == null) {
             return Collections.emptyList();
         }
@@ -159,8 +161,24 @@ public abstract class WidgetConfig
                 }
             }
             QueryField qfGeneId = new QueryField(startClassQueryClass, "id");
-            BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-            cs.addConstraint(bc);
+            if (bag == null) {
+                // use list of IDs instead of bag
+                String[] idArray = ids.split(",");
+                Collection<Integer> idsCollection = new LinkedHashSet<Integer>();
+                for (String intermineId : idArray) {
+                    try {
+                        idsCollection.add(Integer.valueOf(intermineId.trim()));
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("List of IDs contains invalid integer: "
+                                + intermineId, e);
+                    }
+                }
+                BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, idsCollection);
+                cs.addConstraint(bc);
+            } else {
+                BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+                cs.addConstraint(bc);
+            }
 
             Results r = os.execute(q);
             @SuppressWarnings({ "unchecked", "rawtypes" })

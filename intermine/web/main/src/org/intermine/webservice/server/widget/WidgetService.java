@@ -84,6 +84,21 @@ public abstract class WidgetService extends JSONService
     }
 
     /**
+     * Add metadata about the IDs we are processing. Use these IDs instead of bag or
+     * populationBag.
+     * @param ids intermine object ids to be analysed
+     * @param populationIds intermine object ids to use as background population
+     */
+    protected void addOutputIdsInfo(String ids, String populationIds) {
+        if (ids != null) {
+            addOutputInfo("ids", ids);
+        }
+        if (populationIds != null) {
+            addOutputInfo("populationIds", populationIds);
+        }
+    }
+
+    /**
      * Add metadata about the widget we are using.
      * @param config The description of the widget.
      */
@@ -97,13 +112,15 @@ public abstract class WidgetService extends JSONService
      * @param widgetConfig The description of the widgets.
      * @param filterSelectedValue The currently selected value.
      * @param imBag The list we are processing.
+     * @param ids The ids we are processing, use instead of imBag
      */
     protected void addOutputFilter(
             WidgetConfig widgetConfig,
             String filterSelectedValue,
-            InterMineBag imBag) {
+            InterMineBag imBag,
+            String ids) {
         addOutputAttribute("filterLabel", widgetConfig.getFilterLabel());
-        List<String> filters = getFilters(widgetConfig, imBag);
+        List<String> filters = getFilters(widgetConfig, imBag, ids);
         if (filters != null && !filters.isEmpty()) {
             addOutputAttribute("filters", StringUtils.join(filters, ","));
             addOutputAttribute("filterSelectedValue", filterSelectedValue);
@@ -146,9 +163,9 @@ public abstract class WidgetService extends JSONService
 
     private List<String> cachedFilters = null;
 
-    private List<String> getFilters(WidgetConfig widgetConfig, InterMineBag imBag) {
+    private List<String> getFilters(WidgetConfig widgetConfig, InterMineBag imBag, String ids) {
         if (cachedFilters == null) {
-            cachedFilters = widgetConfig.getFiltersValues(im.getObjectStore(), imBag);
+            cachedFilters = widgetConfig.getFiltersValues(im.getObjectStore(), imBag, ids);
         }
         return cachedFilters;
     }
@@ -157,10 +174,12 @@ public abstract class WidgetService extends JSONService
      * Get the default filter value for a widget.
      * @param widgetConfig The widget description.
      * @param imBag The bag we are thinking of running this widget on.
+     * @param ids The ids we are thinking of running this widget on, use instead of imBag
      * @return A string (possibly null) which contains the default filter value.
      */
-    protected String getDefaultFilterValue(WidgetConfig widgetConfig, InterMineBag imBag) {
-        List<String> filters = getFilters(widgetConfig, imBag);
+    protected String getDefaultFilterValue(WidgetConfig widgetConfig, InterMineBag imBag,
+        String ids) {
+        List<String> filters = getFilters(widgetConfig, imBag, ids);
         String defaultValue = null;
         if (filters != null && !filters.isEmpty()) {
             defaultValue = filters.get(0);

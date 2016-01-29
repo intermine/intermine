@@ -10,7 +10,9 @@ package org.intermine.web.logic.widget;
  *
  */
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
@@ -34,6 +36,7 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
+import org.xml.sax.SAXException;
 
 /**
  * Implement methods to access data an enrichment calculation needs to be provided with.
@@ -143,8 +146,16 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             } else if (ids != null) {
                 // use list of IDs instead of bag
                 String[] idArray = ids.split(",");
-                List<String> idCollection = Arrays.asList(idArray);
-                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, idCollection));
+                Collection<Integer> idsCollection = new LinkedHashSet<Integer>();
+                for (String id : idArray) {
+                    try {
+                        idsCollection.add(Integer.valueOf(id.trim()));
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("List of IDs contains invalid integer: " + id,
+                                e);
+                    }
+                }
+                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, idsCollection));
             }
         } else if (populationBag != null || populationIds != null) {
             if (populationBag != null) {
@@ -258,9 +269,17 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                         } else if (ids != null) {
                             // use list of IDs instead of bag
                             String[] idArray = ids.split(",");
-                            List<String> idCollection = Arrays.asList(idArray);
+                            Collection<Integer> idsCollection = new LinkedHashSet<Integer>();
+                            for (String intermineId : idArray) {
+                                try {
+                                    idsCollection.add(Integer.valueOf(intermineId.trim()));
+                                } catch (NumberFormatException e) {
+                                    throw new RuntimeException("List of IDs contains invalid "
+                                            + "integer: " + intermineId, e);
+                                }
+                            }
                             csSubQuery.addConstraint(new BagConstraint(qfStartClassId,
-                                    ConstraintOp.IN, idCollection));
+                                    ConstraintOp.IN, idsCollection));
                         }
                         QueryField outerQFConstraint = new QueryField(subQuery, qfConstraint);
                         cs.addConstraint(new SimpleConstraint(qfConstraint, ConstraintOp.EQUALS,

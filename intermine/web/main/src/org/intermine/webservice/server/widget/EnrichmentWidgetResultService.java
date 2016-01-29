@@ -104,9 +104,10 @@ public class EnrichmentWidgetResultService extends WidgetService
     protected void execute() throws Exception {
         WidgetsServiceInput input = getInput();
         InterMineBag imBag = retrieveBag(input.getBagName());
+        addOutputListInfo(imBag);
         String ids = input.getIds();
         String populationIds = input.getPopulationIds();
-        addOutputListInfo(imBag);
+        addOutputIdsInfo(ids, populationIds);
         LOG.debug("Enriching with " + input);
 
         WebConfig webConfig = InterMineContext.getWebConfig();
@@ -121,9 +122,9 @@ public class EnrichmentWidgetResultService extends WidgetService
         //filters
         String filterSelectedValue = input.getFilter();
         if (StringUtils.isBlank(filterSelectedValue)) {
-            filterSelectedValue = getDefaultFilterValue(widgetConfig, imBag);
+            filterSelectedValue = getDefaultFilterValue(widgetConfig, imBag, ids);
         }
-        addOutputFilter(widgetConfig, filterSelectedValue, imBag);
+        addOutputFilter(widgetConfig, filterSelectedValue, imBag, ids);
 
         addOutputUserLogged();
 

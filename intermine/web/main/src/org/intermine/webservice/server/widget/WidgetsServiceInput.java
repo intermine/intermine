@@ -45,7 +45,7 @@ public class WidgetsServiceInput implements EnrichmentOptions
     }
 
     /**
-     * Get the type of the bag
+     * Get the name of the bag
      * @return the bagName
      */
     public String getBagName() {
@@ -111,7 +111,7 @@ public class WidgetsServiceInput implements EnrichmentOptions
                 widgetId, bagName,
                 maxP, correction,
                 populationBagName, savePopulation, filter,
-                extraAttribute);
+                extraAttribute, ids, populationIds);
     }
 
     /**

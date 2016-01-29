@@ -131,6 +131,8 @@ public class WidgetsRequestParser
         String bagName = request.getParameter(BAG_NAME);
         String populationBagName = request.getParameter(POPULATION_BAG_NAME);
         String savePopulation = request.getParameter(SAVE_POPULATION);
+        String ids = request.getParameter(IDS);
+        String populationIds = request.getParameter(POPULATION_IDS);
         String filter = getOrDefault(request, FILTER);
         String maxP = getOrDefault(request, MAXP);
         String errorCorrection = getOrDefault(request, ERROR_CORRECTION);
@@ -150,6 +152,8 @@ public class WidgetsRequestParser
         ret.setExtraAttribute(extraAttribute);
         ret.setCorrection(errorCorrection);
         ret.setPopulationBagName(populationBagName);
+        ret.setIds(ids);
+        ret.setPopulationIds(populationIds);
         ret.setSavePopulation("true".equalsIgnoreCase(savePopulation));
         if (!isBlank(maxP)) {
             try {
