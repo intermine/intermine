@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -60,7 +61,17 @@ public class HgncConverter extends BioFileConverter
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            String geneRefId = getGeneId(line[1]);
+            String entrezId = line[18];
+
+            if (StringUtils.isEmpty(entrezId)) {
+                // we are only interested in genes that have an NCBI id.
+                continue;
+            }
+
+            String symbol = line[1];
+            String ensemblGeneId = line[19];
+
+            String geneRefId = getGeneId(entrezId, symbol, ensemblGeneId);
 
             String hgncId = line[0];
             createSynonym(geneRefId, hgncId);
@@ -77,10 +88,6 @@ public class HgncConverter extends BioFileConverter
             String prevName = line[11];
             createSynonym(geneRefId, prevName);
 
-            String entrezId = line[18];
-            createSynonym(geneRefId, entrezId);
-
-            String ensemblGeneId = line[19];
             createSynonym(geneRefId, ensemblGeneId);
 
             String vegaId = line[20];
@@ -106,15 +113,22 @@ public class HgncConverter extends BioFileConverter
         }
     }
 
-    private String getGeneId(String symbol) throws ObjectStoreException {
-        String geneId = genes.get(symbol);
+    private String getGeneId(String entrezId, String symbol, String ensembl)
+        throws ObjectStoreException {
+        String geneId = genes.get(entrezId);
         if (geneId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute("symbol", symbol);
+            gene.setAttribute("primaryIdentifier", entrezId);
+            if (StringUtils.isNotEmpty(ensembl)) {
+                gene.setAttribute("secondaryIdentifier", ensembl);
+            }
+            if (StringUtils.isNotEmpty(symbol)) {
+                gene.setAttribute("symbol", symbol);
+            }
             gene.setReference("organism", getOrganism(TAXON_ID));
             store(gene);
             geneId = gene.getIdentifier();
-            genes.put(symbol, geneId);
+            genes.put(entrezId, geneId);
         }
         return geneId;
     }

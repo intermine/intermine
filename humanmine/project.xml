@@ -10,6 +10,9 @@
       <property name="src.data.dir" location="/micklem/data/ncbi/current" />
       <property name="organisms" value="9606" />
     </source>
+    <source name="hgnc" type="hgnc" dump="true">
+      <property name="src.data.dir" location="/micklem/data/human/hgnc/current" />
+    </source>
     <source name="ncbi-summaries" type="ncbi-summaries">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>

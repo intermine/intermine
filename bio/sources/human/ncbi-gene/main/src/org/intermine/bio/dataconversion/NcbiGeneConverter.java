@@ -157,6 +157,7 @@ public class NcbiGeneConverter extends BioFileConverter
         }
 
         for (String ensemblId : record.ensemblIds) {
+            gene.setAttribute("secondaryIdentifier", ensemblId);
             createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl", true);
         }
 
