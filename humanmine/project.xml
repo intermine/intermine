@@ -104,7 +104,7 @@
     </source>
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
-      <property name="intact.organisms" value="9606 10090" />
+      <property name="intact.organisms" value="9606" />
     </source>
     <source name="psi-complexes" type="psi-complexes">
       <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/human"/>

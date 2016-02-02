@@ -104,9 +104,9 @@ public class PsiConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
 
         // init reslover
-        if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
-        }
+//        if (rslv == null) {
+//            rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
+//        }
 
         PsiHandler handler = new PsiHandler();
         try {
@@ -651,7 +651,6 @@ public class PsiConverter extends BioFileConverter
             }
 
             for (String identifier : identifiers) {
-                // validate ensembl, look up dmel
                 String newIdentifier = resolveGeneIdentifier(taxonId, datasource, identifier);
                 if (StringUtils.isNotEmpty(newIdentifier)) {
                     String refId = storeGene(field, newIdentifier, taxonId);
