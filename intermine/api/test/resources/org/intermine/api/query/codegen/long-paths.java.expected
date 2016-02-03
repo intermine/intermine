@@ -1,0 +1,47 @@
+package testprojecttitle;
+
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Iterator;
+import java.util.List;
+
+import org.intermine.metadata.Model;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.client.core.ServiceFactory;
+import org.intermine.webservice.client.services.QueryService;
+
+/**
+ * This is a Java program to run a query from TEST_PROJECT_TITLE.
+ * It was automatically generated at __SOME-DATE__
+ *
+ * @author TEST_PROJECT_TITLE
+ *
+ */
+public class QueryClient
+{
+    private static final String ROOT = "TEST_SERVICE_ROOT/service";
+
+    /**
+     * Perform the query and print the rows of results.
+     * @param args command line arguments
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException {
+        ServiceFactory factory = new ServiceFactory(ROOT);
+        Model model = factory.getModel();
+        PathQuery query = new PathQuery(model);
+
+        // Select the output columns:
+        query.addView("Gene.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.primaryAccession");
+
+        QueryService service = factory.getQueryService();
+        PrintStream out = System.out;
+        out.println("Gene.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.primaryAccession");
+        Iterator<List<Object>> rows = service.getRowListIterator(query);
+        while (rows.hasNext()) {
+            out.println(rows.next().get(0));
+        }
+        out.printf("%d rows\n", service.getCount(query));
+    }
+
+}
