@@ -403,16 +403,16 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         int desiredMaxLineLength = 80;
         String line = prefix + text;
 
-        // If our prefix is greater than desiredMaxTextLength then don't attempt to wrap the lines at all.
-        // This should never happen but lets produce something unwrapped rather than fail in an
-        // unexpected way.
+        // If our prefix is greater than desiredMaxTextLength then don't attempt to wrap the lines
+        // at all.  This should never happen but lets produce something unwrapped rather than fail
+        // in an unexpected way.
         if (line.length() <= desiredMaxLineLength || prefix.length() >= desiredMaxLineLength) {
             sb.append(line + endl);
             return;
         }
 
-        // We need to handle the case where a long path may generate a line without spaces past the 80 column mark
-        // except for the prefix.  Otherwise we get infinite recursion
+        // We need to handle the case where a long path may generate a line without spaces past the
+        // 80 column mark except for the prefix.  Otherwise we get infinite recursion
         int cutPoint = text.length();
         int prevCutPoint = cutPoint;
 
@@ -423,8 +423,8 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             cutPoint = text.lastIndexOf(' ', cutPoint - 1);
         }
 
-        // Handle the case where our non-space text is greater than the desired max text length.  This can be happen
-        // with long paths.
+        // Handle the case where our non-space text is greater than the desired max text length.
+        // This can be happen with long paths.
         if (cutPoint == -1) {
             cutPoint = prevCutPoint;
         }
