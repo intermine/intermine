@@ -104,9 +104,9 @@ public class PsiConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
 
         // init reslover
-//        if (rslv == null) {
-//            rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
-//        }
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
+        }
 
         PsiHandler handler = new PsiHandler();
         try {
