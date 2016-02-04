@@ -57,7 +57,7 @@
 
   <!-- ******************************************************* -->
   <tr>
-    <td rowspan="2" class="leftcol">
+    <td rowspan="3" class="leftcol">
     <h2><p>Proteins</p></h2>
     </td>
     <td>
@@ -65,6 +65,17 @@
     </td>
     <td> 
     <a href="http://www.uniprot.org/" target="_new">UniProt</a>
+    </td>
+  </tr>
+
+  <tr>
+    <td> 
+    Association of mouse proteins to mouse genes. NOTE: due to a limitation 
+    in the data model, MouseMine does NOT currently contain associations of 
+    proteins to non-gene features (e.g., gene segments).
+    </td>
+    <td> 
+    <a href="http://www.informatics.jax.org/" target="_new">MGI</a>
     </td>
   </tr>
 
@@ -153,7 +164,7 @@
     <h2><p>Pathways</p></h2>
     </td>
     <td>
-    Pathway information and the proteins/genes involved in them.
+    Pathways and their associations to genes and proteins.
     </td>
     <td> 
     <a href="http://www.reactome.org/" target="_new">Reactome</a>
