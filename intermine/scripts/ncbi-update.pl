@@ -33,8 +33,9 @@ while (<HGNC_FILE>) {
   my $ncbi = $line[18];
   my $ensembl = $line[19];
 
-  $identifier_hash{$ncbi} = $ensembl; 
-
+  if (!$ncbi eq '' && !$ensembl eq '') {
+    $identifier_hash{$ncbi} = $ensembl; 
+  }
 }
 
 print "Done reading HGNC file\n";
