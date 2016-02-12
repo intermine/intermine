@@ -55,7 +55,39 @@
     </td>
   </tr>
 
-  
+  <!-- ******************************************************* -->
+  <tr>
+    <td rowspan="3" class="leftcol">
+    <h2><p>Proteins</p></h2>
+    </td>
+    <td>
+    Mouse proteins and protein fragments, including sequences, keywords, identifiers, etc.
+    </td>
+    <td> 
+    <a href="http://www.uniprot.org/" target="_new">UniProt</a>
+    </td>
+  </tr>
+
+  <tr>
+    <td> 
+    Association of mouse proteins to mouse genes. NOTE: due to a limitation 
+    in the data model, MouseMine does NOT currently contain associations of 
+    proteins to non-gene features (e.g., gene segments).
+    </td>
+    <td> 
+    <a href="http://www.informatics.jax.org/" target="_new">MGI</a>
+    </td>
+  </tr>
+
+  <tr>
+    <td> 
+    Protein domains annotated to specific protein regions.
+    </td>
+    <td> 
+    <a href="http://www.ebi.ac.uk/interpro/"  target="_new">InterPro</a>
+    </td>
+  </tr>
+
   <!-- ******************************************************* -->
   <tr>
     <td rowspan="2"  class="leftcol">
@@ -123,6 +155,19 @@
     </td>
     <td>
 	<a href="http://www.informatics.jax.org/" target="_new">MGI</a>
+    </td>
+  </tr>
+
+  <!-- ******************************************************* -->
+  <tr>
+    <td class="leftcol">
+    <h2><p>Pathways</p></h2>
+    </td>
+    <td>
+    Pathways and their associations to genes and proteins.
+    </td>
+    <td> 
+    <a href="http://www.reactome.org/" target="_new">Reactome</a>
     </td>
   </tr>
 
