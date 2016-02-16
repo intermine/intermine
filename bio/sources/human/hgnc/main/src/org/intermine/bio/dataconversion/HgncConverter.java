@@ -88,8 +88,6 @@ public class HgncConverter extends BioFileConverter
             String prevName = line[11];
             createSynonym(geneRefId, prevName);
 
-            createSynonym(geneRefId, ensemblGeneId);
-
             String vegaId = line[20];
             createSynonym(geneRefId, vegaId);
 
