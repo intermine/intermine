@@ -65,6 +65,7 @@ public class ExportService extends JSONService
     private Map<String, DefaultModelledParticipant> participants
         = new HashMap<String, DefaultModelledParticipant>();
     private Map<String, FeatureHolder> features = new HashMap<String, FeatureHolder>();
+    private static final String BINDING_SITE = "binding region";
 
     /**
      * Default constructor.
@@ -215,14 +216,19 @@ public class ExportService extends JSONService
 
                 DefaultRange range = new DefaultRange(startPosition, endPosition);
 
+                DefaultCvTerm cvterm = new DefaultCvTerm(BINDING_SITE);
+
+                // feature
                 DefaultModelledFeature feature = getFeature(primaryIdentifier, participant,
                         featureIdentifier);
 
+                // main interactor
                 DefaultInteractor bindingInteractor = getInteractor(featureIdentifier, null, null,
                         null);
 
+                // binding participant
                 DefaultModelledParticipant bindingParticipant
-                    = getParticipant(complex, featureIdentifier, bindingInteractor, null, null);
+                     = getParticipant(complex, featureIdentifier, bindingInteractor, null, null);
 
                 // binding feature
                 DefaultModelledFeature bindingFeature = getFeature(featureIdentifier,
@@ -232,7 +238,8 @@ public class ExportService extends JSONService
 
                 feature.getLinkedFeatures().add(bindingFeature);
 
-
+                // associate linked features with interactor
+                participant.getFeatures().add(feature);
             }
         }
         return complex;
