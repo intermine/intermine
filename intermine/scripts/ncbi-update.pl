@@ -103,7 +103,7 @@ while (<NCBI_FILE>) {
     # append the ensembl value to this entry in file
     if (!$has_ensembl) {
       my $append_text = $xrefs . "|" . $ensembl_prefix . $identifier_hash{$ncbi_identifier};
-      s/"$xrefs"/$append_text/;
+      s/$xrefs/$append_text/;
       print $OUTPUT_FILE "$_\n";
       $have_printed = 1;  
       $i++;
