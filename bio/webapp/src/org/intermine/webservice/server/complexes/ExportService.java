@@ -197,14 +197,16 @@ public class ExportService extends JSONService
             Xref xref = new DefaultXref(db, primaryIdentifier);
 
             // interactor
-            DefaultInteractor interactor = getInteractor(primaryIdentifier, type, organism, xref);
+            DefaultInteractor interactor
+                = updateInteractor(primaryIdentifier, type, organism, xref);
 
             // participant
             DefaultModelledParticipant participant = getParticipant(complex, primaryIdentifier,
                     interactor, biologicalRole, stoichiometry);
 
             // interactions -- not all complexes will have them!
-            if (row.get(10) != null && row.get(10).getField() != null) {
+            if (row.get(9) != null && row.get(9).getField() != null) {
+                // same as protein above
                 //String featureIdentifier = (String) row.get(9).getField();
                 String locatedOn = (String) row.get(10).getField();
                 Integer start = (Integer) row.get(11).getField();
@@ -223,8 +225,7 @@ public class ExportService extends JSONService
                         locatedOn);
 
                 // main interactor
-                DefaultInteractor bindingInteractor = getInteractor(locatedOn, null, null,
-                        null);
+                DefaultInteractor bindingInteractor = getInteractor(locatedOn);
 
                 // binding participant
                 DefaultModelledParticipant bindingParticipant
@@ -245,11 +246,18 @@ public class ExportService extends JSONService
         return complex;
     }
 
-    private DefaultInteractor getInteractor(String primaryIdentifier, CvTerm type,
+    private DefaultInteractor updateInteractor(String primaryIdentifier, CvTerm type,
             DefaultOrganism organism, Xref xref) {
+        DefaultInteractor interactor = getInteractor(primaryIdentifier);
+        interactor.setInteractorType(type);
+        interactor.setOrganism(organism);
+        return interactor;
+    }
+
+    private DefaultInteractor getInteractor(String primaryIdentifier) {
         DefaultInteractor interactor = interactors.get(primaryIdentifier);
         if (interactor == null) {
-            interactor = new DefaultInteractor(primaryIdentifier, type, organism, xref);
+            interactor = new DefaultInteractor(primaryIdentifier);
             interactors.put(primaryIdentifier, interactor);
         }
         return interactor;
