@@ -198,9 +198,7 @@ public class PsiComplexesConverter extends BioFileConverter
 
     private void processInteractions(Complex interactionEvidence,
             DetailHolder detail, Item complex) throws ObjectStoreException {
-
         for (ModelledParticipant modelledParticipant : interactionEvidence.getParticipants()) {
-
             Item interactor = createItem("Interactor");
 
             // annotations
@@ -216,7 +214,6 @@ public class PsiComplexesConverter extends BioFileConverter
             if (refId == null) {
                 return;
             }
-
             interactor.setReference("participant", refId);
 
             // interactions and regions
@@ -245,12 +242,10 @@ public class PsiComplexesConverter extends BioFileConverter
                         detailItem.setCollection("allInteractors", detail.getAllInteractors());
 
                         processRegions(linkedFeature.getRanges(), detailItem, refId, binderRefId);
-
                         store(detailItem);
                     }
                 }
             }
-
 
             // parse stoich
             processStoichiometry(modelledParticipant, interactor);

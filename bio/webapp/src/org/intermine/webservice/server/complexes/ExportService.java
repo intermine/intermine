@@ -204,9 +204,9 @@ public class ExportService extends JSONService
                     interactor, biologicalRole, stoichiometry);
 
             // interactions -- not all complexes will have them!
-            if (row.get(9) != null && row.get(9).getField() != null) {
-                String featureIdentifier = (String) row.get(9).getField();
-                //String locatedOn = (String) row.get(10).getField();
+            if (row.get(10) != null && row.get(10).getField() != null) {
+                //String featureIdentifier = (String) row.get(9).getField();
+                String locatedOn = (String) row.get(10).getField();
                 Integer start = (Integer) row.get(11).getField();
                 Integer end = (Integer) row.get(12).getField();
 
@@ -220,18 +220,18 @@ public class ExportService extends JSONService
 
                 // feature
                 DefaultModelledFeature feature = getFeature(primaryIdentifier, participant,
-                        featureIdentifier);
+                        locatedOn);
 
                 // main interactor
-                DefaultInteractor bindingInteractor = getInteractor(featureIdentifier, null, null,
+                DefaultInteractor bindingInteractor = getInteractor(locatedOn, null, null,
                         null);
 
                 // binding participant
                 DefaultModelledParticipant bindingParticipant
-                     = getParticipant(complex, featureIdentifier, bindingInteractor, null, null);
+                     = getParticipant(complex, locatedOn, bindingInteractor, null, null);
 
                 // binding feature
-                DefaultModelledFeature bindingFeature = getFeature(featureIdentifier,
+                DefaultModelledFeature bindingFeature = getFeature(locatedOn,
                         bindingParticipant, primaryIdentifier);
 
                 feature.getRanges().add(range);
@@ -322,12 +322,12 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.participant.organism.taxonId",
                 "Complex.allInteractors.biologicalRole",
                 "Complex.allInteractors.type",
-                "Complex.allInteractors.interactions.details.interactingRegions.location.feature."
+                "Complex.allInteractors.interactions.details.interactingRegions.locations.feature."
                 + "primaryIdentifier",
-                "Complex.allInteractors.interactions.details.interactingRegions.location.locatedOn."
-                + "primaryIdentifier",
-                "Complex.allInteractors.interactions.details.interactingRegions.location.start",
-                "Complex.allInteractors.interactions.details.interactingRegions.location.end");
+                "Complex.allInteractors.interactions.details.interactingRegions.locations."
+                + "locatedOn.primaryIdentifier",
+                "Complex.allInteractors.interactions.details.interactingRegions.locations.start",
+                "Complex.allInteractors.interactions.details.interactingRegions.locations.end");
         query.setOuterJoinStatus("Complex.allInteractors.interactions", OuterJoinStatus.OUTER);
         query.setOuterJoinStatus("Complex.allInteractors.participant.organism",
             OuterJoinStatus.OUTER);
