@@ -13,7 +13,6 @@ package org.intermine.web.logic.widget;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
@@ -70,15 +69,6 @@ public class GraphWidget extends Widget
         if (grapgWidgetLdr == null) {
             throw new IllegalStateException("This widget has not been processed yet.");
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public List getElementInList() {
-        return new Vector();
     }
 
     /**
@@ -267,4 +257,3 @@ public class GraphWidget extends Widget
         }
     }
 }
-

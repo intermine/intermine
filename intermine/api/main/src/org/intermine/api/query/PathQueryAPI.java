@@ -48,7 +48,7 @@ public final class PathQueryAPI
      * @return a PathQueryExecutor
      */
     public static PathQueryExecutor getPathQueryExecutor() {
-        return new PathQueryExecutor(getObjectStore(), getClassKeys(), getProfile(),
+        return new PathQueryExecutor(getObjectStore(), getProfile(),
                 getBagQueryRunner(), getBagManager());
     }
 

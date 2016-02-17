@@ -57,8 +57,6 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
 
-    protected IdResolver rslv;
-
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -81,10 +79,6 @@ public class OmimConverter extends BioDirectoryConverter
         Map<String, File> files = readFilesInDir(dataDir);
 
         organism = getOrganism(HUMAN_TAXON);
-
-        if (rslv == null) {
-            rslv = IdResolverService.getHumanIdResolver();
-        }
 
         String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
         Set<String> missingFiles = new HashSet<String>();

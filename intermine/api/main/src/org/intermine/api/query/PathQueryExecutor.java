@@ -26,7 +26,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -65,14 +64,12 @@ public class PathQueryExecutor extends QueryExecutor
      * Constructor with necessary objects.
      *
      * @param os the ObjectStore to run the query in
-     * @param classKeys key fields for classes in the data model
      * @param profile the user executing the query - for access to saved lists
      * @param bagQueryRunner for executing bag searches in queries
      * @param bagManager access to global and user bags
      */
     public PathQueryExecutor(
             ObjectStore os,
-            Map<String, List<FieldDescriptor>> classKeys,
             Profile profile,
             BagQueryRunner bagQueryRunner,
             BagManager bagManager) {
