@@ -744,7 +744,6 @@ public class PsiConverter extends BioFileConverter
             if (refId == null) {
                 Item region = createItem("InteractionRegion");
                 refId = region.getIdentifier();
-                region.setReference("gene", geneRefId);
                 region.setReference("ontologyTerm", termId);
                 if (ih.startStatus != null) {
                     region.setAttribute("startStatus", ih.startStatus);
