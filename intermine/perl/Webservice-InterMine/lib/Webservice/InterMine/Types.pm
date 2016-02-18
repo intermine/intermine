@@ -75,7 +75,7 @@ use MooseX::Types -declare => [
 
         Join JoinStyle JoinList
 
-        Uri HTTPCode NetHTTP
+        Uri HTTPCode NetHTTP NetHTTPS
 
         Service
         ServiceVersion
@@ -235,6 +235,7 @@ subtype PathDescriptionList, as ArrayRef [PathDescription];
 
 class_type Uri, { class => 'URI' };
 class_type NetHTTP, { class => 'Net::HTTP', };
+class_type NetHTTPS, { class => 'Net::HTTPS', };
 subtype HTTPCode, as Str, where { /^\d{3}$/ };
 
 coerce Uri, from Str, via {
