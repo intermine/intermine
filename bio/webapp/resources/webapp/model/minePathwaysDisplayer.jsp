@@ -45,7 +45,7 @@
   </c:forEach>
 
 
-
+  intermine.setLoadRoot('${WEB_PROPERTIES['head.cdn.location']}');
   var imload = function(){
     intermine.load({
       'js': {

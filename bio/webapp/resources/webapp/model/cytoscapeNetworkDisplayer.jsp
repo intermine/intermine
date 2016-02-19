@@ -34,6 +34,7 @@
 
   document.getElementsByTagName( "head" )[0].appendChild( link );
 
+    intermine.setLoadRoot('${WEB_PROPERTIES['head.cdn.location']}');
     intermine.load({
       'js': {
           'main': {
