@@ -780,15 +780,14 @@ public class UniprotEntry
      * @param geneDesignation "gene designation" for this gene.  usually the "primary" name
      */
     public void addGeneDesignation(String geneDesignation) {
-        if (dbref != null && geneDesignationToDbref.get(geneDesignation) == null) {
+        if (dbref != null) {
             geneDesignationToDbref.put(geneDesignation, dbref);
         } else {
-            LOG.debug("Could not set 'gene designation' for dbref:" + dbref);
+            LOG.debug("Could not set 'gene designation' for dbref:" + dbref.value);
         }
     }
 
     /**
-     *
      *  <dbReference type="Ensembl" key="23" id="FBtr0082909">
      *      <property value="FBgn0010340" type="gene designation"/>
      * </dbReference>
