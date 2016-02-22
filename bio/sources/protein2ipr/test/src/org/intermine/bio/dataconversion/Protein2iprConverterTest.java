@@ -112,4 +112,17 @@ public class Protein2iprConverterTest extends ItemsTestCase
 
         assertEquals(expected, itemWriter.getItems());
     }
+
+    public void testProcessNoOrganismSet() throws Exception {
+
+        Reader reader = new InputStreamReader(getClass().getClassLoader()
+                                            .getResourceAsStream(currentFile));
+        converter.setCurrentFile(new File(currentFile));
+        converter.process(reader);
+        converter.close();
+
+        Set<org.intermine.xml.full.Item> expected = readItemSet("Protein2iprConverterTest_tgt.xml");
+
+        assertEquals(expected, itemWriter.getItems());
+    }
 }
