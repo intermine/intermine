@@ -64,7 +64,7 @@ public class ProxyReference implements InterMineObject, Lazy
         } catch (ObjectStoreException e) {
             throw new RuntimeException("ObjectStoreException while materialising proxy with ID "
                     + id + " for class " + clazz.getName() + " from ObjectStore " + os + ": "
-                    + e.getMessage());
+                    + e.getMessage(), e);
         }
     }
 

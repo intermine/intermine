@@ -222,7 +222,9 @@ public class Protein2iprConverter extends BioFileConverter
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         // organism in our list
-        cs.addConstraint(new BagConstraint(qfOrganismTaxonId, ConstraintOp.IN, taxonIds));
+        if (taxonIds.size() > 0) {
+            cs.addConstraint(new BagConstraint(qfOrganismTaxonId, ConstraintOp.IN, taxonIds));
+        }
 
         // protein.organism = organism
         QueryObjectReference qor = new QueryObjectReference(qcProtein, "organism");

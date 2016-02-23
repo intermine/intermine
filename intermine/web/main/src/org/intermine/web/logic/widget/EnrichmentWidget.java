@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
@@ -156,14 +155,6 @@ public class EnrichmentWidget extends Widget
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List getElementInList() {
-        return new Vector();
     }
 
     /**
