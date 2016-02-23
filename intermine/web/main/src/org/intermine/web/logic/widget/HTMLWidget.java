@@ -22,17 +22,11 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
  */
 public class HTMLWidget extends Widget
 {
-
     /**
      * @param config widget config
      */
     public HTMLWidget(WidgetConfig config) {
         super(config);
-    }
-
-    @Override
-    public List<String> getElementInList() {
-        return null;
     }
 
     @Override
@@ -70,5 +64,4 @@ public class HTMLWidget extends Widget
     public PathQuery getPathQuery() {
         return null;
     }
-
 }
