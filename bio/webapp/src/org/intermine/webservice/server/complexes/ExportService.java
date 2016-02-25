@@ -224,8 +224,10 @@ public class ExportService extends JSONService
                 DefaultModelledFeature feature = getFeature(primaryIdentifier, participant,
                         locatedOn);
 
+                Xref bindingXref = new DefaultXref(db, locatedOn);
+
                 // main interactor
-                DefaultInteractor bindingInteractor = getInteractor(locatedOn);
+                DefaultInteractor bindingInteractor = getInteractor(locatedOn, bindingXref);
 
                 // binding participant
                 DefaultModelledParticipant bindingParticipant
