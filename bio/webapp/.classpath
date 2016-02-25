@@ -26,6 +26,5 @@
 	<classpathentry kind="lib" path="lib/jaxb-core-2.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl-2.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/biojava-1.7.1.jar"/>
-	<classpathentry kind="lib" path="/bio-source-psi-complexes/main/lib/jami-core-1.2.0.jar"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>

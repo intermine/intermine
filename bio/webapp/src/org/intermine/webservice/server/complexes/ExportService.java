@@ -255,10 +255,10 @@ public class ExportService extends JSONService
         return interactor;
     }
 
-    private DefaultInteractor getInteractor(String primaryIdentifier) {
+    private DefaultInteractor getInteractor(String primaryIdentifier, Xref xref) {
         DefaultInteractor interactor = interactors.get(primaryIdentifier);
         if (interactor == null) {
-            interactor = new DefaultInteractor(primaryIdentifier);
+            interactor = new DefaultInteractor(primaryIdentifier, xref);
             interactors.put(primaryIdentifier, interactor);
         }
         return interactor;
