@@ -248,9 +248,10 @@ public class ExportService extends JSONService
 
     private DefaultInteractor updateInteractor(String primaryIdentifier, CvTerm type,
             DefaultOrganism organism, Xref xref) {
-        DefaultInteractor interactor = getInteractor(primaryIdentifier);
+        DefaultInteractor interactor = getInteractor(primaryIdentifier, xref);
         interactor.setInteractorType(type);
         interactor.setOrganism(organism);
+
         return interactor;
     }
 
