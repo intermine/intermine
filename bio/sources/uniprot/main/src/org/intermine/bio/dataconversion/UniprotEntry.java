@@ -48,7 +48,7 @@ public class UniprotEntry
     // map of gene designation (normally the primary name) to dbref (eg. FlyBase, FBgn001)
     // this map is used when there is more than one gene but the dbref is needed to set an
     // identifier
-    private Map<String, Dbref> geneDesignationToDbref = new HashMap<String, Dbref>();
+    private Map<String, String> geneDesignationToDbref = new HashMap<String, String>();
 
     // temporary objects that hold attribute value until the item is stored
     // usually on the next line of XML
@@ -591,7 +591,7 @@ public class UniprotEntry
     /**
      * @param geneDesignationToDbref map of gene designations to dbref
      */
-    public void setGeneDesignations(Map<String, Dbref> geneDesignationToDbref) {
+    private void setGeneDesignations(Map<String, String> geneDesignationToDbref) {
         this.geneDesignationToDbref = geneDesignationToDbref;
     }
 
@@ -777,18 +777,18 @@ public class UniprotEntry
      * the dbref entries to the correct gene.
      *
      * this is especially important when multiple identifiers are assigned, as in the case of yeast.
-     * @param geneDesignation "gene designation" for this gene.  usually the "primary" name
+     * @param identifier "gene designation" for this gene from the XML.
      */
-    public void addGeneDesignation(String geneDesignation) {
-        if (dbref != null && geneDesignationToDbref.get(geneDesignation) == null) {
-            geneDesignationToDbref.put(geneDesignation, dbref);
+    public void addGeneDesignation(String identifier) {
+        if (dbref != null) {
+            geneDesignationToDbref.put(identifier, dbref.type);
         } else {
-            LOG.debug("Could not set 'gene designation' for dbref:" + dbref);
+            LOG.debug("Could not set 'gene designation' for dbref:" + dbref.value);
         }
+
     }
 
     /**
-     *
      *  <dbReference type="Ensembl" key="23" id="FBtr0082909">
      *      <property value="FBgn0010340" type="gene designation"/>
      * </dbReference>
@@ -798,8 +798,8 @@ public class UniprotEntry
      */
     public Set<String> getGeneDesignation(String dbrefName) {
         Set<String> identifiers = new HashSet<String>();
-        for (Map.Entry<String, Dbref> entry : geneDesignationToDbref.entrySet()) {
-            if (entry.getValue().getType().equals(dbrefName)) {
+        for (Map.Entry<String, String> entry : geneDesignationToDbref.entrySet()) {
+            if (entry.getValue().equals(dbrefName)) {
                 identifiers.add(entry.getKey());
             }
         }
