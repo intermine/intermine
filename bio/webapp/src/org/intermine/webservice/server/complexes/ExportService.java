@@ -191,7 +191,7 @@ public class ExportService extends JSONService
             }
 
             // cv term
-            CvTerm db = new DefaultCvTerm("intermine");
+            CvTerm db = new DefaultCvTerm("uniprotkb");
 
             // identifier
             Xref xref = new DefaultXref(db, primaryIdentifier);
