@@ -421,7 +421,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 entry.addDbref(getAttrValue(attrs, "type"), getAttrValue(attrs, "id"));
             } else if ("property".equals(qName) && "dbReference".equals(previousQName)) {
                 String type = getAttrValue(attrs, "type");
-                if (type.equals(CONFIG.getGeneDesignation())) {
+                String geneDesignation = CONFIG.getGeneDesignation(entry.getTaxonId());
+                if (type.equals(geneDesignation)) {
                     entry.addGeneDesignation(getAttrValue(attrs, "value"));
                 } else if ("evidence".equals(type)) {
                     entry.addGOEvidence(entry.getDbref(), getAttrValue(attrs, "value"));
@@ -713,9 +714,9 @@ public class UniprotConverter extends BioDirectoryConverter
                     processDbrefs(protein, uniprotEntry);
 
                     /* genes */
-		    if(creategenes) {
-			processGene(protein, uniprotEntry);
-		    }
+                    if (creategenes) {
+                        processGene(protein, uniprotEntry);
+                    }
 
                     store(protein);
 
