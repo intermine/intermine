@@ -418,6 +418,20 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
     }
 
     /**
+     * This method tests generation when a path query has long paths.
+     *
+     * Long paths were previously causing an issue with python code generation where a long line without spaces
+     * before the 80 char break caused infinite codegen recursion.
+     */
+    public void testPathQueryCodeGenerationWithLongPaths() {
+        String queryXml = "<query name=\"\" model=\"genomic\" " +
+                "view=\"Gene.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.primaryAccession\">" +
+        "</query>";
+
+        doComparison(queryXml, "long-paths");
+    }
+
+    /**
      * This method tests when a path query has one constraint - PathConstraintBag
      * ConstraintOp.IN
      *
