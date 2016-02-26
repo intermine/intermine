@@ -126,13 +126,18 @@ public class UniprotEntry
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void addToCollection(String collectionName, String value) {
+    public List<String> getCollection(String collectionName) {
         List<String> values = collections.get(collectionName);
         if (values == null) {
             values = new ArrayList();
             collections.put(collectionName, values);
         }
-        values.add(value);
+        return values;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void addToCollection(String collectionName, String value) {
+        getCollection(collectionName).add(value);
     }
 
     /**
@@ -486,7 +491,9 @@ public class UniprotEntry
      */
     public void addCanonicalIsoform(String accession) {
         isIsoform = false;
-        addToCollection("accessions", accession);
+        addToCollection("canonicalIsoformAccessions", accession);
+        collections.get("canonicalIsoformAccessions").addAll(getIsoformSynonyms());
+        collections.remove("isoformSynonyms");
     }
 
     /**
@@ -500,7 +507,12 @@ public class UniprotEntry
      * @param accession of the isoform
      */
     public void addIsoform(String accession) {
+        List<String> synonyms = getIsoformSynonyms();
+        for (String s : synonyms) {
+            accession += ("|" + s);
+        }
         addToCollection("isoforms", accession);
+        collections.remove("isoformSynonyms");
     }
 
     /**
@@ -900,6 +912,8 @@ public class UniprotEntry
      * @return cloned uniprot entry, an isoform of original entry
      */
     public UniprotEntry createIsoformEntry(String accession) {
+        String[] bits = accession.split("\\|");
+        accession = bits[0];
         UniprotEntry entry = new UniprotEntry(accession);
         entry.setIsoform(true);
         entry.setDatasetRefId(datasetRefId);
@@ -909,7 +923,10 @@ public class UniprotEntry
         entry.setFragment(isFragment);
         entry.setUniprotAccession(uniprotAccession);
         entry.setDbrefs(dbrefs);
-        entry.setAccessions(collections.get("accessions"));
+        entry.getCollection("accessions").addAll(getCollection("accessions"));
+        for (int i = 1; i < bits.length; i++) {
+            entry.addAccession (bits[i]);
+        }
         entry.setComments(collections.get("comments"));
 //        entry.setCommentEvidence(commentEvidence);
         entry.setDomains(collections.get("domains"));
