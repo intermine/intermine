@@ -7,9 +7,14 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="/WEB-INF/imutil.tld" prefix="imutil" %>
 <%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
+<% pageContext.setAttribute("newLineChar", "\n"); %>
 
 <!-- report.jsp -->
+
 <html:xhtml/>
+
+<h1>Monkey</h1>
+
 
 <script type="text/javascript">
   <%-- apply white background as report page loads slowly and body bg will show through --%>
@@ -77,7 +82,10 @@
 
       <c:forEach var="field" items="${object.objectSummaryFields}">
         <%-- Expose useful props to the js --%>
-        <script> imSummaryFields["${field.name}"] = "${field.value}";</script>
+        <%-- <script>alert("TEST");</script> --%>
+        <%-- <script> imSummaryFields["${field.name}"] = "${field.value}";</script> --%>
+        <%-- <script> imSummaryFields["${field.name}"] = "${fn:replace(field.value, newLineChar, "; ")}";</script> --%>
+
 
           <c:if test="${tableCount %2 == 0}">
             <c:choose>
