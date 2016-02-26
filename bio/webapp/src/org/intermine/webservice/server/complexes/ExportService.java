@@ -239,7 +239,7 @@ public class ExportService extends JSONService
                 DefaultModelledFeature bindingFeature = getFeature(locatedOn,
                         bindingParticipant, primaryIdentifier);
 
-                feature.getRanges().add(range);
+                bindingFeature.getRanges().add(range);
 
                 feature.getLinkedFeatures().add(bindingFeature);
 
