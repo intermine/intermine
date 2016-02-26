@@ -170,7 +170,9 @@ public class ExportService extends JSONService
             // String function = (String) row.get(3).getField();
             String primaryIdentifier = (String) row.get(4).getField();
             Integer stoichiometry = (Integer) row.get(5).getField();
-
+            if (stoichiometry == null) {
+                stoichiometry = 1;
+            }
             String biologicalRole = (String) row.get(7).getField();
             // e.g. protein, SmallMolecule
             String moleculeType = (String) row.get(8).getField();
