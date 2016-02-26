@@ -75,14 +75,9 @@
       });
     };
 
-
   imload();
 
 </script>
-
-
-
-
 
 
 <!-- /ComplexDisplayer.jsp -->

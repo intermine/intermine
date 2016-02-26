@@ -84,7 +84,7 @@
         <%-- Expose useful props to the js --%>
         <%-- <script>alert("TEST");</script> --%>
         <%-- <script> imSummaryFields["${field.name}"] = "${field.value}";</script> --%>
-        <%-- <script> imSummaryFields["${field.name}"] = "${fn:replace(field.value, newLineChar, "; ")}";</script> --%>
+        <script> imSummaryFields["${field.name}"] = "${fn:replace(field.value, newLineChar, "; ")}";</script>
 
 
           <c:if test="${tableCount %2 == 0}">
