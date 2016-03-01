@@ -67,6 +67,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String PROTEIN = "MI:0326";
     private static final String SMALL_MOLECULE = "MI:0328";
     private static final String BINDING_SITE = "binding region";
+    private static final String DIRECT_BINDING = "direct binding";
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
     private static final String EBI = "intact";
@@ -222,9 +223,8 @@ public class PsiComplexesConverter extends BioFileConverter
                 for (Feature linkedFeature : linkedFeatures) {
                     CvTerm term = linkedFeature.getType();
                     String type = term.getShortName();
-
                     // only create interactions if we have binding information
-                    if (BINDING_SITE.equals(type)) {
+                    if (BINDING_SITE.equals(type) || DIRECT_BINDING.equals(type)) {
                         String binderRefId = processProtein(linkedFeature.getParticipant()
                                 .getInteractor());
 
