@@ -59,18 +59,13 @@
 
       jQuery('document').ready(function(){
 
-        setTimeout(function() {
-
           xlv = new xiNET(element);
           xlv.clear()
 
-          var matrixExpansion = false;
+          var matrixExpansion = true;
           jQuery.getJSON(path, function(data) {
             xlv.readMIJSON(data, matrixExpansion);
           });
-
-        }, 1000)
-
       });
       });
     };
