@@ -653,7 +653,7 @@
         displayFields="name"
         exportField="primaryIdentifier"
         typeClass="Gene"
-        columnTitle="Orthologues"/>
+        columnTitle="Orthologues"/>-->
      <bagtabledisplayer id="interactions" title="Interactions"
                         pathStrings="Gene.interactions.participant2"
                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
@@ -666,7 +666,7 @@
                                   interactions.details.role1, interactions.details.role2,
                                   interactions.participant2.primaryIdentifier,
                                   interactions.participant2.symbol,
-                                  interactions.details.experiment.name"/>-->
+                                  interactions.details.experiment.name"/>
 
 
 </widgets>
