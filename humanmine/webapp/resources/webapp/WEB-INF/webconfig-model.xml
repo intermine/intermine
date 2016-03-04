@@ -417,6 +417,13 @@
                      placement="Genomics"
                      types="Gene"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ComplexDisplayer"
+                     jspName="model/complexDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Complex"/>
+
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
                      replacesFields="interactions"
