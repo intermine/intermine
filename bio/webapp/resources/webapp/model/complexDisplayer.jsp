@@ -24,21 +24,17 @@
 
   var imload = function(){
 
-  // debugger;
-  // link = document.createElement( "link" );
-  // link.href = paths.css;
-  // link.type = "text/css";
-  // link.rel = "stylesheet";
-  // link.media = "screen,print";
-  //
-  // document.getElementsByTagName( "head" )[0].appendChild( link );
-
     var root = window.location.origin + "/${WEB_PROPERTIES['webapp.path']}";
 
     var complexIdentifier = imSummaryFields["identifier"];
     var path = root + "/service/complexes/export/" + complexIdentifier;
 
     intermine.load({
+      'css': {
+        'css': {
+          'path': paths.css.style
+        }
+      },
       'js': {
           'd3': {
             'path': paths.js.d3
@@ -48,11 +44,7 @@
             'depends': ["d3"]
           }
       }
-      // 'css': {
-      //   'css': {
-      //     'path': paths.css.css
-      //   }
-      // }
+
     }, function(err) {
 
       element = document.getElementById('complexDisplayer');
