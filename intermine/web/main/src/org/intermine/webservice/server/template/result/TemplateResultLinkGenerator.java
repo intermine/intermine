@@ -199,11 +199,6 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
 
     private String getLink(String baseUrl, TemplateQuery template, String format,
             boolean highlighted) {
-        if (template.getBagNames().size() > 0) {
-            error = "This template contains list constraints. The service for this "
-                + "special template is not implemented yet. Solution: Don't use list contraint.";
-            return null;
-        }
         String ret = baseUrl + getLinkPath(template, format, highlighted);
         return ret;
     }
