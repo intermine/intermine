@@ -31,7 +31,8 @@ public class KeySearchTrack extends TrackAbstract
      */
     public KeySearchTrack(String keyword, String username,
             String sessionIdentifier, Timestamp timestamp) {
-        this.keyword = keyword;
+        // no funny stuff here
+        this.keyword = keyword.replaceAll("[^A-Za-z0-9]"," ");
         this.userName = username;
         this.sessionIdentifier = sessionIdentifier;
         this.timestamp = timestamp;
