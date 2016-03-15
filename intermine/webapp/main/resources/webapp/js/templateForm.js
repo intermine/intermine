@@ -32,13 +32,13 @@ function clickUseBag(index) {
   if( document.getElementById("attributeId_"+index) ){
     document.getElementById("attributeId_"+index).disabled=useBag;
   }
-  if(useBag){
-    document.getElementsByClassName('constraint_'+index)[1].style.color = "#aaa";
-    document.getElementsByClassName('constraint_'+index)[2].style.color = "#000";
-  }
-  else {
-    document.getElementsByClassName('constraint_'+index)[1].style.color = "#000";
-    document.getElementsByClassName('constraint_'+index)[2].style.color = "#aaa";
+  var c1 = useBag ? "#aaa" : "#000";
+  var c2 = useBag ? "#000" : "#aaa";
+  document.getElementsByClassName('constraint_'+index)[1].style.color = c1;
+  document.getElementsByClassName('constraint_'+index)[2].style.color = c2;
+  var lbl = document.getElementsByClassName('constraint_'+index)[1].getElementsByClassName('marg');
+  if(lbl.length){
+    lbl[0].style.color = c1;
   }
 }
 
