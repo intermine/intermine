@@ -262,6 +262,16 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.ProteinStructure">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="technique"/>
+      <fieldconfig fieldExpr="resolution"/>
+    </fields>
+  </class>
+
+
   <class className="org.intermine.model.bio.Publication">
       <headerconfig>
       <titles>

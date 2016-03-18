@@ -228,11 +228,13 @@ public class ReportObject
                             fc.getLabel()
                     );
 
-                    // summary fields should go first
-                    if (fc.getShowInSummary()) {
-                        objectSummaryFields.add(rof);
-                    } else { // show in summary also, but not right now...
-                        objectOtherSummaryFields.add(rof);
+                    if (!fc.getHide()) {
+                        // summary fields should go first
+                        if (fc.getShowInSummary()) {
+                            objectSummaryFields.add(rof);
+                        } else { // show in summary also, but not right now...
+                            objectOtherSummaryFields.add(rof);
+                        }
                     }
                     fieldConfigPaths.add(fc.getFieldExpr());
                 }
