@@ -49,11 +49,11 @@ public abstract class TrackAbstract implements Track
                 if (value instanceof Integer) {
                     stm.setInt(++index, (Integer) value);
                 } else if (value instanceof Timestamp) {
-                    stm.setTimestamp(++index, (Timestamp)value);
+                    stm.setTimestamp(++index, (Timestamp) value);
                 } else {
                     stm.setString(++index, value.toString());
                 }
-            } 
+            }
             stm.executeUpdate();
         } catch (SQLException sqe) {
             LOG.error("Problem executing the statement: " + sql, sqe);
