@@ -29,6 +29,7 @@ oligo
 overlapping_EST_set
 PCR_product
 point_mutation
+primary_transcript
 primer
 rRNA
 regulatory_region
@@ -47,8 +48,21 @@ transposable_element
 transposable_element_insertion_site
 UTR
 
+region
+match
+cDNA_match
+C_gene_segment
+D_loop
+J_gene_segment
+V_gene_segment
+D_gene_segment
+long_terminal_repeat
+
 # many-to-many part_of relationships (default is many-to-one)
 exon.transcript
 intron.transcript
 UTR.transcript
 EST.overlapping_EST_set
+
+
+

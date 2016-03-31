@@ -119,12 +119,7 @@ public class PubMedGeneConverter extends BioFileConverter
         Item gene = genes.get(resolvedIdentifier);
         if (gene == null) {
             gene = createItem("Gene");
-            // TODO put this in config file
-            if ("9606".equals(taxonId)) {
-                gene.setAttribute("symbol", resolvedIdentifier);
-            } else {
-                gene.setAttribute("primaryIdentifier", resolvedIdentifier);
-            }
+            gene.setAttribute("primaryIdentifier", resolvedIdentifier);
             gene.setReference("organism", getOrganism(taxonId));
             genes.put(resolvedIdentifier, gene);
         }
