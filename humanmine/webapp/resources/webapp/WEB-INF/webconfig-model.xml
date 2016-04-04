@@ -186,11 +186,21 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Interactor">
+
+  <class className="org.intermine.model.bio.Interaction">
     <fields>
-      <fieldconfig fieldExpr="participant.primaryIdentifier" />
-      <fieldconfig fieldExpr="stoichiometry" />
-      <fieldconfig fieldExpr="biologicalRole" />
+      <fieldconfig fieldExpr="participant1.primaryIdentifier"/>
+      <fieldconfig fieldExpr="participant2.primaryIdentifier"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.InteractionDetail">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="role1"/>
+      <fieldconfig fieldExpr="role2"/>
+      <fieldconfig fieldExpr="relationshipType"/>
     </fields>
   </class>
 
@@ -286,6 +296,16 @@
       <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
+
+  <class className="org.intermine.model.bio.ProteinStructure">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="technique"/>
+      <fieldconfig fieldExpr="resolution"/>
+    </fields>
+  </class>
+
 
   <class className="org.intermine.model.bio.Publication">
       <headerconfig>
@@ -425,6 +445,13 @@
                      replacesFields="alleles"
                      placement="Genomics"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ComplexDisplayer"
+                     jspName="model/complexDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Complex"/>
+
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
@@ -656,7 +683,6 @@
         exportField="primaryIdentifier"
         typeClass="Gene"
         columnTitle="Orthologues"/>-->
-
      <bagtabledisplayer id="interactions" title="Interactions"
                         pathStrings="Gene.interactions.participant2"
                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
@@ -670,6 +696,7 @@
                                   interactions.participant2.primaryIdentifier,
                                   interactions.participant2.symbol,
                                   interactions.details.experiment.name"/>
+
 
 </widgets>
 </webconfig>

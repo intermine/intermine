@@ -28,6 +28,18 @@ function clickUseBag(index) {
 
   document.getElementById("bag("+index+")").disabled=!useBag;
   document.getElementById("bagOp("+index+")").disabled=!useBag;
+ 
+  if( document.getElementById("attributeId_"+index) ){
+    document.getElementById("attributeId_"+index).disabled=useBag;
+  }
+  var c1 = useBag ? "#aaa" : "#000";
+  var c2 = useBag ? "#000" : "#aaa";
+  document.getElementsByClassName('constraint_'+index)[1].style.color = c1;
+  document.getElementsByClassName('constraint_'+index)[2].style.color = c2;
+  var lbl = document.getElementsByClassName('constraint_'+index)[1].getElementsByClassName('marg');
+  if(lbl.length){
+    lbl[0].style.color = c1;
+  }
 }
 
 function forwardToLinks() {

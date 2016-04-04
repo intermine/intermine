@@ -60,6 +60,7 @@
         <xsd:attribute name="fieldExpr" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="displayer" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="escapeXml" type="xsd:boolean"></xsd:attribute>
+        <xsd:attribute name="hide" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="showInSummary" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="outerInSummary" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="showInInlineCollection" type="xsd:boolean"></xsd:attribute>
