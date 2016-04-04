@@ -16,9 +16,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -33,10 +34,8 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
-import org.xml.sax.SAXException;
 
 /**
  * Implement methods to access data an enrichment calculation needs to be provided with.
