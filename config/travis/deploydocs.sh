@@ -30,7 +30,7 @@ cd ../../../imbuild/javadoc
 ant clean
 ant
 
-cp build/javadoc ../../../
+cp -r build/javadoc ../../../
 
 git add -A .
 
