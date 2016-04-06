@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### This script is used by travis to automatically deploy new
-### master branch pushes to gh-pages
+### master branch pushes to gh-pages. Thank http://www.steveklabnik.com/automatically_update_github_pages_with_travis_example/ for getting there.
 
 
 set -o errexit -o nounset
@@ -30,10 +30,11 @@ cd ../../../imbuild/javadoc
 ant clean
 ant
 
+#copy to the root
 cp -r build/javadoc/* ../../
 
+#commit
 cd ../../
 git add -A .
-
 git commit -m "rebuild pages at ${rev}"
 git push -q upstream HEAD:gh-pages
