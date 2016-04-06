@@ -190,19 +190,33 @@ public class TrackerDelegateTest extends InterMineAPITestCase
 //        assertEquals(20, trackerDelegate.getUserLogin().size());
 //    }
 //
-//    public void testTrackKeywordSearch() throws SQLException, InterruptedException {
-//
-//        searchActivity();
-//
-//        String sql = "SELECT COUNT(*) FROM searchtrack";
-//        Statement stm = conn.createStatement();
-//        ResultSet rs = stm.executeQuery(sql);
-//        rs.next();
-//        assertEquals(20, rs.getInt(1));
-//        rs.close();
-//        stm.close();
-//
-//        assertEquals(20, trackerDelegate.getKeywordSearches().size());
-//    }
+
+    public void testTrackKeywordSearch() throws SQLException, InterruptedException {
+
+        searchActivity();
+
+        String sql = "SELECT COUNT(*) FROM searchtrack";
+        Statement stm = conn.createStatement();
+        ResultSet rs = stm.executeQuery(sql);
+        rs.next();
+        assertEquals(20, rs.getInt(1));
+        rs.close();
+        stm.close();
+
+        assertEquals(20, trackerDelegate.getKeywordSearches().size());
+    }
+
+    public void testSecurityKeywordSearch() throws SQLException, InterruptedException {
+        String keySearch = "select * from searchtrack";
+        trackerDelegate.trackKeywordSearch(keySearch, superUser, "session");
+        Thread.sleep(3000);
+        Statement stm = conn.createStatement();
+        String query = "SELECT * FROM searchtrack";
+        ResultSet rs = stm.executeQuery(query);
+        rs.next();
+        assertEquals(keySearch, rs.getString("keyword"));
+        rs.close();
+        stm.close();
+    }
 }
 
