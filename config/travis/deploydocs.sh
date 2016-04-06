@@ -32,7 +32,7 @@ ant
 
 cp -r build/javadoc ../../../
 
-cd ../../../
+cd ../../
 git add -A .
 
 git commit -m "rebuild pages at ${rev}"
