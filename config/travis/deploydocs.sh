@@ -19,7 +19,8 @@ git reset upstream/gh-pages
 touch .
 touch .nojekyll
 
-cd bio/webapp
+cd bio/test-all/dbmodel
+ant build-db
 ant javadoc
 
 git add -A .
