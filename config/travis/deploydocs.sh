@@ -13,7 +13,7 @@ git config user.name "Travis CI"
 git config user.email "travis@fakemail.com"
 
 git remote add upstream "https://$GH_TOKEN@github.com/$TRAVIS_REPO_SLUG.git"
-git fetch --depth=1 upstream/dev
+git fetch --depth=1 upstream dev
 git reset upstream/gh-pages
 
 touch .
