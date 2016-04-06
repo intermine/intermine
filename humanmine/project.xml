@@ -6,27 +6,14 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
 
   <sources>
-    <source name="ensembl-human" type="ensembl-core">
-      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/core/current" />
-      <property name="src.data.dir.includes" value="9606.xml" />
-    </source>
-    <source name="ensembl-human-chr-fasta" type="fasta">
-      <property name="fasta.taxonId" value="9606" />
-      <property name="fasta.dataSetTitle" value="Ensembl human chromosome sequence" />
-      <property name="fasta.dataSourceName" value="Ensembl" />
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
-      <property name="fasta.classAttribute" value="primaryIdentifier" />
-      <property name="fasta.includes" value="*.fa" />
-      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/core/current/fasta" />
-    </source>
-    <source name="hgnc" type="hgnc">
-      <property name="src.data.dir" location="/micklem/data/human/hgnc/current" />
-    </source>
     <source name="ncbi-gene" type="ncbi-gene">
       <property name="src.data.dir" location="/micklem/data/ncbi/current" />
       <property name="organisms" value="9606" />
     </source>
-    <source name="ncbi-summaries" type="ncbi-summaries" dump="true">
+    <source name="hgnc" type="hgnc" dump="true">
+      <property name="src.data.dir" location="/micklem/data/human/hgnc/current" />
+    </source>
+    <source name="ncbi-summaries" type="ncbi-summaries">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>
     <source name="pubmed-gene" type="pubmed-gene">
@@ -37,22 +24,7 @@
     <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
     </source>
-<!--
-    <source name="ensembl-mouse" type="ensembl-core">
-      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current" />
-      <property name="src.data.dir.includes" value="10090_mgi_pid.xml" />
-    </source>
--->
-    <source name="ensembl-mouse-chr-fasta" type="fasta">
-      <property name="fasta.taxonId" value="10090" />
-      <property name="fasta.dataSetTitle" value="Ensembl mouse chromosome sequence" />
-      <property name="fasta.dataSourceName" value="Ensembl" />
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
-      <property name="fasta.classAttribute" value="primaryIdentifier" />
-      <property name="fasta.includes" value="*.fa" />
-      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current/fasta" />
-    </source>
-    <source name="mgi-alleles" type="mgi-alleles" dump="true">
+    <source name="mgi-alleles" type="mgi-alleles">
       <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/current" />
     </source>
     <source name="rgd-identifiers" type="rgd-identifiers">
@@ -61,9 +33,9 @@
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo" />
     </source>
- <source name="arrayexpress-atlas" type="arrayexpress-atlas">
-   <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62-wrong-p-value/" />
- </source>
+    <source name="arrayexpress-atlas" type="arrayexpress-atlas">
+      <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62-wrong-p-value/" />
+    </source>
     <source name="protein-atlas" type="protein-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
     </source>
@@ -126,23 +98,18 @@
     <source name="hpo-annotation" type="hpo-annotation" dump="true">
       <property name="src.data.dir" location="/micklem/data/hpo/current" />
     </source>
-
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="9606"/>
     </source>
-
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
-      <property name="intact.organisms" value="9606 10090" />
+      <property name="intact.organisms" value="9606" />
     </source>
-
     <source name="psi-complexes" type="psi-complexes">
       <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/human"/>
       <property name="complexes.source" value="uniprotkb"/>
     </source>
-
-
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current" />
       <property name="src.data.dir.includes" value="*psi25.xml" />
@@ -161,10 +128,35 @@
         <property name="panther.organisms" value="9606"/>
         <property name="panther.homologues" value="7227 10090 6239 10116 7955 4932"/>
     </source>
-    <source name="huge-gwas" type="huge-gwas">
+    <source name="huge-gwas" type="huge-gwas" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
     </source>
-    <source name="update-publications" type="update-publications">
+
+    <source name="ncbi-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="9606"/>
+      <property name="fasta.dataSetTitle" value="NCBI fasta data set for Homo sapiens"/>
+      <property name="fasta.dataSourceName" value="NCBI"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="src.data.dir" location="/micklem/data/human/fasta/current"/>
+      <property name="fasta.includes" value="*.fa"/>
+    </source>
+
+    <source name="ncbi-gff" type="ncbi-gff">
+      <property name="gff3.taxonId" value="9606"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.dataSourceName" value="NCBI"/>
+      <property name="gff3.dataSetTitle" value="NCBI gff3 data set"/>
+      <property name="src.data.dir" location="/micklem/data/human/gff/current"/>
+    </source>
+
+    <source name="uberon" type="uberon">
+      <property name="src.data.file" location="/micklem/data/uberon/current/ext.obo" />
+    </source>
+
+    <source name="update-publications" type="update-publications" dump="true">
       <property name="src.data.file" location="build/publications.xml" />
       <property name="loadFullRecord" value="true"/>
     </source>
@@ -178,10 +170,9 @@
   </sources>
 
   <post-processing>
-    <post-process name="create-references" />
-    <post-process name="transfer-sequences" dump="true" />
-
-    <!-- this runs the postprocessing steps in all sources -->
+    <post-process name="create-references" dump="true" />
+    <post-process name="create-chromosome-locations-and-lengths"/>
+    <post-process name="transfer-sequences"/>
     <post-process name="do-sources" />
     <post-process name="create-gene-flanking-features" />
     <post-process name="create-bioseg-location-index" />

@@ -32,23 +32,6 @@
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="7_2" class="Protein">
-<attribute name="isFragment" value="false"/>
-<attribute name="isUniprotCanonical" value="false"/>
-<attribute name="name" value="eve's name"/>
-<attribute name="primaryAccession" value="Q1234-2"/>
-<attribute name="primaryIdentifier" value="EVE_DROME-2"/>
-<attribute name="secondaryIdentifier" value="Q1234-2"/>
-<attribute name="uniprotAccession" value="Q1234"/>
-<attribute name="uniprotName" value="EVE_DROME"/>
-<reference name="canonicalProtein" ref_id="7_1"/>
-<reference name="organism" ref_id="10_1"/>
-<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="13_1"/><reference ref_id="13_2"/></collection>
-<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
-<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
-</item>
 <item id="3_1" class="Publication">
 <attribute name="pubMedId" value="222222"/>
 </item>
@@ -134,13 +117,13 @@
 <attribute name="name" value="RefSeq"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="4_6" class="Comment">
+<attribute name="description" value="MIM:137800; Glioma 1; GLM1; Gliomas are benign or malignant central nervous system neoplasms derived from glial cells. They comprise astrocytomas and glioblastoma multiforme that are derived from astrocytes, oligodendrogliomas derived from oligodendrocytes and ependymomas derived from ependymocytes. Disease susceptibility may be associated with variations affecting the gene represented in this entry. Polymorphic PPARG alleles have been found to be significantly over-represented among a cohort of American patients with sporadic glioblastoma multiforme suggesting a possible contribution to disease susceptibility."/>
+<attribute name="type" value="disease"/>
+</item>
 <item id="4_2" class="Comment">
 <attribute name="description" value="I'm a duplicate!"/>
 <attribute name="type" value="similarity"/>
-</item>
-<item id="4_4" class="Comment">
-<attribute name="description" value="Disease susceptibility may be associated with variations affecting the gene represented in this entry. MIM:601665"/>
-<attribute name="type" value="disease"/>
 </item>
 <item id="16_4" class="GOAnnotation">
 <reference name="ontologyTerm" ref_id="17_1"/>
@@ -155,6 +138,27 @@
 <attribute name="name" value="signal peptide"/>
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_4" class="Comment">
+<attribute name="description" value="MIM:601665; Obesity; OBESITY; A condition characterized by an increase of body weight beyond the limitation of skeletal and physical requirements, as the result of excessive accumulation of body fat. Disease susceptibility may be associated with variations affecting the gene represented in this entry."/>
+<attribute name="type" value="disease"/>
+</item>
+<item id="7_2" class="Protein">
+<attribute name="isFragment" value="false"/>
+<attribute name="isUniprotCanonical" value="false"/>
+<attribute name="name" value="eve's name"/>
+<attribute name="primaryAccession" value="Q1234-2"/>
+<attribute name="primaryIdentifier" value="EVE_DROME-2"/>
+<attribute name="secondaryIdentifier" value="Q1234-2"/>
+<attribute name="uniprotAccession" value="Q1234"/>
+<attribute name="uniprotName" value="EVE_DROME"/>
+<reference name="canonicalProtein" ref_id="7_1"/>
+<reference name="organism" ref_id="10_1"/>
+<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="13_1"/><reference ref_id="13_2"/></collection>
+<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
 <item id="19_9" class="Synonym">
 <attribute name="value" value="alternativeName - short"/>
@@ -229,7 +233,7 @@
 <attribute name="uniprotName" value="EVE_DROME"/>
 <reference name="organism" ref_id="10_1"/>
 <reference name="sequence" ref_id="9_1"/>
-<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
+<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="ecNumbers"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/></collection>
 <collection name="genes"><reference ref_id="13_1"/><reference ref_id="13_2"/></collection>
