@@ -13,8 +13,10 @@ git config user.name "Travis CI"
 git config user.email "travis@fakemail.com"
 
 git remote add upstream "https://$GH_TOKEN@github.com/$TRAVIS_REPO_SLUG.git"
-git fetch --depth=1 upstream dev
+git fetch --depth=1 upstream
+git reset upstream/gh-pages
 
+touch .
 #stops gh-pages trying to build as jekyll
 touch .nojekyll
 
@@ -28,7 +30,6 @@ cd ../../../imbuild/javadoc
 ant clean
 ant
 
-#move the docs to the root
 cp build/javadoc ../../../
 
 git add -A .
