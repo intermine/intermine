@@ -20,8 +20,12 @@ touch .
 touch .nojekyll
 
 cd bio/test-all/dbmodel
+ant clean-all
 ant build-db
-ant javadoc
+
+cd ../../../imbuild/javadoc
+ant clean
+ant
 
 git add -A .
 
