@@ -20,4 +20,5 @@ cp config/ci-bio.properties $BIO_PROPS
 sed -i.bak -e "$SED_SCRIPT" $BIO_PROPS
 
 echo "#--- creating $HUMANMINE_PROPS"
-touch $HUMANMINE_PROPS
+cp config/ci.properties   $TEST_PROPS
+sed -i.bak -e "$SED_SCRIPT" $HUMANMINE_PROPS
