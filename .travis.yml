@@ -32,4 +32,4 @@ notifications:
     on_success: change
     on_error: change
 after_success:
-- test $TRAVIS_BRANCH == "docautodeploy" && bash deploydocs.sh
+- test $TRAVIS_BRANCH == "docautodeploy" && bash config/travis/deploydocs.sh

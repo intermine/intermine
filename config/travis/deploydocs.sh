@@ -19,7 +19,7 @@ git reset upstream/gh-pages
 touch .
 touch .nojekyll
 
-cd flymine/webapp
+cd humanmine/webapp
 ant javadoc
 
 git add -A .
