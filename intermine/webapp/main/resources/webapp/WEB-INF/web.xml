@@ -1104,7 +1104,7 @@ to will also be returned.
     <servlet-name>ws-version</servlet-name>
     <url-pattern>/service/version/*</url-pattern>
     <metadata>
-        <name>Web-Service Version</name>
+        <name>Version</name>
         <method type="GET" authenticationRequired="false">
            <summary>Get the Web-Service Version.</summary>
            <description>
@@ -1122,6 +1122,18 @@ to will also be returned.
                Get the release version of the data-warehouse. This is a string that is changed
                each time data is added or removed from the server. Thus this number is meant
                to reflect the contents rather than the interface of this set of services.
+           </description>
+           <returns>
+             <format>text</format>
+             <format key="version">json</format>
+           </returns>
+       </method>
+       <method type="GET" authenticationRequired="false" slug="/intermine">
+           <summary>Get the Data-Warehouse Release Version.</summary>
+           <description>
+               Get the InterMine version number. This number represents the version of InterMine
+               code currently running. See https://github.com/intermine/intermine/releases for
+               full details on release dates and versions.
            </description>
            <returns>
              <format>text</format>
@@ -3020,36 +3032,6 @@ The different token types are:
     </metadata>
    </servlet-mapping>
 
-<!-- new in version 19 -->
-
-  <servlet>
-    <servlet-name>ws-intermine-version</servlet-name>
-    <servlet-class>org.intermine.webservice.server.InterMineVersionServlet</servlet-class>
-    <init-param>
-       <param-name>debug</param-name>
-       <param-value>true</param-value>
-    </init-param>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>ws-intermine-version</servlet-name>
-    <url-pattern>/service/version/intermine/*</url-pattern>
-    <metadata>
-        <name>Web-Service InterMine Version</name>
-        <method type="GET" authenticationRequired="false">
-           <summary>Get the InterMine Version.</summary>
-           <description>
-               Get the InterMine version number. This number represents the version of InterMine
-               code currently running. See https://github.com/intermine/intermine/releases for
-               full details on release dates and versions.
-           </description>
-           <returns>
-             <format>text</format>
-             <format key="version">json</format>
-           </returns>
-       </method>
-    </metadata>
-  </servlet-mapping>
 
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
