@@ -1,0 +1,80 @@
+
+<project name="intermine-javadoc" default="javadoc" basedir=".">
+
+  <description>create combined javadoc for intermine public apis</description>
+  <import file="../library.xml"/>
+
+  <target name="-javadoc-build" depends="-init-javadoc">
+    <javadoc destdir="${build.javadoc.dir}" source="${javac.source}" notree="${javadoc.notree}"
+            use="${javadoc.use}" nonavbar="${javadoc.nonavbar}" noindex="${javadoc.noindex}"
+            splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}"
+            windowtitle="${javadoc.windowtitle}" private="${javadoc.private}"
+            additionalparam="${javadoc.additionalparam}" failonerror="false" breakiterator="yes">
+      <classpath refid="project.compile.path"/>
+      <sourcepath>
+        <pathelement location="../../intermine/webtasks/main/src"/>
+        <pathelement location="../../intermine/webapp/main/src"/>
+        <pathelement location="../../intermine/webservice/client/main/src"/>
+        <pathelement location="../../intermine/web/main/src"/>
+        <pathelement location="../../intermine/jbrowse-endpoint/main/src"/>
+        <pathelement location="../../intermine/model/main/src"/>
+        <pathelement location="../../intermine/web/model/userprofile/build/main/src"/>
+        <pathelement location="../../intermine/pathquery/main/src"/>
+        <pathelement location="../../intermine/api/main/src"/>
+        <pathelement location="../../intermine/objectstore/main/src"/>
+        <pathelement location="../../intermine/integrate/main/src"/>
+        <pathelement location="../../intermine/integrate/model/fulldata/build/main/src"/>
+        <pathelement location="../../bio/postprocess/main/src"/>
+        <pathelement location="../../bio/webapp/src"/>
+        <pathelement location="../../bio/tools/main/src"/>
+        <pathelement location="../../bio/core/main/src"/>
+        <pathelement location="../../bio/sources/biogrid/main/src"/>
+        <pathelement location="../../bio/sources/chado-db/main/src"/>
+        <pathelement location="../../bio/sources/ensembl/ensembl-compara/main/src"/>
+        <pathelement location="../../bio/sources/ensembl/ensembl-core/main/src"/>
+        <pathelement location="../../bio/sources/ensembl/ensembl-gwas-db/main/src"/>
+        <pathelement location="../../bio/sources/ensembl/ensembl-snp/main/src"/>
+        <pathelement location="../../bio/sources/ensembl/ensembl-snp-db/main/src"/>
+        <pathelement location="../../bio/sources/entrez-organism/main/src"/>
+        <pathelement location="../../bio/sources/fasta/main/src"/>
+        <pathelement location="../../bio/sources/go-annotation/main/src"/>
+        <pathelement location="../../bio/sources/psi/main/src"/>
+        <pathelement location="../../bio/sources/homologene/main/src"/>
+        <pathelement location="../../bio/sources/interpro/main/src"/>
+        <pathelement location="../../bio/sources/interpro-go/main/src"/>
+        <pathelement location="../../bio/sources/kegg-pathway/main/src"/>
+        <pathelement location="../../bio/sources/kegg-orthologues/main/src"/>
+        <pathelement location="../../bio/sources/mammalian-phenotype-ontology/main/src"/>
+        <pathelement location="../../bio/sources/ncbi-gff/main/src"/>
+        <pathelement location="../../bio/sources/orthodb/main/src"/>
+        <pathelement location="../../bio/sources/panther/main/src"/>
+        <pathelement location="../../bio/sources/pdb/main/src"/>
+        <pathelement location="../../bio/sources/protein2ipr/main/src"/>
+
+        <pathelement location="../../bio/sources/psi/main/src"/>
+        <pathelement location="../../bio/sources/psi-complexes/main/src"/>
+        <pathelement location="../../bio/sources/pubmed-gene/main/src"/>
+        <pathelement location="../../bio/sources/reactome/main/src"/>
+        <pathelement location="../../bio/sources/so/main/src"/>
+        <pathelement location="../../bio/sources/treefam/main/src"/>
+
+        <pathelement location="../../bio/sources/uberon/main/src"/>
+        <pathelement location="../../bio/sources/uniprot-keywords/main/src"/>
+        <pathelement location="../../bio/sources/uniprot/main/src"/>
+        <pathelement location="../../bio/sources/update-publications/main/src"/>
+        <pathelement location="../../bio/sources/vcf/main/src"/>
+
+
+        <pathelement location="../../flymine/webapp/src"/>
+        <pathelement location="../../flymine/postprocess/main/src"/>
+        <pathelement location="../../humanmine/webapp/src"/>
+        <pathelement location="../../humanmine/postprocess/main/src"/>
+        <pathelement location="../../testmodel/webapp/main/src"/>
+
+        <pathelement location="../../imbuild/im-ant-tasks/src"/>
+      </sourcepath>
+    </javadoc>
+  </target>
+
+</project>
+

@@ -3020,6 +3020,37 @@ The different token types are:
     </metadata>
    </servlet-mapping>
 
+<!-- new in version 19 -->
+
+  <servlet>
+    <servlet-name>ws-intermine-version</servlet-name>
+    <servlet-class>org.intermine.webservice.server.InterMineVersionServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-intermine-version</servlet-name>
+    <url-pattern>/service/version/intermine/*</url-pattern>
+    <metadata>
+        <name>Web-Service InterMine Version</name>
+        <method type="GET" authenticationRequired="false">
+           <summary>Get the InterMine Version.</summary>
+           <description>
+               Get the InterMine version number. This number represents the version of InterMine
+               code currently running. See https://github.com/intermine/intermine/releases for
+               full details on release dates and versions.
+           </description>
+           <returns>
+             <format>text</format>
+             <format key="version">json</format>
+           </returns>
+       </method>
+    </metadata>
+  </servlet-mapping>
+
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
@@ -3151,10 +3182,10 @@ The different token types are:
     <servlet-name>ws-model</servlet-name>
   </filter-mapping>
  <filter-mapping>
-  	<filter-name>ReleaseEtags</filter-name>
-  	<servlet-name>ws-model</servlet-name>
-  	<dispatcher>REQUEST</dispatcher>
-  	<dispatcher>FORWARD</dispatcher>
+    <filter-name>ReleaseEtags</filter-name>
+    <servlet-name>ws-model</servlet-name>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
 
   </filter-mapping>
 

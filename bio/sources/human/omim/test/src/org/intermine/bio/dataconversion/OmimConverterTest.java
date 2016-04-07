@@ -45,10 +45,6 @@ public class OmimConverterTest extends ItemsTestCase
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         converter = new OmimConverter(itemWriter, model);
-
-        converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("9606", "PEX6", new HashSet<String>(Arrays.asList("609300", "OMIM:609300", "MIM:OMIM:609300")));
-        converter.rslv.addResolverEntry("9606", "PEX6", new HashSet<String>(Arrays.asList("601498", "OMIM:601498", "MIM:OMIM:601498")));
         super.setUp();
     }
 
