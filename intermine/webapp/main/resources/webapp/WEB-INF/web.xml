@@ -1129,7 +1129,7 @@ to will also be returned.
            </returns>
        </method>
        <method type="GET" authenticationRequired="false" slug="/intermine">
-           <summary>Get the Data-Warehouse Release Version.</summary>
+           <summary>Get the InterMine Release Version.</summary>
            <description>
                Get the InterMine version number. This number represents the version of InterMine
                code currently running. See https://github.com/intermine/intermine/releases for
