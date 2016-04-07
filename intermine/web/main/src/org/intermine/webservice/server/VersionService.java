@@ -30,7 +30,6 @@ import org.intermine.webservice.server.output.HTMLTableFormatter;
  */
 public class VersionService extends JSONService
 {
-    private String header;
     private String versionType;
 
     /**
@@ -49,13 +48,10 @@ public class VersionService extends JSONService
 
         if (versionType.startsWith("release")) {
             addResultValue(webProperties.getProperty("project.releaseVersion"), false);
-            header = "Release";
         } else if (versionType.startsWith("intermine")) {
             addResultValue(Constants.INTERMINE_VERSION, false);
-            header = "InterMine version";
         } else {
             addResultValue(Constants.WEB_SERVICE_VERSION, false);
-            header = "API Version";
         }
     }
 
@@ -70,6 +66,14 @@ public class VersionService extends JSONService
         Map<String, Object> attributes = super.getHeaderAttributes();
         if (Format.HTML == getFormat()) {
             List<String> headers = new ArrayList<String>();
+            String header = null;
+            if (versionType.startsWith("release")) {
+                header = "Release";
+            } else if (versionType.startsWith("intermine")) {
+                header = "InterMine version";
+            } else {
+                header = "API Version";
+            }
             headers.add(header);
             attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS, headers);
         }
