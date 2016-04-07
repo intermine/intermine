@@ -70,7 +70,7 @@ public class VersionService extends JSONService
             if (versionType.startsWith("release")) {
                 header = "Release";
             } else if (versionType.startsWith("intermine")) {
-                header = "InterMine version";
+                header = "InterMine release";
             } else {
                 header = "API Version";
             }
