@@ -43,6 +43,7 @@ public class WidgetLdr
 
     protected ObjectStore os;
     protected InterMineBag bag;
+    protected String ids;
     protected String filter;
     protected QueryClass startClass;
     private static final Logger LOG = Logger.getLogger(WidgetLdr.class);
@@ -55,11 +56,14 @@ public class WidgetLdr
      * @param os the object store
      * @param filter the filter
      * @param config The description of the widget.
+     * @param ids intermine IDs to analyse. required if bag is null
      */
-    public WidgetLdr(InterMineBag bag, ObjectStore os, String filter, WidgetConfig config) {
+    public WidgetLdr(InterMineBag bag, ObjectStore os, String filter, WidgetConfig config,
+        String ids) {
         this.bag = bag;
         this.os = os;
         this.filter = filter;
+        this.ids = ids;
         try {
             startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
                                         + config.getStartClass()));

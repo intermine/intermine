@@ -32,12 +32,15 @@ public class TableWidget extends Widget
     /**
      * @param config configuration for this widget
      * @param interMineBag bag for this widget
+     * @param ids intermine IDs, required if bag is NULL
      * @param os objecstore
      */
-    public TableWidget(TableWidgetConfig config, InterMineBag interMineBag, ObjectStore os) {
+    public TableWidget(TableWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
+        String ids) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
+        this.ids = ids;
     }
 
     /**
@@ -46,7 +49,7 @@ public class TableWidget extends Widget
     public void process() {
         checkNotProcessed();
         try {
-            bagWidgLdr = new TableWidgetLdr(config, bag, os);
+            bagWidgLdr = new TableWidgetLdr(config, bag, os, ids);
             notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block

@@ -161,12 +161,31 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Interaction">
+    <fields>
+      <fieldconfig fieldExpr="participant1.primaryIdentifier" />
+      <fieldconfig fieldExpr="participant2.primaryIdentifier" />
+    </fields>
+  </class>
+
+
+  <class className="org.intermine.model.bio.InteractionDetail">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="relationshipType"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="role1"/>
+      <fieldconfig fieldExpr="role2"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.InteractionTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
+
 
   <class className="org.intermine.model.bio.Interaction">
     <fields>

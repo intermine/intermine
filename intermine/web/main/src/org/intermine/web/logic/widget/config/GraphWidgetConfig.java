@@ -221,8 +221,9 @@ public class GraphWidgetConfig extends WidgetConfig
             InterMineBag imBag,
             InterMineBag populationBag,
             ObjectStore os,
-            WidgetOptions options) {
-        return new GraphWidget(this, imBag, os, options);
+            WidgetOptions options,
+            String ids, String populationIds) {
+        return new GraphWidget(this, imBag, os, options, ids);
     }
 
 }
