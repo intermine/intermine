@@ -373,7 +373,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
         jspName="model/esynDisplayer.jsp"
         replacesFields=""
-        placement="summary"
+        placement="Interactions"
         types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
