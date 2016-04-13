@@ -364,6 +364,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 attName = "value";
             } else if ("dbReference".equals(qName) && "organism".equals(previousQName)) {
                 entry.setTaxonId(parseTaxonId(getAttrValue(attrs, "id")));
+            } else if ("name".equals(qName)  && "isoform".equals(previousQName)) {
+                attName = "isoformname";
             } else if ("id".equals(qName)  && "isoform".equals(previousQName)) {
                 // TODO only use the first isoform
                 // how does xml parser work for multiple isoforms?
@@ -558,6 +560,10 @@ public class UniprotConverter extends BioDirectoryConverter
                 } else {
                     // second <id> value is ignored and added as a synonym
                     entry.addIsoformSynonym(accession);
+                }
+            } else if ("name".equals(qName) && "isoform".equals(previousQName)) {
+                if (!attValue.toString().matches("[0-9]+")) {
+                    entry.addIsoformSynonym(attValue.toString());
                 }
             } else if ("entry".equals(qName)) {
                 try {
@@ -884,7 +890,7 @@ public class UniprotConverter extends BioDirectoryConverter
             }
 
             // isoforms with extra identifiers
-            List<String> isoformSynonyms = uniprotEntry.getIsoformSynonyms();
+            List<String> isoformSynonyms = uniprotEntry.getCollection("canonicalIsoformAccessions");
             if (isoformSynonyms != null && !isoformSynonyms.isEmpty()) {
                 for (String identifier : isoformSynonyms) {
                     createSynonym(proteinRefId, identifier, true);
