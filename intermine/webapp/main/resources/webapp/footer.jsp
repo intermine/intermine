@@ -37,10 +37,10 @@
   <div class="funding-footer footer">
       <!-- funding -->
       <p><fmt:message key="funding" /></p>
-      <p>
+      <div class="cite">
         <strong>Cite us:</strong>
         <cite>${WEB_PROPERTIES['project.citation']}</cite>
-      </p>
+      </div>
   </div>
   <div class="android-footer footer">
     <div>

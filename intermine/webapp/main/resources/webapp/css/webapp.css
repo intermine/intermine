@@ -1699,6 +1699,9 @@ div.bagDetails-page div.widget { width:460px; height:auto; max-height:none !impo
   margin-top: 25px;
 }
 
+.funding-footer .cite { text-align:justify; }
+
+
 div.bottom-footer { margin:0 auto; width:940px; margin-top:20px; }
 div.bottom-footer a.cambridge-logo { float:right; }
 
