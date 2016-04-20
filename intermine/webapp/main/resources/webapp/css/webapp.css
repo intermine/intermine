@@ -1669,6 +1669,39 @@ div.bagDetails-page div.widget { width:460px; height:auto; max-height:none !impo
     margin:0 10px 20px 10px; text-align:left; border-width:1px; border-style:solid; }
 
 /* footer links, logo and stuff */
+
+#promo-footer {
+  background: #eee;
+  margin-bottom: 1em;
+}
+#promo-footer:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+#promo-footer .footer {
+  width: 60%;
+  float: left;
+  clear: right;
+  box-sizing: border-box;
+  padding: 0.5em;
+}
+.funding-footer p {
+  margin: 0.5em;
+}
+#promo-footer .powered-footer, #promo-footer .android-footer {
+  width: 20%
+}
+.android-footer img.googleplay {
+  max-width: 100%;
+}
+.powered-footer {
+  margin-top: 25px;
+}
+
+.funding-footer .cite { text-align:justify; }
+
+
 div.bottom-footer { margin:0 auto; width:940px; margin-top:20px; }
 div.bottom-footer a.cambridge-logo { float:right; }
 
