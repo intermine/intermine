@@ -2067,7 +2067,7 @@ public final class SqlGenerator
             queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
             buffer.append(", ");
             queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
-            buffer.append(")");
+            buffer.append(", '[]')");
         } else {
             if ((ConstraintOp.CONTAINS == c.getOp())
                     || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
