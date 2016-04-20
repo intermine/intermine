@@ -136,7 +136,7 @@
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
     <source name="uberon" type="uberon">
-      <property name="src.data.file" location="/micklem/data/uberon/current/uberon.obo"/>
+      <property name="src.data.file" location="/micklem/data/uberon/current/ext.obo"/>
     </source>
 
     <source name="go" type="go" dump="true">
