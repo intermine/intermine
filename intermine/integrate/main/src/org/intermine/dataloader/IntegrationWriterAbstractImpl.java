@@ -138,7 +138,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @return a Set of InterMineObjects
      * @throws ObjectStoreException if an error occurs
      */
-    public Set<InterMineObject> getEquivalentObjects(InterMineObject obj,
+    public Collection<InterMineObject> getEquivalentObjects(InterMineObject obj,
             Source source) throws ObjectStoreException {
         lastSource = source;
         if (obj == null) {

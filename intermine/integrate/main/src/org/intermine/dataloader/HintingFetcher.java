@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
@@ -115,7 +116,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
      * {@inheritDoc}
      */
     @Override
-    public Set<InterMineObject> queryEquivalentObjects(InterMineObject obj, Source source)
+    public Collection<InterMineObject> queryEquivalentObjects(InterMineObject obj, Source source)
         throws ObjectStoreException {
         Class<? extends InterMineObject> summaryName = obj.getClass();
         Integer soFarCallCount = summaryCallCounts.get(summaryName);
