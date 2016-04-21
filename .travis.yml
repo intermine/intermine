@@ -1,34 +1,35 @@
-language: python # needed to get access to virtualenv
+language: python
 addons:
-    postgresql: 9.2 # minimum supported postgres version
+  postgresql: 9.2
 env:
-    global:
-        - TESTMODEL_URL=http://localhost:8080/intermine-demo
-        - TESTMODEL_PATH=intermine-demo
-    matrix:
-        - TEST_SUITE=webapp # Long tests should be listed first, to make most of 
-        - TEST_SUITE=bio    # concurrency
-        # - TEST_SUITE=bio-webapp : this is not possible until we replace the build script with py
-        - TEST_SUITE=ws CLIENT=JS
-        - TEST_SUITE=ws CLIENT=PY
-        - TEST_SUITE=all
-        - TEST_SUITE=webtasks
-        - TEST_SUITE=checkstyle
-sudo: false # use container based infrastructure
+  global:
+  - TESTMODEL_URL=http://localhost:8080/intermine-demo
+  - TESTMODEL_PATH=intermine-demo
+  - secure: I5Uxlr0/km2I5Yr68yOV16CHU92IeCtuOb5OzA100xcLgAuALoA9kYVMFsplZElRnEHy4n+DAqnjkkUbini16h29fee65Y+iFXOBI5nfKDbWyyvJ2zgrvtNFkvCuTauvXiuAL5Ltog34E58R9t1SWOFGD4N7HI4NR/v945QALYEt5Tp20Dd4CsQ82BVER03JFU2wjx7ykVryypSZ7q9oL6k5SlUcz9jm8oZskD/z1lFnJ6uFsRRrf70glSu0OUelQaon3cCl5IfIcs45kDE7PdIj7vQ/UV7kb36W/532XUaF+UmoF7Yaa4acSDslo3ZdvZ1L4BnDClzzf7gtKxP1AAQxrbfGU005LphnABbX2pjgllU2OzQclXhCyt+oqVUFddOZolM4WtdMneRMQgSWv15F7cMFQJAwCvVBl3LKvQViolAmsqk6RBkJSm0o+SBxhBOgdMaE6yUZfL8jZFDw/AN9EEawcmBzYgo4ehL9yzi7ninxne4VhGWaRaz3qo7xTIyQSOYTBGxWqkSUG4xoWcwAqWQb+UNZT96AOaBAJNSfLZTz3joShI/KMG3f+BCKuZG7oWgF8dbUxZrfLIPkrV7ZRBr7dnJqISGzZEqDvzDtb6P8rnW32lC+cbCK7R21KEl5dcA/5Ssp3tHbCsf2iHtz40Tt2hNugsnNwPWgfeY=
+  matrix:
+  - TEST_SUITE=webapp
+  - TEST_SUITE=bio
+  - TEST_SUITE=ws CLIENT=JS
+  - TEST_SUITE=ws CLIENT=PY
+  - TEST_SUITE=all
+  - TEST_SUITE=webtasks
+  - TEST_SUITE=checkstyle
+sudo: false
 jdk:
-    - openjdk7
-    - openjdk6
+- openjdk7
+- openjdk6
 before_script:
-    - ./config/travis/init.sh
+- "./config/travis/init.sh"
 before_install:
-    - "export DISPLAY=:99.0"
-    - ./config/travis/before-install.sh
+- export DISPLAY=:99.0
+- "./config/travis/before-install.sh"
 script:
-    - ./config/travis/run.sh
+- "./config/travis/run.sh"
 notifications:
   irc:
-      channels:
-          - "chat.freenode.net#intermine-ci"
-      on_success: change
-      on_error: change
-
+    channels:
+    - chat.freenode.net#intermine-ci
+    on_success: change
+    on_error: change
+after_success:
+- test $TRAVIS_BRANCH == "master" && bash config/travis/deploydocs.sh

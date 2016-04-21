@@ -1,0 +1,20 @@
+##gff-version 3
+#!gff-spec-version 1.20
+#!processor NCBI annotwriter
+#!genome-build GRCh38.p2
+#!genome-build-accession NCBI_Assembly:GCF_000001405.28
+#!annotation-date 12 March 2015
+#!annotation-source NCBI Homo sapiens Annotation Release 107
+##sequence-region NC_000001.11 1 248956422
+##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=9606
+NC_000001.11	RefSeq	region	1	248956422	.	+	.	ID=id0;Dbxref=taxon:9606;Name=1;chromosome=1;gbkey=Src;genome=chromosome;mol_type=genomic DNA
+NC_000001.11	BestRefSeq	gene	11874	14409	.	+	.	ID=gene0;Dbxref=GeneID:100287102,HGNC:HGNC:37102;Name=DDX11L1;description=DEAD/H (Asp-Glu-Ala-Asp/His) box helicase 11 like 1;gbkey=Gene;gene=DDX11L1;pseudo=true
+NC_000001.11	BestRefSeq	transcript	11874	14409	.	+	.	ID=rna0;Parent=gene0;Dbxref=GeneID:100287102,Genbank:NR_046018.2,HGNC:HGNC:37102;Name=NR_046018.2;gbkey=misc_RNA;gene=DDX11L1;product=DEAD/H (Asp-Glu-Ala-Asp/His) box helicase 11 like 1;transcript_id=NR_046018.2
+NC_000001.11	BestRefSeq	exon	11874	12227	.	+	.	ID=id1;Parent=rna0;Dbxref=GeneID:100287102,Genbank:NR_046018.2,HGNC:HGNC:37102;gbkey=misc_RNA;gene=DDX11L1;product=DEAD/H (Asp-Glu-Ala-Asp/His) box helicase 11 like 1;transcript_id=NR_046018.2
+NC_000001.11	BestRefSeq	exon	12613	12721	.	+	.	ID=id2;Parent=rna0;Dbxref=GeneID:100287102,Genbank:NR_046018.2,HGNC:HGNC:37102;gbkey=misc_RNA;gene=DDX11L1;product=DEAD/H (Asp-Glu-Ala-Asp/His) box helicase 11 like 1;transcript_id=NR_046018.2
+NC_000001.11	BestRefSeq	exon	13221	14409	.	+	.	ID=id3;Parent=rna0;Dbxref=GeneID:100287102,Genbank:NR_046018.2,HGNC:HGNC:37102;gbkey=misc_RNA;gene=DDX11L1;product=DEAD/H (Asp-Glu-Ala-Asp/His) box helicase 11 like 1;transcript_id=NR_046018.2
+NC_000001.11	BestRefSeq	gene	14362	29370	.	-	.	ID=gene1;Dbxref=GeneID:653635,HGNC:HGNC:38034;Name=WASH7P;description=WAS protein family homolog 7 pseudogene;gbkey=Gene;gene=WASH7P;gene_synonym=FAM39F,WASH5P;pseudo=true
+NC_000001.11	BestRefSeq	transcript	14362	29370	.	-	.	ID=rna1;Parent=gene1;Dbxref=GeneID:653635,Genbank:NR_024540.1,HGNC:HGNC:38034;Name=NR_024540.1;gbkey=misc_RNA;gene=WASH7P;product=WAS protein family homolog 7 pseudogene;transcript_id=NR_024540.1
+NC_000001.11	BestRefSeq	exon	29321	29370	.	-	.	ID=id4;Parent=rna1;Dbxref=GeneID:653635,Genbank:NR_024540.1,HGNC:HGNC:38034;gbkey=misc_RNA;gene=WASH7P;product=WAS protein family homolog 7 pseudogene;transcript_id=NR_024540.1
+NC_000001.11	BestRefSeq	exon	24738	24891	.	-	.	ID=id5;Parent=rna1;Dbxref=GeneID:653635,Genbank:NR_024540.1,HGNC:HGNC:38034;gbkey=misc_RNA;gene=WASH7P;product=WAS protein family homolog 7 pseudogene;transcript_id=NR_024540.1
+NC_000001.11	BestRefSeq	exon	18268	18366	.	-	.	ID=id6;Parent=rna1;Dbxref=GeneID:653635,Genbank:NR_024540.1,HGNC:HGNC:38034;gbkey=misc_RNA;gene=WASH7P;product=WAS protein family homolog 7 pseudogene;transcript_id=NR_024540.1
