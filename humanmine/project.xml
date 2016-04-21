@@ -152,10 +152,6 @@
       <property name="src.data.dir" location="/micklem/data/human/gff/current"/>
     </source>
 
-    <source name="uberon" type="uberon">
-      <property name="src.data.file" location="/micklem/data/uberon/current/ext.obo" />
-    </source>
-
     <source name="update-publications" type="update-publications" dump="true">
       <property name="src.data.file" location="build/publications.xml" />
       <property name="loadFullRecord" value="true"/>
@@ -177,6 +173,7 @@
     <post-process name="create-gene-flanking-features" />
     <post-process name="create-bioseg-location-index" />
     <post-process name="create-overlap-view" />
+    <post-process name="populate-child-features"/>    
     <post-process name="create-attribute-indexes" />
     <post-process name="summarise-objectstore" />
     <post-process name="create-autocomplete-index" />
