@@ -36,7 +36,8 @@ public class HTMLWidgetConfig extends WidgetConfig
     public Widget getWidget(InterMineBag imBag,
             InterMineBag populationBag,
             ObjectStore os,
-            WidgetOptions options) {
+            WidgetOptions options,
+            String ids, String populationIds) {
         return null;
     }
 
