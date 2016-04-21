@@ -26,23 +26,30 @@
     </c:if>
     <br/>
 
-    <!-- funding -->
-    <div id="funding-footer">
-        <fmt:message key="funding" />
-        <br/>
-        <br/>
-
-        Cite us: ${WEB_PROPERTIES['project.citation']}
-
-        <br/>
-        <br/>
-
-        <!-- powered -->
-        <p>Powered by</p>
-        <a target="new" href="http://intermine.org" title="InterMine">
-            <img src="images/icons/intermine-footer-logo.png" alt="InterMine logo" />
-        </a>
+<div id="promo-footer">
+  <!-- powered -->
+  <div class="powered-footer footer">
+    <p>Powered by</p>
+    <a target="new" href="http://intermine.org" title="InterMine">
+      <img src="images/icons/intermine-footer-logo.png" alt="InterMine logo" />
+    </a>
+  </div>
+  <div class="funding-footer footer">
+      <!-- funding -->
+      <p><fmt:message key="funding" /></p>
+      <div class="cite">
+        <strong>Cite us:</strong>
+        <cite>${WEB_PROPERTIES['project.citation']}</cite>
+      </div>
+  </div>
+  <div class="android-footer footer">
+    <div>
+      <p>Have your tried our InterMine Android app?</p>
+      <a href='https://play.google.com/store/apps/details?id=org.intermine.app&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img class="googleplay" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
     </div>
+  </div>
+</div>
+
 </div>
 
 <!-- cam logo and links -->
