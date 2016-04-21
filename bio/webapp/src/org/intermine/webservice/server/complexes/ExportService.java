@@ -82,6 +82,7 @@ public class ExportService extends JSONService
         MOLECULE_TYPES.put("ribonucleic acid", "MI:0320");
         MOLECULE_TYPES.put("transfer rna", "MI:0325");
         MOLECULE_TYPES.put("double stranded deoxyribonucleic acid", "MI:0681");
+        MOLECULE_TYPES.put("small nucleolar rna", "MI:0609");
     }
 
     @Override

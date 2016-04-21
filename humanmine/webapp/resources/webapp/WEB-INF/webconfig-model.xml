@@ -161,27 +161,28 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.InteractionTerm">
+  <class className="org.intermine.model.bio.Interaction">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="participant1.primaryIdentifier" />
+      <fieldconfig fieldExpr="participant2.primaryIdentifier" />
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Interaction">
-    <fields>
-      <fieldconfig fieldExpr="participant1.primaryIdentifier"/>
-      <fieldconfig fieldExpr="participant2.primaryIdentifier"/>
-    </fields>
-  </class>
 
   <class className="org.intermine.model.bio.InteractionDetail">
     <fields>
       <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="relationshipType"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="role1"/>
       <fieldconfig fieldExpr="role2"/>
-      <fieldconfig fieldExpr="relationshipType"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.InteractionTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
@@ -373,7 +374,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
         jspName="model/esynDisplayer.jsp"
         replacesFields=""
-        placement="summary"
+        placement="Interactions"
         types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
