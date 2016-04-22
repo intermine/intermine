@@ -3,6 +3,7 @@ package org.intermine.api.profile;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -57,11 +58,11 @@ public class XMLReadTest extends InterMineAPITestCase
         fieldNames.add("name");
 
         assertEquals("Wrong number of bags!", 3, stored2.getSavedBags().size());
-        Set<Integer> expectedBagContents = new HashSet<Integer>();
+        List<Integer> expectedBagContents = new ArrayList<Integer>();
         //when we read xml file, we load data into savedbag and bagvalues table but not in the
         //osbag_int loaded after user login
         assertEquals(expectedBagContents,
-                    (stored2.getSavedBags().get("stored_2_3")).getContentsAsIds());
+                (stored2.getSavedBags().get("stored_2_3")).getContentsAsIds());
 
         List<BagValue> contentsAsKey = (stored2.getSavedBags()
                 .get("stored_2_1")).getContents();
