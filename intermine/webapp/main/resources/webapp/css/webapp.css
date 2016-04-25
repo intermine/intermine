@@ -1692,12 +1692,39 @@ div.bagDetails-page div.widget { width:460px; height:auto; max-height:none !impo
 #promo-footer .powered-footer, #promo-footer .android-footer {
   width: 20%
 }
-.android-footer img.googleplay {
-  max-width: 100%;
+
+#promo-footer {display:flex;
+align-items:stretch;
 }
-.powered-footer {
-  margin-top: 25px;
+#promo-footer .powered-footer {width:50%}
+
+.powered-footer {max-width:20%;}
+
+.cite-footer {max-width:50%;
 }
+
+.cite-footer {
+text-align:justify;}
+
+
+#promo-footer {
+display:flex;
+align-items:center;
+}
+
+.android img.googleplay {width:80%;}
+.android a {width:100%}
+
+.android {
+max-width:30%;
+margin:1em;
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:rgba(255,255,255,0.9)}
+
+.android p {
+width:90%;}
 
 .funding-footer .cite { text-align:justify; }
 
