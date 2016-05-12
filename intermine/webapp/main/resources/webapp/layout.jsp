@@ -30,7 +30,7 @@
 
 <c:if test="${pageName == 'begin'}">
   <%-- <html:base/> --%>
-  <%-- <base href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/${pageName}.do" /> --%>
+  <base href="https://${pageContext.request.serverName}${pageContext.request.contextPath}/${pageName}.do" />
 </c:if>
 
 <fmt:message key="${pageName}.noFollow" var="noFollow" />
