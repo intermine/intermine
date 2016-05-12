@@ -10,8 +10,7 @@ package org.intermine.web.task;
  *
  */
 
-import java.util.Set;
-
+import java.util.Collection;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStoreException;
@@ -76,7 +75,7 @@ public class EvictOrphansTask extends Task
         QueryClass qc = new QueryClass(Tag.class);
         q.setConstraint(new SimpleConstraint(
                 new QueryField(qc, "userProfile"), ConstraintOp.IS_NULL));
-        Set<Object> res;
+        Collection<Object> res;
         try {
             res = osw.executeSingleton(q);
         } catch (Exception e) {

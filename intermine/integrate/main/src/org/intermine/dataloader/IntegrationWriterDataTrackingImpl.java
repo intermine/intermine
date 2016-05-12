@@ -11,6 +11,7 @@ package org.intermine.dataloader;
  */
 
 import java.lang.reflect.Constructor;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -254,7 +255,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             }
             InterMineObject o = (InterMineObject) nimo;
             long time1 = System.currentTimeMillis();
-            Set<InterMineObject> equivObjects = getEquivalentObjects(o, source);
+            Collection<InterMineObject> equivObjects = getEquivalentObjects(o, source);
             long time2 = System.currentTimeMillis();
             timeSpentEquiv += time2 - time1;
             if ((type != FROM_DB) && ((equivObjects.size() == 0) || ((equivObjects.size() == 1)
@@ -439,7 +440,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      */
     private boolean isDuplicateObject(InterMineObject newObj, InterMineObject objToCheck,
             String fieldName, Source source, Source skelSource, int type,
-            Set<InterMineObject> equivObjects) {
+            Collection<InterMineObject> equivObjects) {
         Source fieldSource = dataTracker.getSource(objToCheck.getId(), fieldName);
         if ((equivObjects.size() == 1) && (fieldSource != null)
             && (fieldSource.equals(source)
@@ -555,8 +556,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         }
     }
 
-    private InterMineObject shortcut(InterMineObject o, Set<InterMineObject> equivObjects, int type,
-            long time2, Source source, Source skelSource) throws ObjectStoreException,
+    private InterMineObject shortcut(InterMineObject o, Collection<InterMineObject> equivObjects,
+            int type, long time2, Source source, Source skelSource) throws ObjectStoreException,
             IllegalAccessException {
         // Take a shortcut!
         InterMineObject newObj = DynamicUtil.createObject(o.getClass());
