@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,10 +11,13 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -31,9 +34,9 @@ public class AtlasExpressConverter extends BioFileConverter
     private static final String DATASET_TITLE = "E-MTAB-513 illumina body map";
     private static final String DATA_SOURCE_NAME = "ArrayExpress";
     private Map<String, String> genes = new HashMap<String, String>();
-
+    protected IdResolver rslv;
     private static final String TAXON_ID = "9606";
-    //private static final Logger LOG = Logger.getLogger(AtlasExpressConverter.class);
+    private static final Logger LOG = Logger.getLogger(AtlasExpressConverter.class);
 
     private static final String EXPRESSION_TYPE = "FPKM value";
 
@@ -44,6 +47,9 @@ public class AtlasExpressConverter extends BioFileConverter
      */
     public AtlasExpressConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(Collections.singleton(TAXON_ID));
+        }
     }
 
     /**
@@ -70,6 +76,10 @@ public class AtlasExpressConverter extends BioFileConverter
 
             String geneId = getGeneId(line[0]);
 
+            if (StringUtils.isEmpty(geneId)) {
+                continue;
+            }
+
             // each column represents a tissue
             // skip first two columns, gene name
             for (int i = 2; i < header.length; i++) {
@@ -89,15 +99,36 @@ public class AtlasExpressConverter extends BioFileConverter
 
 
     private String getGeneId(String primaryIdentifier) throws ObjectStoreException {
-        String geneId = genes.get(primaryIdentifier);
+        String resolvedIdentifier = resolveGene(primaryIdentifier);
+        if (StringUtils.isEmpty(resolvedIdentifier)) {
+            return null;
+        }
+        String geneId = genes.get(resolvedIdentifier);
         if (geneId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", primaryIdentifier);
+            gene.setAttribute("primaryIdentifier", resolvedIdentifier);
             gene.setReference("organism", getOrganism(TAXON_ID));
             store(gene);
             geneId = gene.getIdentifier();
-            genes.put(primaryIdentifier, geneId);
+            genes.put(resolvedIdentifier, geneId);
         }
         return geneId;
     }
+
+    private String resolveGene(String identifier) {
+        String id = identifier;
+
+        if (rslv != null && rslv.hasTaxon(TAXON_ID)) {
+            int resCount = rslv.countResolutions(TAXON_ID, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " Human identifier: "
+                         + rslv.resolveId(TAXON_ID, identifier));
+                return null;
+            }
+            id = rslv.resolveId(TAXON_ID, identifier).iterator().next();
+        }
+        return id;
+    }
+
 }

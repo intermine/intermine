@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,10 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
+import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Sequence;
 
 /**
@@ -24,37 +21,35 @@ import org.biojava.bio.seq.Sequence;
  */
 public class NCBIFastaLoaderTask extends FastaLoaderTask
 {
-    protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
-
-    private static final Pattern NCBI_DB_PATTERN =
-            Pattern.compile(
-                    "^gi\\|([^\\|]*)\\|(gb|emb|dbj|ref)\\|([^\\|]*?)(\\.\\d+\\.?(\\d+)?)?\\|.*");
-    // private static final Pattern PROT_DB_PATTERN =
-    //    Pattern.compile("^(ref|pir|prf)\\|([^\\|]*)\\|([^\\|]*).*");
-    private static final Pattern UNIPROT_PATTERN =
-        Pattern.compile("^([^\\|]+)\\|([^\\|\\s]*).*");
+    //protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
+    private static final String ORG_HEADER = " Homo sapiens ";
+    private static final String CHROMOSOME_HEADER = "chromosome";
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected String getIdentifier(Sequence bioJavaSequence) {
-        String seqIdentifier = bioJavaSequence.getName();
+        Annotation anno = bioJavaSequence.getAnnotation();
+        String header = anno.getProperty("description_line").toString();
+        // >gi|568815597|ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p2 Primary Assembly
+        // gi|251831106|ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
+        for (String headerString : header.split("\\|")) {
+            if (headerString.contains("mitochondrion")) {
+                return "MT";
+            }
+            // we want the phrase with "chromosome" in it
+            if (headerString.contains(CHROMOSOME_HEADER)) {
+                // chop off the part after the comma
+                String[] headerSubStrings = headerString.split(",");
+                // chop off everything but the chromosome number
+                String identifier = headerSubStrings[0].substring(ORG_HEADER.length()
+                        + CHROMOSOME_HEADER.length());
+                return identifier.trim();
 
-        Matcher ncbiMatcher = NCBI_DB_PATTERN.matcher(seqIdentifier);
-        if (ncbiMatcher.matches()) {
-            // pattern such as U00096.2 (group(3): "U00096", group(4): ".2")
-            if (ncbiMatcher.group(4) == null) {
-                return ncbiMatcher.group(3);
-            } else {
-                return ncbiMatcher.group(3) + ncbiMatcher.group(4);
             }
         }
-        Matcher uniprotMatcher = UNIPROT_PATTERN.matcher(seqIdentifier);
-        if (uniprotMatcher.matches()) {
-            return uniprotMatcher.group(2);
-        }
-        throw new RuntimeException("can't parse FASTA identifier: " + seqIdentifier);
-
+        // nothing found
+        throw new RuntimeException("Couldn't find chromosome identifier " + header);
     }
 }

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget.config;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -221,8 +221,9 @@ public class GraphWidgetConfig extends WidgetConfig
             InterMineBag imBag,
             InterMineBag populationBag,
             ObjectStore os,
-            WidgetOptions options) {
-        return new GraphWidget(this, imBag, os, options);
+            WidgetOptions options,
+            String ids, String populationIds) {
+        return new GraphWidget(this, imBag, os, options, ids);
     }
 
 }

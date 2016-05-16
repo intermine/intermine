@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -42,7 +42,7 @@ public class GeneIdentifiersDisplayer extends ReportDisplayer
 
     /** @String[] which identifiers to use? */
     private final String[] identifiers = new String []{"primaryIdentifier", "secondaryIdentifier",
-        "ncbiGeneNumber"};
+        "symbol"};
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {

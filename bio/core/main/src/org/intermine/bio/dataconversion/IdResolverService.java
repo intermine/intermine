@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,12 +60,9 @@ public final class IdResolverService
     public static IdResolver getIdResolverByOrganism(Set<String> taxonIds) {
         // HACK - for worm in ncbi
         IdResolverService.getWormIdResolver();
-        // HACK - resolve human ids to HGNC symbols
-        IdResolverService.getHumanIdResolver();
 
         Set<String> validTaxonIds = new HashSet<String>(taxonIds);
         validTaxonIds.remove("6239");
-        validTaxonIds.remove("9606");
         return new EntrezGeneIdResolverFactory().getIdResolver(validTaxonIds);
     }
 
@@ -73,15 +70,8 @@ public final class IdResolverService
      * @return array of taxon IDs for MODs
      */
     public static IdResolver getIdResolverForMOD() {
-        // String[] modTaxonIds = {"9606", "7227", "7955", "10090","10116", "4932", "6239"};
-        // String[] modTaxonIdsWithoutWorm = {"9606", "7227", "7955", "10090","10116", "4932"};
-        // HACK - In entrezIdResolver_config.properties, 6239 (worm) is disabled.
-
-        String[] modTaxonIdsWithoutHuman = {"7227", "7955", "10090", "10116", "4932", "6239"};
-        // HACK - resolve human ids to HGNC symbols
-        IdResolverService.getHumanIdResolver();
-        return new EntrezGeneIdResolverFactory()
-                .getIdResolver(new HashSet<String>(Arrays.asList(modTaxonIdsWithoutHuman)));
+        return new EntrezGeneIdResolverFactory().getIdResolver(new HashSet<String>(
+                Arrays.asList("7227", "7955", "10090", "10116", "4932", "6239", "9606")));
     }
 
     /**

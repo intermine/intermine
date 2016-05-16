@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -228,11 +228,13 @@ public class ReportObject
                             fc.getLabel()
                     );
 
-                    // summary fields should go first
-                    if (fc.getShowInSummary()) {
-                        objectSummaryFields.add(rof);
-                    } else { // show in summary also, but not right now...
-                        objectOtherSummaryFields.add(rof);
+                    if (!fc.getHide()) {
+                        // summary fields should go first
+                        if (fc.getShowInSummary()) {
+                            objectSummaryFields.add(rof);
+                        } else { // show in summary also, but not right now...
+                            objectOtherSummaryFields.add(rof);
+                        }
                     }
                     fieldConfigPaths.add(fc.getFieldExpr());
                 }

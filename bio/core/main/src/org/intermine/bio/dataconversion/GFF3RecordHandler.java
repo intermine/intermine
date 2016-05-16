@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,6 +35,9 @@ public class GFF3RecordHandler
 {
     protected Map<String, Item> items = new LinkedHashMap<String, Item>();
     protected List<Item> earlyItems = new ArrayList<Item>();
+    // need to keep track of the synonyms in case the item of interest is removed we need
+    // to remove these as well
+    protected List<Item> synonyms = new ArrayList<Item>();
     protected List<String> parents = new ArrayList<String>();
     protected Map<String, String> refsAndCollections = new HashMap<String, String>();
     private Item sequence;
@@ -155,10 +158,14 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Remove the feature item that was set with setFeature().
+     * Remove the feature item that was set with setFeature() and associated synonyms
      */
     protected void removeFeature() {
         items.remove("_feature");
+        for (Item synonym : synonyms) {
+            items.remove(synonym.getIdentifier());
+        }
+        synonyms.clear();
     }
 
     /**
@@ -257,6 +264,33 @@ public class GFF3RecordHandler
     }
 
     /**
+     * Keep track of the synonyms per line. If we delete this item we need to delete the related
+     * synonyms too. Otherwise there will be a build error.
+     *
+     * @param item the synonym
+     */
+    public void addSynonym(Item item) {
+        synonyms.add(item);
+    }
+
+    /**
+     * Keep track of the synonyms per line. If we delete this item we need to delete the related
+     * synonyms too. Otherwise there will be a build error.
+     *
+     * @param synonyms list of synonyms to add
+     */
+    public void addSynonyms(List<String> synonyms) {
+        synonyms.addAll(synonyms);
+    }
+
+    /**
+     * @return the synonyms for this record
+     */
+    public List<Item> getSynonyms() {
+        return synonyms;
+    }
+
+    /**
      * Return true if Location objects should be made for all features (which is the default).
      * @param record the current feature
      * @return true if Location objects should be made
@@ -272,6 +306,7 @@ public class GFF3RecordHandler
         items = new LinkedHashMap<String, Item>();
         sequence = null;
         earlyItems.clear();
+        synonyms.clear();
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -466,9 +466,9 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
            // int4range
            rangeQueries.put("int4range", new HashMap<String, String>());
-           rangeQueries.get("int4range").put("RangeOverlaps", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
-           rangeQueries.get("int4range").put("RangeDoesNotOverlap", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id");
-           rangeQueries.get("int4range").put("RangeOverlapsValues", "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(35, 45) ORDER BY a1_.id");
+           rangeQueries.get("int4range").put("RangeOverlaps", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd, '[]') && int4range(a2_.rangeStart, a2_.rangeEnd, '[]') ORDER BY a1_.id, a2_.id");
+           rangeQueries.get("int4range").put("RangeDoesNotOverlap", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd, '[]') && int4range(a2_.rangeStart, a2_.rangeEnd, '[]'))) ORDER BY a1_.id, a2_.id");
+           rangeQueries.get("int4range").put("RangeOverlapsValues", "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd, '[]') && int4range(35, 45, '[]') ORDER BY a1_.id");
 
            // bioseg
            rangeQueries.put("bioseg", new HashMap<String, String>());

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,12 +60,13 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
      * @param os The data-store.
      * @param config The description of the list tool.
      * @param filter A filter value.
+     * @param ids intermine IDs, required if bag is NULL
      */
     public GraphWidgetLoader(InterMineBag bag,
                               ObjectStore os,
                               GraphWidgetConfig config,
-                              String filter) {
-        super(bag, os, filter, config);
+                              String filter, String ids) {
+        super(bag, os, filter, config, ids);
         this.config = config;
         LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
         if (!config.comparesActualToExpected()) {

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,8 +33,6 @@ public class NcbiSummariesConverter extends BioFileConverter
     private static final String HUMAN_TAXON_ID = "9606";
     protected static final Logger LOG = Logger.getLogger(NcbiSummariesConverter.class);
 
-    private IdResolver rslv;
-
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -49,11 +47,9 @@ public class NcbiSummariesConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
-        rslv = IdResolverService.getHumanIdResolver();
 
         // Data has format:
         // Entrez id | description
-        @SuppressWarnings("rawtypes")
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         int count = 0;
         while (lineIter.hasNext()) {
@@ -63,13 +59,7 @@ public class NcbiSummariesConverter extends BioFileConverter
                 String description = line[1];
                 if (!StringUtils.isBlank(description)) {
                     Item gene = createItem("Gene");
-                    if (resolveGene(entrez) == null) {
-                        LOG.warn("Unresolved Entrez gene: " + entrez);
-                        continue;
-                    } else {
-                        gene.setAttribute("symbol", resolveGene(entrez));
-                    }
-
+                    gene.setAttribute("primaryIdentifier", entrez);
                     gene.setAttribute("description", description);
                     gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
                     store(gene);
@@ -78,16 +68,5 @@ public class NcbiSummariesConverter extends BioFileConverter
                 LOG.info("Failed to read line: " + Arrays.asList(line));
             }
         }
-    }
-
-    private String resolveGene(String entrez) {
-        int resCount = rslv.countResolutions("" + HUMAN_TAXON_ID, entrez);
-        if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene - MIM:"
-                     + entrez + " count: " + resCount + " - "
-                     + rslv.resolveId("" + HUMAN_TAXON_ID, entrez));
-            return null;
-        }
-        return rslv.resolveId("" + HUMAN_TAXON_ID, entrez).iterator().next();
     }
 }

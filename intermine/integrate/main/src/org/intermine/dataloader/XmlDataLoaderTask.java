@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -144,7 +144,9 @@ public class XmlDataLoaderTask extends Task
                     DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
                     String[] fileArray = ds.getIncludedFiles();
                     for (int i = 0; i < fileArray.length; i++) {
-                        files.add(new File(ds.getBasedir(), fileArray[i]));
+                        if (fileArray[i].endsWith(".xml")) {
+                            files.add(new File(ds.getBasedir(), fileArray[i]));
+                        }
                     }
                     if (files.isEmpty()) {
                         throw new BuildException("No xml files read from: " + fileSet.toString());

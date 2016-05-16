@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,7 +13,6 @@ package org.intermine.web.logic.widget;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
@@ -44,13 +43,15 @@ public class GraphWidget extends Widget
      * @param config config for widget
      * @param interMineBag bag for widget
      * @param os objectstore
+     * @param ids intermine IDs, required if bag is NULL
      * @param options The options for this widget.
      */
     public GraphWidget(GraphWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
-                       WidgetOptions options) {
+                       WidgetOptions options, String ids) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
+        this.ids = ids;
         this.filter = options.getFilter();
         validateBagType();
     }
@@ -70,15 +71,6 @@ public class GraphWidget extends Widget
         if (grapgWidgetLdr == null) {
             throw new IllegalStateException("This widget has not been processed yet.");
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public List getElementInList() {
-        return new Vector();
     }
 
     /**
@@ -113,7 +105,7 @@ public class GraphWidget extends Widget
     @Override
     public void process() {
         checkNotProcessed();
-        grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter);
+        grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter, ids);
         if (grapgWidgetLdr == null || grapgWidgetLdr.getResults() == null) {
             LOG.warn("No data found for graph widget");
             return;
@@ -267,4 +259,3 @@ public class GraphWidget extends Widget
         }
     }
 }
-

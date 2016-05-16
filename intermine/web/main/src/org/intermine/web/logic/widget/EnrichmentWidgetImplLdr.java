@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,13 +9,17 @@ package org.intermine.web.logic.widget;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -30,7 +34,6 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
@@ -46,6 +49,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     private InterMineBag populationBag;
     private boolean extraCorrectionCoefficient;
     private CorrectionCoefficient correctionCoefficient;
+    private String populationIds;
 
     /**
      * Construct an Enrichment widget loader, which performs the queries needed for
@@ -60,16 +64,20 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
      * @param extraCorrectionCoefficient if true correction coefficient has been selected
      * @param correctionCoefficient a instance of correction coefficient
      * @param applyCorrectionCoefficient
+     * @param ids list of IDs to analyse, use instead of intermine bag if bag is NULL
+     * @param populationIds use instead of populationBag
      */
     public EnrichmentWidgetImplLdr(InterMineBag bag, InterMineBag populationBag,
                                    ObjectStore os, EnrichmentWidgetConfig config,
                                    String filter, boolean extraCorrectionCoefficient,
-                                   CorrectionCoefficient correctionCoefficient) {
-        super(bag, os, filter, config);
+                                   CorrectionCoefficient correctionCoefficient,
+                                   String ids, String populationIds) {
+        super(bag, os, filter, config, ids);
         this.populationBag = populationBag;
         this.extraCorrectionCoefficient = extraCorrectionCoefficient;
         this.correctionCoefficient = correctionCoefficient;
         this.config = config;
+        this.populationIds = populationIds;
     }
 
     /**
@@ -132,10 +140,32 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
 
         QueryField qfStartClassId = new QueryField(startClass, "id");
         if (!action.startsWith("population")) {
-            cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
-        } else if (populationBag != null) {
-            cs.addConstraint(new BagConstraint(qfStartClassId,
-                             ConstraintOp.IN, populationBag.getOsb()));
+            if (bag != null) {
+                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
+            } else if (ids != null) {
+                // use list of IDs instead of bag
+                String[] idArray = ids.split(",");
+                Collection<Integer> idsCollection = new LinkedHashSet<Integer>();
+                for (String id : idArray) {
+                    try {
+                        idsCollection.add(Integer.valueOf(id.trim()));
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("List of IDs contains invalid integer: " + id,
+                                e);
+                    }
+                }
+                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, idsCollection));
+            }
+        } else if (populationBag != null || populationIds != null) {
+            if (populationBag != null) {
+                cs.addConstraint(new BagConstraint(qfStartClassId,
+                        ConstraintOp.IN, populationBag.getOsb()));
+            } else if (populationIds != null) {
+                // use list of IDs instead of bag
+                String[] idArray = populationIds.split(",");
+                List<String> idCollection = Arrays.asList(idArray);
+                cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, idCollection));
+            }
         }
 
         for (PathConstraint pathConstraint : config.getPathConstraints()) {
@@ -232,8 +262,24 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                         subQuery.addFrom(startClass);
                         subQuery.addFrom(qcConstraint);
                         QueryField qfStartClassId = new QueryField(startClass, "id");
-                        csSubQuery.addConstraint(new BagConstraint(qfStartClassId,
+                        if (bag != null) {
+                            csSubQuery.addConstraint(new BagConstraint(qfStartClassId,
                                                  ConstraintOp.IN, bag.getOsb()));
+                        } else if (ids != null) {
+                            // use list of IDs instead of bag
+                            String[] idArray = ids.split(",");
+                            Collection<Integer> idsCollection = new LinkedHashSet<Integer>();
+                            for (String intermineId : idArray) {
+                                try {
+                                    idsCollection.add(Integer.valueOf(intermineId.trim()));
+                                } catch (NumberFormatException e) {
+                                    throw new RuntimeException("List of IDs contains invalid "
+                                            + "integer: " + intermineId, e);
+                                }
+                            }
+                            csSubQuery.addConstraint(new BagConstraint(qfStartClassId,
+                                    ConstraintOp.IN, idsCollection));
+                        }
                         QueryField outerQFConstraint = new QueryField(subQuery, qfConstraint);
                         cs.addConstraint(new SimpleConstraint(qfConstraint, ConstraintOp.EQUALS,
                                                               outerQFConstraint));

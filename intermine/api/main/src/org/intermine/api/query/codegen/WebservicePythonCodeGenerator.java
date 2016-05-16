@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -393,22 +393,48 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
     /*
      * Nicely format long lines
+     *
+     * @param sb Existing stringbuffer on which to append line. Cannot be null.
+     * @param prefix Prefix for text on line (e.g. python indent or comment prefix). Cannot be null.
+     * @param text Text of line. Will be trimmed. Cannot be null.
      */
-    private void printLine(StringBuffer sb, String prefix, String line) {
-        String lineToPrint;
-        if (prefix != null) {
-            lineToPrint = prefix + line;
-        } else {
-            lineToPrint = line;
+    private void printLine(StringBuffer sb, String prefix, String text) {
+        text = text.trim();
+        int desiredMaxLineLength = 80;
+        String line = prefix + text;
+
+        // If our prefix is greater than desiredMaxTextLength then don't attempt to wrap the lines
+        // at all.  This should never happen but lets produce something unwrapped rather than fail
+        // in an unexpected way.
+        if (line.length() <= desiredMaxLineLength || prefix.length() >= desiredMaxLineLength) {
+            sb.append(line + endl);
+            return;
         }
-        if (lineToPrint.length() > 80 && lineToPrint.lastIndexOf(' ', 80) != -1) {
-            int lastCutPoint = lineToPrint.lastIndexOf(' ', 80);
-            String frontPart = lineToPrint.substring(0, lastCutPoint);
-            sb.append(frontPart + endl);
-            String nextLine = lineToPrint.substring(lastCutPoint + 1);
+
+        // We need to handle the case where a long path may generate a line without spaces past the
+        // 80 column mark except for the prefix.  Otherwise we get infinite recursion
+        int cutPoint = text.length();
+        int prevCutPoint = cutPoint;
+
+        int desiredMaxTextLength = desiredMaxLineLength - prefix.length();
+
+        while (cutPoint > desiredMaxTextLength) {
+            prevCutPoint = cutPoint;
+            cutPoint = text.lastIndexOf(' ', cutPoint - 1);
+        }
+
+        // Handle the case where our non-space text is greater than the desired max text length.
+        // This can be happen with long paths.
+        if (cutPoint == -1) {
+            cutPoint = prevCutPoint;
+        }
+
+        String thisLine = prefix + text.substring(0, cutPoint);
+        sb.append(thisLine + endl);
+
+        if (thisLine.length() < line.length()) {
+            String nextLine = text.substring(cutPoint + 1);
             printLine(sb, prefix, nextLine);
-        } else {
-            sb.append(lineToPrint + endl);
         }
     }
 

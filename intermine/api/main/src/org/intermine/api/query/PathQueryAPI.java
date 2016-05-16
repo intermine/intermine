@@ -1,7 +1,7 @@
 package org.intermine.api.query;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,7 +48,7 @@ public final class PathQueryAPI
      * @return a PathQueryExecutor
      */
     public static PathQueryExecutor getPathQueryExecutor() {
-        return new PathQueryExecutor(getObjectStore(), getClassKeys(), getProfile(),
+        return new PathQueryExecutor(getObjectStore(), getProfile(),
                 getBagQueryRunner(), getBagManager());
     }
 
