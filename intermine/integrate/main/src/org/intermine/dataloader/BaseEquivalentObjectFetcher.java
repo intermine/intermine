@@ -16,7 +16,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
@@ -178,7 +177,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
-    public Collection<InterMineObject> queryEquivalentObjects(InterMineObject obj,
+    public Set<InterMineObject> queryEquivalentObjects(InterMineObject obj,
             Source source) throws ObjectStoreException {
         Class<? extends InterMineObject> summaryName = obj.getClass();
         Long soFar = summaryTimes.get(summaryName);
@@ -210,11 +209,11 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
             summaryTimes.put(summaryName, new Long(time + soFar.longValue()));
             summaryCounts.put(summaryName, new Integer(soFarCount.intValue() + 1));
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
-            @SuppressWarnings("unchecked") Collection<InterMineObject> retval = (Collection) result;
+            @SuppressWarnings("unchecked") Set<InterMineObject> retval = (Set) result;
             return retval;
         } else {
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
     }
 
