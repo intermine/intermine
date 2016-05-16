@@ -11,7 +11,6 @@
 InterMine 1.6.6 (2016 13 May, Friday the 13th)
 
 #1361 - Correct Panther homologue labels
-#1343 - Java 8 - Duplicate default methods 
 #1322 - HumanMine keyword search is returning atomic coordinates of protein structures
 #1318 - Inconsistent session expiration
 #1301 - Enabled/disabled styling on template forms
