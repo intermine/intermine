@@ -31,29 +31,29 @@ public abstract class TrackAbstract implements Track
 
     @Override
     public void store(Connection con) {
-    	String sql = "";
+        String sql = "";
         PreparedStatement stm = null;
         StringBuffer valuesBuffer = new StringBuffer();
         Object[] values = getFormattedTrack();
         int valuesSize = values.length;
         for (int index = 0; index < valuesSize; index++) {
-        	valuesBuffer = valuesBuffer.append("?,");
+            valuesBuffer = valuesBuffer.append("?,");
         }
         valuesBuffer = valuesBuffer.deleteCharAt(valuesBuffer.length() - 1);
         try {
-        	sql = "INSERT INTO " + getTableName() + " VALUES(" + valuesBuffer + ")";
+            sql = "INSERT INTO " + getTableName() + " VALUES(" + valuesBuffer + ")";
             stm = con.prepareStatement(sql);
             Object value = null;
             for (int index = 0; index < valuesSize; ) {
                 value = values[index];
-            	if (value instanceof Integer) {
-            		stm.setInt(++index, (Integer) value);
-            	} else if (value instanceof Timestamp) {
-            		stm.setTimestamp(++index, (Timestamp)value);
-            	} else {
-            		stm.setString(++index, value.toString());
-            	}
-            } 
+                if (value instanceof Integer) {
+                    stm.setInt(++index, (Integer) value);
+                } else if (value instanceof Timestamp) {
+                    stm.setTimestamp(++index, (Timestamp) value);
+                } else {
+                    stm.setString(++index, value.toString());
+                }
+            }
             stm.executeUpdate();
         } catch (SQLException sqe) {
             LOG.error("Problem executing the statement: " + sql, sqe);
