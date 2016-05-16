@@ -11,7 +11,8 @@ package org.intermine.objectstore.proxy;
  */
 
 import java.util.List;
-import java.util.Collection;
+import java.util.Set;
+
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -22,7 +23,7 @@ import org.intermine.objectstore.query.ResultsInfo;
  * @author Matthew Wakeling
  * @param <E> The element type
  */
-public interface LazyCollection<E> extends Lazy, Collection<E>
+public interface LazyCollection<E> extends Lazy, Set<E>
 {
     /**
      * Sets this LazyCollection to bypass the optimiser

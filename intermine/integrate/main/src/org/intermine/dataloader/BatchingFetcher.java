@@ -109,10 +109,10 @@ public class BatchingFetcher extends HintingFetcher
      * {@inheritDoc}
      */
     @Override
-    public Collection<InterMineObject> queryEquivalentObjects(InterMineObject obj,
+    public Set<InterMineObject> queryEquivalentObjects(InterMineObject obj,
             Source source) throws ObjectStoreException {
         if (source == this.source) {
-            Collection<InterMineObject> retval = equivalents.get(obj);
+            Set<InterMineObject> retval = equivalents.get(obj);
             if (retval != null) {
                 //Set expected = super.queryEquivalentObjects(obj, source);
                 //if (!retval.equals(expected)) {
@@ -396,7 +396,7 @@ public class BatchingFetcher extends HintingFetcher
                                 if (value instanceof InterMineObject) {
                                     Integer id = idMap.get(((InterMineObject) value).getId());
                                     if (id == null) {
-                                        Collection<InterMineObject> eqs = results.get(value);
+                                        Set<InterMineObject> eqs = results.get(value);
                                         if (eqs == null) {
                                             value = object.getFieldValue(fieldName);
                                             eqs = queryEquivalentObjects((InterMineObject) value,

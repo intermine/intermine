@@ -10,14 +10,14 @@ package org.intermine.api.tracker.track;
  *
  */
 
+import java.sql.Statement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 
-/**
+/**long
  * Class representing the track
  * @author dbutano
  */
@@ -32,29 +32,18 @@ public abstract class TrackAbstract implements Track
     @Override
     public void store(Connection con) {
         String sql = "";
-        PreparedStatement stm = null;
+        Statement stm = null;
         StringBuffer valuesBuffer = new StringBuffer();
         Object[] values = getFormattedTrack();
-        int valuesSize = values.length;
-        for (int index = 0; index < valuesSize; index++) {
-            valuesBuffer = valuesBuffer.append("?,");
+        for (int index = 0; index < values.length; index++) {
+            valuesBuffer = valuesBuffer.append("'" + values[index] + "',");
         }
         valuesBuffer = valuesBuffer.deleteCharAt(valuesBuffer.length() - 1);
         try {
-            sql = "INSERT INTO " + getTableName() + " VALUES(" + valuesBuffer + ")";
-            stm = con.prepareStatement(sql);
-            Object value = null;
-            for (int index = 0; index < valuesSize; ) {
-                value = values[index];
-                if (value instanceof Integer) {
-                    stm.setInt(++index, (Integer) value);
-                } else if (value instanceof Timestamp) {
-                    stm.setTimestamp(++index, (Timestamp) value);
-                } else {
-                    stm.setString(++index, value.toString());
-                }
-            }
-            stm.executeUpdate();
+            stm = con.createStatement();
+            sql = "INSERT INTO " + getTableName()
+                + " VALUES ( " + valuesBuffer + ")";
+            stm.executeUpdate(sql);
         } catch (SQLException sqe) {
             LOG.error("Problem executing the statement: " + sql, sqe);
             if (stm != null) {

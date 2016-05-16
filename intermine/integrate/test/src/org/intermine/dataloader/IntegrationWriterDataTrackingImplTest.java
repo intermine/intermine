@@ -11,11 +11,11 @@ package org.intermine.dataloader;
  */
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import junit.framework.Test;
 
@@ -767,7 +767,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         conA.setCompanys(new HashSet<Company>());
         //Contractor sConA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
         Query equivQuery = iw.beof.createPKQuery(conA, source2, false);
-        Collection<InterMineObject> equiv = iw.getEquivalentObjects(conA, source2);
+        Set<InterMineObject> equiv = iw.getEquivalentObjects(conA, source2);
         assertEquals(equiv.getClass().getName() + ": " + equiv + ", " + equivQuery, 2, equiv.size());
         iw.store(conA, source2, skelSource2);
         Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
@@ -958,7 +958,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Source source = iw.getMainSource("testsource", "testsource");
         @SuppressWarnings("unused")
         Source skelSource = iw.getSkeletonSource("testsource", "testsource");
-        Collection<InterMineObject> objects = iw.getEquivalentObjects(b, source);
+        Set<InterMineObject> objects = iw.getEquivalentObjects(b, source);
         System.out.println(objects);
         assertTrue(objects.isEmpty());
     }
