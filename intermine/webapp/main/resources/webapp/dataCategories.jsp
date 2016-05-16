@@ -216,9 +216,9 @@
   </tr>
 
   <tr>
-    <td>MEDIC disease ontology. MEDIC is a merging of OMIM disease ids onto the MeSH disease ontology. OMIM disease annotations from MGI are converted into the corresponding MEDIC annotations in MouseMine. </td>
+    <td>The Disease Ontology (DO) is a standardized ontology for human disease terms, phenotype characteristics and related medical vocabulary disease concepts. </td>
     <td>
-    <a href="http://ctdbase.org/" target="_new">CTD</a> (Comparative Toxicogenomics Database)
+    <a href="http://disease-ontology.org" target="_new">Disease Ontology</a> project.
     </td>
   </tr>
 
