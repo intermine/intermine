@@ -3,6 +3,8 @@ InterMine
 
 Master: [![Build Status: master][travis-badge-master]][ci]
 Dev: [![Build Status: dev][travis-badge-dev]][ci]
+[![Version](http://img.shields.io/badge/version-1.6.6-blue.svg?style=flat)](https://github.com/intermine/intermine/releases/tag/intermine-1.6.6)
+[![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 
 A powerful open source data warehouse system. InterMine allows users
 to integrate diverse data sources with a minimum of effort, providing
