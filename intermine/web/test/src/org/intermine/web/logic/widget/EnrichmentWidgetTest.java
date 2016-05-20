@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -63,7 +63,8 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         InterMineBag employeeList = createEmployeeList();
         bag = employeeList;
         options = new FixureOptions();
-        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, null, os, options);
+        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, null, os, options,
+                null, null);
     }
 
     public void testValidateBagType() throws Exception {
@@ -71,7 +72,8 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         WidgetConfig config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         try {
             EnrichmentWidget w = new EnrichmentWidget(
-                    (EnrichmentWidgetConfig) config, companyList, null, os, options);
+                    (EnrichmentWidgetConfig) config, companyList, null, os, options,
+                    null, null);
             w.process();
             fail("Should raise a IllegalArgumentException");
         } catch (IllegalArgumentException iae){
@@ -79,8 +81,9 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
     }
 
     public void testProcess() throws Exception {
-        EnrichmentWidgetImplLdr ldr 
-            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null);
+        EnrichmentWidgetImplLdr ldr
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null,
+                    null, null);
         EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
         Double maxValue = Double.parseDouble(MAX);
         results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION, false, null);
@@ -92,8 +95,9 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
     }
 
     public void testProcessLCBonferroni() throws Exception {
-        EnrichmentWidgetImplLdr ldr 
-            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null);
+        EnrichmentWidgetImplLdr ldr
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null,
+                    null, null);
         EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
         Double maxValue = Double.parseDouble(MAX);
         results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION.toLowerCase(), false, null);
@@ -105,8 +109,9 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
     }
 
     public void testProcessHolmBonferroni() throws Exception {
-        EnrichmentWidgetImplLdr ldr 
-            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null);
+        EnrichmentWidgetImplLdr ldr
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null,
+                    null, null);
         EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
         Double maxValue = Double.parseDouble(MAX);
         results = EnrichmentCalculation.calculate(input, maxValue, "Holm-Bonferroni", false, null);

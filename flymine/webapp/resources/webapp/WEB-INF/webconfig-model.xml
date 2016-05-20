@@ -224,6 +224,9 @@
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="relationshipType"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="role1"/>
+      <fieldconfig fieldExpr="role2"/>
     </fields>
   </class>
 
@@ -231,14 +234,6 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.Interactor">
-    <fields>
-      <fieldconfig fieldExpr="participant.primaryIdentifier" />
-      <fieldconfig fieldExpr="stoichiometry" />
-      <fieldconfig fieldExpr="biologicalRole" />
     </fields>
   </class>
 

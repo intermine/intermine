@@ -1,7 +1,7 @@
 package org.intermine.web.logic;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -205,8 +205,14 @@ public final class Constants
      *    - Added JBrowse-names, simple-data service.
      * 17 - Added jbrowse-config.
      * 18 - Added display names to the model output.
+     * 19 - Added intermine version
      */
-    public static final int WEB_SERVICE_VERSION = 18;
+    public static final int WEB_SERVICE_VERSION = 19;
+
+    /**
+     * Current version of the InterMine code
+     */
+    public static final String INTERMINE_VERSION = "1.6.6";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

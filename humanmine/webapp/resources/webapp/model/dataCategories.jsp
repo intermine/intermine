@@ -28,9 +28,9 @@
        </tr>
        <tr>
                <td>Genome sequence and annotation</td>
-               <td><a href="http://www.ensembl.org">Ensembl</a></td>
+               <td><a href="http://www.ncbi.nlm.nih.gov">NCBI</a></td>
                <td>Human</td>
-               <td>Ensembl 82</td>
+               <td>Annotation release 107; 12thMarch 2015</td>
        </tr>
        <tr>
                <td>GWAS</td>
@@ -42,19 +42,19 @@
                <td>Gene names and symbol</td>
                <td><a href="http://www.genenames.org/">HGNC</a>, <a href="http://www.ncbi.nlm.nih.gov/gene/">NCBI</a>, <a href="http://www.informatics.jax.org/">MGI</a>, <a href="http://rgd.mcw.edu/">RGD</a></td>
                <td>Human, Mouse, Rat</td>
-               <td>November 2015</td>
+               <td>December 2015</td>
        </tr>
        <tr>
                <td>Protein sequence and annotation</a></td>
                <td><a href="http://www.uniprot.org/">UniProt</a></td>
                <td>Human, Mouse</td>
-               <td>2015_10</td>
+               <td>2015_11</td>
        </tr>
        <tr>
                <td>Protein domains</td>
                <td><a href="http://www.ebi.ac.uk/interpro/">InterPro</a></td>
                <td>Human, Mouse</td>
-               <td>2015-11-10</td>
+               <td>2015-11-26</td>
        </tr>
        <tr>
                <td>Gene Ontology</td>
@@ -92,6 +92,7 @@
                <td>Human</td>
                <td>July 2014</td>
        </tr>
+
        <tr>
                <td>Interactions</td>
                <td><a href="http://www.ebi.ac.uk/intact/">IntAct</a></td>

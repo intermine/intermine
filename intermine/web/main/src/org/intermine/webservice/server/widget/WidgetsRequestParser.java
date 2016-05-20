@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -47,17 +47,25 @@ public class WidgetsRequestParser
     static final String EXTRA_ATTRIBUTE = "gene_length_correction";
     /* But this parameter is also accessed in the EnrichmentWidgetResultService */
     static final String POPULATION_BAG_NAME = "current_population";
+    /* can use list for widgets, or a list of object IDs */
+    static final String IDS = "ids";
+    /* can use list for widgets populations, or a list of object IDs */
+    static final String POPULATION_IDS = "populationIds";
 
     private Set<String> requiredParameters;
     private Map<String, String> defaults;
+    private Set<String> conditionalParameters;
 
     /**
      * ListsRequestProcessor constructor.
      */
     public WidgetsRequestParser() {
         this.requiredParameters = new HashSet<String>();
+        this.conditionalParameters = new HashSet<String>();
         defaults = new HashMap<String, String>();
-        requiredParameters.add(BAG_NAME);
+        // we only need one, either the list name OR the ids in the list
+        conditionalParameters.add(BAG_NAME);
+        conditionalParameters.add(IDS);
         requiredParameters.add(WIDGET_ID);
     }
 
@@ -92,6 +100,19 @@ public class WidgetsRequestParser
     public WidgetsServiceInput getInput(HttpServletRequest request) {
 
         Set<String> missingParameters = new HashSet<String>();
+        Set<String> foundParameters = new HashSet<String>();
+        for (String param: conditionalParameters) {
+            if (isBlank(request.getParameter(param))) {
+                missingParameters.add(param);
+            } else {
+                foundParameters.add(param);
+            }
+        }
+        // we have at least one of our conditional params, so we are fine
+        if (!foundParameters.isEmpty()) {
+            missingParameters = new HashSet<String>();
+        }
+
         for (String param: requiredParameters) {
             if (isBlank(request.getParameter(param))) {
                 missingParameters.add(param);
@@ -99,7 +120,7 @@ public class WidgetsRequestParser
         }
         if (!missingParameters.isEmpty()) {
             throw new BadRequestException("Bad parameters. I expected a value for each of "
-                    + requiredParameters
+                    + requiredParameters + " and one of " + conditionalParameters
                     + " but I didn't get any values for "
                     + missingParameters);
         }
@@ -110,6 +131,8 @@ public class WidgetsRequestParser
         String bagName = request.getParameter(BAG_NAME);
         String populationBagName = request.getParameter(POPULATION_BAG_NAME);
         String savePopulation = request.getParameter(SAVE_POPULATION);
+        String ids = request.getParameter(IDS);
+        String populationIds = request.getParameter(POPULATION_IDS);
         String filter = getOrDefault(request, FILTER);
         String maxP = getOrDefault(request, MAXP);
         String errorCorrection = getOrDefault(request, ERROR_CORRECTION);
@@ -129,6 +152,8 @@ public class WidgetsRequestParser
         ret.setExtraAttribute(extraAttribute);
         ret.setCorrection(errorCorrection);
         ret.setPopulationBagName(populationBagName);
+        ret.setIds(ids);
+        ret.setPopulationIds(populationIds);
         ret.setSavePopulation("true".equalsIgnoreCase(savePopulation));
         if (!isBlank(maxP)) {
             try {

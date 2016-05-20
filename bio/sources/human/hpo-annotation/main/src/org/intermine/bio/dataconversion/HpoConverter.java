@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -136,31 +136,33 @@ public class HpoConverter extends BioDirectoryConverter
             }
 
             String diseaseId = line[0];
-            String geneSymbol = line[1];
+            //String geneSymbol = line[1];
+            // entrez id
+            String identifier = line[2];
             String hpoId = line[3];
 
-            if (geneToHpoTermMap.get(geneSymbol) == null) {
+            if (geneToHpoTermMap.get(identifier) == null) {
                 Set<String> hpoTermSet = new HashSet<String>();
                 hpoTermSet.add(hpoId);
-                geneToHpoTermMap.put(geneSymbol, hpoTermSet);
+                geneToHpoTermMap.put(identifier, hpoTermSet);
             } else {
-                geneToHpoTermMap.get(geneSymbol).add(hpoId);
+                geneToHpoTermMap.get(identifier).add(hpoId);
             }
 
-            if (geneToDiseaseMap.get(geneSymbol) == null) {
+            if (geneToDiseaseMap.get(identifier) == null) {
                 Set<String> diseaseSet = new HashSet<String>();
                 diseaseSet.add(diseaseId);
-                geneToDiseaseMap.put(geneSymbol, diseaseSet);
+                geneToDiseaseMap.put(identifier, diseaseSet);
             } else {
-                geneToDiseaseMap.get(geneSymbol).add(diseaseId);
+                geneToDiseaseMap.get(identifier).add(diseaseId);
             }
 
             if (hpoTermToGeneMap.get(hpoId) == null) {
                 Set<String> geneSet = new HashSet<String>();
-                geneSet.add(geneSymbol);
+                geneSet.add(identifier);
                 hpoTermToGeneMap.put(hpoId, geneSet);
             } else {
-                hpoTermToGeneMap.get(hpoId).add(geneSymbol);
+                hpoTermToGeneMap.get(hpoId).add(identifier);
             }
 
             if (hpoTermToDiseaseMap.get(hpoId) == null) {
@@ -173,10 +175,10 @@ public class HpoConverter extends BioDirectoryConverter
 
             if (diseaseToGeneMap.get(diseaseId) == null) {
                 Set<String> geneSet = new HashSet<String>();
-                geneSet.add(geneSymbol);
+                geneSet.add(identifier);
                 diseaseToGeneMap.put(diseaseId, geneSet);
             } else {
-                diseaseToGeneMap.get(diseaseId).add(geneSymbol);
+                diseaseToGeneMap.get(diseaseId).add(identifier);
             }
 
             if (diseaseToHpoTermMap.get(diseaseId) == null) {
@@ -218,7 +220,7 @@ public class HpoConverter extends BioDirectoryConverter
     private void storeGene(Map<String, Set<String>> geneDisease) throws ObjectStoreException {
         for (Entry<String, Set<String>> e : geneDisease.entrySet()) {
             Item gene = createItem("Gene");
-            gene.setAttribute("symbol", e.getKey());
+            gene.setAttribute("primaryIdentifier", e.getKey());
             gene.setReference("organism", organism);
 
             List<String> dList = new ArrayList<String>();
