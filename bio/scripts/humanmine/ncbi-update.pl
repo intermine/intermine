@@ -44,7 +44,7 @@ print "Done reading HGNC file\n";
 ########################################
 ########################################
 
-my $ncbi_file = "/micklem/data/ncbi/ensembl-test/All_Data.gene_info";
+my $ncbi_file = "/micklem/data/ncbi/All_Data.gene_info";
 #my $ncbi_file = "/micklem/data/ncbi/ensembl-test/ncbi.tsv";
 my $human_taxon = "9606";
 

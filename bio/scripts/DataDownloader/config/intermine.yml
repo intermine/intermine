@@ -32,6 +32,7 @@ default_sources:
   - "NCBIGff"
   - "ClinVar"
   - "IntActComplexes"
+  - "HGNC"
 
 UniProt:
     organisms:
