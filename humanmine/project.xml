@@ -97,7 +97,7 @@
       <property name="src.data.includes" value="variant_summary.txt" />
     </source>
     <source name="hpo" type="hpo">
-      <property name="src.data.file" location="/micklem/data/hpo/hp.obo" />
+      <property name="src.data.file" location="/micklem/data/hpo/current/hp.obo" />
     </source>
     <source name="hpo-annotation" type="hpo-annotation" dump="true">
       <property name="src.data.dir" location="/micklem/data/hpo/current" />

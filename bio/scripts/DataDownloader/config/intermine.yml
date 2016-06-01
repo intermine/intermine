@@ -31,6 +31,7 @@ default_sources:
   - "NCBIFasta"
   - "NCBIGff"
   - "ClinVar"
+  - "IntActComplexes"
 
 UniProt:
     organisms:
