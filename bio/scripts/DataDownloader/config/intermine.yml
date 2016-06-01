@@ -30,6 +30,7 @@ default_sources:
   - "HPO"
   - "NCBIFasta"
   - "NCBIGff"
+  - "ClinVar"
 
 UniProt:
     organisms:
