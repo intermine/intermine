@@ -52,9 +52,9 @@
 
 <!-- cam logo and links -->
 <div class="body bottom-footer">
-    <a class="cambridge-logo" href="http://www.cam.ac.uk/" title="University of Cambridge" target="_blank">
+<!--    <a class="cambridge-logo" href="http://www.cam.ac.uk/" title="University of Cambridge" target="_blank">
         <img src="images/icons/cambridge-footer-logo.png" alt="University of Cambridge logo">
-    </a>
+    </a> -->
 
     <ul class="footer-links">
         <!-- contact us form link -->
