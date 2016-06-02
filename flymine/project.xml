@@ -5,7 +5,7 @@
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
+    <source name="chado-db-flybase-dmel" type="chado-db">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
@@ -23,7 +23,7 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
-    <source name="chado-db-flybase-others" type="chado-db" dump="true">
+    <source name="chado-db-flybase-others" type="chado-db">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="Dana Dere Dgri Dmoj Dper Dsec Dsim Dvir Dwil Dyak"/>
       <property name="dataSourceName" value="FlyBase"/>
@@ -47,7 +47,7 @@
     </source>
 
     <!-- uniprot must be processed immediately after chado -->
-    <source name="uniprot" type="uniprot" dump="true">
+    <source name="uniprot" type="uniprot">
       <!--<property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238 559292"/>-->
       <property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7244 7217 7220 7222 7238 559292"/>
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
@@ -85,7 +85,7 @@
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
     </source>
 
-    <source name="long-oligo" type="long-oligo" dump="true">
+    <source name="long-oligo" type="long-oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="src.data.dir" location="/micklem/data/flymine/long-oligo"/>
@@ -135,7 +135,7 @@
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
-    <source name="go" type="go" dump="true">
+    <source name="go" type="go">
       <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
@@ -499,7 +499,7 @@
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/micklem/data/flybase/fasta/current"/>
     </source>
-    <source name="pubmed-gene" type="pubmed-gene" dump="true">
+    <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
       <property name="pubmed.organisms" value="7227 7165 6239 7240 7244 7245 7217 7220 7222 7234 7238 46245"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
@@ -542,16 +542,10 @@
       <property name="src.data.dir" location="/micklem/data/flymine/mirna/miranda/current"/>
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
-    <source name="psi-intact" type="psi" dump="true">
+    <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 46245 7240 7244 7245 4932"/>
     </source>
-<!--
-    <source name="psi-complexes" type="psi-complexes">
-      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/current"/>
-      <property name="complexes.source" value="sgd"/>
-    </source>
--->
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
@@ -563,13 +557,13 @@
           <property name="homologene.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>    
 <!--
-   <source name="orthodb" type="orthodb" dump="true">
+   <source name="orthodb" type="orthodb">
       <property name="src.data.dir" location="/micklem/data/orthodb/current"/>
       <property name="orthodb.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
 -->
 
-   <source name="panther" type="panther" dump="true">
+   <source name="panther" type="panther">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
       <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955 4932"/>
     </source>
@@ -596,7 +590,7 @@
       <property name="dataSourceFile" value="/micklem/data/uniprot/xrefs/current/dbxref.txt"/>
     </source>
 
-   <source name="update-publications" type="update-publications" dump="true">
+   <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
       <property name="loadFullRecord" value="true"/>
     </source>
@@ -612,7 +606,7 @@
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
     <post-process name="populate-child-features"/>
-    <post-process name="do-sources" dump="true"/>
+    <post-process name="do-sources" />
     <post-process name="create-location-overlap-index"/>
     <post-process name="create-overlap-view" />
     <post-process name="create-attribute-indexes"/>
