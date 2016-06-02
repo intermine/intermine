@@ -125,6 +125,11 @@ public class ClinvarConverter extends BioFileConverter
     }
 
     private String getGene(String identifier) throws ObjectStoreException {
+        String refId = genes.get(identifier);
+        if (refId != null) {
+            // we've already seen this gene
+            return refId;
+        }
         Item item = createItem("Gene");
         item.setAttribute("primaryIdentifier", identifier);
         genes.put(identifier, item.getIdentifier());
