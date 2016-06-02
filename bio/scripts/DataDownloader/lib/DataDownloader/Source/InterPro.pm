@@ -4,7 +4,7 @@ use Moose;
 extends 'DataDownloader::Source::FtpBase';
 
 use constant {
-    TITLE => 'InterPro protein family and domain data',
+    TITLE => 'InterPro domain data',
     DESCRIPTION => "Protein Family and Domain data from Interpro",
     SOURCE_LINK => 'http://www.ebi.ac.uk/interpro',
     SOURCE_DIR  => 'interpro',
