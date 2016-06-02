@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -24,14 +26,13 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
-
 /**
  *
- * @author
+ * @author Julie
  */
 public class ClinvarConverter extends BioFileConverter
 {
-    //
+    private static final Logger LOG = Logger.getLogger(ClinvarConverter.class);
     private static final String DATASET_TITLE = "ClinVar data set";
     private static final String DATA_SOURCE_NAME = "ClinVar";
     private static final String ASSEMBLY = "GRCh38";
@@ -60,7 +61,8 @@ public class ClinvarConverter extends BioFileConverter
             String[] line = (String[]) lineIter.next();
 
             if (line.length < 26) {
-                throw new BuildException("bad line:" + line.length);
+                LOG.error("Allele not processed, only had " + line.length + " columns");
+                continue;
             }
 
             String alleleId = line [0];
@@ -68,10 +70,6 @@ public class ClinvarConverter extends BioFileConverter
             if (alleleId.startsWith("#")) {
                 // skip header
                 continue;
-            }
-
-            if (alleles.contains(alleleId)) {
-                throw new BuildException("Duplicate alleles found");
             }
 
             String type = line[1];
@@ -87,6 +85,12 @@ public class ClinvarConverter extends BioFileConverter
             if (!ASSEMBLY.equals(assemblyString)) {
                 continue;
             }
+
+            if (alleles.contains(alleleId)) {
+                LOG.error("Duplicate alleles found for " + alleleId);
+                continue;
+            }
+            alleles.add(alleleId);
 
             String referenceAllele = line[25];
             String alternateAllele = line[26];
@@ -116,7 +120,6 @@ public class ClinvarConverter extends BioFileConverter
             if (!"-".equals(clinVarXref)) {
                 createCrossReference(item.getIdentifier(), clinVarXref, "ClinVar", true);
             }
-
         }
 
     }
@@ -137,6 +140,10 @@ public class ClinvarConverter extends BioFileConverter
                 String diseaseRefId = diseases.get(identifier);
                 if (diseaseRefId != null) {
                     return diseaseRefId;
+                }
+                // had issues with the data file. "OMIM:^@" was a value.
+                if (!StringUtils.isNumeric(identifier)) {
+                    return null;
                 }
                 Item item = createItem("Disease");
                 item.setAttribute("identifier", identifier);
