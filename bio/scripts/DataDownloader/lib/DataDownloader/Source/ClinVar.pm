@@ -7,7 +7,7 @@ use constant {
     TITLE => "ClinVar",
     DESCRIPTION => "Clinical variations",
     SOURCE_LINK => "http://www.ncbi.nlm.nih.gov/",
-    SOURCE_DIR => 'clinvar',
+    SOURCE_DIR => 'human/clinvar',
     SOURCES => [
         {
             SUBTITLE => 'NCBI',
