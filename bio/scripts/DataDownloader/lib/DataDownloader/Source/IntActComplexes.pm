@@ -23,7 +23,6 @@ sub BUILD {
                 HOST       => 'ftp.ebi.ac.uk',
                 REMOTE_DIR => "pub/databases/IntAct/complex/current/psi25/Homo_sapiens",
                 FILE       => $file,
-                EXTRACT    => 1,
             ) if ( $file =~ FILE_TYPES );
 
     }
