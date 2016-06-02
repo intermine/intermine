@@ -10,8 +10,8 @@ use constant {
     SOURCE_DIR => 'human/hgnc',
     SOURCES => [
         {
-            HOST => 'ftp://ftp.ebi.ac.uk',
-            REMOTE_DIR => '/pub/databases/genenames/',
+            HOST => 'ftp.ebi.ac.uk',
+            REMOTE_DIR => 'pub/databases/genenames',
             FILE => 'hgnc_complete_set.txt.gz',
             EXTRACT => 1,
         },
