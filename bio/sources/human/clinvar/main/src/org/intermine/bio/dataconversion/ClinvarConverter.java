@@ -80,8 +80,9 @@ public class ClinvarConverter extends BioFileConverter
             String clinVarXref = line[8];
 
             String diseaseString = line[10];    // parse for OMIM
-            String assemblyString = line[12]; // only load GRCh38
+            String assemblyString = line[12];
 
+            // only load GRCh38
             if (!ASSEMBLY.equals(assemblyString)) {
                 continue;
             }
@@ -147,7 +148,8 @@ public class ClinvarConverter extends BioFileConverter
                     return diseaseRefId;
                 }
                 // had issues with the data file. "OMIM:^@" was a value.
-                if (!StringUtils.isNumeric(identifier)) {
+                String[] bits = identifier.split(":");
+                if (bits.length != 2 || !StringUtils.isNumeric(bits[1])) {
                     return null;
                 }
                 Item item = createItem("Disease");

@@ -3,18 +3,13 @@
 <attribute name="name" value="ClinVar data set"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
-<item id="3_4" class="Gene">
-<attribute name="primaryIdentifier" value="55572"/>
-<reference name="sequenceOntologyTerm" ref_id="4_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="5_2" class="Allele">
 <attribute name="alternate" value="-"/>
 <attribute name="clinicalSignificance" value="Pathogenic"/>
 <attribute name="primaryIdentifier" value="15042"/>
 <attribute name="reference" value="GGACCTGCCCTGCT"/>
 <attribute name="type" value="deletion"/>
-<reference name="gene" ref_id="3_2"/>
+<reference name="gene" ref_id="3_1"/>
 <reference name="organism" ref_id="6_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -28,18 +23,6 @@
 <item id="6_1" class="Organism">
 <attribute name="taxonId" value="9606"/>
 </item>
-<item id="5_4" class="Allele">
-<attribute name="alternate" value="T"/>
-<attribute name="clinicalSignificance" value="Pathogenic"/>
-<attribute name="primaryIdentifier" value="15044"/>
-<attribute name="reference" value="C"/>
-<attribute name="type" value="single nucleotide variant"/>
-<reference name="gene" ref_id="3_4"/>
-<reference name="organism" ref_id="6_1"/>
-<reference name="sequenceOntologyTerm" ref_id="4_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="diseases"><reference ref_id="7_3"/></collection>
-</item>
 <item id="7_3" class="Disease">
 <attribute name="identifier" value="OMIM:252010"/>
 </item>
@@ -47,6 +30,11 @@
 <attribute name="identifier" value="RCV000000013"/>
 <reference name="source" ref_id="1_1"/>
 <reference name="subject" ref_id="5_2"/>
+</item>
+<item id="3_2" class="Gene">
+<attribute name="primaryIdentifier" value="9640"/>
+<reference name="sequenceOntologyTerm" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
@@ -57,15 +45,22 @@
 <reference name="sequenceOntologyTerm" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_2" class="Gene">
-<attribute name="primaryIdentifier" value="9907"/>
+<item id="3_3" class="Gene">
+<attribute name="primaryIdentifier" value="55572"/>
 <reference name="sequenceOntologyTerm" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_3" class="Gene">
-<attribute name="primaryIdentifier" value="9640"/>
-<reference name="sequenceOntologyTerm" ref_id="4_1"/>
+<item id="5_3" class="Allele">
+<attribute name="alternate" value="A"/>
+<attribute name="clinicalSignificance" value="Uncertain significance"/>
+<attribute name="primaryIdentifier" value="15043"/>
+<attribute name="reference" value="G"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_2"/></collection>
 </item>
 <item id="1_2" class="DataSource">
 <attribute name="name" value="dbSNP"/>
@@ -81,22 +76,22 @@
 <reference name="source" ref_id="1_2"/>
 <reference name="subject" ref_id="5_3"/>
 </item>
-<item id="8_6" class="CrossReference">
-<attribute name="identifier" value="RCV000000014"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="5_3"/>
-</item>
-<item id="5_3" class="Allele">
-<attribute name="alternate" value="A"/>
-<attribute name="clinicalSignificance" value="Uncertain significance"/>
-<attribute name="primaryIdentifier" value="15043"/>
-<attribute name="reference" value="G"/>
+<item id="5_4" class="Allele">
+<attribute name="alternate" value="T"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="15044"/>
+<attribute name="reference" value="C"/>
 <attribute name="type" value="single nucleotide variant"/>
 <reference name="gene" ref_id="3_3"/>
 <reference name="organism" ref_id="6_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="diseases"><reference ref_id="7_2"/></collection>
+<collection name="diseases"><reference ref_id="7_3"/></collection>
+</item>
+<item id="8_6" class="CrossReference">
+<attribute name="identifier" value="RCV000000014"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="5_3"/>
 </item>
 <item id="5_1" class="Allele">
 <attribute name="alternate" value="TGCTGTAAACTGTAACTGTAAA"/>
