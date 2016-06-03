@@ -12,8 +12,8 @@ use constant {
         {
             HOST => 'ftp.ebi.ac.uk',
             REMOTE_DIR => 'pub/databases/genenames/new/tsv',
-            FILE => 'hgnc_complete_set.txt.gz',
-            EXTRACT => 1,
+            FILE => 'hgnc_complete_set.txt',
+            EXTRACT => 0,
         },
     ],
 };
