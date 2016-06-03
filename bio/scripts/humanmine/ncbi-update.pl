@@ -116,6 +116,6 @@ while (<NCBI_FILE>) {
 
 print "Wrote to $output_file. added $i Ensembl gene identifiers \n";
 
-#rename $output_file, $ncbi_file;
+rename $output_file, $ncbi_file;
 
 exit(1);
