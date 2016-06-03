@@ -6,12 +6,12 @@ extends 'DataDownloader::Source::FtpBase';
 use constant {
     TITLE => 'HGNC',
     DESCRIPTION => 'HGNC gene identifiers',
-    SOURCE_LINK => 'http://www.ncbi.nlm.nih.gov/homologene',
+    SOURCE_LINK => 'http://www.ebi.ac.uk',
     SOURCE_DIR => 'human/hgnc',
     SOURCES => [
         {
             HOST => 'ftp.ebi.ac.uk',
-            REMOTE_DIR => 'pub/databases/genenames',
+            REMOTE_DIR => 'pub/databases/genenames/new/tsv',
             FILE => 'hgnc_complete_set.txt.gz',
             EXTRACT => 1,
         },

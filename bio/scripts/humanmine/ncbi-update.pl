@@ -44,8 +44,8 @@ print "Done reading HGNC file\n";
 ########################################
 ########################################
 
-my $ncbi_file = "/micklem/data/ncbi/All_Data.gene_info";
-#my $ncbi_file = "/micklem/data/ncbi/ensembl-test/ncbi.tsv";
+my $ncbi_file = "/micklem/data/ncbi/current/All_Data.gene_info";
+
 my $human_taxon = "9606";
 
 print "Reading in NCBI file from $ncbi_file\n";
@@ -115,5 +115,7 @@ while (<NCBI_FILE>) {
 }
 
 print "Wrote to $output_file. added $i Ensembl gene identifiers \n";
+
+#rename $output_file, $ncbi_file;
 
 exit(1);
