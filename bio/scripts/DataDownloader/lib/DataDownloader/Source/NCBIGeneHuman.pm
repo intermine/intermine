@@ -1,4 +1,4 @@
-package DataDownloader::Source::NCBIGene;
+package DataDownloader::Source::NCBIGeneHuman;
 
 use Moose;
 extends 'DataDownloader::Source::FtpBase';
