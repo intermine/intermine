@@ -14,7 +14,7 @@
       <property name="src.data.dir" location="/micklem/data/human/hgnc/current" />
     </source>
     <source name="ncbi-summaries" type="ncbi-summaries">
-      <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
+      <property name="src.data.dir" location="/micklem/data/ncbi/gene-summaries/current/" />
     </source>
     <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/micklem/data/pubmed/current" />
