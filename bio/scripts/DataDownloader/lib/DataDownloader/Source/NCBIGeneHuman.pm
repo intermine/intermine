@@ -10,7 +10,7 @@ use constant {
     TITLE => "NCBI Gene - Human",
     DESCRIPTION => "Human Genes from NCBI",
     SOURCE_LINK => "ftp.ncbi.nih.gov",
-    SOURCE_DIR => "ncbi",
+    SOURCE_DIR => "ncbi/gene-info-human",
     SOURCES => [{
         FILE => "Homo_sapiens.gene_info.gz", 
         HOST => "ftp.ncbi.nih.gov",
