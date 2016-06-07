@@ -2341,20 +2341,19 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected Integer getSerialWithConnection(Connection c) throws SQLException {
         if (sequenceOffset >= SEQUENCE_MULTIPLE) {
-            long start = System.currentTimeMillis();
             sequenceOffset = 0;
             Statement s = c.createStatement();
             ResultSet r = s.executeQuery("SELECT nextval('serial');");
-            //System//.out.println(getModel().getName()
-            //        + ": Executed SQL: SELECT nextval('serial');");
+
             if (!r.next()) {
                 throw new SQLException("No result while attempting to get a unique id");
             }
+
             long nextSequence = r.getLong(1);
             sequenceBase = (int) (nextSequence * SEQUENCE_MULTIPLE);
-            long end = System.currentTimeMillis();
-            LOG.info("Got new set of serial numbers with base " + sequenceBase + " - took " + (end - start) + " ms");
+            LOG.info("Got new set of serial numbers with base " + sequenceBase);
         }
+
         return new Integer(sequenceBase + (sequenceOffset++));
     }
 
