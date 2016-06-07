@@ -2353,7 +2353,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long nextSequence = r.getLong(1);
             sequenceBase = (int) (nextSequence * SEQUENCE_MULTIPLE);
             long end = System.currentTimeMillis();
-            LOG.info("Got new set of serial numbers - took " + (end - start) + " ms");
+            LOG.info("Got new set of serial numbers with base " + sequenceBase + " - took " + (end - start) + " ms");
         }
         return new Integer(sequenceBase + (sequenceOffset++));
     }
