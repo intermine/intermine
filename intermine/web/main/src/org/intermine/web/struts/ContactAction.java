@@ -97,7 +97,7 @@ public class ContactAction extends InterMineAction
                 Authenticator authenticator = new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        String password = (String) webProperties.get("mail.server.password");
+                        final String password = (String) webProperties.get("mail.server.password");
                         return new PasswordAuthentication(user, password);
                     }
                 };
