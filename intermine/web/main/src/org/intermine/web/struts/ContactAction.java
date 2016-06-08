@@ -31,7 +31,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 import org.intermine.web.logic.session.SessionMethods;
-import javax.mail.Session;
 /**
  * Action handles submission of user feedback form.
  *
