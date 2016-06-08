@@ -71,7 +71,8 @@ public class ContactAction extends InterMineAction
             properties.put("mail.smtp.host", host);
 
             MimeMessage message = new MimeMessage(Session.getDefaultInstance(properties, null));
-            message.setFrom(new InternetAddress(from));
+            message.setReplyTo(InternetAddress.parse(from, true));
+            message.setFrom(new InternetAddress(dest));
             message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(dest, true)[0]);
             message.setSubject(subject);
             message.setText(text);
