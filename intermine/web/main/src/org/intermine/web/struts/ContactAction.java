@@ -62,6 +62,7 @@ public class ContactAction extends InterMineAction
             Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
             MessageResources strings = getResources(request);
             String host = webProperties.getProperty("mail.host");
+            String user = webProperties.getProperty("mail.smtp.user");
             String from = ff.getMonkey();
             String subject = ff.getSubject();
             String text = MessageFormat.format(strings.getMessage("contact.template"),
@@ -72,7 +73,7 @@ public class ContactAction extends InterMineAction
 
             MimeMessage message = new MimeMessage(Session.getDefaultInstance(properties, null));
             message.setReplyTo(InternetAddress.parse(from, true));
-            message.setFrom(new InternetAddress(dest));
+            message.setFrom(new InternetAddress(user));
             message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(dest, true)[0]);
             message.setSubject(subject);
             message.setText(text);
