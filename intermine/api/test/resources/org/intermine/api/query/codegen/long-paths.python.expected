@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+
+# This is an automatically generated script to run your query
+# to use it you will require the intermine python client.
+# To install the client, run the following command from a terminal:
+#
+#     sudo easy_install intermine
+#
+# For further documentation you can visit:
+#     http://intermine.readthedocs.org/en/latest/web-services/
+
+# The following two lines will be needed in every python script:
+from intermine.webservice import Service
+service = Service("TEST_SERVICE_ROOT/service")
+
+# Get a new query on the class (table) you will be querying:
+query = service.new_query("Gene")
+
+# The view specifies the output columns
+query.add_view(
+    "proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.primaryAccession"
+)
+
+for row in query.rows():
+    print \
+        row["proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.primaryAccession"]

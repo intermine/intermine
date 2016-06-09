@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -83,7 +83,7 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
 
         widgetLdr.createQueryFieldByPath("department.company.name", q, false);
         assertEquals(query.toString(), q.toString());
-        
+
     }
 
     public void testAddReference() throws ClassNotFoundException {
@@ -110,7 +110,7 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
     public class MokaWidgetLdr extends WidgetLdr
     {
         public MokaWidgetLdr(InterMineBag bag, ObjectStore os, String filter, WidgetConfig config) {
-            super(bag, os, filter, config);
+            super(bag, os, filter, config, null);
         }
 
         public QueryClass getStartQueryClass() {

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -57,8 +57,6 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
 
-    protected IdResolver rslv;
-
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -81,8 +79,6 @@ public class OmimConverter extends BioDirectoryConverter
         Map<String, File> files = readFilesInDir(dataDir);
 
         organism = getOrganism(HUMAN_TAXON);
-
-        rslv = IdResolverService.getHumanIdResolver();
 
         String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
         Set<String> missingFiles = new HashSet<String>();
@@ -220,22 +216,12 @@ public class OmimConverter extends BioDirectoryConverter
                 counts.get(geneMapType).total++;
             }
 
-            // String symbolStr = bits[1];
-            // String[] symbols = symbolStr.split(",");
+            String symbolStr = bits[1];
+            String[] symbols = symbolStr.split(",");
             // main HGNC symbols is first, others are synonyms
-            // String symbolFromFile = symbols[0].trim();
+            String symbolFromFile = symbols[0].trim();
 
-            String mimId = bits[2];
-            String geneSymbol = resolveGene(OMIM_PREFIX + mimId);
-            if (geneSymbol != null) {
-                resolvedCount++;
-                //String gene = getGeneId(symbol);
-                if (geneMapType != null) {
-                    counts.get(geneMapType).resolved++;
-                }
-            }
-
-            String geneItemId = getGeneItemId(geneSymbol);
+            String geneItemId = getGeneItemId(symbolFromFile);
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;
             while (m.find()) {
@@ -277,17 +263,6 @@ public class OmimConverter extends BioDirectoryConverter
         LOG.info(mapTypesMessage);
         LOG.info("Found " + diseaseMatches + " to " + diseaseNumbers.size()
                 + " unique diseases from " + lineCount + " line file.");
-    }
-
-    private String resolveGene(String mimId) {
-        int resCount = rslv.countResolutions("" + HUMAN_TAXON, mimId);
-        if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene - MIM:"
-                     + mimId + " count: " + resCount + " - "
-                     + rslv.resolveId("" + HUMAN_TAXON, mimId));
-            return null;
-        }
-        return rslv.resolveId("" + HUMAN_TAXON, mimId).iterator().next();
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {

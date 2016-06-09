@@ -14,17 +14,22 @@
 	<classpathentry kind="src" path="/intermine-api-main"/>
 	<classpathentry kind="src" path="/intermine-webservice-client"/>
 	<classpathentry kind="lib" path="lib/bridges-core-1.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/jami-interactionviewer-json-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jami-ols-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/ols-1.18.jar"/>
-	<classpathentry kind="lib" path="lib/jami-core-1.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/jami-commons-1.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/jami-mitab-1.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/jami-xml-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-api-2.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-core-2.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl-2.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/biojava-1.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/axis-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-discovery-0.4.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache-core-2.6.11.jar"/>
+	<classpathentry kind="lib" path="lib/ols-client-1.18.jar"/>
+	<classpathentry kind="lib" path="lib/wsdl4j-1.6.3.jar"/>
+	<classpathentry kind="lib" path="lib/jami-commons-1.1.3-20150304.115350-1.jar"/>
+	<classpathentry kind="lib" path="lib/jami-core-1.2.2-20150304.115305-4.jar"/>
+	<classpathentry kind="lib" path="lib/jami-interactionviewer-json-2.0.2-20150304.115400-2.jar"/>
+	<classpathentry kind="lib" path="lib/jami-mitab-1.1.2-20150304.115341-1.jar"/>
+	<classpathentry kind="lib" path="lib/jami-xml-1.1.3-20150304.115347-1.jar"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>

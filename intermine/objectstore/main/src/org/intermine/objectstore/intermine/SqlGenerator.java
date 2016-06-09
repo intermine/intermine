@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -2050,7 +2050,12 @@ public final class SqlGenerator
             queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
             buffer.append(", ");
             queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
-            buffer.append(")");
+            // if int4range, request it includes extremes (default: include lower, exclude upper)
+            if (rangeFunction.startsWith("int")) {
+                buffer.append(", '[]')");
+            } else {
+                buffer.append(")");
+            }
             if ((ConstraintOp.CONTAINS == c.getOp())
                     || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
                 buffer.append(" @> ");
@@ -2067,7 +2072,11 @@ public final class SqlGenerator
             queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
             buffer.append(", ");
             queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
-            buffer.append(")");
+            if (rangeFunction.startsWith("int")) {
+                buffer.append(", '[]')");
+            } else {
+                buffer.append(")");
+            }
         } else {
             if ((ConstraintOp.CONTAINS == c.getOp())
                     || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {

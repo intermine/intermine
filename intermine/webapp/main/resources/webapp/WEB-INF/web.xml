@@ -1104,7 +1104,7 @@ to will also be returned.
     <servlet-name>ws-version</servlet-name>
     <url-pattern>/service/version/*</url-pattern>
     <metadata>
-        <name>Web-Service Version</name>
+        <name>Version</name>
         <method type="GET" authenticationRequired="false">
            <summary>Get the Web-Service Version.</summary>
            <description>
@@ -1122,6 +1122,18 @@ to will also be returned.
                Get the release version of the data-warehouse. This is a string that is changed
                each time data is added or removed from the server. Thus this number is meant
                to reflect the contents rather than the interface of this set of services.
+           </description>
+           <returns>
+             <format>text</format>
+             <format key="version">json</format>
+           </returns>
+       </method>
+       <method type="GET" authenticationRequired="false" slug="/intermine">
+           <summary>Get the InterMine Release Version.</summary>
+           <description>
+               Get the InterMine version number. This number represents the version of InterMine
+               code currently running. See https://github.com/intermine/intermine/releases for
+               full details on release dates and versions.
            </description>
            <returns>
              <format>text</format>
@@ -1423,10 +1435,13 @@ to will also be returned.
                 domain ranked by p-value (low to high).
             </description>
             <param type="String"
-                required="true"
-                description="The name of the list to investigate"
+                required="false"
+                description="The name of the list to investigate, optional unless identifiers is NULL."
                 options="/lists|lists{status=CURRENT}"
                 default="{name}">list</param>
+            <param type="String"
+                required="false"
+                description="Comma-separated list of InterMine object IDs, optional unless list name is NULL.">ids</param>
             <param type="String"
                 required="true"
                 description="The name of the enrichment widget to display"
@@ -3021,6 +3036,7 @@ The different token types are:
    </servlet-mapping>
 
 
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
@@ -3151,10 +3167,10 @@ The different token types are:
     <servlet-name>ws-model</servlet-name>
   </filter-mapping>
  <filter-mapping>
-  	<filter-name>ReleaseEtags</filter-name>
-  	<servlet-name>ws-model</servlet-name>
-  	<dispatcher>REQUEST</dispatcher>
-  	<dispatcher>FORWARD</dispatcher>
+    <filter-name>ReleaseEtags</filter-name>
+    <servlet-name>ws-model</servlet-name>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
 
   </filter-mapping>
 

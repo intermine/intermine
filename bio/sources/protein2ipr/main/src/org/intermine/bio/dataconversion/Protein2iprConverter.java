@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -222,7 +222,9 @@ public class Protein2iprConverter extends BioFileConverter
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         // organism in our list
-        cs.addConstraint(new BagConstraint(qfOrganismTaxonId, ConstraintOp.IN, taxonIds));
+        if (taxonIds.size() > 0) {
+            cs.addConstraint(new BagConstraint(qfOrganismTaxonId, ConstraintOp.IN, taxonIds));
+        }
 
         // protein.organism = organism
         QueryObjectReference qor = new QueryObjectReference(qcProtein, "organism");
