@@ -53,8 +53,8 @@ public class OmimConverter extends BioDirectoryConverter
 
     private String organism;
 
-    private static final String OMIM_TXT_FILE = "omim.txt";
-    private static final String MORBIDMAP_FILE = "morbidmap";
+    private static final String OMIM_TXT_FILE = "mimTitles.txt";
+    private static final String MORBIDMAP_FILE = "morbidmap.txt";
     private static final String PUBMED_FILE = "pubmed_cited";
 
     /**
@@ -164,7 +164,7 @@ public class OmimConverter extends BioDirectoryConverter
     }
 
     private void processMorbidMapFile(Reader reader) throws IOException, ObjectStoreException {
-        Iterator<String[]> lineIter = FormattedTextParser.parseDelimitedReader(reader, '|');
+        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         int lineCount = 0;
         int resolvedCount = 0;
