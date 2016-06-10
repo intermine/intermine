@@ -106,60 +106,34 @@ public class OmimConverter extends BioDirectoryConverter
         return files;
     }
 
-    private void processOmimTxtFile(Reader reader) throws IOException {
-        final BufferedReader br = new BufferedReader(reader);
-
-        String line = null;
-        StringBuilder sb = new StringBuilder();
-        boolean readingTitle = false;
-        while ((line = br.readLine()) != null) {
-            if (readingTitle) {
-                if (sb.length() > 0) {
-                    sb.append(" ");
-                }
-                sb.append(line.trim());
+    private void processOmimTxtFile(Reader reader) throws IOException, ObjectStoreException {
+        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
+            if (line.length < 3) {
+                LOG.error("Disease not processed -- only had " + line.length + " columns");
+                continue;
             }
-            if (line.startsWith("*FIELD* TI")) {
-                readingTitle = true;
-            } else if (line.startsWith("*FIELD* TX")) {
-                readingTitle = false;
 
-                // s contains line after start of TI and includes TX header line
-                String s = sb.toString();
-                // check if this is a deprecated entry
-                if (s.startsWith("^")) {
-                    sb = new StringBuilder();
-                    continue;
-                }
+            String prefix = line [0];
 
-                // if first character is not a digit, remove it
-                if (!Character.isDigit(s.charAt(0))) {
-                    s = s.substring(1);
-                }
-                // MIM number is now first thing on line
-                String[] parts = s.split(" ", 2);
-                String mimNumber = parts[0];
-                String text = parts[1];
-
-                // if this isn't a disease we need we can just ignore
-                if (diseases.containsKey(mimNumber)) {
-                    int terminateAt = s.length();
-                    for (int i = 0; i < s.length(); i++) {
-                        if (text.charAt(i) == '*'
-                            || (text.charAt(i) == ';' && text.charAt(i + 1) == ';')) {
-                            terminateAt = i;
-                            break;
-                        }
-                    }
-                    // title is text until ;; or the terminating *
-                    String title = text.substring(0, terminateAt);
-
-                    Item disease = getDisease(mimNumber);
-                    disease.setAttribute("name", title.replace("@", "").trim());
-                }
-
-                sb = new StringBuilder();
+            if (prefix.startsWith("#")) {
+                // skip header
+                continue;
             }
+
+            String mimId = line[1];
+            String preferredTitles = line[2];
+
+            Item disease = getDisease(mimId);
+            String[] names = preferredTitles.split(";");
+            if (names.length > 0) {
+                disease.setAttribute("name", names[0]);
+            }
+            for (int i = 1; i <     names.length; i++) {
+                createSynonym(disease.getIdentifier(), names[i], true);
+            }
+
         }
     }
 
