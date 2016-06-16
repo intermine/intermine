@@ -309,7 +309,7 @@ public class OmimConverter extends BioDirectoryConverter
                 gene.setReference("organism", organism);
                 store(gene);
                 geneItemId = gene.getIdentifier();
-                genes.put(geneSymbol, geneItemId);
+                genes.put(entrezGeneNumber, geneItemId);
             }
         }
         return geneItemId;
