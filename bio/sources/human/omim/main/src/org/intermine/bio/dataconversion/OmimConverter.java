@@ -10,13 +10,13 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,7 +44,7 @@ public class OmimConverter extends BioDirectoryConverter
 
     private static final String DATASET_TITLE = "OMIM diseases";
     private static final String DATA_SOURCE_NAME = "Online Mendelian Inheritance in Man";
-    private static final String HUMAN_TAXON = "9606";
+    private static final String TAXON_ID = "9606";
     private static final String OMIM_PREFIX = "OMIM:";
 
     private Map<String, String> genes = new HashMap<String, String>();
@@ -52,7 +52,7 @@ public class OmimConverter extends BioDirectoryConverter
     private Map<String, Item> diseases = new HashMap<String, Item>();
 
     private String organism;
-
+    private IdResolver rslv;
     private static final String OMIM_TXT_FILE = "mimTitles.txt";
     private static final String MORBIDMAP_FILE = "morbidmap.txt";
     private static final String PUBMED_FILE = "pubmed_cited";
@@ -64,6 +64,9 @@ public class OmimConverter extends BioDirectoryConverter
      */
     public OmimConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(Collections.singleton(TAXON_ID));
+        }
     }
 
     @Override
@@ -78,7 +81,7 @@ public class OmimConverter extends BioDirectoryConverter
     public void process(File dataDir) throws Exception {
         Map<String, File> files = readFilesInDir(dataDir);
 
-        organism = getOrganism(HUMAN_TAXON);
+        organism = getOrganism(TAXON_ID);
 
         String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
         Set<String> missingFiles = new HashSet<String>();
@@ -297,12 +300,12 @@ public class OmimConverter extends BioDirectoryConverter
 
     private String getGeneItemId(String geneSymbol) throws ObjectStoreException {
         String geneItemId = null;
-        // String entrezGeneNumber = resolveGene(symbol);
-        if (geneSymbol != null) {
-            geneItemId = genes.get(geneSymbol);
+        String entrezGeneNumber = resolveGene(geneSymbol);
+        if (entrezGeneNumber != null) {
+            geneItemId = genes.get(entrezGeneNumber);
             if (geneItemId == null) {
                 Item gene = createItem("Gene");
-                gene.setAttribute("symbol", geneSymbol);
+                gene.setAttribute("primaryIdentifier", entrezGeneNumber);
                 gene.setReference("organism", organism);
                 store(gene);
                 geneItemId = gene.getIdentifier();
@@ -310,5 +313,20 @@ public class OmimConverter extends BioDirectoryConverter
             }
         }
         return geneItemId;
+    }
+
+    private String resolveGene(String identifier) {
+        String id = identifier;
+        if (rslv != null && rslv.hasTaxon(TAXON_ID)) {
+            int resCount = rslv.countResolutions(TAXON_ID, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " Human identifier: "
+                         + rslv.resolveId(TAXON_ID, identifier));
+                return null;
+            }
+            id = rslv.resolveId(TAXON_ID, identifier).iterator().next();
+        }
+        return id;
     }
 }

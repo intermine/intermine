@@ -39,6 +39,9 @@
       <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
       <property name="organisms" value="9606"/>
     </source>
+    <source name="hgnc" type="hgnc">
+      <property name="src.data.dir" location="/micklem/data/human/hgnc/current" />
+    </source>
    <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current"/>
     </source>
