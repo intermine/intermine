@@ -43,11 +43,11 @@
   </div>
 
 <!-- beta notice-->
-<p id="beta-notice" 
+<p id="beta-notice"
    style="text-align: left;
           width: 800px;
 	  margin: -1em 2em 1em;
-	  color: #535353;">Disclaimer: This is a beta release of WormMine WS250. Although we have done our best to insure the accuracy of this release, please <a href="/tools/support">contact us</a> if you discover problems with data output or functionality.</p>
+	  color: #535353;">Disclaimer: This is a beta release of WormMine WS${WEB_PROPERTIES['project.releaseVersion']}. Although we have done our best to insure the accuracy of this release, please <a href="/tools/support">contact us</a> if you discover problems with data output or functionality.</p>
 
     <!-- Tab Menu -->
   <fmt:message key="${pageName}.tab" var="tab" />
