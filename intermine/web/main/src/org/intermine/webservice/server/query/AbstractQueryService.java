@@ -59,7 +59,7 @@ public abstract class AbstractQueryService extends WebService
             final Properties webProperties = InterMineContext.getWebProperties();
             String baseUrl = webProperties.getProperty("webapp.baseurl");
             String path = webProperties.getProperty("webapp.path");
-            String relPath = request.getContextPath() + "/"
+            String relPath = path + "/service/"
                     + XML_SCHEMA_LOCATION;
             URL url = new URL(request.getScheme(), baseUrl,
                     request.getServerPort(), relPath);
