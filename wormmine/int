@@ -1,0 +1,3 @@
+cd integrate;
+ant -v -Dsource=all;
+cd ..;

@@ -1,0 +1,7 @@
+<project name="wormmine-postprocess" default="default" basedir=".">
+
+  <description>perform post processing for wormmine</description>
+
+  <import file="../../imbuild/postprocess.xml"/>
+
+</project>

@@ -1,0 +1,17 @@
+<project name="wormmine-dbmodel" default="default" basedir=".">
+  <description>represents the production objectstore and the model therein</description>
+  <import file="../../imbuild/objectstore.xml"/>
+
+  <target name="create-so-model" depends="init, -init-deps">
+    <taskdef name="so-model" classname="org.intermine.bio.task.SOToModelTask">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+    <so-model
+       soTermListFile="${so.termlist.file}"
+       soFile="${so.obo.file}"
+       outputFile="${so.output.file}"/>
+  </target>
+
+  <target name="-pre-init-merge" depends="create-so-model"/>
+
+</project>

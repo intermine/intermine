@@ -1,0 +1,16 @@
+
+<project name="wormmine-integration" default="default" basedir=".">
+  <description>perform integration</description>
+  
+  <!-- To load just one data source, run "ant -Dsource=<whatever>" -->
+  <!-- To empty the production database, go to wormmine/dbmodel, and type "ant clean" and then "ant build-db" -->
+
+  <import file="../../imbuild/integrate.xml"/>
+
+  <target name="acceptance-tests" depends="-init-properties, -init-integrate, -init-deps">
+    <acceptance-tests configFile="resources/wormmine_acceptance_test.conf"
+                      outputFile="build/acceptance_test.html"
+                      database="db.production"/>
+  </target>
+</project>
+
