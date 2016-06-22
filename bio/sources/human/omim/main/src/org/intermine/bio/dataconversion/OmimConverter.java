@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -133,7 +132,7 @@ public class OmimConverter extends BioDirectoryConverter
             if (names.length > 0) {
                 disease.setAttribute("name", names[0]);
             }
-            for (int i = 1; i <     names.length; i++) {
+            for (int i = 1; i < names.length; i++) {
                 createSynonym(disease.getIdentifier(), names[i], true);
             }
 
@@ -143,103 +142,31 @@ public class OmimConverter extends BioDirectoryConverter
     private void processMorbidMapFile(Reader reader) throws IOException, ObjectStoreException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
-        int lineCount = 0;
-        int resolvedCount = 0;
-
-        /**
-         * a class to represent CountPair
-         */
-        class CountPair
-        {
-            protected int resolved = 0;
-            protected int total = 0;
-        }
-        Map<String, CountPair> counts = new HashMap<String, CountPair>();
-        List<String> diseaseNumbers = new ArrayList<String>();
-
-        int noMapType = 0;
-        int diseaseMatches = 0;
-
-        File f = new File("/tmp/omim_not_loaded.txt");
-        FileWriter fw = new FileWriter(f);
-
-        // extract e.g. (3)
-        Pattern matchNumberInBrackets = Pattern.compile("(\\(.\\))$");
-
-        // pull out OMIM id of disease
         Pattern matchMajorDiseaseNumber = Pattern.compile("(\\d{6})");
 
         while (lineIter.hasNext()) {
-            lineCount++;
-
             String[] bits = lineIter.next();
-            if (bits.length == 0) {
-                continue;
-            }
-
-            String first = bits[0].trim();
-
-            Matcher m = matchNumberInBrackets.matcher(first);
-            String geneMapType = null;
-            if (m.find()) {
-                geneMapType = m.group(1);
-            }
-            if (geneMapType == null) {
-                noMapType++;
-            } else {
-                if (!counts.containsKey(geneMapType)) {
-                    counts.put(geneMapType, new CountPair());
+            if (bits.length == 4) {
+                String phenotype = bits[0];
+                String symbols = bits[1];
+                Matcher m = matchMajorDiseaseNumber.matcher(phenotype);
+                String mimNumber = null;
+                if (m.find()) {
+                    mimNumber = m.group(1);
                 }
-                counts.get(geneMapType).total++;
-            }
-
-            String symbolStr = bits[1];
-            String[] symbols = symbolStr.split(",");
-            // main HGNC symbols is first, others are synonyms
-            String symbolFromFile = symbols[0].trim();
-
-            String geneItemId = getGeneItemId(symbolFromFile);
-            m = matchMajorDiseaseNumber.matcher(first);
-            String diseaseMimId = null;
-            while (m.find()) {
-                diseaseMatches++;
-                diseaseMimId = m.group(1);
-            }
-
-            if (diseaseMimId != null && geneItemId != null) {
-                Item disease = getDisease(diseaseMimId);
-                disease.addToCollection("genes", geneItemId);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                for (String bit : bits) {
-                    if (sb.length() > 0) {
-                        sb.append("|");
+                if (mimNumber == null) {
+                    mimNumber = bits[2];
+                }
+                Item disease = getDisease(mimNumber);
+                for (String geneSymbol : symbols.split(",")) {
+                    String geneRefId = getGene(geneSymbol);
+                    if (geneRefId != null) {
+                        disease.addToCollection("genes", geneRefId);
                     }
-                    sb.append(bit);
                 }
-                sb.append(System.getProperty("line.separator"));
-                fw.write(sb.toString());
             }
-
-            // start with basic rules and count how many columns are parsed
-            // if gene is an HGNC symbol - create a gene
-
-            // if disease id in first column, create a disease object
-
-            // if not create a region
-
         }
-        fw.flush();
-        fw.close();
-        LOG.info("Resolved " + resolvedCount + " of " + lineCount + " gene symbols from file.");
-        String mapTypesMessage = "Counts of resolved genes/ total for each map type: ";
-        for (Map.Entry<String, CountPair> pair : counts.entrySet()) {
-            mapTypesMessage += pair.getKey() + ": " + pair.getValue().resolved
-                + " / " + pair.getValue().total + "  ";
-        }
-        LOG.info(mapTypesMessage);
-        LOG.info("Found " + diseaseMatches + " to " + diseaseNumbers.size()
-                + " unique diseases from " + lineCount + " line file.");
+
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
@@ -298,7 +225,7 @@ public class OmimConverter extends BioDirectoryConverter
         return pubId;
     }
 
-    private String getGeneItemId(String geneSymbol) throws ObjectStoreException {
+    private String getGene(String geneSymbol) throws ObjectStoreException {
         String geneItemId = null;
         String entrezGeneNumber = resolveGene(geneSymbol);
         if (entrezGeneNumber != null) {
