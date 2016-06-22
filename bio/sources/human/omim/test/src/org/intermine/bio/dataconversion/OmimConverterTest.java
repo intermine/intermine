@@ -59,7 +59,7 @@ public class OmimConverterTest extends ItemsTestCase
         converter.process(datadir);
         converter.close();
         storedItems = itemWriter.getItems();
-        //writeItemsFile(storedItems, "omim-tgt-items.xml");
+        writeItemsFile(storedItems, "omim-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("OmimConverterTest_tgt.xml");
         assertEquals(expected, storedItems);
