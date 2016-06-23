@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
-
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -51,20 +49,17 @@ public class HpoConverter extends BioDirectoryConverter
     private static final String GENE_FILE =
             "ALL_SOURCES_ALL_FREQUENCIES_diseases_to_genes_to_phenotypes.txt";
 
-    private Map<String, Item> diseaseMap = new HashMap<String, Item>();
-    private Map<String, Item> hpoTermMap = new HashMap<String, Item>();
-    private Map<String, Item> geneMap = new HashMap<String, Item>();
+    private Map<String, Item> diseases = new HashMap<String, Item>();
+    private Map<String, Item> hpoTerms = new HashMap<String, Item>();
+    private Map<String, Item> genes = new HashMap<String, Item>();
 
-    private Map<String, String> eviCodeMap = new HashMap<String, String>();
+    private Map<String, String> evidenceCodes = new HashMap<String, String>();
     private Map<MultiKey, Item> annotations = new HashMap<MultiKey, Item>();
     private Map<String, String> publications = new HashMap<String, String>();
     private String ontologyItemId = null;
 
     private static final String HUMAN_TAXON = "9606";
     private String organism = getOrganism(HUMAN_TAXON);
-
-    private static final String REGEX = "^(\\*|\\+|#|%)*[0-9]{6,}";
-    private static final String TO_DISCARD = "MOVED TO";
 
     /**
      * Constructor
@@ -137,33 +132,33 @@ public class HpoConverter extends BioDirectoryConverter
     }
 
     private Item getDisease(String omimId) {
-        Item item = diseaseMap.get(omimId);
+        Item item = diseases.get(omimId);
         if (item == null) {
             item = createItem("Disease");
             item.setAttribute("identifier", omimId);
-            diseaseMap.put(omimId, item);
+            diseases.put(omimId, item);
         }
         return item;
     }
 
     private Item getTerm(String hpoTerm) {
-        Item item = hpoTermMap.get(hpoTerm);
+        Item item = hpoTerms.get(hpoTerm);
         if (item == null) {
             item = createItem("HPOTerm");
             item.setAttribute("identifier", hpoTerm);
             item.setReference("ontology", ontologyItemId);
-            hpoTermMap.put(hpoTerm, item);
+            hpoTerms.put(hpoTerm, item);
         }
         return item;
     }
 
     private Item getGene(String identifier) throws ObjectStoreException {
-        Item item = geneMap.get(identifier);
+        Item item = genes.get(identifier);
         if (item == null) {
             item = createItem("Gene");
             item.setAttribute("primaryIdentifier", identifier);
             item.setReference("organism", organism);
-            geneMap.put(identifier, item);
+            genes.put(identifier, item);
         }
         return item;
     }
@@ -210,6 +205,8 @@ public class HpoConverter extends BioDirectoryConverter
             String evidenceCodeRefId = getEvidenceCode(evidenceCode);
 
             Item evidence = createItem("HPOEvidence");
+            Item disease = null;
+
             if (dbRef.isEmpty()) {
                 dbRef = dbId;
             }
@@ -222,7 +219,7 @@ public class HpoConverter extends BioDirectoryConverter
             } else {
                 if (dbRef.trim().matches("^(OMIM|ORPHANET):[0-9]{6,}$")) {
                     String diseaseId = dbRef.trim();
-                    Item disease = getDisease(diseaseId);
+                    disease = getDisease(diseaseId);
                     evidence.setReference("diseaseReference", disease);
                 }
             }
@@ -237,18 +234,22 @@ public class HpoConverter extends BioDirectoryConverter
 
             Item annotation = getAnnotation(hpoIdentifier, qualifier);
             annotation.addToCollection("evidences", evidence);
+            if (disease != null) {
+                disease.addToCollection("hpoAnnotations", annotation);
+            }
 
         }
     }
 
 
-    private Item getAnnotation(String hpoId, String qualifier) {
+    private Item getAnnotation(String hpoId, String qualifier) throws ObjectStoreException {
         MultiKey key = new MultiKey(hpoId, qualifier);
         Item annotation = annotations.get(key);
         if (annotation == null) {
             annotation = createItem("HPOAnnotation");
             Item hpoTerm = getTerm(hpoId);
             annotation.setReference("hpoTerm", hpoTerm);
+            hpoTerm.addToCollection("hpoAnnotations", annotation);
             if (!qualifier.isEmpty()) {
                 annotation.setAttribute("qualifier", qualifier);
             }
@@ -259,9 +260,10 @@ public class HpoConverter extends BioDirectoryConverter
 
     @Override
     public void close() throws Exception {
-        store(diseaseMap.values());
-        store(geneMap.values());
-        store(hpoTermMap.values());
+        store(hpoTerms.values());
+        store(diseases.values());
+        store(genes.values());
+        store(annotations.values());
         super.close();
     }
 
@@ -274,12 +276,12 @@ public class HpoConverter extends BioDirectoryConverter
     }
 
     private String getEvidenceCode(String code) throws ObjectStoreException {
-        String refId = eviCodeMap.get(code);
+        String refId = evidenceCodes.get(code);
         if (refId == null) {
             Item item = createItem("GOEvidenceCode");
             item.setAttribute("code", code);
             refId = item.getIdentifier();
-            eviCodeMap.put(code, refId);
+            evidenceCodes.put(code, refId);
             store(item);
         }
         return refId;
