@@ -237,7 +237,6 @@ public class HpoConverter extends BioDirectoryConverter
             if (disease != null) {
                 disease.addToCollection("hpoAnnotations", annotation);
             }
-
         }
     }
 

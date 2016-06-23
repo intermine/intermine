@@ -4,7 +4,7 @@ use Moose;
 extends 'DataDownloader::Source::ABC';
 
 use constant {
-    TITLE  => 'Reactome',
+    TITLE  => 'Orphanet',
     DESCRIPTION => "Diseases from Orphanet",
     SOURCE_LINK => "http://www.orphadata.org",
     SOURCE_DIR => 'human/orphanet',
