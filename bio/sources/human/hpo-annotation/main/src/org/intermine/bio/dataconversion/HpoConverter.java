@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,8 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
@@ -56,9 +56,8 @@ public class HpoConverter extends BioDirectoryConverter
     private Map<String, Item> geneMap = new HashMap<String, Item>();
 
     private Map<String, String> eviCodeMap = new HashMap<String, String>();
-    private Map<MultiKey, Set<String[]>> annoMap = new HashMap<MultiKey, Set<String[]>>();
-    private Map<String, String> publicationMap = new HashMap<String, String>();
-    private Map<String, Set<String>> diseaseToHpoAnnoItemMap = new HashMap<String, Set<String>>();
+    private Map<MultiKey, Item> annotations = new HashMap<MultiKey, Item>();
+    private Map<String, String> publications = new HashMap<String, String>();
     private String ontologyItemId = null;
 
     private static final String HUMAN_TAXON = "9606";
@@ -96,9 +95,8 @@ public class HpoConverter extends BioDirectoryConverter
 
         ontologyItemId = storeOntology();
         processGeneFile(new FileReader(files.get(GENE_FILE)));
-        processAnnoFile(new FileReader(files.get(HPOTEAM_FILE)));
-        processAnnoFile(new FileReader(files.get(NEG_FILE)));
-        parseAnnotation();
+        processAnnotationFile(new FileReader(files.get(HPOTEAM_FILE)));
+        processAnnotationFile(new FileReader(files.get(NEG_FILE)));
     }
 
     private static Map<String, File> readFilesInDir(File dir) {
@@ -175,11 +173,9 @@ public class HpoConverter extends BioDirectoryConverter
      * @throws IOException if can't read file
      * @throws ObjectStoreException if can't store to db
      */
-    protected void processAnnoFile(Reader reader) throws IOException, ObjectStoreException {
+    protected void processAnnotationFile(Reader reader) throws IOException, ObjectStoreException {
         BufferedReader br = new BufferedReader(reader);
         String line = null;
-
-        // loop through entire file
         while ((line = br.readLine()) != null) {
             String[] array = line.split("\t", -1); // keep trailing empty Strings
 
@@ -190,99 +186,75 @@ public class HpoConverter extends BioDirectoryConverter
                         + array.length + ") in line: " + line);
             }
 
+            // e.g. OMIM
             String db = array[0];
             if (ignoreDbList.contains(db)) {
                 continue;
             }
 
+            // e.g. OMIM:100200
             String dbId = db + ":" + array[1];
-            String dbName = array[2];
-
-            if (dbName.contains(TO_DISCARD)) {
-                continue;
-            }
-
-            dbName = dbName.replaceAll(REGEX, "").replaceAll("@", "");
-
-
+            // e.g. NOT
             String qualifier = array[3];
-            String hpoId = array[4];
+            // HP:0000028
+            String hpoIdentifier = array[4];
+            //  PMID:17088400 OR OMIM:100050
             String dbRef = array[5];
-            String eviCode = array[6];
-            String freq = array[8];
+            // e.g. IEA
+            String evidenceCode = array[6];
+            // e.g RARE
+            String frequency = array[8];
+            // HPO:curators
             String assignedBy = array[13];
 
-            storeEvidenceCode(eviCode);
+            String evidenceCodeRefId = getEvidenceCode(evidenceCode);
 
-            String[] eviInfo = {dbRef, eviCode, freq, assignedBy};
-
-            if (annoMap.get(new MultiKey(dbId, hpoId, qualifier)) == null) {
-                Set<String[]> eviInfoSet = new HashSet<String[]>();
-                eviInfoSet.add(eviInfo);
-                annoMap.put(new MultiKey(dbId, hpoId, qualifier), eviInfoSet);
-            } else {
-                annoMap.get(new MultiKey(dbId, hpoId, qualifier)).add(eviInfo);
+            Item evidence = createItem("HPOEvidence");
+            if (dbRef.isEmpty()) {
+                dbRef = dbId;
             }
+            evidence.setAttribute("source", dbRef);
+            if (dbRef.toUpperCase().startsWith("PMID")) {
+                String refId = getPublication(dbRef);
+                if (refId != null) {
+                    evidence.addToCollection("publications", refId);
+                }
+            } else {
+                if (dbRef.trim().matches("^(OMIM|ORPHANET):[0-9]{6,}$")) {
+                    String diseaseId = dbRef.trim();
+                    Item disease = getDisease(diseaseId);
+                    evidence.setReference("diseaseReference", disease);
+                }
+            }
+            evidence.setReference("code", evidenceCodeRefId);
+            if (!frequency.isEmpty()) {
+                evidence.setAttribute("frequencyModifier", frequency);
+            }
+            if (!assignedBy.isEmpty()) {
+                evidence.setAttribute("assignedBy", assignedBy);
+            }
+            store(evidence);
+
+            Item annotation = getAnnotation(hpoIdentifier, qualifier);
+            annotation.addToCollection("evidences", evidence);
+
         }
     }
 
-    /**
-     * @throws ObjectStoreException if can't store to db
-     */
-    protected void parseAnnotation() throws ObjectStoreException {
-        for (MultiKey mKey : annoMap.keySet()) {
-            Item annoItem = createItem("HPOAnnotation");
-            if (diseaseToHpoAnnoItemMap.get(mKey.getKey(0)) == null) {
-                Set<String> annoItemSet = new HashSet<String>();
-                annoItemSet.add(annoItem.getIdentifier());
-                diseaseToHpoAnnoItemMap.put((String) mKey.getKey(0), annoItemSet);
-            } else {
-                diseaseToHpoAnnoItemMap.get(mKey.getKey(0)).add(annoItem.getIdentifier());
+
+    private Item getAnnotation(String hpoId, String qualifier) {
+        MultiKey key = new MultiKey(hpoId, qualifier);
+        Item annotation = annotations.get(key);
+        if (annotation == null) {
+            annotation = createItem("HPOAnnotation");
+            Item hpoTerm = getTerm(hpoId);
+            annotation.setReference("hpoTerm", hpoTerm);
+            if (!qualifier.isEmpty()) {
+                annotation.setAttribute("qualifier", qualifier);
             }
-
-            String hpoTermId = (String) mKey.getKey(1);
-            Item hpoTerm = getTerm(hpoTermId);
-            annoItem.setReference("hpoTerm", hpoTerm);
-            hpoTermMap.get(mKey.getKey(1)).setReference("hpoAnnotation", annoItem);
-
-            if (!((String) mKey.getKey(2)).isEmpty()) {
-                annoItem.setAttribute("qualifier", (String) mKey.getKey(2));
-            }
-
-            List<String> eviIdList = new ArrayList<String>();
-            for (String[] eviInfoBits : annoMap.get(mKey)) {
-                // Create Evidence item
-                Item eviItem = createItem("HPOEvidence");
-                if (!eviInfoBits[0].isEmpty()) {
-                    eviItem.setAttribute("source", eviInfoBits[0]);
-                    if (eviInfoBits[0].toUpperCase().startsWith("PMID")) {
-                        eviItem.setCollection("publications", storePublication(eviInfoBits[0]));
-                    } else {
-                        if (eviInfoBits[0].trim().matches("^(OMIM|DECIPHER|ORPHANET):[0-9]{6,}$")) {
-                            String diseaseId = eviInfoBits[0].trim();
-                            Item disease = getDisease(diseaseId);
-                            eviItem.setReference("diseaseReference", disease);
-                        }
-                    }
-                }
-
-                eviItem.setReference("code", eviCodeMap.get(eviInfoBits[1]));
-
-                if (!eviInfoBits[2].isEmpty()) {
-                    eviItem.setAttribute("frequencyModifier", eviInfoBits[2]);
-                }
-
-                if (!eviInfoBits[3].isEmpty()) {
-                    eviItem.setAttribute("assignedBy", eviInfoBits[3]);
-                }
-
-                store(eviItem);
-                eviIdList.add(eviItem.getIdentifier());
-            }
-
-            annoItem.setCollection("evidences", eviIdList);
-            store(annoItem);
+            annotations.put(key, annotation);
         }
+        return annotation;
     }
 
     @Override
@@ -293,7 +265,6 @@ public class HpoConverter extends BioDirectoryConverter
         super.close();
     }
 
-
     private String storeOntology() throws ObjectStoreException {
         Item item = createItem("Ontology");
         item.setAttribute("name", "Human Phenotype Ontology");
@@ -302,32 +273,31 @@ public class HpoConverter extends BioDirectoryConverter
         return item.getIdentifier();
     }
 
-    private void storeEvidenceCode(String code) throws ObjectStoreException {
-        if (eviCodeMap.get(code) == null) {
+    private String getEvidenceCode(String code) throws ObjectStoreException {
+        String refId = eviCodeMap.get(code);
+        if (refId == null) {
             Item item = createItem("GOEvidenceCode");
             item.setAttribute("code", code);
-            eviCodeMap.put(code, item.getIdentifier());
+            refId = item.getIdentifier();
+            eviCodeMap.put(code, refId);
             store(item);
         }
+        return refId;
     }
 
-    private List<String> storePublication(String ref) throws ObjectStoreException {
-        List<String> pubItemIdList = new ArrayList<String>();
-        String[] pubs = StringUtils.split(ref, ";");
-        for (String pub : pubs) {
-            String pubMedId = pub.trim().substring(5);
-            if (StringUtil.allDigits(pubMedId)) {
-                String pubItemId = publicationMap.get(pubMedId);
-                if (pubItemId == null) {
-                    Item item = createItem("Publication");
-                    item.setAttribute("pubMedId", pubMedId);
-                    pubItemId = item.getIdentifier();
-                    publicationMap.put(pubMedId, pubItemId);
-                    store(item);
-                }
-                pubItemIdList.add(pubItemId);
+    private String getPublication(String ref) throws ObjectStoreException {
+        String pubMedId = ref.trim().substring(5);
+        if (StringUtil.allDigits(pubMedId)) {
+            String pubItemId = publications.get(pubMedId);
+            if (pubItemId == null) {
+                Item item = createItem("Publication");
+                item.setAttribute("pubMedId", pubMedId);
+                pubItemId = item.getIdentifier();
+                publications.put(pubMedId, pubItemId);
+                store(item);
             }
+            return pubItemId;
         }
-        return pubItemIdList;
+        return null;
     }
 }
