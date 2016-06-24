@@ -52,7 +52,7 @@
 
     <link rel="shortcut icon" type="image/x-icon" href="model/images/favicon.ico?v=2">
     <!--<link type="text/css" href="${WEB_PROPERTIES['webapp.baseurl']}/css/jquery-ui.min.css" rel="stylesheet" />-->
-    <link type="text/css" href="${WEB_PROPERTIES['webapp.baseurl']}/css/main.min.css" rel="stylesheet" />
+    <link type="text/css" href="${WEB_PROPERTIES['webapp.wormbase.url']}/css/main.min.css" rel="stylesheet" />
   </head>
 
   <!-- Check if the current page has fixed layout -->
@@ -243,7 +243,7 @@ if (typeof intermine != 'undefined') {
       </div>
     </c:if>
   </div>
-  <c:import var="wbfooter" url="${WEB_PROPERTIES['webapp.baseurl']}/footer?desktop=true"/>
+  <c:import var="wbfooter" url="${WEB_PROPERTIES['webapp.wormbase.url']}/footer?desktop=true"/>
   ${wbfooter}
 
 
@@ -260,8 +260,8 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 ga('create', 'UA-16257183-1', {'cookieDomain': 'wormbase.org'});
 ga('require', 'displayfeatures');
 ga('send', 'pageview');
-      <!-- End Google Analytics --> 
-   </script> 
+      <!-- End Google Analytics -->
+   </script>
 
 </body>
 </html:html>

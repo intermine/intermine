@@ -36,8 +36,8 @@
   </c:if>
   <div id="imheader">
     <!--<a href="${WEB_PROPERTIES['project.sitePrefix']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo.png" width="45px" height="43px" alt="Logo" /></a>-->
-    <a href="${WEB_PROPERTIES['webapp.baseurl']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo_wb.png" height="34px" alt="Logo" /></a>
-    <h1><html:link href="${WEB_PROPERTIES['project.sitePrefix']}/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link></h1>
+    <a href="${WEB_PROPERTIES['webapp.wormbase.url']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo_wb.png" height="34px" alt="Logo" /></a>
+    <h1><html:link href="/${WEB_PROPERTIES['webapp.path']}/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link></h1>
     <p id="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span>
     <p><c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/></p>
   </div>
