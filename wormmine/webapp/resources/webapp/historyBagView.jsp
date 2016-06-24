@@ -32,7 +32,7 @@ if (!im.bagWorks) {
   <h1>
     <fmt:message key="history.savedbags.intro"/>
      <c:if test="${!PROFILE.loggedIn}">
-      - <a href="${WEB_PROPERTIES['webapp.baseurl']}/google"><fmt:message key="history.savedbags.login"/></a>&nbsp;&nbsp;
+      - <a href="login.do?returnto=/mymine.do?subtab=lists"><fmt:message key="history.savedbags.login"/></a>&nbsp;&nbsp;
     </c:if>
   </h1>
 
