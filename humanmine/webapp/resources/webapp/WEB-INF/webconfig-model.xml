@@ -370,6 +370,11 @@
 <!-- report page displayers -->
 <reportdisplayers>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
+                 jspName="model/jbrowseDisplayer.jsp"
+                 replacesFields=""
+                 placement="Genomics"
+                 types="SequenceFeature"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
         jspName="model/esynDisplayer.jsp"
