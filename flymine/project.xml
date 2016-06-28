@@ -32,7 +32,7 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
-    <source name="wormbase-identifiers" type="wormbase-identifiers" dump="true">
+    <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
     <source name="ncbi-gene" type="ncbi-gene">
@@ -98,7 +98,7 @@
     </source>
 
 <!-- has to be after UniProt because only loads protein domains for loaded proteins -->
-    <source name="protein2ipr" type="protein2ipr">
+    <source name="protein2ipr" type="protein2ipr" dump="true">
      <property name="src.data.dir" location="/micklem/data/interpro/match_complete"/>
      <property name="src.data.dir.includes" value="protein2ipr.dat"/>
      <property name="protein2ipr.organisms" value="7227"/>
@@ -545,7 +545,7 @@
       <property name="src.data.dir" location="/micklem/data/flymine/mirna/miranda/current"/>
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
-    <source name="psi-intact" type="psi">
+    <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 46245 7240 7244 7245 4932"/>
     </source>
