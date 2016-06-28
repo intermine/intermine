@@ -185,14 +185,15 @@ public class Config extends JSONService
         */
 
         // Parse any track configuration found.
-        final Map<String, Map<String, String>> userConfiguredFeatures = new HashMap<String, Map<String, String>>();
+        final Map<String, Map<String, String>> userConfiguredFeatures =
+                new HashMap<String, Map<String, String>>();
         final String tracksRegex = prefix + ".track\\.([^.]+)\\.(.+)";
         final Pattern p = Pattern.compile(tracksRegex);
 
         // FIXME: namespaced is broken for iterating through properties
         for (Map.Entry<Object, Object> entry : webProperties.entrySet()) {
-            final String key = (String)entry.getKey();
-            final String value = (String)entry.getValue();
+            final String key = (String) entry.getKey();
+            final String value = (String) entry.getValue();
 
             Matcher matcher = p.matcher(key);
 
@@ -215,7 +216,8 @@ public class Config extends JSONService
      * Initialise track information.
      *
      * @param userConfiguredFeatureTracks - If given then only these tracks will be displayed.
-     * If empty then all InterMine classes that are descendants of SequenceFeature (including SequenceFeature) will have a jbrowse track.
+     *             If empty then all InterMine classes that are descendants of SequenceFeature
+     *             (including SequenceFeature) will have a jbrowse track.
      */
     private void initTracks(Map<String, Map<String, String>> userConfiguredFeatures) {
         tracks = new ArrayList<Map<String, Object>>();
@@ -226,14 +228,16 @@ public class Config extends JSONService
                 final Map<String, String> trackProperties = entry.getValue();
 
                 if (!trackProperties.containsKey("class")) {
-                    throw new ResourceNotFoundException("Track named " + entry.getKey() + " has no class property");
+                    throw new ResourceNotFoundException("Track named " + entry.getKey()
+                            + " has no class property");
                 }
 
                 final String className = trackProperties.get("class");
                 ClassDescriptor fcd = m.getClassDescriptorByName(className);
 
                 if (fcd == null) {
-                    throw new ResourceNotFoundException("No class found for user configured track " + className);
+                    throw new ResourceNotFoundException("No class found for user configured track "
+                            + className);
                 }
 
                 tracks.add(makeFeatureTrack(fcd, trackProperties));
@@ -348,7 +352,8 @@ public class Config extends JSONService
      * @param trackProperties User-configured track properties.  If null then defaults are used.
      * @return A representation of the track configuration.
      */
-    private Map<String, Object> makeFeatureTrack(ClassDescriptor feature, Map<String, String> trackProperties) {
+    private Map<String, Object> makeFeatureTrack(ClassDescriptor feature,
+            Map<String, String> trackProperties) {
 
         Map<String, Object> ret = new HashMap<String, Object>();
         ret.put("type", "JBrowse/View/Track/CanvasFeatures");
@@ -370,10 +375,12 @@ public class Config extends JSONService
                 String key = entry.getKey();
                 Map<String, Object> currentMap = ret;
 
-                // Mask out class property - this is just used for retrieving the ClassDescriptor and we don't want it
+                // Mask out class property
+                // this is just used for retrieving the ClassDescriptor and we don't want it
                 // passed to jbrowse
-                if (key.equals("class"))
+                if ("class".equals(key)) {
                     continue;
+                }
 
                 String[] keyComponents = key.split("\\.");
 
@@ -384,7 +391,7 @@ public class Config extends JSONService
                         currentMap.put(keyComponent, entry.getValue());
                     } else {
                         if (currentMap.containsKey(keyComponent)) {
-                            currentMap = (Map<String, Object>)currentMap.get(keyComponent);
+                            currentMap = (Map<String, Object>) currentMap.get(keyComponent);
                         } else {
                             HashMap<String, Object> newMap = new HashMap<String, Object>();
                             currentMap.put(keyComponent, newMap);
