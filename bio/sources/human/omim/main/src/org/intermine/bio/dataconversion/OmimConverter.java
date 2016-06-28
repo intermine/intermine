@@ -55,7 +55,10 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String OMIM_TXT_FILE = "mimTitles.txt";
     private static final String MORBIDMAP_FILE = "morbidmap.txt";
     private static final String PUBMED_FILE = "pubmed_cited";
-
+    // An asterisk (*) before an entry number indicates a gene.
+    private static final String GENE_ENTRY = "Asterisk";
+    private static final String GENE_PHENOTYPE_ENTRY = "Plus";
+    private static final String OBSOLETE = "Caret";
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -117,10 +120,11 @@ public class OmimConverter extends BioDirectoryConverter
                 continue;
             }
 
-            String prefix = line [0];
+            String prefix = line[0].trim();
 
-            if (prefix.startsWith("#")) {
-                // skip header
+            // skip header AND genes
+            if (prefix.startsWith("#") || GENE_ENTRY.equals(prefix)
+                    || GENE_PHENOTYPE_ENTRY.equals(prefix) || OBSOLETE.equals(prefix)) {
                 continue;
             }
 
@@ -153,9 +157,6 @@ public class OmimConverter extends BioDirectoryConverter
                 String mimNumber = null;
                 if (m.find()) {
                     mimNumber = m.group(1);
-                }
-                if (mimNumber == null) {
-                    mimNumber = bits[2];
                 }
                 Item disease = getDisease(mimNumber);
                 for (String geneSymbol : symbols.split(",")) {
@@ -227,7 +228,7 @@ public class OmimConverter extends BioDirectoryConverter
 
     private String getGene(String geneSymbol) throws ObjectStoreException {
         String geneItemId = null;
-        String entrezGeneNumber = resolveGene(geneSymbol);
+        String entrezGeneNumber = resolveGene(geneSymbol.trim());
         if (entrezGeneNumber != null) {
             geneItemId = genes.get(entrezGeneNumber);
             if (geneItemId == null) {
