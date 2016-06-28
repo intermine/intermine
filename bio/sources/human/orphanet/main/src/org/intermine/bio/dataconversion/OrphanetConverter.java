@@ -29,14 +29,15 @@ import org.xml.sax.SAXException;
 
 
 /**
+ * Loads disease name and identifier from orphanet. the annotations are set in the OMIM source.
  *
  * @author Julie Sullivan
  */
 public class OrphanetConverter extends BioFileConverter
 {
-    //
     private static final String DATASET_TITLE = "Orphanet data set";
     private static final String DATA_SOURCE_NAME = "Orphanet";
+    private static final String PREFIX = "ORPHANET:";
 
     /**
      * Constructor
@@ -76,7 +77,7 @@ public class OrphanetConverter extends BioFileConverter
             String orphaNumber = entry.getElementsByTagName("OrphaNumber").item(0).getTextContent();
             String diseaseName = entry.getElementsByTagName("Name").item(0).getTextContent();
             Item item = createItem("Disease");
-            item.setAttribute("identifier", orphaNumber);
+            item.setAttribute("identifier", PREFIX + orphaNumber);
             item.setAttribute("name", diseaseName);
             store(item);
         }
