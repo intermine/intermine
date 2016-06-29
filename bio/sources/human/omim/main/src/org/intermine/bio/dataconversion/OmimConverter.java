@@ -158,7 +158,8 @@ public class OmimConverter extends BioDirectoryConverter
                 if (m.find()) {
                     mimNumber = m.group(1);
                 }
-                if (mimNumber.isEmpty()) {
+                if (mimNumber == null || mimNumber.isEmpty()) {
+                    LOG.info("Not processing " + phenotype + ", no OMIM ID");
                     continue;
                 }
                 Item disease = getDisease(mimNumber);
