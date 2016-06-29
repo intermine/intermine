@@ -293,11 +293,10 @@ public class TreefamConverter extends BioFileConverter
             }
 
             String resolvedIdentifier = resolveGene(taxonId, geneId, symbol);
-            if (StringUtils.isEmpty(resolvedIdentifier)) {
-                resolvedIdentifier = ("symbol".equalsIgnoreCase(identifierType) ? symbol : geneId);
+            if (!StringUtils.isEmpty(resolvedIdentifier)) {
+                idsToGenes.put(id, new GeneHolder(geneId, symbol, resolvedIdentifier,
+                        identifierColumn, identifierType, taxonId));
             }
-            idsToGenes.put(id, new GeneHolder(geneId, symbol, resolvedIdentifier, identifierColumn,
-                    identifierType, taxonId));
         }
     }
 

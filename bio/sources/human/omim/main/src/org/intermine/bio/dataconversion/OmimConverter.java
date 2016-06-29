@@ -158,6 +158,9 @@ public class OmimConverter extends BioDirectoryConverter
                 if (m.find()) {
                     mimNumber = m.group(1);
                 }
+                if (mimNumber.isEmpty()) {
+                    continue;
+                }
                 Item disease = getDisease(mimNumber);
                 for (String geneSymbol : symbols.split(",")) {
                     String geneRefId = getGene(geneSymbol);
