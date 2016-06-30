@@ -26,8 +26,8 @@
     <th>PubMed</th>
     <th>Note</th>
   </tr>
-  <tr><td rowspan="1" class="leftcol">
-        <h2><p>Genes</p></h2></td>
+  <tr>
+    <td class="leftcol"><h2><p>Genes</p></h2></td>
     <td> <i>Drosophila</i> </td>
     <td> Genome annotation for D. melanogaster (R6.11), D. ananassae (R1.05), D. erecta (R1.05), D. grimshawi (R1.3), D. mojavensis (R1.04), D. persimilis (R1.3), D. pseudoobscura (R3.04), D. sechellia (R1.3), D. simulans (R2.02), D. virilis (R1.06), D. willistoni (R1.05) and D. yakuba (R1.05).</td>
     <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2016_03</td>
@@ -75,11 +75,10 @@
     <td><a href="http://www.pantherdb.org" target="_new" class="extlink">Panther</a> - version 10.0</td>
     <td>Mi et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/23193289 " target="_new" class="extlink">PubMed: 23193289</a></td>
     <td> &nbsp; </td>
-    <td> &nbsp; </td>
   </tr>
 
   <tr>
-    <td rowspan="3"  class="leftcol"><p><h2>Proteins</h2></p></td>
+    <td rowspan="2"  class="leftcol"><p><h2>Proteins</h2></p></td>
     <td>
         <p><i>Drosophila</i></p>
         <p><i>C. elegans</i></p>
@@ -146,7 +145,7 @@
     <td> &nbsp;</td>
   </tr>
   <tr>
-    <td rowspan="3" class="leftcol"><p> <h2>Gene Ontology</h2></p></td>
+    <td rowspan="2" class="leftcol"><p> <h2>Gene Ontology</h2></p></td>
     <td> <i>D. melanogaster</i> </td>
     <td> GO annotations </td>
     <td> <a href="http://www.geneontology.org" target="_new" class="extlink">Gene Ontology Site</a> - June 2016</td>
