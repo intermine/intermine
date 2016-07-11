@@ -13,7 +13,7 @@
       <classpath refid="task.class.path"/>
     </taskdef>
     
-    <echo message="retrieving from ${src.data.file}"/>
+    <echo message="Writing organism Entrez entries to ${src.data.file}"/>
 
     <retrieve-organisms osAlias="os.production" outputFile="${src.data.file}"/>
   </target>

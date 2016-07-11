@@ -391,8 +391,8 @@
         <div class="popup" style="display:none;">
           <span class="close"></span>
           <p style="width:95%;">
-          Use the URL below to fetch results for this template from the command line or a script
-          <i>(please note that you will need to use authentication to access private templates and lists)</i>:
+          Use the URL below to fetch the first <b>10</b> records for this template from the command line or a script
+          <i>(authentication needed for private templates and lists)</i>:
           </p>
           <input type="text" value="None">
         </div>

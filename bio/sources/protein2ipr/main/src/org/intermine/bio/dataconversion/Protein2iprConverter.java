@@ -198,6 +198,8 @@ public class Protein2iprConverter extends BioFileConverter
             dbName = "PIRSF";
         } else if (dbId.startsWith("MF_")) {
             dbName = "HAMAP";
+        } else if (dbId.startsWith("CD")) {
+            dbName = "Conserved Domain Database";
         } else {
             throw new RuntimeException("Unknown DB found. ID: " + dbId);
         }
@@ -222,7 +224,9 @@ public class Protein2iprConverter extends BioFileConverter
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         // organism in our list
-        cs.addConstraint(new BagConstraint(qfOrganismTaxonId, ConstraintOp.IN, taxonIds));
+        if (taxonIds.size() > 0) {
+            cs.addConstraint(new BagConstraint(qfOrganismTaxonId, ConstraintOp.IN, taxonIds));
+        }
 
         // protein.organism = organism
         QueryObjectReference qor = new QueryObjectReference(qcProtein, "organism");

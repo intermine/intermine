@@ -194,7 +194,7 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
                     subv = dblQuote(((PathConstraintLookup) pc).getValue());
                 } else {
                     subv = dblQuote(((PathConstraintLookup) pc).getValue()
-                            + "\", => :with => " + extraValue);
+                            + "\", :with => \"" + extraValue);
                 }
             } else if ("PathConstraintAttribute".equals(className)) {
                 String val = dblQuote(((PathConstraintAttribute) pc).getValue());

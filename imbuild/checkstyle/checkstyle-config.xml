@@ -131,13 +131,13 @@
     </module>
 
     <module name="ParenPad">
-      <property name="tokens" value="CTOR_CALL, LPAREN, METHOD_CALL, RPAREN, SUPER_CTOR_CALL, TYPECAST"/>
+      <property name="tokens" value="CTOR_CALL, METHOD_CALL, SUPER_CTOR_CALL"/>
       <property name="option" value="nospace"/>
     </module>
 
 
     <module name="WhitespaceAfter">
-      <property name="tokens" value="COLON, COMMA, SEMI, TYPECAST"/>
+      <property name="tokens" value="COMMA, SEMI, TYPECAST"/>
     </module>
 
     <module name="WhitespaceAround">
@@ -216,12 +216,6 @@
     <module name="UpperEll"/>
     <module name="Indentation"/>
     <module name="CovariantEquals"/>
-    <module name="RedundantThrows">
-        <!-- Allow, but don't require, unchecked exceptions to be declared -->
-        <property name="allowUnchecked" value="true"/>
-        <!-- Allow javadoc to document subclasses of exceptions -->
-        <property name="allowSubclasses" value="true"/>
-    </module>
     <module name="StringLiteralEquality"/>
     <module name="SuperFinalize"/>
     <module name="PackageDeclaration"/>

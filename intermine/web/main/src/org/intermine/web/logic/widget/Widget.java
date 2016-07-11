@@ -33,6 +33,7 @@ public abstract class Widget
 {
     protected WidgetConfig config;
     protected InterMineBag bag;
+    protected String ids;
     protected ObjectStore os;
     protected int notAnalysed = 0;
 
@@ -77,12 +78,6 @@ public abstract class Widget
      * @return the hasResults
      */
     public abstract boolean getHasResults();
-
-    /**
-     * checks if elem is in bag
-     * @return true if elem is in bag
-     */
-    public abstract List<String> getElementInList();
 
     /**
      * Get the ID of the corresponding WidgetConfig

@@ -26,18 +26,28 @@
     </c:if>
     <br/>
 
-    <!-- funding -->
-    <div id="funding-footer">
-        <fmt:message key="funding" />
-        <br/>
-        <br/>
-
-        <!-- powered -->
-        <p>Powered by</p>
-        <a target="new" href="http://intermine.org" title="InterMine">
-            <img src="images/icons/intermine-footer-logo.png" alt="InterMine logo" />
-        </a>
+<div id="promo-footer">
+  <!-- powered -->
+  <div class="powered-footer footer">
+    <p>Powered by</p>
+    <a target="new" href="http://intermine.org" title="InterMine">
+      <img src="images/icons/intermine-footer-logo.png" alt="InterMine logo" />
+    </a>
+  </div>
+    <div class="android">
+        <p>Have you tried our InterMine Android app?</p>
+        <a href='https://play.google.com/store/apps/details?id=org.intermine.app&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1' target="_blank"><img class="googleplay" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' /></a>
     </div>
+    <div class="cite-footer footer">
+      <strong>Cite us:</strong>
+          <cite>${WEB_PROPERTIES['project.citation']}</cite>
+    </div>
+</div>
+<div class="funding-footer footer">
+  <!-- funding -->
+  <p><fmt:message key="funding" /></p>
+</div>
+
 </div>
 
 <!-- cam logo and links -->
@@ -62,13 +72,13 @@
                 </c:otherwise>
             </c:choose>
         </c:forEach>
+
     </ul>
 
     <!-- mines -->
     <ul class="footer-links">
         <li><a href="http://www.intermine.org" target="_blank">InterMine</a></li>
         <li><a href="http://www.flymine.org" target="_blank">FlyMine</a></li>
-        <li><a href="http://www.modmine.org" target="_blank">modMine</a></li>
         <li><a href="http://www.mousemine.org" target="_blank">MouseMine</a></li>
         <li><a href="http://ratmine.mcw.edu/ratmine" target="_blank">RatMine</a></li>
         <li><a href="http://www.wormbase.org/tools/wormmine" target="_blank">WormMine</a></li>
@@ -77,7 +87,7 @@
         <li><a href="http://www.humanmine.org" target="_blank">HumanMine</a></li>
     </ul>
 
-    <p class="footer-copy">&copy; 2002 - 2015 Department of Genetics, University of Cambridge, Downing Street,<br />
+    <p class="footer-copy">&copy; 2002 - 2016 Department of Genetics, University of Cambridge, Downing Street,<br />
         Cambridge CB2 3EH, United Kingdom</p>
 
     <div style="clear:both"></div>
