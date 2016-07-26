@@ -369,8 +369,6 @@
 
 <!-- report page displayers -->
 <reportdisplayers>
-
-
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
         jspName="model/esynDisplayer.jsp"
         replacesFields=""

@@ -10,7 +10,7 @@ use constant {
     SOURCE_DIR => 'ontologies/fly-anatomy',
     SOURCES => [{
         FILE   => 'fbbt.obo',
-        SERVER => 'http://svn.code.sf.net/p/fbbtdv/code/fbbt/releases',
+        SERVER => 'https://github.com/FlyBase/drosophila-anatomy-developmental-ontology/blob/master/fbbt/releases',
     }],
 };
 

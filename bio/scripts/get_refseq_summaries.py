@@ -22,9 +22,9 @@ class SummaryHandler(handler.ContentHandler):
 		self.content += content
 
 	def endElement(self, name):
-		if name == 'DocSum':
+		if name == 'DocumentSummary':
 			self.counter += 1
-		if name == 'Id':
+		if name == 'uid':
 			self.gene_id = self.content
 		if self.in_summary:
 			if len(self.content.strip()) > 0:
