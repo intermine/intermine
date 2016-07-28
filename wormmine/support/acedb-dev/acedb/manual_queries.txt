@@ -1,0 +1,34 @@
+query find Gene Live
+
+query find Protein Corresponding_CDS
+
+query find CDS Method="curated"
+
+query find Transcript (Gene)
+
+Also:
+
+Species : "Pristionchus pacificus"
+Species : "Meloidogyne incognita"
+Species : "Caenorhabditis remanei"
+Species : "Ascaris suum"          
+Species : "Strongyloides ratti"   
+Species : "Trichinella spiralis"  
+Species : "Caenorhabditis briggsae"
+Species : "Caenorhabditis angaria" 
+Species : "Heterorhabditis bacteriophora"
+Species : "Brugia malayi"                
+Species : "Caenorhabditis japonica"      
+Species : "Bursaphelenchus xylophilus"   
+Species : "Caenorhabditis elegans"       
+Species : "Meloidogyne hapla"            
+Species : "Caenorhabditis trinidad"      
+Species : "Caenorhabditis brenneri"      
+Species : "Haemonchus contortus"         
+Species : "Caenorhabditis vulgaris"      
+Species : "Onchocerca volvulus"          
+Species : "Brugia pahangi"
+
+acedb> KeySet-Read species.ace
+
+

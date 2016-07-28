@@ -1,0 +1,153 @@
+
+{ty=>ob,cl=>Gene,va=>WBGene00006758,ti=>unc-20,Pn=>[
+	{ty=>tg,va=>Identity,Pn=>[
+		{ty=>tg,va=>Version,Pn=>[
+			{ty=>in,va=>1}]},
+		{ty=>tg,va=>Name,Pn=>[
+			{ty=>tg,va=>CGC_name,Pn=>[
+				{ty=>ob,cl=>Gene_name,va=>unc-20,Pn=>[
+					{ty=>tg,va=>Person_evidence,Pn=>[
+						{ty=>ob,cl=>Person,va=>WBPerson261,ti=>Jonathan Hodgkin}]}]}]},
+			{ty=>tg,va=>Public_name,Pn=>[
+				{ty=>ob,cl=>Gene_name,va=>unc-20}]}]},
+		{ty=>tg,va=>Species,Pn=>[
+			{ty=>ob,cl=>Species,va=>Caenorhabditis elegans}]},
+		{ty=>tg,va=>History,Pn=>[
+			{ty=>tg,va=>Version_change,Pn=>[
+				{ty=>in,va=>1,Pn=>[
+					{ty=>dt,va=>2004-04-07_11:29:42,Pn=>[
+						{ty=>ob,cl=>Person,va=>WBPerson1971,ti=>Keith Bradnam,Pn=>[
+							{ty=>tg,va=>Event,Pn=>[
+								{ty=>tg,va=>Imported,Pn=>[
+									{ty=>tx,va=>Initial conversion from geneace}]}]}]}]}]}]}]},
+		{ty=>tg,va=>Status,Pn=>[
+			{ty=>tg,va=>Live}]}]},
+	{ty=>tg,va=>Gene_info,Pn=>[
+		{ty=>tg,va=>Gene_class,Pn=>[
+			{ty=>ob,cl=>Gene_class,va=>unc}]},
+		{ty=>tg,va=>Reference_allele,Pn=>[
+			{ty=>ob,cl=>Variation,va=>WBVar00142969,ti=>e112}]},
+		{ty=>tg,va=>Allele,Pn=>[
+			{ty=>ob,cl=>Variation,va=>WBVar00241441,ti=>r977},
+			{ty=>ob,cl=>Variation,va=>WBVar00241442,ti=>r990},
+			{ty=>ob,cl=>Variation,va=>WBVar00142969,ti=>e112,Pn=>[
+				{ty=>tg,va=>Inferred_automatically,Pn=>[
+					{ty=>tx,va=>From strain object: NG16},
+					{ty=>tx,va=>From strain object: CB112},
+					{ty=>tx,va=>From strain object: LX658},
+					{ty=>tx,va=>From strain object: MT458},
+					{ty=>tx,va=>From strain object: SP309},
+					{ty=>tx,va=>From strain object: SP913}]}]}]},
+		{ty=>tg,va=>Legacy_information,Pn=>[
+			{ty=>tx,va=>e112ts : at 25x severe kinker some coiling; active healthy. ES3 (25x) ME0 (25x); at 15x wildtype. NA1.},
+			{ty=>tx,va=>[C.elegansII] e112ts : at 25C severe kinker, some coiling; active, healthy; some head muscle contraction; defects in longitudinal axon elongation in VNC. ES3 (25C) ME0 (25C); at 15C wildtype. OA>5: (6 Smg-enhanced or Smg-dependent alleles). [Brenner 1974; NG; TR]}]},
+		{ty=>tg,va=>Strain,Pn=>[
+			{ty=>ob,cl=>Strain,va=>CB112,ti=>unc-20(e112)X.},
+			{ty=>ob,cl=>Strain,va=>LX658,ti=>mnDp33(X;IV)/+ ; unc-20(e112) rgs-7(vs92) X.},
+			{ty=>ob,cl=>Strain,va=>MT458,ti=>unc-20(e112) lon-2(e678) X.},
+			{ty=>ob,cl=>Strain,va=>SP309,ti=>mnDp33(X;IV)/+ IV; unc-20(e112)X.},
+			{ty=>ob,cl=>Strain,va=>SP913,ti=>mnDp57(X;I); unc-20(e112)X.}]},
+		{ty=>tg,va=>GO_term,Pn=>[
+			{ty=>ob,cl=>GO_term,va=>GO:0040011,ti=>locomotion,Pn=>[
+				{ty=>ob,cl=>GO_code,va=>IMP,Pn=>[
+					{ty=>tg,va=>Paper_evidence,Pn=>[
+						{ty=>ob,cl=>Paper,va=>WBPaper00000031,ti=>Brenner S (1974) Genetics "The genetics of Caenorhabditis elegans."}]},
+					{ty=>tg,va=>Variation_evidence,Pn=>[
+						{ty=>ob,cl=>Variation,va=>WBVar00142969,ti=>e112}]}]}]}]}]},
+	{ty=>tg,va=>Map_info,Pn=>[
+		{ty=>tg,va=>Map,Pn=>[
+			{ty=>ob,cl=>Map,va=>X,Pn=>[
+				{ty=>tg,va=>Position,Pn=>[
+					{ty=>fl,va=>-11.6064,Pn=>[
+						{ty=>tg,va=>Error,Pn=>[
+							{ty=>fl,va=>0.197001}]}]}]}]}]},
+		{ty=>tg,va=>Well_ordered},
+		{ty=>tg,va=>Positive,Pn=>[
+			{ty=>tg,va=>Inside_rearr,Pn=>[
+				{ty=>ob,cl=>Rearrangement,va=>yDp16}]}]},
+		{ty=>tg,va=>Mapping_data,Pn=>[
+			{ty=>tg,va=>2_point,Pn=>[
+				{ty=>ob,cl=>2_point_data,va=>146,ti=>dpy-3 unc-20/+ +},
+				{ty=>ob,cl=>2_point_data,va=>157,ti=>unc-2/unc-20 x N2 males},
+				{ty=>ob,cl=>2_point_data,va=>158,ti=>unc-20/lon-2 x N2 males},
+				{ty=>ob,cl=>2_point_data,va=>159,ti=>unc-20 lon-2/+ +},
+				{ty=>ob,cl=>2_point_data,va=>160,ti=>unc-20 dpy-7/+ +},
+				{ty=>ob,cl=>2_point_data,va=>292,ti=>unc-20/unc-58},
+				{ty=>ob,cl=>2_point_data,va=>3936,ti=>dpy-3 unc-20/+ +},
+				{ty=>ob,cl=>2_point_data,va=>3937,ti=>unc-20 dpy-8/+ +},
+				{ty=>ob,cl=>2_point_data,va=>7152,ti=>+ sma-14(wk53)/unc-20(e112) +},
+				{ty=>ob,cl=>2_point_data,va=>7153,ti=>+ sma-16(wk57) / unc-20(e112) +},
+				{ty=>ob,cl=>2_point_data,va=>7157,ti=>+ sma-18(wk68) / unc-20(e112) +}]},
+			{ty=>tg,va=>Multi_point,Pn=>[
+				{ty=>ob,cl=>Multi_pt_data,va=>160},
+				{ty=>ob,cl=>Multi_pt_data,va=>163},
+				{ty=>ob,cl=>Multi_pt_data,va=>1209,ti=>osm-5(p813)/unc-20(e112) dpy-8(e130)},
+				{ty=>ob,cl=>Multi_pt_data,va=>1210,ti=>osm-5(p813)/dpy-3(e27) unc-20(e112)},
+				{ty=>ob,cl=>Multi_pt_data,va=>1771,ti=>daf-20(m25)/unc-20(e112) dpy-6(e14)},
+				{ty=>ob,cl=>Multi_pt_data,va=>2428,ti=>unc-20(e112ts)/pha-2(ad472cs) lon-2(e678) X},
+				{ty=>ob,cl=>Multi_pt_data,va=>3081,ti=>unc-20(e112) dpy-8(e130)/dyf-11(mn392)},
+				{ty=>ob,cl=>Multi_pt_data,va=>3539,ti=>fax-1(gm27)/unc-20(e122) lon-2(e678)},
+				{ty=>ob,cl=>Multi_pt_data,va=>3607,ti=>unc-20(e112) lin-18(e620) lon-2(e678)/eld-1(mc13)},
+				{ty=>ob,cl=>Multi_pt_data,va=>3806,ti=>imo-1/dpy-3 (e27) unc-20 (e112)},
+				{ty=>ob,cl=>Multi_pt_data,va=>3870,ti=>pdk-1(sa680)/unc-20(e112) lon-2(e678)},
+				{ty=>ob,cl=>Multi_pt_data,va=>3974,ti=>hid-1(sa691)/unc-20(e112) lon-2(e678) },
+				{ty=>ob,cl=>Multi_pt_data,va=>5702,ti=>rgl-1(tm2255)/unc-20(e112) lon-2(e678)},
+				{ty=>ob,cl=>Multi_pt_data,va=>5703,ti=>rgl-1(tm2255)/unc-20(e112) lon-2(e678)}]},
+			{ty=>tg,va=>Pos_neg_data,Pn=>[
+				{ty=>ob,cl=>Pos_neg_data,va=>1862,ti=>mnDp1 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>1871,ti=>mnDp2 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>1885,ti=>mnDp3 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>1909,ti=>mnDp8 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>1925,ti=>mnDp9 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>1941,ti=>mnDp10 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>1957,ti=>mnDp25 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>1973,ti=>mnDp26 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>1989,ti=>mnDp27 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>2026,ti=>mnDp30 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>2034,ti=>mnDp33 includes unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>2055,ti=>mnDp32 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>2062,ti=>mnDp31 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>3756,ti=>szDp1 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>5049,ti=>hDp31 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>5059,ti=>hDp56 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>5451,ti=>mnDp57 includes unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>525,ti=>ctDp1 does not include unc-20.},
+				{ty=>ob,cl=>Pos_neg_data,va=>8464,ti=>yDp13 includes unc-20},
+				{ty=>ob,cl=>Pos_neg_data,va=>8473,ti=>yDp14 includes unc-20},
+				{ty=>ob,cl=>Pos_neg_data,va=>8480,ti=>yDp15 includes unc-20},
+				{ty=>ob,cl=>Pos_neg_data,va=>8487,ti=>yDp16 includes unc-20}]}]},
+		{ty=>tg,va=>Landmark_gene}]},
+	{ty=>tg,va=>Reference,Pn=>[
+		{ty=>ob,cl=>Paper,va=>WBPaper00000031,ti=>Brenner S (1974) Genetics "The genetics of Caenorhabditis elegans."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00000608,ti=>Hodgkin JA (1983) Genetics "Male Phenotypes and Mating Efficiency in CAENORHABDITIS ELEGANS."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00001143,ti=>Barrios L et al. (1989) J Mol Biol "Genomic organization of the glyceraldehyde-3-phosphate dehydrogenase gene ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00001709,ti=>Avery L (1993) Genetics "The genetics of feeding in Caenorhabditis elegans."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00001722,ti=>Albertson DG (1993) Genetics "Mapping chromosome rearrangement breakpoints to the physical map of ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00001747,ti=>McKim KS et al. (1993) Genetics "Two types of sites required for meiotic chromosome pairing in Caenorhabditis ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00002487,ti=>Schafer WR et al. (1996) Genetics "Genes affecting sensitivity to serotonin in Caenorhabditis elegans."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00006049,ti=>Bany IA et al. (2003) J Neurosci "Genetic and cellular basis for acetylcholine inhibition of Caenorhabditis ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00006384,ti=>Csankovszki G et al. (2004) Science "Recruitment and spreading of the C. elegans dosage compensation complex along X ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00010295,ti=>Jessica Tanis et al. (2002) East Coast Worm Meeting "STRUCTURAL DIFFERENCES IN THE GOLGI APPARATUSES OF WILD-TYPE AND  unc-20 MUTANT ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00010429,ti=>Kohrt H et al. (2000) East Coast Worm Meeting "Molecular cloning of the elusive unc-20"},
+		{ty=>ob,cl=>Paper,va=>WBPaper00011099,ti=>Nguyen S et al. (1998) East Coast Worm Meeting "MOLECULAR AND FUNCTIONAL ANALYSIS OF unc-20"},
+		{ty=>ob,cl=>Paper,va=>WBPaper00013792,ti=>Thierry-Mieg D (1987) Worm Breeder's Gazette "a little uncoordinated genetics."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00014681,ti=>Anderson P et al. (1993) Worm Breeder's Gazette "More on smg-Dependent Dominance and the Role of Disruptive Polypeptide ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00016131,ti=>Meneely PM (1982) Worm Breeder's Gazette "studies with dpy-21."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00016388,ti=>Kari CK et al. (1985) Worm Breeder's Gazette "some chromosome rearrangements."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00016415,ti=>Wood WB et al. (1985) Worm Breeder's Gazette "suppression of dpy-22 male inviability by X duplications."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00016498,ti=>Herman RK et al. (1986) Worm Breeder's Gazette "some properties of two new X duplications."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00016556,ti=>Meneely PM (1986) Worm Breeder's Gazette "more about X-linked gene expression in X-duplication and X-dependent Dpy ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00017175,ti=>Rakow TL et al. (1996) West Coast Worm Meeting "STRUCTURAL STUDIES OF VC NEURONS IN SEROTONIN HYPERSENSITIVE MUTANTS"},
+		{ty=>ob,cl=>Paper,va=>WBPaper00017184,ti=>Schafer WR et al. (1996) West Coast Worm Meeting "GENES AFFECTING THE SEROTONIN RESPONSE OF THE EGG-LAYING MUSCLES"},
+		{ty=>ob,cl=>Paper,va=>WBPaper00017219,ti=>Vijayaratnam V et al. (1996) West Coast Worm Meeting "HOW DOES rec-1 WORK?"},
+		{ty=>ob,cl=>Paper,va=>WBPaper00017232,ti=>Wightman BC et al. (1996) West Coast Worm Meeting "GENES REQUIRED FOR GUIDING GROWTH CONES ALONG THE VENTRAL NERVE CORD"},
+		{ty=>ob,cl=>Paper,va=>WBPaper00018596,ti=>Jessica Tanis et al. (2001) International C. elegans Meeting "unc-20 MAPS TO A REGION THAT INCLUDES TWO PREDICTED GOLGI COMPLEX ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00022132,ti=>Wightman BC et al. (1995) International C. elegans Meeting "GENES REQUIRED FOR AXON OUTGROWTH AND ORGANIZATION OF THE VENTRAL NERVE ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00022810,ti=>Wightman BC et al. (1997) International C. elegans Meeting "FAX-1, A NUCLEAR HORMONE RECEPTOR REQUIRED FOR AXON PATHFINDING"},
+		{ty=>ob,cl=>Paper,va=>WBPaper00023755,ti=>V Vijayaratnam et al. (1999) International C. elegans Meeting "The Elusive Rec-1"},
+		{ty=>ob,cl=>Paper,va=>WBPaper00023788,ti=>B Wightman et al. (1999) International C. elegans Meeting "The Roles of fax-1 and unc-2 in Nervous System Development"},
+		{ty=>ob,cl=>Paper,va=>WBPaper00026866,ti=>Tsuboi D et al. (2005) J Neurochem "Regulatory machinery of UNC-33 Ce-CRMP localization in neurites during ...."},
+		{ty=>ob,cl=>Paper,va=>WBPaper00029020,ti=>Mark L. Edgley et al. (2006) WormBook "Genetic balancers."}]},
+	{ty=>tg,va=>Method,Pn=>[
+		{ty=>ob,cl=>Method,va=>Gene}]}]}
+

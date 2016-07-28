@@ -1,0 +1,3457 @@
+// %W%    %G%
+// models.wrm - main file defining tree class structures for the WormBase database
+// This file is read only when starting a new database or when you select 
+// "Read Models" or "Add Update File" from the main menu.
+
+// ALL WormBase groups should be in sync with this set of models
+// Last edited by: $Author: pad $
+// Last edited on: $Date: 2012-08-17 12:54:10 $
+
+
+////////////////////////
+// Basic map classes  //
+////////////////////////
+
+?Map	No_cache // Don't cache segs for this map.
+        Display Non_graphic  // Prevents a graphic display!
+                Title UNIQUE ?Text
+		Flipped // Then coordinates go upwards
+                Unit UNIQUE Text 
+			// e.g. kb, centiMorgan, MegaParsec
+		Centre UNIQUE Float UNIQUE Float  
+			// default centre, width - else 0, 10
+	    	Extent UNIQUE Float UNIQUE Float  
+			// min, max - else min, max gene/locus
+		Default_view UNIQUE ?View
+		Minimal_view UNIQUE ?View // use this when >1 map displayed
+		View ?View                // Columns to display
+        Inherits  From_map UNIQUE ?Map    // To locally edit
+		  Author Text             // login name of who created it
+ 	Main_Marker Main_Locus ?Gene      // XREF Main_Marker removed to
+					  // allow tag2 system
+		// tag2 system for items shown left of locator
+	Map ?Map XREF Map_shown #Map_position  // Include all objects in these maps (must be mapped and have extents)
+	Includes ?Map
+	Contains Locus ?Locus XREF Map
+		 Gene  ?Gene XREF Map
+        	 Rearrangement ?Rearrangement XREF Map
+		 Contig ?Contig XREF Map
+		 Clone ?Clone XREF Map
+		 Sequence ?Sequence XREF Map
+		 Variation ?Variation XREF Map
+		 Map_shown ?Map XREF Map
+                 Transgene  ?Transgene //sdm added to display gmaps //removed XREF ky 2011 
+		// tag2 system for items shown in main region
+	EMBL_chromosome UNIQUE Text
+
+
+
+?Map_position UNIQUE	Position UNIQUE Float #Map_error
+			Ends Left UNIQUE Float #Map_error
+			     Right UNIQUE Float #Map_error
+			Multi_Position  Float #Map_error
+			Multi_Ends Float UNIQUE Float
+			With UNIQUE With_locus UNIQUE ?Locus #Map_offset
+				    With_clone UNIQUE ?Clone #Map_offset
+				// tag2 system for "burying"
+
+
+?Map_error Error UNIQUE Float
+
+
+?Map_offset Relative #Map_position
+
+
+?MultiMap Map ?Map
+          Min Int // keep loci appearing on at least min maps. Default = 2 
+          Anchor UNIQUE Text UNIQUE Text UNIQUE Text  // Class tag1 tag2
+                            // i.e Locus Homeology_group Homelogs
+                            // class members on different maps with the
+                            // same Anchor tag will be chained
+
+?ManyMap Map ?Map UNIQUE ?View
+
+
+
+///////////////////////
+// Views and Columns //
+///////////////////////
+
+?View 	Type 	UNIQUE 	Pepmap
+			Fmap
+		  	Gmap
+			Grid  Grid_map Int #View_tags // Int is priority
+			      Grid_edit_default UNIQUE Text UNIQUE Text 
+			      Grid_edit_menu Text UNIQUE Text 
+			Pmap  Pmap_probes Pmap_probe_query Text
+					  Pmap_probe_height Int
+			      Pmap_YAC  Pmap_YAC_query Text
+					Pmap_YAC_bold_query Text
+					Pmap_YAC_height Int
+			      Pmap_cmid Pmap_cmid_query Text
+					Pmap_cmid_bold_query Text
+					Pmap_cmid_height Int
+			      Pmap_locus Pmap_locus_query Text
+					 Pmap_locus_height Int
+			      Pmap_remark Pmap_remark_query Text
+					  Pmap_remark_height Int
+				// 1st text tag name, 2nd text optional "Negative"
+	Display Submenus	// BOOL for submenus on item boxes
+		Cambridge	// Cambridge v. Montpellier behaviour
+		No_buttons      // suppress header buttons for WWW 
+                Hide_header     // No headers and footers 
+	Name 	UNIQUE 	Text
+	Columns	Text UNIQUE Int #Column	// Int is BOOL for Hidden/Visible
+
+
+
+?Column	UNIQUE	Scale Scale_unit UNIQUE Float	// minimum increment
+		      Cursor Cursor_on
+			     Cursor_unit UNIQUE Float
+		Scroller
+		Locator Magnification UNIQUE Float
+			Projection_lines_on
+		Marker_points
+		Marker_intervals
+		Contigs
+		Reversed_physical
+		Physical_genes
+		Two_point
+		Multi_point
+		Likelihood
+		Points	Point_query UNIQUE Text
+			Point_yellow Text // To be made redundant.
+                        Point_colour Text #Colour // to replace above
+			Point_width UNIQUE Int	// max width if not at RHS
+                        Point_error_scale UNIQUE Float
+			Point_segregate_ordered
+                        Point_show_marginal
+			Point_pne #Colour // positive, no error
+			Point_pe  #Colour // positive, error
+			Point_nne #Colour // negative, no error
+                	Point_ne  #Colour // negative, error
+			Point_symbol Text // can now have more than one of these
+		Interval_JTM	#Interval_col_conf
+		Interval_RD	#Interval_col_conf
+               	Interval_SRK 	#Interval_col_conf
+		Derived_tags	DT_query UNIQUE Text
+				DT_width UNIQUE Int
+				DT_no_duplicates
+                                DT_neighbours
+                                DT_parents
+				DT_follow_parent
+                                DT_symbol_query
+                                DT_tag Text Int
+                                DT_hide
+ 		Spacer          Spacer_colour #Colour
+                                Spacer_width Float
+		RH_data		RH_query UNIQUE Text
+				RH_spacing UNIQUE Float
+				RH_show_all
+				RH_positive #Colour
+				RH_negative #Colour
+				RH_contradictory #Colour
+                pepSequence	PS_Highlight_residue   // il all needed for colomn display of peptides
+				PS_Residues_per_wrap Int
+				PS_Colours Text #Colour
+		Hydrophobicity	HP_Show_Zero_bar
+				HP_Fixed_Scaling
+				HP_Calculation_window Int
+				HP_Display_width Int
+                Homol           HOM_bump
+                pepFeature      FEA_bump
+                                FEA_Query Text
+                Homol_Name      HOM_NAME_bump
+				HOM_NAME_width Int
+                pepActiveZone
+
+
+?View_tags	Colour #Colour
+		Surround_colour #Colour	// colour when surround
+		Tag Text		// could be many tags
+
+
+?Interval_col_conf 	Query UNIQUE Text // Query
+			Names_on
+                        No_neighbours
+			Show_multiple
+			Width UNIQUE Int
+			Symbol UNIQUE Text
+			Colours Text #Colour // Only for chrom_bands.
+			Pne #Colour // positive, no error
+			Pe  #Colour // positive, error
+			Nne #Colour // negative, no error
+                	Ne  #Colour // negative, error
+
+
+/////////////////////////  CLASSICAL GENETICS ///////////////////////////////
+//
+// ?Locus class, ?Allele class, ?Gene_class class
+//
+///////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////
+//
+// Gene_class class
+// Used for grouping genes into families
+//
+///////////////////////////////////////
+
+?Gene_class     Evidence #Evidence
+		Phenotype ?Text
+		Description ?Text // [krb 020614]
+                Designating_laboratory UNIQUE ?Laboratory XREF Gene_classes
+                Variation ?Variation	XREF Gene_class
+		Genes ?Gene XREF Gene_class
+		Old_member ?Gene_name XREF Former_member_of
+                Main_name  ?Gene_class XREF Other_name
+		Other_name ?Gene_class XREF Main_name
+                Remark ?Text #Evidence
+
+
+
+///////////////////////////////////////////////////////////////////////////////////
+// 
+// ?Locus class - krb Feb 2004
+// slimmed down Locus class will initially just store Polymorphisms and gene clusters.
+//
+///////////////////////////////////////////////////////////////////////////////////
+ 
+?Locus  Evidence #Evidence
+        Name    Other_name ?Gene_name #Evidence // unidirectional link
+        Species UNIQUE ?Species // added by krb 15/02/02
+        Type	Polymorphism    SNP  Text               // Todd [171001 krb]
+                                Status Text
+                                SNP_assay ?PCR_product XREF SNP_locus ?Text
+                                RFLP    Text
+                                Transposon_insertion  Text
+                                Detection_method Text
+        Map    UNIQUE ?Map XREF Locus #Map_position
+        Positive Inside_rearr ?Rearrangement XREF Locus_inside ?Author
+        Negative Outside_rearr ?Rearrangement XREF Locus_outside ?Author
+                 Negative_clone ?Clone XREF Negative_locus ?Author
+        Mapping_data    Well_ordered            // "on the line"
+                        2_point ?2_point_data
+                        Multi_point ?Multi_pt_data
+                        Pos_neg_data ?Pos_neg_data
+        Laboratory ?Laboratory
+        Remark ?Text #Evidence
+ 
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  ?Gene class - krb
+//
+////////////////////////////////////////////////////////////////////////////////////////
+                                                                                
+                                                                                
+?Gene   Evidence #Evidence
+	SMap S_parent UNIQUE Sequence UNIQUE ?Sequence XREF Gene_child
+        Identity  Version UNIQUE Int
+                  Name  CGC_name        UNIQUE ?Gene_name XREF CGC_name_for #Evidence
+                        Sequence_name   UNIQUE ?Gene_name XREF Sequence_name_for // captures main CDS name without isoforms
+			Molecular_name         ?Gene_name XREF Molecular_name_for  // for linking to full CDS names, wormpep etc.
+                        Other_name             ?Gene_name XREF Other_name_for #Evidence // other unapproved CGC-style gene names
+                        Public_name     UNIQUE ?Gene_name XREF Public_name_for // the one name that should be used
+		  DB_info Database ?Database ?Database_field ?Accession_number Text //For Darin genbank genpep ids
+                  Species UNIQUE ?Species
+                  History Version_change Int UNIQUE DateType UNIQUE ?Person #Gene_history_action
+                          Merged_into UNIQUE ?Gene XREF Acquires_merge
+                          Acquires_merge ?Gene XREF Merged_into
+                          Split_from UNIQUE ?Gene XREF Split_into
+                          Split_into ?Gene XREF Split_from
+			  Made_into_transposon
+		  Status UNIQUE Live #Evidence
+                                Suppressed #Evidence
+                                Dead #Evidence   
+        Gene_info Gene_class UNIQUE ?Gene_class XREF Genes
+                  Laboratory ?Laboratory
+		  Cloned_by #Evidence      // mt3 acreditation of person who cloned gene [060829 ar2]
+                  Reference_allele ?Variation #Evidence
+                  Allele ?Variation XREF Gene #Evidence
+		  Possibly_affected_by ?Variation XREF Possibly_affects #Evidence
+                  Legacy_information Text #Evidence
+                  Complementation_data Text
+                  Strain ?Strain XREF Gene
+                  In_cluster ?Gene_cluster XREF Contains_gene // linking to Clusters in locus class
+		  RNASeq_FPKM  ?Life_stage  Float  #Evidence
+                  GO_term ?GO_term XREF Gene ?GO_code #Evidence
+                  Contained_in_operon ?Operon XREF Contains_gene
+                  Ortholog ?Gene XREF Ortholog ?Species #Evidence
+		  Paralog ?Gene XREF Paralog ?Species #Evidence
+		  Ortholog_other  ?Protein XREF Ortholog_gene #Evidence // to allow Orthologues links to none ?Gene genes eg remanei (ar2 Nov06)
+                  Structured_description Provisional_description ?Text #Evidence         // Erich [020322 krb]
+                                         Detailed_description ?Text #Evidence            // Erich [020322 krb]
+                                         Concise_description ?Text #Evidence             // Erich [020523 krb]
+                                         Other_description ?Text #Evidence               // Carol [050202 dl]
+                                         Sequence_features ?Text #Evidence               // Carol [050202 dl]
+                                         Functional_pathway ?Text #Evidence              // Carol [050202 dl]
+                                         Functional_physical_interaction ?Text #Evidence // Carol [050202 dl]
+                                         Biological_process ?Text #Evidence              // Carol [050202 dl]
+                                         Molecular_function ?Text #Evidence              // Carol [050202 dl]
+                                         Expression ?Text #Evidence                      // Carol [050202 dl]
+					 Human_disease_relevance ?Text #Evidence	 // Ranjana [110601 pad]
+        Molecular_info Corresponding_CDS ?CDS XREF Gene #Evidence             // to link to live CDSs
+                       Corresponding_CDS_history ?CDS XREF Gene_history       // to link to history CDSs
+                       Corresponding_transcript ?Transcript XREF Gene #Evidence
+                       Corresponding_transcript_history ?Transcript XREF Gene_history
+                       Corresponding_pseudogene ?Pseudogene XREF Gene #Evidence
+                       Corresponding_pseudogene_history ?Pseudogene XREF Gene_history
+                       Other_sequence ?Sequence XREF Gene #Evidence  // for linking to mRNAs etc. that correspond to a gene		   
+		       Associated_feature ?Feature XREF Associated_with_gene #Evidence
+		       Gene_product_binds ?Feature XREF Bound_by_product_of
+		       Transcription_factor ?Transcription_factor XREF Product_of
+        Experimental_info RNAi_result ?RNAi XREF Gene #Evidence
+                          Expr_pattern ?Expr_pattern XREF Gene
+                          Drives_Transgene ?Transgene XREF Driven_by_gene
+                          Transgene_product ?Transgene XREF Gene
+                          Gene_regulation Trans_regulator ?Gene_regulation XREF Trans_regulator_gene
+                                          Trans_target    ?Gene_regulation XREF Trans_regulated_gene
+					  Regulate_expr_cluster ?Expression_cluster XREF Regulated_by_gene // Wen WS228
+                          Antibody ?Antibody XREF Gene
+                          Microarray_results ?Microarray_results XREF Gene
+			  Expression_cluster ?Expression_cluster XREF Gene #Evidence	//Igor: create clusters of Genes from microarray exps
+			  SAGE_tag ?SAGE_tag XREF Gene #SAGE_mapping_info 
+			  YH_bait   ?YH XREF Bait_overlapping_gene ?Text// for yeast two hybrid data
+			  YH_target ?YH XREF Target_overlapping_gene ?Text
+			  3d_data ?3d_data XREF Gene // for NESGC structure information
+			  Interaction ?Interaction
+			  Anatomy_function ?Anatomy_function XREF Gene
+			  Product_binds_matrix ?Position_Matrix XREF Bound_by_gene_product #Evidence
+			  WBProcess ?WBProcess XREF Gene #Evidence
+        Map_info  Map UNIQUE ?Map XREF Gene #Map_position
+                  Well_ordered          // "on the line"
+                  Hide_under ?Gene XREF Representative_for
+                  Representative_for ?Gene XREF Hide_under
+                  Positive Inside_rearr   ?Rearrangement XREF Gene_inside #Evidence
+                           Positive_clone ?Clone XREF Positive_gene #Evidence
+                  Negative Outside_rearr  ?Rearrangement XREF Gene_outside #Evidence
+                           Negative_clone ?Clone XREF Negative_gene #Evidence
+                  Mapping_data  2_point ?2_point_data
+                                Multi_point ?Multi_pt_data
+				Pos_neg_data ?Pos_neg_data
+                  Interpolated_map_position UNIQUE ?Map UNIQUE Float // for loci with CDSs but no real Map position
+		  Landmark_gene // for those genes that will appear in genetic map of Genome Browser
+		  Pseudo_map_position // should be added to flag those genes which have Map position tags that
+				      // were 'promoted' from Interpolated_map_position tags
+        Reference ?Paper XREF Gene #Evidence
+	
+        Remark ?Text #Evidence
+	Method UNIQUE ?Method
+
+?Gene_cluster Title UNIQUE ?Text                                        // Information on the Gene cluster 
+              Description ?Text
+              Contains_gene ?Gene XREF In_cluster
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// hash to track details of what actually happened for each change to a gene
+//
+////////////////////////////////////////////////////////////////////////////////
+
+#Gene_history_action Event  Created
+                            Killed
+                            Resurrected
+                            Merged_into UNIQUE ?Gene
+                            Acquires_merge UNIQUE ?Gene
+                            Split_from UNIQUE ?Gene
+                            Split_into UNIQUE ?Gene
+                            Imported Text // for the first set of Gene IDs created
+			    Changed_class Text Text	// added to capture CDS->Pseudogene changes, two text fields should list old and new classes
+			    Made_into_transposon        // for CDSs that become Transposon CDSs - no longer count as Live Gene
+                     Name_change CGC_name UNIQUE Text
+                                 Sequence_name UNIQUE Text
+                                 Other_name UNIQUE Text // Text field to store 'Other_name' of Gene
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// ?Gene_name class to allow easier indexing of gene names and other names
+// [krb 030124]
+//
+////////////////////////////////////////////////////////////////////////////////
+
+?Gene_name CGC_name_for       ?Gene XREF CGC_name
+           Sequence_name_for  ?Gene XREF Sequence_name
+           Molecular_name_for ?Gene XREF Molecular_name // captures CDS names, Wormpep names etc.
+           Other_name_for     ?Gene XREF Other_name     // main reason for this class
+           Former_member_of   ?Gene_class XREF Old_member // track old members of a class
+           Public_name_for    ?Gene XREF Public_name    // the main name for a gene
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//   New Interaction class Proposal, 1-30-2012
+//   See: http://wiki.wormbase.org/index.php/WormBase_Model:Interaction for details
+//   This unifies Physical and genetic interactions into a single class.
+//   Chris Grove & Kimberly Van Auken
+//   
+//////////////////////////////////////////////////////////////////////////////////////
+
+				   
+?Interaction	Interaction_type Physical
+				 Predicted
+				 Regulatory Change_of_localization
+					    Change_of_expression_level
+				 Genetic Genetic_interaction
+					 Negative_genetic
+					 Synthetic
+					 Enhancement
+					 Unilateral_enhancement
+					 Mutual_enhancement
+					 Suppression
+					 Unilateral_suppression
+					 Mutual_suppression
+					 Asynthetic
+					 Suppression_enhancement
+					 Epistasis
+					 Maximal_epistasis
+					 Minimal_epistasis
+					 Suppression_epistasis
+					 Agonistic_epistasis
+					 Antagonistic_epistasis
+					 Oversuppression	
+					 Unilateral_oversuppression
+					 Mutual_oversuppression		
+					 Complex_oversuppression		
+					 Oversuppression_enhancement	
+					 Phenotype_bias			
+					 Biased_suppression		
+					 Biased_enhancement		
+					 Complex_phenotype_bias		
+					 No_interaction				// Negative data; no interaction was observed after testing
+		Interactor PCR_interactor ?PCR_product #Interactor_info	// PCR_product of the interacting gene or protein, e.g. Yeast Two Hybrid experiments
+			   Sequence_interactor ?Sequence #Interactor_info	// Sequence of the interacting gene or protein
+			   Interactor_overlapping_CDS ?CDS	#Interactor_info	// CDS of the interacting gene or protein (or related sequence)
+			   Interactor_overlapping_gene ?Gene XREF Interaction #Interactor_info		// Gene (or portion of gene) involved in the interaction
+			   Interactor_overlapping_protein ?Protein XREF Interaction #Interactor_info	// Protein (or portion of protein) involved in the interaction
+			   Molecule_regulator ?Molecule XREF Interaction #Interactor_info			// Molecule that regulates a gene or protein (ported from Gene_regulation class)
+			   Other_regulator ?Text #Interactor_info	// Free text describing a regulator entity or condition that does not fall into a standard WormBase category
+			   Other_regulated ?Text #Interactor_info	// Free text describing a regulated entity or condition that does not fall into a standard WormBase category
+			   Rearrangement  ?Rearrangement XREF Interactor #Interactor_info
+		Interaction_summary ?Text #Evidence
+		Detection_method Affinity_capture_luminescence		// A physical interaction detection technique
+				 Affinity_capture_MS			// A physical interaction detection technique
+				 Affinity_capture_RNA			// A physical interaction detection technique
+				 Affinity_capture_Western		// A physical interaction detection technique
+				 Cofractionation				// A physical interaction detection technique
+				 Colocalization				// A physical interaction detection technique
+				 Copurification				// A physical interaction detection technique
+				 Fluorescence_resonance_energy_transfer	// A physical interaction detection technique
+				 Protein_fragment_complementation_assay	// A physical interaction detection technique
+				 Yeast_two_hybrid			// A physical interaction detection technique (Protein-protein)
+				 Biochemical_activity			// A physical interaction detection technique
+				 Cocrystal_structure			// A physical interaction detection technique
+				 Far_western				// A physical interaction detection technique
+				 Protein_peptide 			// A physical interaction detection technique
+				 Protein_RNA 				// A physical interaction detection technique
+				 Reconstituted_complex			// A physical interaction detection technique
+				 Yeast_one_hybrid			// A physical interaction detection technique (Protein-DNA)
+				 Directed_yeast_one_hybrid		// A physical interaction detection technique (Protein-DNA)
+				 Antibody				// A regulatory interaction detection technique; Antibody name and details captured in Interactor_info hash
+				 Reporter_gene ?Text			// A regulatory interaction detection technique
+				 Transgene				// A regulatory interaction detection technique; Trasnsgene name and details captured in Interactor_info hash
+				 In_situ Text				// A regulatory interaction detection technique
+				 Northern Text				// A regulatory interaction detection technique
+				 Western Text				// A regulatory interaction detection technique
+				 RT_PCR Text				// A regulatory interaction detection technique
+				 Other_method ?Text			// A regulatory interaction detection technique
+		Library_info Library_screened Text INT			// In the context of Y2H or YH screens, for example, the library may have been cDNA library or a pool of clones
+			     Origin From_laboratory UNIQUE ?Laboratory 	// A library generated at an academic laboratory
+				    From_company UNIQUE ?Text		// A library generated at a company
+		Deviation_from_expectation Text				// A text description of the way in which the phenotype deviated from expectation in genetic interactions	
+		Neutrality_function UNIQUE Multiplicative		// The multiplicative neutrality function defines expectation as the product of two quantified phenotypes (relative to wild type) 
+					   Additive			// The additive neutrality function defines expectation as the sum of two quantified phenotypes (relative to wild type) 
+					   Minimal			// The minimal neutrality function defines expectation as the most severe of two quantified phenotypes (relative to wild type) 
+		Regulation_level Transcriptional			// Regulation occurs at the transcriptional level
+				 Post_transcriptional			// Regulation occurs at the post-transcriptional level
+				 Post_translational			// Regulation occurs at the post-translational level
+		Interaction_associated_feature ?Feature XREF Associated_with_Interaction #Evidence //Modified from proposal
+		Regulation_result Positive_regulate #GR_condition
+				  Negative_regulate #GR_condition
+				  Does_not_regulate #GR_condition // added to capture negative data [040220 krb]
+		Confidence Description Text			  // Free text description of the confidence, e.g. "Core" vs "Noncore" (Vidal Interactome terms)
+			   P_value UNIQUE Float			  // P-value confidence of interaction, if given
+			   Log_likelihood_score UNIQUE Float	  // Only used for Predicted interactions
+		Throughput UNIQUE High_throughput		  //See BioGRID curation criteria for discussion
+				  Low_throughput
+		Interaction_RNAi ?RNAi XREF Interaction			// RNAi experiment associated with the interaction
+		Interaction_phenotype ?Phenotype XREF Interaction	// Phenotype associated with a genetic interaction
+		Unaffiliated_variation   ?Variation
+		Unaffiliated_transgene   ?Transgene
+		Unaffiliated_antibody    ?Antibody
+		Unaffiliated_expr_pattern   ?Expr_pattern
+		WBProcess ?WBProcess XREF Interaction			// WormBase biological process associated with the interaction
+		DB_info Database ?Database ?Database_field ?Accession_number	// Any database reference to the interaction outside of WormBase, e.g. BioGRID, Interactome
+		Paper ?Paper XREF Interaction
+		Antibody_remark ?Text
+		Remark ?Text #Evidence
+
+
+
+#Interactor_info       Interactor_type Non_directional		   // An interactor that has no inherent directionality
+				       Bait			   // The interactor of interest or focus; the focus/starting point of an interaction screen
+				       Target			   // The discovered interactor; interactors found as a result of an interaction screen
+				       Effector			   // In a genetic interaction, the perturbation that affects the phenotype of the other perturbation
+				       Affected			   // In a genetic interaction, the perturbation whose phenotype is affected by the other perturbation
+				       Trans_regulator		   // A trans-acting regulator, e.g. a transcription factor
+				       Cis_regulator		   // A cis-acting regulator, e.g. an enhancer element
+				       Trans_regulated		   // A gene regulated in trans, e.g. by a transcription factor
+				       Cis_regulated		   // A gene regulated in cis, e.g. by an enhancer element
+		       Intragenic_effector_variation   ?Variation   XREF   Interactor
+		       Intragenic_affected_variation   ?Variation   XREF   Interactor
+		       Expr_pattern ?Expr_pattern		   // An expression pattern altered to indicate 
+		       Variation ?Variation XREF Interactor	   // (allele, polymorphism, etc.) involved in the interaction //removed XREF from proposal
+		       Transgene ?Transgene XREF Interactor	   // Transgene XREF Interactor that carries an interacting gene //removed XREF from proposal
+		       Antibody ?Antibody XREF Interactor	   // Free text description of the antibody used to detect a regulation event //removed XREF from proposal
+
+
+///////////////////////////////////
+
+
+?Balancer From_left_end
+          To_right_end
+          Locus ?Locus
+	  Gene ?Gene
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// ?Rearrangement class
+//
+////////////////////////////////////////////////////////////////////////////////
+
+?Rearrangement 	Evidence #Evidence
+		Name    Other_name ?Text
+			Variation ?Variation XREF Rearrangement
+		Type    Deletion
+			Duplication	Free_dup
+			Translocation
+			Compound	Text
+			Introgression
+                Phenotype ?Phenotype XREF Rearrangement #Phenotype_info
+		Phenotype_not_observed ?Phenotype XREF Not_in_Rearrangement #Phenotype_info  //added by Wen to separate Not phenotype from real phenotypes
+		Balances ?Map #Balancer
+		Interactor ?Interaction XREF Rearrangement
+		Marked By_variation ?Variation XREF Marked_rearrangement
+		       By_transgene ?Transgene XREF Marked_rearrangement
+		       By_other ?Text
+//	possibility to refer to other Intervals to describe a complex rearrangement
+//	for the worm this is not too necessary, but important for fly and mouse
+//	or perhaps there should be another class Complex_Rear that refers to
+//	several intervals.
+	        Reference_strain ?Strain
+		Species	UNIQUE	?Species
+		Remark ?Text #Evidence
+		Isolation	Author ?Author  // use Person where possible, else use Author
+				Person ?Person
+				Date DateType
+				Mutagen UNIQUE Text UNIQUE Text // Text is dose
+				Source_rearrangement  ?Rearrangement XREF Derived_rearrangement
+				Derived_rearrangement ?Rearrangement XREF Source_rearrangement
+                Map     ?Map XREF Rearrangement #Map_position
+		Positive Gene_inside  ?Gene  XREF Inside_rearr #Evidence
+			 Locus_inside ?Locus XREF Inside_rearr ?Author
+			 Clone_inside  ?Clone XREF Inside_rearr ?Author
+                         Rearr_inside ?Rearrangement
+		Negative Gene_outside  ?Gene  XREF Outside_rearr #Evidence
+			 Locus_outside ?Locus XREF Outside_rearr ?Author
+			 Clone_outside ?Clone XREF Outside_rearr ?Author
+                         Rearr_outside ?Rearrangement
+		Mapping_data	Pos_neg_data ?Pos_neg_data
+				2_point ?2_point_data
+        	                Multi_point ?Multi_pt_data
+		Display	Hide_under UNIQUE ?Rearrangement XREF Hides
+			Hides ?Rearrangement	// no XREF on purpose
+		Location ?Laboratory #Lab_Location
+		URL Text
+	        Strain   ?Strain XREF Rearrangement
+        	Reference ?Paper XREF Rearrangement
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// ?Strain class
+//
+////////////////////////////////////////////////////////////////////////////////
+
+?Strain  Evidence #Evidence
+	 Genotype Text
+	 Other_name ?Text #Evidence
+	 Contains  Gene	 ?Gene XREF Strain
+	  	   Variation  ?Variation XREF Strain 
+		   Rearrangement	 ?Rearrangement XREF Strain
+                   Clone ?Clone XREF In_strain		  
+		   Transgene ?Transgene XREF Strain
+	 Properties  Males Text
+		     Inbreeding_state UNIQUE Selfed Text
+                                             Isofemale Text
+                                             Multifemale Text
+                                             Inbred Text 
+		     Reference_strain Text
+		     Outcrossed Text
+		     Mutagen Text
+		     Sample_history Text
+		     Date_first_frozen UNIQUE DateType
+		     CGC_received DateType
+		     Phenotype ?Phenotype XREF Strain #Phenotype_info
+		     Phenotype_not_observed ?Phenotype XREF Not_in_Strain #Phenotype_info //added by Wen to separate Not phenotype from real phenotypes 
+         Location ?Laboratory #Lab_Location
+	 Made_by ?Person //updated from ?text
+	 Contact ?Person
+	 Remark	?Text #Evidence
+         Reference ?Paper XREF Strain
+	 Species UNIQUE ?Species // added by krb [021021]
+         Wild_isolate // to identify wild isolates - since genotype is free text
+         Isolation GPS UNIQUE Float UNIQUE Float // Latitude +/-DD.DDDDD Longitude +/-DD.DDDDD
+	 	   Place UNIQUE ?Text 
+         	   Landscape UNIQUE Urban_garden
+				    Forest
+				    Wild_grassland
+				    Agricultural_land
+				    Oasis
+				    Rural_garden
+				    Botanical_garden_zoo
+                                    Wet_shrubland
+                                    Dry_shrubland 
+                   Substrate UNIQUE ?Text // e.g. snail, soil, apple, rotting fruit
+	 	   Associated_organisms ?Species
+	 	   Life_stage ?Life_stage
+	 	   Log_size_of_population UNIQUE Float 
+	 	   Sampled_by Text // the person who found the worms
+                   Isolated_by ?Person // the person who isolated the worms from the sample
+		   Date UNIQUE DateType
+		   Picture ?Picture
+
+////////////////////////////////////////////////////////////////////////////////
+// ?Lab_Location class
+////////////////////////////////////////////////////////////////////////////////
+
+?Lab_Location	Freezer		Text
+		LiquidN2        Text
+		Minus70		Text
+                Remark		?Text #Evidence
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// ##                 worm physical map classes                 ##
+//
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// ?Clone class
+////////////////////////////////////////////////////////////////////////////////
+
+?Clone  Evidence #Evidence
+	Remark  General_remark ?Text 
+		Y_remark ?Text
+		PCR_remark ?Text
+	Position  Map ?Map XREF Clone #Map_position
+        	  pMap UNIQUE  ?Contig XREF Clone  UNIQUE Int UNIQUE Int 
+						// pMap units are bands
+		  Clone_left_end ?Sequence	// filled by XREF
+		  Clone_right_end ?Sequence	// filled by XREF
+		  Pos_neg_data ?Pos_neg_data
+	Positive Positive_gene   ?Gene XREF Positive_clone
+		 Positive_variation  ?Variation XREF Positive_clone ?Author
+		 Inside_rearr    ?Rearrangement XREF Clone_inside ?Author
+		 Hybridizes_to   ?Clone XREF Positive_probe ?Grid
+		 Hybridizes_weak ?Clone XREF Pos_probe_weak ?Grid
+		 Positive_probe  ?Clone XREF Hybridizes_to ?Grid
+		 Pos_probe_weak  ?Clone XREF Hybridizes_weak ?Grid
+	Negative Negative_gene   ?Gene XREF Negative_clone
+		 Negative_locus  ?Locus XREF Negative_clone ?Author
+		 Outside_rearr   ?Rearrangement XREF Clone_outside ?Author
+		 Negative_probe  ?Clone XREF Does_not_hybridize_to ?Grid
+		 Does_not_hybridize_to ?Clone XREF Negative_probe ?Grid
+        In_strain ?Strain XREF Clone
+	Species UNIQUE ?Species
+	Sequence    ?Sequence XREF Clone
+	PCR_product ?PCR_product XREF Clone
+	Length	Seq_length UNIQUE Int 			// bp
+		Gel_length UNIQUE Float			// Kb
+	Location ?Laboratory #Lab_Location
+	URL Text                          // to link to MRC_geneservice website ar2
+	Gridded ?Grid
+	Grid_data ?Grid_data 
+        FingerPrint     Gel_Number UNIQUE Int
+                        Approximate_Match_to UNIQUE ?Clone XREF Canonical_for
+                        Exact_Match_to UNIQUE ?Clone XREF Canonical_for 
+                        Funny_Match_to UNIQUE ?Clone XREF Canonical_for 
+                        Canonical_for ?Clone UNIQUE Int UNIQUE Int 
+				// start and stop offsets from self start
+                        Bands   UNIQUE Int UNIQUE Int
+                        Gel ?Motif  #Lane               // Magic tag2 construct
+	Contig9	Chromosome UNIQUE ?Map 
+                Vaxmap UNIQUE Float
+		In_Situ  UNIQUE Int UNIQUE Int // percent of physical chromosome
+		Cosmid_grid
+                Canon_for_cosmid
+	        Flag    UNIQUE Int
+		Autopos
+	Expression_construct	Pattern ?Text	// archaic
+  	Reference ?Paper XREF Clone
+        cDNA_group Contains ?Clone XREF Contains Text
+                   Contained_in ?Clone XREF Contained_in
+                   Best_match UNIQUE ?Text
+	Expr_pattern ?Expr_pattern XREF Clone
+        Sequence_status	Shotgun	UNIQUE DateType
+			Finished UNIQUE DateType
+			Accession_number UNIQUE Text
+	DB_info  Database ?Database ?Database_field UNIQUE ?Accession_number XREF Clone // added [031120 krb]
+	Type UNIQUE Cosmid            // 000824 Lincoln's additions to segregate clones
+		    Fosmid            // added 06/12/01 by krb for dl
+		    YAC
+		    cDNA
+		    Plasmid
+		    Other Text        // added to catch all clones 011017 dl
+	Transgene ?Transgene XREF Clone
+        Derived_from	?Clone
+
+#Lane UNIQUE Bands UNIQUE Float REPEAT // In base pairs: if you prefer to minimise the ace format
+             Band_Lengths  UNIQUE Float REPEAT // in mm: if you prefer to minimise the ace format
+             Band Float Text    // if you wish to comment single band value
+
+?Grid	Title	?Text
+	Layout	Columns	UNIQUE Int
+		Lines_at UNIQUE Int UNIQUE Int	// x, y spacing
+		Space_at UNIQUE Int UNIQUE Int	// x, y spacing
+		No_stagger // default is with alternate lines staggered
+		Size UNIQUE Int UNIQUE Int
+                      // idea is to give box size here
+		Labels 	UNIQUE	A1_labelling
+		    // label spaced blocks a-h down LHS, 1-12 across top
+				XY_labelling UNIQUE Text UNIQUE Text
+		    // X-axis and Y-axis labels in the form of
+		    // 01-XX or XX-01, for ascending vs. descending.
+		    // Append an 'A', eg. 01-10A, for alphabetic.
+	View ?View
+	Row Int #Grid_row
+
+?Grid_data	Experiment  Mapper ?Author
+			    Laboratory ?Laboratory
+			    Date  UNIQUE DateType
+		Positive Hybridizes_to ?Clone
+			 Positive_product ?Clone
+		Grid_data Grid UNIQUE ?Grid
+			  Probe	UNIQUE Clone UNIQUE ?Clone XREF Grid_data
+		// tag 2 for probe - REQUIRED
+			  Default_negative
+		// if set then all non-explicit elements on Grid score -ve
+
+
+?Grid_row UNIQUE Clone UNIQUE ?Clone XREF Gridded REPEAT
+		 Mixed #Mixed_grid_row
+
+?Mixed_grid_row UNIQUE Clone UNIQUE ?Clone XREF Gridded #Mixed_grid_row
+
+?Contig Map ?Map XREF Contig #Map_position
+        pMap UNIQUE Int UNIQUE Int         // extremities in pMap units
+	Clone ?Clone XREF pMap
+
+
+///////////////////////////////
+//
+//  Species class
+//
+///////////////////////////////
+
+?Species Short_name UNIQUE Text   // e.g. 'C. elegans'
+	 Other_name Text	  // sp. 7 etc.
+	 G_species UNIQUE Text    // e.g. 'c_elegans' - used internally for file generation
+	 NCBITaxonomyID UNIQUE Int 
+	 Assembly UNIQUE ?Sequence_collection //used for linking to the species assembly.
+
+
+///////////////////////////////
+//
+//  Map data classes
+//
+///////////////////////////////
+
+?2_point_data   Evidence #Evidence
+		Genotype  UNIQUE Text
+		Results  UNIQUE Text
+		Experiment	Mapper ?Author
+				Laboratory ?Laboratory
+				Date  UNIQUE DateType
+				Temperature UNIQUE Text
+		Point_1 UNIQUE Gene_1   UNIQUE ?Gene  XREF 2_point UNIQUE ?Variation XREF In_2_point
+			       Locus_1	UNIQUE ?Locus XREF 2_point UNIQUE ?Variation XREF In_2_point
+			       Allele_1 UNIQUE ?Variation XREF 2_point
+			       Rearrangement_1 UNIQUE ?Rearrangement XREF 2_point
+                               Transgene_1 UNIQUE ?Transgene XREF 2_point
+		Point_2 UNIQUE Gene_2   UNIQUE ?Gene  XREF 2_point UNIQUE ?Variation XREF In_2_point
+			       Locus_2	UNIQUE ?Locus XREF 2_point UNIQUE ?Variation XREF In_2_point
+			       Allele_2 UNIQUE ?Variation XREF 2_point
+			       Rearrangement_2 UNIQUE ?Rearrangement XREF 2_point
+                               Transgene_2 UNIQUE ?Transgene XREF 2_point
+			// Point_1 and Point_2 are tag2 for the mapped loci
+			// for now to use this on a map both must be on it with Position type Map info.
+		Calculation UNIQUE Full UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int // WT X Y XY
+				   One_recombinant UNIQUE Int UNIQUE Int // WT X
+				   Selected UNIQUE Int UNIQUE Int // X XY
+				   One_all UNIQUE Int UNIQUE Int // X ALL
+				   Recs_all UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int // X Y ALL
+				   One_let UNIQUE Int UNIQUE Int // X ALL
+				   Tested UNIQUE Int UNIQUE Int // X H
+				   Selected_trans UNIQUE Int UNIQUE Int // X XY
+				   Backcross UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int // WT X Y XY
+				   Back_one UNIQUE Int UNIQUE Int // WT X
+				   Sex_full UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int // WT X Y XY
+				   Sex_one UNIQUE Int UNIQUE Int // WT X
+				   Sex_cis UNIQUE Int UNIQUE Int // X ALL
+				   Dom_one UNIQUE Int UNIQUE Int // WT nonWT
+				   Dom_selected UNIQUE Int UNIQUE Int // WT X
+				   Dom_semi UNIQUE Int UNIQUE Int // XD ALL
+				   Dom_let UNIQUE Int UNIQUE Int // WT ALL
+				   Direct UNIQUE Int UNIQUE Int // R T
+				   Complex_mixed UNIQUE Int UNIQUE Int // X ALL
+			// calculation fields can be used for full likelihood calculations
+		Calc  Calc_distance UNIQUE Float
+		      Calc_lower_conf UNIQUE Float
+		      Calc_upper_conf UNIQUE Float
+			// these fields are filled in by software from the Calculation data
+	        Simple_distance	Min      UNIQUE Float 
+                                Distance UNIQUE Float
+                                Max      UNIQUE Float
+                                Error    UNIQUE Float
+                                Linkage  UNIQUE Text
+			// some of these are used for drawing in the absence of Calculation data
+		Remark ?Text #Evidence
+	// code uses Point_1, Point_2, Calculation and all its subtags, all the Calc subtags,
+	// and most of the Simple_distance subtags.
+
+
+?Pos_neg_data	Evidence #Evidence
+		Genotype  UNIQUE Text
+		Results  UNIQUE Text
+		Experiment Mapper ?Author
+			   Laboratory ?Laboratory
+			   Date  UNIQUE DateType
+		Item_1	UNIQUE	Gene_1  UNIQUE ?Gene  XREF Pos_neg_data UNIQUE ?Variation XREF In_pos_neg_data
+				Locus_1	UNIQUE ?Locus XREF Pos_neg_data UNIQUE ?Variation XREF In_pos_neg_data
+			     	Rearrangement_1 UNIQUE ?Rearrangement XREF Pos_neg_data
+				Allele_1 UNIQUE ?Variation XREF Pos_neg_data
+				Clone_1 UNIQUE ?Clone XREF Pos_neg_data
+		Item_2	UNIQUE	Gene_2  UNIQUE ?Gene  XREF Pos_neg_data UNIQUE ?Variation XREF In_pos_neg_data
+				Locus_2	UNIQUE ?Locus XREF Pos_neg_data UNIQUE ?Variation XREF In_pos_neg_data
+			     	Rearrangement_2 UNIQUE ?Rearrangement XREF Pos_neg_data
+				Allele_2 UNIQUE ?Variation XREF Pos_neg_data
+				Clone_2 UNIQUE ?Clone XREF Pos_neg_data
+		Calculation UNIQUE Positive
+				   Negative
+		Remark ?Text #Evidence
+	// code uses Item_1, Item_2, Positive and Negative
+
+
+?Multi_pt_data	Evidence #Evidence
+		Genotype  UNIQUE Text
+		Experiment  Mapper ?Author
+			    Laboratory ?Laboratory
+			    Date  UNIQUE DateType
+		Selected A UNIQUE Gene_A          UNIQUE ?Gene UNIQUE ?Variation XREF In_multi_point
+				  Locus_A         UNIQUE ?Locus UNIQUE ?Variation XREF In_multi_point
+				  Allele_A        UNIQUE ?Variation
+				  Rearrangement_A UNIQUE ?Rearrangement
+                                  Transgene_A     UNIQUE ?Transgene XREF Multi_point 	
+			 B UNIQUE Gene_B          UNIQUE ?Gene UNIQUE ?Variation XREF In_multi_point
+				  Locus_B         UNIQUE ?Locus UNIQUE ?Variation XREF In_multi_point
+				  Allele_B        UNIQUE ?Variation
+				  Rearrangement_B UNIQUE ?Rearrangement
+                                  Transgene_B UNIQUE ?Transgene XREF Multi_point	
+		Gene  ?Gene  UNIQUE ?Variation XREF In_multi_point     // Connect to ?Gene model
+		Locus ?Locus UNIQUE ?Variation XREF In_multi_point     // Pair up alleles
+		Results A_non_B #Multi_counts
+			B_non_A	#Multi_counts
+			Combined #Multi_counts
+		Old_CGC_results Text
+		Remark ?Text #Evidence
+	// code uses all the Results subtags, and the #Multi_counts structure
+	// There is acedb magic associated with the #?Multi_counts usage.
+
+
+?Multi_counts UNIQUE Gene          UNIQUE ?Gene	         XREF Multi_point UNIQUE Int #Multi_counts
+		     Locus	   UNIQUE ?Locus	 XREF Multi_point UNIQUE Int #Multi_counts
+		     Allele	   UNIQUE ?Variation	 XREF Multi_point UNIQUE Int #Multi_counts
+		     Rearrangement UNIQUE ?Rearrangement XREF Multi_point UNIQUE Int #Multi_counts
+		     Transgene	   UNIQUE ?Transgene	 XREF Multi_point UNIQUE Int #Multi_counts  
+
+////////////////////////////////////////////////////////////////////////////////
+//			      Evidence hash
+////////////////////////////////////////////////////////////////////////////////
+
+#Evidence Paper_evidence ?Paper                                       // Data from a Paper
+          Published_as ?Text                                           //  .. track other names for the same data
+          Person_evidence ?Person                                     // Data from a Person
+          Author_evidence ?Author UNIQUE Text                         // Data from an Author
+          Accession_evidence ?Database ?Accession_number              // Data from a database (NDB/UNIPROT etc)
+          Protein_id_evidence ?Text                                   // Reference a protein_ID
+          GO_term_evidence ?GO_term                                   // Reference a GO_term
+          Expr_pattern_evidence ?Expr_pattern                         // Reference a Expression pattern  
+          Microarray_results_evidence ?Microarray_results             // Reference a Microarray result
+          RNAi_evidence ?RNAi                                         // Reference a RNAi knockdown
+          Gene_regulation_evidence ?Gene_regulation                   // Reference a Gene_regulation interaction
+          CGC_data_submission                                         // bless the data as comning from CGC
+	  Curator_confirmed ?Person                                   // bless the data manually 
+	  Inferred_automatically Text                                 // bless the data via a script
+	  Date_last_updated UNIQUE DateType                           // Stores last update timestamp
+	  Feature_evidence ?Feature				      // Reference a Feature - eg for creation of isoform based on TEC-RED SL2
+	  Laboratory_evidence ?Laboratory                             // Reference a Lab
+	  From_analysis ?Analysis				      // Reference an analysis
+	  Variation_evidence ?Variation				      // Explicitly record variation from which IMP manual GO annotations are made
+	  Mass_spec_evidence ?Mass_spec_peptide
+	  Sequence_evidence ?Sequence				      // for sequence data that hasn't been submitted to a public resource
+
+////////////////////////////////////////////////////////
+//
+// ?GO_term class modified 19/09/01 dl
+// 
+///////////////////////////////////////////////////////
+
+?GO_term Name ?Text
+	 Definition ?Text
+         Term ?Text
+	 Type UNIQUE Biological_process
+                     Cellular_component
+		     Molecular_function
+	 Child Instance ?GO_term XREF Instance_of
+               Component ?GO_term XREF Component_of
+	 Parent Instance_of ?GO_term XREF Instance
+                Component_of ?GO_term XREF Component
+	 Attributes_of Cell       ?Cell       XREF GO_term
+		       Motif      ?Motif      XREF GO_term
+		       Gene       ?Gene       XREF GO_term // will this replace CDS? [040203 krb]
+		       CDS        ?CDS        XREF GO_term
+		       Sequence   ?Sequence   XREF GO_term // Erich, [011210 krb]
+		       Transcript ?Transcript XREF GO_term // [030411 krb]
+		       Pseudogene ?Pseudogene XREF GO_term // [030801 krb]
+		       Phenotype  ?Phenotype  XREF GO_term // Erich, [020128 dl]
+		       Index Ancestor   ?GO_term XREF Descendent // Lincoln [020709 [krb]
+               	             Descendent ?GO_term XREF Ancestor
+		       Anatomy_term ?Anatomy_term XREF GO_term // added [031107 krb]
+		       Homology_group ?Homology_group XREF GO_term // added [031120 krb]
+		       Expr_pattern ?Expr_pattern XREF GO_term
+		       Picture ?Picture XREF Cellular_component
+ 	 Version UNIQUE Text UNIQUE Text // Lincoln, to store version number of GO
+					 // only to be attached to three parent GO_terms [krb 031028]
+
+///////////////////////////////////////////////////////////////
+//
+// GO_code class - 030224 krb
+//
+///////////////////////////////////////////////////////////////
+
+?GO_code Description ?Text 
+	 Remark ?Text #Evidence
+
+
+///////////////////////////////////////////////////////////////
+//
+// ?SO_term class - krb 30062004
+//                - klh 2011-04
+////////////////////////////////////////////////////////////////
+
+
+?SO_term SO_name ?Text
+         SO_definition ?Text
+         SO_synonym ?Text
+         SO_version ?Text
+         Located_sequence_feature UNIQUE Junction
+                                         Region
+                                         Sequence_alteration
+         Parent Is_a ?SO_term XREF Is
+                Part_of ?SO_term XREF Part
+                Derived_from ?SO_term XREF Derives
+                Member_of ?SO_term XREF Member
+         Child Is ?SO_term XREF Is_a
+               Part ?SO_term XREF Part_of
+               Derives ?SO_term XREF Derived_from
+               Member ?SO_term XREF Member_of
+         Ancestor   ?SO_term XREF Descendent
+         Descendent ?SO_term XREF Ancestor
+
+
+// Ace2SO class: gives a mapping from Acedb objects to their SO terms.
+//
+// SO_subpart_tags    - Tag pointing to subpart of this object, e.g. "Source_exon".
+// SO_parent_obj_tag  - Tag pointing to semantic parent of this object, e.g. "Gene"
+// SO_children        - this object has child objects which refer to it.
+
+?Ace2SO Description UNIQUE Text
+        SO_subparts Exons UNIQUE ?SO_Term
+                    Introns UNIQUE ?SO_term
+                    Coding_region UNIQUE ?SO_term
+        No_span
+        SO_parent_obj_tag UNIQUE Text
+        SO_children
+
+
+
+
+//////////////////////////////////////////////////////////
+// AO_code class -  Raymond Lee 040203
+// Evidence codes only relevant to the Anatomy_term class
+//////////////////////////////////////////////////////////
+
+?AO_code Description ?Text
+	 Remark ?Text #Evidence
+	 Attribute_of Anatomy_function ?Anatomy_function XREF Assay //addition
+
+
+//////////////////////////////////////////////////////////
+// ?Atlas class - Lincoln 000824
+// WORMBASE ATLAS (VIRTUAL WORM)
+//////////////////////////////////////////////////////////
+
+?Atlas  Cell ?Cell XREF Atlas
+	Name UNIQUE Text
+ 	Location UNIQUE Text
+ 	Title UNIQUE Text
+ 	Comments UNIQUE Text
+ 	Banner UNIQUE Text
+ 	Up_arrow UNIQUE Text
+ 	Down_arrow UNIQUE Text
+ 	Sx_arrow UNIQUE Text
+ 	Dx_arrow UNIQUE Text	
+ 	X_position UNIQUE Text
+ 	Y_position UNIQUE Text	
+
+
+?Neurodata      Send            Text    UNIQUE Int #Neuro_location   // Text=series,Int=count
+                Send_joint      Text    UNIQUE Int #Neuro_location   // "joint" indicates polyadic synapse
+                Receive         Text    UNIQUE Int #Neuro_location
+                Receive_joint   Text    UNIQUE Int #Neuro_location
+                Gap_junction    Text    UNIQUE Int #Neuro_location
+                Evidence        #Evidence
+
+?Neuro_location	Section Int Int Text  //Int1=first EM section where the connection was
+                                                      //found,Int2=last section,Text=remark
+
+
+?Reconstruction Cell ?Cell
+                Anatomy_term ?Anatomy_term //[2006-04-21 ar2] Raymond
+		Author ?Author
+		Date UNIQUE DateType
+		Remark ?Text #Evidence
+		Description ?LongText
+
+?ReconCellInfo	Birth UNIQUE Float
+	 	Timepoint Float #Timepoint
+
+?Timepoint XYZ UNIQUE Float UNIQUE Float UNIQUE Float
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+//                  S E Q U E N C E    A N D    S - M A P P E D    G E N E    C L A S S E S
+//
+//                           ?Sequence, ?CDS, ?Transcript, ?Pseudogene, ?Transposon
+//
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// ?Sequence class
+//
+// Stores: genomic DNA objects (chromosomes, superlinks, and clones)
+//         cDNAs (ESTs, OSTs, mRNAs)
+//         sequences from other species (e.g. targets of BLAT_NEMATODE)
+//
+///////////////////////////////////////////////////////////////////////
+
+?Sequence DNA UNIQUE ?DNA UNIQUE Int		// Int is the length
+		// if you want to register a length without a DNA sequence, then use a dummy sequence object, e.g. "-"  
+		// This ensures that when a real sequence appears, its length dominates.
+	  SMap S_parent UNIQUE Canonical_parent UNIQUE ?Sequence XREF Genomic_non_canonical 
+			       Genomic_parent   UNIQUE ?Sequence XREF Nongenomic
+			       AGP_parent       UNIQUE ?Sequence XREF AGP_fragment // added to hold briggsae data [krb 020726]
+	       S_child Gene_child ?Gene       XREF Sequence UNIQUE Int UNIQUE Int #SMap_info  // maximal extent of Gene objects
+		       CDS_child  ?CDS        XREF Sequence UNIQUE Int UNIQUE Int #SMap_info  // For ?CDS class [031104 krb]
+		       Transcript ?Transcript XREF Sequence UNIQUE Int UNIQUE Int #SMap_info  // for ?Transcript class [021126 krb]
+		       Pseudogene ?Pseudogene XREF Sequence UNIQUE Int UNIQUE Int #SMap_info  // For ?Pseudogene class [030801 krb]
+		       Transposon ?Transposon XREF Sequence UNIQUE Int UNIQUE Int #SMap_info  // for transposons   [020128 dl]
+		       Genomic_non_canonical ?Sequence XREF Canonical_parent UNIQUE Int UNIQUE Int #SMap_info
+		       Nongenomic ?Sequence XREF Genomic_parent UNIQUE Int UNIQUE Int #SMap_info       // for Lincoln RNAi  [010226 dl]
+		       PCR_product ?PCR_product XREF Canonical_parent UNIQUE Int UNIQUE Int #SMap_info // for Lincoln RNAi  [010226 dl]
+		       Operon ?Operon XREF Canonical_parent UNIQUE Int UNIQUE Int #SMap_info           // for Operon data   [dl]
+     		       AGP_fragment ?Sequence XREF AGP_parent Int UNIQUE Int #SMap_info		       // for Briggsae data [020726 krb]
+		       Allele ?Variation XREF Sequence UNIQUE Int UNIQUE Int #SMap_info		       // SMapped Allele class [021217 krb]
+		       Oligo_set ?Oligo_set XREF Canonical_parent UNIQUE Int UNIQUE Int #SMap_info     //added for Oligo_set class
+                       Feature_object ?Feature XREF Sequence UNIQUE Int UNIQUE Int #SMap_info	       // dl feature play
+		       Feature_data ?Feature_data XREF Sequence UNIQUE Int UNIQUE Int #SMap_info
+		       Homol_data ?Homol_data XREF Sequence UNIQUE Int UNIQUE Int #SMap_info
+	  Structure  From Source UNIQUE ?Sequence XREF Subsequence
+			  Source_exons Int UNIQUE Int // start at 1 
+			  // WARNING: is this still needed when ?CDS class is present???
+		     Subsequence ?Sequence XREF Source UNIQUE Int UNIQUE Int
+		     Overlap_right UNIQUE ?Sequence XREF Overlap_left UNIQUE Int // potentially use Overlap_right integer for auto-linking
+		     Overlap_left UNIQUE ?Sequence XREF Overlap_right
+		     Gap_right UNIQUE Int Text            // 000909 dl added to track gap sizes
+		     Clone_left_end ?Clone XREF Clone_left_end UNIQUE Int
+		     Clone_right_end ?Clone XREF Clone_right_end UNIQUE Int
+		     Flipped
+	  DB_info    Database ?Database ?Database_field UNIQUE ?Accession_number XREF Sequence
+		     Protein_id ?Sequence UNIQUE Text UNIQUE Int // DB_info tag added [011030 krb]
+		     Secondary_accession ?Accession_number XREF Sequence
+		     DB_remark ?Text	#Evidence	// EMBL/Genbank
+		     Keyword ?Keyword	// EMBL/Genbank
+		     DB_annotation ?Database UNIQUE ?LongText
+		     EMBL_dump_info #EMBL_dump_info
+	  Origin  From_database UNIQUE ?Database UNIQUE Int	// release number
+		  From_author ?Author XREF Sequence
+		  From_laboratory UNIQUE ?Laboratory
+		  Genetic_code UNIQUE ?Genetic_code // krb 030506
+		  Date DateType Text			// Text for comments on operation
+		  Date_directory UNIQUE Text	        // date of this version for cosmids, changed sdm 000731 to text
+		  Life_stage UNIQUE ?Life_stage // to capture details of ESTs that are from different libraries
+		  Species UNIQUE ?Species
+		  Library UNIQUE ?Library
+		  Strain UNIQUE ?Strain
+		  Anatomy_term ?Anatomy_term   // life-stage and tissues that the sequence comes from
+		  Analysis UNIQUE ?Analysis    // analysis or project that produced this set of data 
+		  Read_coverage UNIQUE Float   // average read-coverage in a short-read cluster sequence
+	  Visible Title UNIQUE ?Text
+		  Matching_CDS ?CDS XREF Matching_cDNA #Evidence               // to link ESTs/mRNAs to CDS 
+		  Matching_transcript ?Transcript XREF Matching_cDNA #Evidence // to link ESTs/mRNAs to RNA genes
+		  Matching_pseudogene ?Pseudogene XREF Matching_cDNA #Evidence // to link ESTs/mRNAs to Pseudogenes
+		  Clone ?Clone XREF Sequence 
+		  GO_term ?GO_term XREF Sequence ?GO_code #Evidence
+		  Gene ?Gene XREF Other_sequence  // for where mRNAs etc. correspond to a gene
+		  Paired_read ?Sequence XREF Paired_read          // dl 020110
+	  	  Reference ?Paper XREF Sequence
+		  Expr_pattern ?Expr_pattern XREF Sequence
+		  RNAi ?RNAi XREF Sequence
+		  Confidential_remark ?Text		  
+		  Remark ?Text #Evidence
+		// tag2 system: names of all objects following next tag are shown in the 
+		//   general annotation display column as "tag:objname"
+	  Properties    Genomic_canonical Gene_count UNIQUE Int                  // added tag for dot name tracking [020128 dl]
+                        Briggsae_canonical
+                        Genomic                                                  // added tag to define genomic sequences not from the consortium
+                        Checksum MD5 UNIQUE Text     //checksums should only be created for an upper-cased sequence.
+                                 CRC64 UNIQUE Text   //checksums should only be created for an upper-cased sequence.
+			cDNA cDNA_EST
+			     EST_5		       // Indicate whether this is a 5' or 3' read [010423 dl]
+			     EST_3
+			     Capped_5	               // Indicates capped 5' end - for Lincoln [06/12/01 krb]
+			     TSL_tag		       // Indicates a short RT-PCR product for TSL detection [030220 dl]
+			EST_consensus		       // Designates this object as a consensus
+			// if RNA tag, acedb outputs U in place of T in sequence output
+			RNA UNIQUE mRNA UNIQUE Processed_mRNA       // 
+					       Unprocessed_mRNA
+				   tRNA Type UNIQUE Text            // ck1 [030926] krb
+					Anticodon UNIQUE Text       // 
+				   rRNA UNIQUE Text
+				   snRNA UNIQUE Text
+				   snoRNA UNIQUE Text               // [030102 krb]
+				   scRNA UNIQUE Text
+				   miRNA UNIQUE Text                // [020306 kj]
+				   ncRNA UNIQUE Text	            // true non-coding RNA molecules
+			Ignore #Evidence                            // tag to flag problem Sequence objects to avoid certain analysis [031120 krb]
+			Show_in_reverse_orientation                 // Draw 3' reads in reverse orientation [010423 dl]
+			Status	Received UNIQUE DateType
+				Library_construction UNIQUE DateType
+				Shotgun	UNIQUE DateType
+				Shotgun_complete UNIQUE DateType
+				Contiguous UNIQUE DateType
+				Finished UNIQUE DateType
+				Submitted UNIQUE DateType
+                                Annotated UNIQUE DateType
+				Archived UNIQUE DateType UNIQUE Text // Date Disk
+			Match_type  UNIQUE Match_with_function
+					   Match_without_function
+				// These are designed specifically for measuring 
+				// statistics.  What you match should be listed in 
+				// Brief_id, Remark etc.  The aim now is to use Brief_id
+				// exactly for what you would like a half-line summary to
+				// contain, for making tables etc.
+			Link // Enable gene curation of link genes [020805 krb]
+	  Splices	Confirmed_intron  Int Int #Splice_confirmation
+			Predicted_5 ?Method Int Int UNIQUE Float // (x, x+1) or (x, x-1)
+			Predicted_3 ?Method Int Int UNIQUE Float // (x, x+1) or (x, x-1)
+	  Cluster_information Contains_reads       ?Sequence XREF Contained_in_cluster  // Links cluster contig and
+			      Contained_in_cluster ?Sequence XREF Contains_reads        // individual reads
+	  Map ?Map XREF Sequence #Map_position		// use in particular for Genomic_canonical
+	  Interpolated_map_position UNIQUE ?Map UNIQUE Float // For updated CDS-based interpolated map positions [krb 030502]
+          Oligo ?Oligo XREF In_sequence Int UNIQUE Int ?Method 
+	  Defines_feature ?Feature XREF Defined_by_sequence #Evidence       // Feature data model [dl 030304]
+	  Assembly_tags	Text Int Int Text                                   // type, start, stop, comment
+	  Gene_regulation Cis_regulator    ?Gene_regulation XREF Cis_regulator_seq // Wen
+	  YH_bait   ?YH XREF Sequence_bait ?Text// for yeast two hybrid data
+	  YH_target ?YH XREF Sequence_target ?Text
+	  Homol	DNA_homol ?Sequence XREF DNA_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		Pep_homol ?Protein XREF DNA_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		Motif_homol ?Motif XREF DNA_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		Homol_homol ?Homol_data XREF DNA_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+			// We will generate a column for each distinct ?Method.  So for
+			// distinct Worm_EST and Worm_genomic columns, use ?Method objects
+			// Worm_EST_Blastn and Worm_genomic_Blastn.
+          Method UNIQUE ?Method
+
+
+
+/////////////////////////////////////////////
+//
+// hashes relating to ?Sequence class
+//
+/////////////////////////////////////////////
+
+#EMBL_info	Location UNIQUE Text	// full location if non-trivial
+		Qualifier Note Text	// all qualifiers correctly
+			  Product Text
+	// We could have in #EMBL_info a more complete representation of
+	// feature table qualifiers/syntax.  I doubt this is worth it.
+
+#EMBL_dump_info EMBL_dump_method UNIQUE ?Method
+                ID_template UNIQUE Text
+                ID_division UNIQUE Text
+                DE_format UNIQUE Text  
+                OS_line UNIQUE Text    
+                OC_line Text           
+                RL_submission Text     
+                EMBL_reference ?Paper  
+                CC_line Text           
+                source_organism UNIQUE Text
+		gene_from_name   
+
+#Splice_confirmation cDNA ?Sequence // ?Sequence link to flag which cDNA is confirming
+                     EST ?Sequence  // or falsifying the intron in question, added [031121 krb]
+		     OST ?Sequence
+		     RST ?Sequence
+		     RNASeq ?Analysis Int
+		     Mass_spec ?Mass_spec_peptide
+		     mRNA	?Sequence
+		     Homology ?Accession_number
+		     UTR ?Sequence
+		     False ?Sequence 
+		     Inconsistent ?Sequence
+		 
+
+// Homol and Feature info
+
+#Homol_info Align Int UNIQUE Int UNIQUE Int 
+	// not needed if full alignment is ungapped
+	// one row per ungapped alignment section
+	// first int is position in query, second in target
+	// third int is length - only necessary when gaps in both sequences align
+            AlignDNAPep Int UNIQUE Int UNIQUE Int
+            AlignPepDNA Int UNIQUE Int UNIQUE Int
+            Match_string UNIQUE RefFwd_HitFwd UNIQUE Text
+                                RefFwd_HitRev UNIQUE Text
+                                RefRev_HitFwd UNIQUE Text
+                                RefRev_HitRev UNIQUE Text
+            Align_id Text
+            Target_species UNIQUE ?Species
+            EMBL_dump UNIQUE EMBL_dump_YES
+                             EMBL_dump_NO
+	// overrides for embl dump based on method
+            EMBL_qualifier Text// additional to those in the method, includes '/'
+
+#Feature_info	EMBL_dump UNIQUE EMBL_dump_YES
+				 EMBL_dump_NO
+			// overrides for embl dump based on method
+	        EMBL_qualifier Text
+			// additional to those in the method, includes '/'
+
+// Repeat_info - do we need this?
+
+#Repeat_info	Percent_Identity UNIQUE Int
+		Score ?Method UNIQUE Float
+		N_gaps UNIQUE Int
+		Loop UNIQUE Int UNIQUE Int	// rel start, stop
+		Unit_Length UNIQUE Int
+
+// SMap stuff
+
+#SMap_info Method UNIQUE ?Method    // methods used in child (optional)
+	   Content Homol_only // useful for -nohomol gff option
+		   Feature_only // useful for -nofeature gff option
+	   Mapping Align Int UNIQUE Int UNIQUE Int 
+		        // not needed if full alignment is ungapped
+			// one row per ungapped alignment section
+			// first int is position in parent, second in child
+			// third int is length - only necessary when gaps in both sequences align
+		   Mismatch Int
+			// Int give position(s) in parent of mismatches (technically in which they will
+			// not create an error if they occur
+			// if just the tag is set without values, then accept mismatches anywhere
+	   Display Max_mag UNIQUE Float	// don't show if more bases per line
+		   Min_mag UNIQUE Float	// don't show if fewer bases per line
+
+
+///////////////////////////////////////////////////////////////////////////
+// Sequence_collection class
+// holds a collection of sequences and some descriptions
+///////////////////////////////////////////////////////////////////////////
+
+?Sequence_collection Origin	Evidence #Evidence
+				Name ?Text // name that the author gave this collection
+				Species UNIQUE ?Species
+				Strain UNIQUE ?Strain
+				Laboratory ?Laboratory
+				Database ?Database ?Database_field ?Accession_number
+		     History    First_WS_release Int // first WormBase release this assembly was used
+				Latest_WS_release Int // latest release where it was used
+				Supercedes    UNIQUE ?Sequence_collection XREF Superceded_by
+				Superceded_by UNIQUE ?Sequence_collection XREF Supercedes
+		     Remark	?Text
+		     Status     UNIQUE Live #Evidence
+				       Suppressed #Evidence
+				       Dead #Evidence   
+		     Sequences	?Sequence
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// ?CDS class - To store all coding genes
+//
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+?CDS	Evidence #Evidence
+	SMap S_parent UNIQUE Sequence   UNIQUE ?Sequence   XREF CDS_child
+			     Transposon UNIQUE ?Transposon XREF CDS_child
+	Structure Source_exons Int UNIQUE Int
+	DB_info Database ?Database ?Database_field UNIQUE ?Accession_number XREF CDS
+		Protein_id ?Sequence UNIQUE Text UNIQUE Int // DB_info tag added [011030 krb]
+		DB_remark ?Text #Evidence
+	Origin	From_laboratory UNIQUE ?Laboratory
+		Species UNIQUE ?Species
+		Genetic_code UNIQUE ?Genetic_code // needed for one gene with selenocysteine!
+	Properties Coding CDS UNIQUE Int UNIQUE Int
+			  CDS_predicted_by ?Method Float // score of method
+			  Prediction_status UNIQUE Predicted		// all CDSs must be one of these three things
+						   Partially_confirmed
+						   Confirmed
+		   Isoform #Evidence
+		   Start_not_found UNIQUE Int //UNIQUE added by MH6 WS228
+		   End_not_found
+		   Merge Text  // ar2 270106 added by request for StLoius
+		   Split Text  // ar2 270106 added by request for StLoius
+	Gene_regulation Trans_regulator ?Gene_regulation XREF Trans_regulator_seq // Wen [030804 krb]
+                        Trans_target    ?Gene_regulation XREF Trans_regulated_seq // Wen
+                        Cis_target      ?Gene_regulation XREF Cis_regulated_seq   // Wen
+	Visible Gene UNIQUE ?Gene XREF Corresponding_CDS // when live 
+		Gene_history UNIQUE ?Gene XREF Corresponding_CDS_history // when dead
+		Corresponding_transcript ?Transcript XREF Corresponding_CDS #Evidence  // links CDS' to new-style ?Transcript objects, 1-to-1 relationship
+		Corresponding_protein UNIQUE ?Protein XREF Corresponding_CDS #Evidence 
+		Corresponding_PCR_product ?PCR_product XREF Overlaps_CDS // added for PCR mappings [010419 dl]
+		Corresponding_oligo_set ?Oligo_set XREF Overlaps_CDS
+		Corresponding_transposon UNIQUE ?Transposon XREF Corresponding_CDS
+		Matching_cDNA ?Sequence XREF Matching_CDS #Evidence
+		Expr_pattern ?Expr_pattern XREF CDS
+                RNAi_result ?RNAi XREF Predicted_gene // Lincoln RNAi [001213 dl]
+		GO_term ?GO_term XREF CDS ?GO_code #Evidence
+		Variation ?Variation XREF Predicted_CDS // replaces Has_allele tag in ?Sequence
+		Microarray_results ?Microarray_results XREF CDS      //added for Microarray_results
+	  	Reference ?Paper XREF CDS // added [011030 krb]
+                Provisional_description ?Text #Evidence
+                Detailed_description ?Text #Evidence
+                Concise_description ?Text #Evidence
+		Brief_identification UNIQUE ?Text #Evidence
+		Confidential_remark ?Text
+		SAGE_tag ?SAGE_tag XREF Predicted_CDS #SAGE_mapping_info
+		YH_bait   ?YH XREF Bait_overlapping_CDS ?Text// for yeast two hybrid data
+		YH_target ?YH XREF Target_overlapping_CDS ?Text
+		3d_data ?3d_data XREF CDS
+	        //Structure_data ?Structure_data XREF Corresponding_CDS #Evidence
+		RNASeq_FPKM  ?Life_stage  Float  #Evidence
+                Remark ?Text #Evidence
+	Associated_feature ?Feature XREF Associated_with_CDS #Evidence
+        Method UNIQUE ?Method
+
+
+
+///////////////////////////////////////////////////////////////////
+//
+// ?Transcript class - krb 021126
+//
+///////////////////////////////////////////////////////////////////
+
+?Transcript     Evidence #Evidence
+		SMap S_parent UNIQUE Sequence UNIQUE ?Sequence XREF Transcript
+                Structure Source_exons Int UNIQUE Int
+		DB_info DB_remark ?Text #Evidence // was missing from first draft of Transcript class krb
+			Database ?Database ?Database_field UNIQUE ?Accession_number XREF Transcript
+                Origin  From_laboratory UNIQUE ?Laboratory                         // [020306 kj]
+                        Species UNIQUE ?Species                                    // [020306 kj]
+                Visible Gene ?Gene XREF Corresponding_transcript // for live transcripts
+			Gene_history UNIQUE ?Gene XREF Corresponding_transcript_history // when Transcript is dead
+			Variation ?Variation XREF Transcript // added to fit two alleles of RNA genes [021127 krb]
+                        Matching_cDNA ?Sequence XREF Matching_transcript #Evidence            // to attach non-coding RNA genes to matching ESTs
+			Corresponding_CDS UNIQUE ?CDS XREF Corresponding_transcript #Evidence // 1-2-1 relationships with coding genes
+                        Corresponding_PCR_product ?PCR_product XREF Overlaps_transcript
+			Corresponding_oligo_set ?Oligo_set XREF Overlaps_transcript
+                        Reference ?Paper XREF Transcript                           // [020306 kj]
+			RNAi_result ?RNAi XREF Transcript //was missing from model [021126 krb]
+			GO_term ?GO_term XREF Transcript ?GO_code #Evidence // [030411 krb]
+			Microarray_results ?Microarray_results XREF Transcript      //added for Microarray_results
+                        Provisional_description ?Text #Evidence
+                        Detailed_description ?Text #Evidence
+                        Concise_description ?Text #Evidence
+                        Brief_identification UNIQUE ?Text
+                        Confidential_remark ?Text
+			SAGE_tag ?SAGE_tag XREF Transcript #SAGE_mapping_info
+			RNASeq_FPKM  ?Life_stage  Float  #Evidence
+                        Remark ?Text #Evidence
+                Properties Transcript UNIQUE  mRNA UNIQUE Processed_mRNA
+                                                          Unprocessed_mRNA
+                                              tRNA Type UNIQUE Text        // ck1 [030926] krb
+						   Anticodon UNIQUE Text   // 
+                                              rRNA UNIQUE Text
+                                              snRNA UNIQUE Text
+					      snoRNA UNIQUE Text           // [030102 krb]
+                                              scRNA UNIQUE Text
+                                              stRNA UNIQUE Text            // [010723 dl]
+                                              miRNA UNIQUE Text            // [020306 kj]
+                                              ncRNA UNIQUE Text            // true non-coding RNAs
+					      snlRNA UNIQUE Text	   // small nuclear like 
+					      piRNA UNIQUE Text		   // 21U-RNA/piwi-interacting RNA/piRNA Gary W. WS228
+		           Isoform #Evidence                               // Set if this is a RNA isoform
+			   Ignore #Evidence                                // Set for putative NMD targets which we do not want to see in wormrna
+                           Start_not_found                                 // [020306 kj]
+                           End_not_found                                   // [020306 kj]
+		Associated_feature ?Feature XREF Associated_with_transcript #Evidence
+                Method UNIQUE ?Method                  
+
+
+
+
+///////////////////////////////////////////////////////////////////
+//
+// ?Pseudogene - krb 030801
+//
+///////////////////////////////////////////////////////////////////
+
+
+?Pseudogene     Evidence #Evidence
+                SMap S_parent UNIQUE Sequence UNIQUE ?Sequence XREF Pseudogene
+				     Transposon UNIQUE ?Transposon XREF Pseudogene_child    
+                Structure Source_exons Int UNIQUE Int
+                DB_info DB_remark ?Text #Evidence
+			Database ?Database ?Database_field UNIQUE ?Accession_number XREF Pseudogene
+                Origin  From_laboratory UNIQUE ?Laboratory
+                        Species UNIQUE ?Species
+                Type    UNIQUE Coding_pseudogene #Evidence
+                               RNA_pseudogene #Evidence
+                               Transposon_pseudogene #Evidence
+	        Attributes   Transcribed #Evidence
+			     Fragment #Evidence 
+		Properties Isoform #Evidence
+                Visible Gene         UNIQUE ?Gene XREF Corresponding_pseudogene         // when Pseudogene is live
+                        Gene_history UNIQUE ?Gene XREF Corresponding_pseudogene_history // when Pseudogene is dead
+                        Matching_cDNA ?Sequence XREF Matching_pseudogene #Evidence
+                        Brief_identification UNIQUE ?Text #Evidence
+                        Corresponding_PCR_product ?PCR_product XREF Overlaps_pseudogene 
+			Corresponding_oligo_set ?Oligo_set XREF Overlaps_pseudogene
+			Corresponding_transposon    UNIQUE ?Transposon XREF Corresponding_pseudogene
+                        RNAi_result ?RNAi XREF Pseudogene
+			Variation ?Variation XREF Pseudogene // for completeness of variation connecting to all gene types
+                        Expr_pattern ?Expr_pattern XREF Pseudogene
+                        Provisional_description ?Text #Evidence
+                        Detailed_description ?Text #Evidence
+                        Concise_description ?Text #Evidence
+                        GO_term ?GO_term XREF Pseudogene ?GO_code #Evidence
+			SAGE_tag ?SAGE_tag XREF Pseudogene #SAGE_mapping_info
+			Microarray_results ?Microarray_results XREF Pseudogene  //added for Microarray_results
+			RNASeq_FPKM  ?Life_stage  Float  #Evidence
+			Remark ?Text #Evidence	  
+		Associated_feature ?Feature XREF Associated_with_pseudogene #Evidence
+                Confidential_remark ?Text
+                Method UNIQUE ?Method
+
+
+
+///////////////////////////////////////////////////////////////////////////
+//
+// ?Transposon class [020128 dl]
+//
+///////////////////////////////////////////////////////////////////////////
+
+
+?Transposon Evidence #Evidence
+	    SMap S_parent UNIQUE Sequence UNIQUE ?Sequence XREF Transposon
+	    Structure	  S_child CDS_child ?CDS XREF Transposon UNIQUE Int UNIQUE Int #SMap_info // Transposon_CDSs will now link to parent Transposons ar2 02-DEC-05   
+				  Pseudogene_child ?Pseudogene XREF Transposon UNIQUE Int UNIQUE Int #SMap_info
+				  LTR_region Int UNIQUE Int
+	    Origin Species UNIQUE ?Species
+	           From_laboratory UNIQUE ?Laboratory
+                   Member_of ?Transposon_family XREF Family_members
+		   Old_Name ?Text #Evidence        //to store old Transposon name
+		   Copy_status UNIQUE Full #Evidence    //track if the transposon is essentially complete or a fragment.
+				      Partial #Evidence
+	    Molecular_info Corresponding_CDS ?CDS XREF Corresponding_transposon #Evidence
+			   Corresponding_pseudogene ?Pseudogene XREF Corresponding_transposon #Evidence 
+	    Visible Remark ?Text #Evidence
+            Associated_feature ?Feature XREF Associated_with_transposon #Evidence
+            Method UNIQUE ?Method
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//
+// ?Transposon_family class - used for grouping Transposons and adding meta data.
+//
+//////////////////////////////////////////////////////////////////////////////////
+
+
+?Transposon_family Evidence #Evidence
+		   Title UNIQUE ?Text                                   // Information on the Transposon family 
+                   Description ?Text
+		   Remark Text #Evidence
+		   DB_annotation ?Database UNIQUE ?LongText
+		   Family_members ?Transposon XREF Member_of            // Connects to Transposon object
+                   In_variation ?Variation XREF Transposon_insertion
+		   Associated_motif   ?Motif   XREF Associated_transposon_family // to connect Transposon famillies to Repeat motifs ar2
+
+
+///////////////////////////////////////////////////////////////////////////
+//
+// ?Library class [040723 dl1]
+//
+// To represent libraries used for sequencing of nematode ESTs
+// Information to come from Mark Blaxters group in Edinburgh
+//
+///////////////////////////////////////////////////////////////////////////
+
+
+?Library DB_info Database ?Database ?Database_field UNIQUE ?Accession_number
+	 Origin  Species UNIQUE ?Species
+		 Strain UNIQUE ?Strain
+		 Life_stage UNIQUE ?Life_stage
+		 Tissue ?Text
+	 Description ?Text                       // Description lifted from NEMBASE
+	 Vector ?Sequence                        // Should we store vector sequences in the database?
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+//
+// ?Homology_group class - krb 031120
+// Class to handle clusters of orthologus genes (COG) and other related data
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+
+?Homology_group Evidence #Evidence
+                Title ?Text
+                DB_info Database ?Database ?Database_field ?Accession_number
+                Group_type  UNIQUE COG	   COG_type #Homology_type
+					   COG_code #COG_codes
+				   eggNOG  eggNOG_type #Homology_type
+					   eggNOG_code #COG_codes
+				   InParanoid_group
+				   OrthoMCL_group     //erich Nov06
+                GO_term ?GO_term XREF Homology_group
+                Protein ?Protein XREF Homology_group
+                Remark ?Text #Evidence
+
+
+#COG_codes       Code_J // Translation, ribosomal structure and biogenesis
+                 Code_A // RNA processing and modification
+                 Code_K // Transcription
+                 Code_L // Replication, recombination and repair
+                 Code_B // Chromatin structure and dynamics
+                 Code_D // Cell cycle control, cell division, chromosome partitioning
+                 Code_Y // Nuclear structure
+                 Code_V // Defense mechanisms
+                 Code_T // Signal transduction mechanisms
+                 Code_M // Cell wall/membrane/envelope biogenesis
+                 Code_N // Cell motility
+                 Code_Z // Cytoskeleton
+                 Code_W // Extracellular structures
+                 Code_U // Intracellular trafficking, secretion, and vesicular transport
+                 Code_O // Posttranslational modification, protein turnover, chaperones
+                 Code_C // Energy production and conversion
+                 Code_G // Carbohydrate transport and metabolism
+                 Code_E // Amino acid transport and metabolism
+                 Code_F // Nucleotide transport and metabolism
+                 Code_H // Coenzyme transport and metabolism
+                 Code_I // Lipid transport and metabolism
+                 Code_P // Inorganic ion transport and metabolism
+                 Code_Q // Secondary metabolites biosynthesis, transport and catabolism
+                 Code_R // General function prediction only
+                 Code_S // Function unknown
+
+// J, A, K, L, B == Information storage and processing
+// D, Y, V, T, M, N, Z, W, U, O == Cellular processes and signalling
+// C, G, E, F, H, I, P, Q == Metabolism
+// R, S == Poorly characterized
+
+
+#Homology_type KOG
+               TWOG
+               FOG
+               LSE
+               NOG   //eggNOG - standard cluster
+               euNOG //eggNOG - eukaryote cluster
+               meNOG //eggNOG - metazoan cluster
+	       COG   //eggNOG - COG cluster // MH6 WS228
+	       nemNOG //eggNOG - nematode clusters
+
+
+?Homol_data SMap S_parent UNIQUE Sequence UNIQUE ?Sequence XREF Homol_data
+	    Homol DNA_homol ?Sequence XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		  Pep_homol ?Protein XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		  Motif_homol ?Motif XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		  Homol_homol ?Homol_data XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		  RNAi_homol ?RNAi XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info //added for RNAi mapping
+		  Structure_homol ?Structure_data XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info               //ar2_struct
+		  Expr_homol ?Expr_pattern XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info //added for Expr_pattern mapping [ar2 27-APR-2006]
+                  MSPeptide_homol ?Mass_spec_peptide XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info //[ar2 07-JUN-2006]
+		  SAGE_homol ?SAGE_tag XREF Homol_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info                           
+
+
+///////////////////////////////////////////////////////////////////////////
+//
+// Feature class
+//
+///////////////////////////////////////////////////////////////////////////
+
+?Feature SMap S_parent UNIQUE Sequence UNIQUE ?Sequence XREF Feature_object
+	 Name Public_name UNIQUE ?Text
+	      Other_name ?Text
+         Flanking_sequences UNIQUE ?Sequence UNIQUE Text UNIQUE Text
+	 DNA_text UNIQUE ?Text       // for storing the sequence of the feature...can use IUPAC codes to be able
+				     // store consensus sequences, e.g. binding site consensus sequence
+	 Origin     Species UNIQUE ?Species  //added by pad, as we are moving towards multi species readyness.
+		    Strain  UNIQUE ?Strain//added by pad, as we are moving towards multi strain readyness.
+	 History    Merged_into	   UNIQUE    ?Feature XREF Acquires_merge #Evidence
+		    Acquires_merge ?Feature XREF Merged_into #Evidence
+		    Deprecated	   Text	     #Evidence 
+         Visible    Description ?Text
+		    SO_term ?SO_term
+	 Defined_by Defined_by_sequence ?Sequence XREF Defines_feature #Evidence
+		    Defined_by_paper    ?Paper XREF Feature #Evidence
+		    Defined_by_person   ?Person
+		    Defined_by_author   ?Author
+		    Defined_by_analysis ?Analysis Int
+	 Score Float           // this would be a log score as indicated by the analysis used in gff dump
+	 Associations Associated_with_gene	 ?Gene	     XREF Associated_feature #Evidence // richard
+                      Associated_with_CDS	 ?CDS	     XREF Associated_feature #Evidence  // richard
+                      Associated_with_transcript ?Transcript XREF Associated_feature #Evidence  // richard
+                      Associated_with_pseudogene ?Pseudogene XREF Associated_feature #Evidence // richard
+                      Associated_with_transposon ?Transposon XREF Associated_feature #Evidence //richard
+		      Associated_with_variation  ?Variation  XREF Feature #Evidence  
+		      Associated_with_Position_Matrix	      ?Position_Matrix XREF Associated_feature #Evidence
+		      Associated_with_operon      ?Operon XREF Associated_feature #Evidence
+		      Associated_with_gene_regulation      ?Gene_regulation XREF Associated_feature #Evidence
+		      Associated_with_Interaction ?Interaction XREF Interaction_associated_feature //modified from proposal 
+		      Associated_with_expression_pattern	 ?Expr_pattern XREF Associated_feature #Evidence 
+		      Associated_with_Feature ?Feature XREF Associated_with_Feature #Evidence 
+	 Bound_by_product_of ?Gene XREF Gene_product_binds #Evidence //pad added this to show what gene it binds
+	 Transcription_factor UNIQUE ?Transcription_factor XREF Binding_site 
+	 Annotation UNIQUE ?LongText		// added for data attribution [030220 dl]
+	 Confidential_remark ?Text //pad
+	 Remark ?Text #Evidence
+         Method UNIQUE ?Method
+
+///////////////////////////////////////////////////////////////////////////
+//
+// Feature_data class
+//
+///////////////////////////////////////////////////////////////////////////
+
+?Feature_data Species UNIQUE ?Species
+	      Strain  UNIQUE ?Strain
+	      SMap S_parent UNIQUE Sequence UNIQUE ?Sequence XREF Feature_data
+	      Feature ?Method Int Int UNIQUE Float UNIQUE Text #Feature_info
+	      Splices	Confirmed_intron  Int Int #Splice_confirmation
+			Predicted_5 ?Method Int Int UNIQUE Float // (x, x+1) or (x, x-1)
+			Predicted_3 ?Method Int Int UNIQUE Float // (x, x+1) or (x, x-1)
+               // keep the same model as in Sequence, so same code works
+              Method UNIQUE ?Method // Lincoln RNAi [001213 dl]
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// Transcription_factor  class This describes a type of transcription factor (and Pol II)
+// Gary W. 14/10/2010
+//
+//////////////////////////////////////////////////////////////////////////////////////////
+
+?Transcription_factor	Name UNIQUE Text
+			Species UNIQUE ?Species
+			Position_matrix  ?Position_Matrix XREF Transcription_factor #Evidence
+			Product_of ?Gene XREF Transcription_factor 
+			Remark Text #Evidence
+			Binding_site ?Feature XREF Transcription_factor 
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Position_Matrix class
+// General data model for known or inferred binding sites of transcription factors to DNA, 
+// accomodating either a straight position-frequency matrix (PFM), or a position-specific 
+// weight matrix 
+//
+////////////////////////////////////////////////////////////////////////////////////////////
+
+?Position_Matrix  Description  ?Text #Evidence
+		  Brief_id  UNIQUE ?Text			// Addition Xiaodong 
+                  Type  UNIQUE Frequency
+                               Weight
+                  Background_model Text UNIQUE Float
+                  Site_values      Text UNIQUE Float REPEAT
+                  Threshold        Float
+                  Associated_feature ?Feature XREF Associated_with_Position_Matrix #Evidence
+                  Sites_used UNIQUE Int
+		  Derived_from_matrix ?Position_Matrix                  
+		  Bound_by_gene_product ?Gene XREF Product_binds_matrix #Evidence
+		  Transcription_factor  UNIQUE ?Transcription_factor XREF Position_matrix #Evidence //gw3	  
+                  Remark ?Text  #Evidence
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Oligo class
+//
+////////////////////////////////////////////////////////////////////////////////////////////
+
+?Oligo  Sequence UNIQUE Text  // verbatim sequence 
+        Length UNIQUE Int
+        GC UNIQUE Float
+//        STS STS1 UNIQUE ?STS XREF Oligo1
+//            STS2 UNIQUE ?STS XREF Oligo2
+        OSP  Score UNIQUE Float
+             Tm UNIQUE Float
+             Pairwise_scores ?Oligo XREF Pairwise_scores UNIQUE Float Float // score and Tm
+        In_sequence ?Sequence XREF Oligo
+	PCR_product ?PCR_product XREF Oligo //added 15/02/2002 krb
+
+
+
+///////////////////////////////////////////////////////////////////
+//
+// ?Genetic_code class - krb 030506
+// Support alternative genetic codes for translation of mitochondrial genes etc.
+//
+////////////////////////////////////////////////////////////////////
+
+
+?Genetic_code   Other_name ?Text
+                NCBI_id   UNIQUE        Int
+                Translation  UNIQUE Text
+                Start UNIQUE Text
+		Stop  UNIQUE Text 
+                Base1 UNIQUE Text
+                Base2 UNIQUE Text
+                Base3 UNIQUE Text
+		Remark ?Text
+
+
+/////////////////////////////////
+//
+// ?Protein class
+//
+/////////////////////////////////
+
+?Protein  Peptide UNIQUE ?Peptide UNIQUE Int UNIQUE Int // Length + checksum
+          Display View ?View
+                  Default_view UNIQUE ?View
+          DB_info Database ?Database ?Database_field UNIQUE ?Accession_number XREF Protein
+                  Gene_name  ?Text
+                  Description   UNIQUE ?Text
+		  Molecular_weight Float #Evidence
+          Origin  Species UNIQUE ?Species
+                  Wormpep // for C. elegans or C. briggsae  proteins, used by subclass definitions
+		  Brigpep // 
+		  History Int Text ?Text //history logging [020801 krb]
+                  Live       // replace use of 'Inactive' krb 06/12/01
+          Visible Corresponding_CDS ?CDS XREF Corresponding_protein
+                  Expr_pattern ?Expr_pattern XREF Protein
+		  Homology_group ?Homology_group XREF Protein // added [031120 krb]
+		  Ortholog_gene ?Gene XREF Ortholog_other #Evidence //[change Ortholog others to link to proteins rather than accessions]
+		  3d_data ?3d_data XREF Protein
+		  Interaction ?Interaction XREF Interactor_overlapping_protein
+                 // Structure_data ?Structure_data XREF Corresponding_protein #Evidence
+          Homol DNA_homol ?Sequence XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
+                Pep_homol ?Protein XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
+                Structure_homol ?Structure_data XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+                Motif_homol ?Motif XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
+                Homol_homol ?Homol_data XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+          Feature ?Method Int Int UNIQUE Float  // display according to method
+	  Contains_peptide ?Mass_spec_peptide
+	  Remark ?Text #Evidence
+
+
+// A tiny class to support ?Protein.  The Remark should explain a bit more about what the Database_field object
+// refers to
+
+?Database_field Remark Text
+
+
+?Motif	Match_sequence  UNIQUE Text	// Text is the DNA or protein sequence
+	Num_mismatch UNIQUE Int		// Allowed number of mismatches when matching
+					// (default 0)
+	Restriction     Isoschizomer ?Motif XREF Isoschizomer
+		        Offset UNIQUE Int   
+			Cleavage UNIQUE Text  // will show the cleavage points ex: G_ACGT'C
+		        Overhang UNIQUE Int
+		        Company UNIQUE Text
+                        Redundant
+        Remark ?Text #Evidence
+	Title ?Text
+	DB_info	Database ?Database ?Database_field UNIQUE ?Accession_number XREF Motif // ID  Accession_number
+	  	DB_remark ?Text #Evidence
+		DB_text ?LongText
+		Web_location ?WWW_server
+	Substrate UNIQUE DNA
+			 Peptide
+	Homol	DNA_homol ?Sequence XREF Motif_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		Pep_homol ?Protein XREF Motif_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		Motif_homol ?Motif XREF Motif_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		Homol_homol ?Homol_data XREF Motif_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+	GO_term ?GO_term XREF Motif ?GO_code #Evidence
+	Associated_transposon_family ?Transposon_family XREF Associated_motif   // to connect Transposon famillies to Repeat motifs ar2 02-DEC-05
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Accession_number
+//
+// Small class to track lots of different accessions which are not just EMBL/GenBank accessions. 
+// E.g. they can be: SGD ORF ids, GenBank GI numbers, protein IDs, Ensembl identifiers, swissprot 
+// accessions *and* swissprot identifiers etc.
+// Many classes will first reference the ?Accession_number class by specifying both
+// a database name and a database field/qualifier to help clarify, e.g.
+//
+// Protein "WP:CE23172"
+// Database TREMBL TrEMBL_AC Q9N2U8
+//          WormPep WORMPEP_ID WP:CE23172
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+?Accession_number  Entry Sequence ?Sequence	
+			 CDS ?CDS
+			 Transcript ?Transcript
+			 Pseudogene ?Pseudogene 
+			 Protein ?Protein
+			 Motif ?Motif
+			 Clone ?Clone // added [031120 krb]
+                         Structure_data ?Structure_data
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Database class.  This is to be used in the construction of cgi URLs
+// an RNAi object would have a Database connection  . .
+// Database Phenobank GeneID 512754
+//                    RNAID 3004316 
+// The Phenobank Database object would have a URL_constructor
+// eg "http://worm.mpi-cbg.de/phenobank2/cgi-bin/GenePage.py?GeneID=<GeneID>&RNAID=<RNAID>" 
+//
+// Combining the two would give a URL of 
+// http://worm.mpi-cbg.de/phenobank2/cgi-bin/GenePage.py?GeneID=512754&RNAID=3004316
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+?Database  Name        UNIQUE ?Text            // name of the database
+           Description UNIQUE Text             // description of database contacts
+           URL         UNIQUE Text             // Link to database home page
+           Email              Text             // Contact email 
+           URL_constructor UNIQUE Text         // rule to build URL to specific database entry page 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//		
+// Method class
+//
+// Used a lot by acedb code for displaying data (on the FMap) and dumping data (via GFF)
+//
+///////////////////////////////////////////////////////////////////////////////////////////
+
+?Method	Remark ?Text #Evidence
+        // the Display information controls how the column looks.
+	Display No_display			// column is not displayed at all.
+		Colour #Colour
+		CDS_colour #Colour		// CDS outlined in this colour.
+		Frame_sensitive
+		Strand_sensitive Show_up_strand #Colour
+		Score	Score_by_offset // has priority over width, for Jean
+			Score_by_width
+			Score_by_histogram UNIQUE Float	// baseline value
+			Score_bounds UNIQUE Float UNIQUE Float
+				// limits for squashing
+			Percent // Score will be displayed as a '%' in fmap reportline + bounds default to 25 & 100.
+		Overlap_mode UNIQUE	Overlap		  // draw on top - default
+					Bumpable	  // bump to avoid overlap
+			     		Cluster		  // one column per homol target
+		Width UNIQUE Float
+		Symbol UNIQUE Text          // first char only is used
+		Right_priority UNIQUE Float // the greater the more right
+		Max_mag UNIQUE Float        // don't show if more bases per line
+		Min_mag UNIQUE Float        // don't show if fewer bases per line
+		Show_text                   // only put text in right-hand column if set
+		Join_blocks                 // link up all blocks of a single feature with lines
+		Display_gaps                // draw sequences or homols with gaps 
+		Gapped                      // draw sequences or homols with gaps //leaving this is preserved backwards compatibility
+        // Alignment options (default is map only with no misaligns or clipping and do not map gaps).
+        Align_mapping Allow_misalign        // Homol reference/match coords do not have to align exactly, ref coords override.
+                      Allow_clipping        // Map gaps even if they need to be clipped.
+                      Map_gaps              // Map gaps for gapped aligns.
+	Blastn		// can calculate percent from score if blastn
+	Blixem  Blixem_X
+		Blixem_N
+                Blixem_P
+	Belvu
+	EMBL_dump EMBL_feature UNIQUE Text		// require this
+		  EMBL_threshold UNIQUE Float		// apply to score unless overridden
+		  EMBL_qualifier Text UNIQUE Text
+	  // if 1 Text, it is the entire qualifier including '/'
+	  // if 2 Texts, 1st is an sprintf format and 2nd is
+	  //   an argument.  If this is "score", "note", "y1", "y2" or "target"
+	  //   then use the corresponding field of the Feature or Homol line.
+	  // multiple formats will be concatenated until one starts with '/'.
+        Gene_assemble	Gene_assemble_method ?Method UNIQUE Float
+				// Float factor to multiply score by
+			Intron_min UNIQUE Int
+			Exon_min UNIQUE Int
+			Intron_cost UNIQUE Float UNIQUE Float UNIQUE Int
+				// base cost, cost per log bp beyond min
+				// Int is min for this if not Intron_min
+			Inter_gene_cost UNIQUE Float
+        GF_parameters	GF_range UNIQUE Int
+				// +- range for genefinder feature calculation
+			GF_ATG_cutoff UNIQUE Float
+			GF_5_cutoff UNIQUE Float
+			GF_3_cutoff UNIQUE Float
+	GFF	GFF_source UNIQUE Text
+		GFF_feature UNIQUE Text
+		GFF_SO UNIQUE ?SO_term UNIQUE ?Ace2SO
+	EMBL_dump_info #EMBL_dump_info // when used for controlling dump
+
+?Reference	Reference ?Paper
+		Remark ?Text #Evidence
+		Species ?Species
+		Description ?Text //For trait information
+
+
+?Expr_pattern	Expression_of	Gene ?Gene XREF Expr_pattern
+				CDS        ?CDS XREF Expr_pattern // for coding genes
+				Sequence   ?Sequence XREF Expr_pattern // for clones???
+				Pseudogene ?Pseudogene XREF Expr_pattern // [030801 krb]
+				Clone ?Clone XREF Expr_pattern
+				Protein ?Protein XREF Expr_pattern
+                                Protein_description Text   // stores information for Expr_patterns with unknown antigens [031105 krb]
+		Homol Homol_homol ?Homol_data XREF Expr_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info //Expr_pattern mapping [060427 ar2]
+		Expressed_in	Cell         ?Cell         XREF Expr_pattern #Qualifier
+				Cell_group   ?Cell_group   XREF Expr_pattern #Qualifier
+				Life_stage   ?Life_stage   XREF Expr_pattern #Qualifier
+				Anatomy_term ?Anatomy_term XREF Expr_pattern #Qualifier
+				GO_term      ?GO_term      XREF Expr_pattern #GR_condition
+                Subcellular_localization ?Text
+		Type	Reporter_gene ?Text
+			In_situ Text
+			Antibody ?Text
+			Northern Text // Wen [krb 030425]
+                        Western Text  // Wen 
+                        RT_PCR Text   // Wen
+			Localizome ?Text //added by Wen
+		Expression_cluster ?Expression_cluster XREF Expr_pattern //added by Wen.for localizome
+		Pattern ?Text
+		Picture ?Picture XREF Expr_pattern
+		MovieURL Text //Added by wen for link to movie URLs. 
+		Movie    ?Movie    XREF Expr_pattern  //Added by Wen to curate Expr_pattern video
+                Remark ?Text #Evidence
+                Experiment	Laboratory ?Laboratory
+				Author ?Author 
+				Date UNIQUE DateType
+				Strain UNIQUE ?Strain
+		Reference ?Paper XREF Expr_pattern
+                Transgene ?Transgene XREF Expr_pattern
+		Associated_feature ?Feature XREF Associated_with_expression_pattern #Evidence
+		Antibody_info ?Antibody XREF Expr_pattern // This applies to both Western & Antibody staining
+                                                          // added [031120 krb]
+		Curated_by UNIQUE Text // Hinxton (HX) or Caltech (CIT) Sylvia [010927 krb]
+
+
+//Qualifer hash will be used for Expr_pattern curation to specify the reliability of data.
+                                                                                                 
+#Qualifier Certain   Text
+           Uncertain Text    //For faint or variable expression
+           Partial   Text    //For expression of unidentified cell in a cell group
+                                                                                                 
+                                                                                                 
+
+
+// NEW Expr_profile and SK_map classes added at request of Raymond [010912 krb]
+// more tweaks added [010927 krb]
+
+?Expr_profile SMap S_parent UNIQUE PCR_product UNIQUE ?PCR_product XREF Expr_profile
+              Expr_map ?SK_map XREF Expr_profile
+              Reference ?Paper XREF Expr_profile
+	      RNAi_result ?RNAi XREF Expr_profile // Connection made by script during build [030106 krb]
+	      Species UNIQUE ?Species
+              Remark ?Text #Evidence
+              Method UNIQUE ?Method
+
+
+?SK_map       X_coord UNIQUE Float
+              Y_coord UNIQUE Float
+              Mountain UNIQUE Int
+              Date UNIQUE DateType
+	      Attribute_of Expr_profile ?Expr_profile XREF Expr_map
+              Remark ?Text #Evidence
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Antibody class model
+//
+// Summary records the whole description extracted from paper
+// Other_name holds the antibody's name appeared in the paper, such as MH27
+// XREF from ?Antibody to ?CDS class will be added after ?CDS is integrated 
+// into models.wrm and gets stable.
+//
+// added by krb 031120
+//
+// Well defined antibodies will be full populated with Isolation data.  Ambigous anibodies
+// will be connected to what it is believed to be by the Possible_pseudonym(_of) pair of tags
+// No connection to CDS is required - just Gene is fine
+//
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+?Antibody Summary ?Text #Evidence
+	  Other_name Text
+	  Gene ?Gene XREF Antibody
+	  Isolation Original_publication UNIQUE ?Paper
+		    No_original_reference    Text //proposed by Wen
+		    Person ?Person
+		    Location ?Laboratory
+		    Clonality UNIQUE Polyclonal Text
+				     Monoclonal Text
+		    Antigen UNIQUE Peptide Text
+				   Protein Text
+				   Other_antigen Text
+		    Animal UNIQUE Rabbit
+				  Mouse
+				  Rat
+				  Guinea_pig
+				  Chicken
+				  Goat
+				  Other_animal Text
+	  Possible_pseudonym ?Antibody XREF Possible_pseudonym_of
+	  Possible_pseudonym_of ?Antibody XREF Possible_pseudonym
+	  Expr_pattern ?Expr_pattern XREF Antibody_info
+	  Gene_regulation ?Gene_regulation XREF Antibody_info
+	  Interactor ?Interaction
+	  Reference ?Paper XREF Antibody
+	  Remark ?Text #Evidence 
+
+
+/////////////////////////////////////////////////////
+//
+// ?Picture class - substantially modified by Daniela
+//
+/////////////////////////////////////////////////////
+
+
+?Picture Evidence #Evidence
+	 Description ?Text
+         Name UNIQUE Text
+	 Species UNIQUE ?Species
+         Crop Crop_picture ?Picture XREF Cropped_from
+              Cropped_from ?Picture XREF Crop_picture
+         Pick_me_to_call Text Text
+         Remark ?Text #Evidence
+         Depict  Expr_pattern ?Expr_pattern XREF Picture
+                 Anatomy ?Anatomy_term XREF Picture
+	         Cellular_component ?GO_term XREF Picture
+         Acknowledgment Template UNIQUE Text
+                        Publication_year UNIQUE Text
+                        Article_URL UNIQUE ?Database UNIQUE ?Database_field UNIQUE ?Accession_number
+                        Journal_URL UNIQUE ?Database 
+                        Publisher_URL UNIQUE ?Database 
+                        Person_name UNIQUE Text
+         Reference ?Paper XREF Picture
+         Contact ?Person
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+//   Cells and things
+//
+//
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+
+?Cell   Main_name ?Anatomy_name XREF Name_for_cell #Evidence
+        Other_name ?Anatomy_name XREF Synonym_for_cell #Evidence
+        Brief_id ?Text                   //put in for Raymond and Paul, equivalent to old Remark but shorter
+	Fate	 Cell_type  ?Text        // e.g. muscle, neuron,hypodermis, gland
+		 Program ?Text           //division, differentiation, death, and differs between sexes
+		 Syncitial_cell ?Cell_group XREF Nucleus //see Cell_group,
+	Summary Text                     // the whole of old remark plus more to be added by Raymond
+        Embryo_division_time Text
+        Remark        ?Text #Evidence
+        Lineage Parent  UNIQUE  ?Cell XREF Daughter
+                Daughter      ?Cell XREF Parent
+                Lineage_name    Text
+                Equivalence_fate ?Cell XREF Equivalence_origin
+                Equivalence_origin ?Cell XREF Equivalence_fate
+		Sex_dimorphism Herm_origin ?Cell XREF Herm_fate // Added according to Sylvia 5/06/2000
+			       Herm_fate ?Cell XREF Herm_origin
+			       Male_origin ?Cell XREF Male_fate
+			       Male_fate ?Cell XREF Male_origin
+	Cell_group ?Cell_group XREF Cell
+	Life_stage ?Life_stage XREF Cell
+        Anatomy_term ?Anatomy_term XREF Cell
+        Tree_Node ?TreeNode XREF Cell
+        Reference ?Paper XREF Cell
+        GO_term ?GO_term XREF Cell ?GO_code #Evidence
+	Data	Expr_pattern ?Expr_pattern XREF Cell
+		Reconstruction ?Reconstruction XREF Cell #ReconCellInfo
+	        Neurodata ?Cell #Neurodata
+        Atlas ?Atlas XREF Cell
+        Link_diagram Text
+ 
+
+
+?Cell_group	Main_name ?Anatomy_name XREF Name_for_cell_group #Evidence
+		Other_name ?Anatomy_name XREF Synonym_for_cell_group #Evidence
+		Fate ?Text	
+		Remark	?Text #Evidence
+		Contains	Cell ?Cell XREF Cell_group
+				Nucleus ?Cell XREF Syncitial_cell // for syncitia like hyp7
+				Sub_group ?Cell_group XREF Contained_in
+		Contained_in ?Cell_group XREF Sub_group
+		Type	UNIQUE  Tissue
+				Organ
+				Region
+                                Lineage //put in for Lilncoln some time ago
+		Expr_pattern ?Expr_pattern XREF Cell_group	
+		Life_stage ?Life_stage XREF Cell_group
+		Anatomy_term ?Anatomy_term XREF Cell_group
+                Reference ?Paper XREF Cell_group
+                Tree_Node ?TreeNode XREF Cell_group
+		Group_derivation Expression_experiment          //groups made by experimenters in their reports
+                                 Top_down_modelling             // sylvia's anatomy modelling shown on dendrograms starting with whole animal and working downwards
+                                 Bottom_up_modelling            // for Raymond in the future for cell upwards approach
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// ?Anatomy_name - Raymond, krb [030916]
+//
+///////////////////////////////////////////////////////////////////////
+
+?Anatomy_name Primary   Name_for_cell            ?Cell XREF Main_name
+                        Name_for_cell_group      ?Cell_group XREF Main_name
+                        Name_for_anatomy_term    ?Anatomy_term XREF Term
+              Secondary Synonym_for_cell         ?Cell XREF Other_name
+                        Synonym_for_cell_group   ?Cell_group XREF Other_name
+                        Synonym_for_anatomy_term ?Anatomy_term XREF Synonym
+
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// ?Anatomy_term class
+//
+// a model to store cell and anatomy ontology terms and relationships
+// ?Anatomy_term object names should be in the form of WBca:1234567
+//
+////////////////////////////////////////////////////////////////////////
+
+?Anatomy_term   Evidence #Evidence
+                Version UNIQUE Int UNIQUE Int
+                Definition UNIQUE ?Text #Evidence
+                Term UNIQUE ?Anatomy_name XREF Name_for_anatomy_term #Evidence
+                Synonym ?Anatomy_name XREF Synonym_for_anatomy_term #Evidence
+                Legacy Cell ?Cell XREF Anatomy_term
+                       Embryo_division_time Text
+                       Fate    Cell_type  ?Text        // e.g. muscle, neuron,hypodermis, gland
+                               Program ?Text           //division, differentiation, death, and differs between sexes
+                               Syncitial_cell ?Anatomy_term XREF Nucleus //see Cell_group,
+                       Lineage Parent_term  UNIQUE  ?Anatomy_term XREF Daughter_term
+                               Daughter_term      ?Anatomy_term XREF Parent_term
+                               Lineage_name    Text
+                               Equivalence_fate ?Anatomy_term XREF Equivalence_origin
+                               Equivalence_origin ?Anatomy_term XREF Equivalence_fate
+                               Sex_dimorphism Herm_origin ?Anatomy_term XREF Herm_fate // Added according to Sylvia 5/06/2000
+                                              Herm_fate ?Anatomy_term XREF Herm_origin
+                                              Male_origin ?Anatomy_term XREF Male_fate
+                                              Male_fate ?Anatomy_term XREF Male_origin
+                       Life_stage ?Life_stage XREF Anatomy_term
+                       Tree_Node ?TreeNode XREF Anatomy_term
+                       Cell_group ?Cell_group XREF Anatomy_term
+                       Contains Cell_term ?Anatomy_term XREF Sub_group
+                                Nucleus ?Anatomy_term XREF Syncitial_cell //for syncitia like hyp7
+                                Sub_group ?Anatomy_term XREF Contained_in
+                       Contained_in ?Anatomy_term XREF Sub_group
+                Reconstruction ?Reconstruction XREF Anatomy_term #ReconCellInfo
+                Neurodata ?Anatomy_term #Neurodata
+                Link_diagram Text
+		Database     ?Database	?Database_field	?Accession_number 
+                URL     Text // for storing static URLs, such as WormAtlas, WormBook
+                Child   PART_OF_c	?Anatomy_term   XREF    PART_OF_p
+                        IS_A_c		?Anatomy_term   XREF    IS_A_p
+                        DESCENDENT_OF_c	?Anatomy_term   XREF	DESCENDENT_OF_p
+                        DESC_IN_HERM_c	?Anatomy_term   XREF	DESC_IN_HERM_p
+                        DESC_IN_MALE_c	?Anatomy_term   XREF	DESC_IN_MALE_p
+                        DEVELOPS_FROM_c	?Anatomy_term   XREF	DEVELOPS_FROM_p
+			CELL_c		?Anatomy_term	XREF	CELL_p
+			XUNION_OF_c	?Anatomy_term	XREF	XUNION_OF_p
+                Parent  PART_OF_p	?Anatomy_term   XREF	PART_OF_c
+                        IS_A_p		?Anatomy_term	XREF	IS_A_c
+                        DESCENDENT_OF_p	?Anatomy_term   XREF	DESCENDENT_OF_c
+                        DESC_IN_HERM_p	?Anatomy_term   XREF	DESC_IN_HERM_c
+                        DESC_IN_MALE_p	?Anatomy_term   XREF	DESC_IN_MALE_c
+                        DEVELOPS_FROM_p	?Anatomy_term   XREF	DEVELOPS_FROM_c
+			CELL_p		?Anatomy_term	XREF	CELL_c
+			XUNION_OF_p	?Anatomy_term	XREF	XUNION_OF_c
+                Attribute_of    Expr_pattern    ?Expr_pattern   XREF    Anatomy_term
+				Expression_cluster ?Expression_cluster XREF Anatomy_term #Evidence 
+                                GO_term ?GO_term XREF Anatomy_term ?AO_code #Evidence
+                                Reference       ?Paper  XREF Anatomy_term
+				Function Anatomy_function ?Anatomy_function XREF Involved
+					 Anatomy_function_not ?Anatomy_function XREF Not_involved
+                Attribute_index Expr_ancestor ?Expr_pattern  //attribute assigned to broader terms
+                                Expr_descendent ?Expr_pattern
+                                GO_ancestor ?GO_term         //attribute assigned to narrower terms
+                                GO_descendent ?GO_term
+                Index   Ancestor ?Anatomy_term XREF Descendent  //store ancestors of relationship IS_A and PART_OF
+                        Descendent ?Anatomy_term XREF Ancestor  //store descendents of relationship IS_A and PART_OF
+                Remark  ?Text #Evidence
+		Picture ?Picture XREF Anatomy
+		WBProcess ?WBProcess XREF Anatomy_term
+
+// Anatomy_function class for Raymond 
+// allow the connection between ?Anatomy_term, ?Phenotype (proxy of biological function), and
+// ?Gene and still give some information about the experiment itself.
+//name shall be "WBbtf0001"
+
+?Anatomy_function Assay ?AO_code XREF Anatomy_function ?Condition
+                  Phenotype UNIQUE ?Phenotype XREF Anatomy_function #Anatomy_function_info
+                  Gene UNIQUE ?Gene XREF Anatomy_function #Evidence //use Published_as tag
+                  Body_part Involved ?Anatomy_term XREF Anatomy_function #Anatomy_function_info
+                            Not_involved ?Anatomy_term XREF Anatomy_function_not #Anatomy_function_info
+                  Remark Text #Evidence
+                  Reference UNIQUE ?Paper XREF Anatomy_function
+
+#Anatomy_function_info Autonomous Text
+                       Nonautonomous Text
+                       Sufficient Text
+                       Insufficient Text
+                       Necessary Text
+                       Unnecessary Text
+                       Remark Text
+
+
+
+?Life_stage	Contains Cell ?Cell XREF Life_stage
+			 Cell_group ?Cell_group XREF Life_stage
+                         Anatomy_term ?Anatomy_term XREF Life_stage
+			 Sub_stage ?Life_stage XREF Contained_in
+                Contained_in ?Life_stage XREF Sub_stage            // changed for Wen 010516
+                Preceded_by ?Life_stage XREF Followed_by
+		Followed_by ?Life_stage XREF Preceded_by
+		Expr_pattern ?Expr_pattern XREF Life_stage
+		WBProcess ?WBProcess XREF Life_stage
+		Remark	?Text #Evidence
+		Definition ?Text // Wen [020607 krb]
+		Public_name UNIQUE ?Text
+		Other_name ?Text // Wen [020607 krb]
+                Reference ?Paper XREF Life_stage
+		Curated_by UNIQUE Text // Sylvia [010928 krb]
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//      The Tree Classes from Richard Bruskiewich with a few fields commented out
+//       species class not put in because we already have a different one in the worm database
+//
+///////////////////////////////////////////////////////////////////////////////
+
+?Tree    Description UNIQUE ?Text		// Used as graph display title if present
+         Type UNIQUE Taxonomy			// Controls semantics of tree display
+                     DNA
+                     Protein
+                     Cell_Lineage
+         Root UNIQUE ?TreeNode
+         Display     No_Header			// Suppresses display "header"
+                     Descriptive_Labels		// Show descriptive labels
+                     Colour			// Taxon_colouring if present
+                     Normalization    UNIQUE Float	// Normalization factor for display (defaults to 1.0)
+                     Bootstrap_Factor UNIQUE Float	// Normalization factor for bootstrap values (defaults to 1.0)
+                     Hide_Bootstraps
+                     Alignment UNIQUE Top	// How the dendrogram is to be drawn
+                                      Middle
+                                      Bottom
+                                      Unrooted  // Unrooted "star" tree
+	 Embedded_Tree ?Tree			      
+
+?TreeNode       Label UNIQUE ?Text		// Tree vertex label, e.g. sequence name or taxon   
+                Id    UNIQUE Int		// Node numbering...
+                Description  ?Text
+		Type UNIQUE  Root		// Root ?TreeNode should be so designated!
+                             Interior
+		             Leaf
+                Distance UNIQUE	Float		// "Evolutionary distance" or branch length
+                Bootstrap UNIQUE	Float		// Node subtree "bootstrap" values
+                Tree   UNIQUE   ?Tree
+		Parent UNIQUE   ?TreeNode XREF  Child
+		Child           ?TreeNode XREF  Parent
+                Display  Hide			// Hide the subtree (children) of this node
+                         Colour   UNIQUE #Colour // Fixes the colour of the subtree; 
+                                                 // overridden by child node settings
+                         Hide_Bootstraps         // Hide all bootstraps in subtree...
+                         Show_Bootstrap          // ... except those with the "Show_Bootstrap" tag set
+                Contains Taxon                //    UNIQUE ?Taxon    XREF Tree_Node
+                         Cell     UNIQUE ?Cell     XREF Tree_Node
+                         Cell_group UNIQUE ?Cell_group  XREF Tree_Node 
+                         Anatomy_term UNIQUE ?Anatomy_term XREF Tree_Node // [2006-04-21 ar2] Raymond
+			 Pick_me_to_call UNIQUE Text Text
+                         Embedded_Tree ?Tree
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Jade model for Lincoln/Jean added by rd 000307
+///////////////////////////////////////////////////////////////////////////////
+
+?Jade Display Text Text Text UNIQUE Text 
+      StandAloneDisplay Text
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Transgene class from Wen Chen 12/00
+// Reorganised by Karen/Wen May 2011
+//
+/////////////////////////////////////////////////////////////////////////////// 
+
+?Transgene      Evidence #Evidence
+		Public_name UNIQUE ?Text
+		Summary UNIQUE ?Text								// concise genomic description of the transgene
+                Synonym ?Text									// for alternative names
+                Promoter  Driven_by_gene ?Gene XREF Drives_transgene				// eventually change this tag to promoter_gene
+                          Driven_by_construct  ?Text						// eventually change this tag to promoter_artificial
+                Reporter  Reporter_product ?Text						// removed multiple tags for Reporter_product
+                          Gene ?Gene XREF Transgene_product Text
+			  3_UTR  ?Gene
+                Reporter_type  ?Text								// added for Transcriptional fusion or Translational fusion
+                Construction  Fragment ?Text							// new tag to collect the following as subtags, Fragment may be deleted later
+			      Coinjection_marker ?Text
+                              Integration_method UNIQUE ?Text					// changed from Integrated_by
+                              Laboratory ?Laboratory #Lab_Location				// changed from Location
+                              Author ?Author							// may eventually be deleted
+			      Person ?Person							// new tag ky 2011
+                Genetic_information  Extrachromosomal						// new subtag and tags
+                                     Integrated							// new subtag and collects the mapping tags
+				     Map ?Map  #Map_position  
+                                     Map_evidence #Evidence 
+                                     Mapping_data  2_point ?2_point_data			// if no data can be removed
+                                                   Multi_point ?Multi_pt_data			// if no data can be removed
+                         	     Phenotype ?Phenotype XREF Transgene #Phenotype_info
+                         	     Phenotype_not_observed ?Phenotype XREF Not_in_Transgene #Phenotype_info   
+                Used_for   Expr_pattern ?Expr_pattern XREF Transgene  
+                           Marker_for   ?Text #Evidence 
+                           Gene_regulation ?Gene_regulation XREF Transgene 
+                           Interactor ?Interaction 
+                Associated_with   Marked_rearrangement ?Rearrangement XREF By_transgene		//new tag to collect the following as subtags
+                          	  Clone ?Clone XREF Transgene Text 
+                          	  Strain ?Strain XREF Transgene 
+                Reference ?Paper XREF Transgene  
+                Species UNIQUE ?Species       
+                Remark ?Text #Evidence								//contains a lot of construction notes
+
+
+//////////////////////////////////////////////////////////////////
+//
+// ?RNAi class
+// 
+// Initially from Lincoln Stein December, 2000
+//
+// Heavily modified by Igor November, 2004
+//
+//////////////////////////////////////////////////////////////////
+
+
+?RNAi   Evidence #Evidence
+        History_name UNIQUE ?Text
+        Homol Homol_homol ?Homol_data XREF RNAi_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+        Sequence_info   DNA_text Text UNIQUE Text //stores actual probe sequence for automated mapping
+						  // 1st Text is DNA, 2nd is probe name
+                        Sequence ?Sequence XREF RNAi  //links to a real Sequence object used in the experiment 
+						      // such as yk clone; not UNIQUE anymore
+                        PCR_product ?PCR_product XREF RNAi // links to a PCR_product object used in 
+							   // the experiment; not UNIQUE anymore
+        Uniquely_mapped  //boolean; if present, signifies that ?RNAi object has a unique sequence 
+			// which maps to a single place in the genome
+        Experiment      Laboratory ?Laboratory
+                        Date UNIQUE DateType
+                        Strain UNIQUE ?Strain
+                        Genotype UNIQUE ?Text   //used when no Strain object exists
+                        Treatment UNIQUE ?Text
+                        Life_stage UNIQUE ?Life_stage
+                        Temperature UNIQUE Int
+                        Delivered_by UNIQUE Bacterial_feeding      //RL [010327]
+                                            Injection              //RL [010327]
+                                            Soaking                //RL [010327]
+                                            Transgene_expression   //RL [010327]
+        Inhibits        Predicted_gene ?CDS XREF RNAi_result #Evidence // "gene" parent (unreliable)
+                        Gene ?Gene   XREF RNAi_result #Evidence           //RL [010327]
+                        Transcript ?Transcript XREF RNAi_result #Evidence // [021126 krb]
+                        Pseudogene ?Pseudogene XREF RNAi_result #Evidence // [030801 krb]
+        Supporting_data Movie ?Movie XREF RNAi    // Lincoln, krb [010807]
+	DB_info    Database ?Database ?Database_field ?Accession_number //to link out to Phenobank ar2 02-DEC-05 //removed UNIQUE as reqs multiple connections
+	Species UNIQUE ?Species
+	Gene_regulation ?Gene_regulation XREF RNAi  // this tag is used when an RNAi experiment describes gene regulation ar2 29-MAR-06 for igor
+	Interaction ?Interaction XREF Interaction_RNAi
+        Reference UNIQUE ?Paper XREF RNAi //[070215 ar2] made reference unique so Paper sort of equates to a Study class for Will S
+        Phenotype ?Phenotype XREF RNAi #Phenotype_info
+	Phenotype_not_observed ?Phenotype XREF Not_in_RNAi #Phenotype_info //added by Wen to separate Not phenotype from real phenotypes
+        Expr_profile ?Expr_profile XREF RNAi_result // connection added during build [030106 krb]
+        Remark ?Text #Evidence
+	Method UNIQUE ?Method
+
+
+
+////////////////////////////////////////////
+//
+// ?Phenotype_info Class
+//
+////////////////////////////////////////////
+
+#Phenotype_info		Paper_evidence ?Paper
+			Person_evidence	?Person
+			Curator_confirmed	?Person
+		    	Remark  ?Text   #Evidence // specific remarks about the phenotype
+			Quantity_description ?Text #Evidence //Remark to describe what quantity describes, below
+			Quantity        UNIQUE  Int UNIQUE      Int     #Evidence
+			Not      	#Evidence //This is being phased out but is needed for the next phase [06/08/10].
+			Anatomy_term	?Anatomy_term #Evidence 
+                	Penetrance      	Incomplete      Text    #Evidence
+                                		Low             Text    #Evidence
+                                		High            Text    #Evidence
+                                		Complete        Text	#Evidence
+						Range UNIQUE Int UNIQUE Int #Evidence // Range of penetrance
+                	Recessive               #Evidence
+                	Semi_dominant           #Evidence
+                	Dominant                #Evidence
+                	Haplo_insufficient      #Evidence
+			Caused_by ?Gene #Evidence
+			Caused_by_other ?Text #Evidence
+			Rescued_by_transgene ?Transgene
+                	Loss_of_function  UNIQUE  	Hypomorph                               #Evidence
+                                 			Amorph                                  #Evidence
+                                                	Uncharacterised_loss_of_function        #Evidence
+                	Gain_of_function  UNIQUE  	Dominant_negative       #Evidence
+                                                	Hypermorph              #Evidence
+                                                	Neomorph                #Evidence
+                                                	Uncharacterised_gain_of_function        #Evidence
+                	Other_allele_type UNIQUE  Wild_type	#Evidence
+                                               	  Isoallele     #Evidence  
+						  Mixed      	#Evidence       
+			Affected_by	Molecule    ?Molecule    #Evidence // ?Molecule model Karen Yook
+                	Temperature_sensitive   Heat_sensitive  Text            #Evidence
+                                        	Cold_sensitive  Text            #Evidence
+                	Maternal        UNIQUE  Strictly_maternal       #Evidence
+                                        	With_maternal_effect    #Evidence
+                	Paternal        #Evidence
+			Phenotype_assay Life_stage  ?Life_stage	 #Evidence
+					Strain	    ?Strain	 #Evidence
+					Treatment   ?Text	 #Evidence
+					Temperature ?Text	 #Evidence
+					Genotype    ?Text	 #Evidence
+			Ease_of_scoring UNIQUE ES0_Impossible_to_score #Evidence
+					       ES1_Very_hard_to_score #Evidence
+					       ES2_Difficult_to_score #Evidence
+					       ES3_Easy_to_score #Evidence
+
+
+///////////////////////////////////////////////////////////////////////////////
+// ?PCR_product class - Lincoln [010226]
+///////////////////////////////////////////////////////////////////////////////
+
+?PCR_product SMap S_parent UNIQUE Canonical_parent UNIQUE ?Sequence XREF PCR_product
+ 		  S_child Expr_profile ?Expr_profile XREF PCR_product UNIQUE Int UNIQUE Int #SMap_info // added for Expr_profile class [010912 krb]
+	     Mapping_primers Left_mapping_primer UNIQUE Text
+			     Right_mapping_primer UNIQUE Text
+	     Species UNIQUE ?Species
+ 	     Overlaps_CDS ?CDS XREF Corresponding_PCR_product  // Dan PCR mappings [010419 dl]
+ 	     Overlaps_transcript ?Transcript XREF Corresponding_PCR_product  
+	     Overlaps_pseudogene ?Pseudogene XREF Corresponding_PCR_product // [030801 krb]
+	     Oligo ?Oligo XREF PCR_product UNIQUE Int UNIQUE Int
+ 	     Assay_conditions ?LongText
+	     From_laboratory UNIQUE ?Laboratory // Lincoln Orfeome attribution [020304 dl]
+	     Amplified Int
+	     SNP_locus ?Locus XREF SNP_assay	                    // Todd [171001 krb]
+	     Variation ?Variation XREF PCR_product // For KO allele data [krb 021217]// ar2 PCR_products used in RFLPs etc
+	     Microarray_results ?Microarray_results XREF PCR_product //added for Microarray_results class
+	     Clone ?Clone XREF PCR_product  // added [krb 031126]
+	     YH_bait   ?YH XREF PCR_bait ?Text // for yeast two hybrid data
+	     YH_target ?YH XREF PCR_target ?Text
+	     RNAi ?RNAi XREF PCR_product
+	     Remark ?Text #Evidence
+ 	     Method UNIQUE ?Method
+
+
+///////////////////////////////////////////////
+// ?Phenotype class
+///////////////////////////////////////////////
+
+?Phenotype Description UNIQUE ?Text	#Evidence
+	   Name        Primary_name	UNIQUE	?Phenotype_name	XREF Primary_name_for	#Evidence
+                       Synonym		?Phenotype_name	XREF Synonym_for	#Evidence
+                       Short_name 	?Phenotype_name XREF Short_name_for	#Evidence
+           Assay UNIQUE ?Text #Evidence
+           Remark ?Text #Evidence
+           Related_phenotypes Specialisation_of ?Phenotype XREF Generalisation_of
+                              Generalisation_of ?Phenotype XREF Specialisation_of
+			      Dead Alternate_phenotype ?Phenotype
+           Attribute_of       RNAi 	?RNAi XREF Phenotype
+			      Variation	?Variation XREF Phenotype
+                              Transgene	?Transgene XREF Phenotype	// Added by Carol
+			      Anatomy_function ?Anatomy_function XREF Phenotype
+			      Interaction ?Interaction XREF Interaction_phenotype
+			      Rearrangement ?Rearrangement XREF Phenotype
+			      Strain ?Strain XREF Phenotype
+			      Not_in_RNAi ?RNAi XREF Phenotype_not_observed //added by Wen for Not observed phenotypes
+			      Not_in_Variation ?Variation XREF Phenotype_not_observed //added by Wen for Not observed phenotypes
+			      Not_in_Strain ?Strain XREF Phenotype_not_observed //added by Wen for Not observed phenotypes
+			      Not_in_Transgene ?Transgene XREF Phenotype_not_observed //added by Wen for Not observed phenotypes
+			      Not_in_Rearrangement ?Rearrangement XREF Phenotype_not_observed //added by Wen for Not observed phenotypes
+	   Associated_with    GO_term   ?GO_term   XREF Phenotype   ?GO_code  #Evidence	// Tag Associated_with changed by Carol
+			      WBProcess ?WBProcess XREF Phenotype
+
+
+?Phenotype_name	Primary_name_for UNIQUE	?Phenotype	XREF	Primary_name	#Evidence
+		Synonym_for		?Phenotype	XREF	Synonym		#Evidence
+		Short_name_for		?Phenotype	XREF	Short_name	#Evidence
+
+
+?Phenotype_Assay Description ?Text
+
+
+//////////////////////////////////////////////
+//
+// ?Operon class - [010928 dl]
+//
+//////////////////////////////////////////////
+
+?Operon SMap S_parent UNIQUE Canonical_parent UNIQUE ?Sequence XREF Operon
+	Species UNIQUE ?Species
+	Contains_gene ?Gene XREF Contained_in_operon #Trans_splice_leader
+	Associated_feature ?Feature XREF Associated_with_operon	#Evidence
+	Reference ?Paper XREF Operon
+	Description UNIQUE Text     #Evidence
+	Method UNIQUE ?Method
+	History    Merged_into      UNIQUE ?Operon XREF Acquires_merge #Evidence
+		   Acquires_merge   ?Operon XREF Merged_into #Evidence
+		   Split_from       UNIQUE ?Operon XREF Split_into #Evidence
+		   Split_into       ?Operon XREF Split_from #Evidence
+		   Deprecated	    Text   #Evidence //pad - for operons no longer believed.
+	Remark Text #Evidence
+
+#Trans_splice_leader SL1 #Evidence
+                     SL2 #Evidence
+		     Microarray #Evidence   // Handles Blumenthal microarray assignments
+		     Inferred #Evidence                                                          
+
+
+/////////////////////////////////////////////////////////////////////
+// ?Movie class - Lincoln
+/////////////////////////////////////////////////////////////////////
+
+?Movie Description ?Text
+       Pick_me_to_call Text Text
+       RNAi ?RNAi XREF Movie
+       Variation ?Variation XREF Movie  //[2006-04-21 ar2] Carol
+       Expr_pattern ?Expr_pattern XREF Movie //Added by Wen to curate Expr_pattern video 
+       Remark ?Text #Evidence
+
+/////////////////////////////////////////////////////////////////////
+//
+//	##		Classes for microarray data      ##
+//
+//////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+//
+//?Microarray class - Igor [030815 krb]
+//
+/////////////////////////////////////////////////////////////////////
+
+?Microarray     Chip_type UNIQUE ?Text  //SMD, Affymetrix, etc.
+                Chip_info  ?Text        //Describes batch number of the chip, etc.
+                Reference  ?Paper       //Describes design of the chip
+		URL Text                //to link to manufacturers site.
+                Remark     ?Text        #Evidence
+                Microarray_experiment   ?Microarray_experiment XREF Microarray
+
+
+/////////////////////////////////////////////////////////////////////
+//
+// ?Microarray_results class
+// Contains multiple results for one microarray spot. Used for both SMD and Affymetrix chips as well as for generic chips. 
+//
+/////////////////////////////////////////////////////////////////////
+
+?Microarray_results     Sequence_info UNIQUE PCR_product     UNIQUE ?PCR_product     XREF Microarray_results
+                                             Oligo_set       UNIQUE ?Oligo_set       XREF Microarray_results
+                        Gene          ?Gene 	  XREF Microarray_results #Evidence   // should be mapped during the build
+                        CDS	      ?CDS 	  XREF Microarray_results #Evidence   // should be mapped during the build
+                        Transcript    ?Transcript XREF Microarray_results #Evidence   // should be mapped during the build
+			Pseudogene    ?Pseudogene XREF Microarray_results #Evidence   // should be mapped during the build
+			Microarray    ?Microarray
+                        Results       ?Microarray_experiment UNIQUE #Microarray_data
+                        Range         Min UNIQUE Float UNIQUE ?Microarray_experiment  // mix observed ratio or frequency in all experiments and corresponding experiment
+                                      Max UNIQUE Float UNIQUE ?Microarray_experiment  // max observed ratio or frequency in all experiments and corresponding experiment 
+                        Remark        ?Text   #Evidence
+
+
+////////////////////////////////
+//
+// #Microarray_data 
+// Used by ?Microarray_results.
+//
+////////////////////////////////
+
+#Microarray_data        Result          A_vs_B_log_ratio        UNIQUE Float                 // relative abundance               
+                                        A_vs_B_SD               UNIQUE Float                 // standard deviation over a set of experiments
+                                        Frequency               UNIQUE Float                 // absolute abundance in ppm - [14-Mar-06 ar2] Igor wants a float (absolute?)
+                                        Number_of_experiments   UNIQUE Int
+                                        Range_within_paper      UNIQUE Float UNIQUE Float    // min and max observed ratio or frequency in all experiments from a paper
+                        Confidence      Confidence_level        UNIQUE Float                 // Igor [031020
+					P_value  UNIQUE Float
+                                        Presence UNIQUE PA                                   // present always
+                                                        PS                                   // present sometimes - marginal call
+                                                        NP                                   // never present
+			Expression_cluster ?Expression_cluster XREF Microarray_results       // one way XREF used to populate Cluster class (prev ?Cluster)
+                        Remark          Text #Evidence
+
+
+////////////////////////////////
+//
+// ?Microarray_experiment 
+// Used by ?Microarray_results.
+//
+////////////////////////////////
+
+?Microarray_experiment  Microarray ?Microarray XREF Microarray_experiment
+			Expression_cluster ?Expression_cluster XREF Microarray_experiment // Wen WS228
+			Species UNIQUE ?Species
+                        Sample  Sample_A     UNIQUE      ?Condition     //for PCR product-base (SMD-type) chips
+                                Sample_B     UNIQUE      ?Condition     //for PCR product-base (SMD-type) chips
+                                Microarray_sample UNIQUE ?Condition     //for oligo-based (Affymetrix-type) chips
+                        Reference  ?Paper XREF Microarray_experiment
+                        Remark     Text        #Evidence
+
+
+//Will eventually replace Microarray_aff class. 
+//Used for Affymetrix and other oligo-based arrays. 
+
+////////////////////////////////
+//
+// ?Oligo_set class
+//
+////////////////////////////////
+
+?Oligo_set      SMap S_parent UNIQUE Canonical_parent UNIQUE ?Sequence XREF Oligo_set
+		Structure Target_exons Int UNIQUE Int
+                Microarray_results ?Microarray_results XREF Oligo_set 
+                Oligo ?Oligo     //used in case oligos are specified
+		Overlaps_CDS 	    ?CDS 	XREF Corresponding_oligo_set #Evidence
+		Overlaps_transcript ?Transcript XREF Corresponding_oligo_set #Evidence
+		Overlaps_pseudogene ?Pseudogene XREF Corresponding_oligo_set #Evidence
+                Remark Text    #Evidence
+		Type    Affymetrix_microarray_probe
+			WashU_GSC_microarray_probe
+			Agilent_microarray_probe
+			Affymetrix_tiling_array_probe
+		Method UNIQUE ?Method
+
+
+//////////////////////////////////
+//
+// ?Expression_cluster class
+// For microarray data clustering results.
+//
+//////////////////////////////////
+
+?Expression_cluster  Description  ?Text				             // refers to Biological meaning of this cluster group
+		     Species UNIQUE ?Species  
+		     Algorithm    Text				             // refers to the algorithm that was used to get this clustering result.
+		     Reference    ?Paper XREF Expression_cluster
+		     Based_on_WB_Release     Int //Wen - to identify clusters not mapped if authors did not provide probe information.
+		     Microarray_results ?Microarray_results  Text #Evidence  //refers to all experimental results included in the cluster.
+		     SAGE_tag ?SAGE_tag Text #Evidence
+		     Gene ?Gene XREF Expression_cluster Text #Evidence       //Igor: populated during build based on Microarray_results mapping
+		     Attribute_of Microarray_experiment ?Microarray_experiment  XREF Expression_cluster //Wen
+				  Analysis ?Analysis XREF Expression_cluster //Wen, for cluster obtained from RNAseq or Tiling array
+				  Expr_pattern ?Expr_pattern XREF Expression_cluster #Evidence          //Wen originally for Localizome
+                     Regulation   Regulated_by_gene ?Gene		     //Wen WS228
+                                  Regulated_by_treatment Text                //Wen WS228
+                                  Regulated_by_molecule ?Molecule            //Wen WS228
+                     Associated_with  Life_stage ?Life_stage                 //Wen WS228
+                                      GO_term ?GO_term                       //Wen WS228
+                                      Anatomy_term ?Anatomy_term XREF Expression_cluster #Evidence //Describes microarray experiments involving expression profiling in a particular tissue or cell Igor Dec 06
+                                      WBProcess ?WBProcess XREF Expression_cluster #Evidence
+		     Remark ?Text #Evidence
+     
+
+//////////////////////////////////////////////////////////////////
+//      SAGE_tag model
+//      contains sequence and mapping information for a tag
+//////////////////////////////////////////////////////////////////
+?SAGE_tag       Evidence #Evidence
+                Homol Homol_homol ?Homol_data XREF SAGE_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+                Tag_sequence            UNIQUE Text     //tag sequence including the restriction site
+                Anchoring_enzyme        UNIQUE ?Motif   //NlaIII most commonly
+                Tag_length              UNIQUE Int      //14 most commonly
+                Most_three_prime        // added for tags which are the most 3' in a transcript
+                Unambiguously_mapped    //boolean; describes whether tag is unambiguously mapped to one SAGE transcript or to splice isoforms of the same gene at the same genomic location
+                Corresponds_to  Predicted_CDS   ?CDS XREF SAGE_tag #SAGE_mapping_info
+                                Gene            ?Gene XREF SAGE_tag #SAGE_mapping_info
+                                Transcript      ?Transcript XREF SAGE_tag #SAGE_mapping_info
+                                Pseudogene      ?Pseudogene XREF SAGE_tag #SAGE_mapping_info
+                Results ?SAGE_experiment UNIQUE #SAGE_data //contains SAGE data for all experiments using the tag
+                Remark ?Text #Evidence
+                Method UNIQUE ?Method  //for GFF dumping
+
+#SAGE_mapping_info Transcript_source      UNIQUE ?Text            //Coding RNA, Mitochondrial, Other...
+                   Position               UNIQUE Int              //the number of the SAGE anchoring enzyme restriction site from the 3' end of the cDNA molecule
+                   Strand                 UNIQUE Sense            //sense/antisense
+                                                 Antisense
+                   Most_three_prime
+                   Unambiguously_mapped
+
+#SAGE_data      Result          Frequency               UNIQUE Int      //tag count
+                                Total_tag_count         UNIQUE Int      //sum of all tag counts in the experiment
+                                Relative_abundance      UNIQUE Float    //Frequency/Total_tag_count
+                                Significance            UNIQUE Float
+                                Confidence_level        UNIQUE Float
+                                Standard_deviation      UNIQUE Float
+                                Number_of_experiments   UNIQUE Int
+		Expression_cluster ?Expression_cluster XREF SAGE_tag    //Replaces ?Cluster connection
+                Sequence_quality  UNIQUE Float            //most commonly cumulative phred scores associated with the tag 
+						// sequences; not in ?SAGE_tag since it will vary from experiment to experiment
+
+
+
+
+///////////////////////////////////////////////////////
+//      SAGE_experiment model
+//      connects to condition and paper objects
+///////////////////////////////////////////////////////
+
+?SAGE_experiment Sample  UNIQUE  ?Condition XREF SAGE_experiment
+		 Species UNIQUE ?Species
+                 Reference  ?Paper XREF SAGE_experiment
+                 Remark ?Text #Evidence
+
+
+/////////////////////////////////////////////////////////////////
+//
+// ?Y2H - 14-04-2004
+// stores yeast two-hybrid data, initially for Interactome data
+//
+/////////////////////////////////////////////////////////////////
+
+
+
+?YH Evidence #Evidence
+    Interactor Bait PCR_bait UNIQUE ?PCR_product XREF YH_bait
+		    Sequence_bait UNIQUE ?Sequence XREF YH_bait
+		    Bait_overlapping_CDS ?CDS XREF YH_bait #Evidence
+		    Bait_overlapping_gene ?Gene XREF YH_bait #Evidence
+	       Target PCR_target UNIQUE ?PCR_product XREF YH_target
+		      Sequence_target UNIQUE ?Sequence XREF YH_target
+		      Target_overlapping_CDS ?CDS XREF YH_target #Evidence
+		      Target_overlapping_gene ?Gene XREF YH_target #Evidence
+    Library_screened Text INT //wrmcDNA or TF libraries times_found
+    Experiment_type UNIQUE Y2H
+			   Y1H
+			   Directed_Y1H Text
+    Interactome_type UNIQUE Interactome_core_1
+			    Interactome_core_2
+			    Interactome_noncore
+    Origin From_laboratory UNIQUE ?Laboratory
+    Reference ?Paper XREF YH
+    Remark ?Text #Evidence
+
+///////////////////////////////////////////////////////////////////////////////////////
+//
+// ?3d_data - 14042004
+// A protein structure class which will store data from the NESGC
+//
+///////////////////////////////////////////////////////////////////////////////////////
+
+?3d_data Evidence              #Evidence
+         DB_info               Database ?Database ?Database_field ?Accession_number
+         CDS      ?CDS XREF 3d_data
+	 Protein  ?Protein XREF 3d_data
+	 Gene	  ?Gene XREF 3d_data
+         Status                Selected
+                               Cloned
+                               Expressed
+                               Soluble
+                               Purified
+                               Crystallized
+                               Diffraction_quality_crystals    //Diffraction-quality Crystals
+                               Diffraction
+                               NMR_assigned                    //NMR assigned
+                               HSQC
+                               Crystal_structure               //Crystal Structure
+                               NMR_structure                   //NMR Structure
+                               In_PDB                          //In PDB
+                               Work_stopped                    //Work Stopped
+                               Test_target                     //Test Target
+                               Other
+         Origin                Location UNIQUE NESGC           //3d data sources can be added as new sub-tags to the model in the future
+                               First_imported UNIQUE DateType
+                               Last_updated UNIQUE DateType
+         Remark                ?Text #Evidence
+
+
+
+
+/////////////////////////  PEOPLE, PLACES AND PAPERS //////////////////////////////
+//
+// ?Person, #Address, ?Person_name, ?Author, ?Paper, ?Journal, and ?Laboratory
+//
+///////////////////////////////////////////////////////////////////////////////////
+
+///////////////////
+// ?Person class //
+///////////////////
+
+?Person PostgreSQL_id UNIQUE Text       // for linking to internal RDB
+                                        // Text instead of Int so it says WBperson####
+        Name    First_name    UNIQUE  Text    // prefered first name
+                Middle_name   Text            // middle name(s)
+                Last_name     UNIQUE  ?Person_name XREF Last_name_of    // prefered last name
+                Standard_name UNIQUE  ?Person_name XREF Standard_name_of   // name to be used for displays
+                                              // default is "First_name Last_name"
+		Full_name     UNIQUE  ?Person_name XREF Full_name_of // field for storing long name [030321 krb]
+                Also_known_as   ?Person_name XREF Other_name_of // new XREF added [030310 krb]
+        CGC_representative_for ?Laboratory XREF Representative
+        Laboratory ?Laboratory XREF Registered_lab_members
+	Affiliation Text // used for storing institute affiliations that aren't in their Address
+	Conducted ?Analysis XREF Conducted_by
+        Address #Address
+        Tracking        Old_laboratory ?Laboratory XREF Past_lab_members      // Lab(s) the person previously worked in
+                        Last_verified UNIQUE DateType                         // Last time the name/contact information in this record was actively verified
+                        Last_attempt_to_contact UNIQUE DateType UNIQUE Text   // Text is method of attempt to contact
+                        Old_address DateType #Address   // for history
+			Left_the_field Text
+			History	       Merged_into	 UNIQUE ?Person XREF Acquires_merge
+				       Acquires_merge	 ?Person XREF Merged_into
+			Status  Valid
+				Invalid
+        Comment Text
+ 	Lineage Supervised    ?Person XREF Supervised_by #Role
+                Supervised_by ?Person XREF Supervised #Role
+                Worked_with   ?Person XREF Worked_with #Role
+        Publication     Paper ?Paper XREF Person #Evidence
+			Not_paper ?Paper XREF Not_person #Evidence
+                        Publishes_as ?Author    // confirmed author names (curated) can't XREF because of paper model
+                        Possibly_publishes_as ?Author XREF Possible_person
+                                                // curated for Author->Paper->Person
+                                                // connection but not yet verified by
+                                                // the Person
+
+#Address  Street_address Text        // multiple lines including town, state, zip/postcode, whatever
+          Country UNIQUE Text
+          Institution UNIQUE Text    
+          Email Text                 // multiple emails allowed
+          Main_phone    Text         // phone number for the institution, I presume
+          Lab_phone     Text
+          Office_phone  Text
+          Other_phone   Text UNIQUE Text  // second text can be used to indicate type
+          Fax           Text 
+          Web_page      Text    // web page is part of the address info I think
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+//
+// #Role hash - Juancarlos October 2003
+// works with the Person class for Person lineage only.
+// The two DateType fields allow you to specify a start year and optionally an 'end' year.
+// If the second field is not specified, it is taken to mean that they are currently active at that particular role
+//
+///////////////////////////////////////////////////////////////////////////////////////
+
+#Role   Assistant_professor    DateType    UNIQUE    DateType
+	Phd		DateType UNIQUE DateType
+        Postdoc		DateType UNIQUE DateType
+        Masters		DateType UNIQUE DateType
+        Undergrad	DateType UNIQUE DateType
+        Highschool	DateType UNIQUE DateType
+        Sabbatical	DateType UNIQUE DateType
+        Lab_visitor	DateType UNIQUE DateType
+        Collaborated	DateType UNIQUE DateType
+        Research_staff  DateType UNIQUE DateType
+        Unknown		DateType UNIQUE DateType
+
+
+
+///////////////////////
+//
+// Person_name class - krb 030210
+// Simple way of searching for peoples full name (using Standard_name field of ?Person class) or just surname.
+//
+///////////////////////
+
+?Person_name Name Full_name_of     ?Person XREF Full_name
+		  Standard_name_of ?Person XREF Standard_name // added [030321 krb]
+		  Last_name_of     ?Person XREF Last_name
+		  Other_name_of    ?Person XREF Also_known_as // added [030310 krb]
+
+
+
+//////////////////
+// Author class //
+//////////////////
+
+?Author Full_name Text
+        Also_known_as Text
+// Need to keep Laboratory connected to Author since People haven't been connected to Labs yet
+        Old_lab ?Laboratory
+        Possible_person ?Person XREF Possibly_publishes_as
+        Address Mail Text  // this address section for Authors not yet connected to Person
+                E_mail Text
+                Phone Text
+                Fax   Text
+        Paper ?Paper
+        Sequence ?Sequence XREF From_author
+        Keyword ?Keyword
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// ?Paper class - krb 040223
+// ID-based system (WBPaperXXXXXXXX) to allow paper tracking and an associated ?Paper_name class
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+?Paper Original_timestamp Datetype // temporary tag in transition period [krb 040223]
+       Name ?Text     //used for storing legacy names, like cgc5654 or wm95p426
+       DB_info Database ?Database ?Database_field ?Accession_number     //used for storing PubMed or other database identifiers, for PubMed, Database_field would be PMID 
+       History Merged_into UNIQUE ?Paper XREF Acquires_merge
+               Acquires_merge ?Paper XREF Merged_into
+       Status  Valid
+               Invalid
+       Erratum_in      ?Paper XREF Erratum_for
+       Erratum_for     ?Paper XREF Erratum_in
+       Reference       Title UNIQUE ?Text
+                       Journal UNIQUE ?Text     //we are cleaning up Journal names and considering retiring the class
+                       Publisher UNIQUE Text
+                       Editor ?Text            //used for books put in as objects
+                       Page  UNIQUE  Text 
+                       Volume UNIQUE Text
+                       Publication_date UNIQUE ?Text         //YYYY-MM-DD or YYYY-MM, replaces DateType which led to erroneous pub dates
+                       Contained_in ?Paper XREF Contains       // old form
+                       Contains ?Paper XREF Contained_in
+       Author ?Author XREF Paper #Affiliation
+       Person ?Person XREF Paper #Evidence
+       Describes_analysis ?Analysis XREF Reference
+       Not_person ?Person XREF Not_Paper #Evidence
+       Affiliation Text        // Authors' affiliation if available
+       Brief_citation UNIQUE Text
+       Abstract ?LongText
+       URL Text   //will be used for Worm Breeder's Gazette articles and other citations available online but not through PubMed
+       Type    Journal_article        #Evidence
+               Review        #Evidence
+               Comment        #Evidence
+               News        #Evidence
+               Letter        #Evidence
+               Editorial        #Evidence
+               Congresses        #Evidence
+               Historical_article        #Evidence
+               Biography        #Evidence
+               Interview        #Evidence
+               Lectures        #Evidence
+               Interactive_tutorial        #Evidence
+               Retracted_publication        #Evidence
+               Technical_report        #Evidence
+               Directory        #Evidence
+               Monograph        #Evidence
+               Published_erratum        #Evidence
+               Meeting_abstract        #Evidence
+               Gazette_article        #Evidence
+               Book_chapter        #Evidence
+               Book        #Evidence
+               Email        #Evidence
+               WormBook        #Evidence
+               Other        #Evidence
+       Refers_to Gene ?Gene XREF Reference #Evidence
+                 Allele ?Variation XREF Reference #Evidence
+                 Rearrangement ?Rearrangement XREF Reference #Evidence
+                 Sequence ?Sequence XREF Reference #Evidence
+                 CDS ?CDS XREF Reference #Evidence
+                 Transcript ?Transcript XREF Reference #Evidence
+		 Species ?Species #Evidence
+                 Strain ?Strain XREF Reference #Evidence
+                 Clone ?Clone XREF Reference #Evidence
+                 Expr_pattern ?Expr_pattern XREF Reference #Evidence
+                 Expr_profile ?Expr_profile XREF Reference #Evidence
+                 Cell ?Cell XREF Reference #Evidence
+                 Cell_group ?Cell_group XREF Reference #Evidence
+                 Life_stage ?Life_stage XREF Reference #Evidence
+                 RNAi ?RNAi XREF Reference #Evidence
+                 Transgene ?Transgene XREF Reference #Evidence
+                 Operon ?Operon XREF Reference #Evidence
+                 Expression_cluster ?Expression_cluster XREF Reference #Evidence
+                 Feature ?Feature XREF Defined_by_paper                 // added [030424 dl]
+                 Gene_regulation ?Gene_regulation XREF Reference // added [030804 krb]
+                 Microarray_experiment ?Microarray_experiment XREF Reference //added for Microarray_experiment model
+                 Anatomy_term ?Anatomy_term XREF Reference #Evidence
+                 Anatomy_function ?Anatomy_function XREF Reference
+                 Antibody ?Antibody XREF Reference #Evidence // added [031120 krb]
+                 SAGE_experiment ?SAGE_experiment XREF Reference
+                 YH ?YH XREF Reference ?Text
+                 Interaction ?Interaction XREF Paper
+                 Mass_spec_experiment ?Mass_spec_experiment XREF Reference
+		 WBProcess ?WBProcess XREF Reference
+		 Picture ?Picture XREF Reference
+       Curation_pipeline Phenotype2GO
+       Keyword ?Keyword
+       Remark  ?Text   #Evidence
+
+
+#Affiliation Affiliation_address UNIQUE Text
+	     Person ?Person
+
+
+///////////////////////
+// Laboratory class  //
+///////////////////////
+
+?Laboratory   Address Mail Text
+                      Phone Text
+                      E_mail Text
+                      Fax Text
+		      URL Text //to link to lab homepage ar2 02-DEC-05
+              Clean_address #Address
+// Put back Address instead of #Address because citace doesn't have
+// control of Laboratory data, so anything parsed here won't be read.
+// If Keith or someone with control of Laboratory data wants to parse
+// it into #Address, please do so
+              CGC     Representative ?Person XREF CGC_representative_for
+                      Strain_designation UNIQUE Text
+                      Allele_designation UNIQUE Text
+                      Alleles ?Variation
+                      Gene_classes ?Gene_class XREF Designating_laboratory
+	      Staff   Registered_lab_members ?Person XREF Laboratory   // for people with WormBase Person IDs
+        	      Past_lab_members ?Person XREF Old_laboratory     // for anyone who has left the field, or the circle of life
+	      Remark ?Text #Evidence
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//
+// ?Gene_regulation class - Wen 05082003//
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Gene regulation model describes the expression pattern in different genetic backgrounds
+// "Summary" use text to describe the experimental results observed from experiments. It should be summarized from 
+// publication or pers. coomunication. 
+// "Method" is the experimental approach, whether it is done by Immunostaining, Reporter_gene or ...
+// "Regulator" is the party that regulated the expression pattern, it can be a gene (Trans_regulator), a short 
+// DNA sequence (Cis_regulator), or protein, drug, condition ... (Other_regulator). 
+// Regulator_info  describes details about regulator, such aswhat allele and what RNAi is used to test the regulation.
+// "Target" is the party that displayed expression pattern, can be a gene(Trans_regulated) or a specific promoter
+// sequence(Cis_regulated). Target_info described what Expr_pattern is tested under mutant background. Here the 
+// Expr_pattern refers to the expression pattern under wild type C. elegans background. 
+// Result: "Positive_regulate" display when and where increase of expression were observed. "Negative_regulate" display 
+// when and where decrease of expression were observed.
+// "Remark" is for any other information that might be useful.
+// "Evidence" will be used to curate data from personal communication. 
+//"Reference" show which paper is the source of the data.
+
+
+?Gene_regulation Evidence  #Evidence       
+		 Summary   ?Text
+                 Method    Antibody       ?Text
+			   Antibody_info  ?Antibody XREF Gene_regulation
+                           Reporter_gene  ?Text
+			   Transgene      ?Transgene XREF Gene_regulation
+                           In_situ        Text
+                           Northern       Text
+                           Western        Text
+                           RT_PCR         Text
+                           Other_method   ?Text
+		 Type	   Change_of_localization	//Added by wen 02132006 to distinguish regulation of expression level or localization.
+			   Change_of_expression_level	//Added by wen 02132006
+		 Molecule_regulator      ?Molecule  XREF    Gene_regulator  #Boolean		// ?Molecule model - Karen Yook
+		 Regulation_level	Transcriptional		//Added by wen 02132006 to distinguish process that regulation occurs on
+					Post_transcriptional	//Added by wen 02132006
+					Post_translational	//Added by wen 02132006
+                 Regulator Regulator_info Allele                  ?Variation 
+                                          RNAi     ?RNAi      XREF    Gene_regulation
+                           Trans_regulator_gene    ?Gene      XREF    Trans_regulator #Boolean
+                           Trans_regulator_seq     ?CDS       XREF    Trans_regulator #Boolean
+                           Cis_regulator_seq       ?Sequence  XREF    Cis_regulator   #Boolean
+                           Other_regulator         ?Text                              #Boolean        
+                 Target    Target_info     Expr_pattern  ?Expr_pattern
+                           Trans_regulated_gene    ?Gene      XREF    Trans_target    #Boolean
+                           Trans_regulated_seq     ?CDS       XREF    Trans_target    #Boolean
+                           Cis_regulated_seq       ?CDS       XREF    Cis_target      #Boolean
+                           Other_regulated         ?Text                              #Boolean
+		 Associated_feature ?Feature XREF Associated_with_gene_regulation #Evidence //to curate sequence feature connection [ar2]
+                 Result    Positive_regulate #GR_condition
+                           Negative_regulate #GR_condition
+			   Does_not_regulate #GR_condition // addded to capture negative data [040220 krb]
+                 Remark    ?Text #Evidence
+                 Reference ?Paper XREF Gene_regulation
+
+
+//Boolean operators.
+
+#Boolean  AND      //Added by wjc for Gene_regulation model.
+          OR       //Added by wjc for Gene_regulation model.
+          NOT      //Added by wjc for Gene_regulation model.
+          XOR      //Added by wjc for Gene_regulation model.
+
+
+// #GR_condition provides information on when(Life_stage) and where(Cell, Cell_group, Subcellular) certain kinds of 
+// regulation happen.
+
+#GR_condition          Life_stage               ?Life_stage      
+                       Cell                     ?Cell
+                       Cell_group               ?Cell_group
+		       Anatomy_term		?Anatomy_term //Added by wen 02132006
+                       Subcellular_localization ?Text 
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//
+//Variation class
+//
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+?Variation Evidence #Evidence
+	   Name Public_name	UNIQUE ?Variation_name XREF Public_name_for
+		Other_name	?Variation_name XREF Other_name_for #Evidence
+                Rearrangement	?Rearrangement  XREF Variation // some alleles are really rearrangements		
+	   Sequence_details SMap S_parent UNIQUE Sequence UNIQUE ?Sequence XREF Allele
+			    Flanking_sequences UNIQUE Text UNIQUE Text
+			    CGH_deleted_probes UNIQUE Text UNIQUE Text
+			    CGH_flanking_probes UNIQUE text UNIQUE text
+			    Type_of_mutation Substitution UNIQUE Text Text #Evidence // wild type and mutant sequence
+					     Insertion    UNIQUE Text      #Evidence
+					     Deletion     UNIQUE Text      #Evidence  
+					     Inversion
+			    PCR_product ?PCR_product XREF Variation  
+			    SeqStatus UNIQUE Not_sequenced //[2006-02-17 ar2] to differentiate between mutations which have been sequenced and those which have not.
+					     Sequenced
+					     Pending_curation
+			    Deletion_verification Text #Evidence //[14-Mar-06 ar2] Mark Edgely of KO_alleles has developed test to confirm deletion (mt3)
+           Variation_type Allele		
+			  SNP            // replaces the old 'Status Text' part of ?Locus model	
+			  Confirmed_SNP
+			  Predicted_SNP
+			  RFLP Reference_strain_digest	 Text Text Text // storing site, enzyme, and band size
+			       Polymorphic_strain_digest Text Text Text 
+			  Transposon_insertion ?Transposon_family XREF In_variation
+			  Natural_variant
+	   Origin Species UNIQUE ?Species
+		  Strain	 ?Strain XREF Variation
+		  Laboratory ?Laboratory
+		  Author  ?Author // use Person when known, else use Author
+                  Person  ?Person //
+		  Analysis ?Analysis
+		  DB_info    Database ?Database ?Database_field UNIQUE ?Accession_number //to link out to KO pages ar2 02-DEC-05
+                  KO_consortium_allele   // North American knockout consortium
+                  NBP_allele  // Japanese knockout consortium
+		  NemaGENETAG_consortium_allele //NemaGENETAG consortium allele - Nektarios et al
+		  Detection_method Text
+		  Positive_clone ?Clone XREF Positive_variation #Evidence
+		  Nature_of_variation UNIQUE Polymorphic
+					     Synthetic	
+		  Status UNIQUE Live #Evidence
+                                Suppressed #Evidence
+                                Dead #Evidence   
+	   Linked_to ?Variation XREF Linked_to  // for being able to specify paired substitutions which are part of the same allele
+	   Affects Gene	         ?Gene	     XREF Allele #Molecular_change      //#Molecular_change mh6 define precise changes [060217 ar2]
+		   Predicted_CDS ?CDS	     XREF Variation #Molecular_change
+		   Transcript    ?Transcript XREF Variation #Molecular_change
+		   Pseudogene    ?Pseudogene XREF Variation #Molecular_change
+		   Feature       ?Feature    XREF Associated_with_variation
+		   Interactor	 ?Interaction
+	   Possibly_affects ?Gene XREF Possibly_affected_by #Evidence
+           Isolation Date    DateType
+                     Mutagen UNIQUE Text #Evidence
+                     Forward_genetics Text #Evidence  // Capture the basis of the experiment that isolated
+                     Reverse_genetics Text #Evidence  // the allele. [040206 krb]
+                     Transposon_excision ?Transposon_family
+                     Derived_from ?Variation XREF Derivative
+		     Derivative	  ?Variation XREF Derived_from
+           Genetics Gene_class ?Gene_class XREF Variation
+		    Mating_efficiency  Male UNIQUE ME0_Mating_not_successful #Evidence
+						   ME1_Mating_rarely_successful #Evidence
+						   ME2_Mating_usually_successful #Evidence
+						   ME3_Mating_always_successful #Evidence
+				       Hermaphrodite UNIQUE HME0_Mating_not_successful #Evidence
+							    HME1_Mating_rarely_successful #Evidence
+							    HME2_Mating_usually_successful #Evidence
+							    HME3_Mating_always_successful #Evidence
+		    Map ?Map   XREF Variation #Map_position
+		    Interpolated_map_position UNIQUE ?Map UNIQUE Float
+                    Mapping_data 2_point         ?2_point_data
+                                 Multi_point     ?Multi_pt_data
+                                 Pos_neg_data    ?Pos_neg_data
+                                 // above three are for mapping on its own behalf
+                                 In_2_point      ?2_point_data
+                                 In_multi_point  ?Multi_pt_data
+                                 In_pos_neg_data ?Pos_neg_data
+                                // these are for when the locus is mapped
+		    Marked_rearrangement ?Rearrangement XREF By_variation
+	   Description Phenotype ?Phenotype XREF Variation #Phenotype_info
+                       Phenotype_remark ?Text #Evidence
+		       Phenotype_not_observed ?Phenotype XREF Not_in_Variation #Phenotype_info  //added by Wen to separate Not phenotype from real phenotypes 
+                       Nonsense UNIQUE Amber_UAG Text #Evidence
+                                       Ochre_UAA Text #Evidence
+                                       Opal_UGA  Text #Evidence
+                       Missense Text  #Evidence				// text fields stored details of codon change
+                       Silent Text #Evidence
+                       Splice_site Donor Text #Evidence
+                                   Acceptor Text #Evidence
+                       Frameshift Text #Evidence  // added sdm
+		       Readthrough Text #Evidence // klh WS228
+           Reference ?Paper XREF Allele
+           Remark  ?Text #Evidence
+	   Method UNIQUE ?Method
+           Supporting_data Movie   ?Movie   XREF Variation #Evidence  //Carol [060421 ar2] 
+
+
+?Variation_name Other_name_for     ?Variation XREF Other_name // main reason for this class
+                Public_name_for    ?Variation XREF Public_name // the main name for a gene
+
+
+// hash to contain detailed changes caused by mutations [2006-02-17 ar2]
+#Molecular_change   Missense Int    Text #Evidence
+                    Silent   Text   #Evidence
+                    Nonsense UNIQUE Amber_UAG Text #Evidence
+                                    Ochre_UAA Text #Evidence
+                                    Opal_UGA  Text #Evidence
+				    Ochre_UAA_or_Opal_UGA Text #Evidence
+				    Amber_UAG_or_Ochre_UAA Text #Evidence
+				    Amber_UAG_or_Opal_UGA Text #Evidence 
+                    Splice_site UNIQUE  Donor    Text #Evidence
+                                        Acceptor Text #Evidence
+                    Frameshift Text #Evidence
+                    Readthrough Text #Evidence //klh WS228
+                    Intron #Evidence
+                    Coding_exon #Evidence
+                    Noncoding_exon #Evidence 
+		    Promoter #Evidence
+		    UTR_3 #Evidence
+		    UTR_5 #Evidence 
+		    Regulatory_feature #Evidence
+		    Genomic_neighbourhood #Evidence
+
+
+///////////////////////////////////
+// Structure_data model for Payan
+///////////////////////////////////
+
+?Structure_data Evidence            #Evidence //Contains Date_last_updated                                    
+                DB_info             Database ?Database ?Database_field ?Accession_number XREF Structure_data // Database_field: Native_ID
+                                    Sequence            Protein UNIQUE ?Protein  // Protein sequence as included in the source data
+                                    Homol               Pep_homol ?Protein XREF Structure_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info 
+							Homol_homol ?Homol_data XREF Structure_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info 
+                Status              Selected UNIQUE DateType
+                                    Cloned UNIQUE DateType
+                                    Expressed UNIQUE DateType
+                                    Soluble UNIQUE DateType
+                                    Purified UNIQUE DateType
+                                    Crystallized UNIQUE DateType
+                                    Diffraction_quality_crystals UNIQUE DateType
+                                    Diffraction UNIQUE DateType
+                                    Native_diffraction_data UNIQUE DateType
+                                    Phasing_diffraction_data UNIQUE DateType
+                                    Nmr_assigned UNIQUE DateType
+                                    Hsqc UNIQUE DateType
+                                    Crystal_structure UNIQUE DateType
+                                    Nmr_structure UNIQUE DateType
+                                    In_pdb UNIQUE DateType
+				    In_bmrb UNIQUE DateType
+                                    Work_stopped UNIQUE DateType
+                                    Test_target UNIQUE DateType
+                                    Other UNIQUE DateType                                   
+                Status_updated      UNIQUE DateType // Date when status was updated as reported by the source data
+                Wormpep_release     UNIQUE Int// The Wormpep release that was used for mapping
+                Remark              ?Text #Evidence
+
+
+//////////////////////////////////////////////////
+//
+// Mass Spec model
+//
+//////////////////////////////////////////////////
+
+
+?Mass_spec_experiment Reference ?Paper XREF Mass_spec_experiment       // Describes the experiment
+                      Remark Text #Evidence
+                      Laboratory ?Laboratory    // use when a CGC-derived laboratory code is available, else ignore
+                      Contact   Person ?Person  // use Person where possible, else use Author
+                                Author ?Author
+                      Origin Species UNIQUE ?Species
+                             Strain UNIQUE ?Strain
+                             Genotype ?Text            // in many cases the proper strain name is not available, use this instead
+                             Life_stage ?Life_stage
+                             Anatomy_term ?Anatomy_term
+                             Cell_type ?Cell
+                             Sub_cellular_localization Text
+                      Digestion UNIQUE Trypsin
+                                       Red_ALK
+                      Ionisation_source     UNIQUE MALDI
+                                                   ESI
+                      Instrumentation UNIQUE IonTrap
+                                             FT
+                                             QTOF
+                      Database Text            // database used to search for matches
+                      Program Text             // program used to match MS data against databases
+                      Minimum_ion_proportion UNIQUE Float
+                      Multiple_ambiguous_IDs_allowed
+                      Minimum_peptide_length UNIQUE Int
+                      False_discovery_rate UNIQUE Float // percentage
+                      Mass_spec_peptide ?Mass_spec_peptide XREF Mass_spec_experiments     // the resulting peptide data
+
+//
+// The Mass Spec peptide
+//
+
+?Mass_spec_peptide  Peptide UNIQUE Text                 // the deduced peptide sequence
+                    Protein_seq UNIQUE ?Protein         // the protein object of this Mass_spec_peptide
+                    Petide_is_natural                   // the peptide is known to occur naturally, e.g. a neuro-peptide
+                    Homol Homol_homol ?Homol_data XREF MSPeptide_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+                    Mass_spec_experiments ?Mass_spec_experiment XREF Mass_spec_peptide #Mass_spec_data
+
+//
+// The data from an experiment describing the peptide
+//
+
+#Mass_spec_data  XCorr   UNIQUE Float   // SEQUEST score
+                 DeltaCN UNIQUE Float   // SEQUEST score
+                 Charge_state UNIQUE Int // SEQUEST score
+                 Sp_rank UNIQUE Int  // SEQUEST score
+                 Sp_score UNIQUE Float  // SEQUEST score
+                 Protein_probability UNIQUE Float       // from Prophet or a corresponding program
+                 Peptide_probability UNIQUE Float       // from Prophet or a corresponding program
+                 Matches_database_uniquely
+                 Matches Protein ?Protein  XREF  Contains_peptide    // matched protein
+
+//////////////////////////////////////////////////
+//
+// ?Analysis class - used for adding meta data from large scale experiments
+//
+//////////////////////////////////////////////////
+
+?Analysis    DB_info Database ?Database ?Database_field ?Accession_number
+	     Title Text
+             Based_on_WB_Release Int
+             Based_on_DB_Release Text
+	     Group Project UNIQUE ?Analysis XREF Subproject
+		   Subproject	  ?Analysis XREF Project
+             Description ?Text
+	     Sample ?Condition XREF Analysis
+	     Expression_cluster ?Expression_cluster XREF Analysis //Wen WS228
+             Reference ?Paper XREF Describes_analysis
+             Conducted_by ?Person XREF Conducted		// not always the same as the author of the paper - eg Erich running OrthoMCL
+             URL Text					// eg www.treefam.org  (or would this be covered by Source_database?)
+
+//////////////////////////////////
+//
+//?Condition class
+//
+//////////////////////////////////
+
+?Condition Life_stage      ?Life_stage
+	   Sex		   UNIQUE Hermaphrodite
+				  Male
+				  Female	//not all worms are elegans!
+				  Unknown
+	   Food		   Text
+	   Exposure_time   Text
+	   Species	   UNIQUE ?Species
+	   Strain	   ?Strain // added for Microarry_result [030127 krb]
+	   Preparation	   ?Text // added for Microarray_result [030127 krb]
+           Temperature     Int
+           Genotype        ?Text
+           Other           ?Text
+           Relationship    Contains        ?Condition XREF Contained_in
+                           Contained_in    ?Condition XREF Contains
+                           Precedes        ?Condition XREF Follows
+                           Follows         ?Condition XREF Precedes
+           Reference       ?Paper  //Defines the condition.
+	   Tissue	   ?Anatomy_term   // added for Experiment (Microarray_results)
+           Treatment       ?Text // added for Experiment (Microarray_results)
+	   SAGE_experiment ?SAGE_experiment XREF Sample
+	   Analysis	   ?Analysis XREF Sample 
+           Remark          ?Text #Evidence
+
+//////////////////////////////////////////////////
+//
+// Molecule class Model - Proposed by Karen Yook WS217
+// Connects to: #Phenotype_info
+//              ?Gene_regulation 
+//
+//////////////////////////////////////////////////	
+
+?Molecule  Name ?Text
+           Public_name ?Text
+           Synonym ?Text
+           DB_info Database ?Database ?Database_field ?Accession_number
+           Gene_regulation Gene_regulator ?Gene_regulation XREF Molecule_regulator
+			   Regulate_expr_cluster ?Expression_cluster XREF Regulated_by_molecule //Wen WS228
+	   WBProcess ?WBProcess XREF Molecule
+           Affects_phenotype_of     Variation ?Variation ?Phenotype #Evidence
+                                    Strain    ?Strain    ?Phenotype #Evidence
+                                    Transgene ?Transgene ?Phenotype #Evidence
+                                    RNAi      ?RNAi      ?Phenotype #Evidence
+				    Rearrangement  ?Rearrangement  ?Phenotype  #Evidence  //KY [110602 pad]
+	   Interaction	?Interaction	XREF	Molecule_regulator
+	   Molecule_use  ?Text  #Evidence
+	   Remark ?Text #Evidence
+
+
+//////////////////////////////////////////////////
+//
+// WBProcess class Model - Proposed by Karen Yook WS225
+// Connects to: ?Gene
+//              ?Expression_cluster
+//              ?Interaction
+//              ?Anatomy_term
+//              ?Life_stage
+//              ?Molecule
+//              ?Phenotype
+//
+//////////////////////////////////////////////////	
+
+?WBProcess      Summary ?Text #Evidence
+                Process_term ?Text
+		Public_name UNIQUE ?Text
+                Other_name ?Text
+                Related_process ?WBProcess XREF Related_process
+                Taxon   NCBITaxonomyID ?Text
+                Involved_entity         Gene ?Gene XREF WBProcess #Evidence  
+                                        Expression_cluster ?Expression_cluster XREF WBProcess  #Evidence
+                                        Interaction ?Interaction XREF WBProcess #Evidence
+                                        Anatomy_term ?Anatomy_term XREF WBProcess #Evidence
+                                        Life_stage ?Life_stage XREF WBProcess #Evidence 
+                                        Molecule ?Molecule XREF WBProcess #Evidence 
+                Associated_with         Phenotype ?Phenotype XREF WBProcess #Evidence
+                                        GO_term ?GO_term  #Evidence
+                Picture ?Picture #Evidence
+                Movie ?Movie  #Evidence
+                Pathway DB_info Database ?Database ?Database_field ?Accession_number //Can be used for any pathway db with unique accessionIDs
+                Remark ?Text #Evidence
+                Reference ?Paper XREF WBProcess
+
+
+
+////////////////////////
+//    END OF FILE     //
+////////////////////////
