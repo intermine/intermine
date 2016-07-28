@@ -16,6 +16,11 @@ use File::Temp qw/ tempfile /;
 my $genexml = $ARGV[0];
 my $gffin   = $ARGV[1];
 
+unless ($gffin) {
+    print "\nUsage: ./generate_test_gff.pl <Gene.xml> <elegans.gff>\n\n"; 
+    exit(0);
+}
+
 # make the xml file happy for XML::Simple
 my ($fh, $filename) = tempfile(undef, UNLINK => 0);
 
