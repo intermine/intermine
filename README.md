@@ -48,7 +48,7 @@ automated bootstrap script:
   # Set up tomcat
   sh config/download_and_configure_tomcat.sh
   # For a genomic application, with test data from Malaria
-  sh bio/setup.sh
+  sh biotestmine/setup.sh
   # For the testmodel
   sh testmodel/setup.sh
 ```

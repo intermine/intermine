@@ -5,23 +5,18 @@
         <attribute name="url" type="java.lang.String" />
     </class>
     <class name="HPOAnnotation" extends="OntologyAnnotation" is-interface="true">
-        <reference name="hpoTerm" referenced-type="HPOTerm" reverse-reference="hpoAnnotation" />
-        <!-- <reference name="disease" referenced-type="Disease" /> -->
+        <reference name="hpoTerm" referenced-type="HPOTerm" reverse-reference="hpoAnnotations" />
         <collection name="evidences" referenced-type="HPOEvidence" />
     </class>
     <class name="HPOTerm" extends="OntologyTerm" is-interface="true">
         <reference name="ontology" referenced-type="Ontology" />
-        <reference name="hpoAnnotation" referenced-type="HPOAnnotation" reverse-reference="hpoTerm" />
+        <collection name="hpoAnnotations" referenced-type="HPOAnnotation" reverse-reference="hpoTerm" />
         <collection name="diseases" referenced-type="Disease" />
     </class>
     <class name="Disease" is-interface="true">
         <attribute name="identifier" type="java.lang.String" />
-        <collection name="synonyms" referenced-type="DiseaseSynonym" />
         <collection name="genes" referenced-type="Gene" reverse-reference="diseases"/>
         <collection name="hpoAnnotations" referenced-type="HPOAnnotation" />
-    </class>
-    <class name="DiseaseSynonym" is-interface="true">
-        <attribute name="name" type="java.lang.String"/>
     </class>
     <class name="HPOEvidence" is-interface="true">
         <attribute name="source" type="java.lang.String" />
@@ -31,9 +26,6 @@
         <reference name="diseaseReference" referenced-type="Disease" />
         <collection name="publications" referenced-type="Publication" />
         <collection name="with" referenced-type="BioEntity" />
-    </class>
-    <class name="HPOEvidenceCode" is-interface="true">
-        <attribute name="code" type="java.lang.String" />
     </class>
     <class name="Gene" is-interface="true">
         <collection name="diseases" referenced-type="Disease" reverse-reference="genes"/>

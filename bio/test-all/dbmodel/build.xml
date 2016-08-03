@@ -60,6 +60,7 @@
     <merge-additions file="bio/sources/reactome/reactome_additions.xml"/>
     <merge-additions file="bio/sources/human/omim/omim_additions.xml"/>
     <merge-additions file="bio/sources/human/atlas-express/atlas-express_additions.xml"/>
+    <merge-additions file="bio/sources/human/clinvar/clinvar_additions.xml"/>
   </target>
 
 </project>
