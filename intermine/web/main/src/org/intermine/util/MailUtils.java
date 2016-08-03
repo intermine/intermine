@@ -103,9 +103,8 @@ public abstract class MailUtils
             session = Session.getInstance(properties);
         }
         MimeMessage message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(from));
-        //message.setReplyTo(InternetAddress.parse(from, true));
-        //message.setFrom(new InternetAddress(user));
+        message.setReplyTo(InternetAddress.parse(from, true));
+        message.setFrom(new InternetAddress(user));
         message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(to, true)[0]);
         message.setSubject(subject);
         message.setContent(body, "text/plain");
