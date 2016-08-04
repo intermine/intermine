@@ -43,7 +43,7 @@ sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location, should be 
 #                                               #
 #################### Species ####################
 intermine='/mnt/data/intermine'
-# intermine='/Users/nuin/intermine_work/new/intermine' local test
+# intermine='/Users/nuin/intermine_work/new/intermine'
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
