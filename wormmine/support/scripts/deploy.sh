@@ -33,7 +33,8 @@ declare -A species=(["c_elegans"]="PRJNA13758"
                     ["s_ratti"]="PRJEB125"
                     ["c_sinica"]="PRJNA194557")
 
-sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location
+# sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location
+sourcedir='/Users/nuin/intermine_work/WS254-test-data'
 
 #################### Main dirs ##################
 #                                               #
@@ -42,8 +43,8 @@ sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location
 #  pp - pre-processing dir with perl and bash   #
 #                                               #
 #################### Species ####################
-intermine='/mnt/data/intermine'
-# intermine='/Users/nuin/intermine_work/new/intermine' #local test
+# intermine='/mnt/data/intermine'
+intermine='/Users/nuin/intermine_work/new/intermine' #local test
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
@@ -128,21 +129,23 @@ fi
 #cp /mnt/data/properties/typeMapping.tab $datadir'/wormbase-gff3/mapping/'
 #################### AceDB processing #################
 
-#echo 'anatomy_term'
-#mkdir -vp $datadir/wormbase-acedb/anatomy_term/XML
-#mkdir -vp $datadir/wormbase-acedb/anatomy_term/mapping
-#cp -v $sourcedir/Anatomy_term.xml $acexmldir/anatomy_term/Anatomy_term.xml
-#cp -v /mnt/data/properties/anatomy_term_mapping.properties $datadir/wormbase-acedb/anatomy_term/mapping/
-# perl $pp/wb-acedb/anatomy_term//prep_anatomy_term.pl $datadir/wormbase-acedb/anatomy_term/Anatomy_term.xml $datadir/wormbase-acedb/anatomy_term/XML/Anatomy_term_pre$
+#################### anatomy term #####################
+echo 'anatomy_term'
+mkdir -vp $datadir/wormbase-acedb/anatomy_term/XML
+mkdir -vp $datadir/wormbase-acedb/anatomy_term/mapping
+cp -v $sourcedir/Anatomy_term.xml $acexmldir/anatomy_term/Anatomy_term.xml
+cp -v $intermine'/wormmine/support/properties/anatomy_term_mapping.properties' $datadir'/wormbase-acedb/anatomy_term/mapping/'
+perl $testlab'/perl/preprocess/wb-acedb/anatomy_term//prep_anatomy_term.pl' $datadir'/wormbase-acedb/anatomy_term/Anatomy_term.xml' $datadir'/wormbase-acedb/anatomy_term/XML/Anatomy_term_prepped.xml'
 
-# echo 'cds'
-#mkdir -vp $datadir/wormbase-acedb/cds/XML
-#mkdir -vp $datadir/wormbase-acedb/cds/mapping
-#cp -v $sourcedir/CDS.xml $acexmldir/cds/CDS.xml
-#cp -v /mnt/data/properties/cds_mapping.properties $datadir/wormbase-acedb/cds/mapping/
-#perl /mnt/data/intermine/testlab/perl/purify_xace/purify_xace.pl $datadir/wormbase-acedb/cds/CDS.xml $datadir/wormbase-acedb/cds/purified_CDS.xml
-#perl $pp/wb-acedb/cds/prep_wb-acedb-cds.pl $datadir/wormbase-acedb/cds/purified_CDS.xml $datadir/wormbase-acedb/cds/XML/prepped_CDS.xml
-#rm $datadir/wormbase-acedb/cds/purified_CDS.xml
+#################### cds #############################
+echo 'cds'
+mkdir -vp $datadir/wormbase-acedb/cds/XML
+mkdir -vp $datadir/wormbase-acedb/cds/mapping
+cp -v $sourcedir/CDS.xml $acexmldir/cds/CDS.xml
+cp -v $intermine'/wormmine/support/properties/cds_mapping.properties' $datadir'/wormbase-acedb/cds/mapping/'
+perl $testlab'/perl/purify_xace/purify_xace.pl' $datadir'/wormbase-acedb/cds/CDS.xml' $datadir'/wormbase-acedb/cds/purified_CDS.xml'
+perl $testlab'/perl/preprocess/wb-acedb/cds/prep_wb-acedb-cds.pl' $datadir'/wormbase-acedb/cds/purified_CDS.xml' $datadir'/wormbase-acedb/cds/XML/prepped_CDS.xml'
+rm -v $datadir/wormbase-acedb/cds/purified_CDS.xml
 
 
 #echo 'expr_cluster'
