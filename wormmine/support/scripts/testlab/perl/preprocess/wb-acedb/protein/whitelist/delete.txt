@@ -1,0 +1,779 @@
+<species_list>
+   
+  # All is a special type of species. 
+  # Configuration included here for easily building the species index page.
+  <all>
+      title All Species
+      display_in_dropdown yes
+      gbrowse             no
+      gene_models         no
+      <default_widgets>
+                 overview
+		 downloads
+      </default_widgets>
+      <widgets> 
+#           <overview>
+#               name overview
+#               title Overview
+#           </overview>
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+      </widgets>
+      # These are the classes available from the drop down menu
+      <available_classes>
+           class antibody
+           class expression_cluster
+           class life_stage
+           class gene
+           class gene_class
+           class phenotype
+           class protein
+           class sequence
+           class strain
+           class transgene
+           class variation
+       </available_classes>
+  </all>        
+
+   <a_suum>
+      title A. suum
+      genus Ascaris
+      species suum
+      ncbi_taxonomy_id 6253
+       tier                    III
+       display_in_dropdown     yes
+       gbrowse                 yes
+       gene_models             yes
+       <source>
+          name University of Melbourne; BGI
+          url 
+          contact Aaron Jex
+          email ajex@unimelb.edu.au
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+      </available_classes>
+    </a_suum>
+
+    <b_malayi>
+      title B. malayi
+      genus Brugia
+      species malayi
+      common_name agent of lymphatic filariasis
+      ncbi_taxonomy_id 6279
+      current_version
+      tier                    III
+      display_in_dropdown     yes
+      gbrowse                 yes
+      gene_models             yes
+      <gff_availability>
+          gff2
+      </gff_availability>
+      <source>
+          name TIGR -> WashU/Sanger
+          url
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+            # These are the classes available from the drop down menu
+      <available_classes>
+           class gene
+           class protein
+           class sequence
+           class strain
+           class variation  
+      </available_classes>
+    </b_malayi>
+
+    <b_xylophilus>
+      title B. xylophilus
+      genus Bursaphelenchus
+      species xylophilus
+      common_name pine wood nematode
+      ncbi_taxonomy_id 6326
+      current_version
+      tier                    III
+      display_in_dropdown     yes
+      gbrowse                 yes
+      gene_models             yes
+      <source>
+          name 
+          url
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+      </available_classes>
+    </b_xylophilus>
+
+    <c_angaria>
+      title C. angaria
+      genus Caenorhabditis
+      species angaria
+      common_name  
+      ncbi_taxonomy_id        96668
+      current_version
+      tier                    II
+      display_in_dropdown     yes
+      gbrowse                 yes
+      gene_models             yes
+      <source>
+          name Caltech
+          url
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+      </available_classes>
+    </c_angaria>
+
+    <c_elegans>
+      title C. elegans
+      genus Caenorhabditis
+      species elegans
+      common_name  
+      ncbi_taxonomy_id 6239
+      current_version
+      tier            I
+      display_in_dropdown yes
+      gbrowse             yes
+      gene_models         yes
+      <gff_availability>
+          gff2
+      </gff_availability>
+      <source>
+          name
+          url
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      # These are the classes available from the drop down menu
+      <available_classes>
+           class antibody
+           class expression_cluster
+           class life_stage
+           class gene
+           class gene_class
+           class phenotype
+           class protein
+           class sequence
+           class strain
+           class transgene
+           class variation  
+       </available_classes>
+    </c_elegans>
+
+    <c_brenneri>
+      title C. brenneri
+      genus Caenorhabditis
+      species brenneri
+      common_name = 
+      ncbi_taxonomy_id 135651
+      current_version
+      tier                    II
+      display_in_dropdown     yes
+      gbrowse                 yes
+      gene_models             yes
+      <source>
+          name WashU
+          url
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+           class gene
+           class protein
+           class sequence
+           class strain
+           class variation
+       </available_classes>
+    </c_brenneri>
+
+    <c_briggsae>
+      title C. briggsae
+      genus Caenorhabditis
+      species briggsae
+      common_name =
+      ncbi_taxonomy_id 6238
+      current_version CB4
+      tier                    II
+      display_in_dropdown     yes
+      gbrowse                 yes
+      gene_models             yes
+      <source>
+          name WashU
+          url
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+           class gene
+           class protein
+           class sequence
+           class variation
+           class strain
+       </available_classes>
+    </c_briggsae>
+ 
+   <c_japonica>
+      title C. japonica
+      genus Caenorhabditis
+      species japonica
+      common_name = 
+      ncbi_taxonomy_id 281687
+      current_version
+      tier                    II
+      display_in_dropdown     yes
+      gbrowse                 yes                
+      gene_models             yes
+      <source>
+          name WashU
+          url
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+           class gene
+           class protein
+           class sequence
+           class variation
+       </available_classes>
+    </c_japonica>
+
+    <c_remanei>
+       title C. remanei
+       genus Caenorhabditis
+       species remanei
+       common_name = 
+       ncbi_taxonomy_id 31234
+       current_version
+       tier                    II
+       display_in_dropdown     yes
+       gbrowse                 yes
+       gene_models             yes
+       <source>
+          name WashU
+          url
+          contact
+          email
+      </source>
+
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+     <available_classes>
+           class gene
+           class protein
+           class sequence
+           class variation
+           class strain
+      </available_classes>
+    </c_remanei>
+
+    <c_sp5>
+       title C. sp5
+       genus Caenorhabditis
+       species "sp. 5"
+       ncbi_taxonomy_id        497871
+       tier                    III
+       display_in_dropdown     yes
+       gbrowse                 yes
+       gene_models             no
+       <source>
+          name Sanger
+          url 
+          contact
+          email
+       </source>
+       <default_widgets>
+         overview
+         downloads
+         assemblies
+       </default_widgets>
+       <widgets> 
+       # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+       </widgets>
+       <available_classes>
+       </available_classes>
+    </c_sp5>
+
+    <c_sp11>
+       title C. sp11
+       genus Caenorhabditis
+       species "sp. 11"
+       ncbi_taxonomy_id 886184
+       tier                    III
+       display_in_dropdown     yes
+       gbrowse                 yes
+       gene_models             yes
+       <source>
+          name Sanger
+          url 
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+      # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+      </available_classes>
+    </c_sp11>
+
+ 
+    <h_bacteriophora>
+      title H. bacteriophora
+      genus Heterorhabditis
+      species bacteriophora
+      common_name =
+      ncbi_taxonomy_id 37862
+       current_version
+       tier                    III
+       display_in_dropdown     yes
+       gbrowse                 yes
+       gene_models             no
+       <source>
+          name WashU
+          url
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+     <available_classes>
+     </available_classes>
+    </h_bacteriophora>
+
+    <h_contortus>
+      title H. contortus
+      genus Haemonchus
+      species contortus
+      common_name barber pole worm
+      ncbi_taxonomy_id 6289
+      current_version
+       tier                    III
+       display_in_dropdown     yes
+       gbrowse                 yes
+       gene_models             yes
+       <source>
+          name Sanger
+          url
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+      </available_classes>
+    </h_contortus>
+
+    <m_hapla>
+      title M. hapla
+      genus Meloidogyne
+      species hapla
+      common_name =
+      ncbi_taxonomy_id 6305
+       tier                    III
+       display_in_dropdown     yes
+       gbrowse                 yes
+       gene_models             yes
+       <source>
+          name NCSU
+          url hapla.org
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+      </available_classes>
+    </m_hapla>
+
+    <m_incognita>
+      title M. incognita
+      genus Meloidogyne
+      species incognita
+      common_name southern root-knot nematode
+      ncbi_taxonomy_id 6306
+      tier                    III
+      display_in_dropdown     yes
+      gbrowse                 yes
+      gene_models             no
+      <source>
+          name INRA
+          url 
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+      </available_classes>
+    </m_incognita>
+
+
+   <p_pacificus>
+      title P. pacificus
+      genus Pristionchus
+      species pacificus
+      ncbi_taxonomy_id 54126
+      tier                    II
+      display_in_dropdown     yes
+      gbrowse                 yes
+      gene_models             yes
+       <source>
+          name WashU/MPI
+          url 
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+           class gene
+           class protein
+           class sequence
+           class variation
+       </available_classes>
+    </p_pacificus>
+
+
+   <s_ratti>
+      title S. ratti
+      genus Strongyloides
+      species ratti
+      ncbi_taxonomy_id 34506
+       tier                    III
+       display_in_dropdown     no
+       gbrowse                 no
+       gene_models             no
+       <source>
+          name Sanger
+          url 
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+      </available_classes>
+    </s_ratti>
+
+    <t_spiralis>
+      title T. spiralis
+      genus Trichinella
+      species spiralis
+      ncbi_taxonomy_id 6334
+       tier                    III
+       display_in_dropdown     yes
+       gbrowse                 no
+       gene_models             no
+       <source>
+          name WashU
+          url 
+          contact
+          email
+      </source>
+      <default_widgets>
+         overview
+         downloads
+         assemblies
+      </default_widgets>
+      <widgets> 
+	  # Built programmatically. This cannot be a custom widget.
+          <downloads>
+              name   downloads
+              title  Downloads
+          </downloads>
+          <assemblies>
+              name   assemblies
+              title  Genome Assemblies
+              fields current_assemblies
+	      fields previous_assemblies
+          </assemblies>
+      </widgets>
+      <available_classes>
+      </available_classes>
+    </t_spiralis>
+
+</species_list>

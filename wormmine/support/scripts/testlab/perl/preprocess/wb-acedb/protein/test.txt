@@ -1,0 +1,8 @@
+
+<?xml version='1.0'?>
+<employees>test1
+	<employee age="43" sex="M" department="Operations">John Doe</employee>
+	<employee age="31" sex="F" department="Accounts">Jane Doe</employee>
+	test2
+	<employee age="32" sex="M" department="Human Resources">Be Goode</employee> 
+</employees>

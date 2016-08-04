@@ -1,0 +1,2 @@
+# just run this script
+#perl prep-wb-proteins.pl $DATADIR/fasta/c_elegans/proteins/raw/c_elegans.WS234.protein.fa $DATADIR/fasta/c_elegans/proteins/prepped/prepped-c_elegans.WS234.protein.fa
