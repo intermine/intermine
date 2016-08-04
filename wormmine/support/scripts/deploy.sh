@@ -3,7 +3,7 @@
 #Paulo Nuin Jan 2015, modified Feb 15 - Aug 2016
 
 # TODO: set release version as a script argument
-# TODO: 
+# TODO: add mapping/property files to repo and copy process here
 
 #set the version to be accessed
 wbrel="WS254"
@@ -33,7 +33,7 @@ declare -A species=(["c_elegans"]="PRJNA13758"
                     ["s_ratti"]="PRJEB125"
                     ["c_sinica"]="PRJNA194557")
 
-sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location, should be changed with each release
+sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location
 
 #################### Main dirs ##################
 #                                               #
@@ -43,19 +43,10 @@ sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location, should be 
 #                                               #
 #################### Species ####################
 intermine='/mnt/data/intermine'
-# intermine='/Users/nuin/intermine_work/new/intermine'
+# intermine='/Users/nuin/intermine_work/new/intermine' #local test
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
-
-# Gene association file  localtion
-gaffile='gene_association.'$wbrel'.wb'
-gafurl='ftp://ftp.wormbase.org/pub/wormbase/releases/'$wbrel'/ONTOLOGY/'$gaffile
-
-# #GFF URL
-# gffurl='ftp://206.108.120.212/pub/wormbase/releases/'$wbrel'/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.'$wbrel'.annotations.gff3.gz'
-
-
 
 
 #################### FTP ########################
@@ -66,8 +57,8 @@ do
 
   #################### get the genomic data ####################
   echo 'Getting genomic data'
-  mkdir -vp $datadir"/fasta/"$spe"/genomic"
-  cd $datadir"/fasta/"$spe"/genomic"
+  mkdir -vp $datadir'/fasta/'$spe"/genomic"
+  cd $datadir'/fasta/'$spe"/genomic"
   if [ ! -f "$spe"."${species["$spe"]}"."$wbrel".genomic.fa ]; then
     echo "$spe"."${species["$spe"]}"."$wbrel".genomic.fa 'not found'
     echo 'transferring ' "$spe"."${species["$spe"]}"."$wbrel".genomic.fa.gz
@@ -77,69 +68,65 @@ do
     echo "$spe"."${species["$spe"]}"."$wbrel".genomic.fa 'found, not transferring'
   fi
 
-
   #################### get the protein data ####################
+  echo 'Getting protein data'
   mkdir -vp $datadir"/fasta/"$spe"/proteins/raw"
   mkdir -vp $datadir"/fasta/"$spe"/proteins/prepped"
   cd $datadir"/fasta/"$spe"/proteins/raw"
   if [ ! -f "$spe"."${species["$spe"]}"."$wbrel".protein.fa ]; then
     echo "$spe"."${species["$spe"]}"."$wbrel".protein.fa 'not found'
     echo 'transferring ' "$spe"."${species["$spe"]}"."$wbrel".protein.fa
-    wget -O "$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/species/"$spe"/"${species["$spe"]}"/"$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz"
+    # wget -O "$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/species/"$spe"/"${species["$spe"]}"/"$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz"
     gunzip -v "$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz
   else
     echo "$spe"."${species["$spe"]}"."$wbrel".protein.fa 'found, not transferring'
   fi
   perl $testlab'/perl/preprocess/fasta/wb-proteins/prep-wb-proteins.pl' "$spe"."${species["$spe"]}"."$wbrel".protein.fa ../prepped/"$spe"."${species["$spe"]}"."$wbrel".protein.fa
 
-  #################### get gff annotations ####################
-  mkdir -vp $datadir'/wormbase-gff3'
+  # #################### get gff annotations ####################
+  echo 'Getting gff data'
+  mkdir -vp $datadir'/wormbase-gff3/raw'
+  mkdir -vp $datadir'/wormbase-gff3/final'
   cd $datadir'/wormbase-gff3'
-  if [ ! -f "$spe"."${species["$spe"]}"."$wbrel".gff ]; then
+  if [ ! -f raw/"$spe"."${species["$spe"]}"."$wbrel".gff ]; then
     echo 'transferring' "$spe"."${species["$spe"]}"."$wbrel".gff
-    wget -O "$spe"."${species["$spe"]}"."$wbrel".gff.gz  "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/species/"$spe"/"${species["$spe"]}"/"$spe"."${species["$spe"]}"."$wbrel".annotations.gff3.gz"
-    gunzip -v "$spe"."${species["$spe"]}"."$wbrel".gff.gz
+    wget -O raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz  "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/species/"$spe"/"${species["$spe"]}"/"$spe"."${species["$spe"]}"."$wbrel".annotations.gff3.gz"
+    gunzip -v raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz
+    bash $testlab'/perl/preprocess/gff3/scrape_gff3.sh' $datadir/wormbase-gff3/raw/"$spe"."${species["$spe"]}"."$wbrel".gff $datadir/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff
   else
-    echo  "$spe"."${species["$spe"]}"."$wbrel".gff 'found'
+    echo  raw/"$spe"."${species["$spe"]}"."$wbrel".gff 'found'
   fi
-  $pp/gff3/scrape_gff3.sh $datadir/wormbase-gff3/raw $datadir/wormbase-gff3/final/cdogma.gff3
-
 done
 
 
-# get gene ontology file
-#mkdir -vp $datadir"/go/"
-#wget -O $datadir/go/gene_ontology."$wbrel".obo "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/ONTOLOGY/gene_ontology."$wbrel".obo"
+#################### gene ontology ####################
+mkdir -vp $datadir"/go/"
+if [ ! -f $datadir/go/gene_ontology."$wbrel".obo ];then
+  echo 'transferring gene ontology file'
+  wget -O $datadir/go/gene_ontology."$wbrel".obo "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/ONTOLOGY/gene_ontology."$wbrel".obo"
+else
+  echo 'gene ontolgy file found'
+fi
 
-# get gene association file
-#mkdir -vp $datadir'/go-annotation/raw/'
-#wget -O $datadir/gene_association."$wbrel".wb "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/ONTOLOGY/gene_association."$wbrel".wb"
+#################### gene association #################
+mkdir -vp $datadir'/go-annotation/raw/'
+mkdir -vp $datadir'/go-annotation/final'
+if [ ! -f $datadir'/go-annotation/final/gene_association_sorted_filtered.wb' ];then
+  echo 'transferring gene association file'
+  wget -O $datadir'/go-annotation/raw/gene_association'."$wbrel".wb "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/ONTOLOGY/gene_association."$wbrel".wb"
+  echo 'sorting'
+  sort -k 2,2 $datadir'/go-annotation/raw/gene_association'."$wbrel".wb > $datadir'/go-annotation/raw/gene_association_sorted.wb'
+  echo 'filtering'
+  bash $testlab'/perl/preprocess/go-annotation/filter_out_uniprot.sh' $datadir'/go-annotation/raw/gene_association_sorted.wb' $datadir'/go-annotation/final/gene_association_sorted_filtered.wb'
+else
+  echo 'gene association file found'
+fi
 
-
-#echo 'replacing gaf file'
-#rm $datadir'/go-annotation/raw/*'
-#mkdir -vp $datadir/go-annotation/final
-#wget -O $datadir'/go-annotation/raw/'$gaffile $gafurl
-#sort -k 2,2 $datadir/go-annotation/raw/gene_association."$wbrel".wb > $datadir/go-annotation/gene_association_sorted.wb
-# grep -vE $datadir/go-annotation/gene_association_sorted.wb > $datadir/go-annotation/final/gene_association_sorted_filtered.wb
-#bash $ppgo/filter_out_uniprot.sh $datadir/go-annotation/gene_association_sorted.wb $datadir/go-annotation/final/gene_association_sorted_filtered.wb
-
-
-# echo 'replacing gff3'
-#cd $datadir'/wormbase-gff3'
-#mkdir -vp $datadir'/wormbase-gff3/final'
-#mkdir -vp $datadir'/wormbase-gff3/mapping'
-#rm -v $datadir'/wormbase-gff3'/*
-#rm -v $datadir'/wormbase-gff3'final/*
-#rm -v $datadir'/wormbase-gff3'/mapping/*
-#wget -O $datadir'/wormbase-gff3/raw.gz' $gffurl
-#gunzip -v $datadir'/wormbase-gff3/raw.gz'
-#bash 
 
 
 #cp /mnt/data/properties/id_mapping.tab $datadir'/wormbase-gff3/mapping/'
 #cp /mnt/data/properties/typeMapping.tab $datadir'/wormbase-gff3/mapping/'
-
+#################### AceDB processing #################
 
 #echo 'anatomy_term'
 #mkdir -vp $datadir/wormbase-acedb/anatomy_term/XML
