@@ -147,47 +147,49 @@ perl $testlab'/perl/purify_xace/purify_xace.pl' $datadir'/wormbase-acedb/cds/CDS
 perl $testlab'/perl/preprocess/wb-acedb/cds/prep_wb-acedb-cds.pl' $datadir'/wormbase-acedb/cds/purified_CDS.xml' $datadir'/wormbase-acedb/cds/XML/prepped_CDS.xml'
 rm -v $datadir/wormbase-acedb/cds/purified_CDS.xml
 
+#################### expression cluster ##############
+echo 'expression cluster'
+mkdir -vp $datadir/wormbase-acedb/expr_cluster/XML
+mkdir -vp $datadir/wormbase-acedb/expr_cluster/mapping
+cp -v $sourcedir/Expression_cluster.xml $acexmldir/expr_cluster/Expression_cluster.xml
+cp -v $intermine'/wormmine/support/properties/expr_cluster_mapping.properties' $datadir'/wormbase-acedb/expr_cluster/mapping/'
+perl $testlab'/perl/purify_xace/purify_xace.pl' $datadir'/wormbase-acedb/expr_cluster/Expression_cluster.xml' $datadir'/wormbase-acedb/expr_cluster/XML/purified_expression_cluster.xml'
 
-#echo 'expr_cluster'
-#mkdir -vp $datadir/wormbase-acedb/expr_cluster/XML
-#mkdir -vp $datadir/wormbase-acedb/expr_cluster/mapping
-#cp $sourcedir/Expression_cluster.xml $acexmldir/expr_cluster/Expression_cluster.xml
-#cp /mnt/data/properties/expr_cluster_mapping.properties $datadir/wormbase-acedb/expr_cluster/mapping/
-#cp /mnt/data/properties/anatomy_term_mapping.properties $datadir/wormbase-acedb/anatomy_term/mapping
-#perl /mnt/data/intermine/testlab/perl/purify_xace/purify_xace.pl $datadir/wormbase-acedb/expr_cluster/Expression_cluster.xml $datadir/wormbase-acedb/expr_cluster/X$
+#################### expression pattern #############
+echo 'expression pattern'
+mkdir -vp $datadir/wormbase-acedb/expr_pattern/XML
+mkdir -vp $datadir/wormbase-acedb/expr_pattern/mapping
+cp -v $sourcedir/Expr_pattern.xml $acexmldir/expr_pattern/Expr_pattern.xml
+cp -v $intermine'/wormmine/support/properties/expr_pattern_mapping.properties' $datadir'/wormbase-acedb/expr_pattern/mapping/'
+perl $testlab'/perl/preprocess/wb-acedb/expr_pattern/prep_expr_pattern.pl' $datadir'/wormbase-acedb/expr_pattern/Expr_pattern.xml' $datadir'/wormbase-acedb/expr_pattern/XML/Expr_pattern_prepped.xml'
 
-
-#echo 'expr_pattern'
-#mkdir -vp $datadir/wormbase-acedb/expr_pattern/XML
-#mkdir -vp $datadir/wormbase-acedb/expr_pattern/mapping
-#cp $sourcedir/Expr_pattern.xml $acexmldir/expr_pattern/Expr_pattern.xml
-#cp /mnt/data/properties/expr_pattern_mapping.properties $datadir/wormbase-acedb/expr_pattern/mapping/
-#perl /mnt/data/intermine/testlab/perl/preprocess/wb-acedb/expr_pattern/prep_expr_pattern.pl $datadir/wormbase-acedb/expr_pattern/Expr_pattern.xml $datadir/wormbase$
-
-
-#echo 'gene'
-#mkdir -vp $datadir/wormbase-acedb/gene/XML
-#mkdir -vp $datadir/wormbase-acedb/gene/mapping
-#cp $sourcedir/Gene.xml $acexmldir/gene/Gene.xml
-#cp /mnt/data/properties/wormbase-acedb-gene.properties $datadir/wormbase-acedb/gene/mapping/
-#perl /mnt/data/intermine/testlab/perl/purify_xace/purify_xace.pl $datadir/wormbase-acedb/gene/Gene.xml $datadir/wormbase-acedb/gene/purified_gene.xml
-#perl $pp/wb-acedb/gene/prep_wb-acedb-gene.pl $datadir/wormbase-acedb/gene/purified_gene.xml $datadir/wormbase-acedb/gene/XML/prepped_gene.xml
-#rm $datadir/wormbase-acedb/gene/purified_gene.xml
-
-#echo 'life_stage'
-#mkdir -vp $datadir/wormbase-acedb/life_stage/XML
-#mkdir -vp $datadir/wormbase-acedb/life_stage/mapping
-#cp $sourcedir/Life_stage.xml $acexmldir/life_stage/Life_stage.xml
-#cp /mnt/data/properties/life_stage_mapping.properties $datadir/wormbase-acedb/life_stage/mapping/
-# perl /mnt/data/intermine/testlab/perl/purify_xace/purify_xace.pl $datadir/wormbase-acedb/life_stage/Life_stage.xml $datadir/wormbase-acedb/life_stage/XML/purified_l$
+#################### gene ###########################
+echo 'gene'
+mkdir -vp $datadir/wormbase-acedb/gene/XML
+mkdir -vp $datadir/wormbase-acedb/gene/mapping
+cp -v $sourcedir/Gene.xml $acexmldir/gene/Gene.xml
+cp -v $intermine'/wormmine/support/properties/wormbase-acedb-gene.properties' $datadir'/wormbase-acedb/gene/mapping/'
+perl $testlab'/perl/purify_xace/purify_xace.pl' $datadir'/wormbase-acedb/gene/Gene.xml' $datadir'/wormbase-acedb/gene/purified_gene.xml'
+perl $testlab'/perl/preprocess/wb-acedb/gene/prep_wb-acedb-gene.pl' $datadir'/wormbase-acedb/gene/purified_gene.xml' $datadir'/wormbase-acedb/gene/XML/prepped_gene.xml'
+rm $datadir/wormbase-acedb/gene/purified_gene.xml
 
 
-#echo 'phenotype'
-#mkdir -vp $datadir/wormbase-acedb/phenotype/XML
-#mkdir -vp $datadir/wormbase-acedb/phenotype/mapping
-#cp $sourcedir/Phenotype.xml $acexmldir/phenotype/Phenotype.xml
-#cp /mnt/data/properties/phenotype_mapping.properties $datadir/wormbase-acedb/phenotype/mapping
-#perl /mnt/data/intermine/testlab/perl/purify_xace/purify_xace.pl $datadir/wormbase-acedb/phenotype/Phenotype.xml $datadir/wormbase-acedb/phenotype/XML/purified_phe$
+#################### life stage #####################
+echo 'life stage'
+mkdir -vp $datadir/wormbase-acedb/life_stage/XML
+mkdir -vp $datadir/wormbase-acedb/life_stage/mapping
+cp $sourcedir/Life_stage.xml $acexmldir/life_stage/Life_stage.xml
+cp $intermine'/wormmine/support/properties/life_stage_mapping.properties' $datadir'/wormbase-acedb/life_stage/mapping/'
+perl $testlab'/perl/purify_xace/purify_xace.pl' $datadir'/wormbase-acedb/life_stage/Life_stage.xml' $datadir'/wormbase-acedb/life_stage/XML/purified_life_stage.xml'
+
+
+#################### phenotype #####################
+echo 'phenotype'
+mkdir -vp $datadir/wormbase-acedb/phenotype/XML
+mkdir -vp $datadir/wormbase-acedb/phenotype/mapping
+cp -v $sourcedir/Phenotype.xml $acexmldir/phenotype/Phenotype.xml
+cp -v $intermine'/wormmine/support/properties/phenotype_mapping.properties' $datadir'/wormbase-acedb/phenotype/mapping'
+perl $testlab'/perl/purify_xace/purify_xace.pl' $datadir'/wormbase-acedb/phenotype/Phenotype.xml' $datadir'/wormbase-acedb/phenotype/XML/purified_phenotype.xml'
 
 
 #echo 'protein'
