@@ -4,6 +4,7 @@
 
 # TODO: set release version as a script argument
 # TODO: add mapping/property files to repo and copy process here
+# TODO: not process XML files already processed
 
 #set the version to be accessed
 wbrel="WS254"
@@ -43,8 +44,8 @@ sourcedir='/Users/nuin/intermine_work/WS254-test-data'
 #  pp - pre-processing dir with perl and bash   #
 #                                               #
 #################### Species ####################
-# intermine='/mnt/data/intermine'
-intermine='/Users/nuin/intermine_work/new/intermine' #local test
+intermine='/mnt/data/intermine'
+# intermine='/Users/nuin/intermine_work/new/intermine' #local test
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
@@ -191,51 +192,41 @@ cp -v $sourcedir/Phenotype.xml $acexmldir/phenotype/Phenotype.xml
 cp -v $intermine'/wormmine/support/properties/phenotype_mapping.properties' $datadir'/wormbase-acedb/phenotype/mapping'
 perl $testlab'/perl/purify_xace/purify_xace.pl' $datadir'/wormbase-acedb/phenotype/Phenotype.xml' $datadir'/wormbase-acedb/phenotype/XML/purified_phenotype.xml'
 
+#################### protein #######################
+echo 'protein'
+mkdir -vp $datadir/wormbase-acedb/protein/XML
+mkdir -vp $datadir/wormbase-acedb/protein/mapping
+cp -v $sourcedir/Protein.xml $acexmldir/protein/Protein.xml
+cp -v $intermine'/wormmine/support/properties/protein_mapping.properties' $datadir'/wormbase-acedb/protein/mapping'
+perl $testlab'/perl//preprocess/wb-acedb/protein/prep_wb-acedb-protein.pl' $datadir'/wormbase-acedb/protein/Protein.xml' $datadir'/wormbase-acedb/protein/prepped_protein.xml'
+perl $testlab'/perl/preprocess/wb-acedb/protein/purge_protein.pl' $datadir'/wormbase-acedb/protein/prepped_protein.xml' $datadir/'wormbase-acedb/protein/XML/purged_prepped_protein.xml' $testlab'/perl/preprocess/wb-acedb/protein/whitelist/species_whitelist.txt' $datadir'/wormbase-acedb/protein/rejected_by_purge.xml'
+rm $datadir/wormbase-acedb/protein/prepped_protein.xml
 
-#echo 'protein'
-#mkdir -vp $datadir/wormbase-acedb/protein/XML
-#mkdir -vp $datadir/wormbase-acedb/protein/mapping
-#cp $sourcedir/Protein.xml $acexmldir/protein/Protein.xml
-#cp /mnt/data/properties/protein_mapping.properties $datadir/wormbase-acedb/protein/mapping
-#perl /mnt/data/intermine/testlab/perl/preprocess/wb-acedb/protein/prep_wb-acedb-protein.pl $datadir/wormbase-acedb/protein/Protein.xml $datadir/wormbase-acedb/prot$
-#perl /mnt/data/intermine/testlab/perl/preprocess/wb-acedb/protein/purge_protein.pl $datadir/wormbase-acedb/protein/prepped_protein.xml $datadir/wormbase-acedb/prot$
-#rm $datadir/wormbase-acedb/protein/prepped_protein.xml
+#################### species #####################
+echo 'species'
+mkdir -vp $datadir/wormbase-acedb/species/XML
+mkdir -vp $datadir/wormbase-acedb/species/mapping
+cp -v $sourcedir/Species.xml $acexmldir/species/Species.xml
+# cp -v $intermine'/wormmine/support/species_mapping.properties' $datadir'/wormbase-acedb/species/mapping'
 
+#################### transcript ##################
+echo 'transcript'
+mkdir -vp $datadir/wormbase-acedb/transcript/XML
+mkdir -vp $datadir/wormbase-acedb/transcript/mapping
+cp -v $sourcedir/Transcript.xml $acexmldir/transcript/Transcript.xml
+cp -v $intermine'/wormmine/support/properties/transcript_mapping.properties' $datadir'/wormbase-acedb/transcript/mapping'
+perl $testlab'/perl/preprocess/wb-acedb/transcript/prep_wb-acedb-transcript.pl' $datadir'/wormbase-acedb/transcript/Transcript.xml $datadir/wormbase-acedb/transcript/XML/prepped_Transcript.xml'
 
-#echo 'species'
-#mkdir -vp $datadir/wormbase-acedb/species/XML
-#mkdir -vp $datadir/wormbase-acedb/species/mapping
-#cp $sourcedir/Species.xml $acexmldir/species/Species.xml
-#cp /mnt/data/properties/species_mapping.properties $datadir/wormbase-acedb/species/mapping
-
-
-#echo 'transcript'
-#mkdir -vp $datadir/wormbase-acedb/transcript/XML
-#mkdir -vp $datadir/wormbase-acedb/transcript/mapping
-#cp $sourcedir/Transcript.xml $acexmldir/transcript/Transcript.xml
-#cp /mnt/data/properties/transcript_mapping.properties $datadir/wormbase-acedb/transcript/mapping
-#perl /mnt/data/intermine/testlab/perl/preprocess/wb-acedb/transcript/prep_wb-acedb-transcript.pl $datadir/wormbase-acedb/transcript/Transcript.xml $datadir/wormbas$
-
-
-#echo 'variation'
-#mkdir -vp $datadir/wormbase-acedb/variation/XML
-#mkdir -vp $datadir/wormbase-acedb/variation/mapping
-#cp $sourcedir/Variation.xml $acexmldir/variation/Variation.xml
-#cp /mnt/data/properties/variation_mapping.properties $datadir/wormbase-acedb/variation/mapping
-#perl /mnt/data/intermine/testlab/perl/preprocess/wb-acedb/variation/purify_variation.pl $datadir/wormbase-acedb/variation/Variation.xml $datadir/wormbase-acedb/var$
-
-
-#cd /mnt/data/intermine/wormmine/
-#./xx
+#################### variation ##################
+echo 'variation'
+mkdir -vp $datadir/wormbase-acedb/variation/XML
+mkdir -vp $datadir/wormbase-acedb/variation/mapping
+cp -v $sourcedir/Variation.xml $acexmldir/variation/Variation.xml
+cp -v $intermine'/wormmine/support/properties/variation_mapping.properties' $datadir'/wormbase-acedb/variation/mapping'
+perl $testlab'/perl/preprocess/wb-acedb/variation/purify_variation.pl' $datadir'/wormbase-acedb/variation/Variation.xml' $datadir'/wormbase-acedb/variation/XML/prepped_variation.xml'
 
 
+cd $intermine'/wormmine'
+pwd
+../bio/scripts/project_build -b -v localhost wormmine_dump
 
-
-
-# gffurl="ftp://206.108.125.180/pub/wormbase/releases/"$wbrel"/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758."$wbrel".annotations.gff3.gz"
-
-# declare -A species=(["a_ceylanicum"]="PRJNA231479" ["a_suum"]="PRJNA62057"
-#  ["b_xylophilus"]="PRJEA64437"  ["c_sp5"]="PRJNA194557"  ["d_immitis"]="PRJEB1797" ["h_bacteriophora"]="PRJNA13977"
-#  ["h_contortus"]="PRJEB506" ["l_loa"]="PRJNA60051" ["m_hapla"]="PRJNA29083" ["m_incognita"]="PRJEA28837"
-#  ["n_americanus"]="PRJNA72135"  ["p_exspectatus"]="PRJEB6009"
-#  ["t_spiralis"]="PRJNA12603" ["t_suis"]="PRJNA208415")
