@@ -1,0 +1,4 @@
+<project name="wormbase-acedb-tasks" default="default" basedir=".">
+  <description>build wormbase-acedb tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

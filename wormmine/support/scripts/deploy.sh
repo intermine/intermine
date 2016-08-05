@@ -44,8 +44,8 @@ sourcedir='/Users/nuin/intermine_work/WS254-test-data'
 #  pp - pre-processing dir with perl and bash   #
 #                                               #
 #################### Species ####################
-intermine='/mnt/data/intermine'
-# intermine='/Users/nuin/intermine_work/new/intermine' #local test
+# intermine='/mnt/data/intermine'
+intermine='/Users/nuin/intermine_work/new/intermine' #local test
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
@@ -105,7 +105,7 @@ done
 mkdir -vp $datadir"/go/"
 if [ ! -f $datadir/go/gene_ontology."$wbrel".obo ];then
   echo 'transferring gene ontology file'
-  wget -O $datadir/go/gene_ontology."$wbrel".obo "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/ONTOLOGY/gene_ontology."$wbrel".obo"
+  wget -O $datadir/go/gene_ontology.1_2.obo "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/ONTOLOGY/gene_ontology."$wbrel".obo"
 else
   echo 'gene ontolgy file found'
 fi
