@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="UberonTerm" extends="AnatomyTerm" is-interface="true">
+  <class name="UberonTerm" extends="OntologyTerm" is-interface="true">
     <collection name="crossReferences" referenced-type="OntologyTerm" />
   </class>
-  <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true"></class>
+  <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true" />
 </classes>

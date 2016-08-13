@@ -28,7 +28,7 @@
   </target>
 
   <target name="build-model-from-xml-in-project-dir" if="have.xml.in.project.dir">
-    <echo>Found xml file in project directory</echo>
+    <echo>Found model file ${model.name}_model.xml in project directory ${basedir}</echo>
     <model:modeloutofdate source="${model.name}_model.xml">
       <then>
         <copy file="${model.name}_model.xml" tofile="${build.task.dir}/${model.name}_model.xml"/>
@@ -39,7 +39,7 @@
   </target>
 
   <target name="build-model-from-xml-in-build-dir" if="have.xml.in.build.dir">
-    <echo>Found xml file in ${build.dir}</echo>
+    <echo>Found model file ${model.name}_model.xml in build directory ${build.dir}</echo>
     <model:modeloutofdate source="${build.model.dir}/${model.name}_model.xml">
       <then>
         <outofdate>
@@ -85,7 +85,7 @@
   <target name="-init-macrodef-model-output">
     <macrodef name="model-output" uri="http://www.intermine.org/ns/im-model-proj/1">
       <sequential>
-        <echo>Generating model java code...</echo>
+        <echo>Generating model java code for ${model.name} model to ${gen.src.dir}</echo>
         <model-output type="java" model="${model.name}" destdir="${gen.src.dir}"/>
       </sequential>
     </macrodef>

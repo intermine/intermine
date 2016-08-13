@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -415,6 +415,20 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
                 "<constraint path=\"Gene\" op=\"LOOKUP\" value=\"eve\"/>" +
         "</query>";
         doComparison(queryXml, "lookup-constraint");
+    }
+
+    /**
+     * This method tests generation when a path query has long paths.
+     *
+     * Long paths were previously causing an issue with python code generation where a long line without spaces
+     * before the 80 char break caused infinite codegen recursion.
+     */
+    public void testPathQueryCodeGenerationWithLongPaths() {
+        String queryXml = "<query name=\"\" model=\"genomic\" " +
+                "view=\"Gene.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.primaryAccession\">" +
+        "</query>";
+
+        doComparison(queryXml, "long-paths");
     }
 
     /**

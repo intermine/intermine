@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -75,8 +75,8 @@ public class PantherConverter extends BioFileConverter
         TYPES.put("LDO", "least diverged orthologue");
         TYPES.put("O", "orthologue");
         TYPES.put("P", "paralogue");
-        TYPES.put("X", "homologue");
-        TYPES.put("LDX", "least diverged homologue");
+        TYPES.put("X", "horizontal gene transfer");
+        TYPES.put("LDX", "least diverged horizontal gene transfer");
     }
 
     /**

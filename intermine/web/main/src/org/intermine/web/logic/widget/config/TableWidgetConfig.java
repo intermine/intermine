@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget.config;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,7 +22,7 @@ import org.intermine.web.logic.widget.TableWidget;
 import org.intermine.web.logic.widget.WidgetOptions;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -181,8 +181,9 @@ public class TableWidgetConfig extends WidgetConfig
             InterMineBag imBag,
             InterMineBag populationBag,
             ObjectStore os,
-            WidgetOptions options) {
-        return new TableWidget(this, imBag, os);
+            WidgetOptions options,
+            String ids, String populationIds) {
+        return new TableWidget(this, imBag, os, ids);
     }
 
 }

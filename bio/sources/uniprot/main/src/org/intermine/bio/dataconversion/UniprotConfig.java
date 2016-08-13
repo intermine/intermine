@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,7 +32,6 @@ public class UniprotConfig
     private List<String> featureTypes = new ArrayList<String>();
     private List<String> xrefs = new ArrayList<String>();
     private Map<String, ConfigEntry> entries = new HashMap<String, ConfigEntry>();
-    private String geneDesignation = "gene designation";
     private Map<String, String> strains = new HashMap<String, String>();
 
     /**
@@ -116,7 +115,7 @@ public class UniprotConfig
             if ("uniqueField".equals(attributes[1])) {
                 configEntry.setUniqueIdentifier(value);
             } else if ("gene-designation".equals(attributes[1])) {
-                geneDesignation = value;
+                configEntry.setGeneDesignation(value);
             } else if ("strain".equals(attributes[1])) {
                 configEntry.setStrain(value);
                 strains.put(value, taxonId);
@@ -177,22 +176,16 @@ public class UniprotConfig
     }
 
     /**
-     * Set the gene designation string.
-     *
-     * @param geneDesignation string to use to get the gene identifier
+     * A string value, e.g. "gene ID" or "gene designation"
+     * @param taxonId organism for this gene
+     * @return which entry in dbref to use for the gene id
      */
-    public void setGeneDesignation(String geneDesignation) {
-        this.geneDesignation = geneDesignation;
-    }
-
-    /**
-     * Get the gene designation for this gene.  Default value is "gene designation".  Worm uses
-     * "gene ID".
-     *
-     * @return the gene designation string
-     */
-    public String getGeneDesignation() {
-        return geneDesignation;
+    protected String getGeneDesignation(String taxonId) {
+        ConfigEntry configEntry = entries.get(taxonId);
+        if (configEntry == null) {
+            return null;
+        }
+        return configEntry.getGeneDesignation();
     }
 
     /**
@@ -205,6 +198,7 @@ public class UniprotConfig
         private String uniqueIdentifier = null;
         private Map<String, IdentifierConfig> identifiers = new HashMap<String, IdentifierConfig>();
         private String strain = null;
+        private String geneDesignation;
 
         /**
          * eg. primaryIdentifier
@@ -280,6 +274,28 @@ public class UniprotConfig
                 return null;
             }
             return identifierType.getValue();
+        }
+
+        /**
+         * Where to get the gene identifier from. e.g. in WormBase, it's the gene ID.
+         * Also could be "gene designation".
+         * <dbReference type="WormBase" id="C03D6.3a">
+         * <property type="protein sequence ID" value="CE32300"/>
+         * <property type="gene ID" value="WBGene00000466"/>
+         * <property type="gene designation" value="cel-1"/></dbReference>
+         *
+         * @return gene designation
+         */
+        public String getGeneDesignation() {
+            return geneDesignation;
+        }
+
+        /**
+         * set the gene designation for this taxon. can be NULL
+         * @param geneDesignation gene designation
+         */
+        public void setGeneDesignation(String geneDesignation) {
+            this.geneDesignation = geneDesignation;
         }
     }
 

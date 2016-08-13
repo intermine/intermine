@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -651,7 +651,6 @@ public class PsiConverter extends BioFileConverter
             }
 
             for (String identifier : identifiers) {
-                // validate ensembl, look up dmel
                 String newIdentifier = resolveGeneIdentifier(taxonId, datasource, identifier);
                 if (StringUtils.isNotEmpty(newIdentifier)) {
                     String refId = storeGene(field, newIdentifier, taxonId);
@@ -745,7 +744,6 @@ public class PsiConverter extends BioFileConverter
             if (refId == null) {
                 Item region = createItem("InteractionRegion");
                 refId = region.getIdentifier();
-                region.setReference("gene", geneRefId);
                 region.setReference("ontologyTerm", termId);
                 if (ih.startStatus != null) {
                     region.setAttribute("startStatus", ih.startStatus);

@@ -1,7 +1,7 @@
 package org.intermine.api.tracker.track;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,8 +31,7 @@ public class KeySearchTrack extends TrackAbstract
      */
     public KeySearchTrack(String keyword, String username,
             String sessionIdentifier, Timestamp timestamp) {
-        // no funny stuff here
-        this.keyword = keyword.replaceAll("[^A-Za-z0-9]"," ");
+        this.keyword = keyword;
         this.userName = username;
         this.sessionIdentifier = sessionIdentifier;
         this.timestamp = timestamp;

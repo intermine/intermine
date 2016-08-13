@@ -1,7 +1,7 @@
 package org.intermine.bio.query.range;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,23 +16,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.intermine.bio.query.range.ChromosomeLocationHelper.GenomicInterval;
 import org.intermine.metadata.ConstraintOp;
-import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.OverlapConstraint;
-import org.intermine.objectstore.query.OverlapRange;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathConstraintRange;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for the ChromosomeLocationHelper class.

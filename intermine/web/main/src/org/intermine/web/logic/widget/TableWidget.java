@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,14 +11,9 @@ package org.intermine.web.logic.widget;
  */
 
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
@@ -33,65 +28,19 @@ import org.intermine.web.logic.widget.config.TableWidgetConfig;
 public class TableWidget extends Widget
 {
     private TableWidgetLdr bagWidgLdr;
-    @SuppressWarnings("rawtypes")
-    private List bagContent = new Vector();
 
     /**
      * @param config configuration for this widget
      * @param interMineBag bag for this widget
+     * @param ids intermine IDs, required if bag is NULL
      * @param os objecstore
      */
-    public TableWidget(TableWidgetConfig config, InterMineBag interMineBag, ObjectStore os) {
+    public TableWidget(TableWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
+        String ids) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
-        createBagContent();
-    }
-
-
-    @SuppressWarnings("unchecked")
-    private void createBagContent() {
-
-        List<Integer> bagResults = bag.getContentsAsIds();
-        Iterator<Integer> it = bagResults.iterator();
-
-        while (it.hasNext()) {
-            InterMineObject oj = null;
-            try {
-                oj = os.getObjectById(it.next());
-            } catch (NumberFormatException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (ObjectStoreException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            String[] tmp = oj.toString().split(",");
-            String identifier = null;
-            Pattern primaryIdentifier = Pattern.compile("P\\w+(I)\\w+(r)\\=\\w*");
-            for (int i = 0; i < tmp.length; i++) {
-                Matcher matcher = primaryIdentifier.matcher(tmp[i].trim());
-                if (matcher.find()) {
-                    identifier = tmp[i];
-                    break;
-                }
-            }
-            if (identifier != null) {
-                String[] tmp1 = identifier.split("\"");
-                if (tmp1.length > 1) {
-                    bagContent.add(tmp1[1]);
-                }
-            }
-        }
-    }
-
-    /**
-     * checks if elem is in bag
-     * @return true if elem is in bag
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List getElementInList() {
-        return bagContent;
+        this.ids = ids;
     }
 
     /**
@@ -100,7 +49,7 @@ public class TableWidget extends Widget
     public void process() {
         checkNotProcessed();
         try {
-            bagWidgLdr = new TableWidgetLdr(config, bag, os);
+            bagWidgLdr = new TableWidgetLdr(config, bag, os, ids);
             notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
@@ -170,5 +119,4 @@ public class TableWidget extends Widget
         checkProcessed();
         return bagWidgLdr.createPathQuery();
     }
-
 }

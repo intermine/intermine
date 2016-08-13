@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -91,14 +91,7 @@ public class NcbiGeneConverter extends BioFileConverter
                 // gene type -
                 //http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/objects/
                 //entrezgene/entrezgene.asn
-                if (record.geneType == null) {
-                    continue;
-                } else if ("tRNA".equals(record.geneType)
-                        || "protein-coding".equals(record.geneType)
-                        || "miscRNA".equals(record.geneType)
-                        || "rRNA".equals(record.geneType)) { // ecolimine case
-                    createGeneByTaxonId(taxonId, record, parser);
-                }
+                createGeneByTaxonId(taxonId, record, parser);
             }
         }
     }
@@ -163,6 +156,7 @@ public class NcbiGeneConverter extends BioFileConverter
         }
 
         for (String ensemblId : record.ensemblIds) {
+            gene.setAttribute("secondaryIdentifier", ensemblId);
             createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl", true);
         }
 

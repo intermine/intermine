@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -67,17 +67,20 @@ public class GraphService extends WidgetService
 
         addOutputConfig(widgetConfig);
 
+        String ids = input.getIds();
+        String populationIds = input.getPopulationIds();
+
         //filters
         String filterSelectedValue = input.filter;
         if (StringUtils.isBlank(filterSelectedValue)) {
-            filterSelectedValue = getDefaultFilterValue(widgetConfig, imBag);
+            filterSelectedValue = getDefaultFilterValue(widgetConfig, imBag, ids);
         }
-        addOutputFilter(widgetConfig, filterSelectedValue, imBag);
+        addOutputFilter(widgetConfig, filterSelectedValue, imBag, ids);
 
         GraphWidget widget = null;
         try {
             widget = (GraphWidget) widgetConfig.getWidget(imBag, null,
-                    im.getObjectStore(), input);
+                    im.getObjectStore(), input, ids, populationIds);
             if (filterSelectedValue != null) {
                 widget.setFilter(filterSelectedValue);
             }
