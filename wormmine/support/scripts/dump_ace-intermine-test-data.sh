@@ -55,6 +55,8 @@ query find Gene_name $GENE ; follow Public_name_for ; follow Allele ; follow Phe
 show -x -f "$DESTINATION/temp-Phenotype-$GENE.xml"
 query find Gene_name $GENE ; follow Public_name_for ; follow Species
 show -x -f "$DESTINATION/temp-Species-$GENE.xml"
+query find Gene_name $GENE ; follow Public_name_for ; follow Allele; follow Phenotype ; follow RNAi
+show -x -f "$DESTINATION/temp-RNAi-$GENE.xml"
 
 EOF
 
@@ -73,10 +75,11 @@ cat temp-Variation*  > Variation.xml
 cat temp-Life_stage* > Life_stage.xml
 cat temp-Phenotype*  > Phenotype.xml
 cat temp-Species*  > Species.xml
+cat temp-RNAi* > RNAi.xml
 rm -f temp*
 echo ... done.
 cd ../
-tar xzf -c ${VERSION}-test-data.tgz ${VERSION}-test-data
+tar czf  ${VERSION}-test-data.tgz ${VERSION}-test-data
 cd "$CWD"
 
 

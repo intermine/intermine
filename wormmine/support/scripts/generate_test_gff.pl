@@ -28,9 +28,8 @@ my ($fh, $filename) = tempfile(undef, UNLINK => 0);
 #so I'm putting all of the Gene tags in a silly tag
 print $fh "<stuff>\n";
 
-
 open GENE, $genexml or die $!;
-while (<>) {
+while (<GENE>) {
     print $fh $_ unless $_=~/2_point/; #XML::Simple doesn't appear to like tags that start with numbers  
 }
 print $fh "</stuff>\n";
@@ -61,7 +60,14 @@ for (@{$$p1{'Gene'}}) {
         my $name = ref $var ? $$var{'content'} : $var;
         $name =~ s/\s+//g;
         chomp $name;
-        $ids{$name}++  if (&uniquename($name));;
+        $ids{$name}++  if (&uniquename($name));
+    }
+
+    for my $rna (@{ $$_{'Experimental_info'}{'RNAi_result'}{'RNAi'} }) {
+        my $name = $$rna{'content'};
+        $name =~ s/\s+//g;
+        chomp $name;
+        $ids{$name}++  if (&uniquename($name));
     }
 
 #    for my $key (keys %ids) {
