@@ -55,7 +55,7 @@ query find Gene_name $GENE ; follow Public_name_for ; follow Allele ; follow Phe
 show -x -f "$DESTINATION/temp-Phenotype-$GENE.xml"
 query find Gene_name $GENE ; follow Public_name_for ; follow Species
 show -x -f "$DESTINATION/temp-Species-$GENE.xml"
-query find Gene_name $GENE ; follow Public_name_for ; follow Allele; follow Phenotype ; follow RNAi
+query find Gene_name $GENE ; follow Public_name_for ; follow RNAi_result
 show -x -f "$DESTINATION/temp-RNAi-$GENE.xml"
 
 EOF
@@ -78,8 +78,10 @@ cat temp-Species*  > Species.xml
 cat temp-RNAi* > RNAi.xml
 rm -f temp*
 echo ... done.
-cd ../
-tar czf  ${VERSION}-test-data.tgz ${VERSION}-test-data
+#don't tar it up right away so the GFF can be prepared too
+#though that step could be added here eventually
+#cd ../
+#tar czf  ${VERSION}-test-data.tgz ${VERSION}-test-data
 cd "$CWD"
 
 
