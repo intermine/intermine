@@ -200,8 +200,12 @@
 
   <!-- ******************************************************* -->
   <tr>
-    <td rowspan="3"  class="leftcol">
+    <td rowspan="4"  class="leftcol">
     	<p><h2>Disease</h2></p></td>
+    <td>Disease names, synonyms, and identifiers from the Online Mendelian Inheritance in Man database.</td>
+    <td><a href="http://www.omim.org/" target="_new">OMIM</a> (via MGI)</td>
+  </tr>  
+  <tr>  
     <td> Mouse disease model annotations, i.e., associations of human diseases to specific mouse models (genotypes). From these, additional annotations are computed (derived) from diseases to mouse genes and alleles. </td> 
     <td> <a href="http://www.informatics.jax.org/" target="_new">MGI</a></td>
   </tr>
