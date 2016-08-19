@@ -16,8 +16,8 @@
     <query message="searching alt ids for terms" matchesAreIssues="false" runBeforeDefault="false">
         SELECT DISTINCT a1_.id as a3_, a2_.name as a4_ FROM OntologyTerm AS a1_, OntologyTermSynonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.type = 'alt_id' AND lower(a2_.name) in ?)
     </query>
-    <query message="searching synonyms for terms" matchesAreIssues="false" runBeforeDefault="false">
-        SELECT DISTINCT a1_.id as a3_, a2_.name as a4_ FROM OntologyTerm AS a1_, OntologyTermSynonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.type = 'synonym' AND lower(a2_.name) in ?)
+    <query message="searching exact synonyms for terms" matchesAreIssues="false" runBeforeDefault="false">
+        SELECT DISTINCT a1_.id as a3_, a2_.name as a4_ FROM OntologyTerm AS a1_, OntologyTermSynonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.type = 'exact_synonym' AND lower(a2_.name) in ?)
     </query>
   </bag-type>
   <additional-converter class-name="org.intermine.bio.web.logic.OrthologueConverter"
