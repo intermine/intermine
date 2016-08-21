@@ -128,7 +128,7 @@
     <attribute name="md5checksum" type="java.lang.String"/>
     <attribute name="primaryAccession" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Integer"/>
-    <attribute name="molecularWeight" type="java.lang.Integer"/>
+    <attribute name="molecularWeight" type="java.lang.Float"/> //Paulo Nuin August 2016
     <reference name="sequence" referenced-type="Sequence"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="proteins"/>
   </class>

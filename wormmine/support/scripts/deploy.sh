@@ -35,7 +35,7 @@ declare -A species=(["c_elegans"]="PRJNA13758"
                     ["c_sinica"]="PRJNA194557")
 
 # sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location
-sourcedir='/Users/nuin/intermine_work/WS254-test-data'
+sourcedir='/Volumes/Lacie/intermine_install/new/intermine/datadir/WS254-test-data'
 
 #################### Main dirs ##################
 #                                               #
@@ -45,7 +45,7 @@ sourcedir='/Users/nuin/intermine_work/WS254-test-data'
 #                                               #
 #################### Species ####################
 # intermine='/mnt/data/intermine'
-intermine='/Users/nuin/intermine_work/new/intermine' #local test
+intermine='/Volumes/Lacie/intermine_install/new/intermine' #local test
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
@@ -78,7 +78,7 @@ do
   if [ ! -f "$spe"."${species["$spe"]}"."$wbrel".protein.fa ]; then
     echo "$spe"."${species["$spe"]}"."$wbrel".protein.fa 'not found'
     echo 'transferring ' "$spe"."${species["$spe"]}"."$wbrel".protein.fa
-    # wget -O "$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/species/"$spe"/"${species["$spe"]}"/"$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz"
+    wget -O "$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/species/"$spe"/"${species["$spe"]}"/"$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz"
     gunzip -v "$spe"."${species["$spe"]}"."$wbrel".protein.fa.gz
   else
     echo "$spe"."${species["$spe"]}"."$wbrel".protein.fa 'found, not transferring'
