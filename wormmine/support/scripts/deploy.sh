@@ -35,7 +35,7 @@ declare -A species=(["c_elegans"]="PRJNA13758"
                     ["c_sinica"]="PRJNA194557")
 
 # sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location
-sourcedir='/Volumes/Lacie/intermine_install/new/intermine/datadir/WS254-test-data'
+sourcedir='/Users/nuin/intermine_work/WS254-test-data'
 
 #################### Main dirs ##################
 #                                               #
@@ -45,7 +45,7 @@ sourcedir='/Volumes/Lacie/intermine_install/new/intermine/datadir/WS254-test-dat
 #                                               #
 #################### Species ####################
 # intermine='/mnt/data/intermine'
-intermine='/Volumes/Lacie/intermine_install/new/intermine' #local test
+intermine='/Users/nuin/intermine_work/new/intermine' #local test
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
@@ -216,6 +216,16 @@ mkdir -vp $datadir/wormbase-acedb/transcript/mapping
 cp -v $sourcedir/Transcript.xml $acexmldir/transcript/Transcript.xml
 cp -v $intermine'/wormmine/support/properties/transcript_mapping.properties' $datadir'/wormbase-acedb/transcript/mapping'
 perl $testlab'/perl/preprocess/wb-acedb/transcript/prep_wb-acedb-transcript.pl' $datadir'/wormbase-acedb/transcript/Transcript.xml' $datadir'/wormbase-acedb/transcript/XML/prepped_Transcript.xml'
+
+#################### RNAi  ######################
+echo 'RNAi'
+mkdir -vp $datadir/wormbase-acedb/RNAi/XML
+mkdir -vp $datadir/wormbase-acedb/RNAi/mapping
+cp -v $sourcedir/RNAi.xml $acexmldir/RNAi/RNAi.xml
+cp -v $intermine'/wormmine/support/properties/rnai_mapping.properties' $datadir'/wormbase-acedb/RNAi/mapping'
+perl $testlab'/perl/preprocess/wb-acedb/RNAi/prep_RNAi.pl' $datadir'/wormbase-acedb/RNAi/RNAi.xml' $datadir'/wormbase-acedb/RNAi/XML/prepped_RNAi.xml'
+
+
 
 #################### variation ##################
 echo 'variation'

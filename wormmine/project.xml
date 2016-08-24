@@ -224,6 +224,18 @@
 		<property name="debug" value="false"/>
 	</source>
 
+    <source name="wb-acedb-RNAi" type="wormbase-acedb" dump="false">
+          <property name="src.data.dir" location="&datadir;/wormbase-acedb/RNAi/XML" />
+          <property name="mapping.file" 
+              value="&datadir;/wormbase-acedb/RNAi/mapping/RNAi_mapping.properties" />
+          <property name="key.file"
+              value="../../bio/sources/wormbase-acedb/resources/wormbase-acedb_keys.properties"/>
+          <property name="source.class" value="RNAi"/>
+          <property name="rejects.file" 
+              value="&datadir;/wormbase-acedb-RNAi-rejects.xml"/>
+          <property name="data.set" value="AceDB XML (RNAi)"/>
+      </source>
+
 		
     <source name="wb-acedb-species" type="wormbase-acedb" dump="false">
         <property name="src.data.dir" location="&datadir;/wormbase-acedb/species/XML" />
