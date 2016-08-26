@@ -208,6 +208,7 @@ mkdir -vp $datadir/wormbase-acedb/species/XML
 mkdir -vp $datadir/wormbase-acedb/species/mapping
 cp -v $sourcedir/Species.xml $acexmldir/species/Species.xml
 # cp -v $intermine'/wormmine/support/species_mapping.properties' $datadir'/wormbase-acedb/species/mapping'
+mkdir -p $datadir/entrez-organism/build/
 
 #################### transcript ##################
 echo 'transcript'
@@ -225,8 +226,6 @@ cp -v $sourcedir/RNAi.xml $acexmldir/RNAi/RNAi.xml
 cp -v $intermine'/wormmine/support/properties/rnai_mapping.properties' $datadir'/wormbase-acedb/RNAi/mapping'
 perl $testlab'/perl/preprocess/wb-acedb/RNAi/prep_RNAi.pl' $datadir'/wormbase-acedb/RNAi/RNAi.xml' $datadir'/wormbase-acedb/RNAi/XML/prepped_RNAi.xml'
 
-
-
 #################### variation ##################
 echo 'variation'
 mkdir -vp $datadir/wormbase-acedb/variation/XML
@@ -235,6 +234,13 @@ cp -v $sourcedir/Variation.xml $acexmldir/variation/Variation.xml
 cp -v $intermine'/wormmine/support/properties/variation_mapping.properties' $datadir'/wormbase-acedb/variation/mapping'
 perl $testlab'/perl/preprocess/wb-acedb/variation/purify_variation.pl' $datadir'/wormbase-acedb/variation/Variation.xml' $datadir'/wormbase-acedb/variation/XML/prepped_variation.xml'
 
+
+# panther
+echo 'panther'
+mkdir -p $datadir/panther
+wget -O $datadir'/panther/RefGenomeOrthologs.tar.gz' ftp://ftp.pantherdb.org/ortholog/current_release/RefGenomeOrthologs.tar.gz
+tar xzvf $datadir'/panther/RefGenomeOrthologs.tar.gz' -C $datadir'/panther'
+rm -v $datadir'/panther/RefGenomeOrthologs.tar.gz'
 
 cd $intermine'/wormmine'
 pwd
