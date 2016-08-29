@@ -31,7 +31,8 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.*;
 import org.intermine.metadata.*;
-import org.intermine.util.TypeUtil;
+// import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil; //Paulo Nuin 2016
 import org.intermine.xml.full.Item;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -658,13 +659,13 @@ public class WormbaseAcedbConverter extends BioFileConverter
      * Sets the dataset for this instance 
      * @param datasource
      */
-    public void setDataSet(String dataSet){
-    	System.out.println("DataSet set to:"+dataSet); // DELETE
-    	String dataSourceRefID = getDataSource(DATA_SOURCE_NAME);
-        String dataSetRefID = getDataSet(dataSet, dataSourceRefID);
+    // public void setDataSet(String dataSet){
+    // 	System.out.println("DataSet set to:"+dataSet); // DELETE
+    // 	String dataSourceRefID = getDataSource(DATA_SOURCE_NAME);
+    //     String dataSetRefID = getDataSet(dataSet, dataSourceRefID);
     	
-    	BioStoreHook hook = (BioStoreHook) this.storeHook;
-    	hook.setDataSet(dataSetRefID);
-    }
+    // 	BioStoreHook hook = (BioStoreHook) this.storeHook;
+    // 	hook.setDataSet(dataSetRefID);
+    // } Paulo Nuin 2016
     
  }

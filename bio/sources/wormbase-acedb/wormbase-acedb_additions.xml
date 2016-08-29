@@ -23,13 +23,16 @@
 		<collection name="expressionClusters" referenced-type="ExpressionCluster" reverse-reference="genes"/>
 		<collection name="regulatesExprCluster" referenced-type="ExpressionCluster" reverse-reference="regulatedByGene"/>
 		<collection name="affectedByAlleles" referenced-type="Allele" reverse-reference="affectsGenes" />
+		<collection name="RNAiResult" referenced-type="RNAi" reverse-reference="inhibitsGene"/>
 	</class>
     <class name="Transcript" is-interface="true">
         <attribute name="method" type="java.lang.String"/>
 		<collection name="affectedByAlleles" referenced-type="Allele" reverse-reference="affectsTranscripts" />
+		<collection name="RNAis" referenced-type="RNAi" reverse-reference="inhibitsTranscript"/>
     </class>
 	<class name="CDS" is-interface="true">
 		<collection name="affectedByAlleles" referenced-type="Allele" reverse-reference="affectsCDSs" />
+		<collection name="RNAi" referenced-type="RNAi" reverse-reference="inhibitsPredictedGene"/>
 	</class>
 	<class name="BioEntity" is-interface="true">
 		<attribute name="lastUpdated" type="java.util.Date"/>
@@ -67,6 +70,7 @@
 	<class name="Laboratory" is-interface="true">
 		<attribute name="primaryIdentifier" type="java.lang.String"/>
 		<collection name="variations" referenced-type="Allele" reverse-reference="fromLabs" />
+		<collection name="RNAis" referenced-type="RNAi" reverse-reference="laboratories"/>
 	</class>
 	<class name="OntologyTerm" is-interface="true">
 		<collection name="children" referenced-type="OntologyTerm"/>
@@ -132,6 +136,23 @@
 		<collection name="anatomyTerms" referenced-type="AnatomyTerm" reverse-reference="lifeStages"/>
 		<collection name="expressionPatterns" referenced-type="ExpressionPattern" reverse-reference="lifeStages"/>
 		<collection name="expressionClusters" referenced-type="ExpressionCluster" reverse-reference="lifeStages"/>
-
 	</class>
+	<class name="RNAi" extends="BioEntity" is-interface="true">
+		<attribute name="DNA" type="java.lang.String"/>
+		<attribute name="uniquelyMapped" type="java.lang.String"/>
+		<attribute name="remark" type="java.lang.String"/>
+		<attribute name="method" type="java.lang.String"/>
+		<attribute name="genotype" type="java.lang.String"/>
+		<attribute name="treatment" type="java.lang.String"/>
+		<attribute name="temperature" type="java.lang.String"/>
+		<attribute name="deliveredBy" type="java.lang.String"/>
+		<reference name="lifeStage" referenced-type="LifeStage" />
+		<reference name="strain" referenced-type="Strain" />
+		<reference name="reference" referenced-type="Publication" />
+		<collection name="inhibitsGene" referenced-type="Gene" reverse-reference="RNAiResult"/>
+		<collection name="inhibitsPredictedGene" referenced-type="CDS" reverse-reference="RNAi"/>
+		<collection name="laboratories" referenced-type="Laboratory" reverse-reference="RNAis"/>
+		<collection name="inhibitsTranscript" referenced-type="Transcript" reverse-reference="RNAis"/>
+	</class>
+
 </classes>

@@ -207,3 +207,4 @@ failures.list
 biotestmine/project.xml
 *.DS_Store
 /datadir
+wget-log
