@@ -396,9 +396,7 @@ public class Profile
         } else {
             savedTemplates.remove(name);
             if (manager != null) {
-                if (!savingDisabled) {
-                    manager.saveProfile(this);
-                }
+                manager.saveProfile(this);
             }
 
             searchRepository.receiveEvent(new DeletionEvent(template));
