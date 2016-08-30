@@ -127,6 +127,10 @@ public class BagManager
 
         for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
             InterMineBag bag = entry.getValue();
+            // is this bag useable (current)?
+            if (!bag.isCurrent()) {
+                continue;
+            }
             List<Tag> tags = tagManager.getTags(tag, bag.getName(), TagTypes.BAG,
                     profile.getUsername());
             if (tags.size() > 0) {
