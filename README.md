@@ -46,11 +46,11 @@ automated bootstrap script:
 
 ```bash
   # Set up tomcat
-  sh config/download_and_configure_tomcat.sh
+./config/download_and_configure_tomcat.sh
   # For a genomic application, with test data from Malaria
-  sh biotestmine/setup.sh
+./biotestmine/setup.sh
   # For the testmodel
-  sh testmodel/setup.sh
+./testmodel/setup.sh
 ```
 
 This requires that you have all the software dependencies

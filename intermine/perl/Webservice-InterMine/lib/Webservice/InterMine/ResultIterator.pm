@@ -5,7 +5,7 @@ use Moose;
 use Carp qw/croak confess/;
 
 use InterMine::Model::Types qw(PathList);
-use Webservice::InterMine::Types qw(Uri HTTPCode NetHTTP RowFormat JsonFormat RequestFormat RowParser);
+use Webservice::InterMine::Types qw(Uri HTTPCode NetHTTP NetHTTPS RowFormat JsonFormat RequestFormat RowParser);
 use MooseX::Types::Moose qw(Str HashRef Bool Num GlobRef Maybe);
 
 use HTTP::Status qw(status_message);
@@ -141,7 +141,7 @@ sub _build_user_agent {
     return "Webservice::InterMine-" . $Webservice::InterMine::VERSION . "/Perl client library";
 }
 
-=item * connection: ro, Net::HTTP
+=item * connection: ro, Net::HTTP|Net::HTTPS
 
 A connection to the source of results
 
@@ -149,7 +149,7 @@ A connection to the source of results
 
 has connection => (
     is        => 'ro',
-    isa       => NetHTTP,
+    isa       => NetHTTP | NetHTTPS,
     writer    => 'set_connection',
     predicate => 'has_connection',
 );
@@ -490,7 +490,8 @@ sub connect {
 
     $query_form->{format} = $self->request_format;
     
-    my $connection = Net::HTTP->new( Host => $uri->host, PeerPort => $uri->port )
+    my $net_class = ($uri->scheme =~ /https/i) ? 'Net::HTTPS' : 'Net::HTTP';
+    my $connection = $net_class->new( Host => $uri->host, PeerPort => $uri->port )
         or confess "Could not connect to host: $uri $@";
     my %headers = (
         'User-Agent' => $self->user_agent,
