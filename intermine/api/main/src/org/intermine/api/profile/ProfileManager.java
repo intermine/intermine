@@ -43,6 +43,7 @@ import org.intermine.api.xml.SavedQueryBinding;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.PermanentToken;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
@@ -592,7 +593,18 @@ public class ProfileManager
         try {
             UserProfile userProfile = getUserProfile(userId);
 
-            if (userProfile == null) {
+            if (userProfile != null) {
+                // delete all templates and queries in the database
+                // we're going to load the ones in memory into the database next
+                // this should be cleverer
+                for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
+                    uosw.delete((InterMineObject) i.next());
+                }
+                for (Iterator i = userProfile.getSavedTemplateQuerys().iterator();
+                        i.hasNext();) {
+                    uosw.delete((InterMineObject) i.next());
+                }
+            } else {
                 throw new RuntimeException("Cannot save this profile: The UserProfile is null");
             }
 
@@ -617,46 +629,30 @@ public class ProfileManager
                 savedTemplate.setUserProfile(userProfile);
             }
             String xml = TemplateQueryBinding.marshal(template, pathQueryFormat);
-            if (!xml.equals(savedTemplate.getTemplateQuery())) { // Different - needs update.
-                try {
-                    savedTemplate.setTemplateQuery(xml);
-                    uosw.store(savedTemplate);
-                    template.setSavedTemplateQuery(savedTemplate);
-                } catch (Exception e) {
-                    LOG.error("Failed to marshal and save template: " + template, e);
-                }
+            try {
+                savedTemplate.setTemplateQuery(xml);
+                uosw.store(savedTemplate);
+                template.setSavedTemplateQuery(savedTemplate);
+            } catch (Exception e) {
+                LOG.error("Failed to marshal and save template: " + template, e);
             }
         }
     }
 
     private void syncSavedQueries(Profile profile, UserProfile userProfile)
-        throws ObjectStoreException {
-        // Index the currently saved queries by their query XML,
-        // so we know if we need to update them.
-        Map<String, SavedQuery> toDelete = new HashMap<String, SavedQuery>();
-        for (SavedQuery sq: userProfile.getSavedQuerys()) {
-            //uosw.delete(sq);
-            toDelete.put(sq.getQuery(), sq);
-        }
-
+            throws ObjectStoreException {
         for (Entry<String, org.intermine.api.profile.SavedQuery> entry
                 : profile.getSavedQueries().entrySet()) {
             org.intermine.api.profile.SavedQuery query = entry.getValue();
             try {
                 String xml = SavedQueryBinding.marshal(query, pathQueryFormat);
-                SavedQuery savedQuery = toDelete.remove(xml);
-                if (savedQuery == null) { // Need to write a new one.
-                    savedQuery = new SavedQuery();
-                    savedQuery.setQuery(xml);
-                    savedQuery.setUserProfile(userProfile);
-                    uosw.store(savedQuery);
-                }
+                SavedQuery savedQuery = new SavedQuery();
+                savedQuery.setQuery(xml);
+                savedQuery.setUserProfile(userProfile);
+                uosw.store(savedQuery);
             } catch (Exception e) {
                 LOG.error("Failed to marshal and save query: " + query, e);
             }
-        }
-        for (SavedQuery delendum: toDelete.values()) {
-            uosw.delete(delendum);
         }
     }
 
