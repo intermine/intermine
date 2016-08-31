@@ -5,7 +5,6 @@ Master: [![Build Status: master][travis-badge-master]][ci]
 Dev: [![Build Status: dev][travis-badge-dev]][ci]
 [![Version](http://img.shields.io/badge/version-1.6.6-blue.svg?style=flat)](https://github.com/intermine/intermine/releases/tag/intermine-1.6.6)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
-
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
 
 A powerful open source data warehouse system. InterMine allows users
@@ -22,15 +21,11 @@ the life sciences, including:
   * [ThaleMine](https://apps.araport.org/thalemine)
   * [PhytoMine](http://phytozome.jgi.doe.gov/phytomine)
 
-InterMine is free, open-source software.
+For details, please visit: [InterMine Documentation][readthedocs]
 
-For extensive documentation please visit: [InterMine Documentation][readthedocs]
-
-If you run an InterMine, or use one in your research,
-in order to improve the chance of continued funding for the
-InterMine project it would be appreciated if groups that use
-InterMine or parts of InterMine would let us know (email
-[info[at]flymine.org](mailto:info flymine.org)).
+If you run an InterMine, or use one in your research, in order to improve the chance of continued funding for the
+InterMine project it would be appreciated if groups that use InterMine or parts of InterMine would let us know (email
+[info[at]flymine.org](mailto:info intermine.org)).
 
 Getting Started With InterMine
 -------------------------------
