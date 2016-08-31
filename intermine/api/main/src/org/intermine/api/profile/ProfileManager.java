@@ -640,7 +640,7 @@ public class ProfileManager
     }
 
     private void syncSavedQueries(Profile profile, UserProfile userProfile)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         for (Entry<String, org.intermine.api.profile.SavedQuery> entry
                 : profile.getSavedQueries().entrySet()) {
             org.intermine.api.profile.SavedQuery query = entry.getValue();
@@ -650,6 +650,7 @@ public class ProfileManager
                 savedQuery.setQuery(xml);
                 savedQuery.setUserProfile(userProfile);
                 uosw.store(savedQuery);
+
             } catch (Exception e) {
                 LOG.error("Failed to marshal and save query: " + query, e);
             }
