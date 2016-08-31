@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
@@ -126,8 +127,10 @@ public class BagQueryRunner
                 // wildcard + a string
                 } else {
                     wildcardInput.add(inputString);
-                    patterns.put(inputString, Pattern.compile(inputString.toLowerCase()
-                            .replaceAll("\\*", "\\.\\*")));
+                    String patternString = inputString.toLowerCase().replaceAll("\\*", "\\.\\*");
+                    patternString = patternString.replaceAll("\\(", "\\.\\*");
+                    patternString = patternString.replaceAll("\\)", "\\.\\*");
+                    patterns.put(inputString, Pattern.compile(patternString));
                 }
             }
         }
