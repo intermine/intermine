@@ -102,7 +102,7 @@ public class HomologeneConverter extends BioFileConverter
             homologene.data is a tab delimited file containing the following
             columns:
 
-            1) HID (HomoloGene group id) - uid, http://www.ncbi.nlm.nih.gov/homologene?term=3[uid]
+            1) HID (HomoloGene group id) - uid, https://www.ncbi.nlm.nih.gov/homologene?term=3[uid]
             2) Taxonomy ID
             3) Gene ID - NBCI Id
             4) Gene Symbol
