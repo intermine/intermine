@@ -598,7 +598,7 @@
                                  views="secondaryIdentifier, symbol, organism.name,
                                        publications.title, publications.firstAuthor,
                                        publications.journal, publications.year, publications.pubMedId"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+                                 externalLink="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
       <enrichmentwidgetdisplayer id="snp_gwas_study_enrichment"
                                  title="GWAS study Enrichment for SNPs"
@@ -612,7 +612,7 @@
                                  typeClass="SNP"
                                  views="primaryIdentifier, organism.name,
                                        GWASResults.study.name, GWASResults.study.firstAuthor"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+                                 externalLink="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
       <enrichmentwidgetdisplayer id="snp_publication_enrichment"
                                  title="Publication Enrichment for SNPs"
@@ -627,7 +627,7 @@
                                  views="primaryIdentifier, organism.name,
                                        GWASResults.study.publication.title, GWASResults.study.publication.firstAuthor,
                                        GWASResults.study.publication.journal, GWASResults.study.publication.year, GWASResults.study.publication.pubMedId"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+                                 externalLink="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
 <!--
 

@@ -37,7 +37,7 @@ is_a: SO:0001411 ! biological_region
 [Term]
 id: SO:0000003
 name: G_quartet
-def: "G-quartets are unusual nucleic acid structures consisting of a planar arrangement where each guanine is hydrogen bonded by hoogsteen pairing to another guanine in the quartet." [http://www.ncbi.nlm.nih.gov/pubmed/7919797?dopt=Abstract]
+def: "G-quartets are unusual nucleic acid structures consisting of a planar arrangement where each guanine is hydrogen bonded by hoogsteen pairing to another guanine in the quartet." [https://www.ncbi.nlm.nih.gov/pubmed/7919797?dopt=Abstract]
 synonym: "G quartet" EXACT []
 synonym: "G tetrad" EXACT []
 synonym: "G-quadruplex" EXACT []
@@ -215,7 +215,7 @@ is_a: SO:0000021 ! asymmetric_RNA_internal_loop
 [Term]
 id: SO:0000024
 name: sarcin_like_RNA_motif
-def: "A loop in ribosomal RNA containing the sites of attack for ricin and sarcin." [http://www.ncbi.nlm.nih.gov/pubmed/7897662]
+def: "A loop in ribosomal RNA containing the sites of attack for ricin and sarcin." [https://www.ncbi.nlm.nih.gov/pubmed/7897662]
 synonym: "sarcin like RNA motif" EXACT []
 synonym: "sarcin/ricin domain" EXACT []
 synonym: "sarcin/ricin loop" EXACT []
@@ -2738,7 +2738,7 @@ is_a: SO:0000209 ! rRNA_primary_transcript
 [Term]
 id: SO:0000326
 name: SAGE_tag
-def: "A short diagnostic sequence tag, serial analysis of gene expression (SAGE), that allows the quantitative and simultaneous analysis of a large number of transcripts." [http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=7570003&dopt=Abstract]
+def: "A short diagnostic sequence tag, serial analysis of gene expression (SAGE), that allows the quantitative and simultaneous analysis of a large number of transcripts." [https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=7570003&dopt=Abstract]
 subset: SOFA
 synonym: "SAGE tag" EXACT []
 is_a: SO:0000324 ! tag
@@ -3322,7 +3322,7 @@ is_a: SO:0000274 ! snRNA
 [Term]
 id: SO:0000397
 name: U6atac_snRNA
-def: "U6atac_snRNA is an snRNA required for the splicing of the minor U12-dependent class of eukaryotic nuclear introns. It forms a base paired complex with U4atac_snRNA (SO:0000394)." [http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=12409455&dopt=Abstract]
+def: "U6atac_snRNA is an snRNA required for the splicing of the minor U12-dependent class of eukaryotic nuclear introns. It forms a base paired complex with U4atac_snRNA (SO:0000394)." [https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=12409455&dopt=Abstract]
 subset: SOFA
 synonym: "snRNA U6atac" EXACT [RSC:cb]
 synonym: "U6atac small nuclear RNA" EXACT [RSC:cb]
@@ -5039,7 +5039,7 @@ is_a: SO:0000002 ! sequence_secondary_structure
 [Term]
 id: SO:0000592
 name: H_pseudoknot
-def: "A pseudoknot which contains two stems and at least two loops." [http://www.ncbi.nlm.nih.gov\:80/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=10334330&dopt=Abstract]
+def: "A pseudoknot which contains two stems and at least two loops." [https://www.ncbi.nlm.nih.gov\:80/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=10334330&dopt=Abstract]
 synonym: "classical pseudoknot" EXACT []
 synonym: "H pseudoknot" EXACT []
 synonym: "H-pseudoknot" EXACT []
@@ -5781,7 +5781,7 @@ is_obsolete: true
 [Term]
 id: SO:0000683
 name: exonic_splice_enhancer
-def: "Exonic splicing enhancers (ESEs) facilitate exon definition by assisting in the recruitment of splicing factors to the adjacent intron." [http://www.ncbi.nlm.nih.gov\:80/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=12403462&dopt=Abstract]
+def: "Exonic splicing enhancers (ESEs) facilitate exon definition by assisting in the recruitment of splicing factors to the adjacent intron." [https://www.ncbi.nlm.nih.gov\:80/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=12403462&dopt=Abstract]
 synonym: "exonic splice enhancer" EXACT []
 is_a: SO:0000344 ! splice_enhancer
 
@@ -8397,7 +8397,7 @@ intersection_of: has_quality SO:0001185 ! enzymatic
 [Term]
 id: SO:0001013
 name: MNP
-def: "A multiple nucleotide polymorphism with alleles of common length > 1, for example AAA/TTT." [http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=rs2067431]
+def: "A multiple nucleotide polymorphism with alleles of common length > 1, for example AAA/TTT." [https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=rs2067431]
 synonym: "multiple nucleotide polymorphism" RELATED []
 is_a: SO:1000002 ! substitution
 
@@ -10257,7 +10257,7 @@ is_a: SO:0001204 ! Phage_RNA_Polymerase_Promoter
 [Term]
 id: SO:0001208
 name: five_prime_EST
-def: "An EST read from the 5' end of a transcript that usually codes for a protein. These regions tend to be conserved across species and do not change much within a gene family." [http://www.ncbi.nlm.nih.gov/About/primer/est.html]
+def: "An EST read from the 5' end of a transcript that usually codes for a protein. These regions tend to be conserved across species and do not change much within a gene family." [https://www.ncbi.nlm.nih.gov/About/primer/est.html]
 synonym: "5' EST" EXACT []
 synonym: "five prime EST" EXACT []
 is_a: SO:0000345 ! EST
@@ -10265,7 +10265,7 @@ is_a: SO:0000345 ! EST
 [Term]
 id: SO:0001209
 name: three_prime_EST
-def: "An EST read from the 3' end of a transcript. They are more likely to fall within non-coding, or untranslated regions(UTRs)." [http://www.ncbi.nlm.nih.gov/About/primer/est.html]
+def: "An EST read from the 3' end of a transcript. They are more likely to fall within non-coding, or untranslated regions(UTRs)." [https://www.ncbi.nlm.nih.gov/About/primer/est.html]
 synonym: "3' EST" EXACT []
 synonym: "three prime EST" EXACT []
 is_a: SO:0000345 ! EST
@@ -16976,7 +16976,7 @@ is_a: SO:1001268 ! recoding_stimulatory_region
 [Term]
 id: SO:1001261
 name: recoded_mRNA
-def: "The sequence of a mature mRNA transcript, modified before translation or during translation, usually by special cis-acting signals." [http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=8811194&dopt=Abstract]
+def: "The sequence of a mature mRNA transcript, modified before translation or during translation, usually by special cis-acting signals." [https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=8811194&dopt=Abstract]
 synonym: "recoded mRNA" EXACT []
 is_a: SO:0000234 ! implied link automatically realized ! mRNA
 intersection_of: SO:0000234 ! mRNA
@@ -16999,7 +16999,7 @@ is_a: SO:0000887 ! translationally_frameshifted
 [Term]
 id: SO:1001264
 name: mRNA_recoded_by_translational_bypass
-def: "A recoded_mRNA where translation was suspended at a particular codon and resumed at a particular non-overlapping downstream codon." [http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=8811194&dopt=Abstract]
+def: "A recoded_mRNA where translation was suspended at a particular codon and resumed at a particular non-overlapping downstream codon." [https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=8811194&dopt=Abstract]
 synonym: "mRNA recoded by translational bypass" EXACT []
 is_a: SO:1001261 ! implied link automatically realized ! recoded_mRNA
 intersection_of: SO:0000234 ! mRNA
@@ -17027,7 +17027,7 @@ is_obsolete: true
 [Term]
 id: SO:1001268
 name: recoding_stimulatory_region
-def: "A site in an mRNA sequence that stimulates the recoding of a region in the same mRNA." [http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=12519954&dopt=Abstract]
+def: "A site in an mRNA sequence that stimulates the recoding of a region in the same mRNA." [https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=12519954&dopt=Abstract]
 synonym: "recoding stimulatory region" EXACT []
 synonym: "recoding stimulatory signal" EXACT []
 is_a: SO:0000836 ! mRNA_region
@@ -17150,7 +17150,7 @@ is_a: SO:1001277 ! three_prime_recoding_site
 [Term]
 id: SO:1001287
 name: distant_three_prime_recoding_signal
-def: "A recoding signal that is found many hundreds of nucleotides 3' of a redefined stop codon." [http://www.ncbi.nlm.nih.gov\:80/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=8709208&dopt=Abstract]
+def: "A recoding signal that is found many hundreds of nucleotides 3' of a redefined stop codon." [https://www.ncbi.nlm.nih.gov\:80/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=8709208&dopt=Abstract]
 synonym: "distant three prime recoding signal" EXACT []
 is_a: SO:1001277 ! three_prime_recoding_site
 

@@ -32,7 +32,7 @@
 
         <div id="hiddenDiv2" class="dataSetDescription">
 
-          <ul><li><dt>miRNA target predictions for <i>D. melanogaster</i> miRNAs from <a href="http://microrna.sanger.ac.uk/targets/v4/" target="_new">miRBase</a>. The miRanda algorithm was used to scan all available miRNA sequences for a given genome against 3' UTR sequences of that genome. Each predicted target has a score and a p-value. The algorithm and its results have been published: Enright et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14709173" target="_new">PubMed:14709173</a>.</dt></li></ul>
+          <ul><li><dt>miRNA target predictions for <i>D. melanogaster</i> miRNAs from <a href="http://microrna.sanger.ac.uk/targets/v4/" target="_new">miRBase</a>. The miRanda algorithm was used to scan all available miRNA sequences for a given genome against 3' UTR sequences of that genome. Each predicted target has a score and a p-value. The algorithm and its results have been published: Enright et al - <a href="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14709173" target="_new">PubMed:14709173</a>.</dt></li></ul>
 
         </div>
 
