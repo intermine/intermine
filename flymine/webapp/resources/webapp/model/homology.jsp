@@ -55,7 +55,7 @@ this seed-ortholog pair are true orthologues. (This is estimated by
 sampling how often the pair is found as recipricolly best matches by a
 bootstrapping procedure applied to the original Blast alignment). </p>
 
-   <p>   Glossary according to Sonnhammer and Koonin </a> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12446146" target="_new">PubMed: 12446146</a>) ...</p>
+   <p>   Glossary according to Sonnhammer and Koonin </a> (<a href="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12446146" target="_new">PubMed: 12446146</a>) ...</p>
 
 
 
