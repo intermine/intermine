@@ -21,12 +21,12 @@ API_KEY = 'F5DE0CBD69F9F6771E2E0D3BEFD9E7A1D4C3A994' # the API key will expire a
 # http://api.omim.org/api/html/apiKey.html
 OMIM_SERVICE_BASE_USA = 'http://api.omim.org/api/entry/referenceList'
 # http://api.europe.omim.org/api/html/apiKey.html
-OMIM_SERVICE_BASE_ERUOPE = 'http://api.europe.omim.org/api/entry/referenceList'
+OMIM_SERVICE_BASE_EUROPE = 'http://api.europe.omim.org/api/entry/referenceList'
 
-LOG_DIR = '../logs/'
+LOG_DIR = '/tmp/'
 LOG_NAME = 'pubmed_cited.log'
-MIM_NUMBER_FILE = '../current/mim2gene.txt'
-PUBMED_CITED_FILE = '../current/pubmed_cited'
+MIM_NUMBER_FILE = '/micklem/data/metabolic/omim/current/mim2gene.txt'
+PUBMED_CITED_FILE = '/micklem/data/metabolic/omim/current/pubmed_cited'
 
 class OMIMQueryError(Exception):
 	pass
@@ -40,7 +40,7 @@ def get_omim_pubmed(mimNumber, log):
 		format = 'json'
 	)
 
-	resp = requests.get(url=OMIM_SERVICE_BASE_ERUOPE, params=params)
+	resp = requests.get(url=OMIM_SERVICE_BASE_EUROPE, params=params)
 	data = resp.json() # In case the JSON decoding fails, r.json simply returns None.
 
 	log.write('HTTP response in JSON: ' + str(data) + '\n')

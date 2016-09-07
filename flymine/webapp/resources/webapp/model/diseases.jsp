@@ -21,7 +21,7 @@
 
         <p>
           See also:
-          <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM" target="_new">Online
+          <a href="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM" target="_new">Online
           Mendelian Inheritance in Man<sup><font size="-2">TM</font></sup></a>
         </p>
       </div>
