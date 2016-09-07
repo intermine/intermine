@@ -39,7 +39,7 @@
   <listitem>
    <para>Generic Databases</para>
 	<itemizedlist>
-	 <listitem><para><ulink url="http://www.ncbi.nlm.nih.gov">NCBI</ulink> - National Center for Biotechnology Information - [http://www.ncbi.nlm.nih.gov] </para></listitem>
+	 <listitem><para><ulink url="https://www.ncbi.nlm.nih.gov">NCBI</ulink> - National Center for Biotechnology Information - [https://www.ncbi.nlm.nih.gov] </para></listitem>
 	 <listitem><para><ulink url="http://www.ensembl.org">Ensembl</ulink> - Automatic annotation on selected eukaryotic genomes - [http://www.ensembl.org] </para></listitem>
 	 <listitem><para><ulink url="http://harvester.embl.de">Harvester</ulink> - Bioinformatic meta search engine for genes and protein associated information - [http://harvester.embl.de] </para></listitem>
 	 <listitem><para><ulink url="http://smart.embl-heidelberg.de">SMART</ulink> - Simple Modular Architecture Research Tool 
@@ -47,8 +47,8 @@
 	 <listitem><para><ulink url="http://biozon.org">Biozon</ulink> - Biological database that integrates heterogenous data - [http://biozon.org] </para></listitem>
 	 <listitem><para><ulink url="http://www.geneontology.org">GO</ulink> - The Gene Ontology  - [http://www.geneontology.org] </para></listitem>
 	 <listitem><para><ulink url="http://song.sourceforge.net">SO</ulink> - The Sequence Ontology - [http://song.sourceforge.net] </para></listitem>
-	 <listitem><para><ulink url="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?DB=pubmed">PubMed </ulink> - Archive of life sciences journal literature 
-                         - [http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?DB=pubmed] </para></listitem>
+	 <listitem><para><ulink url="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?DB=pubmed">PubMed </ulink> - Archive of life sciences journal literature 
+                         - [https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?DB=pubmed] </para></listitem>
 	</itemizedlist>
   </listitem>
 
@@ -120,7 +120,7 @@
          <listitem><para><ulink url="http://hdflyarray.zmbh.uni-heidelberg.de">Heidelberg FlyArray</ulink> - Heidelberg FlyArray expression project - [http://hdflyarray.zmbh.uni-heidelberg.de]</para></listitem>
 	 <listitem><para><ulink url="http://www.indac.net">INDAC</ulink> - International Drosophila Array Consortium - [http://www.indac.net]</para></listitem>
 	 <listitem><para><ulink url="http://www.mged.org/Workgroups/MAGE/mage.html">MAGE</ulink> - MicroArray and Gene Expression group - [http://www.mged.org/Workgroups/MAGE/mage.html]</para></listitem>
-	 <listitem><para><ulink url="http://www.ncbi.nlm.nih.gov/projects/geo">GEO</ulink> - Gene Expression Omnibus - [http://www.ncbi.nlm.nih.gov/projects/geo]</para></listitem>
+	 <listitem><para><ulink url="https://www.ncbi.nlm.nih.gov/projects/geo">GEO</ulink> - Gene Expression Omnibus - [https://www.ncbi.nlm.nih.gov/projects/geo]</para></listitem>
 	</itemizedlist>
   </listitem>
 

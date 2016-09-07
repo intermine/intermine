@@ -1,0 +1,4 @@
+<project name="clinvar-tasks" default="default" basedir=".">
+  <description>build clinvar tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

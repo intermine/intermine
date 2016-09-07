@@ -226,8 +226,8 @@ Abbrev: dbSNP
 Name  : Database of single nucleotide polymorphism
 Ref   : Nucleic Acids Res. 35:D5-12(2007); PubMed=17170002; DOI=10.1093/nar/gkl1031;
 LinkTp: Explicit
-Server: http://www.ncbi.nlm.nih.gov/SNP/
-Db_URL: http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?type=rs&rs=%s
+Server: https://www.ncbi.nlm.nih.gov/SNP/
+Db_URL: https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?type=rs&rs=%s
 Cat   : Polymorphism databases
 
 AC    : DB-0014
@@ -449,8 +449,8 @@ Abbrev: GenBank
 Name  : GenBank nucleotide sequence database
 Ref   : Nucleic Acids Res. 35:D5-12(2007); PubMed=17170002; DOI=10.1093/nar/gkl1031;
 LinkTp: Implicit; All UniProtKB entries with >=1 EMBL Xref
-Server: http://www.ncbi.nlm.nih.gov/
-Db_URL: http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nuccore&id=%s
+Server: https://www.ncbi.nlm.nih.gov/
+Db_URL: https://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nuccore&id=%s
 Cat   : Sequence databases
 
 AC    : DB-0029
@@ -485,8 +485,8 @@ Abbrev: GeneID
 Name  : Database of genes from NCBI RefSeq genomes
 Ref   : Nucleic Acids Res. 33:D54-D58(2005); PubMed=15608257; DOI=10.1093/nar/gki031;
 LinkTp: Explicit
-Server: http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene
-Db_URL: http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&term=%s
+Server: https://www.ncbi.nlm.nih.gov/sites/entrez?db=gene
+Db_URL: https://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&term=%s
 Cat   : Genome annotation databases
 
 AC    : DB-0162
@@ -1082,8 +1082,8 @@ Abbrev: ProtClustDB
 Name  : Entrez Protein Clusters
 Ref   : Nucleic Acids Res. 37:D216-D223(2009); PubMed=18940865; DOI=10.1093/nar/gkn734;
 LinkTp: Explicit
-Server: http://www.ncbi.nlm.nih.gov/sites/entrez?db=proteinclusters
-Db_URL: http://www.ncbi.nlm.nih.gov/sites/entrez?Db=proteinclusters&Cmd=DetailsSearch&Term=%u
+Server: https://www.ncbi.nlm.nih.gov/sites/entrez?db=proteinclusters
+Db_URL: https://www.ncbi.nlm.nih.gov/sites/entrez?Db=proteinclusters&Cmd=DetailsSearch&Term=%u
 Cat   : Phylogenomic databases
 
 AC    : DB-0159
@@ -1155,8 +1155,8 @@ Abbrev: RefSeq
 Name  : NCBI Reference Sequences
 Ref   : Nucleic Acids Res. 35:D61-D65(2007); PubMed=17130148; DOI=10.1093/nar/gkl842;
 LinkTp: Explicit
-Server: http://www.ncbi.nlm.nih.gov/RefSeq/
-Db_URL: http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=protein&id=%s
+Server: https://www.ncbi.nlm.nih.gov/RefSeq/
+Db_URL: https://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=protein&id=%s
 Cat   : Sequence databases
 
 AC    : DB-0090
@@ -1321,8 +1321,8 @@ Abbrev: UniGene
 Name  : UniGene gene-oriented nucleotide sequence clusters
 Ref   : Nucleic Acids Res. 35:D5-12(2007); PubMed=17170002; DOI=10.1093/nar/gkl1031;
 LinkTp: Explicit
-Server: http://www.ncbi.nlm.nih.gov/sites/entrez?db=UniGene
-Db_URL: http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%s1&CID=%s2
+Server: https://www.ncbi.nlm.nih.gov/sites/entrez?db=UniGene
+Db_URL: https://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%s1&CID=%s2
 Cat   : Sequence databases
 
 AC    : DB-0170

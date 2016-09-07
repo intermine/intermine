@@ -198,6 +198,8 @@ public class Protein2iprConverter extends BioFileConverter
             dbName = "PIRSF";
         } else if (dbId.startsWith("MF_")) {
             dbName = "HAMAP";
+        } else if (dbId.startsWith("cd")) {
+            dbName = "Conserved Domain Database";
         } else {
             throw new RuntimeException("Unknown DB found. ID: " + dbId);
         }

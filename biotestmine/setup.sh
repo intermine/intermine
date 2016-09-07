@@ -87,16 +87,16 @@ if test ! -f $IMDIR/$PROP_FILE; then
     echo "#---> $PROP_FILE not found. Providing default properties file..."
     cd $IMDIR
     cp $DIR/../bio/tutorial/malariamine.properties $PROP_FILE
-    sed -i "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
-    sed -i "s/PSQL_PWD/$PSQL_PWD/g" $PROP_FILE
-    sed -i "s/TOMCAT_USER/$TOMCAT_USER/g" $PROP_FILE
-    sed -i "s/TOMCAT_PWD/$TOMCAT_PWD/g" $PROP_FILE
-    sed -i "s/items-malariamine/$ITEMS_DB/g" $PROP_FILE
-    sed -i "s/userprofile-malariamine/$USERPROFILE_DB/g" $PROP_FILE
-    sed -i "s/databaseName=malariamine/databaseName=$PROD_DB/g" $PROP_FILE
-    sed -i "s/malariamine/$MINENAME/gi" $PROP_FILE
-    sed -i "s/localhost/$SERVER/g" $PROP_FILE
-    sed -i "s/8080/$PORT/g" $PROP_FILE
+    sed -i=bak "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
+    sed -i=bak "s/PSQL_PWD/$PSQL_PWD/g" $PROP_FILE
+    sed -i=bak "s/TOMCAT_USER/$TOMCAT_USER/g" $PROP_FILE
+    sed -i=bak "s/TOMCAT_PWD/$TOMCAT_PWD/g" $PROP_FILE
+    sed -i=bak "s/items-malariamine/$ITEMS_DB/g" $PROP_FILE
+    sed -i=bak "s/userprofile-malariamine/$USERPROFILE_DB/g" $PROP_FILE
+    sed -i=bak "s/databaseName=malariamine/databaseName=$PROD_DB/g" $PROP_FILE
+    sed -i=bak "s/malariamine/$MINENAME/gi" $PROP_FILE
+    sed -i=bak "s/localhost/$SERVER/g" $PROP_FILE
+    sed -i=bak "s/8080/$PORT/g" $PROP_FILE
     echo "#--- Created $PROP_FILE"
 fi
 
@@ -132,8 +132,8 @@ if test ! -f project.xml; then
 fi
 
 echo '#---> Personalising project.xml'
-sed -i "s!DATA_DIR!$DATA_DIR!g" project.xml
-sed -i "s/malariamine/$MINENAME/g" project.xml
+sed -i=bak "s!DATA_DIR!$DATA_DIR!g" project.xml
+sed -i=bak "s/malariamine/$MINENAME/g" project.xml
 
 if egrep -q ProteinDomain.shortName $PRIORITIES; then
     echo '#--- Integration key exists.'
