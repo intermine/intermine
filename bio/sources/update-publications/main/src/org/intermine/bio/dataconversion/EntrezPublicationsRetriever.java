@@ -75,11 +75,11 @@ public class EntrezPublicationsRetriever
     // full record (new)
     // rettype=abstract or just leave it out
     protected static final String EFETCH_URL =
-        "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?tool=flymine&db=pubmed"
+        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?tool=flymine&db=pubmed"
         + "&rettype=abstract&retmode=xml&id=";
     // summary
     protected static final String ESUMMARY_URL =
-            "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
+            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
     // number of records to retrieve per request
     protected static final int BATCH_SIZE = 500;
     // number of times to try the same batch from the server

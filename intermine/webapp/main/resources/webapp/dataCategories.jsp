@@ -200,8 +200,12 @@
 
   <!-- ******************************************************* -->
   <tr>
-    <td rowspan="3"  class="leftcol">
+    <td rowspan="4"  class="leftcol">
     	<p><h2>Disease</h2></p></td>
+    <td>Disease names, synonyms, and identifiers from the Online Mendelian Inheritance in Man database.</td>
+    <td><a href="http://www.omim.org/" target="_new">OMIM</a> (via MGI)</td>
+  </tr>  
+  <tr>  
     <td> Mouse disease model annotations, i.e., associations of human diseases to specific mouse models (genotypes). From these, additional annotations are computed (derived) from diseases to mouse genes and alleles. </td> 
     <td> <a href="http://www.informatics.jax.org/" target="_new">MGI</a></td>
   </tr>
@@ -216,9 +220,9 @@
   </tr>
 
   <tr>
-    <td>MEDIC disease ontology. MEDIC is a merging of OMIM disease ids onto the MeSH disease ontology. OMIM disease annotations from MGI are converted into the corresponding MEDIC annotations in MouseMine. </td>
+    <td>The Disease Ontology (DO) is a standardized ontology for human disease terms, phenotype characteristics and related medical vocabulary disease concepts. </td>
     <td>
-    <a href="http://ctdbase.org/" target="_new">CTD</a> (Comparative Toxicogenomics Database)
+    <a href="http://disease-ontology.org" target="_new">Disease Ontology</a> project.
     </td>
   </tr>
 

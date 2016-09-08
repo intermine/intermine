@@ -126,8 +126,10 @@ public class BagQueryRunner
                 // wildcard + a string
                 } else {
                     wildcardInput.add(inputString);
-                    patterns.put(inputString, Pattern.compile(inputString.toLowerCase()
-                            .replaceAll("\\*", "\\.\\*")));
+                    String patternString = inputString.toLowerCase().replaceAll("\\*", "\\.\\*");
+                    patternString = patternString.replaceAll("\\(", "\\.\\*");
+                    patternString = patternString.replaceAll("\\)", "\\.\\*");
+                    patterns.put(inputString, Pattern.compile(patternString));
                 }
             }
         }
