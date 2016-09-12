@@ -1732,11 +1732,12 @@ width:90%;}
 .funding-footer {
   display:flex;
   justify-content:space-around;
-  border-bottom:solid 1px #ddd;
-}
-
-.credits img {max-width:80px;
-  margin-top:-12px}
+  background:#eee;
+  align-items:center;}
+.credits img {
+  max-width:80px;
+  margin-top:-6px;
+  margin-bottom:-6px;}
 
 div.bottom-footer { margin:0 auto; width:940px; margin-top:20px; }
 div.bottom-footer a.cambridge-logo { float:right; }
