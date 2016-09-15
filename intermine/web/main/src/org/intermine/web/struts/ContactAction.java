@@ -13,13 +13,6 @@ package org.intermine.web.struts;
 import java.text.MessageFormat;
 import java.util.Properties;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,6 +23,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.util.MailUtils;
 import org.intermine.web.logic.session.SessionMethods;
 /**
  * Action handles submission of user feedback form.
@@ -63,56 +57,14 @@ public class ContactAction extends InterMineAction
             Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
             MessageResources strings = getResources(request);
 
-            final String user = webProperties.getProperty("mail.smtp.user");
-            String smtpPort = webProperties.getProperty("mail.smtp.port");
-            String authFlag = webProperties.getProperty("mail.smtp.auth");
-            String starttlsFlag = webProperties.getProperty("mail.smtp.starttls.enable");
-            final String password = (String) webProperties.get("mail.server.password");
-
-            String host = webProperties.getProperty("mail.host");
+            // final String user = webProperties.getProperty("mail.smtp.user");
             String from = ff.getMonkey();
             String subject = ff.getSubject();
-            String text = MessageFormat.format(strings.getMessage("contact.template"),
+            String body = MessageFormat.format(strings.getMessage("contact.template"),
                                 new Object[] {ff.getName(), ff.getMonkey(), ff.getMessage()});
             String dest = webProperties.getProperty("feedback.destination");
-            Properties properties = System.getProperties();
-            properties.put("mail.smtp.host", host);
-            properties.put("mail.smtp.user", user);
-            // Fix to "javax.mail.MessagingException: 501 Syntactically
-            // invalid HELO argument(s)" problem
-            // See http://forum.java.sun.com/thread.jspa?threadID=487000&messageID=2280968
-            properties.put("mail.smtp.localhost", "localhost");
-            if (smtpPort != null) {
-                properties.put("mail.smtp.port", smtpPort);
-            }
 
-            if (starttlsFlag != null) {
-                properties.put("mail.smtp.starttls.enable", starttlsFlag);
-            }
-            if (authFlag != null) {
-                properties.put("mail.smtp.auth", authFlag);
-            }
-            Session mailSession;
-            if (authFlag != null && ("true".equals(authFlag) || "t".equals(authFlag))) {
-                Authenticator authenticator = new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-
-                        return new PasswordAuthentication(user, password);
-                    }
-                };
-                mailSession = Session.getDefaultInstance(properties, authenticator);
-            } else {
-                mailSession = Session.getDefaultInstance(properties);
-            }
-            MimeMessage message = new MimeMessage(mailSession);
-            message.setReplyTo(InternetAddress.parse(from, true));
-            message.setFrom(new InternetAddress(user));
-            message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(dest, true)[0]);
-            message.setSubject(subject);
-            message.setText(text);
-            Transport.send(message);
-
+            MailUtils.email(dest, subject, body, from, webProperties);
             recordMessage(new ActionMessage("contact.sent"), request);
 
             // avoid showing form

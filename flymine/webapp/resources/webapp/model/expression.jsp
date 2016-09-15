@@ -22,7 +22,7 @@
             <dt>
               The <a href="http://www.fruitfly.org/cgi-bin/ex/insitu.pl/" target="_new">BDGP in situ project</a> determines patterns of gene expression during embryogenesis for <i>Drosophila</i> genes represented in non-redundant sets of <i>Drosophila</i> ESTs DGC1 and DGC2. Gene expression patterns are annotated with controlled vocabulary for developmental anatomy of <i>Drosophila</i> embryogenesis (ImaGO).
 
-              The overall findings of the work are summarized in Tomancak et al (2007) Genome Biology 8:R145. (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17645804" target="_new">PubMed: 17645804</a>) - Global analysis of patterns of gene expression during Drosophila embryogenesis.
+              The overall findings of the work are summarized in Tomancak et al (2007) Genome Biology 8:R145. (<a href="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17645804" target="_new">PubMed: 17645804</a>) - Global analysis of patterns of gene expression during Drosophila embryogenesis.
             </dt>
           </dl>
         </div>
@@ -37,7 +37,7 @@
         <div id="hiddenDiv2" class="dataSetDescription">
           <dl>
             <dt>
-              The <a href="http://fly-fish.ccbr.utoronto.ca/" target="_new">Fly-FISH</a> data documents the expression patterns of <i>Drosophila</i> mRNAs at the subcellular level during early embryogenesis. The overall findings and implications of the work performed thus far is summarized in Lecuyer et al (2007) Cell 131:174-187 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17923096</a>) - Global analysis of mRNA localization reveals a prominent role in organizing cellular architecture and function.
+              The <a href="http://fly-fish.ccbr.utoronto.ca/" target="_new">Fly-FISH</a> data documents the expression patterns of <i>Drosophila</i> mRNAs at the subcellular level during early embryogenesis. The overall findings and implications of the work performed thus far is summarized in Lecuyer et al (2007) Cell 131:174-187 (<a href="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17923096</a>) - Global analysis of mRNA localization reveals a prominent role in organizing cellular architecture and function.
             </dt>
           </dl>
         </div>
@@ -80,7 +80,7 @@
         <div id="hiddenDiv4" class="dataSetDescription">
           <dl>
             <dt>
-              Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791" target="_new">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of Drosophila melanogaster - ArrayExpress: <a href="http://www.ebi.ac.uk/microarray-as/aer/result?queryFor=Experiment&eAccession=E-FLYC-6" target="_new">E-FLYC-6</a>
+              Arbeitman et al (2002) Science 297:2270-2275 (<a href="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791" target="_new">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of Drosophila melanogaster - ArrayExpress: <a href="http://www.ebi.ac.uk/microarray-as/aer/result?queryFor=Experiment&eAccession=E-FLYC-6" target="_new">E-FLYC-6</a>
             </dt>
             <dd>
               Arbeitman et al reported gene expression patterns for nearly one third of all <i>Drosophila</i> genes during a complete time course of development.  Graphs are displayed on summary pages for each gene involved in the experiment showing Log 2 exression ratio for 67 time points across life stages.
@@ -101,7 +101,7 @@
         <div id="hiddenDiv5" class="dataSetDescription">
           <dl>
             <dt>
-              Koutsos et al (2007) PNAS 104:11304-11309 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17563388" target="_new">PubMed: 17563388</a>) - Life cycle transcriptome of the malaria mosquito <i>A. gambiae</i> and comparison with the fruitfly <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/microarray-as/aer/result?queryFor=Experiment&eAccession=E-TABM-186/" target="_new">E-TABM-186</a>
+              Koutsos et al (2007) PNAS 104:11304-11309 (<a href="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17563388" target="_new">PubMed: 17563388</a>) - Life cycle transcriptome of the malaria mosquito <i>A. gambiae</i> and comparison with the fruitfly <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/microarray-as/aer/result?queryFor=Experiment&eAccession=E-TABM-186/" target="_new">E-TABM-186</a>
             </dt>
             <dd>
               Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determine genome-wide expression profiles during the <i>A. gambiae</i> life cycle.
