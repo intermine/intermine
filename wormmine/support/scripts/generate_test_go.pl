@@ -6,10 +6,10 @@ use XML::Simple;
 use File::Temp qw/ tempfile /;
 #use Data::Dumper;
 
-#Usage: ./generate_test_go.pl Gene.xml go.obo > test-go.obo
+#Usage: ./generate_test_go.pl Gene.xml go.owl 
 #
 # Usage is simple: provide the Gene.xml file from the acedb dump and and
-# a full GO obo file and the script will output a "go-slim" for testing to STDOUT.
+# a full GO owl file and the script will output a file called go-test.owl.
 #
 # This tool requires that the ROBOT tool be installed:
 #    https://github.com/ontodev/robot 
@@ -18,7 +18,7 @@ my $genexml = $ARGV[0];
 my $goin   = $ARGV[1];
 
 unless ($goin) {
-    print "\nUsage: ./generate_test_go.pl <Gene.xml> <go.obo>\n\n";
+    print "\nUsage: ./generate_test_go.pl <Gene.xml> <go.owl>\n\n";
     exit(0);
 }
 
@@ -44,8 +44,38 @@ my %ids;
 
 for (@{$$p1{'Gene'}}) {
     for my $id (@{ $$_{'Gene_info'}{'GO_annotation'}{'GO_annotation'}} ) {
+        #my $tmp = "$id";
+        $id =~ s/^0//;
         $ids{"GO:$id"}++;
     }
 }
 
+# construct a command for robot to make the go slim
+
+#my @goterms;
+#for my $key (keys %ids) {
+#    push @goterms, "--lower-term $key";
+#}
+
+#my $terms = join(" ",@goterms);
+
+#open OUT, ">go-terms.txt";
+#for my $key (keys %ids) {
+#    print OUT "$key\n"; 
+#}
+#close OUT;
+
+my ($gofh, $gofilename) = tempfile(undef, UNLINK => 0);
+
+for my $key (keys %ids) {
+    print $gofh "$key\n";
+}
+close ($gofh);
+
+my $robot   = "/home/scain/robot/bin/robot";
+my $command = "$robot extract --method BOT --input /home/scain/robot/go.owl --term-file $gofilename --output go-test.obo";
+
+system($command);
+
+exit(0);
 
