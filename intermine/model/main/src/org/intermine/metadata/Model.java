@@ -234,7 +234,7 @@ public class Model
     /**
      * Get a ClassDescriptor by name, null if no ClassDescriptor of given name in Model.
      * @param name unqualified or fully-qualified class name of ClassDescriptor requested
-     * @return the requested ClassDescriptor
+     * @return the requested ClassDescriptor.  Returns null if no match was found.
      */
     public ClassDescriptor getClassDescriptorByName(String name) {
         ClassDescriptor cd = cldMap.get(name);
