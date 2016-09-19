@@ -881,11 +881,14 @@ public class GenomicRegionSearchService
                 passed = true;
             }
             // add to errorSpanList here if not passed
-            if (!passed) errorSpanList.add(gr);
+            if (!passed) {
+                errorSpanList.add(gr);
+            }
         }
 
         // make errorSpanList - replaced by logic above using passed flag
-        // NOTE (SH): can't use removeAll(passedSpanList) because the newSpan entries are not members of grsc.getGenomicRegionList()!
+        // NOTE (SH): can't use removeAll(passedSpanList) because the newSpan entries are not
+        // members of grsc.getGenomicRegionList()!
         // errorSpanList.addAll(grsc.getGenomicRegionList());
         // errorSpanList.removeAll(passedSpanList);
 
