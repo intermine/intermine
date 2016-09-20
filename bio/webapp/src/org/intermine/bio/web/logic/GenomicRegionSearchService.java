@@ -854,7 +854,7 @@ public class GenomicRegionSearchService
                     continue;
                 }
             }
-
+            boolean passed = false; // flag to add to errorSpanList
             if (gr.getStart() > gr.getEnd()) {
                 GenomicRegion newSpan = new GenomicRegion();
                 newSpan.setChr(ci.getChrPID()); // converted to the right case
@@ -869,6 +869,7 @@ public class GenomicRegionSearchService
                 newSpan.setExtendedRegionSize(0);
                 newSpan.setOrganism(grsc.getOrgName());
                 passedSpanList.add(newSpan);
+                passed = true;
             } else {
                 gr.setChr(ci.getChrPID());
 
@@ -877,12 +878,19 @@ public class GenomicRegionSearchService
                 }
 
                 passedSpanList.add(gr);
+                passed = true;
+            }
+            // add to errorSpanList here if not passed
+            if (!passed) {
+                errorSpanList.add(gr);
             }
         }
 
-        // make errorSpanList
-        errorSpanList.addAll(grsc.getGenomicRegionList());
-        errorSpanList.removeAll(passedSpanList);
+        // make errorSpanList - replaced by logic above using passed flag
+        // NOTE (SH): can't use removeAll(passedSpanList) because the newSpan entries are not
+        // members of grsc.getGenomicRegionList()!
+        // errorSpanList.addAll(grsc.getGenomicRegionList());
+        // errorSpanList.removeAll(passedSpanList);
 
         resultMap.put("pass", passedSpanList);
         resultMap.put("error", errorSpanList);

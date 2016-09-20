@@ -425,15 +425,6 @@ public class Engine extends CommandRunner
             } catch (Exception e) {
                 feature.put("type", fpo.getClass().getSimpleName());
             }
-            FastPathObject sot = null;
-            try {
-                sot = (FastPathObject) fpo.getFieldValue("sequenceOntologyTerm");
-            } catch (IllegalAccessException e) {
-                // Not all BioEntities have SO terms. ignore.
-            }
-            if (sot != null) {
-                feature.put("type", sot.getFieldValue("name"));
-            }
 
             String name, symbol, primId;
 
