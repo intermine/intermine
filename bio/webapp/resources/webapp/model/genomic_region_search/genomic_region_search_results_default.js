@@ -114,11 +114,11 @@
         jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: span_uuid_string, createList: "true", criteria: criteria, facet: facet }, function(bagName){
                   window.location.href = "/" + webapp_path + "/bagDetails.do?bagName=" + bagName;
                   /*window.open(
-                "/" + webapp_path + "/bagDetails.do?bagName=" + bagName,
-                '_blank' // <- This is what makes it open in a new window.
-                );
-              }, "text"); // would use but triggers pop up blocker */
-    }
+                      "/" + webapp_path + "/bagDetails.do?bagName=" + bagName,
+                      '_blank' // <- This is what makes it open in a new window.
+                      );*/
+              }, "text"); // would use but triggers pop up blocker
+          }
         }, "text");
     }
 
