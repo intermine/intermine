@@ -357,7 +357,9 @@ public class GFF3Converter extends DataConverter
         Double score = record.getScore();
         if (score != null && !"".equals(String.valueOf(score))) {
             feature.setAttribute("score", String.valueOf(score));
-            feature.setAttribute("scoreType", record.getSource());
+            if (record.getSource() != null) {
+                feature.setAttribute("scoreType", record.getSource());
+            }
         }
 
         for (Item synonym : synonymsToAdd) {
