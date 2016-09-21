@@ -175,7 +175,7 @@ public class HpoConverter extends BioDirectoryConverter
             String[] array = line.split("\t", -1); // keep trailing empty Strings
 
             // HPO Annotation File Format:
-            // http://www.human-phenotype-ontology.org/contao/index.php/annotation-guide.html
+            // http://human-phenotype-ontology.github.io/documentation.html
             if (array.length < 9) {
                 throw new IllegalArgumentException("Not enough elements (should be > 8 not "
                         + array.length + ") in line: " + line);
@@ -205,8 +205,8 @@ public class HpoConverter extends BioDirectoryConverter
             String evidenceCodeRefId = getEvidenceCode(evidenceCode);
 
             Item evidence = createItem("HPOEvidence");
-            Item disease = null;
-
+            Item disease = getDisease(dbId);
+            evidence.setReference("diseaseReference", disease);
             if (dbRef.isEmpty()) {
                 dbRef = dbId;
             }
@@ -216,13 +216,8 @@ public class HpoConverter extends BioDirectoryConverter
                 if (refId != null) {
                     evidence.addToCollection("publications", refId);
                 }
-            } else {
-                if (dbRef.trim().matches("^(OMIM|ORPHANET):[0-9]{6,}$")) {
-                    String diseaseId = dbRef.trim();
-                    disease = getDisease(diseaseId);
-                    evidence.setReference("diseaseReference", disease);
-                }
             }
+
             evidence.setReference("code", evidenceCodeRefId);
             if (!frequency.isEmpty()) {
                 evidence.setAttribute("frequencyModifier", frequency);
@@ -232,7 +227,7 @@ public class HpoConverter extends BioDirectoryConverter
             }
             store(evidence);
 
-            Item annotation = getAnnotation(hpoIdentifier, qualifier);
+            Item annotation = getAnnotation(hpoIdentifier, dbId, qualifier);
             annotation.addToCollection("evidences", evidence);
             if (disease != null) {
                 disease.addToCollection("hpoAnnotations", annotation);
@@ -240,9 +235,9 @@ public class HpoConverter extends BioDirectoryConverter
         }
     }
 
-
-    private Item getAnnotation(String hpoId, String qualifier) throws ObjectStoreException {
-        MultiKey key = new MultiKey(hpoId, qualifier);
+    private Item getAnnotation(String hpoId, String diseaseId, String qualifier)
+        throws ObjectStoreException {
+        MultiKey key = new MultiKey(hpoId, diseaseId, qualifier);
         Item annotation = annotations.get(key);
         if (annotation == null) {
             annotation = createItem("HPOAnnotation");
