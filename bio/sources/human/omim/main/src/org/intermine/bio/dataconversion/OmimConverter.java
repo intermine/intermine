@@ -14,12 +14,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -34,6 +32,7 @@ import org.intermine.xml.full.Item;
 
 /**
  * Load disease data from OMIM and relationship to genes, publications and SNPs.
+ *
  * @author Richard Smith
  */
 public class OmimConverter extends BioDirectoryConverter
@@ -59,6 +58,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String GENE_ENTRY = "Asterisk";
     private static final String GENE_PHENOTYPE_ENTRY = "Plus";
     private static final String OBSOLETE = "Caret";
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -74,7 +74,6 @@ public class OmimConverter extends BioDirectoryConverter
     @Override
     public void close() throws Exception {
         store(diseases.values());
-        super.close();
     }
 
     /**
@@ -176,40 +175,27 @@ public class OmimConverter extends BioDirectoryConverter
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-
-        List<String> currentPubs = new ArrayList<String>();
         String mimNumber = null;
         while (lineIter.hasNext()) {
+
             String[] bits = lineIter.next();
             if (bits.length == 3) {
                 mimNumber = bits[0];
-                String pos = bits[1];
+                // String pos = bits[1];
                 String pubmedId = bits[2];
                 // all the diseases we need are already create from morbidmap file
                 if (diseases.containsKey(mimNumber)) {
-                    // are we on the first row for a particular MIM number
-                    if ("1".equals(pos)) {
-                        addPubCollection(mimNumber, currentPubs);
-                        currentPubs = new ArrayList<String>();
-                    }
-                    currentPubs.add(getPubId(pubmedId));
+                    Item disease = getDisease(mimNumber);
+                    disease.addToCollection("publications", getPubId(pubmedId));
+
                 }
             }
-        }
-        if (diseases.containsKey(mimNumber)) {
-            addPubCollection(mimNumber, currentPubs);
-        }
-    }
-
-    private void addPubCollection(String mimNumber, List<String> newPubs) {
-        if (!pubs.isEmpty()) {
-            Item disease = getDisease(mimNumber);
-            disease.setCollection("publications", newPubs);
         }
     }
 
     private Item getDisease(String mimNumber) {
         Item disease = diseases.get(mimNumber);
+
         if (disease == null) {
             disease = createItem("Disease");
             disease.setAttribute("identifier", OMIM_PREFIX + mimNumber);
@@ -219,32 +205,32 @@ public class OmimConverter extends BioDirectoryConverter
     }
 
     private String getPubId(String pubmed) throws ObjectStoreException {
-        String pubId = pubs.get(pubmed);
-        if (pubId == null) {
+        String refId = pubs.get(pubmed);
+        if (refId == null) {
             Item pub = createItem("Publication");
             pub.setAttribute("pubMedId", pubmed);
-            pubId = pub.getIdentifier();
-            pubs.put(pubmed, pubId);
+            refId = pub.getIdentifier();
+            pubs.put(pubmed, refId);
             store(pub);
         }
-        return pubId;
+        return refId;
     }
 
     private String getGene(String geneSymbol) throws ObjectStoreException {
-        String geneItemId = null;
+        String refId = null;
         String entrezGeneNumber = resolveGene(geneSymbol.trim());
         if (entrezGeneNumber != null) {
-            geneItemId = genes.get(entrezGeneNumber);
-            if (geneItemId == null) {
+            refId = genes.get(entrezGeneNumber);
+            if (refId == null) {
                 Item gene = createItem("Gene");
                 gene.setAttribute("primaryIdentifier", entrezGeneNumber);
                 gene.setReference("organism", organism);
                 store(gene);
-                geneItemId = gene.getIdentifier();
-                genes.put(entrezGeneNumber, geneItemId);
+                refId = gene.getIdentifier();
+                genes.put(entrezGeneNumber, refId);
             }
         }
-        return geneItemId;
+        return refId;
     }
 
     private String resolveGene(String identifier) {
@@ -253,8 +239,8 @@ public class OmimConverter extends BioDirectoryConverter
             int resCount = rslv.countResolutions(TAXON_ID, identifier);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                         + identifier + " count: " + resCount + " Human identifier: "
-                         + rslv.resolveId(TAXON_ID, identifier));
+                        + identifier + " count: " + resCount + " Human identifier: "
+                        + rslv.resolveId(TAXON_ID, identifier));
                 return null;
             }
             id = rslv.resolveId(TAXON_ID, identifier).iterator().next();
