@@ -22,7 +22,7 @@
 <c:choose>
     <c:when test='${webData == "Chromosome location information is missing"}'>
         <div  class="altmessage" align="center" >
-           <br>Chromsome location information is not available, region search is disabled.</br>
+           <br/>Chromsome location information is not available, region search is disabled.</br>
         </div>
     </c:when>
     <c:otherwise>
@@ -48,11 +48,11 @@
                     jQuery("#pasteInput").val('${galaxyIntervalData}');
                     jQuery('#isInterBaseCoordinate').prop('checked', true);
                     // Add galaxy imported data information on top
-                    jQuery('#grs-options-body').before('<div id="grs-options-info" class="topBar info" style="padding-left:34px;"><a href="#" onclick="javascript:jQuery(\'#grs-options-info\').hide(\'slow\');return false">Hide</a>${galaxyFetchDataSuccess}<br></div>');
+                    jQuery('#grs-options-body').before('<div id="grs-options-info" class="topBar info" style="padding-left:34px;"><a href="#" onclick="javascript:jQuery(\'#grs-options-info\').hide(\'slow\');return false">Hide</a>${galaxyFetchDataSuccess}<br/></div>');
                 } else {
                     if ('${galaxyFetchDataError}') {
                         // Add galaxy imported data error on top
-                        jQuery('#grs-options-body').before('<div id="grs-options-error" class="topBar errors" style="padding-left:34px;"><a href="#" onclick="javascript:jQuery(\'#grs-options-error\').hide(\'slow\');return false">Hide</a>${galaxyFetchDataError}<br></div>');
+                        jQuery('#grs-options-body').before('<div id="grs-options-error" class="topBar errors" style="padding-left:34px;"><a href="#" onclick="javascript:jQuery(\'#grs-options-error\').hide(\'slow\');return false">Hide</a>${galaxyFetchDataError}<br/></div>');
                     }
                 }
             });
@@ -70,6 +70,7 @@
                   <p>${WEB_PROPERTIES['genomicRegionSearch.caption']}</p>
 
                   <br/>
+
                   <a id="region-help-link" href="#">Genome coordinates help</a>
                   <script type="text/javascript">
                     jQuery('#region-help-link').click(function(e) {
@@ -81,8 +82,10 @@
                   <div id="region-help" style="display:none">
                      ${WEB_PROPERTIES['genomicRegionSearch.howTo']}
                   </div>
+
                   <br/>
                   <br/>
+                  
                   <ol id="optionlist">
 
                     <li id="genomicRegionInput">
@@ -110,29 +113,32 @@
                            </html:link>
                        </div>
                        <html:textarea styleId="pasteInput" property="pasteInput" rows="10" cols="60" onclick="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" onkeyup="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" />
-                       <br>
+                       <br/>
 
                        <%-- file input --%>
                        <span>or Upload genomic regions from a .txt file...</span>
-                       <br>
+                       <br/>
                        <html:file styleId="fileInput" property="fileInput" onchange="switchInputs('file','paste');" onkeydown="switchInputs('file','paste');" size="28" />
                        <html:hidden styleId="whichInput" property="whichInput" />
                     </li>
-                    <br>
 
-                    <li id="genomicRegionFlanking">
+                    <li id="genomicRegionFlanking" style="margin-top:10px">
                        <span>Extend your regions at both sides: <i><b id="extendLength"></b></i></span>
                        <html:hidden styleId="extendedRegionSize" property="extendedRegionSize" value="0" />
-
                        <tiles:insert name="genomicRegionSearchOptionsExtentionNonLinearSlider.jsp">
                           <tiles:put name="sliderIdentifier" value="regionExtention" />
                           <tiles:put name="defaultValue" value="0" />
                        </tiles:insert>
                     </li>
 
+                    <li id="genomicRegionStrandSpecific">
+                        <html:checkbox property="strandSpecific" value="true" />
+                        <span>Check this box to perform a strand-specific region search (search + strand if region end>start; search &ndash; strand if region start>end)</span>
+                    </li>
+
                   </ol>
 
-                  <div align="right">
+                  <div align="right" style="margin-top:10px">
                      <%-- reset button --%>
                      <input type="button" onclick="resetInputs()" value="Reset" />
                      <%-- <html:submit onclick="javascript: return validateBeforeSubmit();">Search</html:submit> --%>
