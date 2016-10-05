@@ -60,7 +60,7 @@ public class GraphWidgetTest extends WidgetConfigTestCase
         assertEquals("1", results.get(3).get(1).toString());
     }
 
-/*   public void testGetPathQuery() {
+   public void testGetPathQuery() {
         PathQuery q = new PathQuery(os.getModel());
         q.addView("Employee.name");
         q.addView("Employee.age");
@@ -68,10 +68,11 @@ public class GraphWidgetTest extends WidgetConfigTestCase
         q.addView("Employee.department.name");
         // bag constraint
         q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        q.addConstraint(Constraints.eq("Employee.age", "%category"));
         q.addConstraint(Constraints.neq("Employee.age", "40"));
         PathQuery widgetPathQuery = widget.getPathQuery();
         assertEquals(q, widgetPathQuery);
-    }*/
+    }
 
     public void testCreatePathQueryView() {
         PathQuery pathQuery = new PathQuery(os.getModel());
