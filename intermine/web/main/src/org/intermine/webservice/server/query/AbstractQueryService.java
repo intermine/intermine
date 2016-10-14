@@ -33,7 +33,7 @@ import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
 public abstract class AbstractQueryService extends WebService
 {
 
-    private static final String XML_SCHEMA_LOCATION = "query.xsd";
+    private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
 
     /**
      * Constructor.
