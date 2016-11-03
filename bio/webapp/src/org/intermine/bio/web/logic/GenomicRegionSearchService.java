@@ -721,11 +721,11 @@ public class GenomicRegionSearchService
                     && Integer.parseInt(extendedRegionSize) < 1000000) {
                 selectionInfo.add("<b>Extend Regions: </b>"
                         + new DecimalFormat("#.##").format(Integer
-                                .parseInt(extendedRegionSize) / 1000) + " kbp");
+                                .parseInt(extendedRegionSize) / 1000f) + " kbp");
             } else if (Integer.parseInt(extendedRegionSize) >= 1000000) {
                 selectionInfo.add("<b>Extend Regions: </b>"
                         + new DecimalFormat("#.##").format(Integer
-                                .parseInt(extendedRegionSize) / 1000000) + " Mbp");
+                                .parseInt(extendedRegionSize) / 1000000f) + " Mbp");
             } else {
                 selectionInfo.add("<b>Extend Regions: </b>" + extendedRegionSize + "bp");
             }
