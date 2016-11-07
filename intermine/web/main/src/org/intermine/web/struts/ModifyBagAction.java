@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -184,17 +183,11 @@ public class ModifyBagAction extends InterMineAction
         }
     }
 
-    private static boolean createBag(InterMineBag origBag, String newBagName, Profile profile, InterMineAPI im)
-        //throws ObjectStoreException, CloneNotSupportedException {
+    private static boolean createBag(InterMineBag origBag, String newBagName, Profile profile,
+        InterMineAPI im)
         throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
-        // Clone method clones the bag in the database
-        /*InterMineBag newBag = (InterMineBag) origBag.clone();
-        newBag.setProfileId(profile.getUserId());
-        newBag.setDate(new Date());
-        newBag.setName(newBagName);
-        profile.saveBag(newBagName, newBag);
-        newBag.addBagValues();*/
-        InterMineBag newBag = profile.createBag(newBagName, origBag.getType(), origBag.getDescription(), im.getClassKeys());
+        InterMineBag newBag = profile.createBag(newBagName, origBag.getType(),
+                origBag.getDescription(), im.getClassKeys());
         newBag.addIdsToBag(origBag.getContentsAsIds(), origBag.getType());
         profile.saveBag(newBagName, newBag);
         return true;
