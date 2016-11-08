@@ -455,21 +455,103 @@ public class Engine extends CommandRunner
                 feature.put("end",    chrLoc.getFieldValue("end"));
                 feature.put("strand", chrLoc.getFieldValue("strand"));
             }
+            /* This section has been changed to
+             *  - avoid a loop caused by exon resulting as parents of mRNA.
+             *    similar issue for transposon fragment
+             *    TODO: check PopulateChildFeatures.
+             *  - exclude Exon and CDS as children of Gene
+             */
             if (includeSubfeatures) {
                 List<Map<String, Object>> subFeatures = new ArrayList<Map<String, Object>>();
+                @SuppressWarnings("unchecked")
                 Collection<FastPathObject> childFeatures = (Collection<FastPathObject>)
                         fpo.getFieldValue("childFeatures");
-                if (childFeatures != null) {
+                // there are exons parents of mRNA -> loop
+                if (childFeatures != null
+                        && !feature.get("type").toString().contains("Exon")
+                        && !feature.get("type").toString().contains("TransposonFragment")) {
                     for (FastPathObject child: childFeatures) {
-                        subFeatures.add(makeFeatureWithSubFeatures(child));
+                        LOG.debug("CF " + feature.get("type") + " p of -> "
+                                + child.getClass().getSimpleName());
+                        // don't consider introns
+                        if (!child.getClass().getSimpleName().startsWith("Intron")) {
+                            // and don't consider exons or CDS as subfeatures of gene
+                            // not(A and B) and not(A and C) = (notA or notB) and (notA or notC) =
+                            // notA or (notB and notC)
+                            if (!feature.get("type").toString().endsWith(".Gene")
+                                    || (!child.getClass().getSimpleName().startsWith("Exon")
+                                    && !child.getClass().getSimpleName().startsWith("CDS"))) {
+                                subFeatures.add(makeFeatureWithSubFeatures(child));
+                            }
+                        }
                     }
                 }
+                String soType = getSOType(feature);
+                feature.put("type", soType);
                 feature.put("subfeatures", subFeatures);
             }
             return feature;
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Error reading results", e);
         }
+    }
+
+    /**
+     * @param feature
+     * @return the feature.type, SO style
+     */
+    private String getSOType(Map<String, Object> feature) {
+        String path = "org.intermine.model.bio.";
+        String camelName = feature.get("type").toString().replace(path, "");
+
+        if (camelName.contentEquals("MiRNA")) {
+            return "miRNA";
+        }
+        if (camelName.contentEquals("SnRNA")) {
+            return "snRNA";
+        }
+        if (camelName.contentEquals("SnoRNA")) {
+            return "snoRNA";
+        }
+        if (camelName.contentEquals("NcRNA")) {
+            return "ncRNA";
+        }
+        if (camelName.contentEquals("LncRNA")) {
+            return "lncRNA";
+        }
+        if (camelName.contentEquals("AntisenseLncRNA")) {
+            return "antisense_lncRNA";
+        }
+        if (camelName.contentEquals("MiRNAPrimaryTranscript")) {
+            return "miRNA_primary_transcript";
+        }
+
+        StringBuffer so = new StringBuffer();
+        int i = 0;
+        for (String w : camelName.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])")) {
+            if (i > 0) {
+                so.append("_");
+            }
+            so.append(w);
+            i++;
+        }
+        
+        if (so.toString().contentEquals("CDS")) {
+            return so.toString();
+        }
+
+        String sosmall = so.toString().toLowerCase();
+        if (sosmall.contains("rna")) {
+            return sosmall.replace("rna", "RNA");
+        }
+        if (sosmall.contains("orf")) {
+            return sosmall.replace("orf", "ORF");
+        }
+        if (sosmall.contains("utr")) {
+            return sosmall.replace("utr", "UTR");
+        }
+        // default
+        return sosmall;
     }
 
     private Query getReferenceQuery(Command command) {
