@@ -133,7 +133,7 @@
 
                     <li id="genomicRegionStrandSpecific">
                         <html:checkbox property="strandSpecific" value="true" />
-                        <span>Check this box to perform a strand-specific region search (search + strand if region end>start; search &ndash; strand if region start>end)</span>
+                        <span>Check this box to perform a strand-specific region search (search <b>+</b> strand if region end&gt;start; search <b>&ndash;</b> strand if region start&gt;end)</span>
                     </li>
 
                   </ol>
