@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
@@ -169,16 +170,14 @@ public class HpoConverter extends BioDirectoryConverter
      * @throws ObjectStoreException if can't store to db
      */
     protected void processAnnotationFile(Reader reader) throws IOException, ObjectStoreException {
-        BufferedReader br = new BufferedReader(reader);
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            String[] array = line.split("\t", -1); // keep trailing empty Strings
-
+        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        while (lineIter.hasNext()) {
+            String[] array = lineIter.next();
             // HPO Annotation File Format:
             // http://human-phenotype-ontology.github.io/documentation.html
             if (array.length < 9) {
                 throw new IllegalArgumentException("Not enough elements (should be > 8 not "
-                        + array.length + ") in line: " + line);
+                        + array.length + ")");
             }
 
             // e.g. OMIM
@@ -211,10 +210,15 @@ public class HpoConverter extends BioDirectoryConverter
                 dbRef = dbId;
             }
             evidence.setAttribute("source", dbRef);
-            if (dbRef.toUpperCase().startsWith("PMID")) {
-                String refId = getPublication(dbRef);
-                if (refId != null) {
-                    evidence.addToCollection("publications", refId);
+            if (StringUtils.isNotEmpty(dbRef)) {
+                String[] bits = dbRef.split(";");
+                for (String bit : bits) {
+                    if (bit.toUpperCase().startsWith("PMID")) {
+                        String refId = getPublication(bit);
+                        if (refId != null) {
+                            evidence.addToCollection("publications", refId);
+                        }
+                    }
                 }
             }
 
