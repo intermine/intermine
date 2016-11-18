@@ -57,7 +57,9 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.LogicExpression;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintNull;
@@ -602,6 +604,18 @@ public class MainHelperTest extends TestCase {
         l = new LogicExpression("A");
         assertNull(MainHelper.removeFromConstraintLogic(l, "A"));
     }
+    
+    public void testOrderBy() throws Exception {
+        PathQuery pathQuery = new PathQuery(os.getModel());
+        pathQuery.addViews("Employee.name", "Employee.age", "Employee.department.name", "Employee.department.company.name");
+        Query q = MainHelper.makeQuery(pathQuery, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(0, q.getOrderBy().size());
+
+        pathQuery.addOrderBy("Employee.name", OrderDirection.ASC);
+        pathQuery.addOrderBy("Employee.department.name", OrderDirection.ASC);
+        Query q2 = MainHelper.makeQuery(pathQuery, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(2, q2.getOrderBy().size());
+    }
 
     private Map<String, PathQuery> readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
@@ -611,7 +625,7 @@ public class MainHelperTest extends TestCase {
 
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\"></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name",
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_",
                 "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC");
     }
 
