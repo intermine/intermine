@@ -517,9 +517,10 @@ public class ProfileManager
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-
+        int i = 0;
         Map<String, org.intermine.api.profile.SavedQuery> savedQueries =
             new HashMap<String, org.intermine.api.profile.SavedQuery>();
+
         for (SavedQuery query : userProfile.getSavedQuerys()) {
             try {
                 Reader r = new StringReader(query.getQuery());
@@ -528,13 +529,10 @@ public class ProfileManager
                     Map<String, PathQuery> pqs = PathQueryBinding.unmarshalPathQueries(
                             new StringReader(query.getQuery()),
                             pathQueryFormat);
-                    if (pqs.size() == 1) {
-                        Map.Entry<String, PathQuery> entry = pqs.entrySet().iterator().next();
+                    for (Map.Entry<String, PathQuery> entry : pqs.entrySet()) {
                         String name = (String) entry.getKey();
-                        savedQueries.put(
-                                name,
-                                new org.intermine.api.profile.SavedQuery(name, null,
-                                                                  entry.getValue()));
+                        savedQueries.put(name, new org.intermine.api.profile.SavedQuery(name,
+                                null, entry.getValue()));
                     }
                 }
             } catch (Exception err) {
