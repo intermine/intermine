@@ -99,7 +99,7 @@
 
 <!-- has to be after UniProt because only loads protein domains for loaded proteins -->
     <source name="protein2ipr" type="protein2ipr" dump="true">
-     <property name="src.data.dir" location="/micklem/data/interpro/match_complete"/>
+     <property name="src.data.dir" location="/micklem/data/interpro/match_complete/current"/>
      <property name="src.data.dir.includes" value="protein2ipr.dat"/>
      <property name="protein2ipr.organisms" value="7227"/>
     </source>
