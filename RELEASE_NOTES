@@ -8,7 +8,21 @@
  *
  */
 
-InterMine 1.6.7 (2016 September)
+InterMine 1.6.9 (2016 November)
+
+#1425 - Region Search: allow strand-specific search
+#1443 - HTTPS - web services using hardcoded HTTP 
+#1449 - List analysis page generating error
+#1451 - The copy of a list by an un-logged user, saves the new list into db with the same name
+#1456 - HPO source: doesn't capture publication if there is more than one
+
+InterMine 1.6.8 (2016 September 20)
+
+Fix for Region search [595e786]
+Fix for FlyAtlas expression widget [#1141]
+Fix for mail update [9211ab7]
+
+InterMine 1.6.7 (2016 September 7)
 
 #421 - Results table forgetting toggle state
 #593 - cdn.intermine.org in generated JavaScript
