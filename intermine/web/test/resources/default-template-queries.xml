@@ -51,7 +51,7 @@
 
 <template name="ManagerLookup" title="Search for Managers" longDescription="Use a LOOKUP constraint to search for Managers." comment="">
   <query name="ManagerLookup" model="testmodel" view="Manager.name Manager.title">
-    <constraint path="Manager" lookup="Mr." description="" identifier="" editable="true" code="A"/>
+    <constraint path="Manager" op="LOOKUP" value="Mr." description="" identifier="" editable="true" code="A"/>
   </query>
 </template>
 
