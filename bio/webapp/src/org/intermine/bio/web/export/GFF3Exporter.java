@@ -58,12 +58,12 @@ public class GFF3Exporter implements Exporter
      * for the gff header, link to taxomony
      */
     public static final String WORM_LINK =
-        "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239";
+        "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239";
     /**
      * for the gff header, link to taxomony
      */
     public static final String FLY_LINK =
-        "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227";
+        "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227";
 
     PrintWriter out;
     private List<Integer> featureIndexes;

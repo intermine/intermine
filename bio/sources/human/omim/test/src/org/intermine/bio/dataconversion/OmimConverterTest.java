@@ -54,7 +54,7 @@ public class OmimConverterTest extends ItemsTestCase
      */
     public void testProcess() throws Exception {
         File tmp = new File(getClass().getClassLoader()
-                .getResource("omim.txt").toURI());
+                .getResource("morbidmap.txt").toURI());
         File datadir = tmp.getParentFile();
         converter.process(datadir);
         converter.close();

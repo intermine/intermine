@@ -30,6 +30,11 @@ default_sources:
   - "HPO"
   - "NCBIFasta"
   - "NCBIGff"
+  - "ClinVar"
+  - "IntActComplexes"
+  - "HGNC"
+  - "NCBIGeneHuman"
+  - "Orphanet"
 
 UniProt:
     organisms:

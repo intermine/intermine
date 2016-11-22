@@ -1,0 +1,52 @@
+Carotid intimal medial thickness 1, 609338 (3)	PPARG, PPARG1, PPARG2, CIMT1, GLM1	601487	3p25.2
+Diabetes mellitus, noninsulin-dependent, 125853 (3)	ABCC8, SUR, PHHI, SUR1, HHF1, TNDM2	600509	11p15.1
+Diabetes mellitus, noninsulin-dependent, 125853 (3)	HNF1B, TCF2, HNF2, MODY5, FJHN, HPC11	189907	17q12
+Diabetes mellitus, noninsulin-dependent, late onset, 125853 (3)	GCK, HHF3	138079	7p13
+Diabetes mellitus, type 2, 125853 (3)	PAX4, MODY9, KPD	167413	7q32.1
+Diabetes mellitus, type II, 125853 (3)	AKT2, HIHGHH	164731	19q13.2
+Insulin resistance, severe, digenic, 604367 (3)	PPARG, PPARG1, PPARG2, CIMT1, GLM1	601487	3p25.2
+Insulin resistance, severe, digenic, 604367 (3)	PPP1R3A, PPP1R3	600917	7q31.1
+Lipodystrophy, familial partial, type 3, 604367 (3)	PPARG, PPARG1, PPARG2, CIMT1, GLM1	601487	3p25.2
+Obesity, autosomal dominant, 601665 (3)	MC4R	155541	18q21.32
+Obesity, mild, early-onset, 601665 (3)	NR0B2, SHP	604630	1p36.11
+Obesity, severe, 601665 (3)	PPARG, PPARG1, PPARG2, CIMT1, GLM1	601487	3p25.2
+Obesity, severe, 601665 (3)	SIM1	603128	6q16.3
+[Obesity, resistance to] (3)	PPARG, PPARG1, PPARG2, CIMT1, GLM1	601487	3p25.2
+{?Obesity, susceptibility to}, 601665 (3)	CARTPT, CART	602606	5q13.2
+{Diabetes mellitus, non-insulin-dependent, susceptibility to}, 125853 (3)	ENPP1, PDNP1, NPPS, M6S1, PCA1, ARHR2, COLED	173335	6q23.2
+{Diabetes mellitus, noninsulin-dependent, 2}, 125853 (3)	HNF1A, TCF1, MODY3, IDDM20	142410	12q24.31
+{Diabetes mellitus, noninsulin-dependent, association with}, 125853 (3)	WFS1, WFRS, WFS, DFNA6, DFNA14, DFNA38, WFSL, CTRCT41	606201	4p16.1
+{Diabetes mellitus, noninsulin-dependent, susceptibility to}, 125853 (3)	CDKAL1	611259	6p22.3
+{Diabetes mellitus, noninsulin-dependent, susceptibility to}, 125853 (3)	HMGA1, HMGIY	600701	6p21.31
+{Diabetes mellitus, noninsulin-dependent, susceptibility to}, 125853 (3)	IGF2BP2, IMP2	608289	3q27.2
+{Diabetes mellitus, noninsulin-dependent, susceptibility to}, 125853 (3)	RETN, RSTN, FIZZ3	605565	19p13.2
+{Diabetes mellitus, noninsulin-dependent, susceptibility to}, 125853 (3)	SLC30A8, ZNT8	611145	8q24.11
+{Diabetes mellitus, noninsulin-dependent}, 125853 (2)	NIDDM3	603694	20q12-q13.1
+{Diabetes mellitus, noninsulin-dependent}, 125853 (2)	NIDDM4	608036	5q34-q35.2
+{Diabetes mellitus, noninsulin-dependent}, 125853 (3)	GCGR	138033	17q25.3
+{Diabetes mellitus, noninsulin-dependent}, 125853 (3)	HNF4A, TCF14, MODY1, FRTS4	600281	20q13.12
+{Diabetes mellitus, noninsulin-dependent}, 125853 (3)	IRS1	147545	2q36.3
+{Diabetes mellitus, noninsulin-dependent}, 125853 (3)	IRS2	600797	13q34
+{Diabetes mellitus, noninsulin-dependent}, 125853 (3)	LIPC, HL, LIPH, HDLCQ12	151670	15q21.3
+{Diabetes mellitus, noninsulin-dependent}, 125853 (3)	MAPK8IP1, IB1	604641	11p11.2
+{Diabetes mellitus, noninsulin-dependent}, 125853 (3)	NEUROD1, NIDDM	601724	2q31.3
+{Diabetes mellitus, noninsulin-dependent}, 125853 (3)	SLC2A2, GLUT2	138160	3q26.2
+{Diabetes mellitus, type 2, susceptibility to}, 125853 (3)	KCNJ11, BIR, PHHI, HHF2, TNDM3, MODY13	600937	11p15.1
+{Diabetes mellitus, type 2, susceptibility to}, 125853 (3)	MTNR1B	600804	11q14.3
+{Diabetes mellitus, type 2, susceptibility to}, 125853 (3)	TCF7L2, TCF4	602228	10q25.2-q25.3
+{Diabetes mellitus, type II, susceptibility to}, 125853 (3)	IPF1, MODY4, PAGEN1	600733	13q12.2
+{Diabetes, susceptibility to}, 222100, 125853 (3)	IL6, IFNB2, BSF2, HSF, HGF	147620	7p15.3
+{Diabetes, type 2, susceptibility to}, 125853 (3)	GPD2	138430	2q24.1
+{Diabetes, type 2}, 125853 (3)	PPARG, PPARG1, PPARG2, CIMT1, GLM1	601487	3p25.2
+{Hypertension, insulin resistance-related, susceptibility to}, 125853 (3)	RETN, RSTN, FIZZ3	605565	19p13.2
+{Insulin resistance, susceptibility to}, 125853 (3)	PTPN1, PTP1B	176885	20q13.13
+{Obesity, association with}, 601665 (3)	SDC3, SYND3, SDCN	186357	1p35.2
+{Obesity, early-onset, susceptibility to}, 601665 (3)	POMC	176830	2p23.3
+{Obesity, late-onset}, 601665 (3)	AGRP, ART, AGRT	602311	16q22.1
+{Obesity, severe, and type II diabetes}, 601665 (3)	UCP3	602044	11q13.4
+{Obesity, susceptibility to}, 601665 (3)	ADRB2	109690	5q32
+{Obesity, susceptibility to}, 601665 (3)	ADRB3	109691	8p11.23
+{Obesity, susceptibility to}, 601665 (3)	ENPP1, PDNP1, NPPS, M6S1, PCA1, ARHR2, COLED	173335	6q23.2
+{Obesity, susceptibility to}, 601665 (3)	GHRL	605353	3p25.3
+{Obesity, susceptibility to}, 601665 (3)	UCP1	113730	4q31.1
+{Obesity, variation in}, 601665 (3)	PPARGC1B, PGC1B, PERC	608886	5q32

@@ -7,7 +7,7 @@
 # TODO: not process XML files already processed
 
 #set the version to be accessed
-wbrel="WS254"
+wbrel="WS256"
 echo 'Release version' $wbrel
 
 
@@ -35,7 +35,7 @@ declare -A species=(["c_elegans"]="PRJNA13758"
                     ["c_sinica"]="PRJNA194557")
 
 # sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location
-sourcedir='/Users/nuin/intermine_work/WS254-test-data'
+sourcedir='/Users/nuin/wormmine/WS256-test-data'
 
 #################### Main dirs ##################
 #                                               #
@@ -45,7 +45,7 @@ sourcedir='/Users/nuin/intermine_work/WS254-test-data'
 #                                               #
 #################### Species ####################
 # intermine='/mnt/data/intermine'
-intermine='/Users/nuin/intermine_work/new/intermine' #local test
+intermine='/Users/nuin/wormmine/' #local test
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'

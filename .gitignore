@@ -208,3 +208,4 @@ biotestmine/project.xml
 *.DS_Store
 /datadir
 wget-log
+/WS256-test-data

@@ -8,6 +8,49 @@
  *
  */
 
+InterMine 1.6.9 (2016 November)
+
+#1422 - Constrain widget results. 
+#1425 - Region Search: allow strand-specific search
+#1431 - GFF source: ScoreType is required to parse the file but not required in GFF3 specs 
+#1441 - Region Search: Fix integer truncation bug for Extended Regions
+#1443 - HTTPS - web services using hardcoded HTTP 
+#1451 - The copy of a list by an un-logged user, saves the new list into db with the same name
+#1456 - HPO source: doesn't capture publication if there is more than one
+
+InterMine 1.6.8 (2016 September 20)
+
+Fix for Region search [595e786]
+Fix for FlyAtlas expression widget [#1141]
+Fix for mail update [9211ab7]
+
+InterMine 1.6.7 (2016 September 7)
+
+#421 - Results table forgetting toggle state
+#593 - cdn.intermine.org in generated JavaScript
+#845 - Some tests fail occasionally
+#1204 - Cytoscape: clean up
+#1226 - Userprofile backup script - improvements
+#1364 - Web service: for enrichment, gene length correction requires list
+#1369 - Deleting templates doesn't really delete them
+#1370 - Issues with https
+#1372 - Human data: add ClinVar data parser
+#1375 - Mail: add replyto param
+#1376 - HTTPS - still not working as expected
+#1378 - OMIM script fails
+#1381 - InterPro - added a new database
+#1383 - Bootstrap fails
+#1384 - NCBI moving to HTTPS
+#1385 - HPO - too many diseases
+#1386 - Disease - add data set
+#1387 - Disease - add Orphanet source
+#1388 - Docker: tomcat uses a different port
+#1396 - template.do XSS vulnerability
+#1398 - Travis tests failing
+#1402 - Refactor Mail
+#1404 - Lists endpoint returns bad lists (Lists that need to be upgraded)
+
+
 InterMine 1.6.6 (2016 13 May, Friday the 13th)
 
 #1361 - Correct Panther homologue labels

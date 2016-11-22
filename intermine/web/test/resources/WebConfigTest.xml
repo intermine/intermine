@@ -23,7 +23,21 @@
     <tabledisplayer src="/model/tableManager.jsp"/>
   </class>
    <widgets>
-   <enrichmentwidgetdisplayer id="contractor_enrichment"
+        <graphdisplayer id="age_groups"
+                      title="Age Groups Distribution"
+                      description="Demographic distribution of employees by age group"
+                      graphType="ColumnChart"
+                      domainLabel="Age group"
+                      rangeLabel="Count"
+                      startClass="Employee"
+                      typeClass="Employee"
+                      categoryPath="age"
+                      seriesPath=""
+                      seriesValues=""
+                      seriesLabels=""
+                      constraints="age != 40"
+                      views="name,age,fullTime,department.name"/>
+        <enrichmentwidgetdisplayer id="contractor_enrichment"
                  title="Contractor Enrichment"
                  label="Contractor"
                  description="The relationship between contractors and employees"

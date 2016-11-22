@@ -20,6 +20,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -45,8 +46,9 @@ import org.json.JSONObject;
  * @author Alex
  *
  */
-public class GenomicRegionSearchListInput extends ListInput
-{
+public class GenomicRegionSearchListInput extends ListInput {
+
+    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchListInput.class);
 
     private final InterMineAPI api;
     private final GenomicRegionSearchInfo info;
@@ -100,6 +102,9 @@ public class GenomicRegionSearchListInput extends ListInput
             regions.add(regs.getString(i));
         }
         parsed.setRegions(regions);
+
+        parsed.setStrandSpecific(jsonRequest.getBoolean("strandSpecific"));
+        
         return parsed;
     }
 
@@ -125,8 +130,8 @@ public class GenomicRegionSearchListInput extends ListInput
      * @author Alex
      *
      */
-    public class GenomicRegionSearchInfo
-    {
+    public class GenomicRegionSearchInfo {
+        
         private final String sequenceFeature = "org.intermine.model.bio.SequenceFeature";
         private String organism;
         private Set<String> featureTypes;
@@ -135,6 +140,7 @@ public class GenomicRegionSearchListInput extends ListInput
         private int extension = 0;
         private boolean isInterbase = false;
         private Set<String> invalidSpans = new HashSet<String>();
+        private boolean strandSpecific;
 
         /**
          *
@@ -157,6 +163,20 @@ public class GenomicRegionSearchListInput extends ListInput
          */
         public void setOrganism(String organism) {
             this.organism = organism;
+        }
+
+        /**
+         * @return strandSpecific
+         */
+        public boolean getStrandSpecific() {
+            return strandSpecific;
+        }
+
+        /**
+         * @param strandSpecific
+         */
+        public void setStrandSpecific(boolean strandSpecific) {
+            this.strandSpecific = strandSpecific;
         }
 
         /**
@@ -307,7 +327,7 @@ public class GenomicRegionSearchListInput extends ListInput
             grsc.setOrgName(organism);
             grsc.setFeatureTypes(getFeatureClasses());
             grsc.setGenomicRegionList(getGenomicRegions());
-            grsc.setExtededRegionSize(extension);
+            grsc.setExtendedRegionSize(extension);
             return grsc;
         }
 

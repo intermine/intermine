@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<JDBOR date="2016-06-01 04:15:01" version="1.2.4 / 4.1.6 [2016-04-08] (orientdb version)" copyright="Orphanet (c) 2016">
+  <DisorderList count="9393">
+    <Disorder id="17601">
+      <OrphaNumber>166024</OrphaNumber>
+      <ExpertLink lang="en">http://www.orpha.net/consor/cgi-bin/OC_Exp.php?lng=en&amp;Expert=166024</ExpertLink>
+      <Name lang="en">Multiple epiphyseal dysplasia, Al-Gazali type</Name>
+      <DisorderFlagList count="1">
+        <DisorderFlag id="476">
+          <Label>on-line</Label>
+        </DisorderFlag>
+      </DisorderFlagList>
+      <SynonymList count="1">
+        <Synonym lang="en">Multiple epiphyseal dysplasia-macrocephaly-distinctive facies syndrome</Synonym>
+      </SynonymList>
+      <DisorderType id="21394">
+        <OrphaNumber>377788</OrphaNumber>
+        <Name lang="en">Disease</Name>
+      </DisorderType>
+      <ExternalReferenceList count="2">
+        <ExternalReference id="78407">
+          <Source>ICD-10</Source>
+          <Reference>Q77.3</Reference>
+          <DisorderMappingRelation id="21534">
+            <OrphaNumber>377808</OrphaNumber>
+            <Name lang="en">NTBT (narrower term maps to a broader term)</Name>
+          </DisorderMappingRelation>
+          <DisorderMappingICDRelation id="21604">
+            <OrphaNumber>377818</OrphaNumber>
+            <Name lang="en">Attributed</Name>
+          </DisorderMappingICDRelation>
+          <DisorderMappingValidationStatus id="21611">
+            <OrphaNumber>377819</OrphaNumber>
+            <Name lang="en">Validated</Name>
+          </DisorderMappingValidationStatus>
+        </ExternalReference>
+        <ExternalReference id="38949">
+          <Source>OMIM</Source>
+          <Reference>607131</Reference>
+          <DisorderMappingRelation id="21527">
+            <OrphaNumber>377807</OrphaNumber>
+            <Name lang="en">E (exact mapping (the terms and the concepts are equivalent))</Name>
+          </DisorderMappingRelation>
+          <DisorderMappingICDRelation/>
+          <DisorderMappingValidationStatus id="21611">
+            <OrphaNumber>377819</OrphaNumber>
+            <Name lang="en">Validated</Name>
+          </DisorderMappingValidationStatus>
+        </ExternalReference>
+      </ExternalReferenceList>
+      <DisorderDisorderAssociationList count="0">
+      </DisorderDisorderAssociationList>
+    </Disorder>
+    <Disorder id="17603">
+      <OrphaNumber>166032</OrphaNumber>
+      <ExpertLink lang="en">http://www.orpha.net/consor/cgi-bin/OC_Exp.php?lng=en&amp;Expert=166032</ExpertLink>
+      <Name lang="en">Multiple epiphyseal dysplasia, with miniepiphyses</Name>
+  </Disorder>
+</DisorderList>
+</JDBOR>
