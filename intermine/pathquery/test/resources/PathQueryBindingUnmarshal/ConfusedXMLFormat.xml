@@ -1,8 +1,0 @@
-<query model="testmodel" view="Employee.name Employee.age Employee.department:employees.name">
-    <node path="Employee.department:employees" type="Manager">
-        <constraint path="Employee.department.manager" op="&gt;" value="C"/>
-    </node>
-    <node path="Employee.department:employee.fullTime" type="boolean">
-        <constraint op="=" value="Tom"/>
-    </node>
-</query>
