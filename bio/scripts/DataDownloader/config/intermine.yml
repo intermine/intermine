@@ -34,7 +34,6 @@ default_sources:
   - "IntActComplexes"
   - "HGNC"
   - "NCBIGeneHuman"
-  - "OMIM"
   - "Orphanet"
 
 UniProt:
