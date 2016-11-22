@@ -81,10 +81,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
     public void testGetPrecomputeLookup() throws Exception {
         Reader reader = new StringReader("<template name=\"ManagerLookup\" title=\"Search for Managers\" longDescription=\"Use a LOOKUP constraint to search for Managers.\" comment=\"\">\n" +
         "  <query name=\"ManagerLookup\" model=\"testmodel\" view=\"Manager.name Manager.title\">\n" +
-        "    <node path=\"Manager\" type=\"Manager\">\n" +
-        "      <constraint description=\"\" identifier=\"\" editable=\"true\" code=\"A\"  op=\"LOOKUP\" value=\"Mr.\">\n" +
-        "      </constraint>\n" +
-        "    </node>\n" +
+        "    <constraint path=\"Manager\" editable=\"true\" code=\"A\" op=\"LOOKUP\" value=\"Mr.\"/>\n" +
         "  </query>\n" +
         "</template>");
         TemplateQuery t =
