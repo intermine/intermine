@@ -50,7 +50,6 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -64,7 +63,6 @@ import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.util.ConsistentSet;
 import org.intermine.metadata.StringUtil;
 
 /**

@@ -1,7 +1,3 @@
 <query model="testmodel" view="Employee.name Employee.age Employee.department:employees.name">
-    <node path="Employee.department:employees" type="Manager">
-    </node>
-    <node path="Employee.department.employees.age" type="int">
-        <constraint op="=" value="10"/>
-    </node>
+    <constraint path="Employee.department.employees.age" op="=" value="10"/>
 </query>
