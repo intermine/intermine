@@ -13,6 +13,7 @@ package org.intermine.web.logic.widget;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
@@ -89,7 +90,15 @@ public class WidgetLdr
         } else if ("false".equalsIgnoreCase(value)) {
             queryValue = new QueryValue(false);
         } else {
-            queryValue = new QueryValue(value);
+            if (!NumberUtils.isNumber(value)) {
+                queryValue = new QueryValue(value);
+            } else {
+                try {
+                    queryValue = new QueryValue(Integer.parseInt(value));
+                } catch (NumberFormatException nfe) {
+                    queryValue = new QueryValue(Double.parseDouble(value));
+                }
+            }
         }
         return queryValue;
     }

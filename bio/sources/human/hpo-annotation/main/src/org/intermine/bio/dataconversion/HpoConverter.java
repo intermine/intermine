@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
@@ -169,16 +170,14 @@ public class HpoConverter extends BioDirectoryConverter
      * @throws ObjectStoreException if can't store to db
      */
     protected void processAnnotationFile(Reader reader) throws IOException, ObjectStoreException {
-        BufferedReader br = new BufferedReader(reader);
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            String[] array = line.split("\t", -1); // keep trailing empty Strings
-
+        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        while (lineIter.hasNext()) {
+            String[] array = lineIter.next();
             // HPO Annotation File Format:
-            // http://www.human-phenotype-ontology.org/contao/index.php/annotation-guide.html
+            // http://human-phenotype-ontology.github.io/documentation.html
             if (array.length < 9) {
                 throw new IllegalArgumentException("Not enough elements (should be > 8 not "
-                        + array.length + ") in line: " + line);
+                        + array.length + ")");
             }
 
             // e.g. OMIM
@@ -205,24 +204,24 @@ public class HpoConverter extends BioDirectoryConverter
             String evidenceCodeRefId = getEvidenceCode(evidenceCode);
 
             Item evidence = createItem("HPOEvidence");
-            Item disease = null;
-
+            Item disease = getDisease(dbId);
+            evidence.setReference("diseaseReference", disease);
             if (dbRef.isEmpty()) {
                 dbRef = dbId;
             }
             evidence.setAttribute("source", dbRef);
-            if (dbRef.toUpperCase().startsWith("PMID")) {
-                String refId = getPublication(dbRef);
-                if (refId != null) {
-                    evidence.addToCollection("publications", refId);
-                }
-            } else {
-                if (dbRef.trim().matches("^(OMIM|ORPHANET):[0-9]{6,}$")) {
-                    String diseaseId = dbRef.trim();
-                    disease = getDisease(diseaseId);
-                    evidence.setReference("diseaseReference", disease);
+            if (StringUtils.isNotEmpty(dbRef)) {
+                String[] bits = dbRef.split(";");
+                for (String bit : bits) {
+                    if (bit.toUpperCase().startsWith("PMID")) {
+                        String refId = getPublication(bit);
+                        if (refId != null) {
+                            evidence.addToCollection("publications", refId);
+                        }
+                    }
                 }
             }
+
             evidence.setReference("code", evidenceCodeRefId);
             if (!frequency.isEmpty()) {
                 evidence.setAttribute("frequencyModifier", frequency);
@@ -232,7 +231,7 @@ public class HpoConverter extends BioDirectoryConverter
             }
             store(evidence);
 
-            Item annotation = getAnnotation(hpoIdentifier, qualifier);
+            Item annotation = getAnnotation(hpoIdentifier, dbId, qualifier);
             annotation.addToCollection("evidences", evidence);
             if (disease != null) {
                 disease.addToCollection("hpoAnnotations", annotation);
@@ -240,9 +239,9 @@ public class HpoConverter extends BioDirectoryConverter
         }
     }
 
-
-    private Item getAnnotation(String hpoId, String qualifier) throws ObjectStoreException {
-        MultiKey key = new MultiKey(hpoId, qualifier);
+    private Item getAnnotation(String hpoId, String diseaseId, String qualifier)
+        throws ObjectStoreException {
+        MultiKey key = new MultiKey(hpoId, diseaseId, qualifier);
         Item annotation = annotations.get(key);
         if (annotation == null) {
             annotation = createItem("HPOAnnotation");

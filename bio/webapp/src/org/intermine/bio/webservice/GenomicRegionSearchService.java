@@ -146,10 +146,11 @@ public class GenomicRegionSearchService extends ListMakerService
      */
     protected Map<GenomicRegion, Query> createQueries(GenomicRegionSearchInfo info) {
         return GenomicRegionSearchUtil.createRegionListQueries(
-                info.getGenomicRegions(),
-                info.getExtension(),
-                GenomicRegionSearchQueryRunner.getChromosomeInfo(im).get(info.getOrganism()),
-                info.getOrganism(),
-                info.getFeatureClasses());
+                                                               info.getGenomicRegions(),
+                                                               info.getExtension(),
+                                                               GenomicRegionSearchQueryRunner.getChromosomeInfo(im).get(info.getOrganism()),
+                                                               info.getOrganism(),
+                                                               info.getFeatureClasses(),
+                                                               info.getStrandSpecific());
     }
 }

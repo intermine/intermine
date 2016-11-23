@@ -87,7 +87,7 @@
     </source>
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo" />
-      <property name="src.data.dir" location="/micklem/data/go-annotation/metabolic" />
+      <property name="src.data.dir" location="/micklem/data/go-annotation/current/human" />
       <property name="src.data.includes" value="**/gene_association*" />
     </source>
     <source name="clinvar" type="clinvar">
@@ -103,7 +103,7 @@
       <property name="intact.organisms" value="9606" />
     </source>
     <source name="psi-complexes" type="psi-complexes">
-      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/human"/>
+      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes"/>
       <property name="complexes.source" value="uniprotkb"/>
     </source>
     <source name="biogrid" type="biogrid">
