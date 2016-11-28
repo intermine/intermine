@@ -780,6 +780,9 @@
                       seriesPath="affyCall"
                       seriesValues="Up,Down"
                       seriesLabels="Up,Down"
+                      constraints="presentCall != 0,
+                                   presentCall != 1,
+                                   presentCall != 2"
                       views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,
                             tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
 
