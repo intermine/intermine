@@ -116,7 +116,7 @@
       <property name="kegg.organisms" value="9606 10090" />
     </source>
     <source name="reactome" type="reactome">
-      <property name="src.data.dir" location="/micklem/data/reactome/uniprot" />
+      <property name="src.data.dir" location="/micklem/data/reactome/current" />
       <property name="reactome.organisms" value="9606 10090" />
     </source>
     <source name="panther" type="panther">
