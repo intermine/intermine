@@ -74,13 +74,13 @@ public class ClinvarConverter extends BioFileConverter
 
             String type = line[1];
             String geneId = line[3];
-            String clinicalSignificance = line[5];
-            String dbSNPXref = line[6];
-            String ncbiXref = line[7];
-            String clinVarXref = line[8];
+            String clinicalSignificance = line[6];
+//            String dbSNPXref = line[6];
+//            String ncbiXref = line[7];
+//            String clinVarXref = line[8];
 
             String diseaseString = line[10];    // parse for OMIM
-            String assemblyString = line[12];
+            String assemblyString = line[16];
 
             // only load GRCh38
             if (!ASSEMBLY.equals(assemblyString)) {
@@ -93,8 +93,8 @@ public class ClinvarConverter extends BioFileConverter
             }
             alleles.add(alleleId);
 
-            String referenceAllele = line[25];
-            String alternateAllele = line[26];
+            String referenceAllele = line[21];
+            String alternateAllele = line[22];
 
             String geneRefId = getGene(geneId);
 
@@ -112,15 +112,15 @@ public class ClinvarConverter extends BioFileConverter
             }
             store(item);
 
-            if (!"-".equals(dbSNPXref)) {
-                createCrossReference(item.getIdentifier(), dbSNPXref, "dbSNP", true);
-            }
-            if (!"-".equals(ncbiXref)) {
-                createCrossReference(item.getIdentifier(), ncbiXref, "NCBI", true);
-            }
-            if (!"-".equals(clinVarXref)) {
-                createCrossReference(item.getIdentifier(), clinVarXref, "ClinVar", true);
-            }
+//            if (!"-".equals(dbSNPXref)) {
+//                createCrossReference(item.getIdentifier(), dbSNPXref, "dbSNP", true);
+//            }
+//            if (!"-".equals(ncbiXref)) {
+//                createCrossReference(item.getIdentifier(), ncbiXref, "NCBI", true);
+//            }
+//            if (!"-".equals(clinVarXref)) {
+//                createCrossReference(item.getIdentifier(), clinVarXref, "ClinVar", true);
+//            }
         }
 
     }
