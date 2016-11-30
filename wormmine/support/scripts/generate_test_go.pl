@@ -73,7 +73,7 @@ for my $key (keys %ids) {
 close ($gofh);
 
 my $robot   = "/home/scain/robot/bin/robot";
-my $command = "$robot extract --method BOT --input /home/scain/robot/go.owl --term-file $gofilename --output go-test.obo";
+my $command = "$robot extract --method BOT --input $goin --term-file $gofilename --output go-test.obo";
 
 system($command);
 
