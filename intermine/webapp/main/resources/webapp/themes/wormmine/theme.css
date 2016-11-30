@@ -559,3 +559,7 @@ input[type = "button"].ui-icon-search {
 #funding-footer {
     margin-bottom: 1em;
 }
+
+.imtables .clearfix {
+  overflow: visible;
+}
