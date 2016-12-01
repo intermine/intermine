@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -194,7 +194,7 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
                     subv = dblQuote(((PathConstraintLookup) pc).getValue());
                 } else {
                     subv = dblQuote(((PathConstraintLookup) pc).getValue()
-                            + "\", => :with => " + extraValue);
+                            + "\", :with => \"" + extraValue);
                 }
             } else if ("PathConstraintAttribute".equals(className)) {
                 String val = dblQuote(((PathConstraintAttribute) pc).getValue());

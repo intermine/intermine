@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,6 +7,111 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+InterMine 1.6.9 (2016 November)
+
+#1422 - Constrain widget results. 
+#1425 - Region Search: allow strand-specific search
+#1431 - GFF source: ScoreType is required to parse the file but not required in GFF3 specs 
+#1441 - Region Search: Fix integer truncation bug for Extended Regions
+#1443 - HTTPS - web services using hardcoded HTTP 
+#1451 - The copy of a list by an un-logged user, saves the new list into db with the same name
+#1456 - HPO source: doesn't capture publication if there is more than one
+
+InterMine 1.6.8 (2016 September 20)
+
+Fix for Region search [595e786]
+Fix for FlyAtlas expression widget [#1141]
+Fix for mail update [9211ab7]
+
+InterMine 1.6.7 (2016 September 7)
+
+#421 - Results table forgetting toggle state
+#593 - cdn.intermine.org in generated JavaScript
+#845 - Some tests fail occasionally
+#1204 - Cytoscape: clean up
+#1226 - Userprofile backup script - improvements
+#1364 - Web service: for enrichment, gene length correction requires list
+#1369 - Deleting templates doesn't really delete them
+#1370 - Issues with https
+#1372 - Human data: add ClinVar data parser
+#1375 - Mail: add replyto param
+#1376 - HTTPS - still not working as expected
+#1378 - OMIM script fails
+#1381 - InterPro - added a new database
+#1383 - Bootstrap fails
+#1384 - NCBI moving to HTTPS
+#1385 - HPO - too many diseases
+#1386 - Disease - add data set
+#1387 - Disease - add Orphanet source
+#1388 - Docker: tomcat uses a different port
+#1396 - template.do XSS vulnerability
+#1398 - Travis tests failing
+#1402 - Refactor Mail
+#1404 - Lists endpoint returns bad lists (Lists that need to be upgraded)
+
+
+InterMine 1.6.6 (2016 13 May, Friday the 13th)
+
+#1361 - Correct Panther homologue labels
+#1322 - HumanMine keyword search is returning atomic coordinates of protein structures
+#1318 - Inconsistent session expiration
+#1301 - Enabled/disabled styling on template forms
+#1297 - Template generates bad web service URL
+#1293 - GO parser: missing additional publication IDs
+#1292 - IntAct: resolve all Ensembl identifier not just the ones in NCBI file
+#1284 - App gene report page kills HumanMine
+#1283 - Region search: not returning SNPs
+#1282 - stepZ - working with results sets
+#1277 - Complex - interacting region has two locations
+#1276 - Footer - make like YeastMine
+#1274 - Publication Enrichment - download fails on NULL pubmed ID
+#1270 - GFF parser - allow for multiple locations
+#1267 - GFF parser - removeFeature() leaves synonyms
+#1260 - Web services: add an intermine version web service
+#1259 - NCBI GFF - create parser
+#1258 - Enrichment widget: accept identifiers instead of just the list
+#1252 - ID resolver - update human IDs file.
+#1251 - NCBI parser - for synonyms
+#1250 - Add synonyms to Ensembl XML generating script
+#1249 - HGNC parser
+#1248 - List upload: error
+#1245 - Hardcoded CDN values
+#1239 - errorMessages tile missing?
+#1225 - Cytoscape: less mean error message
+#1202 - UniProt: comments not capturing disease
+#1201 - Results tables - external link outs don't work on objects without organism, e.g. Pubs
+#1200 - HumanMine: load synonyms
+#1191 - PubMed: remove obsolete classes
+#1189 - HumanMine - add illumina body map.
+#1180 - Postgres warning - connection closed
+#1160 - 'Contact Us' link not working
+#1104 - PFam data loader
+#1082 - PDB - use restful API instead of manual download
+#1073 - cannot change default file name in imtable export 
+#1046 - XenMine - list creation error
+#1015 - Panther and Homologene - Mouse genes are not being merged correctly
+#986 - JS tests failing 
+#984 - oAuth2 error text needs updating
+#930 - Blog for InterMine / human InterMine
+#925 - CHEBI data source
+#918 - GOAnnotation has an empty publications collection
+#764 - cytoscape display export: error #3769
+#763 - cytoscape diagram not right in yeastmine
+#717 - Export broken in cytoscape viewer
+#624 - wrapping of java errors, contact us form
+#601 - Keyword search - organism facet not being returned for some genes
+#586 - FlyMine - make the childFeatures correct
+#566 - Keyword search - don't index IDs
+#500 - Code generation needs platform specific line endings
+#449 - Quick search results only retrieving first 100 rows
+#426 - Web service URL for templates constrained to a list doesn't work.
+#414 - Reword error message
+#206 - GO enrichment widget - accessed via webservice
+#148 - Add more orthologue data sets to mastermine
+#78 - Save changes to query results as new query
+
+
 
 InterMine 1.6.5
 

@@ -1,7 +1,7 @@
 package org.intermine.api;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -199,7 +199,7 @@ public class InterMineAPI
         synchronized (pqeCache) {
             PathQueryExecutor retval = pqeCache.get(profile);
             if (retval == null) {
-                retval = new PathQueryExecutor(objectStore, classKeys, profile,
+                retval = new PathQueryExecutor(objectStore, profile,
                         bagQueryRunner, bagManager);
                 pqeCache.put(profile, retval);
             }

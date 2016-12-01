@@ -1,7 +1,7 @@
 package org.intermine.web.logic.config;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,6 +24,7 @@ public class FieldConfig
     private String fieldExpr;
     private boolean doNotTruncate;
     private boolean escapeXml = true;
+    private boolean hide = false;
     private boolean showInSummary = true;
     private boolean outerInSummary = false;
     private boolean showInInlineCollection = true;
@@ -181,6 +182,22 @@ public class FieldConfig
      */
     public boolean getEscapeXml() {
         return escapeXml;
+    }
+
+    /**
+     * If set to true, do not display field on report page.
+     * @param hide do not display if true
+     */
+    public void setHide(boolean hide) {
+        this.hide = hide;
+    }
+
+    /**
+     * Return the value of the hide flag.
+     * @return the value of the flag
+     */
+    public boolean getHide() {
+        return hide;
     }
 
     /**

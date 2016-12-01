@@ -1,7 +1,7 @@
 package org.intermine.web.util;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,12 @@ package org.intermine.web.util;
  */
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Properties;
+
+import org.apache.commons.lang.StringUtils;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * Class generating useful links like base link: http://localhost:8080/query
@@ -48,11 +54,34 @@ public class URLGenerator
     }
 
     private String generateURL(HttpServletRequest request, String contextPath) {
+        final Properties webProperties = InterMineContext.getWebProperties();
+        String baseUrl = webProperties.getProperty("webapp.baseurl");
+
+        if (StringUtils.isEmpty(baseUrl)) {
+            return getCurrentURL(request, contextPath);
+        }
+
+        if (request.getServerPort() != 80) {
+            baseUrl += ":" + request.getServerPort();
+        }
+        String path = webProperties.getProperty("webapp.path");
+        URL url = null;
+        try {
+            url = new URL(baseUrl + "/" + path);
+        } catch (MalformedURLException e) {
+            // whoops somethings gone terribly wrong. Use the URL
+            return getCurrentURL(request, contextPath);
+        }
+        return url.toString();
+    }
+
+    // only use if they haven't set up baseURL
+    private String getCurrentURL(HttpServletRequest request, String contextPath) {
         String port = "";
         if (request.getServerPort() != 80) {
             port = ":" + request.getServerPort();
         }
-        String ret = "http://" + request.getServerName() + port;
+        String ret = request.getScheme() + "://" + request.getServerName() + port;
         if (contextPath.length() > 0) {
             ret += contextPath;
         }

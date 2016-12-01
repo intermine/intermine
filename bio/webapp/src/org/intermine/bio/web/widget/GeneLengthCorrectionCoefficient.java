@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,8 +13,10 @@ package org.intermine.bio.web.widget;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
@@ -52,6 +54,7 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
     private WidgetConfig config;
     private ObjectStore os;
     private InterMineBag bag;
+    private String ids;
     private Integer countItemsWithLengthNotNull = null;
     private static final String GENE_LENGTH = "gene_length";
     private static final String GENE_LENGTH_CORRECTION = "gene_length_correction";
@@ -62,11 +65,15 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
      * @param config config for this widget
      * @param os database
      * @param bag list of genes being operated on
+     * @param ids intermine IDs, required if bag is NULL
      */
-    public GeneLengthCorrectionCoefficient(WidgetConfig config, ObjectStore os, InterMineBag bag) {
+    public GeneLengthCorrectionCoefficient(WidgetConfig config, ObjectStore os, InterMineBag bag,
+            String ids) {
         this.config = config;
         this.os = os;
+        // one of the two below is not NULL or else web service call would have failed.
         this.bag = bag;
+        this.ids = ids;
     }
 
     /**
@@ -116,7 +123,7 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
     private int getCountItemsWithLengthNotNull() {
         ClassDescriptor sequenceFeatureCd = os.getModel()
                 .getClassDescriptorByName("SequenceFeature");
-        if (bag.getClassDescriptors().contains(sequenceFeatureCd)) {
+        if ((bag != null && bag.getClassDescriptors().contains(sequenceFeatureCd)) || ids != null) {
             Query q = new Query();
             try {
                 Class<? extends InterMineObject> clazz =
@@ -128,7 +135,11 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
                 ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
                 QueryField lenghtField = new QueryField(qc, "length");
                 cs.addConstraint(new SimpleConstraint(lenghtField, ConstraintOp.IS_NOT_NULL));
-                cs.addConstraint(new BagConstraint(qc, ConstraintOp.IN, bag.getOsb()));
+                if (bag != null) {
+                    cs.addConstraint(new BagConstraint(qc, ConstraintOp.IN, bag.getOsb()));
+                } else {
+                    cs.addConstraint(new BagConstraint(qc, ConstraintOp.IN, getIds()));
+                }
                 q.setConstraint(cs);
                 SingletonResults result = os.executeSingleton(q);
                 return ((Long) result.get(0)).intValue();
@@ -237,7 +248,12 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
     }
 
     private double getPercentageGeneWithLengthNull() throws ObjectStoreException {
-        int bagSize = bag.getSize();
+        int bagSize = 0;
+        if (bag == null && !ids.isEmpty()) {
+            bagSize = ids.length();
+        } else {
+            bagSize = bag.getSize();
+        }
         double rate = (double) (bagSize - countItemsWithLengthNotNull) / bagSize;
         return rate * 100;
     }
@@ -261,11 +277,31 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
             }
         }
         // bag constraint
-        q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        if (bag == null) {
+            // use list of IDs instead of bag
+            List<Integer> intermineIds = getIds();
+            q.addConstraint(Constraints.inIds(config.getStartClass(), intermineIds));
+        } else {
+            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        }
         //constraints for gene length
         q.addConstraint(Constraints.isNull(config.getStartClass() + ".length"));
 
         return q;
+    }
+
+    private List<Integer> getIds() {
+        String[] idArray = ids.split(",");
+        List<Integer> idsCollection = new ArrayList<Integer>();
+        for (String intermineId : idArray) {
+            try {
+                idsCollection.add(Integer.valueOf(intermineId.trim()));
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("List of IDs contains invalid integer: "
+                        + intermineId, e);
+            }
+        }
+        return idsCollection;
     }
 
     /**

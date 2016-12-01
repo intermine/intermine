@@ -1,7 +1,7 @@
 package org.intermine.bio.web.model;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,7 +14,7 @@ package org.intermine.bio.web.model;
  * This Java bean represents one record of Chromosome coordinates from user input
  * The record should be in BED format: "chr\tstart\tend".
  *
- * @author Fengyuan Hu
+ * @author Fengyuan Hu, Sam Hokin
  */
 public class GenomicRegion implements Comparable<GenomicRegion>
 {
@@ -25,6 +25,8 @@ public class GenomicRegion implements Comparable<GenomicRegion>
     private Integer extendedRegionSize = new Integer(0); // user add region flanking
     private Integer extendedStart;
     private Integer extendedEnd;
+    
+    private Boolean minusStrand;    // for strand-specific matching
 
     //user identifier to tag the order of input e.g. X:7880589..7880644:5 is the 5th input
     private Integer tag = null;
@@ -74,7 +76,7 @@ public class GenomicRegion implements Comparable<GenomicRegion>
     }
 
     /**
-     * @param start start poistion
+     * @param start start position
      */
     public void setStart(Integer start) {
         this.start = start;
@@ -148,6 +150,27 @@ public class GenomicRegion implements Comparable<GenomicRegion>
      */
     public Integer getTag() {
         return tag;
+    }
+
+    /**
+     * @param minusStrand as Boolean
+     */
+    public void setMinusStrand(Boolean minusStrand) {
+        this.minusStrand = minusStrand;
+    }
+
+    /**
+     * @param minusStrand as boolean
+     */
+    public void setMinusStrand(boolean minusStrand) {
+        this.minusStrand = new Boolean(minusStrand);
+    }
+
+    /**
+     * @return minusStrand value
+     */
+    public Boolean getMinusStrand() {
+        return minusStrand;
     }
 
     /**
@@ -234,44 +257,51 @@ public class GenomicRegion implements Comparable<GenomicRegion>
         final int eQUAL = 0;
         final int aFTER = 1;
 
-        //this optimization is usually worthwhile, and can always be added
+        // this optimization is usually worthwhile, and can always be added
         if (this == gr) {
             return eQUAL;
         }
 
         if (this.getChr().compareTo(gr.getChr()) < 0) {
-            return bEFORE;
-        }
 
-        if (this.getChr().equals(gr.getChr())) {
+            return bEFORE; // doesn't make sense, regions on different chromosomes are neither before nor after
+
+        } else if (this.getChr().compareTo(gr.getChr()) > 0) {
+
+            return aFTER; // doesn't make sense, regions on different chromosomes are neither before nor after
+
+        } else {
+
             if (extendedRegionSize == 0) {
+
                 if (this.getStart() < gr.getStart()) {
                     return bEFORE;
                 } else if (this.getStart() > gr.getStart()) {
                     return aFTER;
+                } else if (this.getEnd() < gr.getEnd()) {
+                    return bEFORE;
+                } else if (this.getEnd() > gr.getEnd()) {
+                    return aFTER;
                 } else {
-                    if (this.getEnd() < gr.getEnd()) {
-                        return bEFORE;
-                    } else {
-                        return aFTER;
-                    }
+                    return eQUAL;
                 }
+
             } else {
+
                 if (this.getExtendedStart() < gr.getExtendedStart()) {
                     return bEFORE;
                 } else if (this.getExtendedStart() > gr.getExtendedStart()) {
                     return aFTER;
+                } else if (this.getExtendedEnd() < gr.getExtendedEnd()) {
+                    return bEFORE;
+                } else if (this.getExtendedEnd() > gr.getExtendedEnd()) {
+                    return aFTER;
                 } else {
-                    if (this.getExtendedEnd() < gr.getExtendedEnd()) {
-                        return bEFORE;
-                    } else {
-                        return aFTER;
-                    }
+                    return eQUAL;
                 }
+
             }
         }
-
-        return eQUAL;
     }
 
     /**

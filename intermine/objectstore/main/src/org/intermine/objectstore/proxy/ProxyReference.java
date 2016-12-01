@@ -1,7 +1,7 @@
 package org.intermine.objectstore.proxy;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -64,7 +64,7 @@ public class ProxyReference implements InterMineObject, Lazy
         } catch (ObjectStoreException e) {
             throw new RuntimeException("ObjectStoreException while materialising proxy with ID "
                     + id + " for class " + clazz.getName() + " from ObjectStore " + os + ": "
-                    + e.getMessage());
+                    + e.getMessage(), e);
         }
     }
 

@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,6 +21,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Mail utilities for the webapp.
@@ -81,7 +83,6 @@ public abstract class MailUtils
         if (smtpPort != null) {
             properties.put("mail.smtp.port", smtpPort);
         }
-
         if (starttlsFlag != null) {
             properties.put("mail.smtp.starttls.enable", starttlsFlag);
         }
@@ -98,12 +99,17 @@ public abstract class MailUtils
                     return new PasswordAuthentication(user, password);
                 }
             };
-            session = Session.getDefaultInstance(properties, authenticator);
+            session = Session.getInstance(properties, authenticator);
         } else {
-            session = Session.getDefaultInstance(properties);
+            session = Session.getInstance(properties);
         }
         MimeMessage message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(from));
+        if (StringUtils.isEmpty(user)) {
+            message.setFrom(new InternetAddress(from));
+        } else {
+            message.setReplyTo(InternetAddress.parse(from, true));
+            message.setFrom(new InternetAddress(user));
+        }
         message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(to, true)[0]);
         message.setSubject(subject);
         message.setContent(body, "text/plain");

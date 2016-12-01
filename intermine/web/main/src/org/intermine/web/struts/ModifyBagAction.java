@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -32,6 +31,8 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagOperations;
+import org.intermine.api.bag.ClassKeysNotFoundException;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.bag.operations.BagOperationException;
 import org.intermine.api.bag.operations.InternalBagOperationException;
 import org.intermine.api.bag.operations.NoContent;
@@ -111,8 +112,8 @@ public class ModifyBagAction extends InterMineAction
         return newBagName;
     }
 
-    private void copy(ActionForm form, HttpServletRequest request) throws ObjectStoreException,
-    CloneNotSupportedException {
+    private void copy(ActionForm form, HttpServletRequest request) throws UnknownBagTypeException,
+        ClassKeysNotFoundException, ObjectStoreException {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
@@ -146,7 +147,7 @@ public class ModifyBagAction extends InterMineAction
                 newBagName = NameUtil.generateNewName(allBags.keySet(), selectedBagName);
             }
 
-            if (createBag(origBag, newBagName, profile)) {
+            if (createBag(origBag, newBagName, profile, im)) {
                 recordMessage(new ActionMessage("bag.createdlists", newBagName), request);
                 //track the list creation
                 im.getTrackerDelegate().trackListCreation(origBag.getType(), origBag.getSize(),
@@ -169,7 +170,7 @@ public class ModifyBagAction extends InterMineAction
                 }
 
                 String newBagName = NameUtil.generateNewName(allBags.keySet(), selectedBagName);
-                if (createBag(origBag, newBagName, profile)) {
+                if (createBag(origBag, newBagName, profile, im)) {
                     msg += newBagName + ", ";
                 }
             }
@@ -182,15 +183,13 @@ public class ModifyBagAction extends InterMineAction
         }
     }
 
-    private static boolean createBag(InterMineBag origBag, String newBagName, Profile profile)
-        throws ObjectStoreException, CloneNotSupportedException {
-        // Clone method clones the bag in the database
-        InterMineBag newBag = (InterMineBag) origBag.clone();
-        newBag.setProfileId(profile.getUserId());
-        newBag.setDate(new Date());
-        newBag.setName(newBagName);
+    private static boolean createBag(InterMineBag origBag, String newBagName, Profile profile,
+        InterMineAPI im)
+        throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
+        InterMineBag newBag = profile.createBag(newBagName, origBag.getType(),
+                origBag.getDescription(), im.getClassKeys());
+        newBag.addIdsToBag(origBag.getContentsAsIds(), origBag.getType());
         profile.saveBag(newBagName, newBag);
-        newBag.addBagValues();
         return true;
     }
 

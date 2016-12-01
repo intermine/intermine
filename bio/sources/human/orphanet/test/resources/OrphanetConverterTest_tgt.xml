@@ -1,0 +1,21 @@
+<items>
+<item id="3_1" class="Disease">
+<attribute name="identifier" value="166024"/>
+<attribute name="name" value="Multiple epiphyseal dysplasia, Al-Gazali type"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="Orphanet data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Orphanet"/>
+</item>
+<item id="3_2" class="Disease">
+<attribute name="identifier" value="166032"/>
+<attribute name="name" value="Multiple epiphyseal dysplasia, with miniepiphyses"/>
+</item>
+</items>

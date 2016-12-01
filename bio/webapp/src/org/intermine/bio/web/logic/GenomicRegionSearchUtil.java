@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.tools.ant.BuildException;
 import org.intermine.bio.web.model.ChromosomeInfo;
@@ -49,8 +50,9 @@ import org.intermine.web.logic.session.SessionMethods;
  *
  * @author Fengyuan Hu
  */
-public final class GenomicRegionSearchUtil
-{
+public final class GenomicRegionSearchUtil {
+
+    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchUtil.class);
 
     private static final Pattern DOT_DOT =
         Pattern.compile("[^:]+: ?\\d+\\.{2}\\d+$"); // "chr:start..end"
@@ -72,12 +74,12 @@ public final class GenomicRegionSearchUtil
      * @return the current mine's GenomicRegionSearchService object
      */
     public static GenomicRegionSearchService getGenomicRegionSearchService(
-            HttpServletRequest request) {
+                                                                           HttpServletRequest request) {
 
         // Get service class name from web.properties
         String serviceClassName = (String) SessionMethods.getWebProperties(
-                request.getSession().getServletContext()).get(
-                "genomicRegionSearch.service");
+                                                                           request.getSession().getServletContext()).get(
+                                                                                                                         "genomicRegionSearch.service");
 
         GenomicRegionSearchService grsService = null;
         if (serviceClassName == null || "".equals(serviceClassName)) {
@@ -94,7 +96,7 @@ public final class GenomicRegionSearchUtil
             Object [] args = new Object[] {request};
             try {
                 grsService = (GenomicRegionSearchService) serviceClass
-                        .getConstructor(types).newInstance(args);
+                    .getConstructor(types).newInstance(args);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             } catch (SecurityException e) {
@@ -123,7 +125,7 @@ public final class GenomicRegionSearchUtil
      * @throws RegionParseException a RegionParseException
      */
     public static GenomicRegion parseRegion(String span, boolean isInterbase,
-            Map<String, ChromosomeInfo> chromsForOrg)
+                                            Map<String, ChromosomeInfo> chromsForOrg)
         throws RegionParseException {
 
         String[] parts = parseDotDotSpan(span);
@@ -143,7 +145,7 @@ public final class GenomicRegionSearchUtil
         GenomicRegion region = new GenomicRegion();
         region.setChr(parts[0].trim());
         int start = Integer.valueOf(parts[1].trim()),
-                end = Integer.valueOf(parts[2].trim());
+            end = Integer.valueOf(parts[2].trim());
         if (isInterbase) {
             region.setStart(start + 1);
         } else {
@@ -151,10 +153,12 @@ public final class GenomicRegionSearchUtil
         }
         region.setEnd(end);
 
+        region.setMinusStrand(start>end);
+
         ChromosomeInfo ci = getChromosomeInfo(chromsForOrg, region.getChr());
 
         if ((region.getStart() >= 1 && region.getStart() <= ci.getChrLength())
-                && (region.getEnd() >= 1 && region.getEnd() <= ci.getChrLength())) {
+            && (region.getEnd() >= 1 && region.getEnd() <= ci.getChrLength())) {
             if (region.getStart() > region.getEnd()) {
                 // Swap them around.
                 int oldStart = region.getStart(), oldEnd = region.getEnd();
@@ -164,14 +168,14 @@ public final class GenomicRegionSearchUtil
             region.setChr(ci.getChrPID());
         } else {
             throw new RegionParseException("start and/or end values are out of bounds "
-                    + "(0 - " + ci.getChrLength() + ")");
+                                           + "(0 - " + ci.getChrLength() + ")");
         }
 
         return region;
     }
 
     private static ChromosomeInfo getChromosomeInfo(
-            Map<String, ChromosomeInfo> chromsForOrg, String chromosome)
+                                                    Map<String, ChromosomeInfo> chromsForOrg, String chromosome)
         throws RegionParseException {
         String chr = chromosome.toLowerCase();
         if (chromsForOrg.containsKey(chr)) {
@@ -235,15 +239,16 @@ public final class GenomicRegionSearchUtil
      * @param extension the flanking
      * @param organismName org short name
      * @param featureTypes ft
+     * @param strandSpecific flag
      * @return map of gr-query
      */
     public static Map<GenomicRegion, Query> createQueryList(
-            Collection<GenomicRegion> genomicRegions,
-            int extension,
-            String organismName,
-            Set<Class<?>> featureTypes) {
-        return createRegionQueries(genomicRegions, extension, organismName,
-                featureTypes, false);
+                                                            Collection<GenomicRegion> genomicRegions,
+                                                            int extension,
+                                                            String organismName,
+                                                            Set<Class<?>> featureTypes,
+                                                            boolean strandSpecific) {
+        return createRegionQueries(genomicRegions, extension, organismName, featureTypes, strandSpecific, false);
     }
 
     /**
@@ -254,22 +259,26 @@ public final class GenomicRegionSearchUtil
      * @param chromInfo chr info map
      * @param organismName org short name
      * @param featureTypes ft
+     * @param strandSpecific flag
      * @return map of gr-query
      */
     public static Map<GenomicRegion, Query> createRegionListQueries(
-            Collection<GenomicRegion> genomicRegions,
-            int extension,
-            Map<String, ChromosomeInfo> chromInfo,
-            String organismName,
-            Set<Class<?>> featureTypes) {
-        return createRegionQueries(genomicRegions, extension, organismName,
-                featureTypes, true);
+                                                                    Collection<GenomicRegion> genomicRegions,
+                                                                    int extension,
+                                                                    Map<String, ChromosomeInfo> chromInfo,
+                                                                    String organismName,
+                                                                    Set<Class<?>> featureTypes,
+                                                                    boolean strandSpecific) {
+        return createRegionQueries(genomicRegions, extension, organismName, featureTypes, strandSpecific, true);
     }
 
     private static Map<GenomicRegion, Query> createRegionQueries(
-            Collection<GenomicRegion> genomicRegions,
-                int extension, String organismName,
-                Set<Class<?>> featureTypes, boolean idOnly) {
+                                                                 Collection<GenomicRegion> genomicRegions,
+                                                                 int extension,
+                                                                 String organismName,
+                                                                 Set<Class<?>> featureTypes,
+                                                                 boolean strandSpecific,
+                                                                 boolean idOnly) {
 
         Map<GenomicRegion, Query> queryMap = new LinkedHashMap<GenomicRegion, Query>();
 
@@ -292,21 +301,23 @@ public final class GenomicRegionSearchUtil
 
             String chrPID = aSpan.getChr();
 
-
             QueryClass qcOrg = new QueryClass(Organism.class);
             QueryClass qcChr = new QueryClass(Chromosome.class);
             QueryClass qcFeature = new QueryClass(SequenceFeature.class);
             QueryClass qcLoc = new QueryClass(Location.class);
 
             QueryField qfOrgName = new QueryField(qcOrg, "shortName");
+
             QueryField qfFeatureId = new QueryField(qcFeature, "id");
-            QueryField qfFeaturePID = new QueryField(qcFeature,
-                    "primaryIdentifier");
+            QueryField qfFeaturePID = new QueryField(qcFeature, "primaryIdentifier");
             QueryField qfFeatureSymbol = new QueryField(qcFeature, "symbol");
             QueryField qfFeatureClass = new QueryField(qcFeature, "class");
+
             QueryField qfChr = new QueryField(qcChr, "primaryIdentifier");
+
             QueryField qfLocStart = new QueryField(qcLoc, "start");
             QueryField qfLocEnd = new QueryField(qcLoc, "end");
+            QueryField qfLocStrand = new QueryField(qcLoc, "strand");
 
             q.addToSelect(qfFeatureId);
             q.addFrom(qcFeature);
@@ -320,6 +331,7 @@ public final class GenomicRegionSearchUtil
                 q.addToSelect(qfChr);
                 q.addToSelect(qfLocStart);
                 q.addToSelect(qfLocEnd);
+                q.addToSelect(qfLocStrand);
                 q.addToOrderBy(qfLocStart, "ascending");
             }
 
@@ -328,46 +340,44 @@ public final class GenomicRegionSearchUtil
             q.setConstraint(constraints);
 
             // SequenceFeature.organism = Organism
-            QueryObjectReference organism = new QueryObjectReference(qcFeature,
-                    "organism");
-            ContainsConstraint ccOrg = new ContainsConstraint(organism,
-                    ConstraintOp.CONTAINS, qcOrg);
+            QueryObjectReference organism = new QueryObjectReference(qcFeature, "organism");
+            ContainsConstraint ccOrg = new ContainsConstraint(organism, ConstraintOp.CONTAINS, qcOrg);
             constraints.addConstraint(ccOrg);
 
             // Organism.name = orgName
-            SimpleConstraint scOrg = new SimpleConstraint(qfOrgName,
-                    ConstraintOp.EQUALS, new QueryValue(organismName));
+            SimpleConstraint scOrg = new SimpleConstraint(qfOrgName, ConstraintOp.EQUALS, new QueryValue(organismName));
             constraints.addConstraint(scOrg);
 
             // Location.feature = SequenceFeature
-            QueryObjectReference locSubject = new QueryObjectReference(qcLoc,
-                    "feature");
-            ContainsConstraint ccLocSubject = new ContainsConstraint(
-                    locSubject, ConstraintOp.CONTAINS, qcFeature);
+            QueryObjectReference locSubject = new QueryObjectReference(qcLoc, "feature");
+            ContainsConstraint ccLocSubject = new ContainsConstraint(locSubject, ConstraintOp.CONTAINS, qcFeature);
             constraints.addConstraint(ccLocSubject);
 
             // Location.locatedOn = Chromosome
-            QueryObjectReference locObject = new QueryObjectReference(qcLoc,
-                    "locatedOn");
-            ContainsConstraint ccLocObject = new ContainsConstraint(locObject,
-                    ConstraintOp.CONTAINS, qcChr);
+            QueryObjectReference locObject = new QueryObjectReference(qcLoc, "locatedOn");
+            ContainsConstraint ccLocObject = new ContainsConstraint(locObject, ConstraintOp.CONTAINS, qcChr);
             constraints.addConstraint(ccLocObject);
 
+            // Location.strand = strand (optional)
+            if (strandSpecific) {
+                String strand = "1";
+                if (aSpan.getMinusStrand()) {
+                    strand = "-1";
+                }
+                SimpleConstraint scStrand = new SimpleConstraint(qfLocStrand, ConstraintOp.EQUALS, new QueryValue(strand));
+                constraints.addConstraint(scStrand);
+            }                
+
             // Chromosome.primaryIdentifier = chrPID
-            SimpleConstraint scChr = new SimpleConstraint(qfChr,
-                    ConstraintOp.EQUALS, new QueryValue(chrPID));
+            SimpleConstraint scChr = new SimpleConstraint(qfChr, ConstraintOp.EQUALS, new QueryValue(chrPID));
             constraints.addConstraint(scChr);
 
             // SequenceFeature.class in a list
-            constraints.addConstraint(new BagConstraint(qfFeatureClass,
-                    ConstraintOp.IN, featureTypes));
+            constraints.addConstraint(new BagConstraint(qfFeatureClass, ConstraintOp.IN, featureTypes));
 
-            OverlapRange overlapInput = new OverlapRange(new QueryValue(start),
-                    new QueryValue(end), locObject);
-            OverlapRange overlapFeature = new OverlapRange(new QueryField(
-                    qcLoc, "start"), new QueryField(qcLoc, "end"), locObject);
-            OverlapConstraint oc = new OverlapConstraint(overlapInput,
-                    ConstraintOp.OVERLAPS, overlapFeature);
+            OverlapRange overlapInput = new OverlapRange(new QueryValue(start), new QueryValue(end), locObject);
+            OverlapRange overlapFeature = new OverlapRange(new QueryField(qcLoc, "start"), new QueryField(qcLoc, "end"), locObject);
+            OverlapConstraint oc = new OverlapConstraint(overlapInput, ConstraintOp.OVERLAPS, overlapFeature);
             constraints.addConstraint(oc);
 
             queryMap.put(aSpan, q);
@@ -413,7 +423,7 @@ public final class GenomicRegionSearchUtil
      * @throws Exception with error message
      */
     public static List<GenomicRegion> generateGenomicRegions(
-            Collection<String> genomicRegionStringCollection) throws Exception {
+                                                             Collection<String> genomicRegionStringCollection) throws Exception {
 
         List<GenomicRegion> genomicRegionList = new ArrayList<GenomicRegion>();
 
@@ -458,7 +468,7 @@ public final class GenomicRegionSearchUtil
                     gr.setStart(Integer.valueOf(start));
                     gr.setEnd(Integer.valueOf(end));
                     gr.setExtendedRegionSize(0);
-
+                    gr.setMinusStrand(gr.getStart()>gr.getEnd());
                     genomicRegionList.add(gr);
                 } else {
                     throw new Exception("Not Dot-Dot format: " + original);
@@ -483,7 +493,7 @@ public final class GenomicRegionSearchUtil
                         gr.setExtendedStart(Integer.valueOf(extStart));
                         gr.setExtendedEnd(Integer.valueOf(extEnd));
                         gr.setExtendedRegionSize(Integer.valueOf(extenedSize));
-
+                        gr.setMinusStrand(gr.getStart()>gr.getEnd());
                         genomicRegionList.add(gr);
                     } else {
                         throw new Exception("Not Dot-Dot format: " + original);
@@ -504,8 +514,8 @@ public final class GenomicRegionSearchUtil
      * @return a list of GenomicRegion objects
      */
     public static List<GenomicRegion> createGenomicRegionsFromString(
-            Collection<String> regionStringList, String organism,
-            Integer extendedRegionSize, Boolean isInterBaseCoordinate) {
+                                                                     Collection<String> regionStringList, String organism,
+                                                                     Integer extendedRegionSize, Boolean isInterBaseCoordinate) {
         List<GenomicRegion> grList = new ArrayList<GenomicRegion>();
         for (String grStr : regionStringList) {
             GenomicRegion aSpan = new GenomicRegion();
@@ -555,6 +565,7 @@ public final class GenomicRegionSearchUtil
             } else {
                 throw new IllegalArgumentException("Region string is in wrong format: " + grStr);
             }
+            aSpan.setMinusStrand(aSpan.getStart()>aSpan.getEnd());
             grList.add(aSpan);
         }
         return grList;
@@ -569,7 +580,7 @@ public final class GenomicRegionSearchUtil
      * @throws Exception with error message
      */
     public static List<GenomicRegion> groupGenomicRegionByInterval(
-            String interval, Set<GenomicRegion> regionSet) throws Exception {
+                                                                   String interval, Set<GenomicRegion> regionSet) throws Exception {
 
         // Parse the interval
         Matcher m = DOT_DOT.matcher(interval);
@@ -584,14 +595,14 @@ public final class GenomicRegionSearchUtil
                 if (chr.equals(gr.getChr())) {
                     if (gr.getExtendedRegionSize() > 0) {
                         if (!((gr.getExtendedStart() < start && gr
-                                .getExtendedEnd() < end) && (gr
-                                .getExtendedStart() > start && gr
-                                .getExtendedEnd() > end))) {
+                               .getExtendedEnd() < end) && (gr
+                                                            .getExtendedStart() > start && gr
+                                                            .getExtendedEnd() > end))) {
                             filteredList.add(gr);
                         }
                     } else {
                         if (!((gr.getStart() < start && gr.getEnd() < end) && (gr
-                                .getStart() > start && gr.getEnd() > end))) {
+                                                                               .getStart() > start && gr.getEnd() > end))) {
                             filteredList.add(gr);
                         }
                     }

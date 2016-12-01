@@ -1,36 +1,1175 @@
 <items>
-<item id="6_1" class="Disease">
-<attribute name="identifier" value="OMIM:614862"/>
-<attribute name="name" value="DISEASE 1"/>
-<collection name="genes"><reference ref_id="4_1"/></collection>
-</item>
-<item id="5_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="5_33" class="Gene">
+<attribute name="primaryIdentifier" value="ENPP1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_1" class="Organism">
-<attribute name="taxonId" value="9606"/>
+<item id="8_94" class="Publication">
+<attribute name="pubMedId" value="15863669"/>
 </item>
-<item id="0_1" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
-<attribute name="url" value="http://www.sequenceontology.org"/>
+<item id="8_62" class="Publication">
+<attribute name="pubMedId" value="17463248"/>
 </item>
-<item id="1_1" class="DataSource">
-<attribute name="name" value="Online Mendelian Inheritance in Man"/>
+<item id="8_72" class="Publication">
+<attribute name="pubMedId" value="9892237"/>
 </item>
-<item id="4_1" class="Gene">
-<attribute name="symbol" value="PEX6"/>
+<item id="5_71" class="Gene">
+<attribute name="primaryIdentifier" value="LIPC"/>
 <reference name="organism" ref_id="3_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_13" class="Publication">
+<attribute name="pubMedId" value="15808156"/>
+</item>
+<item id="8_5" class="Publication">
+<attribute name="pubMedId" value="2695375"/>
+</item>
+<item id="5_11" class="Gene">
+<attribute name="primaryIdentifier" value="TNDM2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_55" class="Gene">
+<attribute name="primaryIdentifier" value="IGF2BP2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_141" class="Publication">
+<attribute name="pubMedId" value="10458720"/>
+</item>
+<item id="8_27" class="Publication">
+<attribute name="pubMedId" value="17603485"/>
+</item>
+<item id="8_69" class="Publication">
+<attribute name="pubMedId" value="8897863"/>
+</item>
+<item id="8_82" class="Publication">
+<attribute name="pubMedId" value="16034410"/>
+</item>
+<item id="5_114" class="Gene">
+<attribute name="primaryIdentifier" value="PERC"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_6" class="Publication">
+<attribute name="pubMedId" value="22286214"/>
+</item>
+<item id="5_13" class="Gene">
+<attribute name="primaryIdentifier" value="TCF2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_126" class="Publication">
+<attribute name="pubMedId" value="18523006"/>
+</item>
+<item id="5_107" class="Gene">
+<attribute name="primaryIdentifier" value="UCP3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_121" class="Publication">
+<attribute name="pubMedId" value="11136233"/>
+</item>
+<item id="8_23" class="Publication">
+<attribute name="pubMedId" value="8528248"/>
+</item>
+<item id="8_21" class="Publication">
+<attribute name="pubMedId" value="8528247"/>
+</item>
+<item id="8_84" class="Publication">
+<attribute name="pubMedId" value="22456732"/>
+</item>
+<item id="5_35" class="Gene">
+<attribute name="primaryIdentifier" value="NPPS"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_42" class="Gene">
+<attribute name="primaryIdentifier" value="MODY3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_31" class="Gene">
+<attribute name="primaryIdentifier" value="CARTPT"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="OMIM diseases"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
-<item id="6_2" class="Disease">
-<attribute name="identifier" value="OMIM:614863"/>
-<collection name="genes"><reference ref_id="4_1"/></collection>
+<item id="8_41" class="Publication">
+<attribute name="pubMedId" value="17066296"/>
+</item>
+<item id="8_117" class="Publication">
+<attribute name="pubMedId" value="18454148"/>
+</item>
+<item id="5_18" class="Gene">
+<attribute name="primaryIdentifier" value="GCK"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_44" class="Publication">
+<attribute name="pubMedId" value="15070960"/>
+</item>
+<item id="8_18" class="Publication">
+<attribute name="pubMedId" value="9745421"/>
+</item>
+<item id="8_47" class="Publication">
+<attribute name="pubMedId" value="1587533"/>
+</item>
+<item id="8_42" class="Publication">
+<attribute name="pubMedId" value="17906635"/>
+</item>
+<item id="8_70" class="Publication">
+<attribute name="pubMedId" value="9062343"/>
+</item>
+<item id="5_47" class="Gene">
+<attribute name="primaryIdentifier" value="DFNA6"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_80" class="Gene">
+<attribute name="primaryIdentifier" value="GLUT2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_112" class="Publication">
+<attribute name="pubMedId" value="1358794"/>
+</item>
+<item id="5_61" class="Gene">
+<attribute name="primaryIdentifier" value="ZNT8"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_77" class="Gene">
+<attribute name="primaryIdentifier" value="NEUROD1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_77" class="Publication">
+<attribute name="pubMedId" value="11032784"/>
+</item>
+<item id="8_85" class="Publication">
+<attribute name="pubMedId" value="11533494"/>
+</item>
+<item id="5_9" class="Gene">
+<attribute name="primaryIdentifier" value="SUR1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_28" class="Publication">
+<attribute name="pubMedId" value="12783844"/>
+</item>
+<item id="4_4" class="Disease">
+<attribute name="identifier" value="OMIM:601665"/>
+<attribute name="name" value="OBESITY"/>
+<collection name="genes"><reference ref_id="5_27"/><reference ref_id="5_28"/><reference ref_id="5_29"/><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_30"/><reference ref_id="5_31"/><reference ref_id="5_32"/><reference ref_id="5_100"/><reference ref_id="5_101"/><reference ref_id="5_102"/><reference ref_id="5_103"/><reference ref_id="5_104"/><reference ref_id="5_105"/><reference ref_id="5_106"/><reference ref_id="5_107"/><reference ref_id="5_108"/><reference ref_id="5_109"/><reference ref_id="5_33"/><reference ref_id="5_34"/><reference ref_id="5_35"/><reference ref_id="5_36"/><reference ref_id="5_37"/><reference ref_id="5_38"/><reference ref_id="5_39"/><reference ref_id="5_110"/><reference ref_id="5_111"/><reference ref_id="5_112"/><reference ref_id="5_113"/><reference ref_id="5_114"/></collection>
+<collection name="publications"><reference ref_id="8_88"/><reference ref_id="8_89"/><reference ref_id="8_90"/><reference ref_id="8_91"/></collection>
+</item>
+<item id="5_15" class="Gene">
+<attribute name="primaryIdentifier" value="MODY5"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_8" class="Gene">
+<attribute name="primaryIdentifier" value="PHHI"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_59" class="Publication">
+<attribute name="pubMedId" value="17603484"/>
+</item>
+<item id="5_17" class="Gene">
+<attribute name="primaryIdentifier" value="HPC11"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_26" class="Gene">
+<attribute name="primaryIdentifier" value="PPP1R3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_10" class="Publication">
+<attribute name="pubMedId" value="18323454"/>
+</item>
+<item id="8_11" class="Publication">
+<attribute name="pubMedId" value="17463246"/>
+</item>
+<item id="8_36" class="Publication">
+<attribute name="pubMedId" value="11158011"/>
+</item>
+<item id="8_92" class="Publication">
+<attribute name="pubMedId" value="17357083"/>
+</item>
+<item id="5_75" class="Gene">
+<attribute name="primaryIdentifier" value="MAPK8IP1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_101" class="Gene">
+<attribute name="primaryIdentifier" value="SYND3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_89" class="Publication">
+<attribute name="pubMedId" value="10622252"/>
+</item>
+<item id="8_34" class="Publication">
+<attribute name="pubMedId" value="7971976"/>
+</item>
+<item id="8_91" class="Publication">
+<attribute name="pubMedId" value="12663460"/>
+</item>
+<item id="5_105" class="Gene">
+<attribute name="primaryIdentifier" value="ART"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_34" class="Gene">
+<attribute name="primaryIdentifier" value="PDNP1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_101" class="Publication">
+<attribute name="pubMedId" value="2336074"/>
+</item>
+<item id="5_113" class="Gene">
+<attribute name="primaryIdentifier" value="PGC1B"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_67" class="Gene">
+<attribute name="primaryIdentifier" value="MODY1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_72" class="Gene">
+<attribute name="primaryIdentifier" value="HL"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_15" class="Publication">
+<attribute name="pubMedId" value="10331426"/>
+</item>
+<item id="5_53" class="Gene">
+<attribute name="primaryIdentifier" value="HMGA1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_104" class="Gene">
+<attribute name="primaryIdentifier" value="AGRP"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_85" class="Gene">
+<attribute name="primaryIdentifier" value="MODY13"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_60" class="Gene">
+<attribute name="primaryIdentifier" value="SLC30A8"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_105" class="Publication">
+<attribute name="pubMedId" value="18344982"/>
+</item>
+<item id="8_73" class="Publication">
+<attribute name="pubMedId" value="18711366"/>
+</item>
+<item id="8_74" class="Publication">
+<attribute name="pubMedId" value="12727978"/>
+</item>
+<item id="8_22" class="Publication">
+<attribute name="pubMedId" value="12915642"/>
+</item>
+<item id="8_40" class="Publication">
+<attribute name="pubMedId" value="1357346"/>
+</item>
+<item id="5_58" class="Gene">
+<attribute name="primaryIdentifier" value="RSTN"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_76" class="Publication">
+<attribute name="pubMedId" value="11067779"/>
+</item>
+<item id="5_63" class="Gene">
+<attribute name="primaryIdentifier" value="NIDDM4"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_92" class="Gene">
+<attribute name="primaryIdentifier" value="IL6"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_46" class="Publication">
+<attribute name="pubMedId" value="11916952"/>
+</item>
+<item id="8_115" class="Publication">
+<attribute name="pubMedId" value="17183309"/>
+</item>
+<item id="5_83" class="Gene">
+<attribute name="primaryIdentifier" value="HHF2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_49" class="Gene">
+<attribute name="primaryIdentifier" value="DFNA38"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_33" class="Publication">
+<attribute name="pubMedId" value="20016592"/>
+</item>
+<item id="8_54" class="Publication">
+<attribute name="pubMedId" value="12045211"/>
+</item>
+<item id="8_129" class="Publication">
+<attribute name="pubMedId" value="19164386"/>
+</item>
+<item id="5_86" class="Gene">
+<attribute name="primaryIdentifier" value="MTNR1B"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_44" class="Gene">
+<attribute name="primaryIdentifier" value="WFS1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_97" class="Gene">
+<attribute name="primaryIdentifier" value="GPD2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_71" class="Publication">
+<attribute name="pubMedId" value="11904371"/>
+</item>
+<item id="8_138" class="Publication">
+<attribute name="pubMedId" value="19270708"/>
+</item>
+<item id="8_86" class="Publication">
+<attribute name="pubMedId" value="17463249"/>
+</item>
+<item id="8_2" class="Publication">
+<attribute name="pubMedId" value="11443197"/>
+</item>
+<item id="8_132" class="Publication">
+<attribute name="pubMedId" value="10577903"/>
+</item>
+<item id="8_87" class="Publication">
+<attribute name="pubMedId" value="22456734"/>
+</item>
+<item id="8_45" class="Publication">
+<attribute name="pubMedId" value="16142453"/>
+</item>
+<item id="8_81" class="Publication">
+<attribute name="pubMedId" value="22456733"/>
+</item>
+<item id="5_95" class="Gene">
+<attribute name="primaryIdentifier" value="HSF"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_95" class="Publication">
+<attribute name="pubMedId" value="1978328"/>
+</item>
+<item id="5_14" class="Gene">
+<attribute name="primaryIdentifier" value="HNF2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_134" class="Publication">
+<attribute name="pubMedId" value="12754702"/>
+</item>
+<item id="8_80" class="Publication">
+<attribute name="pubMedId" value="21118154"/>
+</item>
+<item id="7_1" class="Synonym">
+<attribute name="value" value=" NIDDM"/>
+<reference name="subject" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_60" class="Publication">
+<attribute name="pubMedId" value="12118251"/>
+</item>
+<item id="8_110" class="Publication">
+<attribute name="pubMedId" value="2589320"/>
+</item>
+<item id="4_5" class="Disease">
+<attribute name="identifier" value="OMIM:null"/>
+<collection name="genes"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/></collection>
+</item>
+<item id="8_98" class="Publication">
+<attribute name="pubMedId" value="10766251"/>
+</item>
+<item id="8_139" class="Publication">
+<attribute name="pubMedId" value="3583293"/>
+</item>
+<item id="8_49" class="Publication">
+<attribute name="pubMedId" value="20574426"/>
+</item>
+<item id="8_122" class="Publication">
+<attribute name="pubMedId" value="8981960"/>
+</item>
+<item id="5_28" class="Gene">
+<attribute name="primaryIdentifier" value="NR0B2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_88" class="Gene">
+<attribute name="primaryIdentifier" value="TCF4"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_113" class="Publication">
+<attribute name="pubMedId" value="17357078"/>
+</item>
+<item id="8_83" class="Publication">
+<attribute name="pubMedId" value="18711367"/>
+</item>
+<item id="8_119" class="Publication">
+<attribute name="pubMedId" value="19151714"/>
+</item>
+<item id="8_56" class="Publication">
+<attribute name="pubMedId" value="9541507"/>
+</item>
+<item id="8_67" class="Publication">
+<attribute name="pubMedId" value="17293876"/>
+</item>
+<item id="8_79" class="Publication">
+<attribute name="pubMedId" value="17554300"/>
+</item>
+<item id="5_39" class="Gene">
+<attribute name="primaryIdentifier" value="COLED"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_9" class="Publication">
+<attribute name="pubMedId" value="12874106"/>
+</item>
+<item id="5_16" class="Gene">
+<attribute name="primaryIdentifier" value="FJHN"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_2" class="Synonym">
+<attribute name="value" value=" FPLD3"/>
+<reference name="subject" ref_id="4_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_48" class="Gene">
+<attribute name="primaryIdentifier" value="DFNA14"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_82" class="Gene">
+<attribute name="primaryIdentifier" value="BIR"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_76" class="Gene">
+<attribute name="primaryIdentifier" value="IB1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_94" class="Gene">
+<attribute name="primaryIdentifier" value="BSF2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_96" class="Gene">
+<attribute name="primaryIdentifier" value="HGF"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_3" class="Publication">
+<attribute name="pubMedId" value="10973253"/>
+</item>
+<item id="8_118" class="Publication">
+<attribute name="pubMedId" value="10766252"/>
+</item>
+<item id="5_21" class="Gene">
+<attribute name="primaryIdentifier" value="MODY9"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_65" class="Publication">
+<attribute name="pubMedId" value="11723072"/>
+</item>
+<item id="5_22" class="Gene">
+<attribute name="primaryIdentifier" value="KPD"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_45" class="Gene">
+<attribute name="primaryIdentifier" value="WFRS"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_98" class="Gene">
+<attribute name="primaryIdentifier" value="PTPN1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_106" class="Gene">
+<attribute name="primaryIdentifier" value="AGRT"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_35" class="Publication">
+<attribute name="pubMedId" value="9032096"/>
+</item>
+<item id="8_123" class="Publication">
+<attribute name="pubMedId" value="15592877"/>
+</item>
+<item id="5_68" class="Gene">
+<attribute name="primaryIdentifier" value="FRTS4"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_58" class="Publication">
+<attribute name="pubMedId" value="12851856"/>
+</item>
+<item id="5_74" class="Gene">
+<attribute name="primaryIdentifier" value="HDLCQ12"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_20" class="Gene">
+<attribute name="primaryIdentifier" value="PAX4"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_89" class="Gene">
+<attribute name="primaryIdentifier" value="IPF1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_63" class="Publication">
+<attribute name="pubMedId" value="9312173"/>
+</item>
+<item id="4_2" class="Disease">
+<attribute name="identifier" value="OMIM:125853"/>
+<attribute name="name" value="DIABETES MELLITUS, NONINSULIN-DEPENDENT"/>
+<collection name="genes"><reference ref_id="5_6"/><reference ref_id="5_7"/><reference ref_id="5_8"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_11"/><reference ref_id="5_12"/><reference ref_id="5_13"/><reference ref_id="5_14"/><reference ref_id="5_15"/><reference ref_id="5_16"/><reference ref_id="5_17"/><reference ref_id="5_18"/><reference ref_id="5_19"/><reference ref_id="5_20"/><reference ref_id="5_21"/><reference ref_id="5_22"/><reference ref_id="5_23"/><reference ref_id="5_24"/><reference ref_id="5_33"/><reference ref_id="5_34"/><reference ref_id="5_35"/><reference ref_id="5_36"/><reference ref_id="5_37"/><reference ref_id="5_38"/><reference ref_id="5_39"/><reference ref_id="5_40"/><reference ref_id="5_41"/><reference ref_id="5_42"/><reference ref_id="5_43"/><reference ref_id="5_44"/><reference ref_id="5_45"/><reference ref_id="5_46"/><reference ref_id="5_47"/><reference ref_id="5_48"/><reference ref_id="5_49"/><reference ref_id="5_50"/><reference ref_id="5_51"/><reference ref_id="5_52"/><reference ref_id="5_53"/><reference ref_id="5_54"/><reference ref_id="5_55"/><reference ref_id="5_56"/><reference ref_id="5_57"/><reference ref_id="5_58"/><reference ref_id="5_59"/><reference ref_id="5_60"/><reference ref_id="5_61"/><reference ref_id="5_62"/><reference ref_id="5_63"/><reference ref_id="5_64"/><reference ref_id="5_65"/><reference ref_id="5_66"/><reference ref_id="5_67"/><reference ref_id="5_68"/><reference ref_id="5_69"/><reference ref_id="5_70"/><reference ref_id="5_71"/><reference ref_id="5_72"/><reference ref_id="5_73"/><reference ref_id="5_74"/><reference ref_id="5_75"/><reference ref_id="5_76"/><reference ref_id="5_77"/><reference ref_id="5_78"/><reference ref_id="5_79"/><reference ref_id="5_80"/><reference ref_id="5_81"/><reference ref_id="5_82"/><reference ref_id="5_83"/><reference ref_id="5_84"/><reference ref_id="5_85"/><reference ref_id="5_86"/><reference ref_id="5_87"/><reference ref_id="5_88"/><reference ref_id="5_89"/><reference ref_id="5_90"/><reference ref_id="5_91"/><reference ref_id="5_97"/><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_98"/><reference ref_id="5_99"/></collection>
+</item>
+<item id="5_87" class="Gene">
+<attribute name="primaryIdentifier" value="TCF7L2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_90" class="Gene">
+<attribute name="primaryIdentifier" value="MODY4"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_48" class="Publication">
+<attribute name="pubMedId" value="20085713"/>
+</item>
+<item id="8_78" class="Publication">
+<attribute name="pubMedId" value="20360734"/>
+</item>
+<item id="5_23" class="Gene">
+<attribute name="primaryIdentifier" value="AKT2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_62" class="Gene">
+<attribute name="primaryIdentifier" value="NIDDM3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_16" class="Publication">
+<attribute name="pubMedId" value="11575290"/>
+</item>
+<item id="5_46" class="Gene">
+<attribute name="primaryIdentifier" value="WFS"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Online Mendelian Inheritance in Man"/>
+</item>
+<item id="8_103" class="Publication">
+<attribute name="pubMedId" value="19091795"/>
+</item>
+<item id="5_2" class="Gene">
+<attribute name="primaryIdentifier" value="PPARG1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_4" class="Publication">
+<attribute name="pubMedId" value="16885549"/>
+</item>
+<item id="8_104" class="Publication">
+<attribute name="pubMedId" value="18454146"/>
+</item>
+<item id="5_30" class="Gene">
+<attribute name="primaryIdentifier" value="SIM1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="8_68" class="Publication">
+<attribute name="pubMedId" value="18008060"/>
+</item>
+<item id="8_12" class="Publication">
+<attribute name="pubMedId" value="19657112"/>
+</item>
+<item id="8_66" class="Publication">
+<attribute name="pubMedId" value="17179727"/>
+</item>
+<item id="8_120" class="Publication">
+<attribute name="pubMedId" value="1746554"/>
+</item>
+<item id="8_106" class="Publication">
+<attribute name="pubMedId" value="15647995"/>
+</item>
+<item id="5_3" class="Gene">
+<attribute name="primaryIdentifier" value="PPARG2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_37" class="Publication">
+<attribute name="pubMedId" value="19020324"/>
+</item>
+<item id="8_125" class="Publication">
+<attribute name="pubMedId" value="7258336"/>
+</item>
+<item id="5_54" class="Gene">
+<attribute name="primaryIdentifier" value="HMGIY"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_25" class="Gene">
+<attribute name="primaryIdentifier" value="PPP1R3A"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_103" class="Gene">
+<attribute name="primaryIdentifier" value="POMC"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_4" class="Gene">
+<attribute name="primaryIdentifier" value="CIMT1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_142" class="Publication">
+<attribute name="pubMedId" value="10229743"/>
+</item>
+<item id="5_5" class="Gene">
+<attribute name="primaryIdentifier" value="GLM1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_56" class="Gene">
+<attribute name="primaryIdentifier" value="IMP2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_29" class="Publication">
+<attribute name="pubMedId" value="9758619"/>
+</item>
+<item id="8_135" class="Publication">
+<attribute name="pubMedId" value="3941707"/>
+</item>
+<item id="8_96" class="Publication">
+<attribute name="pubMedId" value="1684952"/>
+</item>
+<item id="6_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_65" class="Gene">
+<attribute name="primaryIdentifier" value="HNF4A"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_136" class="Publication">
+<attribute name="pubMedId" value="17183312"/>
+</item>
+<item id="8_127" class="Publication">
+<attribute name="pubMedId" value="18697794"/>
+</item>
+<item id="8_43" class="Publication">
+<attribute name="pubMedId" value="19020323"/>
+</item>
+<item id="5_1" class="Gene">
+<attribute name="primaryIdentifier" value="PPARG"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_124" class="Publication">
+<attribute name="pubMedId" value="15486293"/>
+</item>
+<item id="4_1" class="Disease">
+<attribute name="identifier" value="OMIM:609338"/>
+<attribute name="name" value="CAROTID INTIMAL MEDIAL THICKNESS 1"/>
+<collection name="genes"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/></collection>
+<collection name="publications"><reference ref_id="8_140"/><reference ref_id="8_141"/><reference ref_id="8_142"/><reference ref_id="8_143"/></collection>
+</item>
+<item id="5_7" class="Gene">
+<attribute name="primaryIdentifier" value="SUR"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_26" class="Publication">
+<attribute name="pubMedId" value="16775236"/>
+</item>
+<item id="5_100" class="Gene">
+<attribute name="primaryIdentifier" value="SDC3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_19" class="Gene">
+<attribute name="primaryIdentifier" value="HHF3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_61" class="Publication">
+<attribute name="pubMedId" value="15980866"/>
+</item>
+<item id="5_50" class="Gene">
+<attribute name="primaryIdentifier" value="WFSL"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_99" class="Gene">
+<attribute name="primaryIdentifier" value="PTP1B"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_14" class="Publication">
+<attribute name="pubMedId" value="10199785"/>
+</item>
+<item id="5_110" class="Gene">
+<attribute name="primaryIdentifier" value="GHRL"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_88" class="Publication">
+<attribute name="pubMedId" value="11788685"/>
+</item>
+<item id="5_6" class="Gene">
+<attribute name="primaryIdentifier" value="ABCC8"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_137" class="Publication">
+<attribute name="pubMedId" value="19079261"/>
+</item>
+<item id="8_131" class="Publication">
+<attribute name="pubMedId" value="12646919"/>
+</item>
+<item id="8_31" class="Publication">
+<attribute name="pubMedId" value="18477659"/>
+</item>
+<item id="8_109" class="Publication">
+<attribute name="pubMedId" value="12646665"/>
+</item>
+<item id="5_91" class="Gene">
+<attribute name="primaryIdentifier" value="PAGEN1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_38" class="Gene">
+<attribute name="primaryIdentifier" value="ARHR2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_30" class="Publication">
+<attribute name="pubMedId" value="11130726"/>
+</item>
+<item id="8_75" class="Publication">
+<attribute name="pubMedId" value="18231124"/>
+</item>
+<item id="5_29" class="Gene">
+<attribute name="primaryIdentifier" value="SHP"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="5_73" class="Gene">
+<attribute name="primaryIdentifier" value="LIPH"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_90" class="Publication">
+<attribute name="pubMedId" value="12453919"/>
+</item>
+<item id="8_20" class="Publication">
+<attribute name="pubMedId" value="17273962"/>
+</item>
+<item id="8_116" class="Publication">
+<attribute name="pubMedId" value="12646673"/>
+</item>
+<item id="8_102" class="Publication">
+<attribute name="pubMedId" value="12646666"/>
+</item>
+<item id="5_93" class="Gene">
+<attribute name="primaryIdentifier" value="IFNB2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_130" class="Publication">
+<attribute name="pubMedId" value="3340127"/>
+</item>
+<item id="8_24" class="Publication">
+<attribute name="pubMedId" value="11032783"/>
+</item>
+<item id="5_40" class="Gene">
+<attribute name="primaryIdentifier" value="HNF1A"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_66" class="Gene">
+<attribute name="primaryIdentifier" value="TCF14"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_100" class="Publication">
+<attribute name="pubMedId" value="18162531"/>
+</item>
+<item id="5_109" class="Gene">
+<attribute name="primaryIdentifier" value="ADRB3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_51" class="Publication">
+<attribute name="pubMedId" value="12750520"/>
+</item>
+<item id="5_37" class="Gene">
+<attribute name="primaryIdentifier" value="PCA1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_108" class="Publication">
+<attribute name="pubMedId" value="11487744"/>
+</item>
+<item id="5_102" class="Gene">
+<attribute name="primaryIdentifier" value="SDCN"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_53" class="Publication">
+<attribute name="pubMedId" value="10902787"/>
+</item>
+<item id="8_7" class="Publication">
+<attribute name="pubMedId" value="9038347"/>
+</item>
+<item id="5_108" class="Gene">
+<attribute name="primaryIdentifier" value="ADRB2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_25" class="Publication">
+<attribute name="pubMedId" value="21186350"/>
+</item>
+<item id="5_52" class="Gene">
+<attribute name="primaryIdentifier" value="CDKAL1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_64" class="Gene">
+<attribute name="primaryIdentifier" value="GCGR"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_27" class="Gene">
+<attribute name="primaryIdentifier" value="MC4R"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_112" class="Gene">
+<attribute name="primaryIdentifier" value="PPARGC1B"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_128" class="Publication">
+<attribute name="pubMedId" value="3340128"/>
+</item>
+<item id="5_81" class="Gene">
+<attribute name="primaryIdentifier" value="KCNJ11"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_79" class="Gene">
+<attribute name="primaryIdentifier" value="SLC2A2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_32" class="Gene">
+<attribute name="primaryIdentifier" value="CART"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_19" class="Publication">
+<attribute name="pubMedId" value="15924147"/>
+</item>
+<item id="8_93" class="Publication">
+<attribute name="pubMedId" value="12761372"/>
+</item>
+<item id="5_78" class="Gene">
+<attribute name="primaryIdentifier" value="NIDDM"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_107" class="Publication">
+<attribute name="pubMedId" value="12478478"/>
+</item>
+<item id="5_84" class="Gene">
+<attribute name="primaryIdentifier" value="TNDM3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_17" class="Publication">
+<attribute name="pubMedId" value="10958757"/>
+</item>
+<item id="8_32" class="Publication">
+<attribute name="pubMedId" value="15472205"/>
+</item>
+<item id="4_3" class="Disease">
+<attribute name="identifier" value="OMIM:604367"/>
+<attribute name="name" value="LIPODYSTROPHY, FAMILIAL PARTIAL, TYPE 3"/>
+<collection name="genes"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_25"/><reference ref_id="5_26"/></collection>
+<collection name="publications"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/><reference ref_id="8_5"/><reference ref_id="8_6"/><reference ref_id="8_7"/><reference ref_id="8_8"/><reference ref_id="8_9"/><reference ref_id="8_10"/><reference ref_id="8_11"/><reference ref_id="8_12"/><reference ref_id="8_13"/><reference ref_id="8_14"/><reference ref_id="8_15"/><reference ref_id="8_16"/><reference ref_id="8_17"/><reference ref_id="8_18"/><reference ref_id="8_19"/><reference ref_id="8_20"/><reference ref_id="8_21"/><reference ref_id="8_22"/><reference ref_id="8_23"/><reference ref_id="8_24"/><reference ref_id="8_25"/><reference ref_id="8_26"/><reference ref_id="8_27"/><reference ref_id="8_28"/><reference ref_id="8_29"/><reference ref_id="8_30"/><reference ref_id="8_31"/><reference ref_id="8_32"/><reference ref_id="8_33"/><reference ref_id="8_34"/><reference ref_id="8_35"/><reference ref_id="8_36"/><reference ref_id="8_37"/><reference ref_id="8_38"/><reference ref_id="8_39"/><reference ref_id="8_40"/><reference ref_id="8_41"/><reference ref_id="8_42"/><reference ref_id="8_43"/><reference ref_id="8_44"/><reference ref_id="8_45"/><reference ref_id="8_46"/><reference ref_id="8_47"/><reference ref_id="8_48"/><reference ref_id="8_49"/><reference ref_id="8_50"/><reference ref_id="8_51"/><reference ref_id="8_52"/><reference ref_id="8_53"/><reference ref_id="8_54"/><reference ref_id="8_55"/><reference ref_id="8_56"/><reference ref_id="8_57"/><reference ref_id="8_58"/><reference ref_id="8_59"/><reference ref_id="8_60"/><reference ref_id="8_61"/><reference ref_id="8_62"/><reference ref_id="8_63"/><reference ref_id="8_64"/><reference ref_id="8_65"/><reference ref_id="8_66"/><reference ref_id="8_67"/><reference ref_id="8_68"/><reference ref_id="8_69"/><reference ref_id="8_70"/><reference ref_id="8_71"/><reference ref_id="8_72"/><reference ref_id="8_73"/><reference ref_id="8_74"/><reference ref_id="8_75"/><reference ref_id="8_76"/><reference ref_id="8_77"/><reference ref_id="8_78"/><reference ref_id="8_79"/><reference ref_id="8_80"/><reference ref_id="8_81"/><reference ref_id="8_82"/><reference ref_id="8_83"/><reference ref_id="8_84"/><reference ref_id="8_85"/><reference ref_id="8_86"/><reference ref_id="8_87"/></collection>
+</item>
+<item id="8_8" class="Publication">
+<attribute name="pubMedId" value="10720052"/>
+</item>
+<item id="8_52" class="Publication">
+<attribute name="pubMedId" value="14960743"/>
+</item>
+<item id="5_12" class="Gene">
+<attribute name="primaryIdentifier" value="HNF1B"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_50" class="Publication">
+<attribute name="pubMedId" value="19933169"/>
+</item>
+<item id="5_10" class="Gene">
+<attribute name="primaryIdentifier" value="HHF1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_38" class="Publication">
+<attribute name="pubMedId" value="15940393"/>
+</item>
+<item id="5_59" class="Gene">
+<attribute name="primaryIdentifier" value="FIZZ3"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_111" class="Gene">
+<attribute name="primaryIdentifier" value="UCP1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_64" class="Publication">
+<attribute name="pubMedId" value="9482914"/>
+</item>
+<item id="8_133" class="Publication">
+<attribute name="pubMedId" value="18454136"/>
+</item>
+<item id="8_1" class="Publication">
+<attribute name="pubMedId" value="17726085"/>
+</item>
+<item id="5_36" class="Gene">
+<attribute name="primaryIdentifier" value="M6S1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_43" class="Gene">
+<attribute name="primaryIdentifier" value="IDDM20"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_69" class="Gene">
+<attribute name="primaryIdentifier" value="IRS1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_111" class="Publication">
+<attribute name="pubMedId" value="15037865"/>
+</item>
+<item id="8_97" class="Publication">
+<attribute name="pubMedId" value="18000969"/>
+</item>
+<item id="5_70" class="Gene">
+<attribute name="primaryIdentifier" value="IRS2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_6" class="Disease">
+<attribute name="identifier" value="OMIM:222100"/>
+<collection name="genes"><reference ref_id="5_92"/><reference ref_id="5_93"/><reference ref_id="5_94"/><reference ref_id="5_95"/><reference ref_id="5_96"/></collection>
+</item>
+<item id="8_99" class="Publication">
+<attribute name="pubMedId" value="15703762"/>
+</item>
+<item id="5_51" class="Gene">
+<attribute name="primaryIdentifier" value="CTRCT41"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_57" class="Publication">
+<attribute name="pubMedId" value="18952314"/>
+</item>
+<item id="8_140" class="Publication">
+<attribute name="pubMedId" value="8553406"/>
+</item>
+<item id="5_41" class="Gene">
+<attribute name="primaryIdentifier" value="TCF1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_57" class="Gene">
+<attribute name="primaryIdentifier" value="RETN"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_39" class="Publication">
+<attribute name="pubMedId" value="11030756"/>
+</item>
+<item id="8_114" class="Publication">
+<attribute name="pubMedId" value="15806395"/>
+</item>
+<item id="5_24" class="Gene">
+<attribute name="primaryIdentifier" value="HIHGHH"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_55" class="Publication">
+<attribute name="pubMedId" value="9498630"/>
+</item>
+<item id="8_143" class="Publication">
+<attribute name="pubMedId" value="12574549"/>
 </item>
 </items>

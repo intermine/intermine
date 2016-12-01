@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -102,7 +102,7 @@ public class HomologeneConverter extends BioFileConverter
             homologene.data is a tab delimited file containing the following
             columns:
 
-            1) HID (HomoloGene group id) - uid, http://www.ncbi.nlm.nih.gov/homologene?term=3[uid]
+            1) HID (HomoloGene group id) - uid, https://www.ncbi.nlm.nih.gov/homologene?term=3[uid]
             2) Taxonomy ID
             3) Gene ID - NBCI Id
             4) Gene Symbol

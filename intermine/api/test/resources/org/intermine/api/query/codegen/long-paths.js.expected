@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<!-- 
+-- This is an automatically generated code snippet to run your query 
+-- using the InterMine JavaScript client library and display the results
+-- in a table. The code is formatted such that you can just cut and paste
+-- it into any webpage.
+-->
+<link rel="stylesheet" type="text/css" href="http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.css">
+<script charset="UTF-8" type="text/javascript" src="http://cdn.intermine.org/js/intermine/im-tables/latest/imtables-bundled.js"></script>
+<!-- A place holder element in your page to hold the table -->
+<div id="query-container">
+ <p class="apology">
+  Please be patient while the results of your query are retrieved.
+ </p>
+</div>
+<script type="text/javascript">
+  var options = {
+    type: 'table',
+    url: 'TEST_SERVICE_ROOT',
+    token: null,
+    query: {"model":{"name":"genomic"},"select":["Gene.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.primaryAccession"]}
+  };
+  jQuery('#query-container').imWidget(options);
+</script>

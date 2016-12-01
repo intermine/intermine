@@ -9,7 +9,7 @@
 
 <!-- errorMessages.jsp -->
 <tiles:importAttributes/>
-<% 
+<%
 ActionMessages actionMessage = (ActionMessages) request.getAttribute("org.apache.struts.action.ERROR");
 int size = 0;
 if (actionMessage != null)
@@ -28,9 +28,9 @@ var strutsMsgSize = <%=size%>;
     }
     <html:messages id="error">
     if (strutsMsgSize > 1) {
-        jQuery('#error_msg').append('<li><imutil:treatString><c:out value="${error}" escapeXml="false"/></imutil:treatString></li>');
+        jQuery('#error_msg').append('<li><imutil:treatString><c:out value="${error}" escapeXml="true"/></imutil:treatString></li>');
     } else {
-        jQuery('#error_msg').append('<imutil:treatString><c:out value="${error}" escapeXml="false"/></imutil:treatString>');
+        jQuery('#error_msg').append('<imutil:treatString><c:out value="${error}" escapeXml="true"/></imutil:treatString>');
     }
     haserrors=1;
     </html:messages>
@@ -57,7 +57,7 @@ var strutsMsgSize = <%=size%>;
 <!-- ERRORS II -->
 <c:if test="${!empty ERRORS}">
     <c:forEach items="${ERRORS}" var="error">
-      jQuery('#error_msg').append('<imutil:treatString><c:out value="${error}" escapeXml="false"/></imutil:treatString><br/>');
+      jQuery('#error_msg').append('<imutil:treatString><c:out value="${error}" escapeXml="true"/></imutil:treatString><br/>');
       haserrors=1;
     </c:forEach>
   <c:remove var="ERRORS" scope="session"/>
@@ -74,7 +74,7 @@ var strutsMsgSize = <%=size%>;
 <!-- MESSAGES II -->
 <c:if test="${!empty MESSAGES}">
     <c:forEach items="${MESSAGES}" var="message">
-      jQuery('#msg').append('<imutil:treatString><c:out value="${message}" escapeXml="false"/></imutil:treatString><br />');
+      jQuery('#msg').append('<imutil:treatString><c:out value="${message}" escapeXml="true"/></imutil:treatString><br />');
       hasmessages=1;
     </c:forEach>
   <c:remove var="MESSAGES" scope="session"/>

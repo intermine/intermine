@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.jbrowse.genomic;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -424,15 +424,6 @@ public class Engine extends CommandRunner
                 feature.put("type", DynamicUtil.getSimpleClassName(fpo));
             } catch (Exception e) {
                 feature.put("type", fpo.getClass().getSimpleName());
-            }
-            FastPathObject sot = null;
-            try {
-                sot = (FastPathObject) fpo.getFieldValue("sequenceOntologyTerm");
-            } catch (IllegalAccessException e) {
-                // Not all BioEntities have SO terms. ignore.
-            }
-            if (sot != null) {
-                feature.put("type", sot.getFieldValue("name"));
             }
 
             String name, symbol, primId;

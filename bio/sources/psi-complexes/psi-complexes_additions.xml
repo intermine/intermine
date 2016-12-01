@@ -59,10 +59,9 @@
     <class name="InteractionRegion" is-interface="true">
       <attribute name="startStatus" type="java.lang.String"/>
       <attribute name="endStatus" type="java.lang.String"/>
-      <reference name="gene" referenced-type="Gene" />
       <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
-      <reference name="location" referenced-type="Location"/>
       <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
+      <collection name="locations" referenced-type="Location" />
     </class>
 
 </classes>

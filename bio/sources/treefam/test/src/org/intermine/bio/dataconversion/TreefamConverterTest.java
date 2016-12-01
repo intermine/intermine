@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -47,9 +47,8 @@ public class TreefamConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new TreefamConverter(itemWriter, Model.getInstanceByName("genomic"));
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
-        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG2222"));
-
+        converter.rslv.addResolverEntry("7227", "FBgn0004106", Collections.singleton("cdc2-RA"));
+        converter.rslv.addResolverEntry("9606", "983", Collections.singleton("ENSG00000170312"));
         super.setUp();
     }
 
@@ -67,14 +66,13 @@ public class TreefamConverterTest extends ItemsTestCase
         ClassLoader loader = getClass().getClassLoader();
         String input = IOUtils.toString(loader.getResourceAsStream("ortholog.txt.table"));
 
-        converter.setTreefamOrganisms("7227");
-        converter.setTreefamHomologues("9606");
+        converter.setTreefamOrganisms("7227 9606");
         converter.setGeneFile(genes);
         converter.process(new StringReader(input));
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "treefam-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "treefam-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("TreefamConverterTest_tgt.xml");
 

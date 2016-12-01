@@ -1,7 +1,9 @@
 package org.intermine.bio.dataconversion;
 
+import java.io.File;
+
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -34,14 +36,11 @@ public class HpoConverterTest extends ItemsTestCase
         converter = new HpoConverter(writer, model);
     }
 
-    public void tearDown() throws Exception {
-    }
 
     public void testProcess() throws Exception {
-        Reader reader = new InputStreamReader(
-                getClass().getClassLoader().getResourceAsStream("HpoConverterOboTest_src.txt"));
-        converter.processAnnoFile(reader);
-        //System.out.println("productWrapperMap: " + converter.productMap.keySet());
+        File tmp = new File(getClass().getClassLoader().getResource("hp.obo").toURI());
+        File datadir = tmp.getParentFile();
+        converter.process(datadir);
         converter.close();
 
         // uncomment to write a new target items file

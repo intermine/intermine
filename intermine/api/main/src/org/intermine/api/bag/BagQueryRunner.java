@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -126,8 +126,10 @@ public class BagQueryRunner
                 // wildcard + a string
                 } else {
                     wildcardInput.add(inputString);
-                    patterns.put(inputString, Pattern.compile(inputString.toLowerCase()
-                            .replaceAll("\\*", "\\.\\*")));
+                    String patternString = inputString.toLowerCase().replaceAll("\\*", "\\.\\*");
+                    patternString = patternString.replaceAll("\\(", "\\.\\*");
+                    patternString = patternString.replaceAll("\\)", "\\.\\*");
+                    patterns.put(inputString, Pattern.compile(patternString));
                 }
             }
         }

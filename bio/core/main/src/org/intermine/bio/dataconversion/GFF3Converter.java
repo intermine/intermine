@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -54,6 +54,10 @@ public class GFF3Converter extends DataConverter
     private Model tgtModel;
     private Map<String, Item> seqs = new HashMap<String, Item>();
     private Map<String, String> identifierMap = new HashMap<String, String>();
+    // map from identifier to GFF garbage ID
+    // only used if there is config to set the identifier to something else.
+    // so that we can map to parents. See #1270
+    private Map<String, String> identifiersToIds = new HashMap<String, String>();
     private GFF3RecordHandler handler;
     private GFF3SeqHandler sequenceHandler;
     private boolean dontCreateLocations;
@@ -258,6 +262,7 @@ public class GFF3Converter extends DataConverter
      * @throws IOException
      */
     public void process(GFF3Record record) throws ObjectStoreException {
+
         String term = record.getType();
         // don't process terms in the exclude list
         if (configExclude != null && !configExclude.isEmpty()) {
@@ -281,6 +286,8 @@ public class GFF3Converter extends DataConverter
         // If pid set in gff_config.propeties, look for the attribute field, e.g. locus_tag
         if (configAttr.containsKey(this.orgTaxonId)) {
             if (configAttr.get(this.orgTaxonId).containsKey("primaryIdentifier")) {
+                // TODO we need to check if this is class-specific config
+                // could be unrelated to the type we are looking at
                 primaryIdentifier = getPrimaryIdentifier(record, term);
             }
         }
@@ -350,12 +357,21 @@ public class GFF3Converter extends DataConverter
         Double score = record.getScore();
         if (score != null && !"".equals(String.valueOf(score))) {
             feature.setAttribute("score", String.valueOf(score));
-            feature.setAttribute("scoreType", record.getSource());
+            if (record.getSource() != null) {
+                feature.setAttribute("scoreType", record.getSource());
+            }
         }
+
         for (Item synonym : synonymsToAdd) {
             handler.addItem(synonym);
+            // this is just to keep track of the synonyms for this record.
+            // if we end up removing this entry, we need to delete these too.
+            handler.addSynonym(synonym);
         }
+        handler.addSynonyms(synonyms);
+
         handler.process(record);
+
         if (handler.getDataSetReferenceList().getRefIds().size() > 0) {
             feature.addCollection(handler.getDataSetReferenceList());
         }
@@ -399,7 +415,7 @@ public class GFF3Converter extends DataConverter
     }
 
     private String getPrimaryIdentifier(GFF3Record record, String term) {
-        String primaryIdentifier = null;
+        String primaryIdentifier = record.getId();
         String cls = configAttrClass.get(this.orgTaxonId).get("primaryIdentifier");
         if ("all".equals(cls) || term.equals(cls)) {
             String pidAttr = configAttr.get(this.orgTaxonId).get("primaryIdentifier");
@@ -417,6 +433,10 @@ public class GFF3Converter extends DataConverter
                     primaryIdentifier = record.getAttributes().get(pidAttr).get(0);
                 }
             }
+        }
+        // only store if the identifier has been reset
+        if (!primaryIdentifier.equals(record.getId())) {
+            identifiersToIds.put(record.getId(), primaryIdentifier);
         }
         return primaryIdentifier;
     }
@@ -796,10 +816,16 @@ public class GFF3Converter extends DataConverter
     private String getRefId(String identifier) {
         String refId = identifierMap.get(identifier);
         if (refId == null) {
-//            identifierMap.put(identifier, refId);
-            String msg = "Failed setting setRefsAndCollections() in GFF3Converter - processing"
-                + " child before parent - " + identifier;
-            throw new RuntimeException(msg);
+            // couldn't find parent. try again. identifier might have been switched with ID.
+            String id = identifiersToIds.get(identifier);
+            refId = identifierMap.get(id);
+
+            if (refId == null) {
+                // parents are usually first in the GFF file but that's not in the specification
+                // parents will not be present if they are ignored in the config file. See #1267
+                throw new RuntimeException("Failed setting setRefsAndCollections() "
+                        + "in GFF3Converter - processing child before parent - " + identifier);
+            }
         }
         return refId;
     }

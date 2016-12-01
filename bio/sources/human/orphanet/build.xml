@@ -1,0 +1,5 @@
+<project name="orphanet" default="default" basedir=".">
+  <description>build, test, package orphanet</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+</project>

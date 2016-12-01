@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -61,13 +61,14 @@ public class TableWidgetService extends WidgetService
         }
 
         addOutputConfig(widgetConfig);
-
+        String ids = input.getIds();
+        String populationIds = input.getPopulationIds();
         TableWidget widget = null;
         try {
             Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
             TableWidgetConfig twc = (TableWidgetConfig) widgetConfig;
             twc.setClassKeys(classKeys);
-            widget = twc.getWidget(imBag, null, im.getObjectStore(), input);
+            widget = twc.getWidget(imBag, null, im.getObjectStore(), input, ids, populationIds);
             widget.process();
             addOutputInfo("columns", StringUtils.join(widget.getColumns().toArray(), ","));
         } catch (ClassCastException e) {

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -468,8 +468,7 @@ public class GenomicRegionSearchService
      * @return genomic region search constraint
      * @throws Exception e
      */
-    public ActionMessage parseGenomicRegionSearchForm(
-            GenomicRegionSearchForm grsForm) throws Exception {
+    public ActionMessage parseGenomicRegionSearchForm(GenomicRegionSearchForm grsForm) throws Exception {
         grsc = new GenomicRegionSearchConstraint();
 
         ActionMessage actmsg = parseBasicInput(grsForm);
@@ -496,24 +495,27 @@ public class GenomicRegionSearchService
         FormFile formFile = (FormFile) grsForm.get("fileInput");
         String pasteInput = (String) grsForm.get("pasteInput");
         String extendedRegionSize = (String) grsForm.get("extendedRegionSize");
+        boolean strandSpecific = grsForm.get("strandSpecific")!=null;
 
         // Organism
         grsc.setOrgName(organism);
+
+        // strand-specific search flag
+        grsc.setStrandSpecific(strandSpecific);
 
         if (Integer.parseInt(extendedRegionSize) < 0) {
             throw new Exception(
                     "extendedRegionSize can't be a negative value: "
                             + extendedRegionSize);
         } else {
-            grsc.setExtededRegionSize(Integer.parseInt(extendedRegionSize));
+            grsc.setExtendedRegionSize(Integer.parseInt(extendedRegionSize));
         }
 
         selectionInfo.add("<b>Selected organism: </b><i>" + organism + "</i>");
 
         // Feature types
         if (featureTypes == null) {
-            return new ActionMessage("genomicRegionSearch.spanFieldSelection",
-                    "feature types");
+            return new ActionMessage("genomicRegionSearch.spanFieldSelection", "feature types");
         }
 
         Set<Class<?>> ftSet = getFeatureTypes(featureTypes, extendedRegionSize);
@@ -721,11 +723,11 @@ public class GenomicRegionSearchService
                     && Integer.parseInt(extendedRegionSize) < 1000000) {
                 selectionInfo.add("<b>Extend Regions: </b>"
                         + new DecimalFormat("#.##").format(Integer
-                                .parseInt(extendedRegionSize) / 1000) + " kbp");
+                                .parseInt(extendedRegionSize) / 1000f) + " kbp");
             } else if (Integer.parseInt(extendedRegionSize) >= 1000000) {
                 selectionInfo.add("<b>Extend Regions: </b>"
                         + new DecimalFormat("#.##").format(Integer
-                                .parseInt(extendedRegionSize) / 1000000) + " Mbp");
+                                .parseInt(extendedRegionSize) / 1000000f) + " Mbp");
             } else {
                 selectionInfo.add("<b>Extend Regions: </b>" + extendedRegionSize + "bp");
             }
@@ -743,7 +745,8 @@ public class GenomicRegionSearchService
             grsc.getGenomicRegionList(),
             grsc.getExtendedRegionSize(),
             grsc.getOrgName(),
-            grsc.getFeatureTypes());
+            grsc.getFeatureTypes(),
+            grsc.getStrandSpecific());
     }
 
     /**
@@ -854,35 +857,42 @@ public class GenomicRegionSearchService
                     continue;
                 }
             }
-
+            
+            boolean passed = false; // flag to add to errorSpanList
             if (gr.getStart() > gr.getEnd()) {
-                GenomicRegion newSpan = new GenomicRegion();
-                newSpan.setChr(ci.getChrPID()); // converted to the right case
-
-                if (gr.getEnd() < 1) {
-                    newSpan.setStart(1);
-                } else {
-                    newSpan.setStart(gr.getEnd());
-                }
-
-                newSpan.setEnd(gr.getStart());
-                newSpan.setExtendedRegionSize(0);
-                newSpan.setOrganism(grsc.getOrgName());
-                passedSpanList.add(newSpan);
-            } else {
-                gr.setChr(ci.getChrPID());
-
+                gr.setChr(ci.getChrPID()); // converted to the right case
+                // swap start, end and flag as minus strand
+                Integer grStart = gr.getStart();
+                Integer grEnd = gr.getEnd();
+                gr.setStart(grEnd);
+                gr.setEnd(grStart);
+                gr.setMinusStrand(Boolean.TRUE);
                 if (gr.getStart() < 1) {
                     gr.setStart(1);
                 }
-
                 passedSpanList.add(gr);
+                passed = true;
+            } else {
+                gr.setChr(ci.getChrPID());
+                if (gr.getStart() < 1) {
+                    gr.setStart(1);
+                }
+                gr.setMinusStrand(Boolean.FALSE);
+                passedSpanList.add(gr);
+                passed = true;
+            }
+
+            // add to errorSpanList here if not passed; shouldn't ever happen, but we'll keep it for now for back-compatibility
+            if (!passed) {
+                errorSpanList.add(gr);
             }
         }
 
-        // make errorSpanList
-        errorSpanList.addAll(grsc.getGenomicRegionList());
-        errorSpanList.removeAll(passedSpanList);
+        // make errorSpanList - replaced by logic above using passed flag
+        // NOTE (SH): can't use removeAll(passedSpanList) because the newSpan entries are not
+        // members of grsc.getGenomicRegionList()!
+        // errorSpanList.addAll(grsc.getGenomicRegionList());
+        // errorSpanList.removeAll(passedSpanList);
 
         resultMap.put("pass", passedSpanList);
         resultMap.put("error", errorSpanList);

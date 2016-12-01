@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
@@ -56,7 +55,8 @@ public class EnrichmentWidget extends Widget
     private EnrichmentWidgetImplLdr ldr;
     private String pathConstraint;
     private ClassDescriptor typeDescriptor;
-
+    private String ids;
+    private String populationIds;
 
     /**
      * @param config widget config
@@ -64,13 +64,17 @@ public class EnrichmentWidget extends Widget
      * @param populationBag the reference population
      * @param os object storegene
      * @param options the options for this widget.
+     * @param ids list of IDs to analyse, use instead of intermine bag
+     * @param populationIds use instead of populationBag
      *
      */
     public EnrichmentWidget(EnrichmentWidgetConfig config,
                             InterMineBag interMineBag,
                             InterMineBag populationBag,
                             ObjectStore os,
-                            EnrichmentOptions options) {
+                            EnrichmentOptions options,
+                            String ids,
+                            String populationIds) {
         super(config);
         this.bag = interMineBag;
         this.populationBag = populationBag;
@@ -79,8 +83,12 @@ public class EnrichmentWidget extends Widget
         this.errorCorrection = options.getCorrection();
         this.max = options.getMaxPValue();
         this.filter = options.getFilter();
+        this.ids = ids;
+        this.populationIds = populationIds;
 
-        validateBagType();
+        if (bag != null) {
+            validateBagType();
+        }
         String correctionCoefficientClassName = (config.getCorrectionCoefficient() != null)
                                                ? config.getCorrectionCoefficient().trim()
                                                : "";
@@ -148,22 +156,21 @@ public class EnrichmentWidget extends Widget
         try {
             ldr = new EnrichmentWidgetImplLdr(bag, populationBag, os,
                   (EnrichmentWidgetConfig) config, filter, extraCorrectionCoefficient,
-                  correctionCoefficient);
+                  correctionCoefficient, ids, populationIds);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             results = EnrichmentCalculation.calculate(input, max, errorCorrection,
                                            extraCorrectionCoefficient, correctionCoefficient);
-            setNotAnalysed(bag.getSize() - results.getAnalysedTotal());
+            int size = 0;
+            if (bag != null) {
+                size = bag.getSize();
+            } else if (ids != null) {
+                String[] idArray = ids.split(",");
+                size = idArray.length;
+            }
+            setNotAnalysed(size - results.getAnalysedTotal());
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List getElementInList() {
-        return new Vector();
     }
 
     /**
@@ -219,9 +226,9 @@ public class EnrichmentWidget extends Widget
                 BigDecimal bd = pValues.get(id);
                 row.add(new Double(bd.doubleValue()).toString());
 
-                List<String> ids = termsToIds.get(id);
+                List<String> termIds = termsToIds.get(id);
                 StringBuffer sb = new StringBuffer();
-                for (String term : ids) {
+                for (String term : termIds) {
                     if (sb.length() > 0) {
                         sb.append(", ");
                     }
@@ -271,15 +278,31 @@ public class EnrichmentWidget extends Widget
     public PathQuery getPathQuery() {
         PathQuery q = createPathQueryView(os, config);
         // bag constraint
-        q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        if (bag != null) {
+            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        } else if (ids != null) {
+            // use list of IDs instead of bag
+            String[] idStrings = ids.split(",");
+            List<Integer> intermineIds = new ArrayList<Integer>();
+            for (int i = 0; i < idStrings.length; i++) {
+                try {
+                    intermineIds.add(Integer.parseInt(idStrings[i]));
+                } catch (NumberFormatException e) {
+                    LOG.error("bad IDs for list in enrichment.", e);
+                    return null;
+                }
+            }
+            q.addConstraint(Constraints.inIds(config.getStartClass(), intermineIds));
+        }
         //constraints for view (bdgp_enrichment)
         List<PathConstraint> pathConstraintsForView =
-            ((EnrichmentWidgetConfig) config).getPathConstraintsForView();
+                ((EnrichmentWidgetConfig) config).getPathConstraintsForView();
         if (pathConstraintsForView != null) {
             for (PathConstraint pc : pathConstraintsForView) {
                 q.addConstraint(pc);
             }
         }
+
         //add type constraints for subclasses
         String enrichIdentifier = ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
         boolean subClassContraint = false;
@@ -345,7 +368,24 @@ public class EnrichmentWidget extends Widget
         pathQuery.addView(startClassDisplayView);
         pathQuery.addOrderBy(enrichIdentifier, OrderDirection.ASC);
         // bag constraint
-        pathQuery.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        if (bag != null) {
+            pathQuery.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        } else if (ids != null) {
+            // use list of IDs instead of bag
+            String[] idStrings = ids.split(",");
+            List<Integer> intermineIds = new ArrayList<Integer>();
+            for (int i = 0; i < idStrings.length; i++) {
+                try {
+                    intermineIds.add(Integer.parseInt(idStrings[i]));
+                } catch (NumberFormatException e) {
+                    LOG.error("bad IDs for list in enrichment.", e);
+                    return null;
+                }
+            }
+            pathQuery.addConstraint(Constraints.inIds(config.getStartClass(), intermineIds));
+        }
+
+
         //subclass constraint
         if (subClassContraint) {
             pathQuery.addConstraint(Constraints.type(subClassPath, subClassType));

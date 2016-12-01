@@ -1,7 +1,7 @@
 package org.intermine.bio.web.model;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,6 +25,8 @@ public class GenomicRegionSearchConstraint
     private Set<Class<?>> featureTypes = null;
     private List<GenomicRegion> genomicRegionList = null;
     private int extendedRegionSize = 0;
+
+    private boolean strandSpecific;
 
     // TODO add liftOver contraints: org, source, target
 
@@ -74,10 +76,24 @@ public class GenomicRegionSearchConstraint
         return extendedRegionSize;
     }
     /**
-     * @param extededRegionSize the extendedRegionSize to set
+     * @param extendedRegionSize the extendedRegionSize to set
      */
-    public void setExtededRegionSize(int extededRegionSize) {
-        this.extendedRegionSize = extededRegionSize;
+    public void setExtendedRegionSize(int extendedRegionSize) {
+        this.extendedRegionSize = extendedRegionSize;
+    }
+
+    /**
+     * @param strandSpecific
+     */
+    public void setStrandSpecific(boolean strandSpecific) {
+        this.strandSpecific = strandSpecific;
+    }
+
+    /**
+     * @return strandSpecific value
+     */
+    public boolean getStrandSpecific() {
+        return strandSpecific;
     }
 
     /**
@@ -91,7 +107,8 @@ public class GenomicRegionSearchConstraint
             return (extendedRegionSize == c.getExtendedRegionSize()
                     && genomicRegionList.equals(c.getGenomicRegionList())
                     && featureTypes.equals(c.getFeatureTypes())
-                    && orgName.equals(c.getOrgName()));
+                    && orgName.equals(c.getOrgName())
+                    && strandSpecific==c.getStrandSpecific());
         }
         return false;
     }

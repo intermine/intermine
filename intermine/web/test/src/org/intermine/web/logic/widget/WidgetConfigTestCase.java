@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -67,8 +67,12 @@ public class WidgetConfigTestCase extends InterMineAPITestCase {
             osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
             Employee e1 = new Employee();
             e1.setName("Employee1");
+            e1.setAge(25);
+            e1.setFullTime(true);
             Employee e2 = new Employee();
             e2.setName("Employee2");
+            e2.setAge(35);
+            e2.setFullTime(true);
             Department d1 = new Department();
             d1.setName("department");
             Company company = new CompanyShadow();
@@ -87,6 +91,62 @@ public class WidgetConfigTestCase extends InterMineAPITestCase {
             InterMineBag list = superUser.createBag("employeeList", "Employee", "", im.getClassKeys());
             Collection<Integer> ids = new ArrayList<Integer>();
             ids.add(e1.getId()); ids.add(e2.getId());
+            list.addIdsToBag(ids, "Employee");
+            return list;
+        } finally {
+            osw.close();
+        }
+    }
+
+    protected InterMineBag createEmployeeLongList() throws Exception {
+        ObjectStoreWriter osw = null;
+        try {
+            Profile superUser = im.getProfileManager().getSuperuserProfile();
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+            Employee e1 = new Employee();
+            e1.setName("Employee1");
+            e1.setAge(25);
+            e1.setFullTime(true);
+            Employee e2 = new Employee();
+            e2.setName("Employee2");
+            e2.setAge(35);
+            e2.setFullTime(true);
+            Employee e3 = new Employee();
+            e3.setName("Employee1");
+            e3.setAge(35);
+            e3.setFullTime(true);
+            Employee e4 = new Employee();
+            e4.setName("Employee1");
+            e4.setAge(40);
+            e4.setFullTime(true);
+            Employee e5 = new Employee();
+            e5.setName("Employee1");
+            e5.setAge(50);
+            e5.setFullTime(true);
+            Department d1 = new Department();
+            d1.setName("department");
+            Company company = new CompanyShadow();
+            company.setName("company");
+            Contractor contractor = new Contractor();
+            contractor.setName("contractor");
+            osw.store(contractor);
+            company.addContractors(contractor);
+            osw.store(company);
+            d1.setCompany(company);
+            osw.store(d1);
+            e1.setDepartment(d1);
+            e2.setDepartment(d1);
+            e3.setDepartment(d1);
+            e4.setDepartment(d1);
+            e5.setDepartment(d1);
+            osw.store(e1);
+            osw.store(e2);
+            osw.store(e3);
+            osw.store(e4);
+            osw.store(e5);
+            InterMineBag list = superUser.createBag("employeeList", "Employee", "", im.getClassKeys());
+            Collection<Integer> ids = new ArrayList<Integer>();
+            ids.add(e1.getId()); ids.add(e2.getId()); ids.add(e3.getId()); ids.add(e4.getId()); ids.add(e5.getId());
             list.addIdsToBag(ids, "Employee");
             return list;
         } finally {

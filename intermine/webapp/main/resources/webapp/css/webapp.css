@@ -1669,6 +1669,76 @@ div.bagDetails-page div.widget { width:460px; height:auto; max-height:none !impo
     margin:0 10px 20px 10px; text-align:left; border-width:1px; border-style:solid; }
 
 /* footer links, logo and stuff */
+
+#promo-footer {
+  background: #eee;
+  margin-bottom: 1em;
+}
+#promo-footer:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+#promo-footer .footer {
+  width: 60%;
+  float: left;
+  clear: right;
+  box-sizing: border-box;
+  padding: 0.5em;
+}
+.funding-footer p {
+  margin: 0.5em;
+}
+#promo-footer .powered-footer, #promo-footer .android-footer {
+  width: 20%
+}
+
+#promo-footer {display:flex;
+align-items:stretch;
+}
+#promo-footer .powered-footer {width:50%}
+
+.powered-footer {max-width:20%;}
+
+.cite-footer {max-width:50%;
+}
+
+.cite-footer {
+text-align:justify;}
+
+
+#promo-footer {
+display:flex;
+align-items:center;
+}
+
+.android img.googleplay {width:80%;}
+.android a {width:100%}
+
+.android {
+max-width:30%;
+margin:1em;
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:rgba(255,255,255,0.9)}
+
+.android p {
+width:90%;}
+
+
+.funding-footer .cite { text-align:justify; }
+
+.funding-footer {
+  display:flex;
+  justify-content:space-around;
+  background:#eee;
+  align-items:center;}
+.credits img {
+  max-width:80px;
+  margin-top:-6px;
+  margin-bottom:-6px;}
+
 div.bottom-footer { margin:0 auto; width:940px; margin-top:20px; }
 div.bottom-footer a.cambridge-logo { float:right; }
 

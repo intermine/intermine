@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,6 +32,9 @@ public class WidgetsServiceInput implements EnrichmentOptions
     protected double maxP = 0.05d;
     protected String correction = null;
     protected String extraAttribute = null;
+    protected String ids = null;
+    protected String populationIds = null;
+
 
     /**
      * Get the name or id of the widget
@@ -42,7 +45,7 @@ public class WidgetsServiceInput implements EnrichmentOptions
     }
 
     /**
-     * Get the type of the bag
+     * Get the name of the bag
      * @return the bagName
      */
     public String getBagName() {
@@ -60,6 +63,16 @@ public class WidgetsServiceInput implements EnrichmentOptions
     /** @return whether we should save the population list. **/
     public boolean shouldSavePopulation() {
         return savePopulation;
+    }
+
+    /** @return list of intermine object IDs to analyse **/
+    public String getIds() {
+        return ids;
+    }
+
+    /** @return list of intermine object IDs to analyse instead of populationBagName **/
+    public String getPopulationIds() {
+        return populationIds;
     }
 
     @Override
@@ -98,7 +111,7 @@ public class WidgetsServiceInput implements EnrichmentOptions
                 widgetId, bagName,
                 maxP, correction,
                 populationBagName, savePopulation, filter,
-                extraAttribute);
+                extraAttribute, ids, populationIds);
     }
 
     /**
@@ -151,6 +164,17 @@ public class WidgetsServiceInput implements EnrichmentOptions
         /** @param filter the filter for this request **/
         public void setFilter(String filter) {
             this.filter = filter;
+        }
+
+        /** @param ids list of intermine object IDs **/
+        public void setIds(String ids) {
+            this.ids = ids;
+        }
+
+        /** @param populationIds list of intermine object IDs to use isntead of populationBagName
+        **/
+        public void setPopulationIds(String populationIds) {
+            this.populationIds = populationIds;
         }
 
         /** @param extraAttribute the extra attribute for this request. **/

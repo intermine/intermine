@@ -1,9 +1,0 @@
-# the name of the class that will have it's fields set
-className: org.intermine.model.bio.Gene
-
-# the column in the file to use as the primary key when finding objects to change
-keyColumn: 0
-
-# the name of the fields that correspond to each column
-column.0: primaryIdentifier
-column.1: ncbiGeneNumber

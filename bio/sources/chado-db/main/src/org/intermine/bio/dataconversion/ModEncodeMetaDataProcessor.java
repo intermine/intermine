@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -3292,7 +3292,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         DatabaseRecordConfig geo = new DatabaseRecordConfig();
         geo.dbName = "GEO";
         geo.dbDescrition = "Gene Expression Omnibus (NCBI)";
-        geo.dbURL = "http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc=";
+        geo.dbURL = "https://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc=";
         geo.types.add("GEO_record");
         configs.add(geo);
 
@@ -3307,7 +3307,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         sra.dbName = "SRA";
         sra.dbDescrition = "Sequence Read Archive (NCBI)";
         sra.dbURL =
-                "http://www.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?cmd=viewer&m=data&s=viewer&run=";
+                "https://www.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?cmd=viewer&m=data&s=viewer&run=";
         sra.types.add("ShortReadArchive_project_ID_list (SRA)");
         sra.types.add("ShortReadArchive_project_ID (SRA)");
         configs.add(sra);
@@ -3315,14 +3315,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         DatabaseRecordConfig ta = new DatabaseRecordConfig();
         ta.dbName = "Trace Archive";
         ta.dbDescrition = "Trace Archive (NCBI)";
-        ta.dbURL = "http://www.ncbi.nlm.nih.gov/Traces/trace.cgi?&cmd=retrieve&val=";
+        ta.dbURL = "https://www.ncbi.nlm.nih.gov/Traces/trace.cgi?&cmd=retrieve&val=";
         ta.types.add("TraceArchive_record");
         configs.add(ta);
 
         DatabaseRecordConfig de = new DatabaseRecordConfig();
         de.dbName = "dbEST";
         de.dbDescrition = "Expressed Sequence Tags database (NCBI)";
-        de.dbURL = "http://www.ncbi.nlm.nih.gov/nucest/";
+        de.dbURL = "https://www.ncbi.nlm.nih.gov/nucest/";
         de.types.add("dbEST_record");
         configs.add(de);
 
@@ -3448,7 +3448,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
             }
         } else if ("SRA".equals(config.dbName) && (accession.startsWith("SRX"))) {
-            config.dbURL = "http://www.ncbi.nlm.nih.gov/sra/";
+            config.dbURL = "https://www.ncbi.nlm.nih.gov/sra/";
             dbRecordIds.add(createDatabaseRecord(accession, config));
             config.dbURL = defaultURL;
 

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,15 +23,14 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 import org.xml.sax.SAXException;
 
@@ -58,8 +57,6 @@ public class TreefamConverter extends BioFileConverter
     private static final String DEFAULT_HOMOLOGUE_TYPE = "orthologue";
     private static final String DEFAULT_IDENTIFIER_COLUMN = "geneid";
     protected IdResolver rslv;
-    @SuppressWarnings("unchecked")
-    private Map<MultiKey, String> resolvedIds = new MultiKeyMap();
     private Set<MultiKey> homologuePairs = new HashSet<MultiKey>();
 
     /**
@@ -209,7 +206,6 @@ public class TreefamConverter extends BioFileConverter
 
     private String getGene(GeneHolder holder)
         throws ObjectStoreException {
-
         String refId = identifiersToGenes.get(holder.resolvedIdentifier);
         if (refId == null) {
             Item gene = createItem("Gene");
@@ -293,11 +289,10 @@ public class TreefamConverter extends BioFileConverter
             }
 
             String resolvedIdentifier = resolveGene(taxonId, geneId, symbol);
-            if (StringUtils.isEmpty(resolvedIdentifier)) {
-                resolvedIdentifier = ("symbol".equalsIgnoreCase(identifierType) ? symbol : geneId);
+            if (!StringUtils.isEmpty(resolvedIdentifier)) {
+                idsToGenes.put(id, new GeneHolder(geneId, symbol, resolvedIdentifier,
+                        identifierColumn, identifierType, taxonId));
             }
-            idsToGenes.put(id, new GeneHolder(geneId, symbol, resolvedIdentifier, identifierColumn,
-                    identifierType, taxonId));
         }
     }
 
@@ -336,7 +331,7 @@ public class TreefamConverter extends BioFileConverter
     public class GeneHolder
     {
         protected String identifier, symbol, taxonId, identifierType, resolvedIdentifier,
-        whichColumn;
+            whichColumn;
 
         /**
          * @param identifier gene identifier, eg FBgn from geneid column
@@ -389,20 +384,18 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier, String symbol) {
-        if (rslv == null || !rslv.hasTaxon(taxonId)) {
-            // no id resolver available, so return the original identifier
-            LOG.info("ID resolver not used for taxon ID " + taxonId);
-            return identifier;
+        String id = identifier;
+        if (rslv != null && rslv.hasTaxon(taxonId)) {
+            int resCount = rslv.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                // failed to resolve. try again!
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " Human identifier: "
+                         + identifier);
+                return null;
+            }
+            id = rslv.resolveId(taxonId, identifier).iterator().next();
         }
-
-        String resolvedId = rslv.resolveIds(taxonId, Arrays.asList(identifier, symbol));
-
-        if (resolvedId != null) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                    + identifier + " for taxon ID " + taxonId);
-        }
-
-        resolvedIds.put(new MultiKey(taxonId, identifier, symbol), resolvedId);
-        return resolvedId;
+        return id;
     }
 }

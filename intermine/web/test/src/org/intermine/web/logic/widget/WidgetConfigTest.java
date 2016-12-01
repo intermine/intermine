@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -53,10 +53,10 @@ public class WidgetConfigTest extends WidgetConfigTestCase
         expected.add("ContractorB");
 
         Map<String, WidgetConfig> widgets = webConfig.getWidgets();
-        assertEquals(Collections.EMPTY_LIST, widgets.get("contractor_enrichment").getFiltersValues(os, list));
-        assertEquals(Arrays.asList("department"), widgets.get("contractor_enrichment_with_filter1").getFiltersValues(os, list));
+        assertEquals(Collections.EMPTY_LIST, widgets.get("contractor_enrichment").getFiltersValues(os, list, null));
+        assertEquals(Arrays.asList("department"), widgets.get("contractor_enrichment_with_filter1").getFiltersValues(os, list, null));
 
-        List<String> actuallyAnArray = widgets.get("contractor_enrichment_with_filter2").getFiltersValues(os, list);
+        List<String> actuallyAnArray = widgets.get("contractor_enrichment_with_filter2").getFiltersValues(os, list, null);
         Iterator<String> it = actuallyAnArray.iterator();
         String actual = it.next();
         assertTrue(actual.contains("ContractorA"));

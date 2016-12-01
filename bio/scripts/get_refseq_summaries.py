@@ -22,9 +22,9 @@ class SummaryHandler(handler.ContentHandler):
 		self.content += content
 
 	def endElement(self, name):
-		if name == 'DocSum':
+		if name == 'DocumentSummary':
 			self.counter += 1
-		if name == 'Id':
+		if name == 'uid':
 			self.gene_id = self.content
 		if self.in_summary:
 			if len(self.content.strip()) > 0:
@@ -58,7 +58,7 @@ def fetch_summaries(all_gene_ids, output, batch_size):
 	
 
 def fetch_summary(gene_ids, parser, output):
-	esummary_url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=intermine&email=bio@flymine.org&db=gene&id='
+	esummary_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=intermine&email=bio@flymine.org&db=gene&id='
 	id_string = ",".join(gene_ids)
 	url = esummary_url + id_string
 

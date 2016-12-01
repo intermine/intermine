@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -146,10 +146,11 @@ public class GenomicRegionSearchService extends ListMakerService
      */
     protected Map<GenomicRegion, Query> createQueries(GenomicRegionSearchInfo info) {
         return GenomicRegionSearchUtil.createRegionListQueries(
-                info.getGenomicRegions(),
-                info.getExtension(),
-                GenomicRegionSearchQueryRunner.getChromosomeInfo(im).get(info.getOrganism()),
-                info.getOrganism(),
-                info.getFeatureClasses());
+                                                               info.getGenomicRegions(),
+                                                               info.getExtension(),
+                                                               GenomicRegionSearchQueryRunner.getChromosomeInfo(im).get(info.getOrganism()),
+                                                               info.getOrganism(),
+                                                               info.getFeatureClasses(),
+                                                               info.getStrandSpecific());
     }
 }

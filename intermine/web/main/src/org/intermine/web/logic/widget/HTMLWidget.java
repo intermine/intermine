@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,17 +22,11 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
  */
 public class HTMLWidget extends Widget
 {
-
     /**
      * @param config widget config
      */
     public HTMLWidget(WidgetConfig config) {
         super(config);
-    }
-
-    @Override
-    public List<String> getElementInList() {
-        return null;
     }
 
     @Override
@@ -70,5 +64,4 @@ public class HTMLWidget extends Widget
     public PathQuery getPathQuery() {
         return null;
     }
-
 }

@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -234,7 +234,7 @@ public class Model
     /**
      * Get a ClassDescriptor by name, null if no ClassDescriptor of given name in Model.
      * @param name unqualified or fully-qualified class name of ClassDescriptor requested
-     * @return the requested ClassDescriptor
+     * @return the requested ClassDescriptor.  Returns null if no match was found.
      */
     public ClassDescriptor getClassDescriptorByName(String name) {
         ClassDescriptor cd = cldMap.get(name);

@@ -1,137 +1,140 @@
 <items>
-<item id="7_3" class="GOTerm">
-<attribute name="identifier" value="GO:0007210"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-</item>
-<item id="1_2" class="GOEvidenceCode">
-<attribute name="code" value="TAS"/>
-</item>
-<item id="7_2" class="GOTerm">
-<attribute name="identifier" value="GO:0001586"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-</item>
-<item id="10_2" class="DatabaseReference">
-<attribute name="identifier" value="FBrf0129744"/>
-<reference name="source" ref_id="5_1"/>
-</item>
-<item id="9_4" class="Publication">
-<attribute name="pubMedId" value="1310937"/>
-<collection name="crossReferences"><reference ref_id="10_4"/></collection>
-</item>
-<item id="11_5" class="GOEvidence">
-<reference name="code" ref_id="1_1"/>
-</item>
-<item id="7_1" class="GOTerm">
-<attribute name="identifier" value="GO:0005887"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-</item>
-<item id="1_1" class="GOEvidenceCode">
-<attribute name="code" value="NAS"/>
-</item>
-<item id="11_3" class="GOEvidence">
-<reference name="code" ref_id="1_3"/>
-<collection name="publications"><reference ref_id="9_2"/><reference ref_id="9_3"/></collection>
-</item>
-<item id="8_3" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="7_3"/>
+<item id="7_2" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="6_2"/>
 <reference name="subject" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="evidence"><reference ref_id="11_3"/></collection>
+<collection name="evidence"><reference ref_id="8_2"/></collection>
 </item>
-<item id="11_6" class="GOEvidence">
-<reference name="code" ref_id="1_2"/>
-<collection name="publications"><reference ref_id="9_1"/></collection>
-</item>
-<item id="11_1" class="GOEvidence">
+<item id="8_2" class="GOEvidence">
+<attribute name="withText" value="UniProtKB-KW:KW-0812"/>
 <reference name="code" ref_id="1_1"/>
 </item>
-<item id="9_2" class="Publication">
-<attribute name="pubMedId" value="10908591"/>
-<collection name="crossReferences"><reference ref_id="10_2"/></collection>
-</item>
-<item id="11_4" class="GOEvidence">
-<reference name="code" ref_id="1_4"/>
-<collection name="publications"><reference ref_id="9_4"/></collection>
+<item id="8_7" class="GOEvidence">
+<attribute name="withText" value="UniProtKB-KW:KW-0812"/>
+<reference name="code" ref_id="1_1"/>
 </item>
 <item id="4_1" class="DataSet">
-<attribute name="name" value="GO Annotation from FlyBase"/>
+<attribute name="name" value="GO Annotation from UniProt"/>
 <reference name="dataSource" ref_id="5_1"/>
 </item>
-<item id="11_2" class="GOEvidence">
-<reference name="code" ref_id="1_2"/>
-<collection name="publications"><reference ref_id="9_1"/></collection>
+<item id="6_1" class="GOTerm">
+<attribute name="identifier" value="GO:0016020"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
-<item id="6_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="7_8" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="6_4"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="8_8"/></collection>
+</item>
+<item id="7_4" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="6_4"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="8_4"/></collection>
+</item>
+<item id="7_7" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="6_2"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="8_7"/></collection>
+</item>
+<item id="7_3" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="6_3"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="8_3"/></collection>
+</item>
+<item id="8_8" class="GOEvidence">
+<attribute name="withText" value="UniProtKB-KW:KW-1003"/>
+<reference name="code" ref_id="1_1"/>
+</item>
+<item id="2_1" class="Organism">
+<attribute name="taxonId" value="224308"/>
+</item>
+<item id="7_1" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="6_1"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_2" class="GOTerm">
+<attribute name="identifier" value="GO:0016021"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
-<item id="8_1" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="7_1"/>
-<reference name="subject" ref_id="3_1"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="evidence"><reference ref_id="11_1"/></collection>
-</item>
-<item id="9_1" class="Publication">
-<attribute name="pubMedId" value="11282322"/>
-<collection name="crossReferences"><reference ref_id="10_1"/></collection>
-</item>
-<item id="8_2" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="7_2"/>
-<reference name="subject" ref_id="3_1"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="evidence"><reference ref_id="11_2"/></collection>
-</item>
-<item id="10_1" class="DatabaseReference">
-<attribute name="identifier" value="FBrf0135704"/>
-<reference name="source" ref_id="5_1"/>
-</item>
-<item id="10_5" class="DatabaseReference">
-<attribute name="identifier" value="FBrf0135704"/>
-<reference name="source" ref_id="5_1"/>
-</item>
-<item id="7_4" class="GOTerm">
-<attribute name="identifier" value="GO:0007198"/>
+<item id="3_2" class="Protein">
+<attribute name="primaryAccession" value="C0H3Q1"/>
+<reference name="organism" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
-<item id="10_3" class="DatabaseReference">
-<attribute name="identifier" value="FBrf0152099"/>
-<reference name="source" ref_id="5_1"/>
-</item>
-<item id="8_4" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="7_4"/>
-<reference name="subject" ref_id="3_1"/>
+<item id="3_3" class="Protein">
+<attribute name="primaryAccession" value="C0H3Q4"/>
+<reference name="organism" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="evidence"><reference ref_id="11_4"/><reference ref_id="11_5"/><reference ref_id="11_6"/></collection>
 </item>
-<item id="9_3" class="Publication">
-<attribute name="pubMedId" value="12163486"/>
-<collection name="crossReferences"><reference ref_id="10_3"/></collection>
+<item id="7_9" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="6_4"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="8_9"/></collection>
+</item>
+<item id="8_5" class="GOEvidence">
+<attribute name="withText" value="UniProtKB-SubCell:SL-0039"/>
+<reference name="code" ref_id="1_1"/>
+</item>
+<item id="3_1" class="Protein">
+<attribute name="primaryAccession" value="C0H3P8"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+</item>
+<item id="8_4" class="GOEvidence">
+<attribute name="withText" value="UniProtKB-KW:KW-1003"/>
+<reference name="code" ref_id="1_1"/>
+</item>
+<item id="7_6" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="6_1"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="8_6"/></collection>
+</item>
+<item id="7_5" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="6_4"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="8_5"/></collection>
+</item>
+<item id="8_9" class="GOEvidence">
+<attribute name="withText" value="UniProtKB-SubCell:SL-0039"/>
+<reference name="code" ref_id="1_1"/>
+</item>
+<item id="6_3" class="GOTerm">
+<attribute name="identifier" value="GO:0030435"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
 <item id="5_1" class="DataSource">
-<attribute name="name" value="FlyBase"/>
+<attribute name="name" value="UniProt"/>
 </item>
-<item id="1_3" class="GOEvidenceCode">
-<attribute name="code" value="ISS"/>
+<item id="1_1" class="GOEvidenceCode">
+<attribute name="code" value="IEA"/>
 </item>
-<item id="2_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
+<item id="8_1" class="GOEvidence">
+<attribute name="withText" value="UniProtKB-KW:KW-0472"/>
+<reference name="code" ref_id="1_1"/>
 </item>
-<item id="10_4" class="DatabaseReference">
-<attribute name="identifier" value="FBrf0055969"/>
-<reference name="source" ref_id="5_1"/>
+<item id="8_3" class="GOEvidence">
+<attribute name="withText" value="UniProtKB-KW:KW-0749"/>
+<reference name="code" ref_id="1_1"/>
 </item>
-<item id="1_4" class="GOEvidenceCode">
-<attribute name="code" value="IDA"/>
+<item id="8_6" class="GOEvidence">
+<attribute name="withText" value="UniProtKB-KW:KW-0472"/>
+<reference name="code" ref_id="1_1"/>
 </item>
-<item id="3_1" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0004168"/>
-<reference name="organism" ref_id="2_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<item id="6_4" class="GOTerm">
+<attribute name="identifier" value="GO:0005886"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="goAnnotation"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/></collection>
 </item>
 </items>

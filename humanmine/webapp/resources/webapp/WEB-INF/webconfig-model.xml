@@ -161,13 +161,30 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Interaction">
+    <fields>
+      <fieldconfig fieldExpr="participant1.primaryIdentifier" />
+      <fieldconfig fieldExpr="participant2.primaryIdentifier" />
+    </fields>
+  </class>
+
+
+  <class className="org.intermine.model.bio.InteractionDetail">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="relationshipType"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="role1"/>
+      <fieldconfig fieldExpr="role2"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.InteractionTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
-
 
  <class className="org.intermine.model.bio.Location">
     <fields>
@@ -262,6 +279,16 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.ProteinStructure">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="technique"/>
+      <fieldconfig fieldExpr="resolution"/>
+    </fields>
+  </class>
+
+
   <class className="org.intermine.model.bio.Publication">
       <headerconfig>
       <titles>
@@ -343,11 +370,16 @@
 <!-- report page displayers -->
 <reportdisplayers>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
+        jspName="model/jbrowseDisplayer.jsp"
+        replacesFields=""
+        placement="Genomics"
+        types="SequenceFeature"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
         jspName="model/esynDisplayer.jsp"
         replacesFields=""
-        placement="summary"
+        placement="Interactions"
         types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
@@ -400,6 +432,13 @@
                      replacesFields="alleles"
                      placement="Genomics"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ComplexDisplayer"
+                     jspName="model/complexDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Complex"/>
+
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
@@ -566,7 +605,7 @@
                                  views="secondaryIdentifier, symbol, organism.name,
                                        publications.title, publications.firstAuthor,
                                        publications.journal, publications.year, publications.pubMedId"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+                                 externalLink="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
       <enrichmentwidgetdisplayer id="snp_gwas_study_enrichment"
                                  title="GWAS study Enrichment for SNPs"
@@ -580,7 +619,7 @@
                                  typeClass="SNP"
                                  views="primaryIdentifier, organism.name,
                                        GWASResults.study.name, GWASResults.study.firstAuthor"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+                                 externalLink="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
       <enrichmentwidgetdisplayer id="snp_publication_enrichment"
                                  title="Publication Enrichment for SNPs"
@@ -595,7 +634,7 @@
                                  views="primaryIdentifier, organism.name,
                                        GWASResults.study.publication.title, GWASResults.study.publication.firstAuthor,
                                        GWASResults.study.publication.journal, GWASResults.study.publication.year, GWASResults.study.publication.pubMedId"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+                                 externalLink="https://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
 <!--
 
@@ -631,7 +670,6 @@
         exportField="primaryIdentifier"
         typeClass="Gene"
         columnTitle="Orthologues"/>-->
-
      <bagtabledisplayer id="interactions" title="Interactions"
                         pathStrings="Gene.interactions.participant2"
                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
@@ -645,6 +683,7 @@
                                   interactions.participant2.primaryIdentifier,
                                   interactions.participant2.symbol,
                                   interactions.details.experiment.name"/>
+
 
 </widgets>
 </webconfig>

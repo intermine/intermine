@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<classes>
+  <class name="Disease" is-interface="true">
+    <attribute name="identifier" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+  </class>
+</classes>

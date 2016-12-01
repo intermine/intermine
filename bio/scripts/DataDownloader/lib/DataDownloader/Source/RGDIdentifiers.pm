@@ -12,9 +12,11 @@ use constant {
     SOURCE_DIR => "rgd-identifiers",
     SOURCES => [{
         FILE => "GENES_RAT.txt", 
-        HOST => "rgd.mcw.edu",
+        HOST => "ftp.rgd.mcw.edu",
         REMOTE_DIR => "pub/data_release",
     }],
 };
 
 1;
+
+

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget.config;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -163,9 +163,10 @@ public class EnrichmentWidgetConfig extends WidgetConfig
 
     @Override
     public EnrichmentWidget getWidget(InterMineBag imBag, InterMineBag populationBag,
-                                      ObjectStore os, WidgetOptions options) {
+                                      ObjectStore os, WidgetOptions options, String ids,
+                                      String populationIds) {
         EnrichmentOptions eo = (EnrichmentOptions) options;
-        return new EnrichmentWidget(this, imBag, populationBag, os, eo);
+        return new EnrichmentWidget(this, imBag, populationBag, os, eo, ids, populationIds);
     }
 
 }
