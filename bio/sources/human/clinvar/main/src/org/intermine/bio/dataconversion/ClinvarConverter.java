@@ -79,7 +79,7 @@ public class ClinvarConverter extends BioFileConverter
 //            String ncbiXref = line[7];
 //            String clinVarXref = line[8];
 
-            String diseaseString = line[10];    // parse for OMIM
+            String diseaseString = line[12];    // parse for OMIM
             String assemblyString = line[16];
 
             // only load GRCh38
