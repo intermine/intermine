@@ -41,6 +41,9 @@
 
   <fmt:message key="${pageName}.title" var="pageNameTitle"/>
 
+    <!--<link type="text/css" href="${WEB_PROPERTIES['webapp.baseurl']}/css/jquery-ui.min.css" rel="stylesheet" />-->
+    <link type="text/css" href="${WEB_PROPERTIES['webapp.wormbase.url']}/css/main.min.css" rel="stylesheet" />
+
     <tiles:insert name="htmlHead.tile">
       <tiles:put name="bagName" value="${param.bagName}"/>
       <tiles:put name="objectId" value="${param.id}"/>
@@ -51,8 +54,6 @@
     </tiles:insert>
 
     <link rel="shortcut icon" type="image/x-icon" href="model/images/favicon.ico?v=2">
-    <!--<link type="text/css" href="${WEB_PROPERTIES['webapp.baseurl']}/css/jquery-ui.min.css" rel="stylesheet" />-->
-    <link type="text/css" href="${WEB_PROPERTIES['webapp.wormbase.url']}/css/main.min.css" rel="stylesheet" />
   </head>
 
   <!-- Check if the current page has fixed layout -->
