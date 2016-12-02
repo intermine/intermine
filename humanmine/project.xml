@@ -95,15 +95,15 @@
       <property name="src.data.includes" value="variant_summary.txt" />
     </source>
     <source name="pdb" type="pdb">
-      <property name="src.data.dir" location="/micklem/data/pdb/current"/>
+      <property name="src.data.dir" location="/micklem/data/pdb"/>
       <property name="pdb.organisms" value="9606"/>
     </source>
-    <source name="psi-intact" type="psi">
+    <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
       <property name="intact.organisms" value="9606" />
     </source>
     <source name="psi-complexes" type="psi-complexes">
-      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes"/>
+      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/current"/>
       <property name="complexes.source" value="uniprotkb"/>
     </source>
     <source name="biogrid" type="biogrid">
@@ -116,7 +116,7 @@
       <property name="kegg.organisms" value="9606 10090" />
     </source>
     <source name="reactome" type="reactome">
-      <property name="src.data.dir" location="/micklem/data/reactome/uniprot" />
+      <property name="src.data.dir" location="/micklem/data/reactome/current" />
       <property name="reactome.organisms" value="9606 10090" />
     </source>
     <source name="panther" type="panther">

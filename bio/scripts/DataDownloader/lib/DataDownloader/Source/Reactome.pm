@@ -9,7 +9,7 @@ use constant {
     SOURCE_LINK => "http://www.reactome.org/",
     SOURCE_DIR => 'reactome',
     SOURCES => [{
-        FILE   => 'UniProt2Reactome.txt',
+        FILE   => 'UniProt2Reactome_All_Levels.txt',
         SERVER => 'http://www.reactome.org/download/current/',
     }],
 };
