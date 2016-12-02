@@ -131,10 +131,12 @@
                        </tiles:insert>
                     </li>
 
-                    <li id="genomicRegionStrandSpecific">
-                        <html:checkbox property="strandSpecific" value="true" />
-                        <span>Check this box to perform a strand-specific region search (search <b>+</b> strand if region start&lt;end; search <b>&ndash;</b> strand if region end&lt;start)</span>
-                    </li>
+                    <c:if test="${WEB_PROPERTIES['genomicRegionSearch.enableStrandSpecificSearch']}">
+                        <li id="genomicRegionStrandSpecific">
+                            <html:checkbox property="strandSpecific" value="true" />
+                            <span>Check this box to perform a strand-specific region search (search <b>+</b> strand if region start&lt;end; search <b>&ndash;</b> strand if region end&lt;start)</span>
+                        </li>
+                    </c:if>
 
                   </ol>
 
