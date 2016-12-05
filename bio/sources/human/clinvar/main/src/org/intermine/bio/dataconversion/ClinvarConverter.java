@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,8 +36,9 @@ public class ClinvarConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "ClinVar";
     private static final String ASSEMBLY = "GRCh38";
     private static final String TAXON_ID = "9606";
+    private static final String DUMMY_GENE_ENTRY = "-1";
     protected Map<String, String> genes = new HashMap<String, String>();
-    protected Map<String, String> diseases = new HashMap<String, String>();
+    protected Map<String, Item> diseases = new HashMap<String, Item>();
     protected Set<String> alleles = new HashSet<String>();
 
     /**
@@ -51,8 +51,15 @@ public class ClinvarConverter extends BioFileConverter
     }
 
     /**
-     *
-     *
+     * {@inheritDoc}
+     */
+    public void close() throws ObjectStoreException {
+        for (Item item : diseases.values()) {
+            store(item);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
@@ -74,11 +81,11 @@ public class ClinvarConverter extends BioFileConverter
 
             String type = line[1];
             String geneId = line[3];
+            if (DUMMY_GENE_ENTRY.equals(geneId)) {
+                // ignore these. remove if we add gene ID resolution
+                continue;
+            }
             String clinicalSignificance = line[6];
-//            String dbSNPXref = line[6];
-//            String ncbiXref = line[7];
-//            String clinVarXref = line[8];
-
             String diseaseString = line[12];    // parse for OMIM
             String assemblyString = line[16];
 
@@ -106,21 +113,12 @@ public class ClinvarConverter extends BioFileConverter
             item.setAttribute("alternate", alternateAllele);
             item.setReference("organism", getOrganism(TAXON_ID));
             item.setReference("gene", geneRefId);
-            String diseaseRefId = getDisease(diseaseString);
-            if (diseaseRefId != null) {
-                item.addToCollection("diseases", diseaseRefId);
+            Item disease = getDisease(diseaseString);
+            if (disease != null) {
+                item.addToCollection("diseases", disease);
+                disease.addToCollection("alleles", item);
             }
             store(item);
-
-//            if (!"-".equals(dbSNPXref)) {
-//                createCrossReference(item.getIdentifier(), dbSNPXref, "dbSNP", true);
-//            }
-//            if (!"-".equals(ncbiXref)) {
-//                createCrossReference(item.getIdentifier(), ncbiXref, "NCBI", true);
-//            }
-//            if (!"-".equals(clinVarXref)) {
-//                createCrossReference(item.getIdentifier(), clinVarXref, "ClinVar", true);
-//            }
         }
 
     }
@@ -128,7 +126,6 @@ public class ClinvarConverter extends BioFileConverter
     private String getGene(String identifier) throws ObjectStoreException {
         String refId = genes.get(identifier);
         if (refId != null) {
-            // we've already seen this gene
             return refId;
         }
         Item item = createItem("Gene");
@@ -139,13 +136,14 @@ public class ClinvarConverter extends BioFileConverter
     }
 
     // MedGen:C3150901,OMIM:613647,ORPHA:306511
-    private String getDisease(String diseaseString) throws ObjectStoreException {
+    // only works for a single OMIM entry. is that okay?
+    private Item getDisease(String diseaseString) throws ObjectStoreException {
         String[] identifiers = diseaseString.split(",");
         for (String identifier : identifiers) {
             if (identifier.startsWith("OMIM")) {
-                String diseaseRefId = diseases.get(identifier);
-                if (diseaseRefId != null) {
-                    return diseaseRefId;
+                Item disease = diseases.get(identifier);
+                if (disease != null) {
+                    return disease;
                 }
                 // had issues with the data file. "OMIM:^@" was a value.
                 String[] bits = identifier.split(":");
@@ -154,9 +152,8 @@ public class ClinvarConverter extends BioFileConverter
                 }
                 Item item = createItem("Disease");
                 item.setAttribute("identifier", identifier);
-                diseases.put(identifier, item.getIdentifier());
-                store(item);
-                return item.getIdentifier();
+                diseases.put(identifier, item);
+                return item;
             }
         }
         return null;
