@@ -38,7 +38,7 @@ public class ClinvarConverter extends BioFileConverter
     private static final String TAXON_ID = "9606";
     private static final String DUMMY_GENE_ENTRY = "-1";
     protected Map<String, String> genes = new HashMap<String, String>();
-    protected Map<String, Item> diseases = new HashMap<String, Item>();
+    protected Map<String, String> diseases = new HashMap<String, String>();
     protected Set<String> alleles = new HashSet<String>();
 
     /**
@@ -53,44 +53,25 @@ public class ClinvarConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
-    public void close() throws ObjectStoreException {
-        for (Item item : diseases.values()) {
-            store(item);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void process(Reader reader) throws Exception {
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            if (line.length < 26) {
-                LOG.error("Allele not processed, only had " + line.length + " columns");
-                continue;
-            }
-
-            String alleleId = line [0];
-
-            if (alleleId.startsWith("#")) {
-                // skip header
-                continue;
-            }
-
+            String alleleId = line[0];
             String type = line[1];
             String geneId = line[3];
-            if (DUMMY_GENE_ENTRY.equals(geneId)) {
-                // ignore these. remove if we add gene ID resolution
-                continue;
-            }
             String clinicalSignificance = line[6];
             String diseaseString = line[12];    // parse for OMIM
             String assemblyString = line[16];
 
-            // only load GRCh38
             if (!ASSEMBLY.equals(assemblyString)) {
+                // only load GRCh38
+                continue;
+            }
+
+            if (DUMMY_GENE_ENTRY.equals(geneId)) {
+                // ignore these. remove if we add gene ID resolution
                 continue;
             }
 
@@ -113,19 +94,18 @@ public class ClinvarConverter extends BioFileConverter
             item.setAttribute("alternate", alternateAllele);
             item.setReference("organism", getOrganism(TAXON_ID));
             item.setReference("gene", geneRefId);
-            Item disease = getDisease(diseaseString);
-            if (disease != null) {
-                item.addToCollection("diseases", disease);
-                disease.addToCollection("alleles", item);
+            String diseaseRefId = getDisease(diseaseString);
+            if (diseaseRefId != null) {
+                item.addToCollection("diseases", diseaseRefId);
             }
             store(item);
         }
-
     }
 
     private String getGene(String identifier) throws ObjectStoreException {
         String refId = genes.get(identifier);
         if (refId != null) {
+            // we've already seen this gene
             return refId;
         }
         Item item = createItem("Gene");
@@ -136,14 +116,13 @@ public class ClinvarConverter extends BioFileConverter
     }
 
     // MedGen:C3150901,OMIM:613647,ORPHA:306511
-    // only works for a single OMIM entry. is that okay?
-    private Item getDisease(String diseaseString) throws ObjectStoreException {
+    private String getDisease(String diseaseString) throws ObjectStoreException {
         String[] identifiers = diseaseString.split(",");
         for (String identifier : identifiers) {
             if (identifier.startsWith("OMIM")) {
-                Item disease = diseases.get(identifier);
-                if (disease != null) {
-                    return disease;
+                String diseaseRefId = diseases.get(identifier);
+                if (diseaseRefId != null) {
+                    return diseaseRefId;
                 }
                 // had issues with the data file. "OMIM:^@" was a value.
                 String[] bits = identifier.split(":");
@@ -152,8 +131,9 @@ public class ClinvarConverter extends BioFileConverter
                 }
                 Item item = createItem("Disease");
                 item.setAttribute("identifier", identifier);
-                diseases.put(identifier, item);
-                return item;
+                diseases.put(identifier, item.getIdentifier());
+                store(item);
+                return item.getIdentifier();
             }
         }
         return null;
