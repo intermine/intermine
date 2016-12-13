@@ -1,36 +1,20 @@
 <template-queries>
 <template name="convertEmployeeToManager" title="Convert Employees to Managers" longDescription="" comment="">
   <query name="convertEmployeeToManager" model="testmodel" view="Employee.id Employee.department.manager.id" sortOrder="Employee.id asc">
-    <node path="Employee" type="Employee">
-    </node>
-    <node path="Employee.id" type="Integer">
-      <constraint op="=" value="0" description="id" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
+    <pathDescription pathString="Employee.id" description="id"/>
+    <constraint path="Employee.id" op="=" value="0" editable="true" code="A"/>
   </query>
 </template>
 <template name="convertEmployeesToAddresses" title="Convert employees to addresses" longDescription="" comment="">
   <query name="convertEmployeesToAddresses" model="testmodel" view="Employee.id Employee.address.id" sortOrder="Employee.id asc">
-    <node path="Employee" type="Employee">
-    </node>
-    <node path="Employee.id" type="Integer">
-      <constraint op="=" value="0" description="id" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Employee.address" type="Address">
-    </node>
-    <node path="Employee.address.id" type="Integer">
-    </node>
+    <pathDescription pathString="Employee.id" description="id"/>
+    <constraint path="Employee.id" op="=" value="0" editable="true" code="A"/>
   </query>
 </template>
 <template name="convertContractorToEmployees" title="convert contractors to employees" longDescription="" comment="This isn't a very sensible query to do, but it's useful for testing the TypeConverter class">
   <query name="convertContractorToEmployees" model="testmodel" view="Contractor.id Contractor.companys.departments.employees.id" sortOrder="Contractor.id asc">
-    <node path="Contractor" type="Contractor">
-    </node>
-    <node path="Contractor.id" type="Integer">
-      <constraint op="=" value="0" description="Contractor.id" identifier="Contractor.id" editable="true" code="A">
-      </constraint>
-    </node>
+    <pathDescription pathString="Contractor.id" description="Contractor.id"/>
+    <constraint path="Contractor.id" op="=" value="0" editable="true" code="A"/>
   </query>
 </template>
 </template-queries>
