@@ -64,6 +64,7 @@ public class PopulateChildFeatures
      * and CDS
      * @throws Exception if anything goes wrong
      */
+    @SuppressWarnings("unchecked")
     public void populateCollection() throws Exception {
         Map<String, SOTerm> soTerms = populateSOTermMap(osw);
         Query q = getAllParents();
@@ -77,6 +78,7 @@ public class PopulateChildFeatures
             ResultsRow<InterMineObject> rr = (ResultsRow<InterMineObject>) resIter.next();
             InterMineObject parent = rr.get(0);
             SOTerm soTerm = (SOTerm) rr.get(1);
+
             InterMineObject o = PostProcessUtil.cloneInterMineObject(parent);
             Set<InterMineObject> newCollection = getChildFeatures(soTerms, soTerm, o);
             if (newCollection != null && !newCollection.isEmpty()) {
@@ -88,13 +90,13 @@ public class PopulateChildFeatures
         }
         osw.commitTransaction();
         LOG.info("Stored " + childCount + " child features for " + parentCount
-                + " parent features");
+                + " parent features. ");
     }
 
     // for each collection in this class (e.g. Gene), test if it's a child feature
+    @SuppressWarnings("unchecked")
     private Set<InterMineObject> getChildFeatures(Map<String, SOTerm> soTerms, SOTerm soTerm,
             InterMineObject o) {
-
         // e.g. gene
         String parentSOTerm = soTerm.getName();
 
@@ -134,9 +136,8 @@ public class PopulateChildFeatures
         }
         Class<?> parentClass = cd.getType();
 
-        // all collections for gene
+        // all intermine collections for gene
         Map<String, Class<?>> childCollections = model.getCollectionsForClass(parentClass);
-
         Set<CollectionHolder> children = new HashSet<CollectionHolder>();
 
         // for each collection, see if this is a child class
@@ -147,24 +148,95 @@ public class PopulateChildFeatures
 
             // TODO use same method as in the oboparser
             // is this a child collection? e.g. transcript
-            SOTerm soterm = soTerms.get(childClassName.toLowerCase());
+            SOTerm childSOTerm = null;
 
-            if (soterm == null) {
+            childSOTerm = lookUpChild(soTerms, childClassName);
+            if (childSOTerm == null) {
                 // for testing
                 continue;
             }
+            LOG.debug("CHILD CLASS " + childClassName + " (" + childSOTerm.getName() + ") :"
+                    + childCollectionName);
 
             // is gene in transcript parents collection
-            for (OntologyTerm parent : soterm.getParents()) {
+            // exon.parents() contains transcript, but we need to match on mRNA which is a
+            // subclass of transcript
+
+            // loop through all parents
+            for (OntologyTerm parent : childSOTerm.getParents()) {
                 if (parent.getName().equals(parentSOTermName)) {
+                    CollectionHolder h = new CollectionHolder(childClassName, childCollectionName);
+                    children.add(h);
+                }
+            }
+            // check for superclasses too
+            ClassDescriptor parentClassDescr = model.getClassDescriptorByName(parentClsName);
+            Set<String> parentInterMineClassNames = parentClassDescr.getSuperclassNames();
+
+            for (String superParent : parentInterMineClassNames) {
+                if (!superParent.equalsIgnoreCase("SequenceFeature")) {
                     CollectionHolder h = new CollectionHolder(childClassName, childCollectionName);
                     children.add(h);
                 }
             }
         }
         if (children.size() > 0) {
+            LOG.info("Adding " + children.size() + " children to parent class "
+                    + parentSOTermName);
+            // don't do it if parent exon or transposon fragment, see Engine.java
             parentToChildren.put(parentSOTermName, children);
         }
+    }
+
+    /**
+     * @param soTerms  the map of SO terms (name, SOterm)
+     * @param childClassName the name of the class
+     * @return the SO term object
+     *
+     * TODO: add utility for the translation className -> so_term
+     */
+    private SOTerm lookUpChild(Map<String, SOTerm> soTerms,
+            String childClassName) {
+        // some specific translations
+        if (childClassName.contentEquals("CDS")) {
+            return soTerms.get(childClassName);
+        }
+//        if (childClassName.contentEquals("MiRNA")) {
+//            return soTerms.get("miRNA");
+//        }
+        if (childClassName.contentEquals("PseudogenicTranscript")) {
+            return soTerms.get("pseudogenic_transcript");
+        }
+        if (childClassName.contentEquals("PseudogenicExon")) {
+            return soTerms.get("pseudogenic_exon");
+        }
+        if (childClassName.contentEquals("TransposableElement")) {
+            return soTerms.get("transposable_element");
+        }
+        if (childClassName.contentEquals("TransposonFragment")) {
+            return soTerms.get("transposon_fragment");
+        }
+        if (childClassName.contentEquals("FivePrimeUTR")) {
+            return soTerms.get("five_prime_UTR");
+        }
+        if (childClassName.contentEquals("ThreePrimeUTR")) {
+            return soTerms.get("three_prime_UTR");
+        }
+        // don't bother
+        if (childClassName.contentEquals("Probe")) {
+            return null;
+        }
+        if (childClassName.contentEquals("Allele")) {
+            return null;
+        }
+        if (childClassName.contentEquals("Genotype")) {
+            return null;
+        }
+        if (childClassName.contentEquals("Intron")) {
+            return null;
+        }
+        // deafult
+        return soTerms.get(childClassName.toLowerCase());
     }
 
     /**
@@ -183,13 +255,12 @@ public class PopulateChildFeatures
         q.addToOrderBy(qcSOTerm);
 
         Results res = os.execute(q);
-
         Iterator it = res.iterator();
-
         while (it.hasNext()) {
             ResultsRow<InterMineObject> rr = (ResultsRow<InterMineObject>) it.next();
             SOTerm soTerm = (SOTerm) rr.get(0);
             soTerms.put(soTerm.getName(), soTerm);
+            LOG.debug("Added SO term: " + soTerm.getName());
         }
         return soTerms;
     }
@@ -201,8 +272,9 @@ public class PopulateChildFeatures
         Query q = new Query();
         q.setDistinct(false);
 
-        QueryClass qcFeature = new QueryClass(model.getClassDescriptorByName("SequenceFeature")
-                .getType());
+        QueryClass qcFeature =
+                new QueryClass(model.getClassDescriptorByName("SequenceFeature").getType());
+
         q.addToSelect(qcFeature);
         q.addFrom(qcFeature);
 
