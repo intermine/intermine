@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Protein;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
@@ -39,5 +41,18 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
     public void display(HttpServletRequest request, ReportObject reportObject) {
          InterMineObject object = reportObject.getObject();
          request.setAttribute("cytoscapeInteractionObjectId", object.getId());
+         // chenyian: determine the the interaction size here instead of jsp 
+         int size = 0;
+         if (object instanceof Gene) {
+        	 size = ((Gene) object).getInteractions().size();
+         } else if (object instanceof Protein) {
+        	 if (((Protein) object).getGenes() != null) {
+        		 // if there are multiple genes, just arbitrary take the first one 
+        		 size = ((Protein) object).getGenes().iterator().next().getInteractions().size();
+        	 }
+         } else {
+         	throw new RuntimeException("Unexpected type: " + object.getClass().getName());
+         }
+         request.setAttribute("interactionSize", Integer.valueOf(size));
     }
 }
