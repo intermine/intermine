@@ -96,9 +96,15 @@ public class WebResultsExecutor extends QueryExecutor
         Results results = os.execute(q, Constants.BATCH_SIZE, true, true, false);
 
         Query realQ = results.getQuery();
+        // If realQ = q this means that the query has never executed before.
+        // We store pathToQueryNode for next time we call the same query
+        // (when the query will no been re-executed)
         if (realQ == q) {
             queryToPathToQueryNode.put(q, pathToQueryNode);
         } else {
+            // We've executed this query before, so the realQ is the query cached before
+            // We have to take to pathToQueryNode matching the real query because in WebResult
+            // we use the realQ and its pathToQueryNode to build the pathToIndex
             pathToQueryNode = queryToPathToQueryNode.get(realQ);
         }
 

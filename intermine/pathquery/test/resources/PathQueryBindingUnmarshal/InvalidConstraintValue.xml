@@ -1,12 +1,4 @@
 <query name="" model="testmodel" view="Employee.name Employee.fullTime Employee.age Employee.end" sortOrder="Employee.name asc Employee.fullTime asc Employee.age asc Employee.end asc" constraintLogic="A">
-  <node path="Employee" type="Employee">
-  </node>
-  <node path="Employee.age" type="int">
-    <constraint op="&gt;" value="10" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Employee.fullTime" type="boolean">
-    <constraint op="=" value="true" description="" identifier="" code="B">
-    </constraint>
-  </node>
+  <constraint path="Employee.age" op="&gt;" value="10" code="A"/>
+  <constraint path="Employee.fullTime" op="=" value="true" code="B"/>
 </query>

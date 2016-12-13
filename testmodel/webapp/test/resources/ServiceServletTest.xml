@@ -1,4 +1,0 @@
-<query name="" model="testmodel" view="Employee.name Employee.age Employee.end Employee.fullTime" sortOrder="Employee.name asc">
-	<node path="Employee" type="Employee">
-	</node>
-</query>
