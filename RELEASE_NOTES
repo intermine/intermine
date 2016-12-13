@@ -8,6 +8,14 @@
  *
  */
 
+InterMine 1.7 (2016 Xmas)
+
+#1445 - Hide protein interaction networks with over 500 participants
+#1462 - Removed old style path queries
+#1469 - Error when creating a list and accessing via the web service
+#1473 - Strand specific search off by default
+#1475 - Update postgresql JDBC driver to fix error with postgres 9.6 
+
 InterMine 1.6.9 (2016 November)
 
 #1422 - Constrain widget results. 
