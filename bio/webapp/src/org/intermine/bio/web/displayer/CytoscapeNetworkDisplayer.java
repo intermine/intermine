@@ -39,20 +39,20 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
-         InterMineObject object = reportObject.getObject();
-         request.setAttribute("cytoscapeInteractionObjectId", object.getId());
-         // chenyian: determine the the interaction size here instead of jsp 
-         int size = 0;
-         if (object instanceof Gene) {
-        	 size = ((Gene) object).getInteractions().size();
-         } else if (object instanceof Protein) {
-        	 if (((Protein) object).getGenes() != null) {
-        		 // if there are multiple genes, just arbitrary take the first one 
-        		 size = ((Protein) object).getGenes().iterator().next().getInteractions().size();
-        	 }
-         } else {
-         	throw new RuntimeException("Unexpected type: " + object.getClass().getName());
-         }
-         request.setAttribute("interactionSize", Integer.valueOf(size));
+        InterMineObject object = reportObject.getObject();
+        request.setAttribute("cytoscapeInteractionObjectId", object.getId());
+        // chenyian: determine the the interaction size here instead of jsp
+        int size = 0;
+        if (object instanceof Gene) {
+            size = ((Gene) object).getInteractions().size();
+        } else if (object instanceof Protein) {
+            if (((Protein) object).getGenes() != null) {
+                // if there are multiple genes, just arbitrary take the first one
+                size = ((Protein) object).getGenes().iterator().next().getInteractions().size();
+            }
+        } else {
+            throw new RuntimeException("Unexpected type: " + object.getClass().getName());
+        }
+        request.setAttribute("interactionSize", Integer.valueOf(size));
     }
 }
