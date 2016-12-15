@@ -37,7 +37,7 @@ public class ComplexDisplayer extends ReportDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
-         InterMineObject object = reportObject.getObject();
-         request.setAttribute("complexObjectId", object.getId());
+        InterMineObject object = reportObject.getObject();
+        request.setAttribute("complexObjectId", object.getId());
     }
 }

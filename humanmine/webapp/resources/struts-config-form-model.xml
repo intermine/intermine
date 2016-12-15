@@ -13,4 +13,5 @@
   <form-property name="whichInput" type="java.lang.String"/>
   <form-property name="dataFormat" type="java.lang.String" initial="isNotInterBaseCoordinate"/>
   <form-property name="extendedRegionSize" type="java.lang.String"/>
+  <form-property name="strandSpecific" type="java.lang.Boolean"/>
 </form-bean>

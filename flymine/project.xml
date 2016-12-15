@@ -155,13 +155,13 @@
     <source name="flyreg" type="flyreg">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/micklem/data/redfly/current/tfbs"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/redfly/current/tfbs"/>
       <property name="src.data.dir.includes" value="tfbs_dump.gff"/>
     </source>
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/micklem/data/redfly/current/crm"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/redfly/current/crm"/>
       <property name="src.data.dir.includes" value="crm_dump.gff"/>
     </source>
 

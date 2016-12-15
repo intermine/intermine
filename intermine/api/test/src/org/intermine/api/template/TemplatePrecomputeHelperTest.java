@@ -34,7 +34,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
         TemplateQuery t = (TemplateQuery) templates.get("employeeByName");
         String expIql =
             "SELECT DISTINCT a1_, a1_.name AS a2_, a1_.age AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name, a1_.age";
-        String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name Employee.age\"><node path=\"Employee\" type=\"Employee\"></node></query>";
+        String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name Employee.age\"></query>";
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
         MainHelper.makeQuery(pathQuery, new HashMap<String, InterMineBag>(), pathToQueryNode, null, null);
@@ -55,13 +55,11 @@ public class TemplatePrecomputeHelperTest extends TestCase {
     public void testBugWhereTrue() throws Exception {
         Reader reader = new StringReader("<template name=\"flibble\" title=\"flobble\" comment=\"wibble\" >"
                 + "<query name=\"flibble\" model=\"testmodel\" view=\"Employee.name\" constraintLogic=\"A and B and C and D\">"
-                + "<node path=\"Employee\" type=\"Employee\"></node>"
-                + "<node path=\"Employee.age\" type=\"Integer\">"
-                + "    <constraint op=\"!=\" value=\"10\" description=\"a\" identifier=\"\" code=\"A\"></constraint>"
-                + "    <constraint op=\"!=\" value=\"20\" description=\"b\" identifier=\"\" code=\"B\" editable=\"true\"></constraint>"
-                + "    <constraint op=\"!=\" value=\"30\" description=\"c\" identifier=\"\" code=\"C\"></constraint>"
-                + "    <constraint op=\"!=\" value=\"40\" description=\"d\" identifier=\"\" code=\"D\" editable=\"true\"></constraint>"
-                + "</node></query></template>");
+                + "<constraint path=\"Employee.age\" op=\"!=\" value=\"10\" code=\"A\" />"
+                + "<constraint path=\"Employee.age\" op=\"!=\" value=\"20\" code=\"B\" editable=\"true\" />"
+                + "<constraint path=\"Employee.age\" op=\"!=\" value=\"30\" code=\"C\" />"
+                + "<constraint path=\"Employee.age\" op=\"!=\" value=\"40\" code=\"D\" editable=\"true\" />"
+                + "</query></template>");
         TemplateQuery t =
             (TemplateQuery) TemplateQueryBinding.unmarshalTemplates(reader, PathQuery.USERPROFILE_VERSION).values().iterator().next();
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
@@ -69,10 +67,10 @@ public class TemplatePrecomputeHelperTest extends TestCase {
         System.out.println(TemplateQueryBinding.marshal(t, 2));
         String expected = "<template name=\"flibble\" title=\"flobble\" comment=\"wibble\">"
             + "<query name=\"flibble\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\" constraintLogic=\"A and B and C and D\">"
-            + "<constraint path=\"Employee.age\" code=\"C\" editable=\"false\" description=\"c\" op=\"!=\" value=\"30\"/>"
-            + "<constraint path=\"Employee.age\" code=\"A\" editable=\"false\" description=\"a\" op=\"!=\" value=\"10\"/>"
-            + "<constraint path=\"Employee.age\" code=\"B\" editable=\"true\" description=\"b\" op=\"!=\" value=\"20\"/>"
-            + "<constraint path=\"Employee.age\" code=\"D\" editable=\"true\" description=\"d\" op=\"!=\" value=\"40\"/>"
+            + "<constraint path=\"Employee.age\" code=\"C\" editable=\"false\" op=\"!=\" value=\"30\"/>"
+            + "<constraint path=\"Employee.age\" code=\"A\" editable=\"false\" op=\"!=\" value=\"10\"/>"
+            + "<constraint path=\"Employee.age\" code=\"B\" editable=\"true\" op=\"!=\" value=\"20\"/>"
+            + "<constraint path=\"Employee.age\" code=\"D\" editable=\"true\" op=\"!=\" value=\"40\"/>"
             + "</query></template>";
         System.out.println(expected);
         assertEquals(expected.trim(), TemplateQueryBinding.marshal(t, 2).trim()); // Ignore whitespace issues
@@ -83,10 +81,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
     public void testGetPrecomputeLookup() throws Exception {
         Reader reader = new StringReader("<template name=\"ManagerLookup\" title=\"Search for Managers\" longDescription=\"Use a LOOKUP constraint to search for Managers.\" comment=\"\">\n" +
         "  <query name=\"ManagerLookup\" model=\"testmodel\" view=\"Manager.name Manager.title\">\n" +
-        "    <node path=\"Manager\" type=\"Manager\">\n" +
-        "      <constraint description=\"\" identifier=\"\" editable=\"true\" code=\"A\"  op=\"LOOKUP\" value=\"Mr.\">\n" +
-        "      </constraint>\n" +
-        "    </node>\n" +
+        "    <constraint path=\"Manager\" editable=\"true\" code=\"A\" op=\"LOOKUP\" value=\"Mr.\"/>\n" +
         "  </query>\n" +
         "</template>");
         TemplateQuery t =

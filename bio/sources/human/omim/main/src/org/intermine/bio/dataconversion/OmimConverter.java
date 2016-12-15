@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -129,6 +130,10 @@ public class OmimConverter extends BioDirectoryConverter
 
             String mimId = line[1];
             String preferredTitles = line[2];
+
+            if (StringUtils.isEmpty(mimId)) {
+                continue;
+            }
 
             Item disease = getDisease(mimId);
             String[] names = preferredTitles.split(";");
