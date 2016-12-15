@@ -9,10 +9,6 @@
 <div id="cwhead">
   <h3 class="goog">Interaction Network</h3>
   <div id="geneInteractionDisplayer"></div>
-
-  <c:choose>
-    <c:when test="${interactionSize < 500}">
-
       <script>
 
         var paths = {
@@ -66,15 +62,6 @@
 
         imload()
       </script>
-
-    </c:when>
-    <c:otherwise>
-      <%-- Let's display a sane error message if there are too many results.
-This was implemented due to https://github.com/intermine/intermine/issues/1284, where > 2000 interactions caused the browser to halt. --%>
-      <p>${interactionSize} interactions found. This viewer is not displayed with this high number of interactions in order to enhance your browser's performance.</p>
-    </c:otherwise>
-  </c:choose>
-
 </div>
 
 <!-- /cytoscapeNetworkDisplayer.jsp -->
