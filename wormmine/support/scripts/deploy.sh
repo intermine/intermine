@@ -98,6 +98,10 @@ do
   else
     echo  raw/"$spe"."${species["$spe"]}"."$wbrel".gff 'found'
   fi
+  for gffile in *.gff;do
+    perl -pi -e 's/Gene://g' $gffile
+    echo $gffile
+  done
 done
 
 
