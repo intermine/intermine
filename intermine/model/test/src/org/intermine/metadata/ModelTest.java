@@ -82,7 +82,7 @@ public class ModelTest extends TestCase
     public void testGetDirectSubs() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         Set<ClassDescriptor> hasAddressCds =
-            model.getClassDescriptorsForClass(org.intermine.model.HasAddress.class);
+            model.getClassDescriptorsForClass(org.intermine.model.Thing.class);
         assertEquals(1, hasAddressCds.size());
 
         ClassDescriptor addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
@@ -94,7 +94,8 @@ public class ModelTest extends TestCase
 
         Set<ClassDescriptor> resultCds = model.getDirectSubs(addressCld);
         Set<String> expectedCdNames = new HashSet<String>();
-        expectedCdNames.add("org.intermine.model.Employee");
+        expectedCdNames.add("org.intermine.model.Employable");
+        expectedCdNames.add("org.intermine.model.Address");
         Set<String> resultCdNames = new HashSet<String>();
         for (ClassDescriptor cld : resultCds) {
             resultCdNames.add(cld.getName());
