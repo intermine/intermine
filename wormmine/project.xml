@@ -41,7 +41,7 @@
   	<source name="wb-acedb-species" type="wormbase-acedb" dump="false">
         <property name="src.data.dir" location="&datadir;/wormbase-acedb/species/XML" />
         <property name="mapping.file"
-		value="&datadir;/wormbase-acedb/species/mapping/species_mapping.properties" />
+		value="/home/nuin/properties/species_mapping.properties" />
         <property name="key.file"
             value="../../bio/sources/wormbase-acedb/resources/wormbase-acedb_keys.properties"/>
         <property name="source.class" value="Organism"/>   

@@ -34,8 +34,8 @@ declare -A species=(["c_elegans"]="PRJNA13758"
                     ["s_ratti"]="PRJEB125"
                     ["c_sinica"]="PRJNA194557")
 
-# sourcedir='/mnt/data/acedb_dumps/'$wbrel'' # <---- XML dump location
-sourcedir='/Users/nuin/wormmine/WS256-test-data'
+sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
+#sourcedir='/Users/nuin/wormmine/WS256-test-data'
 
 #################### Main dirs ##################
 #                                               #
@@ -44,8 +44,8 @@ sourcedir='/Users/nuin/wormmine/WS256-test-data'
 #  pp - pre-processing dir with perl and bash   #
 #                                               #
 #################### Species ####################
-# intermine='/mnt/data/intermine'
-intermine='/Users/nuin/wormmine/' #local test
+intermine='/mnt/data2/intermine'
+#intermine='/Users/nuin/wormmine/' #local test
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
@@ -130,8 +130,8 @@ fi
 
 
 
-#cp /mnt/data/properties/id_mapping.tab $datadir'/wormbase-gff3/mapping/'
-#cp /mnt/data/properties/typeMapping.tab $datadir'/wormbase-gff3/mapping/'
+cp /mnt/data/properties/id_mapping.tab $datadir'/wormbase-gff3/mapping/'
+cp /mnt/data/properties/typeMapping.tab $datadir'/wormbase-gff3/mapping/'
 #################### AceDB processing #################
 
 #################### anatomy term #####################
