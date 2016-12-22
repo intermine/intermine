@@ -245,5 +245,7 @@ public abstract class QueryExecutor
      */
     public abstract Query makeQuery(PathQuery pathQuery) throws ObjectStoreException;
 
-
+    public void updateQueryToPathToQueryNode(Query q, Map<String, QuerySelectable> pathToQueryNode) {
+        queryToPathToQueryNode.put(q, pathToQueryNode);
+    }
 }

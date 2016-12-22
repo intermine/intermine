@@ -384,7 +384,7 @@ public class QueryResultService extends AbstractQueryService
         return processor;
     }
 
-    private PathQueryExecutor getPathQueryExecutor() {
+    protected PathQueryExecutor getPathQueryExecutor() {
         final Profile profile = getPermission().getProfile();
         return im.getPathQueryExecutor(profile);
     }
