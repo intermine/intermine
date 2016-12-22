@@ -26,13 +26,13 @@ public class PrimaryKeyTest extends TestCase {
 
     public void testConstructor() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.Employee");
         Set<String> expected = new HashSet<String>();
         expected.add("name");
-        expected.add("vatNumber");
-        assertEquals(expected, new PrimaryKey("key1", "name, vatNumber", cld).getFieldNames());
+        expected.add("age");
+        assertEquals(expected, new PrimaryKey("key1", "name, age", cld).getFieldNames());
         try {
-            new PrimaryKey("key1", "name, vatNumber", null);
+            new PrimaryKey("key1", "name, age", null);
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }

@@ -29,7 +29,7 @@ public class ModelTest extends TestCase
     protected static final String ENDL = System.getProperty("line.separator");
     protected static final String INDENT = ENDL + "\t";
     private Collection<ClassDescriptor> noClasses = Collections.emptySet();
-    private ClassDescriptorFactory cdMaker = new ClassDescriptorFactory("org.intermine.model.testmodel");
+    private ClassDescriptorFactory cdMaker = new ClassDescriptorFactory("org.intermine.model");
 
     public ModelTest(String arg) {
         super(arg);
@@ -121,6 +121,8 @@ public class ModelTest extends TestCase
         expectedCdNames.add("org.intermine.model.Employable");
         expectedCdNames.add("org.intermine.model.Address");
         expectedCdNames.add("org.intermine.model.Employee");
+        expectedCdNames.add("org.intermine.model.Manager");
+        expectedCdNames.add("org.intermine.model.Contractor");
         Set<String> resultCdNames = new HashSet<String>();
         for (ClassDescriptor cld : resultCds) {
             resultCdNames.add(cld.getName());
@@ -248,7 +250,7 @@ public class ModelTest extends TestCase
         ClassDescriptor c2 = cdMaker.makeInterface("Class2", "Class1");
 
         try {
-            new Model("model", "org.intermine.model.testmodel", Arrays.asList(c1, c2));
+            new Model("model", "org.intermine.model", Arrays.asList(c1, c2));
             fail("expected exception");
         } catch (MetaDataException e) {
             // expected

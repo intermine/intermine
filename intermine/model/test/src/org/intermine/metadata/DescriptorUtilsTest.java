@@ -1,18 +1,21 @@
 package org.intermine.metadata;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
-public class DescriptorUtilsTest {
+import junit.framework.TestCase;
 
+public class DescriptorUtilsTest extends TestCase
+{
     private final static Model testModel = Model.getInstanceByName("testmodel");
     private Set<ClassDescriptor> classes;
+
+    public DescriptorUtilsTest(String arg) {
+        super(arg);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -69,7 +72,7 @@ public class DescriptorUtilsTest {
      */
     @Test
     public void testIncompatibleTypes() {
-        withClasses("Employee", "Department");
+        withClasses("Employee", "SimpleObject");
         try {
             String common = DescriptorUtils.findSumType(classes).getUnqualifiedName();
             fail("No exception thrown: " + common);
@@ -91,9 +94,9 @@ public class DescriptorUtilsTest {
      */
     @Test
     public void testDirectSubclass() throws MetaDataException {
-        withClasses("Employee", "Manager");
+        withClasses("Employee", "Address");
         String common = DescriptorUtils.findSumType(classes).getUnqualifiedName();
-        assertEquals(common, "Employee");
+        assertEquals(common, "Thing");
     }
 
     /**
@@ -111,9 +114,9 @@ public class DescriptorUtilsTest {
      */
     @Test
     public void testDistantSubclass() throws MetaDataException {
-        withClasses("Employee", "CEO");
+        withClasses("Employable", "Manager");
         String common = DescriptorUtils.findSumType(classes).getUnqualifiedName();
-        assertEquals(common, "Employee");
+        assertEquals(common, "Employable");
     }
 
     /**
@@ -128,9 +131,9 @@ public class DescriptorUtilsTest {
      */
     @Test
     public void testCommonCousins() throws MetaDataException {
-        withClasses("Department", "Company");
+        withClasses("Employable", "Address");
         String common = DescriptorUtils.findSumType(classes).getUnqualifiedName();
-        assertEquals(common, "RandomInterface");
+        assertEquals(common, "Thing");
     }
 
 
@@ -148,9 +151,9 @@ public class DescriptorUtilsTest {
      */
     @Test
     public void testMostSpecificType() throws MetaDataException {
-        withClasses("Employee", "Manager", "CEO");
+        withClasses("Employable", "Employee", "Manager");
         String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
-        assertEquals(common, "CEO");
+        assertEquals(common, "Manager");
     }
 
     /**
@@ -188,7 +191,7 @@ public class DescriptorUtilsTest {
      */
     @Test
     public void testCousinsSpecificType() {
-        withClasses("Employee", "Manager", "Company");
+        withClasses("Employee", "Manager", "Address");
         try {
             String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
             fail("Expected an exception. Got " + common);
@@ -211,7 +214,7 @@ public class DescriptorUtilsTest {
      */
     @Test
     public void testClansSpecificType() {
-        withClasses("Contractor", "Manager", "CEO", "Address");
+        withClasses("Employee", "Manager", "HasAddress", "Address");
         try {
             String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
             fail("Expected an exception. Got " + common);
