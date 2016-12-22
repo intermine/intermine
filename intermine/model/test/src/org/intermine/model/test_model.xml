@@ -12,19 +12,8 @@
     <attribute name="end" type="java.lang.String"/>
     <collection name="simpleObjects" referenced-type="SimpleObject" reverse-reference="employee"/>
 </class>
-<class name="Manager" extends="Employee" is-interface="false">
-    <attribute name="title" type="java.lang.String"/>
-</class>
 <class name="Address" extends="Thing" is-interface="false">
     <attribute name="address" type="java.lang.String"/>
-</class>
-<class name="Company" extends="HasAddress" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
-    <attribute name="vatNumber" type="int"/>
-</class>
-<class name="Contractor" extends="Employable" is-interface="false">
-    <reference name="personalAddress" referenced-type="Address"/>
-    <reference name="businessAddress" referenced-type="Address"/>
 </class>
 <class name="SimpleObject" is-interface="false">
     <attribute name="name" type="java.lang.String"/>
