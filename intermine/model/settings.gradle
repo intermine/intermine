@@ -1,0 +1,7 @@
+rootProject.name = 'intermine-model'
+
+include ':intermine-model-main'
+project(':intermine-model-main').projectDir = new File(settingsDir, './main')
+
+include ':intermine-model-test'
+project(':intermine-model-test').projectDir = new File(settingsDir, './test')
