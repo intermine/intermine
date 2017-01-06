@@ -8,6 +8,10 @@
  *
  */
 
+InterMine 1.7.1 (2017 Jan)
+
+#1482 - Error when creating a list and accessing via the web service via tablerows method.
+
 InterMine 1.7 (2016 Xmas)
 
 #1480 - Check interaction count on client not server side. Works for proteins and genes now.
