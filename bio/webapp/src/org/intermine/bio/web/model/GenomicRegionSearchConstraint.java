@@ -83,7 +83,7 @@ public class GenomicRegionSearchConstraint
     }
 
     /**
-     * @param strandSpecific
+     * @param strandSpecific whether or not this search specifies a strand
      */
     public void setStrandSpecific(boolean strandSpecific) {
         this.strandSpecific = strandSpecific;
@@ -108,7 +108,7 @@ public class GenomicRegionSearchConstraint
                     && genomicRegionList.equals(c.getGenomicRegionList())
                     && featureTypes.equals(c.getFeatureTypes())
                     && orgName.equals(c.getOrgName())
-                    && strandSpecific==c.getStrandSpecific());
+                    && strandSpecific == c.getStrandSpecific());
         }
         return false;
     }

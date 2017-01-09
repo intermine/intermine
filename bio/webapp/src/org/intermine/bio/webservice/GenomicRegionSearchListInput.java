@@ -20,7 +20,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -46,10 +45,8 @@ import org.json.JSONObject;
  * @author Alex
  *
  */
-public class GenomicRegionSearchListInput extends ListInput {
-
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchListInput.class);
-
+public class GenomicRegionSearchListInput extends ListInput
+{
     private final InterMineAPI api;
     private final GenomicRegionSearchInfo info;
 
@@ -104,7 +101,7 @@ public class GenomicRegionSearchListInput extends ListInput {
         parsed.setRegions(regions);
 
         parsed.setStrandSpecific(jsonRequest.getBoolean("strandSpecific"));
-        
+
         return parsed;
     }
 
@@ -130,8 +127,9 @@ public class GenomicRegionSearchListInput extends ListInput {
      * @author Alex
      *
      */
-    public class GenomicRegionSearchInfo {
-        
+    public class GenomicRegionSearchInfo
+    {
+
         private final String sequenceFeature = "org.intermine.model.bio.SequenceFeature";
         private String organism;
         private Set<String> featureTypes;
@@ -173,7 +171,7 @@ public class GenomicRegionSearchListInput extends ListInput {
         }
 
         /**
-         * @param strandSpecific
+         * @param strandSpecific Whether or not this search specifies a strand
          */
         public void setStrandSpecific(boolean strandSpecific) {
             this.strandSpecific = strandSpecific;

@@ -535,7 +535,7 @@ public class Engine extends CommandRunner
             so.append(w);
             i++;
         }
-        
+
         if (so.toString().contentEquals("CDS")) {
             return so.toString();
         }
