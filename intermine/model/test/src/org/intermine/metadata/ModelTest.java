@@ -96,6 +96,7 @@ public class ModelTest extends TestCase
         Set<String> expectedCdNames = new HashSet<String>();
         expectedCdNames.add("org.intermine.model.Employable");
         expectedCdNames.add("org.intermine.model.Address");
+        expectedCdNames.add("org.intermine.model.Department");
         Set<String> resultCdNames = new HashSet<String>();
         for (ClassDescriptor cld : resultCds) {
             resultCdNames.add(cld.getName());
@@ -122,6 +123,8 @@ public class ModelTest extends TestCase
         expectedCdNames.add("org.intermine.model.Address");
         expectedCdNames.add("org.intermine.model.Employee");
         expectedCdNames.add("org.intermine.model.Manager");
+        expectedCdNames.add("org.intermine.model.CEO");
+        expectedCdNames.add("org.intermine.model.Department");
         expectedCdNames.add("org.intermine.model.Contractor");
         Set<String> resultCdNames = new HashSet<String>();
         for (ClassDescriptor cld : resultCds) {

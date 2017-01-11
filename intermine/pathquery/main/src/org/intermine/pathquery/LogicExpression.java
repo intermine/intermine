@@ -54,7 +54,7 @@ public class LogicExpression
      */
     private Node parse(String expression) {
         AST ast = null;
-/*        try {
+        try {
             LogicLexer lexer = new LogicLexer(new StringReader(expression));
             LogicParser parser = new LogicParser(lexer);
             Node rootNode;
@@ -85,8 +85,7 @@ public class LogicExpression
         } catch (IllegalArgumentException e) {
             new antlr.DumpASTVisitor().visit(ast);
             throw e;
-        }*/
-        return null;
+        }
     }
 
     /**

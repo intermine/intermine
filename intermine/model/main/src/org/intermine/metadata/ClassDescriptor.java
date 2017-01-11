@@ -167,7 +167,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                 }
                 type = tmpType;
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Can't find class for class descriptor", e);
+                throw new RuntimeException("Can't find class for class descriptor " + className, e);
             }
         }
         return type;

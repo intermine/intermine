@@ -525,6 +525,8 @@ public class PathQueryUnitTest extends TestCase
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = new PathQuery(model);
         q.addView("Employee.department.employees.name");
+        Collections.singleton("Address");
+        Collections.singleton("dani");
         assertEquals(Collections.singleton("Employee"), q.getCandidateLoops("Employee.department.employees"));
         assertEquals(Collections.singleton("Employee.department.employees"), q.getCandidateLoops("Employee"));
         q.addView("Employee.department.company.departments.employees.name");
@@ -708,7 +710,7 @@ public class PathQueryUnitTest extends TestCase
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = new PathQuery(model);
         q.addView("Department.name");
-        q.addConstraint(new PathConstraintSubclass("Department", "Broke"));
+        q.addConstraint(new PathConstraintSubclass("Department", "Company"));
         q.addConstraint(new PathConstraintSubclass("Department.name", "Employee"));
         q.addConstraint(new PathConstraintSubclass("Department.employees", "String"));
         assertEquals(Arrays.asList("Root node Department may not have a subclass constraint", "Path Department.name (from subclass constraint) must not be an attribute", "Subclass String (for path Department.employees) is not in the model"), q.verifyQuery());
@@ -741,8 +743,8 @@ public class PathQueryUnitTest extends TestCase
         q.addConstraint(new PathConstraintSubclass("Department.kjasdf", "Manager"));
         assertEquals(Collections.singletonList("Path Department.kjasdf (from subclass constraint) is not in the model"), q.verifyQuery());
         q.clearConstraints();
-        q.addConstraint(new PathConstraintSubclass("Department.employees", "Broke"));
-        assertEquals(Collections.singletonList("Subclass constraint on path Department.employees (type Employee) restricting to type Broke is not possible, as it is not a subclass"), q.verifyQuery());
+        q.addConstraint(new PathConstraintSubclass("Department.employees", "Company"));
+        assertEquals(Collections.singletonList("Subclass constraint on path Department.employees (type Employee) restricting to type Company is not possible, as it is not a subclass"), q.verifyQuery());
         q.clearConstraints();
         q.addView("Employee.name");
         q.addView("Department");
