@@ -1,11 +1,12 @@
+apply plugin: "antlr"
+
 sourceSets {
     main {
         java {
-            srcDirs = ['src']
+            srcDirs = ['src', 'build/generated-src/antlr/main']
         }
         resources {
             srcDirs = ['resources']
         }
     }
 }
-

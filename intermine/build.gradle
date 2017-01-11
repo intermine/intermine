@@ -1,7 +1,5 @@
-allprojects {
-        group = 'org.intermine.model'
-        version = '2.0.0-SNAPSHOT'
-        task hello << { task -> println "I'm $task.project.name" }
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.0'
 }
 
 subprojects {
@@ -9,25 +7,8 @@ subprojects {
   repositories {
       mavenCentral()
   }
-  sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-        resources {
-            srcDirs = ['resources']
-        }
-    }
-    test {
-        java {
-            srcDirs = ['src']
-        }
-        resources {
-            srcDirs = ['resources']
-        }
-    }
 }
-}
+
 project(':intermine-model-main') {
     dependencies {
         compile group: 'log4j', name: 'log4j', version: '1.2.17'
@@ -43,5 +24,24 @@ project(':intermine-model-test') {
         compile group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
         compile group: 'junit', name: 'junit', version: '4.8.1'
         compile group: 'org.skyscreamer', name: 'jsonassert', version: '1.2.3'
+    }
+}
+
+project(':intermine-pathquery-main') {
+    dependencies {
+        compile project(':intermine-model-main')
+        compile group: 'log4j', name: 'log4j', version: '1.2.17'
+        compile group: 'antlr', name: 'antlr', version: '2.7.6'
+        compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+        runtime group: 'stax', name: 'stax-api', version: '1.0.1'
+    }
+}
+
+project(':intermine-pathquery-test') {
+    dependencies {
+        compile project(':intermine-model-main')
+        compile project(':intermine-model-test')
+        compile project(':intermine-pathquery-main')
+        compile group: 'junit', name: 'junit', version: '4.8.1'
     }
 }
