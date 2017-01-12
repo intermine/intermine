@@ -1691,12 +1691,8 @@ div.bagDetails-page div.widget { width:460px; height:auto; max-height:none !impo
   margin:0em 2em;
   text-align:justify;
 }
-.funders {display:flex;align-items:center;}
-.funders .wide-n-narrow {
- display:flex;
- padding-top:0.5em;
- flex-direction:column; margin:0em 1em;
-}
+.funders {display:flex;align-items:center;flex-wrap:wrap}
+.funders a {margin:0.5em 1em}
 
 #promo-footer .powered-footer, #promo-footer .android-footer {
   width: 20%
