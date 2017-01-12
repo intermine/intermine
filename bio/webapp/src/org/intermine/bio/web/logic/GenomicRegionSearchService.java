@@ -468,7 +468,8 @@ public class GenomicRegionSearchService
      * @return genomic region search constraint
      * @throws Exception e
      */
-    public ActionMessage parseGenomicRegionSearchForm(GenomicRegionSearchForm grsForm) throws Exception {
+    public ActionMessage parseGenomicRegionSearchForm(GenomicRegionSearchForm grsForm)
+        throws Exception {
         grsc = new GenomicRegionSearchConstraint();
 
         ActionMessage actmsg = parseBasicInput(grsForm);
@@ -495,7 +496,7 @@ public class GenomicRegionSearchService
         FormFile formFile = (FormFile) grsForm.get("fileInput");
         String pasteInput = (String) grsForm.get("pasteInput");
         String extendedRegionSize = (String) grsForm.get("extendedRegionSize");
-        boolean strandSpecific = grsForm.get("strandSpecific")!=null;
+        boolean strandSpecific = grsForm.get("strandSpecific") != null;
 
         // Organism
         grsc.setOrgName(organism);
@@ -770,8 +771,6 @@ public class GenomicRegionSearchService
      */
     public Map<String, List<String>> getFeatureTypeToSOTermMap() {
         if (featureTypeToSOTermMap == null) {
-            long startTime = System.currentTimeMillis();
-
             featureTypeToSOTermMap = GenomicRegionSearchQueryRunner
                     .getFeatureAndSOInfo(interMineAPI, classDescrs, initBatchSize);
 
@@ -857,7 +856,7 @@ public class GenomicRegionSearchService
                     continue;
                 }
             }
-            
+
             boolean passed = false; // flag to add to errorSpanList
             if (gr.getStart() > gr.getEnd()) {
                 gr.setChr(ci.getChrPID()); // converted to the right case
@@ -882,7 +881,8 @@ public class GenomicRegionSearchService
                 passed = true;
             }
 
-            // add to errorSpanList here if not passed; shouldn't ever happen, but we'll keep it for now for back-compatibility
+            // add to errorSpanList here if not passed; shouldn't ever happen, but we'll keep it
+            // for now for back-compatibility
             if (!passed) {
                 errorSpanList.add(gr);
             }

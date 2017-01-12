@@ -100,6 +100,11 @@ public class TableRowService extends QueryResultService
         final Results results = os.execute(q, QueryResultService.BATCH_SIZE, true, false, false);
         final Page page = new Page(firstResult, (maxResults == 0) ? null : maxResults);
 
+        Query realQ = results.getQuery();
+        if (realQ == q) {
+            getPathQueryExecutor().updateQueryToPathToQueryNode(q, pathToQueryNode);
+        }
+
         TableRowIterator iter = new TableRowIterator(
                 pathQuery, q, results, pathToQueryNode, page, im);
 
