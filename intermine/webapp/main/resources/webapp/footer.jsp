@@ -87,7 +87,7 @@
         <li><a href="http://www.humanmine.org" target="_blank">HumanMine</a></li>
     </ul>
 
-    <p class="footer-copy">&copy; 2002 - 2016 Department of Genetics, University of Cambridge, Downing Street,<br />
+    <p class="footer-copy">&copy; 2002 - 2017 Department of Genetics, University of Cambridge, Downing Street,<br />
         Cambridge CB2 3EH, United Kingdom</p>
 
     <div style="clear:both"></div>
