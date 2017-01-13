@@ -132,7 +132,6 @@ public class GenomicRegionSearchAction extends InterMineAction
                         gr.setChr(coord.split("\t")[0].trim());
                         gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
                         gr.setEnd(Integer.valueOf(coord.split("\t")[2].trim()));
-                        gr.setMinusStrand(gr.getStart().intValue() > gr.getEnd().intValue());
                         liftedList.add(gr);
                     }
 

@@ -25,8 +25,7 @@ public class GenomicRegion implements Comparable<GenomicRegion>
     private Integer extendedRegionSize = new Integer(0); // user add region flanking
     private Integer extendedStart;
     private Integer extendedEnd;
-
-    private Boolean minusStrand;    // for strand-specific matching
+    private int strand;
 
     //user identifier to tag the order of input e.g. X:7880589..7880644:5 is the 5th input
     private Integer tag = null;
@@ -124,6 +123,14 @@ public class GenomicRegion implements Comparable<GenomicRegion>
         this.extendedEnd = extendedEnd;
     }
 
+    public void setStrand(int strand) {
+        this.strand = strand;
+    }
+
+    public int getStrand() {
+        return this.strand;
+    }
+
     /**
      * @return the extendedRegionSize
      */
@@ -150,27 +157,6 @@ public class GenomicRegion implements Comparable<GenomicRegion>
      */
     public Integer getTag() {
         return tag;
-    }
-
-    /**
-     * @param minusStrand as Boolean
-     */
-    public void setMinusStrand(Boolean minusStrand) {
-        this.minusStrand = minusStrand;
-    }
-
-    /**
-     * @param minusStrand as boolean
-     */
-    public void setMinusStrand(boolean minusStrand) {
-        this.minusStrand = minusStrand;
-    }
-
-    /**
-     * @return minusStrand value
-     */
-    public Boolean getMinusStrand() {
-        return minusStrand;
     }
 
     /**
@@ -213,16 +199,19 @@ public class GenomicRegion implements Comparable<GenomicRegion>
             if (gr.getOrganism() == null || gr.getTag() == null) { // for simpler version
                 return (chr.equals(gr.getChr())
                         && start.equals(gr.getStart())
-                        && end.equals(gr.getEnd()));
+                        && end.equals(gr.getEnd())
+                        && strand == gr.getStrand());
             } else {                                               // for full version
                 return (chr.equals(gr.getChr())
                         && start.equals(gr.getStart())
                         && end.equals(gr.getEnd())
                         && organism.equals(gr.getOrganism())
                         && extendedRegionSize.equals(gr.getExtendedRegionSize())
-                        && tag == gr.getTag());
+                        && tag == gr.getTag()
+                        && strand == gr.getStrand());
             }
         }
+
         return false;
     }
 

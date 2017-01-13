@@ -857,35 +857,27 @@ public class GenomicRegionSearchService
                 }
             }
 
-            boolean passed = false; // flag to add to errorSpanList
+            gr.setChr(ci.getChrPID()); // converted to the right case
+
             if (gr.getStart() > gr.getEnd()) {
-                gr.setChr(ci.getChrPID()); // converted to the right case
                 // swap start, end and flag as minus strand
                 Integer grStart = gr.getStart();
                 Integer grEnd = gr.getEnd();
                 gr.setStart(grEnd);
                 gr.setEnd(grStart);
-                gr.setMinusStrand(Boolean.TRUE);
-                if (gr.getStart() < 1) {
-                    gr.setStart(1);
-                }
-                passedSpanList.add(gr);
-                passed = true;
+
+                if (grsc.getStrandSpecific())
+                    gr.setStrand(-1);
             } else {
-                gr.setChr(ci.getChrPID());
-                if (gr.getStart() < 1) {
-                    gr.setStart(1);
-                }
-                gr.setMinusStrand(Boolean.FALSE);
-                passedSpanList.add(gr);
-                passed = true;
+                if (grsc.getStrandSpecific())
+                    gr.setStrand(1);
             }
 
-            // add to errorSpanList here if not passed; shouldn't ever happen, but we'll keep it
-            // for now for back-compatibility
-            if (!passed) {
-                errorSpanList.add(gr);
+            if (gr.getStart() < 1) {
+                gr.setStart(1);
             }
+
+            passedSpanList.add(gr);
         }
 
         // make errorSpanList - replaced by logic above using passed flag
