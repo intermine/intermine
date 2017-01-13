@@ -866,11 +866,13 @@ public class GenomicRegionSearchService
                 gr.setStart(grEnd);
                 gr.setEnd(grStart);
 
-                if (grsc.getStrandSpecific())
+                if (grsc.getStrandSpecific()) {
                     gr.setStrand(-1);
+                }
             } else {
-                if (grsc.getStrandSpecific())
+                if (grsc.getStrandSpecific()) {
                     gr.setStrand(1);
+                }
             }
 
             if (gr.getStart() < 1) {

@@ -123,10 +123,18 @@ public class GenomicRegion implements Comparable<GenomicRegion>
         this.extendedEnd = extendedEnd;
     }
 
+    /**
+     * Set strand
+     * @param strand 1 is positive, -1 is negative, 0 is both
+     */
     public void setStrand(int strand) {
         this.strand = strand;
     }
 
+    /**
+     * Get strand
+     * @return 1 is positive, -1 is negative, 0 is both
+     */
     public int getStrand() {
         return this.strand;
     }
