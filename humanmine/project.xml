@@ -156,6 +156,7 @@
     </source>
     <source name="hpo-annotation" type="hpo-annotation">
       <property name="src.data.dir" location="/micklem/data/hpo/current" />
+      <property name="hpo.disease.file" location="/micklem/data/metabolic/omim/current/mimTitles.txt" />
     </source>
 
     <source name="orphanet" type="orphanet">

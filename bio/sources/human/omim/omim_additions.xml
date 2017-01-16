@@ -9,6 +9,7 @@
     <attribute name="name" type="java.lang.String"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="diseases"/>
     <collection name="publications" referenced-type="Publication"/>
+    <collection name="datasets" referenced-type="DataSet"/>
   </class>
   <class name="Gene" is-interface="true">
     <collection name="diseases" referenced-type="Disease" reverse-reference="genes"/>

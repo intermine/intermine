@@ -49,11 +49,15 @@ public class HpoConverter extends BioDirectoryConverter
     private static final String NEG_FILE = "negative_phenotype_annotation.tab";
     private static final String GENE_FILE =
             "ALL_SOURCES_ALL_FREQUENCIES_diseases_to_genes_to_phenotypes.txt";
+    private String omimFile = null;
+    private static final String GENE_ENTRY = "Asterisk";
+    private static final String GENE_PHENOTYPE_ENTRY = "Plus";
+    private static final String OBSOLETE = "Caret";
 
     private Map<String, Item> diseases = new HashMap<String, Item>();
     private Map<String, Item> hpoTerms = new HashMap<String, Item>();
     private Map<String, Item> genes = new HashMap<String, Item>();
-
+    private Set<String> omimDiseaseMasterList = new HashSet<String>();
     private Map<String, String> evidenceCodes = new HashMap<String, String>();
     private Map<MultiKey, Item> annotations = new HashMap<MultiKey, Item>();
     private Map<String, String> publications = new HashMap<String, String>();
@@ -90,9 +94,22 @@ public class HpoConverter extends BioDirectoryConverter
         }
 
         ontologyItemId = storeOntology();
+        processOMIMFile(new FileReader(omimFile));
         processGeneFile(new FileReader(files.get(GENE_FILE)));
         processAnnotationFile(new FileReader(files.get(HPOTEAM_FILE)));
         processAnnotationFile(new FileReader(files.get(NEG_FILE)));
+    }
+
+    /**
+     * HPO lists all OMIM IDs whether they are genes or diseases. There is no way to differeniate
+     * the two. So instead we use the OMIM file which does label diseases and genes correctly.
+     *
+     * @param fileName name of OMIM file that lists all diseases and OMIM identifiers
+     */
+    public void setHpoDiseaseFile(String fileName) {
+        if (StringUtils.isNotEmpty(fileName)) {
+            this.omimFile = fileName;
+        }
     }
 
     private static Map<String, File> readFilesInDir(File dir) {
@@ -124,6 +141,10 @@ public class HpoConverter extends BioDirectoryConverter
             String hpoId = line[3];
 
             Item disease = getDisease(diseaseId);
+            if (disease == null) {
+                // whoops this is a gene. genes have OMIM IDs too. ignore.
+                continue;
+            }
             Item gene = getGene(identifier);
             gene.addToCollection("diseases", disease);
             disease.addToCollection("genes", gene);
@@ -133,6 +154,10 @@ public class HpoConverter extends BioDirectoryConverter
     }
 
     private Item getDisease(String omimId) {
+        // only create diseases that are really diseases not genes.
+        if (!omimDiseaseMasterList.contains(omimId)) {
+            return null;
+        }
         Item item = diseases.get(omimId);
         if (item == null) {
             item = createItem("Disease");
@@ -203,8 +228,12 @@ public class HpoConverter extends BioDirectoryConverter
 
             String evidenceCodeRefId = getEvidenceCode(evidenceCode);
 
-            Item evidence = createItem("HPOEvidence");
             Item disease = getDisease(dbId);
+            if (disease == null) {
+                // whoops this is a gene. genes have OMIM IDs too. ignore.
+                continue;
+            }
+            Item evidence = createItem("HPOEvidence");
             evidence.setReference("diseaseReference", disease);
             if (dbRef.isEmpty()) {
                 dbRef = dbId;
@@ -299,5 +328,30 @@ public class HpoConverter extends BioDirectoryConverter
             return pubItemId;
         }
         return null;
+    }
+
+    /**
+     * @param reader file reader
+     * @throws IOException if can't read file
+     */
+    protected void processOMIMFile(Reader reader) throws IOException {
+        Iterator<?> lineIter = FormattedTextParser.
+                parseTabDelimitedReader(new BufferedReader(reader));
+
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
+
+            String prefix = line[0].trim();
+            String mimId = line[1];
+            // String preferredTitles = line[2]; - don't need names
+
+            // skip header AND genes
+            if (GENE_ENTRY.equals(prefix) || GENE_PHENOTYPE_ENTRY.equals(prefix)
+                    || OBSOLETE.equals(prefix)) {
+                continue;
+            }
+
+            omimDiseaseMasterList.add(mimId);
+        }
     }
 }

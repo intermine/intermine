@@ -17,6 +17,7 @@
         <attribute name="identifier" type="java.lang.String" />
         <collection name="genes" referenced-type="Gene" reverse-reference="diseases"/>
         <collection name="hpoAnnotations" referenced-type="HPOAnnotation" />
+        <collection name="datasets" referenced-type="DataSet"/>
     </class>
     <class name="HPOEvidence" is-interface="true">
         <attribute name="source" type="java.lang.String" />
