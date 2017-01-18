@@ -1,6 +1,6 @@
-package org.intermine.model;
+package org.intermine.model.testmodel;
 
-public class Manager extends org.intermine.model.Employee
+public class Manager extends org.intermine.model.testmodel.Employee
 {
     // Attr: org.intermine.model.testmodel.Manager.title
     protected java.lang.String title;

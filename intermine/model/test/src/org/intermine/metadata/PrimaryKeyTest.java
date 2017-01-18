@@ -26,7 +26,7 @@ public class PrimaryKeyTest extends TestCase {
 
     public void testConstructor() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.Employee");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Employee");
         Set<String> expected = new HashSet<String>();
         expected.add("name");
         expected.add("age");

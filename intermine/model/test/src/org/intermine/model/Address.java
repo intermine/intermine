@@ -1,10 +1,8 @@
-package org.intermine.model;
-
-import javax.swing.JTree.DynamicUtilTreeNode;
+package org.intermine.model.testmodel;
 
 import org.intermine.metadata.TypeUtil;
 
-public class Address implements org.intermine.model.Thing
+public class Address implements org.intermine.model.testmodel.Thing
 {
     // Attr: org.intermine.model.testmodel.Address.address
     protected java.lang.String address;
@@ -27,7 +25,7 @@ public class Address implements org.intermine.model.Thing
         if ("id".equals(fieldName)) {
             return id;
         }
-        if (!org.intermine.model.Address.class.equals(getClass())) {
+        if (!org.intermine.model.testmodel.Address.class.equals(getClass())) {
             return TypeUtil.getFieldValue(this, fieldName);
         }
         throw new IllegalArgumentException("Unknown field " + fieldName);
@@ -39,7 +37,7 @@ public class Address implements org.intermine.model.Thing
         if ("id".equals(fieldName)) {
             return id;
         }
-        if (!org.intermine.model.Address.class.equals(getClass())) {
+        if (!org.intermine.model.testmodel.Address.class.equals(getClass())) {
             return TypeUtil.getFieldProxy(this, fieldName);
         }
         throw new IllegalArgumentException("Unknown field " + fieldName);
@@ -64,8 +62,8 @@ public class Address implements org.intermine.model.Thing
         if ("id".equals(fieldName)) {
             return java.lang.Integer.class;
         }
-        if (!org.intermine.model.Address.class.equals(getClass())) {
-            return TypeUtil.getFieldType(org.intermine.model.Address.class, fieldName);
+        if (!org.intermine.model.testmodel.Address.class.equals(getClass())) {
+            return TypeUtil.getFieldType(org.intermine.model.testmodel.Address.class, fieldName);
         }
         throw new IllegalArgumentException("Unknown field " + fieldName);
     }

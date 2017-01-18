@@ -22,7 +22,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
-import org.intermine.model.SimpleObject;
+import org.intermine.model.testmodel.SimpleObject;
 
 public class ModelTest extends TestCase
 {
@@ -82,7 +82,7 @@ public class ModelTest extends TestCase
     public void testGetDirectSubs() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         Set<ClassDescriptor> hasAddressCds =
-            model.getClassDescriptorsForClass(org.intermine.model.Thing.class);
+            model.getClassDescriptorsForClass(org.intermine.model.testmodel.Thing.class);
         assertEquals(1, hasAddressCds.size());
 
         ClassDescriptor addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
@@ -94,9 +94,9 @@ public class ModelTest extends TestCase
 
         Set<ClassDescriptor> resultCds = model.getDirectSubs(addressCld);
         Set<String> expectedCdNames = new HashSet<String>();
-        expectedCdNames.add("org.intermine.model.Employable");
-        expectedCdNames.add("org.intermine.model.Address");
-        expectedCdNames.add("org.intermine.model.Department");
+        expectedCdNames.add("org.intermine.model.testmodel.Employable");
+        expectedCdNames.add("org.intermine.model.testmodel.Address");
+        expectedCdNames.add("org.intermine.model.testmodel.Department");
         Set<String> resultCdNames = new HashSet<String>();
         for (ClassDescriptor cld : resultCds) {
             resultCdNames.add(cld.getName());
@@ -107,7 +107,7 @@ public class ModelTest extends TestCase
     public void testGetAllSubs() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         Set<ClassDescriptor> hasAddressCds =
-            model.getClassDescriptorsForClass(org.intermine.model.Thing.class);
+            model.getClassDescriptorsForClass(org.intermine.model.testmodel.Thing.class);
         assertEquals(1, hasAddressCds.size());
 
         ClassDescriptor addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
@@ -119,13 +119,13 @@ public class ModelTest extends TestCase
 
         Set<ClassDescriptor> resultCds = model.getAllSubs(addressCld);
         Set<String> expectedCdNames = new HashSet<String>();
-        expectedCdNames.add("org.intermine.model.Employable");
-        expectedCdNames.add("org.intermine.model.Address");
-        expectedCdNames.add("org.intermine.model.Employee");
-        expectedCdNames.add("org.intermine.model.Manager");
-        expectedCdNames.add("org.intermine.model.CEO");
-        expectedCdNames.add("org.intermine.model.Department");
-        expectedCdNames.add("org.intermine.model.Contractor");
+        expectedCdNames.add("org.intermine.model.testmodel.Employable");
+        expectedCdNames.add("org.intermine.model.testmodel.Address");
+        expectedCdNames.add("org.intermine.model.testmodel.Employee");
+        expectedCdNames.add("org.intermine.model.testmodel.Manager");
+        expectedCdNames.add("org.intermine.model.testmodel.CEO");
+        expectedCdNames.add("org.intermine.model.testmodel.Department");
+        expectedCdNames.add("org.intermine.model.testmodel.Contractor");
         Set<String> resultCdNames = new HashSet<String>();
         for (ClassDescriptor cld : resultCds) {
             resultCdNames.add(cld.getName());
@@ -144,7 +144,7 @@ public class ModelTest extends TestCase
 
     public void testGetCDByNameQualified() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        assertNotNull(model.getClassDescriptorByName("org.intermine.model.Employee"));
+        assertNotNull(model.getClassDescriptorByName("org.intermine.model.testmodel.Employee"));
     }
 
     public void testGetCDByNameUnqualified() throws Exception {
@@ -162,9 +162,9 @@ public class ModelTest extends TestCase
 
     public void testGetClassDescriptorsForClass() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(org.intermine.model.Employee.class);
+        Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(org.intermine.model.testmodel.Employee.class);
         Set<String> expectedCdNames = new HashSet<String>();
-        expectedCdNames.add("org.intermine.model.Employee");
+        expectedCdNames.add("org.intermine.model.testmodel.Employee");
         Set<String> cdNames = new HashSet<String>();
         for (ClassDescriptor cd: cds) {
             cdNames.add(cd.getName());
@@ -271,7 +271,7 @@ public class ModelTest extends TestCase
 
     public void testGetQualifiedTypeName() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        assertEquals("org.intermine.model.Employee",
+        assertEquals("org.intermine.model.testmodel.Employee",
                      model.getQualifiedTypeName("Employee"));
         assertEquals("java.lang.String",
                      model.getQualifiedTypeName("String"));

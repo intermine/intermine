@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-//import org.intermine.model.Department;
 
 /**
  * Tests for the Path class.
@@ -44,12 +43,12 @@ public class PathTest extends TestCase
         String stringPath = "Department.company";
         Path path = new Path(model, stringPath);
         ClassDescriptor cld =
-            model.getClassDescriptorByName("org.intermine.model.Department");
+            model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
         assertEquals(cld, path.getStartClassDescriptor());
         FieldDescriptor fld = cld.getFieldDescriptorByName("company");
         assertEquals(fld, path.getEndFieldDescriptor());
         ClassDescriptor compDesc =
-            model.getClassDescriptorByName("org.intermine.model.Company");
+            model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         assertEquals(compDesc, path.getEndClassDescriptor());
         assertFalse(path.containsCollections());
         assertEquals(stringPath, path.toString());
@@ -59,7 +58,7 @@ public class PathTest extends TestCase
         String stringPath = "Department.company.name";
         Path path = new Path(model, stringPath);
         ClassDescriptor cld =
-            model.getClassDescriptorByName("org.intermine.model.Department");
+            model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
         assertEquals(String.class, path.getEndType());
         assertEquals(cld, path.getStartClassDescriptor());
     }
@@ -67,7 +66,7 @@ public class PathTest extends TestCase
     public void testValid3() throws Exception {
         String stringPath = "Employee.age";
         Path path = new Path(model, stringPath);
-        assertEquals(model.getClassDescriptorByName("org.intermine.model.Employee"), path.getStartClassDescriptor());
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Employee"), path.getStartClassDescriptor());
         assertEquals(Integer.class, path.getEndType());
     }
 
@@ -118,16 +117,16 @@ public class PathTest extends TestCase
     }
 
     private void checkConstrainedPath(Path path) {
-        assertEquals(model.getClassDescriptorByName("org.intermine.model.Department"), path.getStartClassDescriptor());
-        assertEquals(model.getClassDescriptorByName("org.intermine.model.Department"), path.getElementClassDescriptors().get(0));
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Department"), path.getStartClassDescriptor());
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Department"), path.getElementClassDescriptors().get(0));
         assertEquals("manager", path.getElements().get(0));
-        assertEquals(model.getClassDescriptorByName("org.intermine.model.CEO"), path.getElementClassDescriptors().get(1));
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.CEO"), path.getElementClassDescriptors().get(1));
         assertEquals("company", path.getElements().get(1));
-        assertEquals(model.getClassDescriptorByName("org.intermine.model.Company"), path.getElementClassDescriptors().get(2));
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Company"), path.getElementClassDescriptors().get(2));
         assertEquals("departments", path.getElements().get(2));
-        assertEquals(model.getClassDescriptorByName("org.intermine.model.Department"), path.getElementClassDescriptors().get(3));
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Department"), path.getElementClassDescriptors().get(3));
         assertEquals("employees", path.getElements().get(3));
-        assertEquals(model.getClassDescriptorByName("org.intermine.model.Manager"), path.getElementClassDescriptors().get(4));
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"), path.getElementClassDescriptors().get(4));
         assertEquals("age", path.getElements().get(4));
         assertEquals(Integer.class, path.getEndType());
     }
@@ -151,7 +150,7 @@ public class PathTest extends TestCase
         String stringPath = "Department";
         Path path = new Path(model, stringPath);
         ClassDescriptor cld =
-            model.getClassDescriptorByName("org.intermine.model.Department");
+            model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
         assertEquals(cld, path.getStartClassDescriptor());
         assertEquals(cld, path.getEndClassDescriptor());
         assertNull(path.getEndFieldDescriptor());
@@ -185,7 +184,7 @@ public class PathTest extends TestCase
 
     public void testGetLastClassDescriptor() throws Exception {
         Path path = new Path(model, "Department.manager.name");
-        assertEquals(model.getClassDescriptorByName("org.intermine.model.Manager"), path.getLastClassDescriptor());
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"), path.getLastClassDescriptor());
     }
 
     public void testIsRootPath() throws Exception {

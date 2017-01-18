@@ -1,18 +1,18 @@
-package org.intermine.model;
+package org.intermine.model.testmodel;
 
 import org.intermine.metadata.TypeUtil;
 
-public class Contractor implements org.intermine.model.Employable
+public class Contractor implements org.intermine.model.testmodel.Employable
 {
     // Ref: org.intermine.model.testmodel.Contractor.personalAddress
-    protected org.intermine.model.Address personalAddress;
-    public org.intermine.model.Address getPersonalAddress() { return personalAddress; }
-    public void setPersonalAddress(final org.intermine.model.Address personalAddress) { this.personalAddress = personalAddress; }
+    protected org.intermine.model.testmodel.Address personalAddress;
+    public org.intermine.model.testmodel.Address getPersonalAddress() { return personalAddress; }
+    public void setPersonalAddress(final org.intermine.model.testmodel.Address personalAddress) { this.personalAddress = personalAddress; }
 
     // Ref: org.intermine.model.testmodel.Contractor.businessAddress
-    protected org.intermine.model.Address businessAddress;
-    public org.intermine.model.Address getBusinessAddress() { return businessAddress; }
-    public void setBusinessAddress(final org.intermine.model.Address businessAddress) { this.businessAddress = businessAddress; }
+    protected org.intermine.model.testmodel.Address businessAddress;
+    public org.intermine.model.testmodel.Address getBusinessAddress() { return businessAddress; }
+    public void setBusinessAddress(final org.intermine.model.testmodel.Address businessAddress) { this.businessAddress = businessAddress; }
 
     // Attr: org.intermine.model.testmodel.Employable.name
     protected java.lang.String name;
@@ -56,16 +56,16 @@ public class Contractor implements org.intermine.model.Employable
         if ("id".equals(fieldName)) {
             return id;
         }
-        if (!org.intermine.model.Contractor.class.equals(getClass())) {
+        if (!org.intermine.model.testmodel.Contractor.class.equals(getClass())) {
             return TypeUtil.getFieldProxy(this, fieldName);
         }
         throw new IllegalArgumentException("Unknown field " + fieldName);
     }
     public void setFieldValue(final String fieldName, final Object value) {
         if ("personalAddress".equals(fieldName)) {
-            personalAddress = (org.intermine.model.Address) value;
+            personalAddress = (org.intermine.model.testmodel.Address) value;
         } else if ("businessAddress".equals(fieldName)) {
-            businessAddress = (org.intermine.model.Address) value;
+            businessAddress = (org.intermine.model.testmodel.Address) value;
         } else if ("name".equals(fieldName)) {
             name = (java.lang.String) value;
         } else if ("id".equals(fieldName)) {
@@ -80,10 +80,10 @@ public class Contractor implements org.intermine.model.Employable
     }
     public Class<?> getFieldType(final String fieldName) {
         if ("personalAddress".equals(fieldName)) {
-            return org.intermine.model.Address.class;
+            return org.intermine.model.testmodel.Address.class;
         }
         if ("businessAddress".equals(fieldName)) {
-            return org.intermine.model.Address.class;
+            return org.intermine.model.testmodel.Address.class;
         }
         if ("name".equals(fieldName)) {
             return java.lang.String.class;
@@ -91,8 +91,8 @@ public class Contractor implements org.intermine.model.Employable
         if ("id".equals(fieldName)) {
             return java.lang.Integer.class;
         }
-        if (!org.intermine.model.Contractor.class.equals(getClass())) {
-            return TypeUtil.getFieldType(org.intermine.model.Contractor.class, fieldName);
+        if (!org.intermine.model.testmodel.Contractor.class.equals(getClass())) {
+            return TypeUtil.getFieldType(org.intermine.model.testmodel.Contractor.class, fieldName);
         }
         throw new IllegalArgumentException("Unknown field " + fieldName);
     }

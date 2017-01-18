@@ -1,8 +1,8 @@
-package org.intermine.model;
+package org.intermine.model.testmodel;
 
 import org.intermine.metadata.TypeUtil;
 
-public class Department implements org.intermine.model.Thing
+public class Department implements org.intermine.model.testmodel.Thing
 {
     // Attr: org.intermine.model.testmodel.Department.name
     protected java.lang.String name;
@@ -10,26 +10,26 @@ public class Department implements org.intermine.model.Thing
     public void setName(final java.lang.String name) { this.name = name; }
 
     // Ref: org.intermine.model.testmodel.Department.company
-    protected org.intermine.model.Company company;
-    public org.intermine.model.Company getCompany() { return company; }
-    public void setCompany(final org.intermine.model.Company company) { this.company = company; }
+    protected org.intermine.model.testmodel.Company company;
+    public org.intermine.model.testmodel.Company getCompany() { return company; }
+    public void setCompany(final org.intermine.model.testmodel.Company company) { this.company = company; }
 
     // Ref: org.intermine.model.testmodel.Department.manager
-    protected org.intermine.model.Manager manager;
-    public org.intermine.model.Manager getManager() { return manager; }
-    public void setManager(final org.intermine.model.Manager manager) { this.manager = manager; }
+    protected org.intermine.model.testmodel.Manager manager;
+    public org.intermine.model.testmodel.Manager getManager() { return manager; }
+    public void setManager(final org.intermine.model.testmodel.Manager manager) { this.manager = manager; }
 
     // Col: org.intermine.model.testmodel.Department.employees
-    protected java.util.Set<org.intermine.model.Employee> employees = new java.util.HashSet<org.intermine.model.Employee>();
-    public java.util.Set<org.intermine.model.Employee> getEmployees() { return employees; }
-    public void setEmployees(final java.util.Set<org.intermine.model.Employee> employees) { this.employees = employees; }
-    public void addEmployees(final org.intermine.model.Employee arg) { employees.add(arg); }
+    protected java.util.Set<org.intermine.model.testmodel.Employee> employees = new java.util.HashSet<org.intermine.model.testmodel.Employee>();
+    public java.util.Set<org.intermine.model.testmodel.Employee> getEmployees() { return employees; }
+    public void setEmployees(final java.util.Set<org.intermine.model.testmodel.Employee> employees) { this.employees = employees; }
+    public void addEmployees(final org.intermine.model.testmodel.Employee arg) { employees.add(arg); }
 
     // Col: org.intermine.model.testmodel.Department.rejectedEmployee
-    protected java.util.Set<org.intermine.model.Employee> rejectedEmployee = new java.util.HashSet<org.intermine.model.Employee>();
-    public java.util.Set<org.intermine.model.Employee> getRejectedEmployee() { return rejectedEmployee; }
-    public void setRejectedEmployee(final java.util.Set<org.intermine.model.Employee> rejectedEmployee) { this.rejectedEmployee = rejectedEmployee; }
-    public void addRejectedEmployee(final org.intermine.model.Employee arg) { rejectedEmployee.add(arg); }
+    protected java.util.Set<org.intermine.model.testmodel.Employee> rejectedEmployee = new java.util.HashSet<org.intermine.model.testmodel.Employee>();
+    public java.util.Set<org.intermine.model.testmodel.Employee> getRejectedEmployee() { return rejectedEmployee; }
+    public void setRejectedEmployee(final java.util.Set<org.intermine.model.testmodel.Employee> rejectedEmployee) { this.rejectedEmployee = rejectedEmployee; }
+    public void addRejectedEmployee(final org.intermine.model.testmodel.Employee arg) { rejectedEmployee.add(arg); }
 
     // Attr: org.intermine.model.InterMineObject.id
     protected java.lang.Integer id;
@@ -56,7 +56,7 @@ public class Department implements org.intermine.model.Thing
         if ("id".equals(fieldName)) {
             return id;
         }
-        if (!org.intermine.model.Department.class.equals(getClass())) {
+        if (!org.intermine.model.testmodel.Department.class.equals(getClass())) {
             return TypeUtil.getFieldValue(this, fieldName);
         }
         throw new IllegalArgumentException("Unknown field " + fieldName);
@@ -77,7 +77,7 @@ public class Department implements org.intermine.model.Thing
         if ("id".equals(fieldName)) {
             return id;
         }
-        if (!org.intermine.model.Department.class.equals(getClass())) {
+        if (!org.intermine.model.testmodel.Department.class.equals(getClass())) {
             return TypeUtil.getFieldProxy(this, fieldName);
         }
         throw new IllegalArgumentException("Unknown field " + fieldName);
@@ -86,9 +86,9 @@ public class Department implements org.intermine.model.Thing
         if ("name".equals(fieldName)) {
             name = (java.lang.String) value;
         } else if ("company".equals(fieldName)) {
-            company = (org.intermine.model.Company) value;
+            company = (org.intermine.model.testmodel.Company) value;
         } else if ("manager".equals(fieldName)) {
-            manager = (org.intermine.model.Manager) value;
+            manager = (org.intermine.model.testmodel.Manager) value;
         } else if ("employees".equals(fieldName)) {
             employees = (java.util.Set) value;
         } else if ("rejectedEmployee".equals(fieldName)) {
@@ -108,10 +108,10 @@ public class Department implements org.intermine.model.Thing
             return java.lang.String.class;
         }
         if ("company".equals(fieldName)) {
-            return org.intermine.model.Company.class;
+            return org.intermine.model.testmodel.Company.class;
         }
         if ("manager".equals(fieldName)) {
-            return org.intermine.model.Manager.class;
+            return org.intermine.model.testmodel.Manager.class;
         }
         if ("employees".equals(fieldName)) {
             return java.util.Set.class;
@@ -122,8 +122,8 @@ public class Department implements org.intermine.model.Thing
         if ("id".equals(fieldName)) {
             return java.lang.Integer.class;
         }
-        if (!org.intermine.model.Department.class.equals(getClass())) {
-            return TypeUtil.getFieldType(org.intermine.model.Department.class, fieldName);
+        if (!org.intermine.model.testmodel.Department.class.equals(getClass())) {
+            return TypeUtil.getFieldType(org.intermine.model.testmodel.Department.class, fieldName);
         }
         throw new IllegalArgumentException("Unknown field " + fieldName);
     }
