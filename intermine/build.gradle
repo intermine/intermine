@@ -7,6 +7,8 @@ subprojects {
   repositories {
       mavenCentral()
   }
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6
 }
 
 project(':intermine-model-main') {
@@ -43,5 +45,21 @@ project(':intermine-pathquery-test') {
         compile project(':intermine-model-test')
         compile project(':intermine-pathquery-main')
         compile group: 'junit', name: 'junit', version: '4.8.1'
+    }
+}
+
+project(':intermine-objectstore-main') {
+    dependencies {
+        compile project(':intermine-model-main')
+        //compile group: 'log4j', name: 'log4j', version: '1.2.17'
+        compile group: 'antlr', name: 'antlr', version: '2.7.6'
+        compile group: 'org.apache.ant', name: 'ant', version: '1.9.7'
+        compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
+        compile group: 'torque', name: 'torque-gen', version: '3.3'
+        compile group: 'commons-io', name: 'commons-io', version: '2.5'
+        compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.2'
+        compile group: 'com.zaxxer', name: 'HikariCP', version: '2.2.5'
+        compile group: 'net.iharder', name: 'base64', version: '2.3.8'
+        compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4'
     }
 }

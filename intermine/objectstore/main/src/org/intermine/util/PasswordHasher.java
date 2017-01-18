@@ -14,7 +14,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-import net.sourceforge.iharder.Base64;
+import net.iharder.Base64;
 
 /**
  * Utility methods for managing hashed passwords
