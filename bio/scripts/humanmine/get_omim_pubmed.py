@@ -11,22 +11,20 @@ Requests: HTTP for Humans
 Notice:
 	To run the script under /micklem/data/metabolic/omim/script    
 """
-
 import os, json, requests, time, datetime, types
 
 ## TODO use a better logging system
 
-API_KEY = 'F5DE0CBD69F9F6771E2E0D3BEFD9E7A1D4C3A994' # the API key will expire after one year from the issue date
-# estimated expiry - Jan 6th 2015
+API_KEY = 'SECRET' # the API key will expire after one year from the issue date
 # http://api.omim.org/api/html/apiKey.html
 OMIM_SERVICE_BASE_USA = 'http://api.omim.org/api/entry/referenceList'
 # http://api.europe.omim.org/api/html/apiKey.html
-OMIM_SERVICE_BASE_EUROPE = 'http://api.europe.omim.org/api/entry/referenceList'
+OMIM_SERVICE_BASE_ERUOPE = 'http://api.europe.omim.org/api/entry/referenceList'
 
-LOG_DIR = '/tmp/'
+LOG_DIR = '../logs/'
 LOG_NAME = 'pubmed_cited.log'
-MIM_NUMBER_FILE = '/micklem/data/metabolic/omim/current/mim2gene.txt'
-PUBMED_CITED_FILE = '/micklem/data/metabolic/omim/current/pubmed_cited'
+MIM_NUMBER_FILE = '../current/mim2gene.txt'
+PUBMED_CITED_FILE = '../current/pubmed_cited'
 
 class OMIMQueryError(Exception):
 	pass
@@ -40,7 +38,7 @@ def get_omim_pubmed(mimNumber, log):
 		format = 'json'
 	)
 
-	resp = requests.get(url=OMIM_SERVICE_BASE_EUROPE, params=params)
+	resp = requests.get(url=OMIM_SERVICE_BASE_USA, params=params)
 	data = resp.json() # In case the JSON decoding fails, r.json simply returns None.
 
 	log.write('HTTP response in JSON: ' + str(data) + '\n')
@@ -68,7 +66,7 @@ def parse_mim_number(mim_number_file):
 	f = open(mim_number_file, 'r')
 
 	for line in f:
-		if not line.startswith('#'):
+		if not line.startswith('#') and line.split('\t').pop(1).find('phenotype'):
 			mim_number_set.add(line.split('\t').pop(0))
 
 	return mim_number_set
