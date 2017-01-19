@@ -24,7 +24,7 @@
     <property name="build.dir" location="build"/>
     <property name="src.dir" location="src"/>
     <property name="resources.dir" location="resources"/>
-    <property name="dist.dir" location="dist"/>
+    <property name="dist.dir" location="${build.dir}/libs"/>
     <property name="lib.dir" location="lib"/>
     <property name="build.classes.dir" location="${build.dir}/classes"/>
     <property name="build.model.dir" location="${build.dir}/model"/>
