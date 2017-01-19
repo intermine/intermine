@@ -1,0 +1,39 @@
+ClassLoader antClassLoader = org.apache.tools.ant.Project.class.classLoader
+configurations.compile.each { File f ->
+  antClassLoader.addURL(f.toURI().toURL())
+}
+
+ant.importBuild('build.xml') {
+    antTargetName -> 'ant-' + antTargetName
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['build/gen/src']
+        }
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+}
+
+task generateJar(type: Zip) {
+  baseName = project.name
+  from fileTree('resources')
+}
+
+ant.properties['no.dep'] = 'true'
+ant.properties['regenerate.java'] = 'true'
+ant.properties['model.name'] = 'testmodel'
+ant.properties['gen.src.dir'] = 'build/gen/src'
+
+tasks.compileJava.dependsOn 'generateJar'
+tasks.compileJava.dependsOn 'ant-generate'
+tasks.'ant-generate'.mustRunAfter 'generateJar'
+
+/*
+1-generateJar generates a zip containing testmodel_model.xml so it can be reached by the class loader when the ant 'generate' task is executed 
+2-ant-generate is the ant tash with name 'generate'
+3-compileJava
+*/

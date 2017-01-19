@@ -1,9 +1,10 @@
 rootProject.name = 'intermine'
 
-include ':intermine-model-main', ':intermine-model-test', ':intermine-pathquery-main', ':intermine-pathquery-test', ':intermine-objectstore-main'
+include ':intermine-model-main', ':intermine-model-test', ':intermine-pathquery-main', ':intermine-pathquery-test', ':intermine-objectstore-main', ':testmodel'
 
 project(':intermine-model-main').projectDir = new File(settingsDir, './model/main')
 project(':intermine-model-test').projectDir = new File(settingsDir, './model/test')
 project(':intermine-pathquery-main').projectDir = new File(settingsDir, './pathquery/main')
 project(':intermine-pathquery-test').projectDir = new File(settingsDir, './pathquery/test')
 project(':intermine-objectstore-main').projectDir = new File(settingsDir, './objectstore/main')
+project(':testmodel').projectDir = new File(settingsDir, './objectstore/model/testmodel')

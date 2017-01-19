@@ -63,3 +63,11 @@ project(':intermine-objectstore-main') {
         compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4'
     }
 }
+
+project(':testmodel') {
+    dependencies {
+        compile project(':intermine-model-main')
+        compile project(':intermine-objectstore-main')
+        compile group: 'ant-contrib', name: 'ant-contrib', version: '1.0b3'
+    }
+}
