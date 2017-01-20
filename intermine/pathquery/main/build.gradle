@@ -8,5 +8,8 @@ sourceSets {
         resources {
             srcDirs = ['resources']
         }
+        antlr {
+            srcDirs = ['antlr']
+        }
     }
 }
