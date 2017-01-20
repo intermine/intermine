@@ -68,6 +68,43 @@ project(':testmodel') {
     dependencies {
         compile project(':intermine-model-main')
         compile project(':intermine-objectstore-main')
+        compile fileTree(dir: "$buildDir/distributions", include: '*.zip')
         compile group: 'ant-contrib', name: 'ant-contrib', version: '1.0b3'
+    }
+}
+
+project(':intermine-objectstore-test') {
+    dependencies {
+        compile project(':intermine-model-main')
+        compile project(':intermine-objectstore-main')
+        compile project(':testmodel')
+        //org.gnu.readline is not in a public repo
+        compile fileTree(dir: "$projectDir/lib", include: '*.jar')
+        compile group: 'junit', name: 'junit', version: '4.8.1'
+        compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
+        compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
+    }
+}
+
+project(':userprofile') {
+    dependencies {
+        compile project(':intermine-model-main')
+        compile project(':intermine-objectstore-main')
+        compile fileTree(dir: "$buildDir/distributions", include: '*.zip')
+    }
+}
+
+project(':intermine-api-main') {
+    dependencies {
+        compile project(':intermine-model-main')
+        compile project(':intermine-objectstore-main')
+        compile project(':intermine-pathquery-main')
+        compile project(':userprofile')
+        compile group: 'xalan', name: 'xalan', version: '2.7.2'
+        compile group: 'org.apache.lucene', name: 'lucene-core', version: '3.5.0'
+        compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.5.0'
+        compile group: 'org.apache.lucene', name: 'lucene-highlighter', version: '3.5.0'
+        compile group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.3'
+        compile group: 'com.browseengine.bobo', name: 'bobo-browse', version: '4.0.2'
     }
 }
