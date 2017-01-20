@@ -1,5 +1,7 @@
 package org.intermine.bio.dataconversion;
 
+import java.io.BufferedReader;
+
 /*
  * Copyright (C) 2002-2016 FlyMine
  *
@@ -148,34 +150,39 @@ public class OmimConverter extends BioDirectoryConverter
     }
 
     private void processMorbidMapFile(Reader reader) throws IOException, ObjectStoreException {
-        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-
+        BufferedReader br = new BufferedReader(reader);
+        String line = null;
+        // find the OMIM ID. OMIM identifiers are 6 digits
         Pattern matchMajorDiseaseNumber = Pattern.compile("(\\d{6})");
-
-        while (lineIter.hasNext()) {
-            String[] bits = lineIter.next();
-            if (bits.length == 4) {
-                String phenotype = bits[0];
-                String symbols = bits[1];
-                Matcher m = matchMajorDiseaseNumber.matcher(phenotype);
-                String mimNumber = null;
-                if (m.find()) {
-                    mimNumber = m.group(1);
-                }
-                if (mimNumber == null || mimNumber.isEmpty()) {
-                    LOG.info("Not processing " + phenotype + ", no OMIM ID");
-                    continue;
-                }
-                Item disease = getDisease(mimNumber);
-                for (String geneSymbol : symbols.split(",")) {
-                    String geneRefId = getGene(geneSymbol);
-                    if (geneRefId != null) {
-                        disease.addToCollection("genes", geneRefId);
-                    }
+        final String delim = "\\(3\\)";
+        while ((line = br.readLine()) != null) {
+            Matcher diseaseMatcher = matchMajorDiseaseNumber.matcher(line);
+            String mimNumber = null;
+            if (diseaseMatcher.find()) {
+                mimNumber = diseaseMatcher.group(1);
+            }
+            if (mimNumber == null || mimNumber.isEmpty()) {
+                LOG.info("Not processing " + line + ", no OMIM ID");
+                continue;
+            }
+            Item disease = getDisease(mimNumber);
+            String symbols = null;
+            String[] firstBits = line.split(delim);
+            if (firstBits.length != 2) {
+                // throw exception here?
+                continue;
+            }
+            symbols = firstBits[1].trim();
+            // remove the trailing columns
+            String[] bits = symbols.split("(\\t)|(\\s\\s)");
+            String chompedSymbols = bits[0];
+            for (String geneSymbol : chompedSymbols.split(",")) {
+                String geneRefId = getGene(geneSymbol.trim());
+                if (geneRefId != null) {
+                    disease.addToCollection("genes", geneRefId);
                 }
             }
         }
-
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
@@ -224,7 +231,7 @@ public class OmimConverter extends BioDirectoryConverter
     private String getGene(String geneSymbol) throws ObjectStoreException {
         String refId = null;
         String entrezGeneNumber = resolveGene(geneSymbol.trim());
-        if (entrezGeneNumber != null) {
+        if (StringUtils.isNotEmpty(entrezGeneNumber)) {
             refId = genes.get(entrezGeneNumber);
             if (refId == null) {
                 Item gene = createItem("Gene");
