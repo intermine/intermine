@@ -1,4 +1,5 @@
 apply plugin: "antlr"
+
 sourceSets {
     main {
         java {

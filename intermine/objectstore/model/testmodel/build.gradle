@@ -18,6 +18,10 @@ sourceSets {
     }
 }
 
+task showMeCache << {
+println configurations.compile.asPath
+}
+
 task generateJar(type: Zip) {
   baseName = project.name
   from fileTree('resources')
@@ -34,6 +38,6 @@ tasks.'ant-generate'.mustRunAfter 'generateJar'
 
 /*
 1-generateJar generates a zip containing testmodel_model.xml so it can be reached by the class loader when the ant 'generate' task is executed 
-2-ant-generate is the ant tash with name 'generate'
+2-ant-generate is the ant task with name 'generate'
 3-compileJava
 */
