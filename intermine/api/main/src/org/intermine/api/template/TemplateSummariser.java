@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.iharder.Base64;
+import net.iharder.Base64;
 
 import org.apache.log4j.Logger;
 import org.intermine.model.userprofile.SavedTemplateQuery;
