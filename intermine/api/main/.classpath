@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="FROM_GRADLE_MODEL" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="resources">
+		<attributes>
+			<attribute name="FROM_GRADLE_MODEL" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-pathquery"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/userprofile"/>
@@ -18,5 +26,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/kamikaze-2.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bobo-browse-2.5.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6/"/>
+	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
