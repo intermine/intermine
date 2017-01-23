@@ -1,21 +1,24 @@
 <items>
-<item id="8_145" class="Publication">
-<attribute name="pubMedId" value="10549291"/>
+<item id="8_63" class="Publication">
+<attribute name="pubMedId" value="9312173"/>
 </item>
-<item id="8_144" class="Publication">
-<attribute name="pubMedId" value="10958784"/>
+<item id="8_94" class="Publication">
+<attribute name="pubMedId" value="15863669"/>
 </item>
-<item id="8_109" class="Publication">
-<attribute name="pubMedId" value="9806549"/>
+<item id="8_48" class="Publication">
+<attribute name="pubMedId" value="20085713"/>
 </item>
 <item id="8_62" class="Publication">
 <attribute name="pubMedId" value="17463248"/>
 </item>
-<item id="8_215" class="Publication">
-<attribute name="pubMedId" value="17357083"/>
+<item id="8_78" class="Publication">
+<attribute name="pubMedId" value="20360734"/>
 </item>
 <item id="8_72" class="Publication">
 <attribute name="pubMedId" value="9892237"/>
+</item>
+<item id="8_16" class="Publication">
+<attribute name="pubMedId" value="11575290"/>
 </item>
 <item id="8_13" class="Publication">
 <attribute name="pubMedId" value="15808156"/>
@@ -23,61 +26,72 @@
 <item id="8_5" class="Publication">
 <attribute name="pubMedId" value="2695375"/>
 </item>
-<item id="7_2" class="Synonym">
-<attribute name="value" value=" FPLD3"/>
-<reference name="subject" ref_id="4_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Online Mendelian Inheritance in Man"/>
 </item>
-<item id="8_151" class="Publication">
-<attribute name="pubMedId" value="17356052"/>
+<item id="8_103" class="Publication">
+<attribute name="pubMedId" value="19091795"/>
+</item>
+<item id="8_141" class="Publication">
+<attribute name="pubMedId" value="10458720"/>
 </item>
 <item id="8_27" class="Publication">
 <attribute name="pubMedId" value="17603485"/>
 </item>
-<item id="8_89" class="Publication">
-<attribute name="pubMedId" value="11909955"/>
-</item>
-<item id="8_264" class="Publication">
-<attribute name="pubMedId" value="10458720"/>
-</item>
-<item id="8_216" class="Publication">
-<attribute name="pubMedId" value="12761372"/>
-</item>
 <item id="8_69" class="Publication">
 <attribute name="pubMedId" value="8897863"/>
+</item>
+<item id="8_4" class="Publication">
+<attribute name="pubMedId" value="16885549"/>
+</item>
+<item id="8_104" class="Publication">
+<attribute name="pubMedId" value="18454146"/>
 </item>
 <item id="8_82" class="Publication">
 <attribute name="pubMedId" value="16034410"/>
 </item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="8_68" class="Publication">
+<attribute name="pubMedId" value="18008060"/>
+</item>
+<item id="8_12" class="Publication">
+<attribute name="pubMedId" value="19657112"/>
+</item>
 <item id="8_6" class="Publication">
 <attribute name="pubMedId" value="22286214"/>
 </item>
+<item id="8_66" class="Publication">
+<attribute name="pubMedId" value="17179727"/>
+</item>
+<item id="8_120" class="Publication">
+<attribute name="pubMedId" value="1746554"/>
+</item>
+<item id="8_106" class="Publication">
+<attribute name="pubMedId" value="15647995"/>
+</item>
+<item id="8_37" class="Publication">
+<attribute name="pubMedId" value="19020324"/>
+</item>
 <item id="8_125" class="Publication">
-<attribute name="pubMedId" value="16007095"/>
+<attribute name="pubMedId" value="7258336"/>
 </item>
-<item id="8_104" class="Publication">
-<attribute name="pubMedId" value="11172721"/>
-</item>
-<item id="8_249" class="Publication">
+<item id="8_126" class="Publication">
 <attribute name="pubMedId" value="18523006"/>
 </item>
-<item id="8_169" class="Publication">
-<attribute name="pubMedId" value="14671186"/>
+<item id="6_1" class="Gene">
+<attribute name="primaryIdentifier" value="PPARG"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="8_183" class="Publication">
-<attribute name="pubMedId" value="10549292"/>
-</item>
-<item id="8_153" class="Publication">
-<attribute name="pubMedId" value="9694545"/>
+<item id="8_121" class="Publication">
+<attribute name="pubMedId" value="11136233"/>
 </item>
 <item id="8_23" class="Publication">
 <attribute name="pubMedId" value="8528248"/>
-</item>
-<item id="4_1" class="Disease">
-<attribute name="identifier" value="OMIM:609338"/>
-<attribute name="name" value="CAROTID INTIMAL MEDIAL THICKNESS 1"/>
-<collection name="genes"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/></collection>
-<collection name="publications"><reference ref_id="8_263"/><reference ref_id="8_264"/><reference ref_id="8_265"/><reference ref_id="8_266"/></collection>
 </item>
 <item id="8_21" class="Publication">
 <attribute name="pubMedId" value="8528247"/>
@@ -85,27 +99,36 @@
 <item id="8_84" class="Publication">
 <attribute name="pubMedId" value="22456732"/>
 </item>
-<item id="8_106" class="Publication">
-<attribute name="pubMedId" value="21892191"/>
+<item id="8_142" class="Publication">
+<attribute name="pubMedId" value="10229743"/>
 </item>
-<item id="8_178" class="Publication">
-<attribute name="pubMedId" value="9918859"/>
+<item id="8_29" class="Publication">
+<attribute name="pubMedId" value="9758619"/>
 </item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="OMIM diseases"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
-<item id="8_244" class="Publication">
-<attribute name="pubMedId" value="11136233"/>
+<item id="8_135" class="Publication">
+<attribute name="pubMedId" value="3941707"/>
+</item>
+<item id="8_96" class="Publication">
+<attribute name="pubMedId" value="1684952"/>
 </item>
 <item id="8_41" class="Publication">
 <attribute name="pubMedId" value="17066296"/>
 </item>
-<item id="8_205" class="Publication">
-<attribute name="pubMedId" value="17652179"/>
+<item id="8_117" class="Publication">
+<attribute name="pubMedId" value="18454148"/>
 </item>
-<item id="8_181" class="Publication">
-<attribute name="pubMedId" value="11782441"/>
+<item id="6_4" class="Gene">
+<attribute name="primaryIdentifier" value="CIMT1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_136" class="Publication">
+<attribute name="pubMedId" value="17183312"/>
 </item>
 <item id="8_44" class="Publication">
 <attribute name="pubMedId" value="15070960"/>
@@ -113,23 +136,26 @@
 <item id="8_18" class="Publication">
 <attribute name="pubMedId" value="9745421"/>
 </item>
-<item id="8_97" class="Publication">
-<attribute name="pubMedId" value="10622252"/>
+<item id="8_127" class="Publication">
+<attribute name="pubMedId" value="18697794"/>
 </item>
 <item id="8_47" class="Publication">
 <attribute name="pubMedId" value="1587533"/>
 </item>
+<item id="8_43" class="Publication">
+<attribute name="pubMedId" value="19020323"/>
+</item>
 <item id="8_42" class="Publication">
 <attribute name="pubMedId" value="17906635"/>
-</item>
-<item id="8_96" class="Publication">
-<attribute name="pubMedId" value="10549290"/>
 </item>
 <item id="8_70" class="Publication">
 <attribute name="pubMedId" value="9062343"/>
 </item>
-<item id="8_235" class="Publication">
+<item id="8_112" class="Publication">
 <attribute name="pubMedId" value="1358794"/>
+</item>
+<item id="8_124" class="Publication">
+<attribute name="pubMedId" value="15486293"/>
 </item>
 <item id="8_77" class="Publication">
 <attribute name="pubMedId" value="11032784"/>
@@ -140,11 +166,13 @@
 <item id="8_28" class="Publication">
 <attribute name="pubMedId" value="12783844"/>
 </item>
-<item id="8_176" class="Publication">
-<attribute name="pubMedId" value="11782442"/>
+<item id="8_26" class="Publication">
+<attribute name="pubMedId" value="16775236"/>
 </item>
-<item id="8_189" class="Publication">
-<attribute name="pubMedId" value="12213872"/>
+<item id="5_2" class="Synonym">
+<attribute name="value" value=" FPLD3"/>
+<reference name="subject" ref_id="4_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="8_59" class="Publication">
 <attribute name="pubMedId" value="17603484"/>
@@ -155,92 +183,112 @@
 <item id="8_11" class="Publication">
 <attribute name="pubMedId" value="17463246"/>
 </item>
+<item id="4_2" class="Disease">
+<attribute name="identifier" value="OMIM:601665"/>
+<attribute name="name" value="OBESITY"/>
+<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/><reference ref_id="6_6"/><reference ref_id="6_7"/><reference ref_id="6_8"/></collection>
+<collection name="publications"><reference ref_id="8_92"/><reference ref_id="8_93"/><reference ref_id="8_94"/><reference ref_id="8_95"/><reference ref_id="8_96"/><reference ref_id="8_97"/><reference ref_id="8_98"/><reference ref_id="8_99"/><reference ref_id="8_100"/><reference ref_id="8_101"/><reference ref_id="8_102"/><reference ref_id="8_103"/><reference ref_id="8_104"/><reference ref_id="8_105"/><reference ref_id="8_106"/><reference ref_id="8_107"/><reference ref_id="8_108"/><reference ref_id="8_109"/><reference ref_id="8_110"/><reference ref_id="8_111"/><reference ref_id="8_112"/><reference ref_id="8_113"/><reference ref_id="8_114"/><reference ref_id="8_115"/><reference ref_id="8_116"/><reference ref_id="8_117"/><reference ref_id="8_118"/><reference ref_id="8_119"/><reference ref_id="8_120"/><reference ref_id="8_121"/><reference ref_id="8_122"/><reference ref_id="8_123"/><reference ref_id="8_124"/><reference ref_id="8_125"/><reference ref_id="8_126"/><reference ref_id="8_127"/><reference ref_id="8_128"/><reference ref_id="8_129"/><reference ref_id="8_130"/><reference ref_id="8_131"/><reference ref_id="8_132"/><reference ref_id="8_133"/><reference ref_id="8_134"/><reference ref_id="8_135"/><reference ref_id="8_136"/><reference ref_id="8_137"/><reference ref_id="8_138"/><reference ref_id="8_139"/></collection>
+</item>
 <item id="8_36" class="Publication">
 <attribute name="pubMedId" value="11158011"/>
 </item>
-<item id="8_197" class="Publication">
-<attribute name="pubMedId" value="7926726"/>
+<item id="8_61" class="Publication">
+<attribute name="pubMedId" value="15980866"/>
+</item>
+<item id="8_92" class="Publication">
+<attribute name="pubMedId" value="17357083"/>
+</item>
+<item id="8_89" class="Publication">
+<attribute name="pubMedId" value="10622252"/>
 </item>
 <item id="8_34" class="Publication">
 <attribute name="pubMedId" value="7971976"/>
 </item>
-<item id="8_240" class="Publication">
-<attribute name="pubMedId" value="18454148"/>
-</item>
-<item id="8_217" class="Publication">
-<attribute name="pubMedId" value="15863669"/>
-</item>
-<item id="8_224" class="Publication">
-<attribute name="pubMedId" value="2336074"/>
-</item>
-<item id="8_170" class="Publication">
-<attribute name="pubMedId" value="16127449"/>
-</item>
-<item id="8_177" class="Publication">
-<attribute name="pubMedId" value="9636198"/>
-</item>
-<item id="8_162" class="Publication">
-<attribute name="pubMedId" value="9065481"/>
-</item>
-<item id="8_210" class="Publication">
-<attribute name="pubMedId" value="9425261"/>
-</item>
-<item id="8_107" class="Publication">
-<attribute name="pubMedId" value="22722857"/>
+<item id="6_6" class="Gene">
+<attribute name="primaryIdentifier" value="PPARGC1B"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="8_91" class="Publication">
-<attribute name="pubMedId" value="11443177"/>
+<attribute name="pubMedId" value="12663460"/>
 </item>
-<item id="8_139" class="Publication">
-<attribute name="pubMedId" value="22522926"/>
+<item id="8_14" class="Publication">
+<attribute name="pubMedId" value="10199785"/>
 </item>
-<item id="8_160" class="Publication">
-<attribute name="pubMedId" value="9660931"/>
+<item id="8_88" class="Publication">
+<attribute name="pubMedId" value="11788685"/>
+</item>
+<item id="8_101" class="Publication">
+<attribute name="pubMedId" value="2336074"/>
+</item>
+<item id="6_2" class="Gene">
+<attribute name="primaryIdentifier" value="PPARG1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="8_15" class="Publication">
 <attribute name="pubMedId" value="10331426"/>
 </item>
-<item id="8_168" class="Publication">
-<attribute name="pubMedId" value="10843155"/>
+<item id="8_137" class="Publication">
+<attribute name="pubMedId" value="19079261"/>
 </item>
-<item id="8_102" class="Publication">
-<attribute name="pubMedId" value="15367918"/>
+<item id="8_131" class="Publication">
+<attribute name="pubMedId" value="12646919"/>
 </item>
-<item id="8_261" class="Publication">
-<attribute name="pubMedId" value="19270708"/>
+<item id="5_1" class="Synonym">
+<attribute name="value" value=" NIDDM"/>
+<reference name="subject" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_5" class="Disease">
-<attribute name="identifier" value="OMIM:125853"/>
-<attribute name="name" value="DIABETES MELLITUS, NONINSULIN-DEPENDENT"/>
-<collection name="genes"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/></collection>
-<collection name="publications"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/><reference ref_id="8_5"/><reference ref_id="8_6"/><reference ref_id="8_7"/><reference ref_id="8_8"/><reference ref_id="8_9"/><reference ref_id="8_10"/><reference ref_id="8_11"/><reference ref_id="8_12"/><reference ref_id="8_13"/><reference ref_id="8_14"/><reference ref_id="8_15"/><reference ref_id="8_16"/><reference ref_id="8_17"/><reference ref_id="8_18"/><reference ref_id="8_19"/><reference ref_id="8_20"/><reference ref_id="8_21"/><reference ref_id="8_22"/><reference ref_id="8_23"/><reference ref_id="8_24"/><reference ref_id="8_25"/><reference ref_id="8_26"/><reference ref_id="8_27"/><reference ref_id="8_28"/><reference ref_id="8_29"/><reference ref_id="8_30"/><reference ref_id="8_31"/><reference ref_id="8_32"/><reference ref_id="8_33"/><reference ref_id="8_34"/><reference ref_id="8_35"/><reference ref_id="8_36"/><reference ref_id="8_37"/><reference ref_id="8_38"/><reference ref_id="8_39"/><reference ref_id="8_40"/><reference ref_id="8_41"/><reference ref_id="8_42"/><reference ref_id="8_43"/><reference ref_id="8_44"/><reference ref_id="8_45"/><reference ref_id="8_46"/><reference ref_id="8_47"/><reference ref_id="8_48"/><reference ref_id="8_49"/><reference ref_id="8_50"/><reference ref_id="8_51"/><reference ref_id="8_52"/><reference ref_id="8_53"/><reference ref_id="8_54"/><reference ref_id="8_55"/><reference ref_id="8_56"/><reference ref_id="8_57"/><reference ref_id="8_58"/><reference ref_id="8_59"/><reference ref_id="8_60"/><reference ref_id="8_61"/><reference ref_id="8_62"/><reference ref_id="8_63"/><reference ref_id="8_64"/><reference ref_id="8_65"/><reference ref_id="8_66"/><reference ref_id="8_67"/><reference ref_id="8_68"/><reference ref_id="8_69"/><reference ref_id="8_70"/><reference ref_id="8_71"/><reference ref_id="8_72"/><reference ref_id="8_73"/><reference ref_id="8_74"/><reference ref_id="8_75"/><reference ref_id="8_76"/><reference ref_id="8_77"/><reference ref_id="8_78"/><reference ref_id="8_79"/><reference ref_id="8_80"/><reference ref_id="8_81"/><reference ref_id="8_82"/><reference ref_id="8_83"/><reference ref_id="8_84"/><reference ref_id="8_85"/><reference ref_id="8_86"/><reference ref_id="8_87"/></collection>
+<item id="8_31" class="Publication">
+<attribute name="pubMedId" value="18477659"/>
 </item>
-<item id="4_2" class="Disease">
-<attribute name="identifier" value="OMIM:604367"/>
-<attribute name="name" value="LIPODYSTROPHY, FAMILIAL PARTIAL, TYPE 3"/>
-<collection name="genes"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/></collection>
-<collection name="publications"><reference ref_id="8_88"/><reference ref_id="8_97"/><reference ref_id="8_134"/><reference ref_id="8_188"/></collection>
+<item id="8_109" class="Publication">
+<attribute name="pubMedId" value="12646665"/>
 </item>
-<item id="8_101" class="Publication">
-<attribute name="pubMedId" value="15562023"/>
-</item>
-<item id="8_228" class="Publication">
-<attribute name="pubMedId" value="18344982"/>
-</item>
-<item id="8_124" class="Publication">
-<attribute name="pubMedId" value="7787419"/>
-</item>
-<item id="8_100" class="Publication">
-<attribute name="pubMedId" value="12881480"/>
+<item id="6_3" class="Gene">
+<attribute name="primaryIdentifier" value="PPARG2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="8_105" class="Publication">
-<attribute name="pubMedId" value="20651683"/>
+<attribute name="pubMedId" value="18344982"/>
+</item>
+<item id="8_30" class="Publication">
+<attribute name="pubMedId" value="11130726"/>
+</item>
+<item id="8_75" class="Publication">
+<attribute name="pubMedId" value="18231124"/>
+</item>
+<item id="3_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
 </item>
 <item id="8_73" class="Publication">
 <attribute name="pubMedId" value="18711366"/>
 </item>
+<item id="8_90" class="Publication">
+<attribute name="pubMedId" value="12453919"/>
+</item>
+<item id="8_20" class="Publication">
+<attribute name="pubMedId" value="17273962"/>
+</item>
+<item id="4_4" class="Disease">
+<attribute name="identifier" value="OMIM:609338"/>
+<attribute name="name" value="CAROTID INTIMAL MEDIAL THICKNESS 1"/>
+<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/></collection>
+<collection name="publications"><reference ref_id="8_140"/><reference ref_id="8_141"/><reference ref_id="8_142"/><reference ref_id="8_143"/></collection>
+</item>
 <item id="8_74" class="Publication">
 <attribute name="pubMedId" value="12727978"/>
+</item>
+<item id="6_8" class="Gene">
+<attribute name="primaryIdentifier" value="PERC 608886"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="8_22" class="Publication">
 <attribute name="pubMedId" value="12915642"/>
@@ -248,53 +296,77 @@
 <item id="8_40" class="Publication">
 <attribute name="pubMedId" value="1357346"/>
 </item>
-<item id="8_121" class="Publication">
-<attribute name="pubMedId" value="10882139"/>
+<item id="8_116" class="Publication">
+<attribute name="pubMedId" value="12646673"/>
+</item>
+<item id="8_102" class="Publication">
+<attribute name="pubMedId" value="12646666"/>
 </item>
 <item id="8_76" class="Publication">
 <attribute name="pubMedId" value="11067779"/>
 </item>
-<item id="8_147" class="Publication">
-<attribute name="pubMedId" value="7768881"/>
+<item id="6_5" class="Gene">
+<attribute name="primaryIdentifier" value="GLM1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="8_46" class="Publication">
 <attribute name="pubMedId" value="11916952"/>
 </item>
-<item id="8_108" class="Publication">
-<attribute name="pubMedId" value="11884400"/>
+<item id="8_130" class="Publication">
+<attribute name="pubMedId" value="3340127"/>
 </item>
-<item id="8_238" class="Publication">
+<item id="8_115" class="Publication">
 <attribute name="pubMedId" value="17183309"/>
 </item>
-<item id="8_134" class="Publication">
-<attribute name="pubMedId" value="12453919"/>
+<item id="8_24" class="Publication">
+<attribute name="pubMedId" value="11032783"/>
 </item>
-<item id="8_143" class="Publication">
-<attribute name="pubMedId" value="12679463"/>
+<item id="6_7" class="Gene">
+<attribute name="primaryIdentifier" value="PGC1B"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="8_167" class="Publication">
-<attribute name="pubMedId" value="10381354"/>
-</item>
-<item id="8_255" class="Publication">
-<attribute name="pubMedId" value="10577903"/>
+<item id="8_100" class="Publication">
+<attribute name="pubMedId" value="18162531"/>
 </item>
 <item id="8_33" class="Publication">
 <attribute name="pubMedId" value="20016592"/>
 </item>
+<item id="8_51" class="Publication">
+<attribute name="pubMedId" value="12750520"/>
+</item>
 <item id="8_54" class="Publication">
 <attribute name="pubMedId" value="12045211"/>
+</item>
+<item id="8_129" class="Publication">
+<attribute name="pubMedId" value="19164386"/>
+</item>
+<item id="8_108" class="Publication">
+<attribute name="pubMedId" value="11487744"/>
 </item>
 <item id="8_71" class="Publication">
 <attribute name="pubMedId" value="11904371"/>
 </item>
+<item id="8_138" class="Publication">
+<attribute name="pubMedId" value="19270708"/>
+</item>
 <item id="8_86" class="Publication">
 <attribute name="pubMedId" value="17463249"/>
+</item>
+<item id="8_53" class="Publication">
+<attribute name="pubMedId" value="10902787"/>
 </item>
 <item id="8_2" class="Publication">
 <attribute name="pubMedId" value="11443197"/>
 </item>
-<item id="8_218" class="Publication">
-<attribute name="pubMedId" value="1978328"/>
+<item id="8_132" class="Publication">
+<attribute name="pubMedId" value="10577903"/>
+</item>
+<item id="8_7" class="Publication">
+<attribute name="pubMedId" value="9038347"/>
 </item>
 <item id="8_87" class="Publication">
 <attribute name="pubMedId" value="22456734"/>
@@ -302,68 +374,83 @@
 <item id="8_45" class="Publication">
 <attribute name="pubMedId" value="16142453"/>
 </item>
-<item id="8_257" class="Publication">
-<attribute name="pubMedId" value="12754702"/>
-</item>
-<item id="8_250" class="Publication">
-<attribute name="pubMedId" value="18697794"/>
-</item>
 <item id="8_81" class="Publication">
 <attribute name="pubMedId" value="22456733"/>
 </item>
-<item id="8_117" class="Publication">
-<attribute name="pubMedId" value="9821958"/>
+<item id="8_25" class="Publication">
+<attribute name="pubMedId" value="21186350"/>
 </item>
 <item id="8_95" class="Publication">
-<attribute name="pubMedId" value="18234854"/>
+<attribute name="pubMedId" value="1978328"/>
 </item>
-<item id="8_99" class="Publication">
-<attribute name="pubMedId" value="9792554"/>
-</item>
-<item id="8_191" class="Publication">
-<attribute name="pubMedId" value="14616762"/>
+<item id="8_134" class="Publication">
+<attribute name="pubMedId" value="12754702"/>
 </item>
 <item id="8_80" class="Publication">
 <attribute name="pubMedId" value="21118154"/>
 </item>
-<item id="8_185" class="Publication">
-<attribute name="pubMedId" value="12960963"/>
+<item id="4_3" class="Disease">
+<attribute name="identifier" value="OMIM:604367"/>
+<attribute name="name" value="LIPODYSTROPHY, FAMILIAL PARTIAL, TYPE 3"/>
+<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/></collection>
+<collection name="publications"><reference ref_id="8_88"/><reference ref_id="8_89"/><reference ref_id="8_90"/><reference ref_id="8_91"/></collection>
 </item>
-<item id="8_208" class="Publication">
-<attribute name="pubMedId" value="12740443"/>
+<item id="8_128" class="Publication">
+<attribute name="pubMedId" value="3340128"/>
 </item>
-<item id="8_252" class="Publication">
-<attribute name="pubMedId" value="19164386"/>
-</item>
-<item id="8_203" class="Publication">
-<attribute name="pubMedId" value="9153284"/>
-</item>
-<item id="5_6" class="Gene">
-<attribute name="primaryIdentifier" value="PPARGC1B"/>
-<reference name="organism" ref_id="3_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="8_19" class="Publication">
+<attribute name="pubMedId" value="15924147"/>
 </item>
 <item id="8_60" class="Publication">
 <attribute name="pubMedId" value="12118251"/>
 </item>
-<item id="8_233" class="Publication">
+<item id="8_93" class="Publication">
+<attribute name="pubMedId" value="12761372"/>
+</item>
+<item id="8_110" class="Publication">
 <attribute name="pubMedId" value="2589320"/>
 </item>
-<item id="8_245" class="Publication">
-<attribute name="pubMedId" value="8981960"/>
+<item id="8_107" class="Publication">
+<attribute name="pubMedId" value="12478478"/>
 </item>
-<item id="8_182" class="Publication">
-<attribute name="pubMedId" value="14517292"/>
+<item id="8_98" class="Publication">
+<attribute name="pubMedId" value="10766251"/>
+</item>
+<item id="8_139" class="Publication">
+<attribute name="pubMedId" value="3583293"/>
+</item>
+<item id="8_17" class="Publication">
+<attribute name="pubMedId" value="10958757"/>
 </item>
 <item id="8_49" class="Publication">
 <attribute name="pubMedId" value="20574426"/>
 </item>
-<item id="8_90" class="Publication">
-<attribute name="pubMedId" value="15067317"/>
+<item id="8_122" class="Publication">
+<attribute name="pubMedId" value="8981960"/>
+</item>
+<item id="8_32" class="Publication">
+<attribute name="pubMedId" value="15472205"/>
+</item>
+<item id="8_113" class="Publication">
+<attribute name="pubMedId" value="17357078"/>
+</item>
+<item id="8_8" class="Publication">
+<attribute name="pubMedId" value="10720052"/>
+</item>
+<item id="8_52" class="Publication">
+<attribute name="pubMedId" value="14960743"/>
 </item>
 <item id="8_83" class="Publication">
 <attribute name="pubMedId" value="18711367"/>
+</item>
+<item id="8_119" class="Publication">
+<attribute name="pubMedId" value="19151714"/>
+</item>
+<item id="4_1" class="Disease">
+<attribute name="identifier" value="OMIM:125853"/>
+<attribute name="name" value="DIABETES MELLITUS, NONINSULIN-DEPENDENT"/>
+<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/></collection>
+<collection name="publications"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/><reference ref_id="8_5"/><reference ref_id="8_6"/><reference ref_id="8_7"/><reference ref_id="8_8"/><reference ref_id="8_9"/><reference ref_id="8_10"/><reference ref_id="8_11"/><reference ref_id="8_12"/><reference ref_id="8_13"/><reference ref_id="8_14"/><reference ref_id="8_15"/><reference ref_id="8_16"/><reference ref_id="8_17"/><reference ref_id="8_18"/><reference ref_id="8_19"/><reference ref_id="8_20"/><reference ref_id="8_21"/><reference ref_id="8_22"/><reference ref_id="8_23"/><reference ref_id="8_24"/><reference ref_id="8_25"/><reference ref_id="8_26"/><reference ref_id="8_27"/><reference ref_id="8_28"/><reference ref_id="8_29"/><reference ref_id="8_30"/><reference ref_id="8_31"/><reference ref_id="8_32"/><reference ref_id="8_33"/><reference ref_id="8_34"/><reference ref_id="8_35"/><reference ref_id="8_36"/><reference ref_id="8_37"/><reference ref_id="8_38"/><reference ref_id="8_39"/><reference ref_id="8_40"/><reference ref_id="8_41"/><reference ref_id="8_42"/><reference ref_id="8_43"/><reference ref_id="8_44"/><reference ref_id="8_45"/><reference ref_id="8_46"/><reference ref_id="8_47"/><reference ref_id="8_48"/><reference ref_id="8_49"/><reference ref_id="8_50"/><reference ref_id="8_51"/><reference ref_id="8_52"/><reference ref_id="8_53"/><reference ref_id="8_54"/><reference ref_id="8_55"/><reference ref_id="8_56"/><reference ref_id="8_57"/><reference ref_id="8_58"/><reference ref_id="8_59"/><reference ref_id="8_60"/><reference ref_id="8_61"/><reference ref_id="8_62"/><reference ref_id="8_63"/><reference ref_id="8_64"/><reference ref_id="8_65"/><reference ref_id="8_66"/><reference ref_id="8_67"/><reference ref_id="8_68"/><reference ref_id="8_69"/><reference ref_id="8_70"/><reference ref_id="8_71"/><reference ref_id="8_72"/><reference ref_id="8_73"/><reference ref_id="8_74"/><reference ref_id="8_75"/><reference ref_id="8_76"/><reference ref_id="8_77"/><reference ref_id="8_78"/><reference ref_id="8_79"/><reference ref_id="8_80"/><reference ref_id="8_81"/><reference ref_id="8_82"/><reference ref_id="8_83"/><reference ref_id="8_84"/><reference ref_id="8_85"/><reference ref_id="8_86"/><reference ref_id="8_87"/></collection>
 </item>
 <item id="8_56" class="Publication">
 <attribute name="pubMedId" value="9541507"/>
@@ -374,462 +461,8 @@
 <item id="8_79" class="Publication">
 <attribute name="pubMedId" value="17554300"/>
 </item>
-<item id="8_199" class="Publication">
-<attribute name="pubMedId" value="9568716"/>
-</item>
-<item id="8_211" class="Publication">
-<attribute name="pubMedId" value="12401792"/>
-</item>
 <item id="8_9" class="Publication">
 <attribute name="pubMedId" value="12874106"/>
-</item>
-<item id="8_241" class="Publication">
-<attribute name="pubMedId" value="10766252"/>
-</item>
-<item id="8_148" class="Publication">
-<attribute name="pubMedId" value="12524541"/>
-</item>
-<item id="8_206" class="Publication">
-<attribute name="pubMedId" value="12917338"/>
-</item>
-<item id="8_236" class="Publication">
-<attribute name="pubMedId" value="17357078"/>
-</item>
-<item id="8_3" class="Publication">
-<attribute name="pubMedId" value="10973253"/>
-</item>
-<item id="8_195" class="Publication">
-<attribute name="pubMedId" value="11021798"/>
-</item>
-<item id="8_262" class="Publication">
-<attribute name="pubMedId" value="3583293"/>
-</item>
-<item id="8_187" class="Publication">
-<attribute name="pubMedId" value="10394368"/>
-</item>
-<item id="8_207" class="Publication">
-<attribute name="pubMedId" value="10690291"/>
-</item>
-<item id="8_198" class="Publication">
-<attribute name="pubMedId" value="8001151"/>
-</item>
-<item id="8_149" class="Publication">
-<attribute name="pubMedId" value="10555139"/>
-</item>
-<item id="8_65" class="Publication">
-<attribute name="pubMedId" value="11723072"/>
-</item>
-<item id="8_246" class="Publication">
-<attribute name="pubMedId" value="15592877"/>
-</item>
-<item id="8_35" class="Publication">
-<attribute name="pubMedId" value="9032096"/>
-</item>
-<item id="8_58" class="Publication">
-<attribute name="pubMedId" value="12851856"/>
-</item>
-<item id="8_209" class="Publication">
-<attribute name="pubMedId" value="15662013"/>
-</item>
-<item id="4_4" class="Disease">
-<attribute name="identifier" value="OMIM:601487"/>
-<collection name="genes"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/></collection>
-<collection name="publications"><reference ref_id="8_88"/><reference ref_id="8_89"/><reference ref_id="8_90"/><reference ref_id="8_91"/><reference ref_id="8_92"/><reference ref_id="8_3"/><reference ref_id="8_93"/><reference ref_id="8_94"/><reference ref_id="8_95"/><reference ref_id="8_96"/><reference ref_id="8_97"/><reference ref_id="8_98"/><reference ref_id="8_99"/><reference ref_id="8_100"/><reference ref_id="8_101"/><reference ref_id="8_102"/><reference ref_id="8_103"/><reference ref_id="8_104"/><reference ref_id="8_105"/><reference ref_id="8_106"/><reference ref_id="8_107"/><reference ref_id="8_108"/><reference ref_id="8_109"/><reference ref_id="8_11"/><reference ref_id="8_110"/><reference ref_id="8_111"/><reference ref_id="8_112"/><reference ref_id="8_113"/><reference ref_id="8_114"/><reference ref_id="8_115"/><reference ref_id="8_116"/><reference ref_id="8_117"/><reference ref_id="8_118"/><reference ref_id="8_119"/><reference ref_id="8_120"/><reference ref_id="8_121"/><reference ref_id="8_122"/><reference ref_id="8_123"/><reference ref_id="8_124"/><reference ref_id="8_125"/><reference ref_id="8_126"/><reference ref_id="8_127"/><reference ref_id="8_128"/><reference ref_id="8_129"/><reference ref_id="8_130"/><reference ref_id="8_131"/><reference ref_id="8_132"/><reference ref_id="8_133"/><reference ref_id="8_134"/><reference ref_id="8_135"/><reference ref_id="8_136"/><reference ref_id="8_137"/><reference ref_id="8_138"/><reference ref_id="8_139"/><reference ref_id="8_140"/><reference ref_id="8_141"/><reference ref_id="8_142"/><reference ref_id="8_143"/><reference ref_id="8_144"/><reference ref_id="8_145"/><reference ref_id="8_146"/><reference ref_id="8_147"/><reference ref_id="8_148"/><reference ref_id="8_149"/><reference ref_id="8_150"/><reference ref_id="8_151"/><reference ref_id="8_152"/><reference ref_id="8_153"/><reference ref_id="8_154"/><reference ref_id="8_155"/><reference ref_id="8_156"/><reference ref_id="8_157"/><reference ref_id="8_158"/><reference ref_id="8_159"/><reference ref_id="8_160"/><reference ref_id="8_161"/><reference ref_id="8_162"/><reference ref_id="8_163"/><reference ref_id="8_164"/><reference ref_id="8_165"/><reference ref_id="8_166"/><reference ref_id="8_167"/><reference ref_id="8_168"/><reference ref_id="8_169"/><reference ref_id="8_170"/><reference ref_id="8_171"/><reference ref_id="8_172"/><reference ref_id="8_173"/><reference ref_id="8_174"/><reference ref_id="8_175"/><reference ref_id="8_176"/><reference ref_id="8_177"/><reference ref_id="8_178"/><reference ref_id="8_179"/><reference ref_id="8_180"/><reference ref_id="8_181"/><reference ref_id="8_182"/><reference ref_id="8_183"/><reference ref_id="8_184"/><reference ref_id="8_185"/><reference ref_id="8_186"/><reference ref_id="8_187"/><reference ref_id="8_60"/><reference ref_id="8_188"/><reference ref_id="8_62"/><reference ref_id="8_189"/><reference ref_id="8_190"/><reference ref_id="8_191"/><reference ref_id="8_192"/><reference ref_id="8_193"/><reference ref_id="8_194"/><reference ref_id="8_195"/><reference ref_id="8_196"/><reference ref_id="8_197"/><reference ref_id="8_198"/><reference ref_id="8_199"/><reference ref_id="8_200"/><reference ref_id="8_201"/><reference ref_id="8_202"/><reference ref_id="8_203"/><reference ref_id="8_204"/><reference ref_id="8_205"/><reference ref_id="8_206"/><reference ref_id="8_207"/><reference ref_id="8_208"/><reference ref_id="8_209"/><reference ref_id="8_210"/><reference ref_id="8_211"/><reference ref_id="8_212"/><reference ref_id="8_86"/><reference ref_id="8_213"/><reference ref_id="8_214"/></collection>
-</item>
-<item id="8_242" class="Publication">
-<attribute name="pubMedId" value="19151714"/>
-</item>
-<item id="8_63" class="Publication">
-<attribute name="pubMedId" value="9312173"/>
-</item>
-<item id="8_221" class="Publication">
-<attribute name="pubMedId" value="10766251"/>
-</item>
-<item id="5_7" class="Gene">
-<attribute name="primaryIdentifier" value="PGC1B"/>
-<reference name="organism" ref_id="3_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_171" class="Publication">
-<attribute name="pubMedId" value="15232616"/>
-</item>
-<item id="8_48" class="Publication">
-<attribute name="pubMedId" value="20085713"/>
-</item>
-<item id="8_201" class="Publication">
-<attribute name="pubMedId" value="16778057"/>
-</item>
-<item id="8_138" class="Publication">
-<attribute name="pubMedId" value="14625542"/>
-</item>
-<item id="8_78" class="Publication">
-<attribute name="pubMedId" value="20360734"/>
-</item>
-<item id="8_202" class="Publication">
-<attribute name="pubMedId" value="10523018"/>
-</item>
-<item id="8_154" class="Publication">
-<attribute name="pubMedId" value="14569127"/>
-</item>
-<item id="8_16" class="Publication">
-<attribute name="pubMedId" value="11575290"/>
-</item>
-<item id="8_200" class="Publication">
-<attribute name="pubMedId" value="15254591"/>
-</item>
-<item id="8_118" class="Publication">
-<attribute name="pubMedId" value="12110166"/>
-</item>
-<item id="8_226" class="Publication">
-<attribute name="pubMedId" value="19091795"/>
-</item>
-<item id="1_1" class="DataSource">
-<attribute name="name" value="Online Mendelian Inheritance in Man"/>
-</item>
-<item id="8_146" class="Publication">
-<attribute name="pubMedId" value="11095470"/>
-</item>
-<item id="5_2" class="Gene">
-<attribute name="primaryIdentifier" value="PPARG1"/>
-<reference name="organism" ref_id="3_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_159" class="Publication">
-<attribute name="pubMedId" value="17299075"/>
-</item>
-<item id="8_131" class="Publication">
-<attribute name="pubMedId" value="11158005"/>
-</item>
-<item id="8_110" class="Publication">
-<attribute name="pubMedId" value="22304921"/>
-</item>
-<item id="8_173" class="Publication">
-<attribute name="pubMedId" value="15175761"/>
-</item>
-<item id="8_4" class="Publication">
-<attribute name="pubMedId" value="16885549"/>
-</item>
-<item id="8_196" class="Publication">
-<attribute name="pubMedId" value="7799943"/>
-</item>
-<item id="0_1" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
-<attribute name="url" value="http://www.sequenceontology.org"/>
-</item>
-<item id="8_227" class="Publication">
-<attribute name="pubMedId" value="18454146"/>
-</item>
-<item id="8_68" class="Publication">
-<attribute name="pubMedId" value="18008060"/>
-</item>
-<item id="8_12" class="Publication">
-<attribute name="pubMedId" value="19657112"/>
-</item>
-<item id="8_66" class="Publication">
-<attribute name="pubMedId" value="17179727"/>
-</item>
-<item id="8_243" class="Publication">
-<attribute name="pubMedId" value="1746554"/>
-</item>
-<item id="8_194" class="Publication">
-<attribute name="pubMedId" value="15356014"/>
-</item>
-<item id="8_219" class="Publication">
-<attribute name="pubMedId" value="1684952"/>
-</item>
-<item id="8_248" class="Publication">
-<attribute name="pubMedId" value="7258336"/>
-</item>
-<item id="8_93" class="Publication">
-<attribute name="pubMedId" value="12714563"/>
-</item>
-<item id="5_3" class="Gene">
-<attribute name="primaryIdentifier" value="PPARG2"/>
-<reference name="organism" ref_id="3_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_37" class="Publication">
-<attribute name="pubMedId" value="19020324"/>
-</item>
-<item id="8_155" class="Publication">
-<attribute name="pubMedId" value="9467001"/>
-</item>
-<item id="8_229" class="Publication">
-<attribute name="pubMedId" value="15647995"/>
-</item>
-<item id="8_140" class="Publication">
-<attribute name="pubMedId" value="14691478"/>
-</item>
-<item id="8_114" class="Publication">
-<attribute name="pubMedId" value="15057233"/>
-</item>
-<item id="5_4" class="Gene">
-<attribute name="primaryIdentifier" value="CIMT1"/>
-<reference name="organism" ref_id="3_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_265" class="Publication">
-<attribute name="pubMedId" value="10229743"/>
-</item>
-<item id="5_5" class="Gene">
-<attribute name="primaryIdentifier" value="GLM1"/>
-<reference name="organism" ref_id="3_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_258" class="Publication">
-<attribute name="pubMedId" value="3941707"/>
-</item>
-<item id="5_8" class="Gene">
-<attribute name="primaryIdentifier" value="PERC 608886"/>
-<reference name="organism" ref_id="3_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_137" class="Publication">
-<attribute name="pubMedId" value="14614508"/>
-</item>
-<item id="8_29" class="Publication">
-<attribute name="pubMedId" value="9758619"/>
-</item>
-<item id="6_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_94" class="Publication">
-<attribute name="pubMedId" value="12096349"/>
-</item>
-<item id="8_123" class="Publication">
-<attribute name="pubMedId" value="12370429"/>
-</item>
-<item id="8_174" class="Publication">
-<attribute name="pubMedId" value="10364535"/>
-</item>
-<item id="8_259" class="Publication">
-<attribute name="pubMedId" value="17183312"/>
-</item>
-<item id="8_136" class="Publication">
-<attribute name="pubMedId" value="15254581"/>
-</item>
-<item id="8_132" class="Publication">
-<attribute name="pubMedId" value="14660788"/>
-</item>
-<item id="8_43" class="Publication">
-<attribute name="pubMedId" value="19020323"/>
-</item>
-<item id="5_1" class="Gene">
-<attribute name="primaryIdentifier" value="PPARG"/>
-<reference name="organism" ref_id="3_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_247" class="Publication">
-<attribute name="pubMedId" value="15486293"/>
-</item>
-<item id="8_133" class="Publication">
-<attribute name="pubMedId" value="12379847"/>
-</item>
-<item id="8_26" class="Publication">
-<attribute name="pubMedId" value="16775236"/>
-</item>
-<item id="8_163" class="Publication">
-<attribute name="pubMedId" value="9568715"/>
-</item>
-<item id="8_119" class="Publication">
-<attribute name="pubMedId" value="17213274"/>
-</item>
-<item id="8_152" class="Publication">
-<attribute name="pubMedId" value="12161538"/>
-</item>
-<item id="8_158" class="Publication">
-<attribute name="pubMedId" value="10675354"/>
-</item>
-<item id="8_61" class="Publication">
-<attribute name="pubMedId" value="15980866"/>
-</item>
-<item id="7_1" class="Synonym">
-<attribute name="value" value=" NIDDM"/>
-<reference name="subject" ref_id="4_5"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_184" class="Publication">
-<attribute name="pubMedId" value="21532595"/>
-</item>
-<item id="8_213" class="Publication">
-<attribute name="pubMedId" value="15249658"/>
-</item>
-<item id="8_161" class="Publication">
-<attribute name="pubMedId" value="10984506"/>
-</item>
-<item id="8_260" class="Publication">
-<attribute name="pubMedId" value="19079261"/>
-</item>
-<item id="8_175" class="Publication">
-<attribute name="pubMedId" value="12754253"/>
-</item>
-<item id="8_14" class="Publication">
-<attribute name="pubMedId" value="10199785"/>
-</item>
-<item id="8_88" class="Publication">
-<attribute name="pubMedId" value="11788685"/>
-</item>
-<item id="8_179" class="Publication">
-<attribute name="pubMedId" value="9753710"/>
-</item>
-<item id="8_166" class="Publication">
-<attribute name="pubMedId" value="17515919"/>
-</item>
-<item id="8_188" class="Publication">
-<attribute name="pubMedId" value="12663460"/>
-</item>
-<item id="8_31" class="Publication">
-<attribute name="pubMedId" value="18477659"/>
-</item>
-<item id="8_204" class="Publication">
-<attribute name="pubMedId" value="18059282"/>
-</item>
-<item id="8_254" class="Publication">
-<attribute name="pubMedId" value="12646919"/>
-</item>
-<item id="8_30" class="Publication">
-<attribute name="pubMedId" value="11130726"/>
-</item>
-<item id="8_75" class="Publication">
-<attribute name="pubMedId" value="18231124"/>
-</item>
-<item id="8_231" class="Publication">
-<attribute name="pubMedId" value="11487744"/>
-</item>
-<item id="3_1" class="Organism">
-<attribute name="taxonId" value="9606"/>
-</item>
-<item id="8_157" class="Publication">
-<attribute name="pubMedId" value="11514592"/>
-</item>
-<item id="8_142" class="Publication">
-<attribute name="pubMedId" value="15562396"/>
-</item>
-<item id="8_20" class="Publication">
-<attribute name="pubMedId" value="17273962"/>
-</item>
-<item id="8_251" class="Publication">
-<attribute name="pubMedId" value="3340128"/>
-</item>
-<item id="8_120" class="Publication">
-<attribute name="pubMedId" value="12161548"/>
-</item>
-<item id="8_103" class="Publication">
-<attribute name="pubMedId" value="19043829"/>
-</item>
-<item id="8_239" class="Publication">
-<attribute name="pubMedId" value="12646673"/>
-</item>
-<item id="8_225" class="Publication">
-<attribute name="pubMedId" value="12646666"/>
-</item>
-<item id="8_180" class="Publication">
-<attribute name="pubMedId" value="11684010"/>
-</item>
-<item id="8_253" class="Publication">
-<attribute name="pubMedId" value="3340127"/>
-</item>
-<item id="8_186" class="Publication">
-<attribute name="pubMedId" value="21307849"/>
-</item>
-<item id="8_24" class="Publication">
-<attribute name="pubMedId" value="11032783"/>
-</item>
-<item id="8_126" class="Publication">
-<attribute name="pubMedId" value="20200519"/>
-</item>
-<item id="8_112" class="Publication">
-<attribute name="pubMedId" value="8702406"/>
-</item>
-<item id="8_122" class="Publication">
-<attribute name="pubMedId" value="12037571"/>
-</item>
-<item id="8_150" class="Publication">
-<attribute name="pubMedId" value="21532596"/>
-</item>
-<item id="8_223" class="Publication">
-<attribute name="pubMedId" value="18162531"/>
-</item>
-<item id="8_214" class="Publication">
-<attribute name="pubMedId" value="10851250"/>
-</item>
-<item id="8_51" class="Publication">
-<attribute name="pubMedId" value="12750520"/>
-</item>
-<item id="8_165" class="Publication">
-<attribute name="pubMedId" value="12727991"/>
-</item>
-<item id="8_135" class="Publication">
-<attribute name="pubMedId" value="10843190"/>
-</item>
-<item id="8_116" class="Publication">
-<attribute name="pubMedId" value="12479814"/>
-</item>
-<item id="8_92" class="Publication">
-<attribute name="pubMedId" value="19561094"/>
-</item>
-<item id="8_232" class="Publication">
-<attribute name="pubMedId" value="12646665"/>
-</item>
-<item id="8_53" class="Publication">
-<attribute name="pubMedId" value="10902787"/>
-</item>
-<item id="8_7" class="Publication">
-<attribute name="pubMedId" value="9038347"/>
-</item>
-<item id="8_25" class="Publication">
-<attribute name="pubMedId" value="21186350"/>
-</item>
-<item id="8_141" class="Publication">
-<attribute name="pubMedId" value="10839530"/>
-</item>
-<item id="8_128" class="Publication">
-<attribute name="pubMedId" value="15797964"/>
-</item>
-<item id="8_193" class="Publication">
-<attribute name="pubMedId" value="11600579"/>
-</item>
-<item id="8_98" class="Publication">
-<attribute name="pubMedId" value="9168928"/>
-</item>
-<item id="8_19" class="Publication">
-<attribute name="pubMedId" value="15924147"/>
-</item>
-<item id="8_115" class="Publication">
-<attribute name="pubMedId" value="9228052"/>
-</item>
-<item id="8_111" class="Publication">
-<attribute name="pubMedId" value="12970322"/>
-</item>
-<item id="8_17" class="Publication">
-<attribute name="pubMedId" value="10958757"/>
-</item>
-<item id="8_32" class="Publication">
-<attribute name="pubMedId" value="15472205"/>
-</item>
-<item id="8_8" class="Publication">
-<attribute name="pubMedId" value="10720052"/>
-</item>
-<item id="8_52" class="Publication">
-<attribute name="pubMedId" value="14960743"/>
-</item>
-<item id="8_127" class="Publication">
-<attribute name="pubMedId" value="16822823"/>
-</item>
-<item id="8_164" class="Publication">
-<attribute name="pubMedId" value="12821117"/>
-</item>
-<item id="8_256" class="Publication">
-<attribute name="pubMedId" value="18454136"/>
 </item>
 <item id="8_50" class="Publication">
 <attribute name="pubMedId" value="19933169"/>
@@ -837,70 +470,63 @@
 <item id="8_38" class="Publication">
 <attribute name="pubMedId" value="15940393"/>
 </item>
-<item id="8_222" class="Publication">
-<attribute name="pubMedId" value="15703762"/>
-</item>
 <item id="8_64" class="Publication">
 <attribute name="pubMedId" value="9482914"/>
+</item>
+<item id="8_133" class="Publication">
+<attribute name="pubMedId" value="18454136"/>
 </item>
 <item id="8_1" class="Publication">
 <attribute name="pubMedId" value="17726085"/>
 </item>
-<item id="8_230" class="Publication">
-<attribute name="pubMedId" value="12478478"/>
+<item id="8_3" class="Publication">
+<attribute name="pubMedId" value="10973253"/>
 </item>
-<item id="8_234" class="Publication">
+<item id="8_111" class="Publication">
 <attribute name="pubMedId" value="15037865"/>
 </item>
-<item id="8_113" class="Publication">
-<attribute name="pubMedId" value="12974743"/>
+<item id="8_118" class="Publication">
+<attribute name="pubMedId" value="10766252"/>
 </item>
-<item id="8_190" class="Publication">
-<attribute name="pubMedId" value="11511919"/>
+<item id="8_97" class="Publication">
+<attribute name="pubMedId" value="18000969"/>
+</item>
+<item id="8_99" class="Publication">
+<attribute name="pubMedId" value="15703762"/>
 </item>
 <item id="8_57" class="Publication">
 <attribute name="pubMedId" value="18952314"/>
 </item>
-<item id="8_263" class="Publication">
+<item id="8_65" class="Publication">
+<attribute name="pubMedId" value="11723072"/>
+</item>
+<item id="8_140" class="Publication">
 <attribute name="pubMedId" value="8553406"/>
+</item>
+<item id="8_35" class="Publication">
+<attribute name="pubMedId" value="9032096"/>
 </item>
 <item id="8_39" class="Publication">
 <attribute name="pubMedId" value="11030756"/>
 </item>
-<item id="8_129" class="Publication">
-<attribute name="pubMedId" value="11836319"/>
+<item id="8_123" class="Publication">
+<attribute name="pubMedId" value="15592877"/>
 </item>
-<item id="8_130" class="Publication">
-<attribute name="pubMedId" value="11849312"/>
+<item id="8_58" class="Publication">
+<attribute name="pubMedId" value="12851856"/>
 </item>
-<item id="8_266" class="Publication">
-<attribute name="pubMedId" value="12574549"/>
-</item>
-<item id="4_3" class="Disease">
-<attribute name="identifier" value="OMIM:601665"/>
-<attribute name="name" value="OBESITY"/>
-<collection name="genes"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_7"/><reference ref_id="5_8"/></collection>
-<collection name="publications"><reference ref_id="8_215"/><reference ref_id="8_216"/><reference ref_id="8_217"/><reference ref_id="8_218"/><reference ref_id="8_219"/><reference ref_id="8_220"/><reference ref_id="8_221"/><reference ref_id="8_222"/><reference ref_id="8_223"/><reference ref_id="8_224"/><reference ref_id="8_225"/><reference ref_id="8_226"/><reference ref_id="8_227"/><reference ref_id="8_228"/><reference ref_id="8_229"/><reference ref_id="8_230"/><reference ref_id="8_231"/><reference ref_id="8_232"/><reference ref_id="8_233"/><reference ref_id="8_234"/><reference ref_id="8_235"/><reference ref_id="8_236"/><reference ref_id="8_237"/><reference ref_id="8_238"/><reference ref_id="8_239"/><reference ref_id="8_240"/><reference ref_id="8_241"/><reference ref_id="8_242"/><reference ref_id="8_243"/><reference ref_id="8_244"/><reference ref_id="8_245"/><reference ref_id="8_246"/><reference ref_id="8_247"/><reference ref_id="8_248"/><reference ref_id="8_249"/><reference ref_id="8_250"/><reference ref_id="8_251"/><reference ref_id="8_252"/><reference ref_id="8_253"/><reference ref_id="8_254"/><reference ref_id="8_255"/><reference ref_id="8_256"/><reference ref_id="8_257"/><reference ref_id="8_258"/><reference ref_id="8_259"/><reference ref_id="8_260"/><reference ref_id="8_261"/><reference ref_id="8_262"/></collection>
-</item>
-<item id="8_172" class="Publication">
-<attribute name="pubMedId" value="12077117"/>
-</item>
-<item id="8_192" class="Publication">
-<attribute name="pubMedId" value="18801968"/>
-</item>
-<item id="8_212" class="Publication">
-<attribute name="pubMedId" value="11879638"/>
+<item id="8_114" class="Publication">
+<attribute name="pubMedId" value="15806395"/>
 </item>
 <item id="8_55" class="Publication">
 <attribute name="pubMedId" value="9498630"/>
 </item>
-<item id="8_156" class="Publication">
-<attribute name="pubMedId" value="14506127"/>
+<item id="7_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="8_220" class="Publication">
-<attribute name="pubMedId" value="18000969"/>
-</item>
-<item id="8_237" class="Publication">
-<attribute name="pubMedId" value="15806395"/>
+<item id="8_143" class="Publication">
+<attribute name="pubMedId" value="12574549"/>
 </item>
 </items>

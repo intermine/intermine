@@ -1,7 +1,5 @@
 package org.intermine.bio.dataconversion;
 
-import java.io.BufferedReader;
-
 /*
  * Copyright (C) 2002-2016 FlyMine
  *
@@ -24,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.io.BufferedReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -99,9 +97,9 @@ public class OmimConverter extends BioDirectoryConverter
             throw new RuntimeException("Not all required files for the OMIM sources were found in: "
                     + dataDir.getAbsolutePath() + ", was missing " + missingFiles);
         }
-
-        processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
+        // don't change the processing order. or else!
         processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
+        processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
         processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
     }
 
@@ -165,7 +163,14 @@ public class OmimConverter extends BioDirectoryConverter
                 LOG.info("Not processing " + line + ", no OMIM ID");
                 continue;
             }
-            Item disease = getDisease(mimNumber);
+            // only get diseases from already created map. don't create any new diseases
+            Item disease = diseases.get(mimNumber);
+            if (disease == null) {
+                // disease will be NULL if mimNumber belongs to a gene. OMIM assigns genes and
+                // phenotypes MIM numbers and does not distinguish the two in this file. We are
+                // relying on our diseases map to be populated by the processOmimTxtFile() method
+                continue;
+            }
             String symbols = null;
             String[] firstBits = line.split(delim);
             if (firstBits.length != 2) {
