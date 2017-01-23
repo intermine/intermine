@@ -53,6 +53,7 @@ project(':intermine-objectstore-main') {
         compile project(':intermine-model-main')
         //compile group: 'log4j', name: 'log4j', version: '1.2.17'
         compile group: 'antlr', name: 'antlr', version: '2.7.6'
+        compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
         compile group: 'org.apache.ant', name: 'ant', version: '1.9.7'
         compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
         compile group: 'torque', name: 'torque-gen', version: '3.3'
@@ -73,18 +74,19 @@ project(':testmodel') {
     }
 }
 
+/*
 project(':intermine-objectstore-test') {
     dependencies {
         compile project(':intermine-model-main')
         compile project(':intermine-objectstore-main')
         compile project(':testmodel')
-        //org.gnu.readline is not in a public repo
-        compile fileTree(dir: "$projectDir/lib", include: '*.jar')
+        compile fileTree(dir: "$projectDir/lib", include: '*.jar') //org.gnu.readline is not in a public repo
         compile group: 'junit', name: 'junit', version: '4.8.1'
         compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
         compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
     }
 }
+*/
 
 project(':userprofile') {
     dependencies {
@@ -101,10 +103,11 @@ project(':intermine-api-main') {
         compile project(':intermine-pathquery-main')
         compile project(':userprofile')
         compile group: 'xalan', name: 'xalan', version: '2.7.2'
-        compile group: 'org.apache.lucene', name: 'lucene-core', version: '3.5.0'
-        compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.5.0'
-        compile group: 'org.apache.lucene', name: 'lucene-highlighter', version: '3.5.0'
-        compile group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.3'
+        compile group: 'org.apache.lucene', name: 'lucene-core', version: '3.0.2'
+        compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.0.2'
+        compile group: 'org.apache.lucene', name: 'lucene-highlighter', version: '3.0.2'
+        compile group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.2'
         compile group: 'com.browseengine.bobo', name: 'bobo-browse', version: '4.0.2'
     }
 }
+

@@ -1,6 +1,6 @@
 rootProject.name = 'intermine'
 
-include ':intermine-model-main', ':intermine-model-test', ':intermine-pathquery-main', ':intermine-pathquery-test', ':intermine-objectstore-main', ':testmodel', ':intermine-objectstore-test',
+include ':intermine-model-main', ':intermine-model-test', ':intermine-pathquery-main', ':intermine-pathquery-test' , ':intermine-objectstore-main', ':testmodel',// ':intermine-objectstore-test',
 ':userprofile', ':intermine-api-main'
 
 project(':intermine-model-main').projectDir = new File(settingsDir, './model/main')
@@ -9,6 +9,7 @@ project(':intermine-pathquery-main').projectDir = new File(settingsDir, './pathq
 project(':intermine-pathquery-test').projectDir = new File(settingsDir, './pathquery/test')
 project(':intermine-objectstore-main').projectDir = new File(settingsDir, './objectstore/main')
 project(':testmodel').projectDir = new File(settingsDir, './objectstore/model/testmodel')
-project(':intermine-objectstore-test').projectDir = new File(settingsDir, './objectstore/test')
+//project(':intermine-objectstore-test').projectDir = new File(settingsDir, './objectstore/test')
 project(':userprofile').projectDir = new File(settingsDir, './api/model/userprofile')
 project(':intermine-api-main').projectDir = new File(settingsDir, './api/main')
+
