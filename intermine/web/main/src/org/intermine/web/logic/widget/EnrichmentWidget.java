@@ -96,9 +96,9 @@ public class EnrichmentWidget extends Widget
             try {
                 Class<?> clazz = Class.forName(correctionCoefficientClassName);
                 Constructor<?> c = clazz.getConstructor(new Class[] {WidgetConfig.class,
-                    ObjectStore.class, InterMineBag.class});
+                    ObjectStore.class, InterMineBag.class, String.class});
                 correctionCoefficient =  (CorrectionCoefficient) c.newInstance(new Object[] {
-                    config, os, bag});
+                    config, os, bag, ids});
                 this.extraCorrectionCoefficient = correctionCoefficient
                     .isSelected(options.getExtraCorrectionCoefficient());
             } catch (ClassNotFoundException cnfe) {
