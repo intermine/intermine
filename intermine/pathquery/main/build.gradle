@@ -1,4 +1,4 @@
-apply plugin: "antlr"
+apply plugin: "antlr" 
 
 sourceSets {
     main {
