@@ -4,11 +4,11 @@ task wrapper(type: Wrapper) {
 
 subprojects {
   apply plugin: "java"
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6  
   repositories {
       mavenCentral()
   }
-  sourceCompatibility = 1.6
-  targetCompatibility = 1.6
 }
 
 project(':intermine-model-main') {
@@ -26,6 +26,7 @@ project(':intermine-model-test') {
         compile group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
         compile group: 'junit', name: 'junit', version: '4.8.1'
         compile group: 'org.skyscreamer', name: 'jsonassert', version: '1.2.3'
+        compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
     }
 }
 
@@ -41,19 +42,16 @@ project(':intermine-pathquery-main') {
 
 project(':intermine-pathquery-test') {
     dependencies {
-        compile project(':intermine-model-main')
         compile project(':intermine-model-test')
         compile project(':intermine-pathquery-main')
-        compile group: 'junit', name: 'junit', version: '4.8.1'
+        //compile group: 'junit', name: 'junit', version: '4.8.1'
     }
 }
+
 
 project(':intermine-objectstore-main') {
     dependencies {
         compile project(':intermine-model-main')
-        //compile group: 'log4j', name: 'log4j', version: '1.2.17'
-        compile group: 'antlr', name: 'antlr', version: '2.7.6'
-        compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
         compile group: 'org.apache.ant', name: 'ant', version: '1.9.7'
         compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
         compile group: 'torque', name: 'torque-gen', version: '3.3'
@@ -62,12 +60,13 @@ project(':intermine-objectstore-main') {
         compile group: 'com.zaxxer', name: 'HikariCP', version: '2.2.5'
         compile group: 'net.iharder', name: 'base64', version: '2.3.8'
         compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4'
+        compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
     }
 }
 
+
 project(':testmodel') {
     dependencies {
-        compile project(':intermine-model-main')
         compile project(':intermine-objectstore-main')
         compile fileTree(dir: "$buildDir/distributions", include: '*.zip')
         compile group: 'ant-contrib', name: 'ant-contrib', version: '1.0b3'
@@ -88,26 +87,26 @@ project(':intermine-objectstore-test') {
 }
 */
 
+
 project(':userprofile') {
     dependencies {
-        compile project(':intermine-model-main')
         compile project(':intermine-objectstore-main')
         compile fileTree(dir: "$buildDir/distributions", include: '*.zip')
     }
 }
 
+/*
 project(':intermine-api-main') {
     dependencies {
-        compile project(':intermine-model-main')
-        compile project(':intermine-objectstore-main')
         compile project(':intermine-pathquery-main')
         compile project(':userprofile')
         compile group: 'xalan', name: 'xalan', version: '2.7.2'
-        compile group: 'org.apache.lucene', name: 'lucene-core', version: '3.0.2'
+        compile group: 'org.apache.lucene', name: 'lucene-core', version: '3.0.3'
         compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.0.2'
         compile group: 'org.apache.lucene', name: 'lucene-highlighter', version: '3.0.2'
         compile group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.2'
         compile group: 'com.browseengine.bobo', name: 'bobo-browse', version: '4.0.2'
     }
 }
+*/
 
