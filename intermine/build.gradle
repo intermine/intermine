@@ -44,7 +44,6 @@ project(':intermine-pathquery-test') {
     dependencies {
         compile project(':intermine-model-test')
         compile project(':intermine-pathquery-main')
-        //compile group: 'junit', name: 'junit', version: '4.8.1'
     }
 }
 
@@ -58,7 +57,7 @@ project(':intermine-objectstore-main') {
         compile group: 'commons-io', name: 'commons-io', version: '2.5'
         compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.2'
         compile group: 'com.zaxxer', name: 'HikariCP', version: '2.2.5'
-        compile group: 'net.iharder', name: 'base64', version: '2.3.8'
+        compile group: 'net.iharder', name: 'base64', version: '2.3.7'
         compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4'
         compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
     }
@@ -87,7 +86,6 @@ project(':intermine-objectstore-test') {
 }
 */
 
-
 project(':userprofile') {
     dependencies {
         compile project(':intermine-objectstore-main')
@@ -95,18 +93,13 @@ project(':userprofile') {
     }
 }
 
-/*
 project(':intermine-api-main') {
     dependencies {
         compile project(':intermine-pathquery-main')
         compile project(':userprofile')
         compile group: 'xalan', name: 'xalan', version: '2.7.2'
-        compile group: 'org.apache.lucene', name: 'lucene-core', version: '3.0.3'
-        compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.0.2'
-        compile group: 'org.apache.lucene', name: 'lucene-highlighter', version: '3.0.2'
-        compile group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.2'
-        compile group: 'com.browseengine.bobo', name: 'bobo-browse', version: '4.0.2'
+        compile fileTree(dir: "$projectDir/lib", include: '*.jar') //for lucene
+        compile group: 'org.json', name: 'json', version: '20131018'
     }
 }
-*/
 
