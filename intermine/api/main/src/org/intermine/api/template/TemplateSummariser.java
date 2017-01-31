@@ -16,6 +16,7 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.io.IOException;
 
 import net.iharder.Base64;
 
@@ -130,6 +131,12 @@ public class TemplateSummariser
             }
             LOG.error("ObjectStoreException while storing summary for " + templateQuery.getName());
             throw e;
+        } catch (IOException e) {
+            if (osw.isInTransaction()) {
+                osw.abortTransaction();
+            }
+            LOG.error("IOException in encoding object while storing summary for " + templateQuery.getName());
+            throw new RuntimeException("IOException in encoding object while storing summary");
         } catch (RuntimeException e) {
             if (osw.isInTransaction()) {
                 osw.abortTransaction();
