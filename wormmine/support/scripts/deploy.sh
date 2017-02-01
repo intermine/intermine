@@ -7,7 +7,7 @@
 # TODO: not process XML files already processed
 
 #set the version to be accessed
-wbrel="WS256"
+wbrel="WS257"
 echo 'Release version' $wbrel
 
 
@@ -20,22 +20,24 @@ echo 'Release version' $wbrel
 #  directory and file                           #
 #                                               #
 #################### Species #################### 
-declare -A species=(["c_elegans"]="PRJNA13758" 
-                    ["b_malayi"]="PRJNA10729" 
-                    ["c_angaria"]="PRJNA51225" 
-                    ["c_brenneri"]="PRJNA20035"
-                    ["c_briggsae"]="PRJNA10731" 
-                    ["c_japonica"]="PRJNA12591" 
-                    ["c_remanei"]="PRJNA53967" 
-                    ["c_tropicalis"]="PRJNA53597"
-                    ["o_volvulus"]="PRJEB513" 
-                    ["p_pacificus"]="PRJNA12644" 
-                    ["p_redivivus"]="PRJNA186477" 
-                    ["s_ratti"]="PRJEB125"
-                    ["c_sinica"]="PRJNA194557")
+#declare -A species=(["c_elegans"]="PRJNA13758" 
+#                    ["b_malayi"]="PRJNA10729" 
+#                    ["c_angaria"]="PRJNA51225" 
+#                    ["c_brenneri"]="PRJNA20035"
+#                    ["c_briggsae"]="PRJNA10731" 
+#                    ["c_japonica"]="PRJNA12591" 
+#                    ["c_remanei"]="PRJNA53967" 
+#                    ["c_tropicalis"]="PRJNA53597"
+#                    ["o_volvulus"]="PRJEB513" 
+#                    ["p_pacificus"]="PRJNA12644" 
+#                    ["p_redivivus"]="PRJNA186477" 
+#                    ["s_ratti"]="PRJEB125"
+#                    ["c_sinica"]="PRJNA194557")
 
-sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
-#sourcedir='/Users/nuin/wormmine/WS256-test-data'
+declare -A species=(["c_elegans"]="PRJNA13758")
+
+#sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
+sourcedir='/mnt/data2/acedb_dumps/WS257/WS257-test-data'
 
 #################### Main dirs ##################
 #                                               #
@@ -94,7 +96,9 @@ do
     echo 'transferring' "$spe"."${species["$spe"]}"."$wbrel".gff
     wget -O raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz  "ftp://206.108.120.212/pub/wormbase/releases/"$wbrel"/species/"$spe"/"${species["$spe"]}"/"$spe"."${species["$spe"]}"."$wbrel".annotations.gff3.gz"
     gunzip -v raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz
+    echo 'Starting GFF3 pre-processing'
     bash $testlab'/perl/preprocess/gff3/scrape_gff3.sh' $datadir/wormbase-gff3/raw/"$spe"."${species["$spe"]}"."$wbrel".gff $datadir/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff
+    echo 'Ended #########################'
   else
     echo  raw/"$spe"."${species["$spe"]}"."$wbrel".gff 'found'
   fi
@@ -248,5 +252,5 @@ rm -v $datadir'/panther/RefGenomeOrthologs.tar.gz'
 
 cd $intermine'/wormmine'
 pwd
-../bio/scripts/project_build -b -v localhost wormmine_dump
+#../bio/scripts/project_build -b -v localhost wormmine_dump
 

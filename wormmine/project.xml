@@ -72,137 +72,6 @@
 		<property name="src.data.dir"          location="&datadir;/fasta/c_elegans/genomic" />
 	</source> 
 
-     <source name="b_malayi-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&b_malayi_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase b_malayi chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/b_malayi/genomic/" />
-    </source> 
-
-	<source name="c_angaria-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&c_angaria_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase c_angaria chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/c_angaria/genomic/" />
-    </source> 
-	
-	<source name="c_brenneri-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&c_brenneri_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase c_brenneri chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/c_brenneri/genomic/" />
-    </source> 
-
-	<source name="c_briggsae-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&c_briggsae_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase c_briggsae chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/c_briggsae/genomic/" />
-    </source> 
-
-	<source name="c_japonica-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&c_japonica_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase c_japonica chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/c_japonica/genomic/" />
-    </source>
-
-	<source name="c_remanei-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&c_remanei_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase c_remanei chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/c_remanei/genomic/" />
-    </source>
-
-	<source name="c_sinica-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&c_sinica_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase c_sinica chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/c_sinica/genomic/" />
-    </source>
-
-	<source name="c_tropicalis-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&c_tropicalis_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase c_tropicalis chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/c_tropicalis/genomic/" />
-    </source>
-
-	<source name="o_volvulus-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&o_volvulus_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase o_volvulus chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/o_volvulus/genomic/" />
-    </source>
-
-	<source name="p_pacificus-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&p_pacificus_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase p_pacificus chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/p_pacificus/genomic/" />
-    </source>
-
-	<source name="p_redivivus-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&p_redivivus_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase p_redivivus chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/p_redivivus/genomic/" />
-    </source>
-
-	<source name="s_ratti-genomic-fasta" type="fasta">
-        <property name="fasta.taxonId"         value="&s_ratti_taxon_id;"/>
-        <property name="fasta.className"       value="org.intermine.model.bio.Chromosome"/>
-        <property name="fasta.classAttribute"  value="primaryIdentifier"/>
-        <property name="fasta.dataSourceName"  value="WormBase"/>
-        <property name="fasta.dataSetTitle"    value="WormBase s_ratti chromosome sequence (Fasta)"/> 
-        <property name="fasta.sequenceType"    value="dna"/>
-        <property name="fasta.includes"        value="*.fa*"/>
-        <property name="src.data.dir"          location="&datadir;/fasta/s_ratti/genomic/" />
-    </source>
 
     <!-- FASTA Protein sequences -->
 	<source name="celegans-protein-fasta" type="fasta">
@@ -219,178 +88,9 @@
 		<property name="fasta.PIDPrefix"		value="WP:"/>
 	</source>
 
-	<source name="b_malayi-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&b_malayi_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase b_malayi protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/b_malayi/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
-	<source name="c_angaria-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&c_angaria_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase c_angaria protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/c_angaria/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
-	<source name="c_brenneri-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&c_brenneri_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase c_brenneri protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/c_brenneri/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
-	<source name="c_briggsae-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&c_briggsae_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase c_briggsae protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/c_briggsae/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
-	<source name="c_japonica-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&c_japonica_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase c_japonica protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/c_japonica/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
-	<source name="c_remanei-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&c_remanei_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase c_remanei protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/c_remanei/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
-	<source name="c_sinica-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&c_sinica_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase c_sinica protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/c_sinica/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
-	<source name="c_tropicalis-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&c_tropicalis_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase c_tropicalis protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/c_tropicalis/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
-	<source name="o_volvulus-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&o_volvulus_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase o_volvulus protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/o_volvulus/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
-	<source name="p_pacificus-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&p_pacificus_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase p_pacificus protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/p_pacificus/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>	
-
-	<source name="p_redivivus-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&p_redivivus_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase p_redivivus protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/p_redivivus/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>	
-
-
-	<source name="s_ratti-protein-fasta" type="fasta">
-		<property name="fasta.taxonId"         	value="&s_ratti_taxon_id;"/>
-		<property name="fasta.className"       	value="org.intermine.model.bio.Protein"/>
-		<property name="fasta.classAttribute"  	value="primaryIdentifier"/>
-		<property name="fasta.dataSourceName"  	value="WormBase FTP"/>
-		<property name="fasta.dataSetTitle"    	value="WormBase s_ratti protein sequence (Fasta)"/>
-		<property name="fasta.sequenceType"    	value="protein"/>
-		<property name="src.data.dir"          	location="&datadir;/fasta/s_ratti/proteins/prepped" />
-		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
-			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
-	</source>
-
 
 	<!-- CORE GENOMIC ANNOTATION IN GFF3 -->
-	<source name="celegans-gff3-gene" type="gff" dump="false">
+	<source name="celegans-gff3" type="gff" dump="false">
 		<property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
 		<property name="gff3.seqDataSourceName" value="WormBase"/>
 		<property name="gff3.dataSourceName"    value="WormBase"/>
@@ -405,7 +105,7 @@
 		are processed.  Case insensitive.
 		gene, mrna, cds, exon
 		-->
-		<property name="gff3.allowedClasses" 	 value="gene"/>
+		<property name="gff3.allowedClasses" 	 value="gene,mrna,cds"/>
 		
 		<!-- 
 		This file maps IDs from GFF3 into a type compatible with other 
@@ -415,37 +115,35 @@
 		<property name="gff3.IDMappingFile"	 value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/> 
 		
 	</source>
-
+	<!--
 	<source name="celegans-gff3-mrna" type="gff" dump="false">
 		<property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
 		<property name="gff3.seqDataSourceName" value="WormBase"/>
 		<property name="gff3.dataSourceName"    value="WormBase"/>
 		<property name="gff3.seqClsName"        value="Chromosome"/>
 		<property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 mRNA)"/>
-		<!--<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>-->
+		<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>
 		<property name="src.data.dir"           location="&datadir;/wormbase-gff3/final"/> 
 		<property name="gff3.allowedClasses" 	value="mrna"/>
 		<property name="gff3.IDMappingFile"	 value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/> 
-		<!-- 
+		
 		Maps type names from GFF3 into recognized InterMine class names
 		Format: key \t value. All other columns ignored 
-		-->
 		<property name="gff3.typeMappingFile"    value="&datadir;/wormbase-gff3/mapping/typeMapping.tab"/>
 	</source>
-
-	<source name="celegans-gff3-cds" type="gff" dump="true">
+	<source name="celegans-gff3-cds" type="gff" dump="false">
 		<property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
 		<property name="gff3.seqDataSourceName" value="WormBase"/>
 		<property name="gff3.dataSourceName"    value="WormBase"/>
 		<property name="gff3.seqClsName"        value="Chromosome"/>
 		<property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 CDS)"/>
-		<!--<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>-->
+		<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>
 		<property name="src.data.dir"           location="&datadir;/wormbase-gff3/final"/> 
 		<property name="gff3.allowedClasses" 	 value="cds"/>
 	</source>
-	
+	-->
 	<!-- WormBase aceDB data loader.  Base dir is wormmine/integrate -->
-	<source name="wb-acedb-gene" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-gene" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/gene/XML" />
 		<!--
 			This file maps intermine data classes to an XPath query.
@@ -478,7 +176,7 @@
 	</source>
 
 
-	<source name="wb-acedb-transcript" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-transcript" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/transcript/XML" />
 
 		<property name="mapping.file"
@@ -497,7 +195,7 @@
 	</source>
 
 
-	<source name="wb-acedb-cds" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-cds" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/cds/XML" />
 
 		<property name="mapping.file"
@@ -565,7 +263,7 @@
 
 	</source>
 
-	<source name="wb-acedb-expr_cluster" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-expr_cluster" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/expr_cluster/XML" />
 		<property name="mapping.file"
 				value = "&datadir;/wormbase-acedb/expr_cluster/mapping/expr_cluster_mapping.properties" />
@@ -577,7 +275,7 @@
 		<property name="data.set" value="AceDB XML (Expression Cluster)"/>
 	</source>
 
-	<source name="wb-acedb-protein" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-protein" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/protein/XML" />
 		<property name="mapping.file"
 				value="&datadir;/wormbase-acedb/protein/mapping/protein_mapping.properties" />
@@ -590,7 +288,7 @@
 	</source>
 
 
-	<source name="wb-acedb-variation" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-variation" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/variation/XML" />
 
 		<property name="mapping.file"
@@ -607,7 +305,7 @@
 		<property name="debug" value="false"/>
 	</source>
 
-    <source name="wb-acedb-RNAi" type="wormbase-acedb" dump="true">
+    <source name="wb-acedb-RNAi" type="wormbase-acedb" dump="false">
           <property name="src.data.dir" location="&datadir;/wormbase-acedb/RNAi/XML" />
           <property name="mapping.file"
               value="&datadir;/wormbase-acedb/RNAi/mapping/RNAi_mapping.properties" />
