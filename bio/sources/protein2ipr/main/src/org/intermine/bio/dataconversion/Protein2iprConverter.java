@@ -180,7 +180,7 @@ public class Protein2iprConverter extends BioFileConverter
             dbName = "Pfam";
         } else if (dbId.startsWith("SM")) {
             dbName = "SMART";
-        } else if (dbId.startsWith("SSF")) {
+        } else if (dbId.startsWith("SSF") || dbId.startsWith("SFL") ) {
             dbName = "SUPERFAMILY";
         } else if (dbId.startsWith("PS")) {
             dbName = "PROSITE";
