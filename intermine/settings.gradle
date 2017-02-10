@@ -1,15 +1,35 @@
 rootProject.name = 'intermine'
 
-include ':intermine-model-main', ':intermine-model-test', ':intermine-pathquery-main', ':intermine-pathquery-test' , ':intermine-objectstore-main', ':testmodel', //':intermine-objectstore-test',
-':userprofile', ':intermine-api-main'
+include ':intermine-model-main', ':intermine-model-test',
+':intermine-pathquery-main', ':intermine-pathquery-test' ,
+':intermine-objectstore-main', ':testmodel', ':zfulldata', ':intermine-objectstore-test',
+':intermine-integrate-main', 
+':userprofile', ':intermine-api-main', ':intermine-api-test',
+':intermine-webservice-client'//, ':intermine-webservice-test'
 
+//intermine-model
 project(':intermine-model-main').projectDir = new File(settingsDir, './model/main')
 project(':intermine-model-test').projectDir = new File(settingsDir, './model/test')
+
+//intermine-pathquery
 project(':intermine-pathquery-main').projectDir = new File(settingsDir, './pathquery/main')
 project(':intermine-pathquery-test').projectDir = new File(settingsDir, './pathquery/test')
+
+//intermine-objectstore
 project(':intermine-objectstore-main').projectDir = new File(settingsDir, './objectstore/main')
 project(':testmodel').projectDir = new File(settingsDir, './objectstore/model/testmodel')
-//project(':intermine-objectstore-test').projectDir = new File(settingsDir, './objectstore/test')
-project(':userprofile').projectDir = new File(settingsDir, './api/model/userprofile')
-project(':intermine-api-main').projectDir = new File(settingsDir, './api/main')
+project(':zfulldata').projectDir = new File(settingsDir, './integrate/model/fulldata')
+project(':intermine-objectstore-test').projectDir = new File(settingsDir, './objectstore/test')
 
+//intermine-integrate
+project(':intermine-integrate-main').projectDir = new File(settingsDir, './integrate/main')
+project(':userprofile').projectDir = new File(settingsDir, './api/model/userprofile')
+
+//intermine-api
+project(':intermine-api-main').projectDir = new File(settingsDir, './api/main')
+//project(':intermine-api-test').projectDir = new File(settingsDir, './api/test')
+
+//intermine-webservice
+project(':intermine-webservice-client').projectDir = new File(settingsDir, './webservice/client/main')
+//project(':intermine-webservice-samples').projectDir = new File(settingsDir, './webservice/client/samples')
+//project(':intermine-webservice-test').projectDir = new File(settingsDir, './webservice/client/test')

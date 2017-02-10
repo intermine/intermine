@@ -1,0 +1,35 @@
+task setAntClassLoader {
+  doLast {
+    ClassLoader antClassLoader = org.apache.tools.ant.Project.class.classLoader
+      configurations.runtime.each { File f ->
+        antClassLoader.addURL(f.toURI().toURL())
+    }
+    antClassLoader.addURL(file('./resources/').toURI().toURL()) //fulldata_model.xml in the classpath
+  }
+}
+
+ant.importBuild('build.xml') {
+    antTargetName -> 'fd-' + antTargetName
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['build/gen/src']
+        }
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+}
+
+ant.properties['no.dep'] = 'true'
+ant.properties['regenerate.java'] = 'true'
+ant.properties['model.name'] = 'fulldata'
+ant.properties['gen.src.dir'] = 'build/gen/src'
+
+tasks.compileJava.dependsOn 'setAntClassLoader'
+tasks.compileJava.dependsOn 'fd-generate'
+tasks.'fd-generate'.mustRunAfter 'setAntClassLoader'
+
+
