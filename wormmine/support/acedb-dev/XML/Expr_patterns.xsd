@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+         <!-- XML Schema Generated from XML Document on Mon Feb 20 2017 16:54:48 GMT-0700 (MST) -->
+         <!-- with XmlGrid.net Free Online Service http://xmlgrid.net -->
+         <xs:element name="Expr_patterns">
+               <xs:complexType>
+                     <xs:sequence>
+                           <xs:element name="Expr_pattern" maxOccurs="unbounded" type="xs:string">
+                                 <xs:complexType>
+                                       <xs:sequence>
+                                             <xs:element name="Expression_of">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Gene">
+                                                                     <xs:complexType>
+                                                                           <xs:sequence>
+                                                                                 <xs:element name="Gene" type="xs:string"></xs:element>
+                                                                           </xs:sequence>
+                                                                     </xs:complexType>
+                                                               </xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Homol">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Homol_homol">
+                                                                     <xs:complexType>
+                                                                           <xs:sequence>
+                                                                                 <xs:element name="Homol_data" type="xs:string"></xs:element>
+                                                                           </xs:sequence>
+                                                                     </xs:complexType>
+                                                               </xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Type">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Reporter_gene">
+                                                                     <xs:complexType>
+                                                                           <xs:sequence>
+                                                                                 <xs:element name="Text" type="xs:string"></xs:element>
+                                                                           </xs:sequence>
+                                                                     </xs:complexType>
+                                                               </xs:element>
+                                                               <xs:element name="Localizome"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Picture">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Picture" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Remark">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Text" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Experiment">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Strain">
+                                                                     <xs:complexType>
+                                                                           <xs:sequence>
+                                                                                 <xs:element name="Strain" type="xs:string"></xs:element>
+                                                                           </xs:sequence>
+                                                                     </xs:complexType>
+                                                               </xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Reference">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Paper" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Transgene">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Transgene" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Curated_by">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Txt" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                       </xs:sequence>
+                                 </xs:complexType>
+                           </xs:element>
+                     </xs:sequence>
+               </xs:complexType>
+         </xs:element>
+   </xs:schema>

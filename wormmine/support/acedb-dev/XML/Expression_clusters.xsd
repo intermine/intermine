@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+         <!-- XML Schema Generated from XML Document on Mon Feb 20 2017 21:25:46 GMT-0700 (MST) -->
+         <!-- with XmlGrid.net Free Online Service http://xmlgrid.net -->
+         <xs:element name="Expression_clusters">
+               <xs:complexType>
+                     <xs:sequence>
+                           <xs:element name="Expression_cluster" maxOccurs="unbounded" type="xs:string">
+                                 <xs:complexType>
+                                       <xs:sequence>
+                                             <xs:element name="Description">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Text" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Species">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Species" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Algorithm">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Txt" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Reference">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Paper" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Microarray_results">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Microarray_results" maxOccurs="unbounded" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Gene">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Gene" maxOccurs="unbounded" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Attribute_of">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Microarray_experiment">
+                                                                     <xs:complexType>
+                                                                           <xs:sequence>
+                                                                                 <xs:element name="Microarray_experiment" maxOccurs="unbounded" type="xs:string"></xs:element>
+                                                                           </xs:sequence>
+                                                                     </xs:complexType>
+                                                               </xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                             <xs:element name="Remark">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="Text" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                       </xs:sequence>
+                                 </xs:complexType>
+                           </xs:element>
+                     </xs:sequence>
+               </xs:complexType>
+         </xs:element>
+   </xs:schema>
