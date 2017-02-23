@@ -38,7 +38,7 @@
   
   <sources>
 
-  	<source name="wb-acedb-species" type="wormbase-acedb" dump="false">
+  <source name="wb-acedb-species" type="wormbase-acedb" dump="false">
         <property name="src.data.dir" location="&datadir;/wormbase-acedb/species/XML" />
         <property name="mapping.file"
 		value="/home/nuin/properties/species_mapping.properties" />
@@ -105,7 +105,7 @@
 		are processed.  Case insensitive.
 		gene, mrna, cds, exon
 		-->
-		<property name="gff3.allowedClasses" 	 value="gene,mrna,cds"/>
+		<property name="gff3.allowedClasses" 	 value="gene,mrna,cds,exon"/>
 		
 		<!-- 
 		This file maps IDs from GFF3 into a type compatible with other 
@@ -318,12 +318,12 @@
       </source>
 
 
-	<source name="panther" type="panther">
+<!--	<source name="panther" type="panther">
       <property name="src.data.dir" location="&datadir;/panther"/>
        <property name="panther.organisms" value="6239"/>
        <property name="panther.homologues" value="10090 9606 7955 7227 4932 10116"/>
     </source>
-
+-->
 	<source name="entrez-organism" type="entrez-organism">
         <property name="src.data.file" location="&datadir;/entrez-organism/organisms.xml"/>
     </source>
