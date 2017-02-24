@@ -52,15 +52,34 @@
 		<attribute name="method" type="java.lang.String" />
 		<attribute name="type" type="java.lang.String" />
 		<attribute name="publicName" type="java.lang.String" />
-		<attribute name="otherName" type="java.lang.String" />
-		<attribute name="KOAllele" type="java.lang.String" />
+
+		<attribute name="donorSpliceSite" type="java.lang.String" />
+		<attribute name="acceptorSpliceSite" type="java.lang.String" />
+
+		<!-- new entries -->
+		<attribute name="otherName"     type="java.lang.String" />
+		<attribute name="rearrangement" type="java.lang.String" />
+		<attribute name="typeOfMutation" type="java.lang.String" />	
+		<attribute name="sequenceStatus" type="java.lang.String" />
+		<attribute name="productionMethod" type="java.lang.String" />
+		<attribute name="detectionMethod" type="java.lang.String" />
+		<attribute name="KOConsortiumAllele" type="java.lang.String" />
 		<attribute name="NBPAllele" type="java.lang.String" />
-		<attribute name="nemaAllele" type="java.lang.String" />
+		<attribute name="nemaGENETAGConsortiumAllele" type="java.lang.String" />
+		<attribute name="natureOfVariation" type="java.lang.String" />
+		<attribute name="status" type="java.lang.String" />
+		<attribute name="positiveClone" type="java.lang.String" />
 		<attribute name="amber_UAG" type="java.lang.String" />
 		<attribute name="ochre_UAA" type="java.lang.String" />
 		<attribute name="opal_UGA" type="java.lang.String" />
-		<attribute name="donorSpliceSite" type="java.lang.String" />
-		<attribute name="acceptorSpliceSite" type="java.lang.String" />
+		<attribute name="missense" type="java.lang.String" />
+		<attribute name="missenseChange" type="java.lang.String" />
+		<attribute name="mutagen" type="java.lang.String" />
+		<!-- collection? -->
+		<attribute name="geneClass" type="java.lang.String" />
+		<attribute name="interpolatedMapPosition" type="java.lang.String" />
+		
+
 		<collection name="affectsGenes" referenced-type="Gene" reverse-reference="affectedByAlleles" />
 		<collection name="affectsCDSs" referenced-type="CDS" reverse-reference="affectedByAlleles" />
 		<collection name="affectsTranscripts" referenced-type="Transcript" reverse-reference="affectedByAlleles" />
