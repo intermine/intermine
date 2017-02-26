@@ -69,19 +69,19 @@
 	  <collection name="affectsTranscripts" referenced-type="Transcript" reverse-reference="affectedByAlleles" />
 	  <collection name="strains" referenced-type="Strain" reverse-reference="variations" />
 	  <collection name="fromLabs" referenced-type="Laboratory" reverse-reference="variations" />
+	  <!--  will handle when expanding variation
 	  <collection name="geneClass" referenced-type="GeneClass" reverse-reference="variations" /> 
+	  --> 
 	</class>
 
 	<class name="Laboratory" is-interface="true">
 	  <attribute name="primaryIdentifier" type="java.lang.String"/>
 	  <collection name="variations" referenced-type="Allele" reverse-reference="fromLabs" />
 	  <collection name="RNAis" referenced-type="RNAi" reverse-reference="laboratories"/>
-	  <!-- new collection, WS258 - this is probably not correct -->
 	  <collection name="geneClasses" referenced-type="GeneClass" reverse-reference="designatingLaboratory"/>		
 	  <collection name="formerGeneClasses" referenced-type="GeneClass" reverse-reference="formerDesignatingLaboratory"/>
 	</class>
 
-	<!-- new class for WS258: geneClass; the variation collection here may be spurious -->	
 	<class name="GeneClass" is-interface="true">
 		<attribute name="primaryIdentifier" type="java.lang.String"/>
 		<attribute name="mainName"    type="java.lang.String"/>
@@ -92,7 +92,9 @@
 		<attribute name="designatingLaboratory" type="java.lang.String"/>
 		<attribute name="formerDesignatingLaboratory" type="java.lang.String"/>
 
+		<!-- will handle when expanding variations 
 		<collection name="variations"    referenced-type="Allele" reverse-reference="geneClass" />
+		-->
 
 		<collection name="genes"         referenced-type="Gene" reverse-reference="geneClass" />
 		<collection name="formerGenes"   referenced-type="Gene" reverse-reference="formerGeneClass" />
