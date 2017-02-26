@@ -11,48 +11,10 @@
 		<collection name="transcripts" referenced-type="Transcript" reverse-reference="exons"/>
 	</class>
 -->
-	<class name="Strain" extends="BioEntity" is-interface="true">
-		<reference name="gene" referenced-type="Gene" reverse-reference="strains"/>
-		<collection name="variations" referenced-type="Allele" reverse-reference="strains" />
-		
-		<!-- new attributes for WS258 -->		
-		<attribute name="genotype" type="java.lang.String"/>
-		<attribute name="otherName" type="java.lang.String"/>
-		<attribute name="representative" type="java.lang.String"/>
-		<attribute name="species" type="java.lang.String"/>
-		<attribute name="ncbiTaxonomyID" type="java.lang.String"/>
-
-		<!-- biogrpahical and origin data -->
-		<attribute name="madeBy"     type="java.lang.String"/>
-		<attribute name="contact"    type="java.lang.String"/>
-		<attribute name="remark"     type="java.lang.String"/>
-		<attribute name="laboratory" type="java.lang.String"/>
-		<attribute name="inbreedingState" type="java.lang.String"/>
-		<attribute name="outcrossed" type="java.lang.String"/>
-		<attribute name="mutagen" type="java.lang.String"/>
-		<attribute name="strainHistory" type="java.lang.String"/>
-		<attribute name="dateFirstFrozen" type="java.lang.String"/>
-		<attribute name="CGCReceived" type="java.lang.String"/>
-
-		<!-- Isolation -->
-		<attribute name="elevation" type="java.lang.String"/>
-		<attribute name="place"     type="java.lang.String"/>
-		<attribute name="landscape" type="java.lang.String"/>
-		<attribute name="substrate" type="java.lang.String"/>
-		<attribute name="associatedOrganisms" type="java.lang.String"/>
-		<attribute name="logSizeOfPopulation" type="java.lang.String"/>
-		<attribute name="sampledBy" type="java.lang.String"/>
-		<attribute name="isolatedBy" type="java.lang.String"/>
-		<attribute name="date" type="java.lang.String"/>
-
-		<!-- collection? -->
-		<attribute name="lifeStage" type="java.lang.String"/>
-
-		<collection name="phenotypesObserved" referenced-type="Phenotype" reverse-reference="observedIn"/>
-		<collection name="phenotypesNotObserved" referenced-type="Phenotype" reverse-reference="notObservedIn"/>
-		
-	</class>
-
+        <class name="Strain" extends="BioEntity" is-interface="true">
+                <reference name="gene" referenced-type="Gene" reverse-reference="strains"/>
+                <collection name="variations" referenced-type="Allele" reverse-reference="strains" />
+        </class>
 	<class name="Gene" is-interface="true">
 		<attribute name="operon" type="java.lang.String"/>
 		<reference name="referenceAllele" referenced-type="Allele" />
@@ -87,61 +49,36 @@
 	<class name="Motif" extends="BioEntity" is-interface="true">
 		<collection name="proteins" referenced-type="Protein" reverse-reference="motifs"/>
 	</class>
+
 	<class name="Allele" is-interface="true">
-		<attribute name="naturalVariant" type="java.lang.String" />
-		<attribute name="method" type="java.lang.String" />
-		<attribute name="type" type="java.lang.String" />
-		<attribute name="publicName" type="java.lang.String" />
-
-		<attribute name="donorSpliceSite" type="java.lang.String" />
-		<attribute name="acceptorSpliceSite" type="java.lang.String" />
-
-		<!-- new entries -->
-		<attribute name="otherName"     type="java.lang.String" />
-		<attribute name="rearrangement" type="java.lang.String" />
-		<attribute name="typeOfMutation" type="java.lang.String" />	
-		<attribute name="sequenceStatus" type="java.lang.String" />
-		<attribute name="productionMethod" type="java.lang.String" />
-		<attribute name="detectionMethod" type="java.lang.String" />
-		<attribute name="KOConsortiumAllele" type="java.lang.String" />
-		<attribute name="NBPAllele" type="java.lang.String" />
-		<attribute name="nemaGENETAGConsortiumAllele" type="java.lang.String" />
-		<attribute name="natureOfVariation" type="java.lang.String" />
-		<attribute name="status" type="java.lang.String" />
-		<attribute name="positiveClone" type="java.lang.String" />
-		<attribute name="amber_UAG" type="java.lang.String" />
-		<attribute name="ochre_UAA" type="java.lang.String" />
-		<attribute name="opal_UGA" type="java.lang.String" />
-		<attribute name="missense" type="java.lang.String" />
-		<attribute name="missenseChange" type="java.lang.String" />
-		<attribute name="mutagen" type="java.lang.String" />
-		<attribute name="interpolatedMapPosition" type="java.lang.String" />
-		
-
-		<collection name="affectsGenes" referenced-type="Gene" reverse-reference="affectedByAlleles" />
-		<collection name="affectsCDSs" referenced-type="CDS" reverse-reference="affectedByAlleles" />
-		<collection name="affectsTranscripts" referenced-type="Transcript" reverse-reference="affectedByAlleles" />
-		<collection name="strains" referenced-type="Strain" reverse-reference="variations" />
-		<collection name="fromLabs" referenced-type="Laboratory" reverse-reference="variations" />
-
-		<!-- new collection for WS258 -->
-		<collection name="geneClass" referenced-type="GeneClass" reverse-reference="variations" /> 
+	  <attribute name="naturalVariant" type="java.lang.String" />
+	  <attribute name="method" type="java.lang.String" />
+	  <attribute name="type" type="java.lang.String" />
+	  <attribute name="publicName" type="java.lang.String" />
+	  <attribute name="otherName" type="java.lang.String" />
+	  <attribute name="KOAllele" type="java.lang.String" />
+	  <attribute name="NBPAllele" type="java.lang.String" />
+	  <attribute name="nemaAllele" type="java.lang.String" />
+	  <attribute name="amber_UAG" type="java.lang.String" />
+	  <attribute name="ochre_UAA" type="java.lang.String" />
+	  <attribute name="opal_UGA" type="java.lang.String" />
+	  <attribute name="donorSpliceSite" type="java.lang.String" />
+	  <attribute name="acceptorSpliceSite" type="java.lang.String" />
+	  <collection name="affectsGenes" referenced-type="Gene" reverse-reference="affectedByAlleles" />
+	  <collection name="affectsCDSs" referenced-type="CDS" reverse-reference="affectedByAlleles" />
+	  <collection name="affectsTranscripts" referenced-type="Transcript" reverse-reference="affectedByAlleles" />
+	  <collection name="strains" referenced-type="Strain" reverse-reference="variations" />
+	  <collection name="fromLabs" referenced-type="Laboratory" reverse-reference="variations" />
+	  <collection name="geneClass" referenced-type="GeneClass" reverse-reference="variations" /> 
 	</class>
-	
+
 	<class name="Laboratory" is-interface="true">
-		<attribute name="primaryIdentifier" type="java.lang.String"/>
-
-		<!-- new attributes, WS258 -->
-		<attribute name="representative" type="java.lang.String"/>
-		<attribute name="strainDesignation" type="java.lang.String"/>
-		<attribute name="alleleDesignation" type="java.lang.String"/>
-
-		<collection name="variations" referenced-type="Allele" reverse-reference="fromLabs" />
-		<collection name="RNAis" referenced-type="RNAi" reverse-reference="laboratories"/>
-		
-		<!-- new collection, WS258 - this is probably not correct -->
-		<collection name="geneClasses" referenced-type="GeneClass" reverse-reference="designatingLaboratory"/>		
-		<collection name="geneClasses" referenced-type="GeneClass" reverse-reference="formerDesignatingLaboratory"/>
+	  <attribute name="primaryIdentifier" type="java.lang.String"/>
+	  <collection name="variations" referenced-type="Allele" reverse-reference="fromLabs" />
+	  <collection name="RNAis" referenced-type="RNAi" reverse-reference="laboratories"/>
+	  <!-- new collection, WS258 - this is probably not correct -->
+	  <collection name="geneClasses" referenced-type="GeneClass" reverse-reference="designatingLaboratory"/>		
+	  <collection name="geneClasses" referenced-type="GeneClass" reverse-reference="formerDesignatingLaboratory"/>
 	</class>
 
 	<!-- new class for WS258: geneClass; the variation collection here may be spurious -->	
