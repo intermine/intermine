@@ -78,7 +78,7 @@
 	  <collection name="RNAis" referenced-type="RNAi" reverse-reference="laboratories"/>
 	  <!-- new collection, WS258 - this is probably not correct -->
 	  <collection name="geneClasses" referenced-type="GeneClass" reverse-reference="designatingLaboratory"/>		
-	  <collection name="geneClasses" referenced-type="GeneClass" reverse-reference="formerDesignatingLaboratory"/>
+	  <collection name="formerGeneClasses" referenced-type="GeneClass" reverse-reference="formerDesignatingLaboratory"/>
 	</class>
 
 	<!-- new class for WS258: geneClass; the variation collection here may be spurious -->	
@@ -87,17 +87,17 @@
 		<attribute name="mainName"    type="java.lang.String"/>
 		<attribute name="otherName"   type="java.lang.String"/>
 		<attribute name="remark"    type="java.lang.String"/>
-		<!-- <attribute name="phenotype"   type="java.lang.String"/> -->
+		<!-- <attribute name="phenotype"   type="java.lang.String"/> redundant with description -->
 		<attribute name="description" type="java.lang.String"/>
 		<attribute name="designatingLaboratory" type="java.lang.String"/>
 		<attribute name="formerDesignatingLaboratory" type="java.lang.String"/>
 
-		<collection name="designatingLaboratory"       referenced-type="Laboratory" reverse-reference="geneClass" />
-		<collection name="formerDesignatingLaboratory" referenced-type="Laboratory" reverse-reference="geneClass" />
-		<collection name="variations" referenced-type="Allele" reverse-reference="geneClass" />
-		<!-- I don't think these collections are correctly named -->
-		<collection name="genes"          referenced-type="Gene" reverse-reference="geneClass" />
-		<collection name="formerGenes"   referenced-type="Gene" reverse-reference="geneClass" />
+		<collection name="variations"    referenced-type="Allele" reverse-reference="geneClass" />
+
+		<collection name="genes"         referenced-type="Gene" reverse-reference="geneClass" />
+		<collection name="formerGenes"   referenced-type="Gene" reverse-reference="formerGeneClass" />
+		<collection name="designatingLaboratory"       referenced-type="Laboratory" reverse-reference="geneClasses" />
+		<collection name="formerDesignatingLaboratory" referenced-type="Laboratory" reverse-reference="formerGeneClasses" />
 	</class>
 
 	<class name="OntologyTerm" is-interface="true">
