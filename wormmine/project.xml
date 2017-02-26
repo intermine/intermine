@@ -317,6 +317,18 @@
           <property name="data.set" value="AceDB XML (RNAi)"/>
       </source>
 
+    <source name="wb-acedb-gene-class" type="wormbase-acedb" dump="false">
+          <property name="src.data.dir" location="&datadir;/wormbase-acedb/GeneClass/XML" />
+          <property name="mapping.file"
+              value="&datadir;/wormbase-acedb/GeneClass/mapping/gene-class_mapping.properties" />
+          <property name="key.file"
+              value="../../bio/sources/wormbase-acedb/resources/wormbase-acedb_keys.properties"/>
+          <property name="source.class" value="GeneClass"/>
+          <property name="rejects.file"
+              value="&datadir;/wormbase-acedb-gene-class-rejects.xml"/>
+          <property name="data.set" value="AceDB XML (Gene Class)"/>
+      </source>
+
 
 <!--	<source name="panther" type="panther">
       <property name="src.data.dir" location="&datadir;/panther"/>
