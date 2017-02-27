@@ -1,8 +1,3 @@
 <query name="" model="testmodel" view="Employee.name Employee.fullTime Employee.age Employee.end" constraintLogic="A">
-  <node path="Employee" type="Employee">
-  </node>
-  <node path="Employee.age" type="int">
-    <constraint op="&gt;" value="bad"  code="A">
-    </constraint>
-  </node>
+  <constraint path="Employee.age" op="&gt;" value="bad"  code="A"/>
 </query>

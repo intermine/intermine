@@ -96,8 +96,8 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
 
                     // get the types
                     List<Class<?>> lt = PathQueryResultHelper.
-                    queryForTypesInCollection(reportObject.getObject(), "overlappingFeatures",
-                            im.getObjectStore());
+                            queryForTypesInCollection(reportObject.getObject(),
+                                    "overlappingFeatures", im.getObjectStore());
 
                     // make collection into a list
                     List<?> collectionList;
@@ -110,8 +110,6 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
                             collectionList = new ArrayList(collection);
                         }
                     }
-
-
 
                 // separate objects into their types
                 looptyloop:

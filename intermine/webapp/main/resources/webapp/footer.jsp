@@ -45,7 +45,8 @@
 </div>
 <div class="funding-footer footer">
   <!-- funding -->
-  <p><fmt:message key="funding" /></p>
+  <div class="funders"><fmt:message key="funding" /></div>
+  <div class="credits"><fmt:message key="credits" /></div>
 </div>
 
 </div>
