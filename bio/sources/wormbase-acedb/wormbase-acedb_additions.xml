@@ -69,9 +69,8 @@
 	  <collection name="affectsTranscripts" referenced-type="Transcript" reverse-reference="affectedByAlleles" />
 	  <collection name="strains" referenced-type="Strain" reverse-reference="variations" />
 	  <collection name="fromLabs" referenced-type="Laboratory" reverse-reference="variations" />
-	  <!--  will handle when expanding variation
+	  <!--  will handle when expanding variation -->
 	  <collection name="geneClass" referenced-type="GeneClass" reverse-reference="variations" /> 
-	  --> 
 	</class>
 
 	<class name="Laboratory" is-interface="true">
@@ -91,11 +90,7 @@
 		<attribute name="description" type="java.lang.String"/>
 		<attribute name="designatingLaboratory" type="java.lang.String"/>
 		<attribute name="formerDesignatingLaboratory" type="java.lang.String"/>
-
-		<!-- will handle when expanding variations 
 		<collection name="variations"    referenced-type="Allele" reverse-reference="geneClass" />
-		-->
-
 		<collection name="genes"         referenced-type="Gene" reverse-reference="geneClass" />
 		<collection name="formerGenes"   referenced-type="Gene" reverse-reference="formerGeneClass" />
 		<collection name="designatingLaboratory"       referenced-type="Laboratory" reverse-reference="geneClasses" />
