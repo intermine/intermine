@@ -918,6 +918,9 @@ public final class MainHelper
         } else if (ConstraintOp.CONTAINS.equals(op)) {
             return new SimpleConstraint(qe, ConstraintOp.MATCHES,
                     new QueryValue("%" + value + "%"));
+        } else if (ConstraintOp.DOES_NOT_CONTAIN.equals(op)) {
+            return new SimpleConstraint(qe, ConstraintOp.DOES_NOT_MATCH,
+                    new QueryValue("%" + value + "%"));
         } else {
             return new SimpleConstraint(qe, op, new QueryValue(value));
         }
