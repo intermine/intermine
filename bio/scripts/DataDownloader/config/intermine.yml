@@ -1,4 +1,4 @@
-log_dir: "/micklem/data/download_logs"
+log_dir: "/tmp"
 data_dir: "/micklem/data"
 
 default_sources:
@@ -28,6 +28,13 @@ default_sources:
   - "MousePheno"
   - "HumanGeneIdentifiers"
   - "HPO"
+  - "NCBIFasta"
+  - "NCBIGff"
+  - "ClinVar"
+  - "IntActComplexes"
+  - "HGNC"
+  - "NCBIGeneHuman"
+  - "Orphanet"
 
 UniProt:
     organisms:

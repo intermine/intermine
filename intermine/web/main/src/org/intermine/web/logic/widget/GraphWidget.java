@@ -16,11 +16,14 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
 /**
  * @author Xavier Watkins
@@ -43,13 +46,15 @@ public class GraphWidget extends Widget
      * @param config config for widget
      * @param interMineBag bag for widget
      * @param os objectstore
+     * @param ids intermine IDs, required if bag is NULL
      * @param options The options for this widget.
      */
     public GraphWidget(GraphWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
-                       WidgetOptions options) {
+                       WidgetOptions options, String ids) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
+        this.ids = ids;
         this.filter = options.getFilter();
         validateBagType();
     }
@@ -103,7 +108,7 @@ public class GraphWidget extends Widget
     @Override
     public void process() {
         checkNotProcessed();
-        grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter);
+        grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter, ids);
         if (grapgWidgetLdr == null || grapgWidgetLdr.getResults() == null) {
             LOG.warn("No data found for graph widget");
             return;
@@ -170,6 +175,19 @@ public class GraphWidget extends Widget
                                           "%series"));
         }
 
+        //constraints set in the constraints attribute
+        List<PathConstraint> pathConstraints = config.getPathConstraints();
+        for (PathConstraint pc : pathConstraints) {
+            if (!WidgetConfigUtil.isFilterConstraint(config, pc)) {
+                if (pc.getOp().equals(ConstraintOp.EQUALS)) {
+                    q.addConstraint(Constraints.eq(prefix + pc.getPath(),
+                            PathConstraint.getValue(pc)));
+                } else if (pc.getOp().equals(ConstraintOp.NOT_EQUALS)) {
+                    q.addConstraint(Constraints.neq(prefix + pc.getPath(),
+                            PathConstraint.getValue(pc)));
+                }
+            }
+        }
         return q;
     }
 

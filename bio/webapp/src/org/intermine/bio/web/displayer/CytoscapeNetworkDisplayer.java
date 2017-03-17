@@ -24,8 +24,6 @@ import org.intermine.web.logic.results.ReportObject;
  */
 public class CytoscapeNetworkDisplayer extends ReportDisplayer
 {
-
-
     /**
      * Construct with config and the InterMineAPI.
      * @param config to describe the report displayer
@@ -37,7 +35,7 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
-         InterMineObject object = reportObject.getObject();
-         request.setAttribute("cytoscapeInteractionObjectId", object.getId());
+        InterMineObject object = reportObject.getObject();
+        request.setAttribute("cytoscapeInteractionObjectId", object.getId());
     }
 }

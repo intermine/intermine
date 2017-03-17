@@ -60,12 +60,13 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
      * @param os The data-store.
      * @param config The description of the list tool.
      * @param filter A filter value.
+     * @param ids intermine IDs, required if bag is NULL
      */
     public GraphWidgetLoader(InterMineBag bag,
                               ObjectStore os,
                               GraphWidgetConfig config,
-                              String filter) {
-        super(bag, os, filter, config);
+                              String filter, String ids) {
+        super(bag, os, filter, config, ids);
         this.config = config;
         LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
         if (!config.comparesActualToExpected()) {
@@ -225,10 +226,10 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
                 if (queryValue != null) {
                     if (!"null".equalsIgnoreCase(queryValue.getValue().toString())) {
                         QueryEvaluable qe = null;
-                        if (isFilterConstraint || queryValue.getValue() instanceof Boolean) {
-                            qe = qfConstraint;
-                        } else {
+                        if ( queryValue.getValue() instanceof String && !isFilterConstraint) {
                             qe = new QueryExpression(QueryExpression.LOWER, qfConstraint);
+                        } else {
+                            qe = qfConstraint;
                         }
                         cs.addConstraint(new SimpleConstraint(qe, pc.getOp(), queryValue));
                     } else {

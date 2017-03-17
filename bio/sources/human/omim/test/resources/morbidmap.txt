@@ -1,0 +1,7 @@
+Carotid intimal medial thickness 1, 609338 (3)	PPARG, PPARG1, PPARG2, CIMT1, GLM1	601487	3p25.2
+Insulin resistance, severe, digenic, 604367 (3)	    PPARG, PPARG1, PPARG2, CIMT1, GLM1	601487	3p25.2
+Lipodystrophy, familial partial, type 3, 604367 (3)   PPARG, PPARG1, PPARG2, CIMT1, GLM1    601487	3p25.2
+Obesity, severe, 601665 (3)    PPARG, PPARG1, PPARG2, CIMT1, GLM1      601487		3p25.2
+[Obesity, resistance to] (3)   PPARG, PPARG1, PPARG2, CIMT1, GLM1	601487	3p25.2
+{Diabetes, type 2}, 125853 (3)	  PPARG, PPARG1, PPARG2, CIMT1, GLM1	   601487	3p25.2
+{Obesity, variation in}, 601665 (3)  PPARGC1B, PGC1B, PERC 608886  5q32

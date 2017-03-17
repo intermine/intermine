@@ -42,7 +42,7 @@ public class GeneIdentifiersDisplayer extends ReportDisplayer
 
     /** @String[] which identifiers to use? */
     private final String[] identifiers = new String []{"primaryIdentifier", "secondaryIdentifier",
-        "ncbiGeneNumber"};
+        "symbol"};
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {

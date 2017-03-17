@@ -179,26 +179,14 @@
                if (spanArray[i].match(ddotsRegex)) {
                    var start = parseInt(spanArray[i].split(":")[1].split("..")[0].replace(/\,/g,''));
                    var end = parseInt(spanArray[i].split(":")[1].split("..")[1].replace(/\,/g,''));
-                   if (start > end) {
-                       alert("start coordinate is after end coordinate (start > end) at " + spanArray[i]);
-                       return false;
-                   }
                }
                if (spanArray[i].match(tabRegex)) {
                    var start = parseInt(spanArray[i].split("\t")[1].replace(/\,/g,''));
                    var end = parseInt(spanArray[i].split("\t")[2].replace(/\,/g,''));
-                   if (start > end) {
-                       alert("start coordinate is after end coordinate (start > end) at " + spanArray[i]);
-                       return false;
-                   }
                }
                if (spanArray[i].match(dashRegex)) {
                    var start = parseInt(spanArray[i].split(":")[1].split("-")[0].replace(/\,/g,''));
                    var end = parseInt(spanArray[i].split(":")[1].split("-")[1].replace(/\,/g,''));
-                   if (start > end) {
-                       alert("start coordinate is after end coordinate (start > end) at " + spanArray[i]);
-                       return false;
-                   }
                }
          }
        }

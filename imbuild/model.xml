@@ -85,7 +85,7 @@
   <target name="-init-macrodef-model-output">
     <macrodef name="model-output" uri="http://www.intermine.org/ns/im-model-proj/1">
       <sequential>
-        <echo>Generating model java code...</echo>
+        <echo>Generating model java code for ${model.name} model to ${gen.src.dir}</echo>
         <model-output type="java" model="${model.name}" destdir="${gen.src.dir}"/>
       </sequential>
     </macrodef>

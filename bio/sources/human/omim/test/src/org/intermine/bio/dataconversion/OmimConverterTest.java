@@ -11,13 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
@@ -45,10 +39,6 @@ public class OmimConverterTest extends ItemsTestCase
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         converter = new OmimConverter(itemWriter, model);
-
-        converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("9606", "PEX6", new HashSet<String>(Arrays.asList("609300", "OMIM:609300", "MIM:OMIM:609300")));
-        converter.rslv.addResolverEntry("9606", "PEX6", new HashSet<String>(Arrays.asList("601498", "OMIM:601498", "MIM:OMIM:601498")));
         super.setUp();
     }
 
@@ -58,7 +48,7 @@ public class OmimConverterTest extends ItemsTestCase
      */
     public void testProcess() throws Exception {
         File tmp = new File(getClass().getClassLoader()
-                .getResource("omim.txt").toURI());
+                .getResource("morbidmap.txt").toURI());
         File datadir = tmp.getParentFile();
         converter.process(datadir);
         converter.close();

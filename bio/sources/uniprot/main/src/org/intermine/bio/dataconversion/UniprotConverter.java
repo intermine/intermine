@@ -364,6 +364,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 attName = "value";
             } else if ("dbReference".equals(qName) && "organism".equals(previousQName)) {
                 entry.setTaxonId(parseTaxonId(getAttrValue(attrs, "id")));
+            } else if ("name".equals(qName)  && "isoform".equals(previousQName)) {
+                attName = "isoformname";
             } else if ("id".equals(qName)  && "isoform".equals(previousQName)) {
                 // TODO only use the first isoform
                 // how does xml parser work for multiple isoforms?
@@ -448,7 +450,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 String id = getAttrValue(attrs, "id");
                 disease.setIdentifier(type + ":" + id);
             } else if ("dbreference".equals(qName) || "comment".equals(qName)
-                    || "isoform".equals(qName) || "gene".equals(qName) || "disease".equals(qName)) {
+                    || "isoform".equals(qName) || "gene".equals(qName)) {
                 // set temporary holder variables to null
                 entry.reset();
             }
@@ -505,10 +507,13 @@ public class UniprotConverter extends BioDirectoryConverter
                         item.setAttribute("description", choppedComment + ellipses);
                     } else {
                         if ("disease".equals(commentType) && disease != null) {
-                            commentText.append(" " + disease.toString());
+                            item.setAttribute("description", disease.toString()
+                                    + commentText.toString());
+                        } else {
+                            item.setAttribute("description", commentText.toString());
                         }
-                        item.setAttribute("description", commentText.toString());
                     }
+
                     String refId = item.getIdentifier();
                     try {
                         Integer objectId = store(item);
@@ -539,7 +544,16 @@ public class UniprotConverter extends BioDirectoryConverter
                     && ("name".equals(qName) || "acronym".equals(qName)
                             || "description".equals(qName))
                     && "disease".equals(previousQName)) {
-                String value = attValue.toString();
+                if (disease == null) {
+                    disease = new DiseaseHolder();
+                }
+                if ("name".equals(qName)) {
+                    disease.setDisease("name", attValue.toString());
+                } else if ("description".equals(qName)) {
+                    disease.setDisease("description", attValue.toString());
+                } else if ("acronym".equals(qName)) {
+                    disease.setDisease("acronym", attValue.toString());
+                }
             } else if ("id".equals(qName) && "isoform".equals(previousQName)) {
                 String accession = attValue.toString();
 
@@ -558,6 +572,13 @@ public class UniprotConverter extends BioDirectoryConverter
                 } else {
                     // second <id> value is ignored and added as a synonym
                     entry.addIsoformSynonym(accession);
+                }
+            } else if ("comment".equals(qName)) {
+                // on closing a comment, make sure the disease holder is empty
+                disease = null;
+            } else if ("name".equals(qName) && "isoform".equals(previousQName)) {
+                if (!attValue.toString().matches("[0-9]+")) {
+                    entry.addIsoformSynonym(attValue.toString());
                 }
             } else if ("entry".equals(qName)) {
                 try {
@@ -884,7 +905,7 @@ public class UniprotConverter extends BioDirectoryConverter
             }
 
             // isoforms with extra identifiers
-            List<String> isoformSynonyms = uniprotEntry.getIsoformSynonyms();
+            List<String> isoformSynonyms = uniprotEntry.getCollection("canonicalIsoformAccessions");
             if (isoformSynonyms != null && !isoformSynonyms.isEmpty()) {
                 for (String identifier : isoformSynonyms) {
                     createSynonym(proteinRefId, identifier, true);
@@ -1371,10 +1392,10 @@ public class UniprotConverter extends BioDirectoryConverter
      */
     protected class DiseaseHolder
     {
-        private String name;
-        private String acronym;
-        private String description;
-        private String identifier;
+        private String name = null;
+        private String acronym = null;
+        private String description = null;
+        private String identifier = null;
 
         /**
          * Constructor
@@ -1413,17 +1434,18 @@ public class UniprotConverter extends BioDirectoryConverter
 
         @Override
         public String toString() {
+            // MIM id; name; acronym; description: text
             StringBuilder sb = new StringBuilder();
-            sb.append(identifier);
+            sb.append(identifier + "; ");
 
             if (StringUtils.isNotEmpty(name)) {
-                sb.append(name);
+                sb.append(name + "; ");
             }
             if (StringUtils.isNotEmpty(acronym)) {
-                sb.append(acronym);
+                sb.append(acronym + "; ");
             }
             if (StringUtils.isNotEmpty(description)) {
-                sb.append(description);
+                sb.append(description + " ");
             }
             return sb.toString();
         }

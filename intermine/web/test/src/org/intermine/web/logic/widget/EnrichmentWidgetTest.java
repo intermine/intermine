@@ -11,6 +11,7 @@ package org.intermine.web.logic.widget;
  */
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,8 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         InterMineBag employeeList = createEmployeeList();
         bag = employeeList;
         options = new FixureOptions();
-        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, null, os, options);
+        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, null, os, options,
+                null, null);
     }
 
     public void testValidateBagType() throws Exception {
@@ -71,7 +73,8 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         WidgetConfig config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         try {
             EnrichmentWidget w = new EnrichmentWidget(
-                    (EnrichmentWidgetConfig) config, companyList, null, os, options);
+                    (EnrichmentWidgetConfig) config, companyList, null, os, options,
+                    null, null);
             w.process();
             fail("Should raise a IllegalArgumentException");
         } catch (IllegalArgumentException iae){
@@ -79,8 +82,28 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
     }
 
     public void testProcess() throws Exception {
-        EnrichmentWidgetImplLdr ldr 
-            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null);
+        EnrichmentWidgetImplLdr ldr
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null,
+                    null, null);
+        EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
+        Double maxValue = Double.parseDouble(MAX);
+        results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION, false, null);
+
+        List<List<Object>> exportResults = getResults();
+
+        assertEquals(1, exportResults.size());       // there is only one contract
+        assertEquals(2, exportResults.get(0).get(3));// 2 employees match with the only contracts
+    }
+
+    public void testProcessWithIDs() throws Exception {
+        List<Integer> ids = bag.getContentsAsIds();
+        StringBuilder idsAsString = new StringBuilder();
+        for (Integer id: ids) {
+            idsAsString.append(id).append(",");
+        }
+        EnrichmentWidgetImplLdr ldr
+            = new EnrichmentWidgetImplLdr(null, null, os, (EnrichmentWidgetConfig) config, filter, false, null,
+                    idsAsString.toString(), null);
         EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
         Double maxValue = Double.parseDouble(MAX);
         results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION, false, null);
@@ -92,8 +115,9 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
     }
 
     public void testProcessLCBonferroni() throws Exception {
-        EnrichmentWidgetImplLdr ldr 
-            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null);
+        EnrichmentWidgetImplLdr ldr
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null,
+                    null, null);
         EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
         Double maxValue = Double.parseDouble(MAX);
         results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION.toLowerCase(), false, null);
@@ -105,8 +129,9 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
     }
 
     public void testProcessHolmBonferroni() throws Exception {
-        EnrichmentWidgetImplLdr ldr 
-            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null);
+        EnrichmentWidgetImplLdr ldr
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null,
+                    null, null);
         EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
         Double maxValue = Double.parseDouble(MAX);
         results = EnrichmentCalculation.calculate(input, maxValue, "Holm-Bonferroni", false, null);

@@ -2050,7 +2050,12 @@ public final class SqlGenerator
             queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
             buffer.append(", ");
             queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
-            buffer.append(")");
+            // if int4range, request it includes extremes (default: include lower, exclude upper)
+            if (rangeFunction.startsWith("int")) {
+                buffer.append(", '[]')");
+            } else {
+                buffer.append(")");
+            }
             if ((ConstraintOp.CONTAINS == c.getOp())
                     || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
                 buffer.append(" @> ");
@@ -2067,7 +2072,11 @@ public final class SqlGenerator
             queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
             buffer.append(", ");
             queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
-            buffer.append(")");
+            if (rangeFunction.startsWith("int")) {
+                buffer.append(", '[]')");
+            } else {
+                buffer.append(")");
+            }
         } else {
             if ((ConstraintOp.CONTAINS == c.getOp())
                     || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {

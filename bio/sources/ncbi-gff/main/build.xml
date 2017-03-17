@@ -1,0 +1,4 @@
+<project name="ncbi-gff-tasks" default="default" basedir=".">
+  <description>build ncbi-gff tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

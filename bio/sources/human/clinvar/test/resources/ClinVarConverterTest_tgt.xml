@@ -1,0 +1,239 @@
+<items>
+<item id="5_12" class="Allele">
+<attribute name="alternate" value="T"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23181"/>
+<attribute name="reference" value="C"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_2"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="ClinVar data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="5_1" class="Allele">
+<attribute name="alternate" value="C"/>
+<attribute name="clinicalSignificance" value="association"/>
+<attribute name="primaryIdentifier" value="17078"/>
+<attribute name="reference" value="G"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_5" class="Allele">
+<attribute name="alternate" value="C"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23172"/>
+<attribute name="reference" value="A"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_1"/></collection>
+</item>
+<item id="6_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="7_1" class="Disease">
+<attribute name="identifier" value="OMIM:114500"/>
+</item>
+<item id="7_2" class="Disease">
+<attribute name="identifier" value="OMIM:604367"/>
+</item>
+<item id="5_9" class="Allele">
+<attribute name="alternate" value="A"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23176"/>
+<attribute name="reference" value="G"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_2"/></collection>
+</item>
+<item id="5_10" class="Allele">
+<attribute name="alternate" value="T"/>
+<attribute name="clinicalSignificance" value="Benign;Likely benign"/>
+<attribute name="primaryIdentifier" value="23178"/>
+<attribute name="reference" value="C"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_11" class="Allele">
+<attribute name="alternate" value="A"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23180"/>
+<attribute name="reference" value="T"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_2"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="5_17" class="Allele">
+<attribute name="alternate" value="A"/>
+<attribute name="clinicalSignificance" value="Uncertain significance"/>
+<attribute name="primaryIdentifier" value="207033"/>
+<attribute name="reference" value="G"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="primaryIdentifier" value="133522"/>
+<reference name="sequenceOntologyTerm" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_14" class="Allele">
+<attribute name="alternate" value="T"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23183"/>
+<attribute name="reference" value="C"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_2"/></collection>
+</item>
+<item id="5_4" class="Allele">
+<attribute name="alternate" value="-"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23171"/>
+<attribute name="reference" value="A"/>
+<attribute name="type" value="deletion"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_1"/></collection>
+</item>
+<item id="3_2" class="Gene">
+<attribute name="primaryIdentifier" value="5468"/>
+<reference name="sequenceOntologyTerm" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_2" class="Allele">
+<attribute name="alternate" value="A"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23169"/>
+<attribute name="reference" value="C"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_2" class="SOTerm">
+<attribute name="name" value="allele"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_8" class="Allele">
+<attribute name="alternate" value="T"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23175"/>
+<attribute name="reference" value="C"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_2"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="ClinVar"/>
+</item>
+<item id="5_7" class="Allele">
+<attribute name="alternate" value="A"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23174"/>
+<attribute name="reference" value="G"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_1"/></collection>
+</item>
+<item id="5_16" class="Allele">
+<attribute name="alternate" value="G"/>
+<attribute name="clinicalSignificance" value="Likely benign"/>
+<attribute name="primaryIdentifier" value="135465"/>
+<attribute name="reference" value="C"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_3" class="Allele">
+<attribute name="alternate" value="G"/>
+<attribute name="clinicalSignificance" value="risk factor"/>
+<attribute name="primaryIdentifier" value="23170"/>
+<attribute name="reference" value="C"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_6" class="Allele">
+<attribute name="alternate" value="T"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23173"/>
+<attribute name="reference" value="A"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_1"/></collection>
+</item>
+<item id="5_13" class="Allele">
+<attribute name="alternate" value="A"/>
+<attribute name="clinicalSignificance" value="Pathogenic"/>
+<attribute name="primaryIdentifier" value="23182"/>
+<attribute name="reference" value="T"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="diseases"><reference ref_id="7_2"/></collection>
+</item>
+<item id="5_15" class="Allele">
+<attribute name="alternate" value="C"/>
+<attribute name="clinicalSignificance" value="Uncertain significance"/>
+<attribute name="primaryIdentifier" value="135464"/>
+<attribute name="reference" value="A"/>
+<attribute name="type" value="single nucleotide variant"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>

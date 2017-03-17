@@ -13,6 +13,7 @@ package org.intermine.web.logic.widget;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
@@ -43,6 +44,7 @@ public class WidgetLdr
 
     protected ObjectStore os;
     protected InterMineBag bag;
+    protected String ids;
     protected String filter;
     protected QueryClass startClass;
     private static final Logger LOG = Logger.getLogger(WidgetLdr.class);
@@ -55,11 +57,14 @@ public class WidgetLdr
      * @param os the object store
      * @param filter the filter
      * @param config The description of the widget.
+     * @param ids intermine IDs to analyse. required if bag is null
      */
-    public WidgetLdr(InterMineBag bag, ObjectStore os, String filter, WidgetConfig config) {
+    public WidgetLdr(InterMineBag bag, ObjectStore os, String filter, WidgetConfig config,
+        String ids) {
         this.bag = bag;
         this.os = os;
         this.filter = filter;
+        this.ids = ids;
         try {
             startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
                                         + config.getStartClass()));
@@ -85,7 +90,15 @@ public class WidgetLdr
         } else if ("false".equalsIgnoreCase(value)) {
             queryValue = new QueryValue(false);
         } else {
-            queryValue = new QueryValue(value);
+            if (!NumberUtils.isNumber(value)) {
+                queryValue = new QueryValue(value);
+            } else {
+                try {
+                    queryValue = new QueryValue(Integer.parseInt(value));
+                } catch (NumberFormatException nfe) {
+                    queryValue = new QueryValue(Double.parseDouble(value));
+                }
+            }
         }
         return queryValue;
     }

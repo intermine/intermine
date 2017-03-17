@@ -12,5 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-pathquery"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

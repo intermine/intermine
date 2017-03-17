@@ -28,6 +28,7 @@ h2 { margin-bottom:10px; }
 
     /* header items */
     #object_header table.fields tr td:not(:first-child) { padding-right:20px; }
+    #object_header table.fields td {max-width:500px;}
 
     /* header inline lists */
   #object_header div.inline-list { margin:0; }
@@ -136,6 +137,9 @@ div.template h3 span.name { cursor:pointer; }
 @media only screen and (max-width:1440px) {
     /* header summary fields */
     #object_header table.fields { width:70%; }
+    #object_header table.fields td {
+      max-width:200px;
+    }
     /* menu */
     #toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { padding: 0 2px; }
 }

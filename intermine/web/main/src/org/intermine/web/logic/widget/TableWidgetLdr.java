@@ -80,11 +80,12 @@ public class TableWidgetLdr extends WidgetLdr
      * @param widgetConfig the configuration settings for this widget
      * @param bag bag for this widget
      * @param os the objectstore
+     * @param ids intermine IDs, required if bag is NULL
      * @throws UnsupportedEncodingException if can't encode url
      */
-    public TableWidgetLdr(WidgetConfig widgetConfig, InterMineBag bag, ObjectStore os)
+    public TableWidgetLdr(WidgetConfig widgetConfig, InterMineBag bag, ObjectStore os, String ids)
         throws UnsupportedEncodingException {
-        super(bag, os, null, widgetConfig);
+        super(bag, os, null, widgetConfig, ids);
         this.config = (TableWidgetConfig) widgetConfig;
         pathString = config.getPathStrings();
         model = os.getModel();
