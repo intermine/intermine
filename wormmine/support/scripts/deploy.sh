@@ -7,7 +7,7 @@
 # TODO: not process XML files already processed
 
 #set the version to be accessed
-wbrel="WS257"
+wbrel="WS258"
 echo 'Release version' $wbrel
 
 
@@ -37,7 +37,7 @@ echo 'Release version' $wbrel
 declare -A species=(["c_elegans"]="PRJNA13758")
 
 #sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
-sourcedir='/mnt/data2/acedb_dumps/WS257/WS257-test-data'
+sourcedir='/mnt/data2/acedb_dumps/WS258/'
 
 #################### Main dirs ##################
 #                                               #

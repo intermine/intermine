@@ -51,7 +51,7 @@
 
     </source>
 
-	<source name="go" type="go" dump="false">
+	<source name="go" type="go" dump="true">
 		<property name="src.data.file" location="&datadir;/go/gene_ontology.1_2.obo"/>
 	</source>
 	
@@ -90,7 +90,7 @@
 
 
 	<!-- CORE GENOMIC ANNOTATION IN GFF3 -->
-	<source name="celegans-gff3" type="gff" dump="false">
+	<source name="celegans-gff3" type="gff" dump="true">
 		<property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
 		<property name="gff3.seqDataSourceName" value="WormBase"/>
 		<property name="gff3.dataSourceName"    value="WormBase"/>
@@ -143,7 +143,7 @@
 	</source>
 	-->
 	<!-- WormBase aceDB data loader.  Base dir is wormmine/integrate -->
-	<source name="wb-acedb-gene" type="wormbase-acedb" dump="false">
+	<source name="wb-acedb-gene" type="wormbase-acedb" dump="true">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/gene/XML" />
 		<!--
 			This file maps intermine data classes to an XPath query.
@@ -315,6 +315,18 @@
           <property name="rejects.file"
               value="&datadir;/wormbase-acedb-RNAi-rejects.xml"/>
           <property name="data.set" value="AceDB XML (RNAi)"/>
+      </source>
+
+    <source name="wb-acedb-gene-class" type="wormbase-acedb" dump="false">
+          <property name="src.data.dir" location="&datadir;/wormbase-acedb/GeneClass/XML" />
+          <property name="mapping.file"
+              value="&datadir;/wormbase-acedb/GeneClass/mapping/gene-class_mapping.properties" />
+          <property name="key.file"
+              value="../../bio/sources/wormbase-acedb/resources/wormbase-acedb_keys.properties"/>
+          <property name="source.class" value="GeneClass"/>
+          <property name="rejects.file"
+              value="&datadir;/wormbase-acedb-gene-class-rejects.xml"/>
+          <property name="data.set" value="AceDB XML (Gene Class)"/>
       </source>
 
 
