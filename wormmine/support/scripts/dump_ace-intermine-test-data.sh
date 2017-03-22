@@ -26,7 +26,7 @@ if [ ! -e "$DESTINATION" ]; then
 fi
 
 
-GENES=("unc-26"  "daf-2" "egl-15" "mir-1" "snt-1") 
+GENES=("unc-26"  "daf-2" "egl-15" "mir-1" "snt-1" "abc-1") 
 
 for GENE in ${GENES[@]}; do
     
@@ -53,14 +53,27 @@ query find Gene_name $GENE ; follow Public_name_for ; follow Expr_pattern ; foll
 show -x -f "$DESTINATION/temp-Anatomy_term-$GENE.xml"
 query find Gene_name $GENE ; follow Public_name_for ; follow Allele ; follow Phenotype       
 show -x -f "$DESTINATION/temp-Phenotype-$GENE.xml"
-query find Gene_name $GENE ; follow Public_name_for ; follow Species
-show -x -f "$DESTINATION/temp-Species-$GENE.xml"
+#query find Gene_name $GENE ; follow Public_name_for ; follow Species
+#show -x -f "$DESTINATION/temp-Species-$GENE.xml"
 query find Gene_name $GENE ; follow Public_name_for ; follow RNAi_result
 show -x -f "$DESTINATION/temp-RNAi-$GENE.xml"
 
 EOF
 
 done
+
+
+#could probably do this with other small xml like species
+    echo "Dumping entire Gene_class and species XMLs"
+    $ACEDB_BIN/tace "$ACEDB_DATA" <<EOF > /dev/null
+wb
+query find Gene_class
+show -x -f "$DESTINATION/Gene_class.xml"
+#KeySet-Read acedb-dev/acedb/species.ace
+query find Species
+show -x -f "$DESTINATION/Species.xml
+EOF
+
 
 
 cd $DESTINATION
@@ -74,8 +87,9 @@ cat temp-Expression_cluster*        > Expression_cluster.xml
 cat temp-Variation*  > Variation.xml
 cat temp-Life_stage* > Life_stage.xml
 cat temp-Phenotype*  > Phenotype.xml
-cat temp-Species*  > Species.xml
+#cat temp-Species*  > Species.xml
 cat temp-RNAi* > RNAi.xml
+#cat temp-Gene_class* > Gene_class.xml
 rm -f temp*
 echo ... done.
 #don't tar it up right away so the GFF can be prepared too
