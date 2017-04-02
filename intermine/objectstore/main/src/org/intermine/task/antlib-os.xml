@@ -23,4 +23,7 @@
     <typedef
         name="run-iql-query"
         classname="org.intermine.task.RunIqlQueryTask"/>
+    <typedef
+        name="build-triggermaker"
+        classname="org.intermine.task.BuildTriggerMaker"/>
 </antlib>
