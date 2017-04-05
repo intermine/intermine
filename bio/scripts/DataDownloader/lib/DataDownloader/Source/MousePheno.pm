@@ -1,7 +1,7 @@
 package DataDownloader::Source::MousePheno;
 
 use Moose;
-extends 'DataDownloader::Source::FtpBase';
+extends 'DataDownloader::Source::ABC';
 
 use constant {
     TITLE => 'MousePheno',
@@ -10,28 +10,20 @@ use constant {
     SOURCE_DIR => 'metabolic/mouse-pheno',
     SOURCES => [
         {
-            HOST => 'ftp.informatics.jax.org',
-            REMOTE_DIR => '/pub/reports/',
+            URI => 'http://www.informatics.jax.org/downloads/reports',            
             FILE => 'MGI_PhenotypicAllele.rpt',
-            EXTRACT => 0,
         },
         {
-            HOST => 'ftp.informatics.jax.org',
-            REMOTE_DIR => '/pub/reports/',
+            URI => 'http://www.informatics.jax.org/downloads/reports',
             FILE => 'MGI_PhenoGenoMP.rpt',
-            EXTRACT => 0,
         },
         {
-            HOST => 'ftp.informatics.jax.org',
-            REMOTE_DIR => '/pub/reports/',
+            URI => 'http://www.informatics.jax.org/downloads/reports',
             FILE => 'MGI_QTLAllele.rpt',
-            EXTRACT => 0,
         },
         {
-            HOST => 'ftp.informatics.jax.org',
-            REMOTE_DIR => '/pub/reports/',
+            URI => 'http://www.informatics.jax.org/downloads/reports',
             FILE => 'MPheno_OBO.ontology',
-            EXTRACT => 0,
         },
     ],
 };
