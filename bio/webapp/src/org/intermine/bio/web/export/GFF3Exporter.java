@@ -53,7 +53,7 @@ public class GFF3Exporter implements Exporter
      */
     public static final Set<String> GFF_FIELDS = Collections
             .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
-            "primaryIdentifier", "score")));
+                    "primaryIdentifier", "score")));
     /**
      * for the gff header, link to taxomony
      */
