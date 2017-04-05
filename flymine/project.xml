@@ -139,7 +139,7 @@
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
     <source name="go" type="go">
-      <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
+      <property name="src.data.file" location="/micklem/data/go-annotation/current/go.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
