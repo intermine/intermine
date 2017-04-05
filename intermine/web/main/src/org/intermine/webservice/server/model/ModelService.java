@@ -174,18 +174,20 @@ public class ModelService extends WebService
                 ClassDescriptor cd = model.getClassDescriptorByName(className);
                 // Add the display name for this class.
                 classData.put("displayName", WebUtil.formatClass(cd, config));
+                String fullyQualifiedClassName = cd.getName();
                 try {
                     // Add the count for this class.
-                    classData.put("count", oss.getClassCount(cd.getName()));
+                    classData.put("count", oss.getClassCount(fullyQualifiedClassName));
                 } catch (RuntimeException e) {
                     LOG.error("No class count", e);
                 }
                 // Get the tags for this class.
                 Set<String> tags = new HashSet<String>();
                 if (p.isLoggedIn()) {
-                    tags.addAll(tm.getObjectTagNames(cd.getSimpleName(), TagTypes.CLASS, userName));
+                    tags.addAll(tm.getObjectTagNames(fullyQualifiedClassName, TagTypes.CLASS,
+                            userName));
                 }
-                tags.addAll(tm.getPublicTagNames(cd.getSimpleName(), TagTypes.CLASS));
+                tags.addAll(tm.getPublicTagNames(fullyQualifiedClassName, TagTypes.CLASS));
                 classData.put("tags", tags);
 
                 // Get the Attributes for this class.
