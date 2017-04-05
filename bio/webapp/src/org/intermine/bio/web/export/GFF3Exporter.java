@@ -52,7 +52,7 @@ public class GFF3Exporter implements Exporter
      * the fields we don't want to display as attributes
      */
     public static final Set<String> GFF_FIELDS = Collections
-    .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
+            .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
             "primaryIdentifier", "score")));
     /**
      * for the gff header, link to taxomony
