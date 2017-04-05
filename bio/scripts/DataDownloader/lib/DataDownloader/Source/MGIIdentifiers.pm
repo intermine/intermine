@@ -10,10 +10,10 @@ extends 'DataDownloader::Source::ABC';
 use constant {
     TITLE => "MGI Identifiers",
     DESCRIPTION => "Identifiers from MGI",
-    SOURCE_LINK => "ftp.informatics.jax.org",
+    SOURCE_LINK => "www.informatics.jax.org",
     SOURCE_DIR => "mgi-identifiers",
     SOURCES => [{
-        FILE => "MRK_List2.rpt", 
+        SERVER => "MRK_List2.rpt", 
         URI => "http://www.informatics.jax.org/downloads/reports",
     }],
 };

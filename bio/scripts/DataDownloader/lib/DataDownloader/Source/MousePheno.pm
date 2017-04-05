@@ -10,19 +10,19 @@ use constant {
     SOURCE_DIR => 'metabolic/mouse-pheno',
     SOURCES => [
         {
-            URI => 'http://www.informatics.jax.org/downloads/reports',            
+            SERVER => 'http://www.informatics.jax.org/downloads/reports',            
             FILE => 'MGI_PhenotypicAllele.rpt',
         },
         {
-            URI => 'http://www.informatics.jax.org/downloads/reports',
+            SERVER => 'http://www.informatics.jax.org/downloads/reports',
             FILE => 'MGI_PhenoGenoMP.rpt',
         },
         {
-            URI => 'http://www.informatics.jax.org/downloads/reports',
+            SERVER => 'http://www.informatics.jax.org/downloads/reports',
             FILE => 'MGI_QTLAllele.rpt',
         },
         {
-            URI => 'http://www.informatics.jax.org/downloads/reports',
+            SERVER => 'http://www.informatics.jax.org/downloads/reports',
             FILE => 'MPheno_OBO.ontology',
         },
     ],
