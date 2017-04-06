@@ -2485,7 +2485,7 @@ public class PathQuery implements Cloneable
         return conb.toString();
     }
 
-    private String constraintToJson(PathConstraint constraint, String code) {
+    protected String constraintToJson(PathConstraint constraint, String code) {
         if (PathConstraint.getType(constraint) != null) { // Would be nice to test code instead...
             return typeConstraintToJson(constraint);
         } else {

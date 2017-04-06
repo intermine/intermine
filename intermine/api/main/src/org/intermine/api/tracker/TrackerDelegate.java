@@ -20,6 +20,7 @@ import java.util.Queue;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.factory.TrackerFactory;
 import org.intermine.api.tracker.track.ListTrack;
@@ -154,6 +155,20 @@ public class TrackerDelegate implements Shutdownable
         TemplateTracker tt = getTemplateTracker();
         if (tt != null) {
             return tt.getRank(templateManager);
+        }
+        return null;
+    }
+
+    /**
+     * Return the rank associated to a single template
+     * @param templateManager the template manager
+     * @param templateName the template to get the rank for
+     * @return rank of specified template
+     */
+    public Integer getRank(TemplateManager templateManager, String templateName) {
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            return tt.getRank(templateManager, templateName);
         }
         return null;
     }
