@@ -38,8 +38,8 @@ public abstract class ListOperationService extends ListMakerService
     }
 
     @Override
-    public String getNewListType(ListInput input) {
-        return null; // Not needed, as it can be calculated.
+    public String getNewListType(ListInput input) throws IncompatibleTypes {
+        return getOperation(input).getNewBagType();
     }
 
     @Override
