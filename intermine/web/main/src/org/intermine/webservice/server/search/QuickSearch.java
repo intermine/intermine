@@ -34,6 +34,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.RequestUtil;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -63,7 +64,7 @@ public class QuickSearch extends JSONService
 
     private Map<String, Map<String, Object>> headerObjs
         = new HashMap<String, Map<String, Object>>();
-
+    Map<String, String> kvPairs = new HashMap<String, String>();
     private final ServletContext servletContext;
 
     /**
@@ -103,6 +104,8 @@ public class QuickSearch extends JSONService
             headerObjs.put("facets", facetData);
         }
 
+        kvPairs.put("totalHits", String.valueOf(searchResultsParsed.size()));
+
         QuickSearchResultProcessor processor = getProcessor();
         Iterator<KeywordSearchResult> it = searchResultsParsed.iterator();
         for (int i = 0; input.wantsMore(i) && it.hasNext(); i++) {
@@ -117,6 +120,8 @@ public class QuickSearch extends JSONService
         final Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.putAll(super.getHeaderAttributes());
         if (formatIsJSON()) {
+
+            attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
             attributes.put(JSONFormatter.KEY_INTRO, "\"results\":[");
             attributes.put(JSONFormatter.KEY_OUTRO, "]");
             attributes.put(JSONFormatter.KEY_HEADER_OBJS, headerObjs);
