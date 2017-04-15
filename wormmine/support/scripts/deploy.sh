@@ -7,7 +7,7 @@
 # TODO: not process XML files already processed
 
 #set the version to be accessed
-wbrel="WS257"
+wbrel="WS259"
 echo 'Release version' $wbrel
 
 
@@ -36,8 +36,8 @@ echo 'Release version' $wbrel
 
 declare -A species=(["c_elegans"]="PRJNA13758")
 
-#sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
-sourcedir='/mnt/data2/acedb_dumps/WS257/WS257-test-data'
+sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
+#sourcedir='/mnt/data2/acedb_dumps/WS257/WS257-test-data'
 
 #################### Main dirs ##################
 #                                               #
@@ -102,6 +102,7 @@ do
   else
     echo  raw/"$spe"."${species["$spe"]}"."$wbrel".gff 'found'
   fi
+  cd raw
   for gffile in *.gff;do
     perl -pi -e 's/Gene://g' $gffile
     echo $gffile
@@ -231,7 +232,7 @@ echo 'RNAi'
 mkdir -vp $datadir/wormbase-acedb/RNAi/XML
 mkdir -vp $datadir/wormbase-acedb/RNAi/mapping
 cp -v $sourcedir/RNAi.xml $acexmldir/RNAi/RNAi.xml
-cp -v $intermine'/wormmine/support/properties/rnai_mapping.properties' $datadir'/wormbase-acedb/RNAi/mapping'
+cp -v $intermine'/wormmine/support/properties/RNAi_mapping.properties' $datadir'/wormbase-acedb/RNAi/mapping'
 perl $testlab'/perl/preprocess/wb-acedb/RNAi/prep_RNAi.pl' $datadir'/wormbase-acedb/RNAi/RNAi.xml' $datadir'/wormbase-acedb/RNAi/XML/prepped_RNAi.xml'
 
 #################### variation ##################
