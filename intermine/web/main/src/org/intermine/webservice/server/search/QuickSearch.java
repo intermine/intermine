@@ -34,7 +34,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.RequestUtil;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -132,8 +131,7 @@ public class QuickSearch extends JSONService
     private Map<String, String> getFacetValues(Vector<KeywordSearchFacetData> facets) {
         HashMap<String, String> facetValues = new HashMap<String, String>();
     PARAM_LOOP:
-        for (@SuppressWarnings("unchecked")
-            Enumeration<String> params = request.getParameterNames();
+        for (Enumeration<String> params = request.getParameterNames();
                 params.hasMoreElements();) {
             String param = params.nextElement();
             String value = request.getParameter(param);
