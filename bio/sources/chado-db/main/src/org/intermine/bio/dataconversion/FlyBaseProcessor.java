@@ -710,8 +710,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     @Override
     protected String getExtraFeatureConstraint() {
         return "NOT ((cvterm.name = 'golden_path_region'"
-            + " OR cvterm.name = 'ultra_scaffold'"
-            + " OR cvterm.name = 'unassigned_supercontig')"
+            + " OR cvterm.name = 'ultra_scaffold')"
             + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))"
             + " AND " + getLocatedGeneAllesSql();
     }
