@@ -20,7 +20,6 @@ import java.util.Queue;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.factory.TrackerFactory;
 import org.intermine.api.tracker.track.ListTrack;

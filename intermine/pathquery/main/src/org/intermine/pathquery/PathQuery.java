@@ -2225,7 +2225,7 @@ public class PathQuery implements Cloneable
     {
         private final List<PathConstraint> listToSortBy;
 
-        public ConstraintComparator (List<PathConstraint> listToSortBy) {
+        ConstraintComparator (List<PathConstraint> listToSortBy) {
             this.listToSortBy = listToSortBy;
         }
 
@@ -2485,6 +2485,11 @@ public class PathQuery implements Cloneable
         return conb.toString();
     }
 
+    /**
+     * @param constraint constraint to convert
+     * @param code code for constraint, e.g. A
+     * @return constraint in JSON format
+     */
     protected String constraintToJson(PathConstraint constraint, String code) {
         if (PathConstraint.getType(constraint) != null) { // Would be nice to test code instead...
             return typeConstraintToJson(constraint);

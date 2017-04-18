@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.track.TemplateTrack;
 import org.intermine.api.tracker.track.Track;
