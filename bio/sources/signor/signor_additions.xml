@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+    <class name="Signalling" is-interface="true">
+        <attribute name="identifier" type="java.lang.String"/>
+        <reference name="participant1" referenced-type="BioEntity" reverse-reference="signalling" />
+        <reference name="participant2" referenced-type="BioEntity" />
+        <collection name="details" referenced-type="SignallingDetail" reverse-reference="signalling"/>
+    </class>
+
+    <class name="SignallingDetail" is-interface="true">
+        <attribute name="effect" type="java.lang.String"/>
+        <attribute name="effectMechanism" type="java.lang.String"/>
+        <attribute name="mechanismResidues" type="java.lang.String"/>
+        <attribute name="mechanismSequences" type="java.lang.String"/>
+        <attribute name="notes" type="java.lang.String"/>
+        <reference name="signalling" referenced-type="Signalling" reverse-reference="details"/>
+        <collection name="publications" referenced-type="Publication" />
+    </class>
+
+    <class name="BioEntity" is-interface="true">
+        <collection name="signalling" referenced-type="Signalling" reverse-reference="participant1"/>
+    </class>
+
+</classes>

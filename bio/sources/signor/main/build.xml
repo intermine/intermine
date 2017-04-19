@@ -1,0 +1,4 @@
+<project name="signor-tasks" default="default" basedir=".">
+  <description>build signor tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
