@@ -148,9 +148,7 @@ public class Callback extends LoginHandler
                 JSONObject claims = new JSONObject(new String(decoder.decode(pieces[1])));
                 String openidID = claims.optString("openid_id");
                 String sub = claims.optString("sub");
-                if (StringUtils.isNotEmpty(openidID) && StringUtils.isNotEmpty(sub)) {
-                    migrationMapping = new MigrationMapping(openidID, sub);
-                }
+                migrationMapping = new MigrationMapping(openidID, sub);
             } else {
                 LOG.error("id_token is not a valid JWT - has Google changed their API?");
             }
