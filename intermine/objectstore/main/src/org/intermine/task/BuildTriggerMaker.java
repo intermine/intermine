@@ -70,7 +70,7 @@ import org.intermine.sql.DatabaseUtil;
  *
  * 3) The clob table cannot be manipulated. Again, this may also be changed
  * in the future.
- * 
+ *
  * 4) If the id field in InterMineObject has exceeded 2^31 and gone negative,
  * the sequence im_serial cannot be used in INSERT operations without (probably)
  * colliding with another object. The value of the serial must be set manually
@@ -363,10 +363,12 @@ public class BuildTriggerMaker extends Task {
         + "DROP TRIGGER IF EXISTS im_" + shortName(tableName)
         + "_IntermineObject_TRN_tg ON " + tableName + ";\n"
         + "DROP FUNCTION IF EXISTS im_" + shortName(tableName)
-        + "_IntermineObject_INS();\n" + "DROP FUNCTION IF EXISTS im_"
-        + shortName(tableName) + "_IntermineObject_UPD();\n"
+        + "_IntermineObject_INS();\n"
         + "DROP FUNCTION IF EXISTS im_" + shortName(tableName)
-        + "_IntermineObject_DEL();\n" + "DROP FUNCTION IF EXISTS im_"
+        + "_IntermineObject_UPD();\n"
+        + "DROP FUNCTION IF EXISTS im_" + shortName(tableName)
+        + "_IntermineObject_DEL();\n"
+        + "DROP FUNCTION IF EXISTS im_"
         + shortName(tableName) + "_IntermineObject_TRN();\n\n";
     return cmds;
   }
