@@ -59,6 +59,10 @@ public class SignorConverter extends BioFileConverter
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
+            if (line.length < 27) {
+                continue;
+            }
+
             //String type1 = line[1];
             String identifier1 = line[2];
             String participant1 = getEntity(identifier1);
@@ -75,6 +79,7 @@ public class SignorConverter extends BioFileConverter
             String pubmedId = getPublication(line[21]);
             String notes = line[23];
             String signorId = line[26];
+
 
             Item detail = createItem("SignallingDetail");
             if (StringUtils.isNotEmpty(effect)) {
@@ -98,7 +103,9 @@ public class SignorConverter extends BioFileConverter
             store(detail);
 
             Item signalling = createItem("Signalling");
-            signalling.setAttribute("identifier", signorId);
+            if (StringUtils.isNotEmpty(signorId)) {
+                signalling.setAttribute("identifier", signorId);
+            }
             signalling.setReference("participant1", participant1);
             signalling.setReference("participant2", participant2);
             signalling.addToCollection("details", detail);
