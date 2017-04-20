@@ -290,17 +290,17 @@ public class Callback extends LoginHandler
         if (!preferences.containsKey(UserPreferences.AKA)) {
             preferences.put(UserPreferences.AKA, identity.getName());
         }
-        if (!preferences.containsKey(UserPreferences.ALIAS)) {
-            int c = 0;
-            String alias = identity.getName();
-            while (!preferences.containsKey(UserPreferences.ALIAS)) {
-                try {
-                    preferences.put(UserPreferences.ALIAS, alias);
-                } catch (DuplicateMappingException e) {
-                    alias = identity.getName() + " " + ++c;
-                }
-            }
-        }
+        // if (!preferences.containsKey(UserPreferences.ALIAS)) {
+        //     int c = 0;
+        //     String alias = identity.getName();
+        //     while (!preferences.containsKey(UserPreferences.ALIAS)) {
+        //         try {
+        //             preferences.put(UserPreferences.ALIAS, alias);
+        //         } catch (DuplicateMappingException e) {
+        //             alias = identity.getName() + " " + ++c;
+        //         }
+        //     }
+        // }
         ActionMessages messages = new ActionMessages();
         setUpProfile(request.getSession(), profile);
         messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
@@ -311,29 +311,29 @@ public class Callback extends LoginHandler
             // The current profile was for an anonymous guest.
             issues = mergeProfiles(currentProfile, profile);
         }
-        if (mapping != null) {
-            Profile migratedFrom = api.getProfileManager().getProfile(mapping.getOldId());
-            if (migratedFrom != null) {
-                issues = issues.combineWith(mergeProfiles(migratedFrom, profile));
-                profile.setApiKey(migratedFrom.getApiKey());
-                Map<String, String> prefs =
-                        new HashMap<String, String>(migratedFrom.getPreferences());
-                migratedFrom.getPreferences().clear();
-                profile.getPreferences().putAll(prefs);
-                UserProfile oldUser = api.getProfileManager()
-                                         .getUserProfile(migratedFrom.getUserId());
-                if (oldUser != null) { // mark old profile as migrated.
-                    oldUser.setUsername("__migrated__" + oldUser.getUsername());
-                    try {
-                        api.getUserProfile().store(oldUser);
-                    } catch (ObjectStoreException e) {
-                        messages.add(ActionMessages.GLOBAL_MESSAGE,
-                                new ActionMessage("login.migration.error",
-                                        mapping.getOldId(), e.getMessage()));
-                    }
-                }
-            }
-        }
+//        if (mapping != null) {
+//            Profile migratedFrom = api.getProfileManager().getProfile(mapping.getOldId());
+//            if (migratedFrom != null) {
+//                issues = issues.combineWith(mergeProfiles(migratedFrom, profile));
+//                profile.setApiKey(migratedFrom.getApiKey());
+//                Map<String, String> prefs =
+//                        new HashMap<String, String>(migratedFrom.getPreferences());
+//                migratedFrom.getPreferences().clear();
+//                profile.getPreferences().putAll(prefs);
+//                UserProfile oldUser = api.getProfileManager()
+//                                         .getUserProfile(migratedFrom.getUserId());
+//                if (oldUser != null) { // mark old profile as migrated.
+//                    oldUser.setUsername("__migrated__" + oldUser.getUsername());
+//                    try {
+//                        api.getUserProfile().store(oldUser);
+//                    } catch (ObjectStoreException e) {
+//                        messages.add(ActionMessages.GLOBAL_MESSAGE,
+//                                new ActionMessage("login.migration.error",
+//                                        mapping.getOldId(), e.getMessage()));
+//                    }
+//                }
+//            }
+//        }
         for (Entry<String, String> pair: issues.getRenamedBags().entrySet()) {
             messages.add(ActionMessages.GLOBAL_MESSAGE,
                     new ActionMessage("login.renamed.bag", pair.getKey(), pair.getValue()));
