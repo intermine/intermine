@@ -19,6 +19,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
@@ -190,7 +191,9 @@ public class MgiAllelesConverter extends BioFileConverter
                 allele.setAttribute("type", alleleType);
             }
 
-            if (!StringUtils.isBlank(pubmed)) {
+            // Last file had a bad PubMed ID so be careful.
+            // See #1537
+            if (!StringUtils.isBlank(pubmed) && StringUtil.allDigits(pubmed)) {
                 String pubItemId = getPubItemId(pubmed);
                 allele.setReference("publication", pubItemId);
             }
@@ -221,6 +224,7 @@ public class MgiAllelesConverter extends BioFileConverter
     }
 
     private String getPubItemId(String pubmed) throws ObjectStoreException {
+
         String pubItemId = pubs.get(pubmed);
         if (pubItemId == null) {
             Item pub = createItem("Publication");

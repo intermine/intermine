@@ -182,6 +182,8 @@ public class Protein2iprConverter extends BioFileConverter
             dbName = "SMART";
         } else if (dbId.startsWith("SSF")) {
             dbName = "SUPERFAMILY";
+        } else if (dbId.startsWith("SFLD")) {
+            dbName = "Structure-Function Linkage Database (SFLD)";
         } else if (dbId.startsWith("PS")) {
             dbName = "PROSITE";
         } else if (dbId.startsWith("PR")) {

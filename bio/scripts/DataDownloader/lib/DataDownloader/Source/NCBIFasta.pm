@@ -12,7 +12,7 @@ use constant {
 };
 
 use constant FILE_TYPES =>
-  qr/hs_ref_GRCh38.p2_chr/;
+  qr/hs_ref_GRCh38.p7_chr/;
 
 sub BUILD {
     my $self = shift;
