@@ -233,11 +233,11 @@ public class Profile
      * @return String
      */
     public String getName() {
-    	// AKA is my name for myself (not public).
+        // AKA is my name for myself (not public).
         if (prefers(UserPreferences.AKA)) {
             String aka = getPreferences().get(UserPreferences.AKA);
 
-            if (!aka.equals("")) {
+            if (!("".equals(aka))) {
                 return aka;
             }
         }
@@ -246,7 +246,7 @@ public class Profile
         if (prefers(UserPreferences.ALIAS)) {
             String alias = getPreferences().get(UserPreferences.ALIAS);
 
-            if (!alias.equals("")) {
+            if (!("".equals(alias))) {
                 return alias;
             }
         }

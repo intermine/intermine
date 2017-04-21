@@ -284,43 +284,45 @@ public class Callback extends LoginHandler
         if (!preferences.containsKey(UserPreferences.EMAIL)) {
             preferences.put(UserPreferences.EMAIL, identity.getEmail());
         }
-        
+
         // Always write a user's email address to the user profile. This is unlikely to change
         // but fixes problems associated with Google returning blank strings in the oAuth2 profile.
         preferences.put(UserPreferences.EMAIL, identity.getEmail());
-        
+
         // If we have a non empty identity from the provider
         String identityName = identity.getName();
-        if (!identityName.equals("")) {
-            // ...and an AKA preference exists and it's empty, or if the key is missing (never set), then populate it
+        if (!("".equals(identityName))) {
+            // ...and an AKA preference exists and it's empty,
+            // or if the key is missing (never set), then populate it
             String aka = "";
 
             if (preferences.containsKey(UserPreferences.AKA)) {
                 aka = preferences.get(UserPreferences.AKA);
-    		}
+            }
 
-		    if (aka.equals("")) {
-		        preferences.put(UserPreferences.AKA, identityName);
-		    }
+            if ("".equals(aka)) {
+                preferences.put(UserPreferences.AKA, identityName);
+            }
 
-            // ...and an ALIAS preference exists and it's empty, or if the key is missing (never set), then populate it
-		    String alias = "";
+            // ...and an ALIAS preference exists and it's empty,
+            // or if the key is missing (never set), then populate it
+            String alias = "";
 
             if (preferences.containsKey(UserPreferences.ALIAS)) {
                 alias = preferences.get(UserPreferences.ALIAS);
             }
 
-		    if (alias.equals("")) {
-	            int c = 0;
-	            alias = identityName;
+            if ("".equals(alias)) {
+                int c = 0;
+                alias = identityName;
 
-	            do {	            
-	                try {
-	                    preferences.put(UserPreferences.ALIAS, alias);
-	                } catch (DuplicateMappingException e) {
-	                    alias = identityName + " " + ++c;
-	                }
-	            } while (!preferences.containsKey(UserPreferences.ALIAS));
+                do {
+                    try {
+                        preferences.put(UserPreferences.ALIAS, alias);
+                    } catch (DuplicateMappingException e) {
+                        alias = identityName + " " + ++c;
+                    }
+                } while (!preferences.containsKey(UserPreferences.ALIAS));
             }
         }
 
@@ -336,8 +338,8 @@ public class Callback extends LoginHandler
         }
 
         // Removed the mapping process because it's no longer necessary, and also blank strings
-        // in the user preferences might be causing trouble. 
-        // TODO: Remove related dead code 
+        // in the user preferences might be causing trouble.
+        // TODO: Remove related dead code
         // (DuplicateMappingException and friends must stay because they're used in MyMine)
 //        if (mapping != null) {
 //            Profile migratedFrom = api.getProfileManager().getProfile(mapping.getOldId());
