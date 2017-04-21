@@ -233,7 +233,6 @@ public class Profile
      * @return String
      */
     public String getName() {
-    	Integer x = userId;
     	// AKA is my name for myself (not public).
         if (prefers(UserPreferences.AKA) && !getPreferences().get(UserPreferences.AKA).equals(StringUtils.EMPTY)) {
             return getPreferences().get(UserPreferences.AKA);
