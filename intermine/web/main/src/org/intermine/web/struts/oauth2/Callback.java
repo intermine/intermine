@@ -11,7 +11,6 @@ package org.intermine.web.struts.oauth2;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,8 +46,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.DuplicateMappingException;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.UserPreferences;
-import org.intermine.model.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.profile.ProfileMergeIssues;
@@ -292,34 +289,40 @@ public class Callback extends LoginHandler
         // but fixes problems associated with Google returning blank strings in the oAuth2 profile.
         preferences.put(UserPreferences.EMAIL, identity.getEmail());
         
-        // Set the AKA preference
         // If we have a non empty identity from the provider
-        if (!identity.getName().equals(StringUtils.EMPTY)) {
-        	// ...and an AKA preference exists and it's empty, or if the key is missing (never set), then populate it:
-    		if ((preferences.containsKey(UserPreferences.AKA) && preferences.get(UserPreferences.AKA).equals(StringUtils.EMPTY))
-    				|| (!preferences.containsKey(UserPreferences.AKA))) {
-    					preferences.put(UserPreferences.AKA, identity.getName());
-    				}
-        }
-        
-        // Set the ALIAS preference
-        // If we have a non empty identity from the provider
-        if (!identity.getName().equals(StringUtils.EMPTY)) {
-        	// ...and an ALIAS preference exists and it's empty, or if the key is missing (never set), then populate it:
-    		if ((preferences.containsKey(UserPreferences.ALIAS) && preferences.get(UserPreferences.ALIAS).equals(StringUtils.EMPTY))
-    				|| (!preferences.containsKey(UserPreferences.ALIAS))) {
-    	             int c = 0;
-    	             String alias = identity.getName();
-    	             while (!preferences.containsKey(UserPreferences.ALIAS)) {
-    	                 try {
-    	                     preferences.put(UserPreferences.ALIAS, alias);
-    	                 } catch (DuplicateMappingException e) {
-    	                     alias = identity.getName() + " " + ++c;
-    	                 }
-    	             }
-    		}
-        }
+        String identityName = identity.getName();
+        if (!identityName.equals("")) {
+            // ...and an AKA preference exists and it's empty, or if the key is missing (never set), then populate it
+            String aka = "";
 
+            if (preferences.containsKey(UserPreferences.AKA)) {
+                aka = preferences.get(UserPreferences.AKA);
+    		}
+
+		    if (aka.equals("")) {
+		        preferences.put(UserPreferences.AKA, identityName);
+		    }
+
+            // ...and an ALIAS preference exists and it's empty, or if the key is missing (never set), then populate it
+		    String alias = "";
+
+            if (preferences.containsKey(UserPreferences.ALIAS)) {
+                alias = preferences.get(UserPreferences.ALIAS);
+            }
+
+		    if (alias.equals("")) {
+	            int c = 0;
+	            alias = identityName;
+
+	            do {	            
+	                try {
+	                    preferences.put(UserPreferences.ALIAS, alias);
+	                } catch (DuplicateMappingException e) {
+	                    alias = identityName + " " + ++c;
+	                }
+	            } while (!preferences.containsKey(UserPreferences.ALIAS));
+            }
+        }
 
         ActionMessages messages = new ActionMessages();
         setUpProfile(request.getSession(), profile);
@@ -331,6 +334,7 @@ public class Callback extends LoginHandler
             // The current profile was for an anonymous guest.
             issues = mergeProfiles(currentProfile, profile);
         }
+
         // Removed the mapping process because it's no longer necessary, and also blank strings
         // in the user preferences might be causing trouble. 
         // TODO: Remove related dead code 
@@ -358,6 +362,7 @@ public class Callback extends LoginHandler
 //                }
 //            }
 //        }
+
         for (Entry<String, String> pair: issues.getRenamedBags().entrySet()) {
             messages.add(ActionMessages.GLOBAL_MESSAGE,
                     new ActionMessage("login.renamed.bag", pair.getKey(), pair.getValue()));
