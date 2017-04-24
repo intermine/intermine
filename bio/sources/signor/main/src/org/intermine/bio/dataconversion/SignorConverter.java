@@ -32,6 +32,7 @@ public class SignorConverter extends BioFileConverter
     //
     private static final String DATASET_TITLE = "Signor data set";
     private static final String DATA_SOURCE_NAME = "Signor";
+    private static final String PROTEIN = "protein";
     private Map<String, String> entities = new HashMap<String, String>();
     private Map<String, String> publications = new HashMap<String, String>();
 
@@ -63,13 +64,13 @@ public class SignorConverter extends BioFileConverter
                 continue;
             }
 
-            //String type1 = line[1];
+            String type1 = line[1];
             String identifier1 = line[2];
-            String participant1 = getEntity(identifier1);
+            String participant1 = getEntity(identifier1, type1);
 
-            //String type2 = line[5];
+            String type2 = line[5];
             String identifier2 = line[6];
-            String participant2 = getEntity(identifier2);
+            String participant2 = getEntity(identifier2, type2);
 
             String effect = line[8];
             String effectMechanism = line[9];
@@ -113,11 +114,17 @@ public class SignorConverter extends BioFileConverter
         }
     }
 
-    private String getEntity(String primaryIdentifier) throws ObjectStoreException {
+    private String getEntity(String primaryIdentifier, String type) throws ObjectStoreException {
         String refId = entities.get(primaryIdentifier);
         if (refId == null) {
-            Item item = createItem("BioEntity");
-            item.setAttribute("primaryIdentifier", primaryIdentifier);
+            Item item = null;
+            if (PROTEIN.equals(type)) {
+                item = createItem("Protein");
+                item.setAttribute("primaryAccession", primaryIdentifier);
+            } else {
+                item = createItem("BioEntity");
+                item.setAttribute("primaryIdentifier", primaryIdentifier);
+            }
             store(item);
             refId = item.getIdentifier();
             entities.put(primaryIdentifier, refId);
