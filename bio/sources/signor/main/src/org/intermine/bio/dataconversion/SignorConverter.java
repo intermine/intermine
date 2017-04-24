@@ -81,6 +81,13 @@ public class SignorConverter extends BioFileConverter
             String notes = line[23];
             String signorId = line[26];
 
+            Item signalling = createItem("Signalling");
+            if (StringUtils.isNotEmpty(signorId)) {
+                signalling.setAttribute("identifier", signorId);
+            }
+            signalling.setReference("participant1", participant1);
+            signalling.setReference("participant2", participant2);
+            store(signalling);
 
             Item detail = createItem("SignallingDetail");
             if (StringUtils.isNotEmpty(effect)) {
@@ -101,16 +108,8 @@ public class SignorConverter extends BioFileConverter
             if (StringUtils.isNotEmpty(pubmedId)) {
                 detail.addToCollection("publications", pubmedId);
             }
+            detail.setReference("signalling", signalling);
             store(detail);
-
-            Item signalling = createItem("Signalling");
-            if (StringUtils.isNotEmpty(signorId)) {
-                signalling.setAttribute("identifier", signorId);
-            }
-            signalling.setReference("participant1", participant1);
-            signalling.setReference("participant2", participant2);
-            signalling.addToCollection("details", detail);
-            store(signalling);
         }
     }
 
