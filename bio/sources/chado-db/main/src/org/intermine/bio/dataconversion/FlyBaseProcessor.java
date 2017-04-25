@@ -1058,6 +1058,12 @@ public class FlyBaseProcessor extends SequenceProcessor
     private void makeAndStoreLocation(Integer chrFeatureId, FeatureData subjectFeatureData,
             int start, int end, int strand, int taxonId)
         throws ObjectStoreException {
+
+        if ("protein".equalsIgnoreCase(subjectFeatureData.getInterMineType())) {
+            // don't make locations for proteins
+            return;
+        }
+
         FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
         Item location =
             getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
