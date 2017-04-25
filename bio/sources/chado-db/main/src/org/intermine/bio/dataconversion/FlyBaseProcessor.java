@@ -781,10 +781,8 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
         if ("golden_path_region".equals(chadoFeatureType)) {
-            // For organisms other than D. melanogaster sometimes we can convert a
-            // golden_path_region to an actual chromosome: if name is 2L, 4, etc
-            // 2015 June - most Drosophila are now golden path fragments
-            realInterMineType = "Chromosome";
+            // ignore these, dmel is well mapped, we're not interested. See #1052
+            return null;
         }
 
         if (chadoFeatureType.equals(CHROMOSOME_STRUCTURE_VARIATION_SO_NAME)) {
