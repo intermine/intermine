@@ -733,8 +733,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
-                               String name, String uniqueName,
-                               int seqlen, int taxonId) {
+                               String name, String uniqueName, int seqlen, int taxonId) {
         String realInterMineType = interMineType;
 
         if ("protein".equals(chadoFeatureType) && !uniqueName.startsWith("FBpp")) {
@@ -807,9 +806,9 @@ public class FlyBaseProcessor extends SequenceProcessor
             // the FBti identifier
             return null;
         }
-        if ("mRNA".equals(chadoFeatureType) && seqlen == 0) {
+        if ("mRNA".equals(chadoFeatureType) && (seqlen == 0 || !uniqueName.startsWith("FBtr"))) {
             // flybase has > 7000 mRNA features that have no sequence and don't appear in their
-            // webapp so we filter them out
+            // webapp so we filter them out. See #1086
             return null;
         }
         if ("protein".equals(chadoFeatureType) && seqlen == 0) {
