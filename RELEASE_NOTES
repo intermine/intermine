@@ -8,7 +8,11 @@
  *
  */
 
-InterMine 1.7.1 (2017 Jan)
+InterMine 1.7.2 (2017 April)
+
+#1533 - Update code to adapt to google API changes 
+
+InterMine 1.7.1 (2017 January)
 
 #1482 - Error when creating a list and accessing via the web service via tablerows method.
 
