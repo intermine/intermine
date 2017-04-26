@@ -24,8 +24,9 @@ import org.intermine.xml.full.Item;
 
 
 /**
+ * Load allele disease annotation
  *
- * @author
+ * @author Julie Sullivan
  */
 public class FlybaseAllelesConverter extends BioFileConverter
 {
@@ -34,7 +35,6 @@ public class FlybaseAllelesConverter extends BioFileConverter
     private static final String DATASET_TITLE = "FlyBase";
     private static final String DATA_SOURCE_NAME = "FlyBase Human disease model data set";
     private Map<String, String> alleles = new HashMap<String, String>();
-    private Map<String, String> publications = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -50,59 +50,57 @@ public class FlybaseAllelesConverter extends BioFileConverter
     *
     * {@inheritDoc}
     */
-   public void process(Reader reader) throws Exception {
-       Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+    public void process(Reader reader) throws Exception {
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
-       //##FBal_ID, AlleleSymbol, DOID_qualifier, DOID_term, DOID_ID, Evidence/interacting_alleles, Reference_FBid
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
 
-       while (lineIter.hasNext()) {
-           String[] line = (String[]) lineIter.next();
+            if (line.length < 6) {
+                continue;
+            }
 
-           if (line.length < 6) {
-               continue;
-           }
+            String alleleIdentifier = line[0];
+            String symbol = line[1];
+            String alleleRefId = getAllele(alleleIdentifier, symbol);
 
-           String alleleIdentifier = line[0];
-           String symbol = line[1];
-           String alleleRefId = getAllele(alleleIdentifier, symbol);
+            String qualifier = line[2];
+            //String diseaseName = line[3];
+            String diseaseIdentifier = line[4];
+            String evidence = line[5];
 
-           String qualifier = line[2];
-           String diseaseName = line[3];
-           String diseaseIdentifier = line[4];
-           String evidence = line[5];
+            Item term = createItem("DOTerm");
+            if (StringUtils.isNotEmpty(diseaseIdentifier)) {
+                term.setAttribute("identifier", diseaseIdentifier);
+            }
+            store(term);
 
-           Item term = createItem("DOTerm");
-           if (StringUtils.isNotEmpty(diseaseIdentifier)) {
-               term.setAttribute("identifier", diseaseIdentifier);
-           }
-           store(term);
+            Item evidenceTerm = createItem("DOEvidence");
+            if (StringUtils.isNotEmpty(evidence)) {
+                evidenceTerm.setAttribute("evidence", evidence);
+            }
+            store(evidenceTerm);
 
-           Item evidenceTerm = createItem("DOEvidence");
-           if (StringUtils.isNotEmpty(evidence)) {
-               evidenceTerm.setAttribute("evidence", evidence);
-           }
-           store(evidenceTerm);
+            Item doAnnotation = createItem("DOAnnotation");
+            doAnnotation.setReference("subject", alleleRefId);
+            if (StringUtils.isNotEmpty(qualifier)) {
+                doAnnotation.setAttribute("qualifier", qualifier);
+            }
+            doAnnotation.setReference("ontologyTerm", term);
 
-           Item doAnnotation = createItem("DOAnnotation");
-           doAnnotation.setReference("subject", alleleRefId);
-           if (StringUtils.isNotEmpty(qualifier)) {
-               doAnnotation.setAttribute("qualifier", qualifier);
-           }
-           doAnnotation.setReference("ontologyTerm", term);
+        }
+    }
 
-       }
-   }
-
-   private String getAllele(String primaryIdentifier, String symbol) throws ObjectStoreException {
-       String refId = alleles.get(primaryIdentifier);
-       if (refId == null) {
-           Item item = createItem("Allele");
-           item.setAttribute("primaryIdentifier", primaryIdentifier);
-           item.setAttribute("symbol", symbol);
-           store(item);
-           refId = item.getIdentifier();
-           alleles.put(primaryIdentifier, refId);
-       }
-       return refId;
-   }
+    private String getAllele(String primaryIdentifier, String symbol) throws ObjectStoreException {
+        String refId = alleles.get(primaryIdentifier);
+        if (refId == null) {
+            Item item = createItem("Allele");
+            item.setAttribute("primaryIdentifier", primaryIdentifier);
+            item.setAttribute("symbol", symbol);
+            store(item);
+            refId = item.getIdentifier();
+            alleles.put(primaryIdentifier, refId);
+        }
+        return refId;
+    }
 }
