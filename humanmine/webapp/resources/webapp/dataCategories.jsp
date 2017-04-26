@@ -135,6 +135,12 @@
                <td>Mouse</td>
                <td>November 2016</td>
        </tr>
+       <tr>
+               <td>Signalling</td>
+               <td><a href="http://signor.uniroma2.it/">Signor, Signaling Network Open Resource</a></td>
+               <td>Human, mouse</td>
+               <td>April 2017</td>
+       </tr>
 </table>
 </div>
 <!-- /dataCategories -->
