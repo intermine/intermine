@@ -10,11 +10,10 @@ use constant {
     SOURCE_DIR => "do",
     SOURCES => [
         {
-            URI => "https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/master/src/ontology",
+            SERVER => "https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/master/src/ontology",
             FILE => "doid-non-classified.obo",
         },
     ],
 };
 
 1;
-
