@@ -35,6 +35,7 @@ public class FlybaseAllelesConverter extends BioFileConverter
     private static final String DATASET_TITLE = "FlyBase";
     private static final String DATA_SOURCE_NAME = "FlyBase Human disease model data set";
     private Map<String, String> alleles = new HashMap<String, String>();
+    private Map<String, String> diseases = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -69,11 +70,7 @@ public class FlybaseAllelesConverter extends BioFileConverter
             String diseaseIdentifier = line[4];
             String evidence = line[5];
 
-            Item term = createItem("DOTerm");
-            if (StringUtils.isNotEmpty(diseaseIdentifier)) {
-                term.setAttribute("identifier", diseaseIdentifier);
-            }
-            store(term);
+            String doTerm = getDisease(diseaseIdentifier);
 
             Item evidenceTerm = createItem("DOEvidence");
             if (StringUtils.isNotEmpty(evidence)) {
@@ -86,7 +83,7 @@ public class FlybaseAllelesConverter extends BioFileConverter
             if (StringUtils.isNotEmpty(qualifier)) {
                 doAnnotation.setAttribute("qualifier", qualifier);
             }
-            doAnnotation.setReference("ontologyTerm", term);
+            doAnnotation.setReference("ontologyTerm", doTerm);
 
         }
     }
@@ -100,6 +97,18 @@ public class FlybaseAllelesConverter extends BioFileConverter
             store(item);
             refId = item.getIdentifier();
             alleles.put(primaryIdentifier, refId);
+        }
+        return refId;
+    }
+
+    private String getDisease(String identifier) throws ObjectStoreException {
+        String refId = diseases.get(identifier);
+        if (refId == null) {
+            Item item = createItem("DOTerm");
+            item.setAttribute("identifier", identifier);
+            store(item);
+            refId = item.getIdentifier();
+            diseases.put(identifier, refId);
         }
         return refId;
     }
