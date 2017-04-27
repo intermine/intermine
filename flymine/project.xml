@@ -115,7 +115,7 @@
       <property name="src.data.dir" location="/micklem/data/flyatlas/current"/>
     </source>
     <source name="do" type="do">
-      <property name="src.data.file" location="/micklem/data/do/current/doid.obo" />
+      <property name="src.data.file" location="/micklem/data/do/current/doid-non-classified.obo" />
     </source>
     <source name="flybase-alleles" type="flybase-alleles">
       <property name="src.data.dir" location="/micklem/data/flybase/alleles/current"/>

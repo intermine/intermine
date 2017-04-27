@@ -10,8 +10,8 @@ use constant {
     SOURCE_DIR => "do",
     SOURCES => [
         {
-            URI => "http://purl.obolibrary.org/obo",
-            FILE => "doid.obo",
+            URI => "https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/master/src/ontology",
+            FILE => "doid-non-classified.obo",
         },
     ],
 };
