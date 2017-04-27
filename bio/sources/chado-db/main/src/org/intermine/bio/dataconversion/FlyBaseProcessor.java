@@ -1153,8 +1153,11 @@ public class FlyBaseProcessor extends SequenceProcessor
             int start = fmin + 1;
             int end = fmax;
 
+            // make sure both are relevant features. e.g. we do not load golden paths
+            // but they have insertions. See #1052
             FeatureData subFeatureData = getFeatureMap().get(new Integer(subId));
-            if (subFeatureData != null) {
+            FeatureData chrFeatureData = getFeatureMap().get(new Integer(chrId));
+            if (subFeatureData != null && chrFeatureData != null) {
                 // this is a hack - we should make sure that we only query for features that are in
                 // the feature map, ie. those for the current organism
                 int taxonId = subFeatureData.getOrganismData().getTaxonId();
