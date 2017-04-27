@@ -11,7 +11,6 @@ package org.intermine.web.struts.oauth2;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,8 +46,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.DuplicateMappingException;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.UserPreferences;
-import org.intermine.model.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.profile.ProfileMergeIssues;
@@ -287,20 +284,48 @@ public class Callback extends LoginHandler
         if (!preferences.containsKey(UserPreferences.EMAIL)) {
             preferences.put(UserPreferences.EMAIL, identity.getEmail());
         }
-        if (!preferences.containsKey(UserPreferences.AKA)) {
-            preferences.put(UserPreferences.AKA, identity.getName());
-        }
-        if (!preferences.containsKey(UserPreferences.ALIAS)) {
-            int c = 0;
-            String alias = identity.getName();
-            while (!preferences.containsKey(UserPreferences.ALIAS)) {
-                try {
-                    preferences.put(UserPreferences.ALIAS, alias);
-                } catch (DuplicateMappingException e) {
-                    alias = identity.getName() + " " + ++c;
-                }
+
+        // Always write a user's email address to the user profile. This is unlikely to change
+        // but fixes problems associated with Google returning blank strings in the oAuth2 profile.
+        preferences.put(UserPreferences.EMAIL, identity.getEmail());
+
+        // If we have a non empty identity from the provider
+        String identityName = identity.getName();
+        if (!("".equals(identityName))) {
+            // ...and an AKA preference exists and it's empty,
+            // or if the key is missing (never set), then populate it
+            String aka = "";
+
+            if (preferences.containsKey(UserPreferences.AKA)) {
+                aka = preferences.get(UserPreferences.AKA);
+            }
+
+            if ("".equals(aka)) {
+                preferences.put(UserPreferences.AKA, identityName);
+            }
+
+            // ...and an ALIAS preference exists and it's empty,
+            // or if the key is missing (never set), then populate it
+            String alias = "";
+
+            if (preferences.containsKey(UserPreferences.ALIAS)) {
+                alias = preferences.get(UserPreferences.ALIAS);
+            }
+
+            if ("".equals(alias)) {
+                int c = 0;
+                alias = identityName;
+
+                do {
+                    try {
+                        preferences.put(UserPreferences.ALIAS, alias);
+                    } catch (DuplicateMappingException e) {
+                        alias = identityName + " " + ++c;
+                    }
+                } while (!preferences.containsKey(UserPreferences.ALIAS));
             }
         }
+
         ActionMessages messages = new ActionMessages();
         setUpProfile(request.getSession(), profile);
         messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
@@ -311,29 +336,35 @@ public class Callback extends LoginHandler
             // The current profile was for an anonymous guest.
             issues = mergeProfiles(currentProfile, profile);
         }
-        if (mapping != null) {
-            Profile migratedFrom = api.getProfileManager().getProfile(mapping.getOldId());
-            if (migratedFrom != null) {
-                issues = issues.combineWith(mergeProfiles(migratedFrom, profile));
-                profile.setApiKey(migratedFrom.getApiKey());
-                Map<String, String> prefs =
-                        new HashMap<String, String>(migratedFrom.getPreferences());
-                migratedFrom.getPreferences().clear();
-                profile.getPreferences().putAll(prefs);
-                UserProfile oldUser = api.getProfileManager()
-                                         .getUserProfile(migratedFrom.getUserId());
-                if (oldUser != null) { // mark old profile as migrated.
-                    oldUser.setUsername("__migrated__" + oldUser.getUsername());
-                    try {
-                        api.getUserProfile().store(oldUser);
-                    } catch (ObjectStoreException e) {
-                        messages.add(ActionMessages.GLOBAL_MESSAGE,
-                                new ActionMessage("login.migration.error",
-                                        mapping.getOldId(), e.getMessage()));
-                    }
-                }
-            }
-        }
+
+        // Removed the mapping process because it's no longer necessary, and also blank strings
+        // in the user preferences might be causing trouble.
+        // TODO: Remove related dead code
+        // (DuplicateMappingException and friends must stay because they're used in MyMine)
+//        if (mapping != null) {
+//            Profile migratedFrom = api.getProfileManager().getProfile(mapping.getOldId());
+//            if (migratedFrom != null) {
+//                issues = issues.combineWith(mergeProfiles(migratedFrom, profile));
+//                profile.setApiKey(migratedFrom.getApiKey());
+//                Map<String, String> prefs =
+//                        new HashMap<String, String>(migratedFrom.getPreferences());
+//                migratedFrom.getPreferences().clear();
+//                profile.getPreferences().putAll(prefs);
+//                UserProfile oldUser = api.getProfileManager()
+//                                         .getUserProfile(migratedFrom.getUserId());
+//                if (oldUser != null) { // mark old profile as migrated.
+//                    oldUser.setUsername("__migrated__" + oldUser.getUsername());
+//                    try {
+//                        api.getUserProfile().store(oldUser);
+//                    } catch (ObjectStoreException e) {
+//                        messages.add(ActionMessages.GLOBAL_MESSAGE,
+//                                new ActionMessage("login.migration.error",
+//                                        mapping.getOldId(), e.getMessage()));
+//                    }
+//                }
+//            }
+//        }
+
         for (Entry<String, String> pair: issues.getRenamedBags().entrySet()) {
             messages.add(ActionMessages.GLOBAL_MESSAGE,
                     new ActionMessage("login.renamed.bag", pair.getKey(), pair.getValue()));
