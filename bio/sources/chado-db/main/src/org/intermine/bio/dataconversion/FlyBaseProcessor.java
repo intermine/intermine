@@ -1062,6 +1062,10 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
         FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
+        if (chrFeatureData == null) {
+            // chromosome might be empty if we ignored it earlier, e.g. golden path region
+            return;
+        }
         Item location =
             getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
                                                subjectFeatureData.getItemIdentifier(),
