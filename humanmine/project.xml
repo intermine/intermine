@@ -72,7 +72,9 @@
      <property name="src.data.dir.includes" value="protein2ipr.dat"/>
      <property name="protein2ipr.organisms" value="9606"/>
     </source>
-
+    <source name="signor" type="signor">
+      <property name="src.data.dir" location="/micklem/data/signor/current" />
+    </source>
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/micklem/data/interpro/current" />
     </source>
