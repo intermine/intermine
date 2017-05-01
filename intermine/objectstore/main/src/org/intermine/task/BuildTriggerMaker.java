@@ -192,7 +192,6 @@ public class BuildTriggerMaker extends Task
             removerPW.print(removeDisclaimer());
 
             makerPW.print(writeSequence());
-            removerPW.print(removeSequence());
             for (ClassDescriptor cld : model.getBottomUpLevelTraversal()) {
 
                 if (!"InterMineObject".equals(cld.getUnqualifiedName())
@@ -212,6 +211,7 @@ public class BuildTriggerMaker extends Task
                     removerPW.print(removeInterMineObjectActions(cld));
                 }
             }
+            removerPW.print(removeSequence());
             makerPW.print(writeDisclaimer());
             makerPW.close();
             removerPW.print(removeDisclaimer());
