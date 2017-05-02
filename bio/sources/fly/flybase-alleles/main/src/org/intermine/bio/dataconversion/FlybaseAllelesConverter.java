@@ -84,7 +84,7 @@ public class FlybaseAllelesConverter extends BioFileConverter
                 doAnnotation.setAttribute("qualifier", qualifier);
             }
             doAnnotation.setReference("ontologyTerm", doTerm);
-
+            store(doAnnotation);
         }
     }
 
