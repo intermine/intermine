@@ -73,7 +73,7 @@ public class ObjectTrailController extends TilesAction
         String elementTrail = "";
 
         for (int i = 0; i < ids.length; i++) {
-            elementTrail += "|" + ids[i];
+            elementTrail += "%7C" + ids[i];
 
             // split this param pair again with . delimiter
             // will be something like bag.baggieName or results.col0 or itt.template.id

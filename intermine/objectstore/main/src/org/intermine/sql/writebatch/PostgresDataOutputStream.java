@@ -75,6 +75,11 @@ public class PostgresDataOutputStream extends DataOutputStream
         for (String str : strs) {
             int strlen = str.length();
             for (int i = 0; i < strlen; i++) {
+                if (!Character.isBmpCodePoint(Character.codePointAt(str, i))) {
+                    utflen += 4;
+                    i++;
+                    continue;
+                }
                 c = str.charAt(i);
                 if ((c >= 0x0001) && (c <= 0x007F)) {
                     utflen++;
@@ -94,6 +99,10 @@ public class PostgresDataOutputStream extends DataOutputStream
         writeInt(utflen);
 
         for (String str : strs) {
+            write(str.getBytes());
+            //commented out because it's modified utf-8 incompatible with standard UTF-8
+            //Ref  https://github.com/intermine/intermine/issues/1532
+            /*
             int strlen = str.length();
             int i = 0;
             for (i = 0; i < strlen; i++) {
@@ -116,7 +125,7 @@ public class PostgresDataOutputStream extends DataOutputStream
                     writeByte((byte) (0xC0 | ((c >>  6) & 0x1F)));
                     writeByte((byte) (0x80 | ((c >>  0) & 0x3F)));
                 }
-            }
+            }*/
         }
         return utflen + 4;
     }

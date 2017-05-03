@@ -19,7 +19,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -44,9 +43,6 @@ import org.json.JSONObject;
  */
 public class GenomicRegionSearchAction extends InterMineAction
 {
-
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchAction.class);
-
     /**
      * {@inheritDoc}
      */
@@ -67,7 +63,8 @@ public class GenomicRegionSearchAction extends InterMineAction
         String spanUUIDString = UUID.randomUUID().toString(); // Generate UUID
         request.setAttribute("spanUUIDString", spanUUIDString);
 
-        GenomicRegionSearchService grsService = GenomicRegionSearchUtil.getGenomicRegionSearchService(request);
+        GenomicRegionSearchService grsService = GenomicRegionSearchUtil
+                .getGenomicRegionSearchService(request);
 
         // Parse form
         ActionMessage actmsg = grsService.parseGenomicRegionSearchForm(grsForm);
@@ -130,11 +127,12 @@ public class GenomicRegionSearchAction extends InterMineAction
                         coord.trim();
                         GenomicRegion gr = new GenomicRegion();
                         gr.setOrganism(organism);
-                        gr.setExtendedRegionSize(grsService.getConstraint().getExtendedRegionSize());
+                        gr.setExtendedRegionSize(grsService.getConstraint()
+                                .getExtendedRegionSize());
                         gr.setChr(coord.split("\t")[0].trim());
                         gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
                         gr.setEnd(Integer.valueOf(coord.split("\t")[2].trim()));
-                        gr.setMinusStrand(gr.getStart().intValue()>gr.getEnd().intValue());
+                        gr.setMinusStrand(gr.getStart().intValue() > gr.getEnd().intValue());
                         liftedList.add(gr);
                     }
 
@@ -169,7 +167,8 @@ public class GenomicRegionSearchAction extends InterMineAction
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    request.setAttribute("liftOverStatus", "<i>Genomic region coordinates are not lifted. liftOver service error, please contact system admin</i>");
+                    request.setAttribute("liftOverStatus", "<i>Genomic region coordinates are not "
+                            + "lifted. liftOver service error, please contact system admin</i>");
                 }
             }
         }
@@ -187,7 +186,8 @@ public class GenomicRegionSearchAction extends InterMineAction
             } else {
                 String spanString = "";
                 for (GenomicRegion span : resultMap.get("error")) {
-                    spanString = spanString + span.getChr() + ":" + span.getStart() + ".." + span.getEnd() + ", ";
+                    spanString = spanString + span.getChr() + ":" + span.getStart() + ".."
+                            + span.getEnd() + ", ";
                 }
                 errorMsg = "<b>Invalid genomic regions in <i>"
                         + grsService.getConstraint().getOrgName()

@@ -17,9 +17,9 @@ the life sciences, including:
   * [YeastMine](http://yeastmine.yeastgenome.org)
   * [ZebrafishMine](http://zebrafishmine.org)
   * [RatMine](http://ratmine.mcw.edu/ratmine/begin.do)
-  * [TargetMine](http://targetmine.nibio.go.jp/)
+  * [TargetMine](http://targetmine.mizuguchilab.org/)
   * [ThaleMine](https://apps.araport.org/thalemine)
-  * [PhytoMine](http://phytozome.jgi.doe.gov/phytomine)
+  * [PhytoMine](https://phytozome.jgi.doe.gov/phytomine)
 
 For details, please visit: [InterMine Documentation][readthedocs]
 
