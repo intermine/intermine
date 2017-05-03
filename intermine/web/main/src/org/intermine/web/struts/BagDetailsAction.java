@@ -65,9 +65,9 @@ public class BagDetailsAction extends Action
         PagedTable pt = SessionMethods.getResultsTable(session, identifier);
         if (pt != null) {
             if (trail != null) {
-                trail += "|results." + pt.getTableid();
+                trail += "%7Cresults." + pt.getTableid();
             } else {
-                trail = "|results." + pt.getTableid();
+                trail = "%7Cresults." + pt.getTableid();
             }
         }
 

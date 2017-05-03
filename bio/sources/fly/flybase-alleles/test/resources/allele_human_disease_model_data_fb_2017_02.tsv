@@ -1,0 +1,10 @@
+## FlyBase Allele-DOID Report
+## Generated: Sun Apr  2 21:48:40 2017
+## Using datasource: dbi:Pg:dbname=fb_2017_02_reporting;host=flysql15;port=5432...
+
+##FBal_ID, AlleleSymbol, DOID_qualifier, DOID_term, DOID_ID, Evidence/interacting_alleles, Reference_FBid
+FBal0257945	Uba5[HMS01352]	model of	autosomal recessive cerebellar ataxia	DOID:0050950	inferred from mutant phenotype	FBrf0230959
+FBal0234993	Ufc1[KK107529]	model of	autosomal recessive cerebellar ataxia	DOID:0050950	inferred from mutant phenotype	FBrf0230959
+FBal0266236	Ufm1[GL00536]	model of	autosomal recessive cerebellar ataxia	DOID:0050950	inferred from mutant phenotype	FBrf0230959
+FBal0324972	Atg5[5cc5]	model of	hereditary ataxia	DOID:0050951	in combination with FLYBASE:Hsap\ATG5[E122D.Scer\UAS.T:Zzzz\FLAG]; FB:FBal0324974	FBrf0234286
+FBal0324972	Atg5[5cc5]	model of	hereditary ataxia	DOID:0050951	is ameliorated by FLYBASE:Hsap\ATG5[Scer\UAS.T:Zzzz\FLAG]; FB:FBal0324973	FBrf0234286

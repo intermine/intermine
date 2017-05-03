@@ -80,7 +80,7 @@ public class BDGPInsituConverter extends BioFileConverter
         setStages();
 
         ontology = createItem("Ontology");
-        ontology.setAttribute("name", "Fly Anatomy");
+        ontology.setAttribute("name", "ImaGO");
         store(ontology);
     }
 

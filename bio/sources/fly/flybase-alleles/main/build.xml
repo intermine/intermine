@@ -1,0 +1,4 @@
+<project name="flybase-alleles-tasks" default="default" basedir=".">
+  <description>build flybase-alleles tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

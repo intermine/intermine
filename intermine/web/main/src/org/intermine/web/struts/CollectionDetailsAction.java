@@ -78,9 +78,9 @@ public class CollectionDetailsAction extends Action
 
         // add results table to trail
         if (trail != null) {
-            trail += "|results." + pagedTable.getTableid();
+            trail += "%7Cresults." + pagedTable.getTableid();
         } else {
-            trail = "|results." + pagedTable.getTableid();
+            trail = "%7Cresults." + pagedTable.getTableid();
         }
 
         return new ForwardParameters(mapping.findForward("results")).addParameter("noSelect",

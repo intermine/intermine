@@ -48,7 +48,7 @@ public class OboConverter extends DataConverter
     protected Collection<OboTerm> oboTerms;
     protected List<OboRelation> oboRelations;
     protected Map<String, Item> nameToTerm = new HashMap<String, Item>();
-    protected Map<String, String> xrefs = new HashMap<String, String>();
+    protected Map<String, Item> xrefs = new HashMap<String, Item>();
     protected Map<OboTermSynonym, Item> synToItem = new HashMap<OboTermSynonym, Item>();
     protected Item ontology;
     private boolean createRelations = true;
@@ -137,6 +137,9 @@ public class OboConverter extends DataConverter
         for (Item synItem : synToItem.values()) {
             store(synItem);
         }
+        for (Item xref : xrefs.values()) {
+            store(xref);
+        }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Ran storeItems, took: " + timeTaken + " ms");
     }
@@ -207,7 +210,9 @@ public class OboConverter extends DataConverter
      */
     protected void configureItem(String termId, Item item, OboTerm term)
         throws ObjectStoreException {
-        item.addAttribute(new Attribute("name", term.getName()));
+        if (term.getName() != null && term.getName().trim().length() > 0) {
+            item.addAttribute(new Attribute("name", term.getName()));
+        }
         item.addReference(new Reference("ontology", ontology.getIdentifier()));
         if (term.getId() != null) {
             item.addAttribute(new Attribute("identifier", term.getId()));
@@ -223,16 +228,15 @@ public class OboConverter extends DataConverter
         }
         for (OboTerm xref : term.getXrefs()) {
             String identifier = xref.getId();
-            String refId = xrefs.get(identifier);
-            if (refId == null) {
-                Item xrefTerm = createItem("OntologyTerm");
-                refId = xrefTerm.getIdentifier();
-                xrefs.put(identifier, refId);
+            Item xrefTerm = xrefs.get(identifier);
+            if (xrefTerm == null) {
+                xrefTerm = createItem("OntologyTerm");
+                xrefs.put(identifier, xrefTerm);
                 xrefTerm.setAttribute("identifier", identifier);
-                xrefTerm.addToCollection("crossReferences", item.getIdentifier());
-                store(xrefTerm);
             }
-            item.addToCollection("crossReferences", refId);
+            // many to many so you have to set both ends of the relationship
+            xrefTerm.addToCollection("crossReferences", item.getIdentifier());
+            item.addToCollection("crossReferences", xrefTerm);
         }
         OboTerm oboterm = term;
         if (!StringUtils.isEmpty(oboterm.getNamespace())) {

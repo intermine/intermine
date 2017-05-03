@@ -1,0 +1,5 @@
+<project name="do" default="default" basedir=".">
+  <description>build, test, package do</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>
