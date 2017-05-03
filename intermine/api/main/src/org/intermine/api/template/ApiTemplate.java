@@ -186,9 +186,13 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
         return retVal;
     }
 
-    private Integer getRank() {
+    private String getRank() {
         templateTracker = im.getTrackerDelegate();
         Integer templateRank = templateTracker.getRank(im.getTemplateManager(), name);
-        return templateRank;
+        if (templateRank == null) {
+            // null value for new templates
+            return null;
+        }
+        return String.valueOf(templateRank);
     }
 }
