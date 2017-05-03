@@ -210,7 +210,9 @@ public class OboConverter extends DataConverter
      */
     protected void configureItem(String termId, Item item, OboTerm term)
         throws ObjectStoreException {
-        item.addAttribute(new Attribute("name", term.getName()));
+        if (term.getName() != null && term.getName().trim().length() > 0) {
+            item.addAttribute(new Attribute("name", term.getName()));
+        }
         item.addReference(new Reference("ontology", ontology.getIdentifier()));
         if (term.getId() != null) {
             item.addAttribute(new Attribute("identifier", term.getId()));
