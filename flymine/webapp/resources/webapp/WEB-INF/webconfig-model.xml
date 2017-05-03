@@ -707,7 +707,7 @@
                      replacesFields="pathways"
                      placement="summary"
                      types="Gene"/>
-<!--
+-->
 
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.DiseaseDisplayer"
