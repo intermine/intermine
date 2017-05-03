@@ -190,8 +190,9 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
         templateTracker = im.getTrackerDelegate();
         Integer templateRank = templateTracker.getRank(im.getTemplateManager(), name);
         if (templateRank == null) {
-            // null value for new templates
-            return null;
+            // null value for new templates. PathQuery.formatKVPair() doesn't accept anything
+            // but strings. Yo and Josh say to do this.
+            return "unranked";
         }
         return String.valueOf(templateRank);
     }
