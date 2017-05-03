@@ -272,7 +272,7 @@ public class TemplateAction extends InterMineAction
         // also, note we are not saving any previous trails. trail resets at
         // queries and bags
         if (saveQuery) {
-            trail = "|query";
+            trail = "%7Cquery";
         } else {
             trail = "";
             // session.removeAttribute(Constants.QUERY);
