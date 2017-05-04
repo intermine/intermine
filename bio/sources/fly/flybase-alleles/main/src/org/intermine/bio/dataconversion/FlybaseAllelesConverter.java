@@ -34,7 +34,7 @@ public class FlybaseAllelesConverter extends BioFileConverter
 
     private static final String DATASET_TITLE = "FlyBase";
     private static final String DATA_SOURCE_NAME = "FlyBase Human disease model data set";
-    private Map<String, String> alleles = new HashMap<String, String>();
+    private Map<String, Item> alleles = new HashMap<String, Item>();
     private Map<String, String> diseases = new HashMap<String, String>();
 
     /**
@@ -47,10 +47,24 @@ public class FlybaseAllelesConverter extends BioFileConverter
     }
 
     /**
-    *
-    *
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
+    @Override
+    public void close()  {
+        for (Item allele : alleles.values()) {
+            try {
+                store(allele);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     *
+     *
+     * {@inheritDoc}
+     */
     public void process(Reader reader) throws Exception {
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
@@ -63,7 +77,7 @@ public class FlybaseAllelesConverter extends BioFileConverter
 
             String alleleIdentifier = line[0];
             String symbol = line[1];
-            String alleleRefId = getAllele(alleleIdentifier, symbol);
+            Item allele = getAllele(alleleIdentifier, symbol);
 
             String qualifier = line[2];
             //String diseaseName = line[3];
@@ -79,7 +93,7 @@ public class FlybaseAllelesConverter extends BioFileConverter
             store(evidenceTerm);
 
             Item doAnnotation = createItem("DOAnnotation");
-            doAnnotation.setReference("subject", alleleRefId);
+            doAnnotation.setReference("subject", allele);
             if (StringUtils.isNotEmpty(qualifier)) {
                 doAnnotation.setAttribute("qualifier", qualifier);
             }
@@ -88,17 +102,15 @@ public class FlybaseAllelesConverter extends BioFileConverter
         }
     }
 
-    private String getAllele(String primaryIdentifier, String symbol) throws ObjectStoreException {
-        String refId = alleles.get(primaryIdentifier);
-        if (refId == null) {
-            Item item = createItem("Allele");
+    private Item getAllele(String primaryIdentifier, String symbol) throws ObjectStoreException {
+        Item item = alleles.get(primaryIdentifier);
+        if (item == null) {
+            item = createItem("Allele");
             item.setAttribute("primaryIdentifier", primaryIdentifier);
             item.setAttribute("symbol", symbol);
-            store(item);
-            refId = item.getIdentifier();
-            alleles.put(primaryIdentifier, refId);
+            alleles.put(primaryIdentifier, item);
         }
-        return refId;
+        return item;
     }
 
     private String getDisease(String identifier) throws ObjectStoreException {
