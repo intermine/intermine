@@ -60,7 +60,7 @@
     <copy file="../../../model/main/lib/commons-lang-2.6.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../model/main/lib/commons-io-1.2.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../model/main/lib/antlr-2.7.6-caching.jar" todir="${build.dir}/lib/"/>
-    <copy file="../../../model/main/lib/json20160810.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../model/main/lib/json20161008.jar" todir="${build.dir}/lib/"/>
     <copy file="compile-run.sh" todir="${build.dir}"/>
 
     <antcall target="copy-samples"/>
