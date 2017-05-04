@@ -95,6 +95,12 @@ public class PathQueryExecutor extends QueryExecutor
 
         Query q = makeQuery(pathQuery, returnBagQueryResults, pathToQueryNode);
         Results results = os.execute(q, batchSize, true, true, false);
+
+        Query realQ = results.getQuery();
+        if (realQ == q) {
+            queryToPathToQueryNode.put(q, pathToQueryNode);
+        }
+
         return new ExportResultsIterator(pathQuery, q, results, pathToQueryNode);
     }
 
@@ -118,6 +124,18 @@ public class PathQueryExecutor extends QueryExecutor
 
         Query q = makeQuery(pathQuery, returnBagQueryResults, pathToQueryNode);
         Results results = os.execute(q, batchSize, true, true, false);
+
+        // If realQ = q this means that the query has never executed before.
+        // We store pathToQueryNode for next time we call the same query
+        // for instance by UI when the query will no been re-executed.
+        // Differently from WebResultExecutor, we don't have to update pathToQueryNode
+        // using that one stored on the cache (queryToPathToQueryNode) because the
+        // ResultIterator uses pathQuery, to build the columns,from which pathToQueryNode comes from
+        Query realQ = results.getQuery();
+        if (realQ == q) {
+            queryToPathToQueryNode.put(q, pathToQueryNode);
+        }
+
         // Prime the results -- although lazy, ExportResults are always fetched to be
         // evaluated, and we want errors thrown here, not later when they are swallowed
         // by the list interface.

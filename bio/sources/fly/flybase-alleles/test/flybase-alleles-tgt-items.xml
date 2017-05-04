@@ -1,0 +1,77 @@
+<items>
+<item id="6_3" class="DOEvidence">
+<attribute name="evidence" value="inferred from mutant phenotype"/>
+</item>
+<item id="6_1" class="DOEvidence">
+<attribute name="evidence" value="inferred from mutant phenotype"/>
+</item>
+<item id="3_2" class="Allele">
+<attribute name="primaryIdentifier" value="FBal0234993"/>
+<attribute name="symbol" value="Ufc1[KK107529]"/>
+<reference name="sequenceOntologyTerm" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="SOTerm">
+<attribute name="name" value="allele"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_2" class="DOEvidence">
+<attribute name="evidence" value="inferred from mutant phenotype"/>
+</item>
+<item id="5_3" class="DOTerm">
+<attribute name="identifier" value="DOID:0050950"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_2" class="DOTerm">
+<attribute name="identifier" value="DOID:0050950"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="DOTerm">
+<attribute name="identifier" value="DOID:0050950"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_4" class="Allele">
+<attribute name="primaryIdentifier" value="FBal0324972"/>
+<attribute name="symbol" value="Atg5[5cc5]"/>
+<reference name="sequenceOntologyTerm" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_4" class="DOEvidence">
+<attribute name="evidence" value="in combination with FLYBASE:HsapATG5[E122D.ScerUAS.T:ZzzzFLAG]; FB:FBal0324974"/>
+</item>
+<item id="3_3" class="Allele">
+<attribute name="primaryIdentifier" value="FBal0266236"/>
+<attribute name="symbol" value="Ufm1[GL00536]"/>
+<reference name="sequenceOntologyTerm" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Allele">
+<attribute name="primaryIdentifier" value="FBal0257945"/>
+<attribute name="symbol" value="Uba5[HMS01352]"/>
+<reference name="sequenceOntologyTerm" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_5" class="DOEvidence">
+<attribute name="evidence" value="is ameliorated by FLYBASE:HsapATG5[ScerUAS.T:ZzzzFLAG]; FB:FBal0324973"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="FlyBase Human disease model data set"/>
+</item>
+<item id="5_4" class="DOTerm">
+<attribute name="identifier" value="DOID:0050951"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="FlyBase"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="5_5" class="DOTerm">
+<attribute name="identifier" value="DOID:0050951"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>

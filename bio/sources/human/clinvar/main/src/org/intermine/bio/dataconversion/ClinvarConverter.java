@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,6 +36,7 @@ public class ClinvarConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "ClinVar";
     private static final String ASSEMBLY = "GRCh38";
     private static final String TAXON_ID = "9606";
+    private static final String DUMMY_GENE_ENTRY = "-1";
     protected Map<String, String> genes = new HashMap<String, String>();
     protected Map<String, String> diseases = new HashMap<String, String>();
     protected Set<String> alleles = new HashSet<String>();
@@ -51,8 +51,6 @@ public class ClinvarConverter extends BioFileConverter
     }
 
     /**
-     *
-     *
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
@@ -60,30 +58,20 @@ public class ClinvarConverter extends BioFileConverter
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            if (line.length < 26) {
-                LOG.error("Allele not processed, only had " + line.length + " columns");
-                continue;
-            }
-
-            String alleleId = line [0];
-
-            if (alleleId.startsWith("#")) {
-                // skip header
-                continue;
-            }
-
+            String alleleId = line[0];
             String type = line[1];
             String geneId = line[3];
-            String clinicalSignificance = line[5];
-            String dbSNPXref = line[6];
-            String ncbiXref = line[7];
-            String clinVarXref = line[8];
+            String clinicalSignificance = line[6];
+            String diseaseString = line[12];    // parse for OMIM
+            String assemblyString = line[16];
 
-            String diseaseString = line[10];    // parse for OMIM
-            String assemblyString = line[12];
-
-            // only load GRCh38
             if (!ASSEMBLY.equals(assemblyString)) {
+                // only load GRCh38
+                continue;
+            }
+
+            if (DUMMY_GENE_ENTRY.equals(geneId)) {
+                // ignore these. remove if we add gene ID resolution
                 continue;
             }
 
@@ -93,8 +81,8 @@ public class ClinvarConverter extends BioFileConverter
             }
             alleles.add(alleleId);
 
-            String referenceAllele = line[25];
-            String alternateAllele = line[26];
+            String referenceAllele = line[21];
+            String alternateAllele = line[22];
 
             String geneRefId = getGene(geneId);
 
@@ -111,18 +99,7 @@ public class ClinvarConverter extends BioFileConverter
                 item.addToCollection("diseases", diseaseRefId);
             }
             store(item);
-
-            if (!"-".equals(dbSNPXref)) {
-                createCrossReference(item.getIdentifier(), dbSNPXref, "dbSNP", true);
-            }
-            if (!"-".equals(ncbiXref)) {
-                createCrossReference(item.getIdentifier(), ncbiXref, "NCBI", true);
-            }
-            if (!"-".equals(clinVarXref)) {
-                createCrossReference(item.getIdentifier(), clinVarXref, "ClinVar", true);
-            }
         }
-
     }
 
     private String getGene(String identifier) throws ObjectStoreException {

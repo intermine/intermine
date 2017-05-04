@@ -46,7 +46,7 @@
                               <td class="${tdStyle} brotein">
                                 <c:forEach var="protein" items="${bag.value}" varStatus="looptyLoop">
                                   <!-- protein: id => primaryIdentifier -->
-                                  <html:link action="/report?id=${protein.key}&amp;trail=|${protein.key}">
+                                  <html:link action="/report?id=${protein.key}&amp;trail=%7C${protein.key}">
                                     ${protein.value}
                                   </html:link>
                                   <!-- ${!looptyLoop.last ? ', ' : ''} -->

@@ -7,79 +7,37 @@
   <template-queries>
     <template name="employeeByName" description="View all the employees with certain name" >
       <query name="employeeByName" model="testmodel" view="Employee.name Employee.age">
-        <node path="Employee" type="Employee">
-        </node>
-        <node path="Employee.name" type="String">
-          <constraint op="=" value="" description="" identifier="Employee.name" editable="true" code="A">
-          </constraint>
-        </node>
+        <constraint path="Employee.name" op="=" value="" editable="true" code="A"/>
       </query>
     </template>
 
     <template name="employeesFromCompanyAndDepartment" description="View all the employees that work within a certain department of the specified company" >
       <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
-        <node path="Employee" type="Employee">
-        </node>
-        <node path="Employee.department" type="Department">
-        </node>
-        <node path="Employee.department.company" type="Company">
-        </node>
-        <node path="Employee.department.company.name" type="String">
-          <constraint op="=" value="CompanyA" description="" identifier="Company.name" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Employee.department.name" type="String">
-          <constraint op="LIKE" value="Department*" description="" identifier="Department.name" editable="true" code="B">
-          </constraint>
-        </node>
+        <constraint path="Employee.department.company.name" op="=" value="CompanyA" editable="true" code="A"/>
+        <constraint path="Employee.department.name" op="LIKE" value="Department*" description="" identifier="Department.name" editable="true" code="B"/>
       </query>
     </template>
 
     <template name="employeesOfACertainAge" description="View all the employees of a certain age" >
       <query name="employeesOfACertainAge" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
-        <node path="Employee" type="Employee">
-        </node>
-        <node path="Employee.age" type="int">
-          <constraint op="&gt;" value="35" description="First age constraint" identifier="Employee.age.LESS_THAN.1" editable="true" code="A">
-          </constraint>
-          <constraint op="!=" value="55" description="Second age constraint" identifier="Employee.age.NOT_EQUALS.1" editable="true" code="B">
-          </constraint>
-        </node>
+        <constraint path="Employee.age" op="&gt;" value="35" description="First age constraint" identifier="Employee.age.LESS_THAN.1" editable="true" code="A"/>
+        <constraint path="Employee.age" op="!=" value="55" description="Second age constraint" identifier="Employee.age.NOT_EQUALS.1" editable="true" code="B"/>
       </query>
     </template>
     <template name="employeesOverACertainAgeFromDepartmentA" title="View all the employees of a certain age from a certain department" longDescription="" comment="" >
       <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee.name Employee.age Employee.department.name" constraintLogic="A and B">
-        <node path="Employee" type="Employee">
-        </node>
-        <node path="Employee.age" type="int">
-          <constraint op="&gt;=" value="25" description="Age constraint" identifier="Employee.age.NOT_EQUALS.1" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Employee.department" type="Department">
-        </node>
-        <node path="Employee.department.name" type="String">
-          <constraint op="=" value="DepartmentA" description="Department constraint" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
+        <constraint path="Employee.age" op="&gt;=" value="25" description="Age constraint" editable="true" code="A"/>
+        <constraint path="Employee.department.name" op="=" value="DepartmentA" description="Department constraint" editable="true" code="B"/>
       </query>
     </template>
     <template name="convertEmployeesToAddresses" title="Convert employees to addresses" longDescription="" comment="" >
       <query name="convertEmployeesToAddresses" model="testmodel" view="Employee.id Employee.address.id">
-        <node path="Employee" type="Employee"/>
-        <node path="Employee.id" type="Integer">
-          <constraint op="=" value="0" description="id" identifier="" editable="true" code="A"/>
-        </node>
-        <node path="Employee.address.id" type="Integer"/>
+        <constraint path="Employee.id" op="=" value="0" description="id" identifier="" editable="true" code="A"/>
       </query>
     </template>
     <template name="convertEmployeeToManager" title="Convert Employees to Managers" longDescription="" comment="" >
       <query name="convertEmployeeToManager" model="testmodel" view="Employee.id Employee.department.manager.id">
-        <node path="Employee" type="Employee">
-        </node>
-        <node path="Employee.id" type="Integer">
-          <constraint op="=" value="0" description="id" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
+        <constraint path="Employee.id" op="=" value="0" description="id" identifier="" editable="true" code="A"/>
       </query>
     </template>
     <template name="convertContractorToEmployees"
@@ -87,32 +45,21 @@
               comment="This isn't a very sensible query to do, but it's useful for testing the TypeConverter class"
               >
       <query name="convertContractorToEmployees" model="testmodel" view="Contractor.id Contractor.companys.departments.employees.id">
-        <node path="Contractor" type="Contractor">
-        </node>
-        <node path="Contractor.id" type="Integer">
-          <constraint op="=" value="0" description="Contractor.id" identifier="Contractor.id" editable="true" code="A">
-          </constraint>
-        </node>
+        <constraint path="Contractor.id" op="=" value="0" description="Contractor.id" identifier="Contractor.id" editable="true" code="A"/>
       </query>
     </template>
 
 <template name="ManagerLookup" title="Search for Managers" longDescription="Use a LOOKUP constraint to search for Managers." comment="">
   <query name="ManagerLookup" model="testmodel" view="Manager.name Manager.title">
-    <node path="Manager" type="Manager">
-      <constraint op="LOOKUP" value="Mr." description="" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
+    <constraint path="Manager" op="LOOKUP" value="Mr." description="" identifier="" editable="true" code="A"/>
   </query>
 </template>
 
 <template name="InnerInsideOuter" title="Inner join inside an outer join" longDescription="Inner inside outer" comment="">
   <query name="InnerInsideOuter" model="testmodel" view="Company.name Company:departments.name Company:departments.manager.name">
-    <node path="Company.name" type="String">
-      <constraint op="=" value="flibble" description="something" identifier="flibble" editable="true" code="A"/>
-    </node>
-    <node path="Company:departments.manager.name" type="String">
-      <constraint op="=" value="flobble" description="simething" identifier="flobble" editable="true" code="B"/>
-    </node>
+    <constraint path="Company.name" op="=" value="flibble" editable="true" code="A"/>
+    <join path="Company.departments" style="OUTER"/>
+    <constraint path="Company.departments.manager.name" op="=" value="flobble" editable="true" code="B"/>
   </query>
 </template>
 

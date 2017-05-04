@@ -58,11 +58,7 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         super.setUp();
         final String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" >\n" +
                 "      <query name=\"convertEmployeesToAddresses\" model=\"testmodel\" view=\"Employee.id Employee.address.id\">\n" +
-                "        <node path=\"Employee\" type=\"Employee\"/>\n" +
-                "        <node path=\"Employee.id\" type=\"Integer\">\n" +
-                "          <constraint op=\"=\" value=\"0\" description=\"id\" identifier=\"\" editable=\"true\" code=\"A\"/>\n" +
-                "        </node>\n" +
-                "        <node path=\"Employee.address.id\" type=\"Integer\"/>\n" +
+                "        <constraint path=\"Employee.id\" op=\"=\" value=\"0\" editable=\"true\" code=\"A\"/>\n" +
                 "      </query>\n" +
                 "    </template>";
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");

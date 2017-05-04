@@ -99,7 +99,7 @@
 
 <!-- has to be after UniProt because only loads protein domains for loaded proteins -->
     <source name="protein2ipr" type="protein2ipr" dump="true">
-     <property name="src.data.dir" location="/micklem/data/interpro/match_complete"/>
+     <property name="src.data.dir" location="/micklem/data/interpro/match_complete/current"/>
      <property name="src.data.dir.includes" value="protein2ipr.dat"/>
      <property name="protein2ipr.organisms" value="7227"/>
     </source>
@@ -113,6 +113,12 @@
     </source>
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/micklem/data/flyatlas/current"/>
+    </source>
+    <source name="do" type="do">
+      <property name="src.data.file" location="/micklem/data/do/current/doid-non-classified.obo" />
+    </source>
+    <source name="flybase-alleles" type="flybase-alleles">
+      <property name="src.data.dir" location="/micklem/data/flybase/alleles/current"/>
     </source>
     <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/micklem/data/flymine/anoph-expr"/>
@@ -139,7 +145,7 @@
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
     <source name="go" type="go">
-      <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
+      <property name="src.data.file" location="/micklem/data/go-annotation/current/go.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
@@ -155,13 +161,13 @@
     <source name="flyreg" type="flyreg">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/micklem/data/redfly/current/tfbs"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/redfly/current/tfbs"/>
       <property name="src.data.dir.includes" value="tfbs_dump.gff"/>
     </source>
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/micklem/data/redfly/current/crm"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/redfly/current/crm"/>
       <property name="src.data.dir.includes" value="crm_dump.gff"/>
     </source>
 

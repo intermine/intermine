@@ -47,7 +47,6 @@ import org.json.JSONObject;
  */
 public class GenomicRegionSearchListInput extends ListInput
 {
-
     private final InterMineAPI api;
     private final GenomicRegionSearchInfo info;
 
@@ -100,6 +99,9 @@ public class GenomicRegionSearchListInput extends ListInput
             regions.add(regs.getString(i));
         }
         parsed.setRegions(regions);
+
+        parsed.setStrandSpecific(jsonRequest.getBoolean("strandSpecific"));
+
         return parsed;
     }
 
@@ -127,6 +129,7 @@ public class GenomicRegionSearchListInput extends ListInput
      */
     public class GenomicRegionSearchInfo
     {
+
         private final String sequenceFeature = "org.intermine.model.bio.SequenceFeature";
         private String organism;
         private Set<String> featureTypes;
@@ -135,6 +138,7 @@ public class GenomicRegionSearchListInput extends ListInput
         private int extension = 0;
         private boolean isInterbase = false;
         private Set<String> invalidSpans = new HashSet<String>();
+        private boolean strandSpecific;
 
         /**
          *
@@ -157,6 +161,20 @@ public class GenomicRegionSearchListInput extends ListInput
          */
         public void setOrganism(String organism) {
             this.organism = organism;
+        }
+
+        /**
+         * @return strandSpecific
+         */
+        public boolean getStrandSpecific() {
+            return strandSpecific;
+        }
+
+        /**
+         * @param strandSpecific Whether or not this search specifies a strand
+         */
+        public void setStrandSpecific(boolean strandSpecific) {
+            this.strandSpecific = strandSpecific;
         }
 
         /**
@@ -307,7 +325,7 @@ public class GenomicRegionSearchListInput extends ListInput
             grsc.setOrgName(organism);
             grsc.setFeatureTypes(getFeatureClasses());
             grsc.setGenomicRegionList(getGenomicRegions());
-            grsc.setExtededRegionSize(extension);
+            grsc.setExtendedRegionSize(extension);
             return grsc;
         }
 
