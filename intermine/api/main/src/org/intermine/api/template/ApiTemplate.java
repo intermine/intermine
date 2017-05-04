@@ -182,18 +182,24 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
             }
             retVal.put("tags", tagNames);
         }
-        retVal.put("rank", getRank());
+        String rank = getRank();
+        if (rank != null) {
+            retVal.put("rank", rank);
+        }
         return retVal;
     }
 
     private String getRank() {
-        templateTracker = im.getTrackerDelegate();
-        Integer templateRank = templateTracker.getRank(im.getTemplateManager(), name);
-        if (templateRank == null) {
-            // null value for new templates. PathQuery.formatKVPair() doesn't accept anything
-            // but strings. Yo and Josh say to do this.
-            return "unranked";
+        if (im != null) {
+            templateTracker = im.getTrackerDelegate();
+            Integer templateRank = templateTracker.getRank(im.getTemplateManager(), name);
+            if (templateRank == null) {
+                // null value for new templates. PathQuery.formatKVPair() doesn't accept anything
+                // but strings. Yo and Josh say to do this.
+                return "unranked";
+            }
+            return String.valueOf(templateRank);
         }
-        return String.valueOf(templateRank);
+        return null;
     }
 }
