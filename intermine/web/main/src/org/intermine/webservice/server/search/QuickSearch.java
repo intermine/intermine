@@ -103,7 +103,7 @@ public class QuickSearch extends JSONService
             headerObjs.put("facets", facetData);
         }
 
-        kvPairs.put("totalHits", String.valueOf(searchResultsParsed.size()));
+        kvPairs.put("totalHits", String.valueOf(results.getTotalHits()));
 
         QuickSearchResultProcessor processor = getProcessor();
         Iterator<KeywordSearchResult> it = searchResultsParsed.iterator();
