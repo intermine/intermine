@@ -29,7 +29,7 @@ import org.intermine.webservice.server.output.JSONFormatter;
 public abstract class ListMakerService extends AuthenticatedListService
 {
 
-    private static final String LIST_TYPE_KEY = "type";
+    protected static final String LIST_TYPE_KEY = "type";
 
     /**
      * Constructor.
@@ -93,7 +93,9 @@ public abstract class ListMakerService extends AuthenticatedListService
         addOutputInfo(LIST_NAME_KEY, input.getListName());
 
         final String type = getNewListType(input);
-        addOutputInfo(LIST_TYPE_KEY, type);
+        if (type != null) {
+            addOutputInfo(LIST_TYPE_KEY, type);
+        }
 
         final Set<String> rubbishbin = new HashSet<String>();
         initialiseDelendumAccumulator(rubbishbin, input);
