@@ -38,7 +38,7 @@ import org.intermine.sql.DatabaseUtil;
  *
  * To use, build the SQL files with the ant task "ant generate-post-build-iud-triggers-sql"
  * from the mine's dbmodel/ subdirectory (after the build-db task). There will be
- * 2 files, add-post-build-iud-triggers.sql and remove-post-build-iud-triggers.sql 
+ * 2 files, add-post-build-iud-triggers.sql and remove-post-build-iud-triggers.sql
  * in build/model/ Connect to PostgreSQL using psql and read the command file
  *
  * \i build/model/add-post-build-iud-triggers.sql
@@ -160,12 +160,12 @@ public class BuildTriggerMaker extends Task
         if (destDir == null) {
             throw new BuildException("destDir attribute is not set");
         }
+
         if (osname == null) {
             throw new BuildException("osname attribute is not set");
         }
 
         try {
-
             ObjectStore os;
             try {
                 os = ObjectStoreFactory.getObjectStore(osname);
@@ -173,6 +173,7 @@ public class BuildTriggerMaker extends Task
                 throw new RuntimeException(
                         "Cannot connect to objectstore: " + e.getMessage());
             }
+
             Model model = os.getModel();
             String makerFileName = "add-post-build-iud-triggers.sql";
             String removerFileName = "remove-post-build-iud-triggers.sql";
@@ -185,6 +186,7 @@ public class BuildTriggerMaker extends Task
             } catch (IOException e) {
                 throw new BuildException("Cannot open SQL file: " + e.getMessage());
             }
+
             PrintWriter makerPW = new PrintWriter(makerW);
             PrintWriter removerPW = new PrintWriter(removerW);
 
@@ -211,13 +213,14 @@ public class BuildTriggerMaker extends Task
                     removerPW.print(removeInterMineObjectActions(cld));
                 }
             }
+
             removerPW.print(removeSequence());
             makerPW.print(writeDisclaimer());
             makerPW.close();
             removerPW.print(removeDisclaimer());
             removerPW.close();
         } catch (Exception e) {
-            throw new BuildException("Something bad happened: " + e.getMessage());
+            throw new BuildException("Failed to build SQL triggers: " + e.getMessage());
         }
     }
 
