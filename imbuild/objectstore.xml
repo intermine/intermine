@@ -105,7 +105,7 @@
     </sequential>
   </target>
 
-  <target name="build-sql-triggers" depends="-init-properties, init, -init-deps, -init-task-xml">
+  <target name="generate-post-build-iud-triggers-sql" depends="-init-properties, init, -init-deps, -init-task-xml">
     <echo message="Generating trigger files for SQL operations..."/>
     <build-triggermaker osName="${objectstore.name}" destDir="${build.model.dir}"/>
   </target>

@@ -36,12 +36,12 @@ import org.intermine.sql.DatabaseUtil;
  * be able to make a small change. The SQL files generated from this task
  * will allow you to do that.
  *
- * To use, build the SQL files with the ant task "ant build-sql-triggers"
+ * To use, build the SQL files with the ant task "ant generate-post-build-iud-triggers-sql"
  * from the mine's dbmodel/ subdirectory (after the build-db task). There will be
- * 2 files TriggerMaker.sql and TriggerRemover.sql in build/model/ Connect
- * to PostgreSQL using psql and read the command file
+ * 2 files, add-post-build-iud-triggers.sql and remove-post-build-iud-triggers.sql 
+ * in build/model/ Connect to PostgreSQL using psql and read the command file
  *
- * \i build/model/TriggerMaker.sql
+ * \i build/model/add-post-build-iud-triggers.sql
  *
  * You can now do basic create/update/delete operations such as:
  *
@@ -63,7 +63,7 @@ import org.intermine.sql.DatabaseUtil;
  * At the completion of the manual operations, remove all triggers and
  * stored procedures with
  *
- * \i build/model/TriggerRemover.sql
+ * \i build/model/remove-post-build-iud-triggers.sql
  *
  * What the triggers and procedures do NOT do:
  *
@@ -92,7 +92,7 @@ import org.intermine.sql.DatabaseUtil;
  * on installing languages if needed.
  * 2) Backup the database prior to making changes, especially if there are
  * changes that affect foreign keys.
- * 3) Be sure to run TriggerRemover.sql AND verify it was successful before
+ * 3) Be sure to run remove-post-build-iud-triggers.sql AND verify it was successful before
  * resuming normal InterMine processing. All triggers and stored procedures
  * are prefixed with 'im_'
  *
@@ -174,8 +174,8 @@ public class BuildTriggerMaker extends Task
                         "Cannot connect to objectstore: " + e.getMessage());
             }
             Model model = os.getModel();
-            String makerFileName = "TriggerMaker.sql";
-            String removerFileName = "TriggerRemover.sql";
+            String makerFileName = "add-post-build-iud-triggers.sql";
+            String removerFileName = "remove-post-build-iud-triggers.sql";
 
             FileWriter makerW;
             FileWriter removerW;
