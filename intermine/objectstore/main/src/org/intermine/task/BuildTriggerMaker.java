@@ -37,9 +37,9 @@ import org.intermine.sql.DatabaseUtil;
  * will allow you to do that.
  *
  * To use, build the SQL files with the ant task "ant build-sql-triggers"
- * from the dbmodel subdirectory (after the build-db task). There will be
+ * from the mine's dbmodel/ subdirectory (after the build-db task). There will be
  * 2 files TriggerMaker.sql and TriggerRemover.sql in build/model/ Connect
- * to postgreSQL using psql and read the command file
+ * to PostgreSQL using psql and read the command file
  *
  * \i build/model/TriggerMaker.sql
  *
