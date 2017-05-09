@@ -378,14 +378,11 @@ public class BuildTriggerMaker extends Task
             + " ON " + tn + ";\n"
             + "DROP TRIGGER IF EXISTS " + getIMODeleteTriggerName(tn)
             + " ON " + tn + ";\n"
-            + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
-            + "_IntermineObject_TRN_tg ON " + tn + ";\n"
             + "DROP FUNCTION IF EXISTS im_" + shortName(tn)
             + "_IntermineObject_INS();\n" + "DROP FUNCTION IF EXISTS im_"
             + shortName(tn) + "_IntermineObject_UPD();\n"
             + "DROP FUNCTION IF EXISTS im_" + shortName(tn)
-            + "_IntermineObject_DEL();\n" + "DROP FUNCTION IF EXISTS im_"
-            + shortName(tn) + "_IntermineObject_TRN();\n\n";
+            + "_IntermineObject_DEL();\n\n";
 
         return cmds;
     }
