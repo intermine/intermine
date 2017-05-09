@@ -397,8 +397,8 @@ public class BuildTriggerMaker extends Task
      */
     private static String writeSuperClassActions(final ClassDescriptor c,
             final ClassDescriptor s) {
-        String tableName = getDBName(c.getUnqualifiedName());
-        String superTableName = getDBName(s.getUnqualifiedName());
+        String tn = getDBName(c.getUnqualifiedName());
+        String stn = getDBName(s.getUnqualifiedName());
 
         Set<FieldDescriptor> superFD = s.getAllFieldDescriptors();
         Set<FieldDescriptor> classFD = c.getAllFieldDescriptors();
@@ -415,37 +415,43 @@ public class BuildTriggerMaker extends Task
         }
 
         String cmds = "DROP TRIGGER IF EXISTS "
-            + getUpdateTriggerName(tableName, superTableName)
-            + " ON " + tableName + ";\n"
-            + makeUpdateBody(tableName, superTableName, commonFields)
-            + "CREATE TRIGGER " + getUpdateTriggerName(tableName, superTableName)
-            + " AFTER UPDATE ON " + tableName
-            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tableName)
-            + "_" + shortName(superTableName) + "_UPD();\n"
-            + "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
-            + shortName(superTableName) + "_INS_tg ON " + tableName + ";\n"
-            + makeInsertBody(tableName, superTableName, commonFields)
-            + "CREATE TRIGGER im_" + shortName(tableName) + "_"
-            + shortName(superTableName) + "_INS_tg AFTER INSERT ON " + tableName
-            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tableName)
-            + "_" + shortName(superTableName) + "_INS();\n"
-            + "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
-            + shortName(superTableName) + "_DEL_tg ON " + tableName + ";\n"
-            + makeDeleteBody(tableName, superTableName) + "CREATE TRIGGER im_"
-            + shortName(tableName) + "_" + shortName(superTableName)
-            + "_DEL_tg AFTER DELETE ON " + tableName
-            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tableName)
-            + "_" + shortName(superTableName) + "_DEL();\n";
+            + getUpdateTriggerName(tn, stn) + " ON " + tn + ";\n"
+            + makeUpdateBody(tn, stn, commonFields)
+            + "CREATE TRIGGER " + getUpdateTriggerName(tn, stn)
+            + " AFTER UPDATE ON " + tn
+            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tn)
+            + "_" + shortName(stn) + "_UPD();\n"
+            + "DROP TRIGGER IF EXISTS " + getInsertTriggerName(tn, stn)
+            + " ON " + tn + ";\n"
+            + makeInsertBody(tn, stn, commonFields)
+            + "CREATE TRIGGER " + getInsertTriggerName(tn, stn)
+            + " AFTER INSERT ON " + tn
+            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tn)
+            + "_" + shortName(stn) + "_INS();\n"
+            + "DROP TRIGGER IF EXISTS im_" + shortName(tn) + "_"
+            + shortName(stn) + "_DEL_tg ON " + tn + ";\n"
+            + makeDeleteBody(tn, stn) + "CREATE TRIGGER im_"
+            + shortName(tn) + "_" + shortName(stn)
+            + "_DEL_tg AFTER DELETE ON " + tn
+            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tn)
+            + "_" + shortName(stn) + "_DEL();\n";
 
         return cmds;
     }
 
-    private static String getUpdateTriggerName(
-        String tableName, String superTableName) {
-        return
-            String.format(
-                "im_%s_%s_UPD_tg",
-                shortName(tableName), shortName(superTableName));
+    private static String getInsertTriggerName(String tn, String stn) {
+        return getTriggerName(tn, stn, "INS");
+    }
+
+    private static String getUpdateTriggerName(String tn, String stn) {
+        return getTriggerName(tn, stn, "UPD");
+    }
+
+    private static String getTriggerName(
+        String tableName, String superTableName, String triggerType) {
+        return String.format(
+            "im_%s_%s_%s_tg",
+            shortName(tableName), shortName(superTableName), triggerType);
     }
 
     /**
@@ -552,21 +558,22 @@ public class BuildTriggerMaker extends Task
      */
     private static String removeSuperClassActions(final ClassDescriptor c,
             final ClassDescriptor s) {
-        String tableName = getDBName(c.getUnqualifiedName());
-        String superTableName = getDBName(s.getUnqualifiedName());
+        String tn = getDBName(c.getUnqualifiedName());
+        String stn = getDBName(s.getUnqualifiedName());
 
-        String cmds = "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_INS_tg ON " + tableName + ";\n"
-                + "DROP TRIGGER IF EXISTS " + getUpdateTriggerName(tableName, superTableName)
-                + " ON " + tableName + ";\n"
-                + "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_DEL_tg ON " + tableName + ";\n"
-                + "DROP FUNCTION IF EXISTS im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_INS();\n"
-                + "DROP FUNCTION IF EXISTS im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_UPD();\n"
-                + "DROP FUNCTION IF EXISTS im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_DEL();\n\n";
+        String cmds = "DROP TRIGGER IF EXISTS " + getInsertTriggerName(tn, stn)
+            + " ON " + tn + ";\n"
+            + "DROP TRIGGER IF EXISTS " + getUpdateTriggerName(tn, stn)
+            + " ON " + tn + ";\n"
+            + "DROP TRIGGER IF EXISTS im_" + shortName(tn) + "_"
+            + shortName(stn) + "_DEL_tg ON " + tn + ";\n"
+            + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
+            + shortName(stn) + "_INS();\n"
+            + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
+            + shortName(stn) + "_UPD();\n"
+            + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
+            + shortName(stn) + "_DEL();\n\n";
+
         return cmds;
     }
 
