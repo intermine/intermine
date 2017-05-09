@@ -428,8 +428,8 @@ public class BuildTriggerMaker extends Task
             + makeInsertBody(tn, stn, commonFields)
             + "CREATE TRIGGER " + getInsertTriggerName(tn, stn)
             + " AFTER INSERT ON " + tn
-            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tn)
-            + "_" + shortName(stn) + "_INS();\n"
+            + " FOR EACH ROW EXECUTE PROCEDURE "
+            + getInsertFunctionName(tn, stn) + ";\n"
 
             + "DROP TRIGGER IF EXISTS " + getDeleteTriggerName(tn, stn)
             + " ON " + tn + ";\n"
@@ -458,6 +458,10 @@ public class BuildTriggerMaker extends Task
         return String.format(
             "im_%s_%s_%s_tg",
             shortName(tn), shortName(stn), type);
+    }
+
+    private static String getInsertFunctionName(String tn, String stn) {
+        return getFunctionName(tn, stn, "INS");
     }
 
     private static String getUpdateFunctionName(String tn, String stn) {
@@ -506,21 +510,21 @@ public class BuildTriggerMaker extends Task
     /**
      * Generate the SQL function that propagates insert action to the super table.
      *
-     * @param table
+     * @param tn
      *          base table where the insert action originates
-     * @param superTable
+     * @param stn
      *          super table that the insert action propagates to
      * @param fields
      *          fields in the table which are common to the super table
      * @return SQL to define the function
      */
-    private static String makeInsertBody(final String table,
-            final String superTable, final Set<String> fields) {
+    private static String makeInsertBody(final String tn,
+            final String stn, final Set<String> fields) {
         StringBuffer body = new StringBuffer("CREATE OR REPLACE FUNCTION ");
-        body.append("im_" + shortName(table) + "_" + shortName(superTable)
-                + "_INS() RETURNS TRIGGER AS $BODY$\n");
+        body.append(
+            getInsertFunctionName(tn, stn) + " RETURNS TRIGGER AS $BODY$\n");
         body.append("BEGIN\n");
-        body.append("  INSERT INTO " + superTable + " (");
+        body.append("  INSERT INTO " + stn + " (");
         StringBuffer fieldString = new StringBuffer();
         boolean needsComma = false;
         for (String field : fields) {
@@ -532,7 +536,7 @@ public class BuildTriggerMaker extends Task
             fieldString.append(dbField);
         }
         body.append(
-                fieldString + ") SELECT " + fieldString + " FROM " + table + "\n");
+                fieldString + ") SELECT " + fieldString + " FROM " + tn + "\n");
         body.append("  WHERE id=NEW.id;\n");
         body.append("  RETURN NEW;\nEND;\n");
         body.append("$BODY$ LANGUAGE plpgsql;\n");
@@ -582,8 +586,7 @@ public class BuildTriggerMaker extends Task
             + " ON " + tn + ";\n"
             + "DROP TRIGGER IF EXISTS " + getDeleteTriggerName(tn, stn)
             + " ON " + tn + ";\n"
-            + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
-            + shortName(stn) + "_INS();\n"
+            + "DROP FUNCTION IF EXISTS " + getInsertFunctionName(tn, stn) + ";\n"
             + "DROP FUNCTION IF EXISTS " + getUpdateFunctionName(tn, stn) + ";\n"
             + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
             + shortName(stn) + "_DEL();\n\n";
