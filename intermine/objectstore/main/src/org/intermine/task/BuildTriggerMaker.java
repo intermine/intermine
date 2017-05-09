@@ -436,8 +436,8 @@ public class BuildTriggerMaker extends Task
             + makeDeleteBody(tn, stn)
             + "CREATE TRIGGER " + getDeleteTriggerName(tn, stn)
             + " AFTER DELETE ON " + tn
-            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tn)
-            + "_" + shortName(stn) + "_DEL();\n";
+            + " FOR EACH ROW EXECUTE PROCEDURE "
+            + getDeleteFunctionName(tn, stn) + ";\n";
 
         return cmds;
     }
@@ -466,6 +466,10 @@ public class BuildTriggerMaker extends Task
 
     private static String getUpdateFunctionName(String tn, String stn) {
         return getFunctionName(tn, stn, "UPD");
+    }
+
+    private static String getDeleteFunctionName(String tn, String stn) {
+        return getFunctionName(tn, stn, "DEL");
     }
 
     private static String getFunctionName(String tn, String stn, String type) {
@@ -546,22 +550,23 @@ public class BuildTriggerMaker extends Task
     /**
      * Generate the SQL function that propagates delete action to the super table.
      *
-     * @param table
+     * @param tn
      *          base table where the delete action originates
-     * @param superTable
+     * @param stn
      *          super table that the delete action propagates to
      * @return SQL to define the function
      */
-    private static String makeDeleteBody(final String table,
-            final String superTable) {
+    private static String makeDeleteBody(final String tn,
+            final String stn) {
         StringBuffer body = new StringBuffer("CREATE OR REPLACE FUNCTION ");
-        body.append("im_" + shortName(table) + "_" + shortName(superTable)
-                + "_DEL() RETURNS TRIGGER AS $BODY$\n");
+        body.append(
+            getDeleteFunctionName(tn, stn) + " RETURNS TRIGGER AS $BODY$\n");
         body.append(" BEGIN\n");
-        body.append("  DELETE FROM " + superTable + "\n");
-        body.append("  WHERE " + superTable + ".id = OLD.id;\n");
+        body.append("  DELETE FROM " + stn + "\n");
+        body.append("  WHERE " + stn + ".id = OLD.id;\n");
         body.append("  RETURN OLD;\nEND;\n");
         body.append("$BODY$ LANGUAGE plpgsql;\n");
+
         return body.toString();
     }
 
@@ -588,8 +593,7 @@ public class BuildTriggerMaker extends Task
             + " ON " + tn + ";\n"
             + "DROP FUNCTION IF EXISTS " + getInsertFunctionName(tn, stn) + ";\n"
             + "DROP FUNCTION IF EXISTS " + getUpdateFunctionName(tn, stn) + ";\n"
-            + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
-            + shortName(stn) + "_DEL();\n\n";
+            + "DROP FUNCTION IF EXISTS " + getDeleteFunctionName(tn, stn) + ";\n\n";
 
         return cmds;
     }
