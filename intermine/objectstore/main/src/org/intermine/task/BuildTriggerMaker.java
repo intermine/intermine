@@ -175,49 +175,50 @@ public class BuildTriggerMaker extends Task
             }
 
             Model model = os.getModel();
-            String makerFileName = "add-update-triggers.sql";
+            String adderFileName = "add-update-triggers.sql";
             String removerFileName = "remove-update-triggers.sql";
 
-            FileWriter makerW;
+            FileWriter adderW;
             FileWriter removerW;
             try {
-                makerW = new FileWriter(new File(destDir, makerFileName));
+                adderW = new FileWriter(new File(destDir, adderFileName));
                 removerW = new FileWriter(new File(destDir, removerFileName));
             } catch (IOException e) {
                 throw new BuildException("Cannot open SQL file: " + e.getMessage());
             }
 
-            PrintWriter makerPW = new PrintWriter(makerW);
+            PrintWriter adderPW = new PrintWriter(adderW);
             PrintWriter removerPW = new PrintWriter(removerW);
 
-            makerPW.print(writeDisclaimer());
-            removerPW.print(removeDisclaimer());
+            adderPW.print(getAddDisclaimer());
+            removerPW.print(getRemoveDisclaimer());
 
-            makerPW.print(writeSequence());
+            adderPW.print(getAddSequence());
             for (ClassDescriptor cld : model.getBottomUpLevelTraversal()) {
 
                 if (!"InterMineObject".equals(cld.getUnqualifiedName())
                         && cld.getFieldDescriptorByName("id") != null) {
 
-                    makerPW.print(writeDefaultClassConstraint(cld));
-                    removerPW.print(removeDefaultClassConstraint(cld));
+                    adderPW.print(getAddDefaultClassConstraint(cld));
+                    removerPW.print(getRemoveDefaultClassConstraint(cld));
                     Set<ClassDescriptor> sCDs = cld.getSuperDescriptors();
 
                     for (ClassDescriptor superCld : sCDs) {
                         if (!"InterMineObject".equals(superCld.getUnqualifiedName()) ) {
-                            makerPW.print(writeSuperClassActions(cld, superCld));
-                            removerPW.print(removeSuperClassActions(cld, superCld));
+                            adderPW.print(getAddSuperClassActions(cld, superCld));
+                            removerPW.print(getRemoveSuperClassActions(cld, superCld));
                         }
                     }
-                    makerPW.print(writeInterMineObjectActions(cld));
-                    removerPW.print(removeInterMineObjectActions(cld));
+
+                    adderPW.print(getAddIMOActions(cld));
+                    removerPW.print(getRemoveIMOActions(cld));
                 }
             }
 
-            removerPW.print(removeSequence());
-            makerPW.print(writeDisclaimer());
-            makerPW.close();
-            removerPW.print(removeDisclaimer());
+            removerPW.print(getRemoveSequence());
+            adderPW.print(getAddDisclaimer());
+            adderPW.close();
+            removerPW.print(getRemoveDisclaimer());
             removerPW.close();
         } catch (Exception e) {
             throw new BuildException("Failed to build SQL triggers: " + e.getMessage());
@@ -231,26 +232,26 @@ public class BuildTriggerMaker extends Task
      *          ClassDescriptor for the base table
      * @return SQL to generate functions and triggers
      */
-    private static String writeInterMineObjectActions(final ClassDescriptor c) {
+    private static String getAddIMOActions(final ClassDescriptor c) {
         String tn = getDBName(c.getUnqualifiedName());
         String cmds
             = "DROP TRIGGER IF EXISTS "
             + getIMOUpdateTriggerName(tn) + " ON " + tn + ";\n"
-            + makeUpdateInterMineObjectBody(c)
+            + getIMOUpdateBody(c)
             + "CREATE TRIGGER " + getUpdateTriggerName(tn, "InterMineObject")
             + " AFTER UPDATE ON " + tn + " FOR EACH ROW EXECUTE PROCEDURE "
             + getIMOUpdateFunctionName(tn) + ";\n\n"
 
             + "DROP TRIGGER IF EXISTS "
             + getIMOInsertTriggerName(tn) + " ON " + tn + ";\n"
-            + makeInsertInterMineObjectBody(c)
+            + getIMOInsertBody(c)
             + "CREATE TRIGGER " + getIMOInsertTriggerName(tn)
             + " AFTER INSERT ON " + tn + " FOR EACH ROW EXECUTE PROCEDURE "
             + getIMOInsertFunctionName(tn) + ";\n\n"
 
             + "DROP TRIGGER IF EXISTS "
             + getIMODeleteTriggerName(tn) + " ON " + tn + ";\n"
-            + makeDeleteInterMineObjectBody(c)
+            + getIMODeleteBody(c)
             + "CREATE TRIGGER " + getIMODeleteTriggerName(tn)
             + " AFTER DELETE ON " + tn + " FOR EACH ROW EXECUTE PROCEDURE "
             + getIMODeleteFunctionName(tn) + ";\n\n";
@@ -266,7 +267,7 @@ public class BuildTriggerMaker extends Task
      *          ClassDescriptor for the table
      * @return SQL to define the function
      */
-    private static String makeUpdateInterMineObjectBody(final ClassDescriptor c) {
+    private static String getIMOUpdateBody(final ClassDescriptor c) {
         String tn = getDBName(c.getUnqualifiedName());
         StringBuffer body = new StringBuffer(
                 "CREATE OR REPLACE FUNCTION " + getIMOUpdateFunctionName(tn)
@@ -305,7 +306,7 @@ public class BuildTriggerMaker extends Task
      *          ClassDescriptor for the table
      * @return SQL to define the function
      */
-    private static String makeInsertInterMineObjectBody(final ClassDescriptor c) {
+    private static String getIMOInsertBody(final ClassDescriptor c) {
         String tn = getDBName(c.getUnqualifiedName());
         StringBuffer body = new StringBuffer(
             "CREATE OR REPLACE FUNCTION " + getIMOInsertFunctionName(tn)
@@ -346,7 +347,7 @@ public class BuildTriggerMaker extends Task
      *          ClassDescriptor for the table
      * @return SQL to define the function
      */
-    private static String makeDeleteInterMineObjectBody(final ClassDescriptor c) {
+    private static String getIMODeleteBody(final ClassDescriptor c) {
         String tn = getDBName(c.getUnqualifiedName());
         StringBuffer body = new StringBuffer(
             "CREATE OR REPLACE FUNCTION " + getIMODeleteFunctionName(tn)
@@ -369,7 +370,7 @@ public class BuildTriggerMaker extends Task
      *          ClassDescriptor for the table
      * @return SQL to define the function
      */
-    private static String removeInterMineObjectActions(final ClassDescriptor c) {
+    private static String getRemoveIMOActions(final ClassDescriptor c) {
         String tn = getDBName(c.getUnqualifiedName());
         String cmds =
             "DROP TRIGGER IF EXISTS " + getIMOUpdateTriggerName(tn)
@@ -395,7 +396,7 @@ public class BuildTriggerMaker extends Task
      *          ClassDescriptor for the super table
      * @return SQL to generate functions and triggers
      */
-    private static String writeSuperClassActions(final ClassDescriptor c,
+    private static String getAddSuperClassActions(final ClassDescriptor c,
             final ClassDescriptor s) {
         String tn = getDBName(c.getUnqualifiedName());
         String stn = getDBName(s.getUnqualifiedName());
@@ -417,7 +418,7 @@ public class BuildTriggerMaker extends Task
         String cmds =
             "DROP TRIGGER IF EXISTS " + getUpdateTriggerName(tn, stn)
             + " ON " + tn + ";\n"
-            + makeUpdateBody(tn, stn, commonFields)
+            + getUpdateBody(tn, stn, commonFields)
             + "CREATE TRIGGER " + getUpdateTriggerName(tn, stn)
             + " AFTER UPDATE ON " + tn
             + " FOR EACH ROW EXECUTE PROCEDURE "
@@ -425,7 +426,7 @@ public class BuildTriggerMaker extends Task
 
             + "DROP TRIGGER IF EXISTS " + getInsertTriggerName(tn, stn)
             + " ON " + tn + ";\n"
-            + makeInsertBody(tn, stn, commonFields)
+            + getInsertBody(tn, stn, commonFields)
             + "CREATE TRIGGER " + getInsertTriggerName(tn, stn)
             + " AFTER INSERT ON " + tn
             + " FOR EACH ROW EXECUTE PROCEDURE "
@@ -433,7 +434,7 @@ public class BuildTriggerMaker extends Task
 
             + "DROP TRIGGER IF EXISTS " + getDeleteTriggerName(tn, stn)
             + " ON " + tn + ";\n"
-            + makeDeleteBody(tn, stn)
+            + getDeleteBody(tn, stn)
             + "CREATE TRIGGER " + getDeleteTriggerName(tn, stn)
             + " AFTER DELETE ON " + tn
             + " FOR EACH ROW EXECUTE PROCEDURE "
@@ -512,7 +513,7 @@ public class BuildTriggerMaker extends Task
      *          fields in the table which are common to the super table
      * @return SQL to define the function
      */
-    private static String makeUpdateBody(final String tn,
+    private static String getUpdateBody(final String tn,
             final String stn, final Set<String> fields) {
         StringBuffer body = new StringBuffer("CREATE OR REPLACE FUNCTION ");
         body.append(
@@ -546,7 +547,7 @@ public class BuildTriggerMaker extends Task
      *          fields in the table which are common to the super table
      * @return SQL to define the function
      */
-    private static String makeInsertBody(final String tn,
+    private static String getInsertBody(final String tn,
             final String stn, final Set<String> fields) {
         StringBuffer body = new StringBuffer("CREATE OR REPLACE FUNCTION ");
         body.append(
@@ -580,7 +581,7 @@ public class BuildTriggerMaker extends Task
      *          super table that the delete action propagates to
      * @return SQL to define the function
      */
-    private static String makeDeleteBody(final String tn,
+    private static String getDeleteBody(final String tn,
             final String stn) {
         StringBuffer body = new StringBuffer("CREATE OR REPLACE FUNCTION ");
         body.append(
@@ -604,7 +605,7 @@ public class BuildTriggerMaker extends Task
      *          ClassDescriptor for the super table
      * @return SQL to remove functions and triggers
      */
-    private static String removeSuperClassActions(final ClassDescriptor c,
+    private static String getRemoveSuperClassActions(final ClassDescriptor c,
             final ClassDescriptor s) {
         String tn = getDBName(c.getUnqualifiedName());
         String stn = getDBName(s.getUnqualifiedName());
@@ -629,7 +630,7 @@ public class BuildTriggerMaker extends Task
      *          The ClassDescriptor for the affected table
      * @return SQL for adding the table constraint.
      */
-    private static String writeDefaultClassConstraint(final ClassDescriptor cd) {
+    private static String getAddDefaultClassConstraint(final ClassDescriptor cd) {
         String tableName = getDBName(cd.getUnqualifiedName());
         return "ALTER TABLE " + tableName + " ALTER COLUMN class SET NOT NULL;\n"
             + "ALTER TABLE " + tableName + " ALTER COLUMN class SET DEFAULT '"
@@ -644,7 +645,7 @@ public class BuildTriggerMaker extends Task
      *          The ClassDescriptor for the affected table
      * @return SQL for removing the table constraint.
      */
-    private static String removeDefaultClassConstraint(final ClassDescriptor cd) {
+    private static String getRemoveDefaultClassConstraint(final ClassDescriptor cd) {
         String tableName = getDBName(cd.getUnqualifiedName());
         return "ALTER TABLE " + tableName + " ALTER COLUMN class DROP NOT NULL;\n"
             + "ALTER TABLE " + tableName + " ALTER COLUMN class DROP DEFAULT;\n"
@@ -656,7 +657,7 @@ public class BuildTriggerMaker extends Task
      *
      * @return SQL for writing the notice.
      */
-    private static String writeDisclaimer() {
+    private static String getAddDisclaimer() {
         /*
          * Generate SQL that write a notice to appear when the triggers are added.
          *
@@ -676,7 +677,7 @@ public class BuildTriggerMaker extends Task
      *
      * @return SQL for writing the notice.
      */
-    private static String removeDisclaimer() {
+    private static String getRemoveDisclaimer() {
         return "DO $BODY$\n" + "BEGIN\n" + "  RAISE NOTICE "
                 + "'\nTriggers and stored procedures should have been removed.\n"
                 + "Be sure to confirm all operations were successful by running the\n"
@@ -751,7 +752,7 @@ public class BuildTriggerMaker extends Task
      *
      * @return SQL to create the sequence used in inserts.
      */
-    private static String writeSequence() {
+    private static String getAddSequence() {
         /*
          * create a sequence for newly inserted objects. If there are any.
          */
@@ -764,7 +765,7 @@ public class BuildTriggerMaker extends Task
      *
      * @return SQL to drop sequence used in inserts.
      */
-    private static String removeSequence() {
+    private static String getRemoveSequence() {
         /*
          * create a sequence for newly inserted objects. We may need to increment
          * the 'main' serial counter if we've added many things
