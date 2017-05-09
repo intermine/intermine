@@ -246,7 +246,7 @@ public class BuildTriggerMaker extends Task
             + makeInsertInterMineObjectBody(c)
             + "CREATE TRIGGER " + getIMOInsertTriggerName(tn)
             + " AFTER INSERT ON " + tn + " FOR EACH ROW EXECUTE PROCEDURE "
-            + "im_" + shortName(tn) + "_InterMineObject_INS();\n\n"
+            + getIMOInsertFunctionName(tn) + ";\n\n"
 
             + "DROP TRIGGER IF EXISTS "
             + getIMODeleteTriggerName(tn) + " ON " + tn + ";\n"
@@ -306,11 +306,10 @@ public class BuildTriggerMaker extends Task
      * @return SQL to define the function
      */
     private static String makeInsertInterMineObjectBody(final ClassDescriptor c) {
-
-        String tableName = getDBName(c.getUnqualifiedName());
+        String tn = getDBName(c.getUnqualifiedName());
         StringBuffer body = new StringBuffer(
-                "CREATE OR REPLACE FUNCTION im_" + shortName(tableName)
-                + "_InterMineObject_INS() RETURNS TRIGGER AS $$\n");
+            "CREATE OR REPLACE FUNCTION " + getIMOInsertFunctionName(tn)
+            + " RETURNS TRIGGER AS $$\n");
         body.append("DECLARE objectText TEXT;\n");
         body.append("DECLARE objectid INT;\n");
         body.append("BEGIN\n");
@@ -335,6 +334,7 @@ public class BuildTriggerMaker extends Task
         body.append("EXECUTE 'INSERT INTO intermineobject (id,class,object) values "
                 + "($1,$2,$3)' USING objectId,'" + c.getName() + "',objectText;\n");
         body.append("RETURN NEW;\nEND;\n $$ LANGUAGE plpgsql;\n\n");
+
         return body.toString();
     }
 
@@ -378,8 +378,8 @@ public class BuildTriggerMaker extends Task
             + " ON " + tn + ";\n"
             + "DROP TRIGGER IF EXISTS " + getIMODeleteTriggerName(tn)
             + " ON " + tn + ";\n"
-            + "DROP FUNCTION IF EXISTS im_" + shortName(tn)
-            + "_IntermineObject_INS();\n" + "DROP FUNCTION IF EXISTS im_"
+            + "DROP FUNCTION IF EXISTS " + getIMOInsertFunctionName(tn) + ";\n"
+            + "DROP FUNCTION IF EXISTS im_"
             + shortName(tn) + "_IntermineObject_UPD();\n"
             + "DROP FUNCTION IF EXISTS im_" + shortName(tn)
             + "_IntermineObject_DEL();\n\n";
@@ -472,6 +472,10 @@ public class BuildTriggerMaker extends Task
         return String.format(
             "im_%s_%s_%s_tg",
             shortName(tn), shortName(stn), type);
+    }
+
+    private static String getIMOInsertFunctionName(String tn) {
+        return getInsertFunctionName(tn, "InterMineObject");
     }
 
     private static String getInsertFunctionName(String tn, String stn) {
