@@ -454,15 +454,19 @@ public class BuildTriggerMaker extends Task
         return getTriggerName(tn, stn, "DEL");
     }
 
-    private static String getTriggerName(
-        String tableName, String superTableName, String triggerType) {
+    private static String getTriggerName(String tn, String stn, String type) {
         return String.format(
             "im_%s_%s_%s_tg",
-            shortName(tableName), shortName(superTableName), triggerType);
+            shortName(tn), shortName(stn), type);
     }
 
     private static String getUpdateFunctionName(String tn, String stn) {
-        return String.format("im_%s_%s_UPD()", shortName(tn), shortName(stn));
+        return getFunctionName(tn, stn, "UPD");
+    }
+
+    private static String getFunctionName(String tn, String stn, String type) {
+        return String.format(
+            "im_%s_%s_%s()", shortName(tn), shortName(stn), type);
     }
 
     /**
