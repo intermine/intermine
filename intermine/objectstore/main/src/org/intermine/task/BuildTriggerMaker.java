@@ -253,7 +253,7 @@ public class BuildTriggerMaker extends Task
             + makeDeleteInterMineObjectBody(c)
             + "CREATE TRIGGER " + getIMODeleteTriggerName(tn)
             + " AFTER DELETE ON " + tn + " FOR EACH ROW EXECUTE PROCEDURE "
-            + "im_" + shortName(tn) + "_InterMineObject_DEL();\n\n";
+            + getIMODeleteFunctionName(tn) + "\n\n";
 
         return cmds;
     }
@@ -347,17 +347,17 @@ public class BuildTriggerMaker extends Task
      * @return SQL to define the function
      */
     private static String makeDeleteInterMineObjectBody(final ClassDescriptor c) {
-
-        String tableName = getDBName(c.getUnqualifiedName());
+        String tn = getDBName(c.getUnqualifiedName());
         StringBuffer body = new StringBuffer(
-                "CREATE OR REPLACE FUNCTION im_" + shortName(tableName)
-                + "_InterMineObject_DEL() RETURNS TRIGGER AS $$\n");
+            "CREATE OR REPLACE FUNCTION " + getIMODeleteFunctionName(tn)
+            + " RETURNS TRIGGER AS $$\n");
         body.append("BEGIN\n");
         body.append("IF ( OLD.class != '" + c.getName()
                 + "' ) THEN RETURN NULL; END IF;\n");
         body.append("DELETE FROM intermineobject WHERE id=OLD.id;\n");
         body.append("RETURN OLD;\n");
         body.append("END;\n $$ LANGUAGE plpgsql;\n\n");
+
         return body.toString();
     }
 
@@ -380,8 +380,7 @@ public class BuildTriggerMaker extends Task
             + " ON " + tn + ";\n"
             + "DROP FUNCTION IF EXISTS " + getIMOInsertFunctionName(tn) + ";\n"
             + "DROP FUNCTION IF EXISTS " + getIMOUpdateFunctionName(tn) + ";\n"
-            + "DROP FUNCTION IF EXISTS im_" + shortName(tn)
-            + "_IntermineObject_DEL();\n\n";
+            + "DROP FUNCTION IF EXISTS " + getIMODeleteFunctionName(tn) + ";\n\n";
 
         return cmds;
     }
@@ -479,6 +478,10 @@ public class BuildTriggerMaker extends Task
 
     private static String getIMOUpdateFunctionName(String tn) {
         return getUpdateFunctionName(tn, "InterMineObject");
+    }
+
+    private static String getIMODeleteFunctionName(String tn) {
+        return getDeleteFunctionName(tn, "InterMineObject");
     }
 
     private static String getInsertFunctionName(String tn, String stn) {
