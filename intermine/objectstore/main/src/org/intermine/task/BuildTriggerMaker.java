@@ -414,29 +414,38 @@ public class BuildTriggerMaker extends Task
             }
         }
 
-        String cmds = "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_UPD_tg ON " + tableName + ";\n"
-                + makeUpdateBody(tableName, superTableName, commonFields)
-                + "CREATE TRIGGER im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_UPD_tg AFTER UPDATE ON " + tableName
-                + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tableName)
-                + "_" + shortName(superTableName) + "_UPD();\n"
-                + "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_INS_tg ON " + tableName + ";\n"
-                + makeInsertBody(tableName, superTableName, commonFields)
-                + "CREATE TRIGGER im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_INS_tg AFTER INSERT ON " + tableName
-                + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tableName)
-                + "_" + shortName(superTableName) + "_INS();\n"
-                + "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_DEL_tg ON " + tableName + ";\n"
-                + makeDeleteBody(tableName, superTableName) + "CREATE TRIGGER im_"
-                + shortName(tableName) + "_" + shortName(superTableName)
-                + "_DEL_tg AFTER DELETE ON " + tableName
-                + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tableName)
-                + "_" + shortName(superTableName) + "_DEL();\n";
+        String cmds = "DROP TRIGGER IF EXISTS "
+            + getUpdateTriggerName(tableName, superTableName)
+            + " ON " + tableName + ";\n"
+            + makeUpdateBody(tableName, superTableName, commonFields)
+            + "CREATE TRIGGER " + getUpdateTriggerName(tableName, superTableName)
+            + " AFTER UPDATE ON " + tableName
+            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tableName)
+            + "_" + shortName(superTableName) + "_UPD();\n"
+            + "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
+            + shortName(superTableName) + "_INS_tg ON " + tableName + ";\n"
+            + makeInsertBody(tableName, superTableName, commonFields)
+            + "CREATE TRIGGER im_" + shortName(tableName) + "_"
+            + shortName(superTableName) + "_INS_tg AFTER INSERT ON " + tableName
+            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tableName)
+            + "_" + shortName(superTableName) + "_INS();\n"
+            + "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
+            + shortName(superTableName) + "_DEL_tg ON " + tableName + ";\n"
+            + makeDeleteBody(tableName, superTableName) + "CREATE TRIGGER im_"
+            + shortName(tableName) + "_" + shortName(superTableName)
+            + "_DEL_tg AFTER DELETE ON " + tableName
+            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tableName)
+            + "_" + shortName(superTableName) + "_DEL();\n";
 
         return cmds;
+    }
+
+    private static String getUpdateTriggerName(
+        String tableName, String superTableName) {
+        return
+            String.format(
+                "im_%s_%s_UPD_tg",
+                shortName(tableName), shortName(superTableName));
     }
 
     /**
@@ -548,8 +557,8 @@ public class BuildTriggerMaker extends Task
 
         String cmds = "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
                 + shortName(superTableName) + "_INS_tg ON " + tableName + ";\n"
-                + "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
-                + shortName(superTableName) + "_UPD_tg ON " + tableName + ";\n"
+                + "DROP TRIGGER IF EXISTS " + getUpdateTriggerName(tableName, superTableName)
+                + " ON " + tableName + ";\n"
                 + "DROP TRIGGER IF EXISTS im_" + shortName(tableName) + "_"
                 + shortName(superTableName) + "_DEL_tg ON " + tableName + ";\n"
                 + "DROP FUNCTION IF EXISTS im_" + shortName(tableName) + "_"
