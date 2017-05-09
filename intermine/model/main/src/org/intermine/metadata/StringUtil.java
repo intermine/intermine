@@ -36,6 +36,31 @@ public final class StringUtil
     }
 
     /**
+     * Flattens source name. e.g. LongOligo changes to long-oligo
+     *
+     * @param sourceName the String to alter
+     * @return the altered string
+     */
+    public static String getFlattenedSourceName(String sourceName) {
+        if (sourceName == null) {
+            return null;
+        }
+        String[] array = sourceName.split("(?=\\p{Upper})");
+        StringBuilder sb = new StringBuilder();
+        boolean firstWord = true;
+        for (String s : array) {
+            if (!firstWord) {
+                sb.append("-");
+            } else {
+                firstWord = false;
+            }
+            sb.append(s);
+        }
+        String s = sb.toString();
+        return s.toLowerCase();
+    }
+
+    /**
      * Returns the number of occurances of str in target
      *
      * @param str the String to count

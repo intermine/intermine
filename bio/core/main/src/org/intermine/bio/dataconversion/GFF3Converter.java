@@ -31,8 +31,9 @@ import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.metadata.StringUtil;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 
@@ -112,17 +113,32 @@ public class GFF3Converter extends DataConverter
         readConfig();
     }
 
+    // default is gff_config.properties, but can be overridden by a property file for the
+    // specific GFF3 source
+    private String getSourceConfig() {
+        final String suffix = "GFF3RecordHandler";
+        String fullSourceName = handler.getClass().getSimpleName();
+        // chop off suffix, e.g. LongOligoGFF3RecordHandler
+        String shortenedName = fullSourceName.substring(0, fullSourceName.length()
+                - suffix.length());
+        return StringUtil.getFlattenedSourceName(shortenedName) + "_config.properties";
+    }
+
     /**
      * read in config file
      */
     protected void readConfig() {
         Properties gffConfig = new Properties();
         try {
-            gffConfig.load(getClass().getClassLoader().getResourceAsStream(
-                    PROP_FILE));
-        } catch (IOException e) {
-            throw new RuntimeException("I/O Problem loading properties '"
-                    + PROP_FILE + "'", e);
+            gffConfig.load(handler.getClass().getClassLoader().getResourceAsStream(
+                    getSourceConfig()));
+        } catch (Exception e) {
+            try {
+                gffConfig.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+            } catch (IOException e2) {
+                throw new RuntimeException("I/O Problem loading properties '"
+                        + PROP_FILE + "'", e2);
+            }
         }
 
         for (Map.Entry<Object, Object> entry : gffConfig.entrySet()) {
