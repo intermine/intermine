@@ -232,25 +232,28 @@ public class BuildTriggerMaker extends Task
      * @return SQL to generate functions and triggers
      */
     private static String writeInterMineObjectActions(final ClassDescriptor c) {
-        String tableName = getDBName(c.getUnqualifiedName());
-        String cmds = "DROP TRIGGER IF EXISTS im_" + shortName(tableName)
-                + "_InterMineObject_UPD_tg ON " + tableName + ";\n"
-                + makeUpdateInterMineObjectBody(c) + "CREATE TRIGGER im_"
-                + shortName(tableName) + "_InterMineObject_UPD_tg AFTER UPDATE ON "
-                + tableName + " FOR EACH ROW EXECUTE PROCEDURE " + "im_"
-                + shortName(tableName) + "_InterMineObject_UPD();\n\n"
-                + "DROP TRIGGER IF EXISTS im_" + shortName(tableName)
-                + "_InterMineObject_INS_tg ON " + tableName + ";\n"
-                + makeInsertInterMineObjectBody(c) + "CREATE TRIGGER im_"
-                + shortName(tableName) + "_InterMineObject_INS_tg AFTER INSERT ON "
-                + tableName + " FOR EACH ROW EXECUTE PROCEDURE " + "im_"
-                + shortName(tableName) + "_InterMineObject_INS();\n\n"
-                + "DROP TRIGGER IF EXISTS im_" + shortName(tableName)
-                + "_InterMineObject_DEL_tg ON " + tableName + ";\n"
-                + makeDeleteInterMineObjectBody(c) + "CREATE TRIGGER im_"
-                + shortName(tableName) + "_InterMineObject_DEL_tg AFTER DELETE ON "
-                + tableName + " FOR EACH ROW EXECUTE PROCEDURE " + "im_"
-                + shortName(tableName) + "_InterMineObject_DEL();\n\n";
+        String tn = getDBName(c.getUnqualifiedName());
+        String cmds
+            = "DROP TRIGGER IF EXISTS "
+            + getIMOUpdateTriggerName(tn) + " ON " + tn + ";\n"
+            + makeUpdateInterMineObjectBody(c)
+            + "CREATE TRIGGER " + getUpdateTriggerName(tn, "InterMineObject")
+            + " AFTER UPDATE ON " + tn + " FOR EACH ROW EXECUTE PROCEDURE "
+            + "im_" + shortName(tn) + "_InterMineObject_UPD();\n\n"
+
+            + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
+            + "_InterMineObject_INS_tg ON " + tn + ";\n"
+            + makeInsertInterMineObjectBody(c) + "CREATE TRIGGER im_"
+            + shortName(tn) + "_InterMineObject_INS_tg AFTER INSERT ON "
+            + tn + " FOR EACH ROW EXECUTE PROCEDURE " + "im_"
+            + shortName(tn) + "_InterMineObject_INS();\n\n"
+
+            + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
+            + "_InterMineObject_DEL_tg ON " + tn + ";\n"
+            + makeDeleteInterMineObjectBody(c) + "CREATE TRIGGER im_"
+            + shortName(tn) + "_InterMineObject_DEL_tg AFTER DELETE ON "
+            + tn + " FOR EACH ROW EXECUTE PROCEDURE " + "im_"
+            + shortName(tn) + "_InterMineObject_DEL();\n\n";
 
         return cmds;
     }
@@ -367,21 +370,23 @@ public class BuildTriggerMaker extends Task
      * @return SQL to define the function
      */
     private static String removeInterMineObjectActions(final ClassDescriptor c) {
-        String tableName = getDBName(c.getUnqualifiedName());
-        String cmds = "DROP TRIGGER IF EXISTS im_" + shortName(tableName)
-                + "_IntermineObject_UPD_tg ON " + tableName + ";\n"
-                + "DROP TRIGGER IF EXISTS im_" + shortName(tableName)
-                + "_IntermineObject_INS_tg ON " + tableName + ";\n"
-                + "DROP TRIGGER IF EXISTS im_" + shortName(tableName)
-                + "_IntermineObject_DEL_tg ON " + tableName + ";\n"
-                + "DROP TRIGGER IF EXISTS im_" + shortName(tableName)
-                + "_IntermineObject_TRN_tg ON " + tableName + ";\n"
-                + "DROP FUNCTION IF EXISTS im_" + shortName(tableName)
-                + "_IntermineObject_INS();\n" + "DROP FUNCTION IF EXISTS im_"
-                + shortName(tableName) + "_IntermineObject_UPD();\n"
-                + "DROP FUNCTION IF EXISTS im_" + shortName(tableName)
-                + "_IntermineObject_DEL();\n" + "DROP FUNCTION IF EXISTS im_"
-                + shortName(tableName) + "_IntermineObject_TRN();\n\n";
+        String tn = getDBName(c.getUnqualifiedName());
+        String cmds =
+            "DROP TRIGGER IF EXISTS " + getIMOUpdateTriggerName(tn)
+            + " ON " + tn + ";\n"
+            + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
+            + "_IntermineObject_INS_tg ON " + tn + ";\n"
+            + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
+            + "_IntermineObject_DEL_tg ON " + tn + ";\n"
+            + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
+            + "_IntermineObject_TRN_tg ON " + tn + ";\n"
+            + "DROP FUNCTION IF EXISTS im_" + shortName(tn)
+            + "_IntermineObject_INS();\n" + "DROP FUNCTION IF EXISTS im_"
+            + shortName(tn) + "_IntermineObject_UPD();\n"
+            + "DROP FUNCTION IF EXISTS im_" + shortName(tn)
+            + "_IntermineObject_DEL();\n" + "DROP FUNCTION IF EXISTS im_"
+            + shortName(tn) + "_IntermineObject_TRN();\n\n";
+
         return cmds;
     }
 
@@ -440,6 +445,10 @@ public class BuildTriggerMaker extends Task
             + getDeleteFunctionName(tn, stn) + ";\n";
 
         return cmds;
+    }
+
+    private static String getIMOUpdateTriggerName(String tn) {
+        return getUpdateTriggerName(tn, "InterMineObject");
     }
 
     private static String getInsertTriggerName(String tn, String stn) {
