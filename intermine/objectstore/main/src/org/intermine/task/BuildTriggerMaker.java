@@ -253,7 +253,7 @@ public class BuildTriggerMaker extends Task
             + makeDeleteInterMineObjectBody(c)
             + "CREATE TRIGGER " + getIMODeleteTriggerName(tn)
             + " AFTER DELETE ON " + tn + " FOR EACH ROW EXECUTE PROCEDURE "
-            + getIMODeleteFunctionName(tn) + "\n\n";
+            + getIMODeleteFunctionName(tn) + ";\n\n";
 
         return cmds;
     }
