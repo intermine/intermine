@@ -36,9 +36,9 @@ import org.intermine.sql.DatabaseUtil;
  * be able to make a small change. The SQL files generated from this task
  * will allow you to do that.
  *
- * To use, build the SQL files with the ant task "ant generate-post-build-iud-triggers-sql"
+ * To use, build the SQL files with the ant task "ant generate-update-triggers"
  * from the mine's dbmodel/ subdirectory (after the build-db task). There will be
- * 2 files, add-post-build-iud-triggers.sql and remove-post-build-iud-triggers.sql
+ * 2 files, add-update-triggers.sql and remove-update-triggers.sql
  * in build/model/ Connect to PostgreSQL using psql and read the command file
  *
  * \i build/model/add-post-build-iud-triggers.sql
@@ -175,8 +175,8 @@ public class BuildTriggerMaker extends Task
             }
 
             Model model = os.getModel();
-            String makerFileName = "add-post-build-iud-triggers.sql";
-            String removerFileName = "remove-post-build-iud-triggers.sql";
+            String makerFileName = "add-update-triggers.sql";
+            String removerFileName = "remove-update-triggers.sql";
 
             FileWriter makerW;
             FileWriter removerW;
