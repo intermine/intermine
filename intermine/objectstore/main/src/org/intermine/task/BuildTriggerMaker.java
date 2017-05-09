@@ -420,8 +420,8 @@ public class BuildTriggerMaker extends Task
             + makeUpdateBody(tn, stn, commonFields)
             + "CREATE TRIGGER " + getUpdateTriggerName(tn, stn)
             + " AFTER UPDATE ON " + tn
-            + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tn)
-            + "_" + shortName(stn) + "_UPD();\n"
+            + " FOR EACH ROW EXECUTE PROCEDURE "
+            + getUpdateFunctionName(tn, stn) + ";\n"
 
             + "DROP TRIGGER IF EXISTS " + getInsertTriggerName(tn, stn)
             + " ON " + tn + ";\n"
@@ -461,24 +461,28 @@ public class BuildTriggerMaker extends Task
             shortName(tableName), shortName(superTableName), triggerType);
     }
 
+    private static String getUpdateFunctionName(String tn, String stn) {
+        return String.format("im_%s_%s_UPD()", shortName(tn), shortName(stn));
+    }
+
     /**
      * Write the SQL function that propagates update action to the super table.
      *
-     * @param table
+     * @param tn
      *          base table where the update action originates
-     * @param superTable
+     * @param stn
      *          super table that the update action propagates to
      * @param fields
      *          fields in the table which are common to the super table
      * @return SQL to define the function
      */
-    private static String makeUpdateBody(final String table,
-            final String superTable, final Set<String> fields) {
+    private static String makeUpdateBody(final String tn,
+            final String stn, final Set<String> fields) {
         StringBuffer body = new StringBuffer("CREATE OR REPLACE FUNCTION ");
-        body.append("im_" + shortName(table) + "_" + shortName(superTable)
-                + "_UPD() RETURNS TRIGGER AS $BODY$\n");
+        body.append(
+            getUpdateFunctionName(tn, stn) + " RETURNS TRIGGER AS $BODY$\n");
         body.append("BEGIN\n");
-        body.append("  UPDATE " + superTable + "\n  SET");
+        body.append("  UPDATE " + stn + "\n  SET");
         boolean needsComma = false;
         for (String field : fields) {
             String dbField = getDBName(field);
@@ -489,7 +493,7 @@ public class BuildTriggerMaker extends Task
             body.append("\n  ");
             body.append("    " + dbField + " = NEW." + dbField);
         }
-        body.append("\n  WHERE " + superTable + ".id = NEW.id;\n");
+        body.append("\n  WHERE " + stn + ".id = NEW.id;\n");
         body.append("  RETURN NEW;\nEND;\n");
         body.append("$BODY$ LANGUAGE plpgsql;\n");
         return body.toString();
@@ -576,8 +580,7 @@ public class BuildTriggerMaker extends Task
             + " ON " + tn + ";\n"
             + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
             + shortName(stn) + "_INS();\n"
-            + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
-            + shortName(stn) + "_UPD();\n"
+            + "DROP FUNCTION IF EXISTS " + getUpdateFunctionName(tn, stn) + ";\n"
             + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
             + shortName(stn) + "_DEL();\n\n";
 
