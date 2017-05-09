@@ -94,6 +94,7 @@ public class FlybaseAllelesConverter extends BioFileConverter
 
             Item doAnnotation = createItem("DOAnnotation");
             doAnnotation.setReference("subject", allele);
+            allele.addToCollection("doAnnotation", doAnnotation);
             if (StringUtils.isNotEmpty(qualifier)) {
                 doAnnotation.setAttribute("qualifier", qualifier);
             }
