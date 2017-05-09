@@ -241,12 +241,12 @@ public class BuildTriggerMaker extends Task
             + " AFTER UPDATE ON " + tn + " FOR EACH ROW EXECUTE PROCEDURE "
             + "im_" + shortName(tn) + "_InterMineObject_UPD();\n\n"
 
-            + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
-            + "_InterMineObject_INS_tg ON " + tn + ";\n"
-            + makeInsertInterMineObjectBody(c) + "CREATE TRIGGER im_"
-            + shortName(tn) + "_InterMineObject_INS_tg AFTER INSERT ON "
-            + tn + " FOR EACH ROW EXECUTE PROCEDURE " + "im_"
-            + shortName(tn) + "_InterMineObject_INS();\n\n"
+            + "DROP TRIGGER IF EXISTS "
+            + getIMOInsertTriggerName(tn) + " ON " + tn + ";\n"
+            + makeInsertInterMineObjectBody(c)
+            + "CREATE TRIGGER " + getIMOInsertTriggerName(tn)
+            + " AFTER INSERT ON " + tn + " FOR EACH ROW EXECUTE PROCEDURE "
+            + "im_" + shortName(tn) + "_InterMineObject_INS();\n\n"
 
             + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
             + "_InterMineObject_DEL_tg ON " + tn + ";\n"
@@ -374,8 +374,8 @@ public class BuildTriggerMaker extends Task
         String cmds =
             "DROP TRIGGER IF EXISTS " + getIMOUpdateTriggerName(tn)
             + " ON " + tn + ";\n"
-            + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
-            + "_IntermineObject_INS_tg ON " + tn + ";\n"
+            + "DROP TRIGGER IF EXISTS " + getIMOInsertTriggerName(tn)
+            + " ON " + tn + ";\n"
             + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
             + "_IntermineObject_DEL_tg ON " + tn + ";\n"
             + "DROP TRIGGER IF EXISTS im_" + shortName(tn)
@@ -445,6 +445,10 @@ public class BuildTriggerMaker extends Task
             + getDeleteFunctionName(tn, stn) + ";\n";
 
         return cmds;
+    }
+
+    private static String getIMOInsertTriggerName(String tn) {
+        return getInsertTriggerName(tn, "InterMineObject");
     }
 
     private static String getIMOUpdateTriggerName(String tn) {
