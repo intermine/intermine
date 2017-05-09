@@ -500,7 +500,9 @@ public final class SqlGenerator
                 orderBy = buildOrderBy(state, q, schema, kind);
             }
         }
-
+        if ((kind == QUERY_SUBQUERY_CONSTRAINT) || (kind == QUERY_SUBQUERY_FROM) || (kind == QUERY_SUBQUERY_EXISTS)) {
+            LOG.info("*****Subquery with orderby: " + orderBy);
+        }
         // TODO check here - What on earth does this comment mean, Julie?
 
         StringBuffer retval = new StringBuffer("SELECT ")
