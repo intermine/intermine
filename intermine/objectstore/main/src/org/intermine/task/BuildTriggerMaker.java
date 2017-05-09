@@ -57,8 +57,8 @@ import org.intermine.sql.DatabaseUtil;
  *
  * INSERT INTO organism (genus,species) values ('Hello','world');
  *
- * The id is supplied from a sequence im_serial which is initially set to
- * the maximum id of InterMineObject.
+ * The id is supplied from a sequence im_post_build_insert_serial which is
+ * initially set to the maximum id of InterMineObject.
  *
  * At the completion of the manual operations, remove all triggers and
  * stored procedures with
@@ -82,9 +82,9 @@ import org.intermine.sql.DatabaseUtil;
  * in the future.
  *
  * 4) If the id field in InterMineObject has exceeded 2^31 and gone negative,
- * the sequence im_serial cannot be used in INSERT operations without (probably)
- * colliding with another object. The value of the serial must be set manually
- * in this case.
+ * the sequence im_post_build_insert_serial cannot be used in INSERT operations
+ * without (probably) colliding with another object. The value of the serial
+ * must be set manually in this case.
  *
  * Other requirements:
  * 1) plpgsql must be installed in your postgres (select * from pg_language
@@ -635,7 +635,7 @@ public class BuildTriggerMaker extends Task
         return "ALTER TABLE " + tableName + " ALTER COLUMN class SET NOT NULL;\n"
             + "ALTER TABLE " + tableName + " ALTER COLUMN class SET DEFAULT '"
             + cd.getName() + "';\n" + "ALTER TABLE " + tableName
-            + " ALTER COLUMN id SET DEFAULT nextval('im_serial');\n";
+            + " ALTER COLUMN id SET DEFAULT nextval('im_post_build_insert_serial');\n";
     }
 
     /**
@@ -756,8 +756,8 @@ public class BuildTriggerMaker extends Task
         /*
          * create a sequence for newly inserted objects. If there are any.
          */
-        return "CREATE SEQUENCE im_serial;\n"
-            + "SELECT setval('im_serial',(select max(id) from intermineobject));\n";
+        return "CREATE SEQUENCE im_post_build_insert_serial;\n"
+            + "SELECT setval('im_post_build_insert_serial',(select max(id) from intermineobject));\n";
     }
 
     /**
@@ -770,7 +770,7 @@ public class BuildTriggerMaker extends Task
          * create a sequence for newly inserted objects. We may need to increment
          * the 'main' serial counter if we've added many things
          */
-        return "DROP SEQUENCE im_serial;\n"
+        return "DROP SEQUENCE im_post_build_insert_serial;\n"
             + "SELECT setval('serial',(select (max(id)-1)/1000000 "
             + "from intermineobject));\n";
     }
