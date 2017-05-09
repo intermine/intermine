@@ -414,13 +414,15 @@ public class BuildTriggerMaker extends Task
             }
         }
 
-        String cmds = "DROP TRIGGER IF EXISTS "
-            + getUpdateTriggerName(tn, stn) + " ON " + tn + ";\n"
+        String cmds =
+            "DROP TRIGGER IF EXISTS " + getUpdateTriggerName(tn, stn)
+            + " ON " + tn + ";\n"
             + makeUpdateBody(tn, stn, commonFields)
             + "CREATE TRIGGER " + getUpdateTriggerName(tn, stn)
             + " AFTER UPDATE ON " + tn
             + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tn)
             + "_" + shortName(stn) + "_UPD();\n"
+
             + "DROP TRIGGER IF EXISTS " + getInsertTriggerName(tn, stn)
             + " ON " + tn + ";\n"
             + makeInsertBody(tn, stn, commonFields)
@@ -428,11 +430,12 @@ public class BuildTriggerMaker extends Task
             + " AFTER INSERT ON " + tn
             + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tn)
             + "_" + shortName(stn) + "_INS();\n"
-            + "DROP TRIGGER IF EXISTS im_" + shortName(tn) + "_"
-            + shortName(stn) + "_DEL_tg ON " + tn + ";\n"
-            + makeDeleteBody(tn, stn) + "CREATE TRIGGER im_"
-            + shortName(tn) + "_" + shortName(stn)
-            + "_DEL_tg AFTER DELETE ON " + tn
+
+            + "DROP TRIGGER IF EXISTS " + getDeleteTriggerName(tn, stn)
+            + " ON " + tn + ";\n"
+            + makeDeleteBody(tn, stn)
+            + "CREATE TRIGGER " + getDeleteTriggerName(tn, stn)
+            + " AFTER DELETE ON " + tn
             + " FOR EACH ROW EXECUTE PROCEDURE " + "im_" + shortName(tn)
             + "_" + shortName(stn) + "_DEL();\n";
 
@@ -445,6 +448,10 @@ public class BuildTriggerMaker extends Task
 
     private static String getUpdateTriggerName(String tn, String stn) {
         return getTriggerName(tn, stn, "UPD");
+    }
+
+    private static String getDeleteTriggerName(String tn, String stn) {
+        return getTriggerName(tn, stn, "DEL");
     }
 
     private static String getTriggerName(
@@ -565,8 +572,8 @@ public class BuildTriggerMaker extends Task
             + " ON " + tn + ";\n"
             + "DROP TRIGGER IF EXISTS " + getUpdateTriggerName(tn, stn)
             + " ON " + tn + ";\n"
-            + "DROP TRIGGER IF EXISTS im_" + shortName(tn) + "_"
-            + shortName(stn) + "_DEL_tg ON " + tn + ";\n"
+            + "DROP TRIGGER IF EXISTS " + getDeleteTriggerName(tn, stn)
+            + " ON " + tn + ";\n"
             + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
             + shortName(stn) + "_INS();\n"
             + "DROP FUNCTION IF EXISTS im_" + shortName(tn) + "_"
