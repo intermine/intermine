@@ -74,6 +74,7 @@ public abstract class ListOperationService extends ListMakerService
                 addOutputInfo(ListMakerService.LIST_TYPE_KEY, operation.getNewBagType());
             }
             newBag = operation.operate();
+            size = newBag.getSize();
         } catch (NoContent e) {
             // This service guarantees a bag, even an empty one.
             size = 0;
