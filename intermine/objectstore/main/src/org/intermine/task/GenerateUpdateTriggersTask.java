@@ -756,7 +756,8 @@ public class GenerateUpdateTriggersTask extends Task
          * create a sequence for newly inserted objects. If there are any.
          */
         return "CREATE SEQUENCE im_post_build_insert_serial;\n"
-            + "SELECT setval('im_post_build_insert_serial',(select max(id) from intermineobject));\n";
+            + "SELECT setval('im_post_build_insert_serial',(select max(id) from intermineobject));"
+            + "\n";
     }
 
     /**
