@@ -841,6 +841,10 @@ public class GenomicRegionSearchService
         for (GenomicRegion gr : grsc.getGenomicRegionList()) {
             // User input could be x instead of X for human chromosome, converted to lowercase
             ChromosomeInfo ci = null;
+            // allow for empty lines
+            if (gr == null || gr.getChr() == null) {
+                continue;
+            }
             String chr = gr.getChr().toLowerCase();
 
             if (chrInfo.containsKey(chr)) {
