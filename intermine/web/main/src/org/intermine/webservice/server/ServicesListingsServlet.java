@@ -24,6 +24,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.Output;
