@@ -27,7 +27,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseUtil;
 
-/* Code for generating SQL files for manual CRUD operations on InterMine
+/*
+ * Code for generating SQL files for manual CRUD operations on InterMine
  * database.
  *
  * Sometimes, after a long loading process, you see that something
@@ -97,15 +98,13 @@ import org.intermine.sql.DatabaseUtil;
  * are prefixed with 'im_'
  *
  * This is an experimental feature. Use at your own risk.
- *
  */
-
 
 /**
  * @author Joe Carlson <JWCarlson@lbl.gov>
  * @version 0.1
  */
-public class BuildTriggerMaker extends Task
+public class GenerateUpdateTriggersTask extends Task
 {
     /**
      * If a table name is very long, the names of the triggers and functions may
