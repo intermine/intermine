@@ -70,6 +70,8 @@ public class SummariseTemplatesAction extends InterMineAction
                 summariser.summarise(template);
             } catch (ObjectStoreException e) {
                 recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
+            } catch (RuntimeException e) {
+                recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
             }
         }
 
