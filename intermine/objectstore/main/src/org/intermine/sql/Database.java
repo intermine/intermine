@@ -87,6 +87,7 @@ public class Database implements Shutdownable
             Properties dsProps = PropertiesUtil.getPropertiesStartingWith("datasource", props);
             dsProps = PropertiesUtil.stripStart("datasource", dsProps);
             removeProperty(dsProps, "class");
+            removeProperty(dsProps, "encoding");
 
             // this name is only used for logging
             renameProperty(dsProps, "dataSourceName", "poolName");
