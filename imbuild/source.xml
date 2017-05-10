@@ -328,6 +328,8 @@
                sourceType="${source.type}"
                ignoreDuplicates="${ignore.duplicates}"
                allSources="${allsources.list}"/>
+    <!-- not standard. -->
+    <slack-notify source="${source}" properties="intermine.properties" />
   </target>
 
   <target name="postprocess" depends="init, -init-deps" if="postprocessor.class">
