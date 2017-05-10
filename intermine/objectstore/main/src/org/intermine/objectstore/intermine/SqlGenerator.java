@@ -128,6 +128,8 @@ public final class SqlGenerator
     public static final int QUERY_SUBQUERY_EXISTS = 5;
     /** query for go faster **/
     public static final int QUERY_FOR_GOFASTER = 6;
+    /** subquery only for counting. SELECT COUNT(*) AS ... FROM (subquery) **/
+    public static final int QUERY_FOR_COUNTING = 7;
 
     protected static Map<DatabaseSchema, Map<Query, CacheEntry>> sqlCache
         = new WeakHashMap<DatabaseSchema, Map<Query, CacheEntry>>();
@@ -499,9 +501,6 @@ public final class SqlGenerator
             if (haveOrderBy) {
                 orderBy = buildOrderBy(state, q, schema, kind);
             }
-        }
-        if ((kind == QUERY_SUBQUERY_CONSTRAINT) || (kind == QUERY_SUBQUERY_FROM) || (kind == QUERY_SUBQUERY_EXISTS)) {
-            LOG.info("*****Subquery with orderby: " + orderBy);
         }
         // TODO check here - What on earth does this comment mean, Julie?
 
