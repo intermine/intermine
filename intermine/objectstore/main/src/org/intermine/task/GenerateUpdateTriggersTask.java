@@ -42,7 +42,7 @@ import org.intermine.sql.DatabaseUtil;
  * 2 files, add-update-triggers.sql and remove-update-triggers.sql
  * in build/model/ Connect to PostgreSQL using psql and read the command file
  *
- * \i build/model/add-post-build-iud-triggers.sql
+ * \i build/model/add-update-triggers.sql
  *
  * You can now do basic create/update/delete operations such as:
  *
@@ -64,7 +64,7 @@ import org.intermine.sql.DatabaseUtil;
  * At the completion of the manual operations, remove all triggers and
  * stored procedures with
  *
- * \i build/model/remove-post-build-iud-triggers.sql
+ * \i build/model/remove-update-triggers.sql
  *
  * What the triggers and procedures do NOT do:
  *
@@ -93,7 +93,7 @@ import org.intermine.sql.DatabaseUtil;
  * on installing languages if needed.
  * 2) Backup the database prior to making changes, especially if there are
  * changes that affect foreign keys.
- * 3) Be sure to run remove-post-build-iud-triggers.sql AND verify it was successful before
+ * 3) Be sure to run remove-update-triggers.sql AND verify it was successful before
  * resuming normal InterMine processing. All triggers and stored procedures
  * are prefixed with 'im_'
  *
