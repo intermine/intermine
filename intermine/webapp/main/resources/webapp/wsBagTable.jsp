@@ -31,6 +31,7 @@
   <tiles:put name="showNames" value="${showNames}"/>
   <tiles:put name="showTitles" value="${showTitles}"/>
   <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+  <tiles:put name="showTags" value="${showTags}"/>
   <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
   <tiles:put name="makeTable" value="false"/>
   <tiles:put name="makeLine" value="true"/>

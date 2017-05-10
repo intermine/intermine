@@ -7,7 +7,7 @@
 
 <tiles:importAttribute name="wsName"/>
 <tiles:importAttribute name="scope"/>
-<tiles:useAttribute id="webSearchable" name="webSearchable" 
+<tiles:useAttribute id="webSearchable" name="webSearchable"
                     classname="org.intermine.api.search.WebSearchable"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 <tiles:importAttribute name="statusIndex"/>
@@ -39,7 +39,7 @@
         <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
         <c:set var="extraParams" value=""/>
         <c:if test="${empty currentObjectId}">
-          <c:set var="extraParams" 
+          <c:set var="extraParams"
                  value="&highlightId=${currentObjectId}&amp;gotoHighlighted=true"/>
         </c:if>
         <html:link action="/bagDetails?bagName=${nameForURL}${extraParams}">

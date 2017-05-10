@@ -14,6 +14,7 @@
 <tiles:useAttribute id="webSearchable" name="webSearchable"
                     classname="org.intermine.api.search.WebSearchable"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<tiles:importAttribute name="showTags" ignore="true"/>
 <tiles:importAttribute name="statusIndex"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 
@@ -79,6 +80,18 @@
      <p class="description">${webSearchable.description}</p>
   </div>
    <div id="${wsListId}_${type}_item_description_${webSearchable.name}_highlight" style="display:none" class="description"></div>
+</c:if>
+
+
+<c:if test="${showTags}">
+  <div id="${wsListId}_${type}_item_tags_${webSearchable.name}">
+     <p class="description">
+     <span id="currentTags-${editorId}" class="current-tags">
+        <tiles:insert page="/currentTags.jsp"></tiles:insert>
+     </span>
+  </p>
+  </div>
+   <div id="${wsListId}_${type}_item_tags_${webSearchable.name}_highlight" style="display:none" class="description"></div>
 </c:if>
 
 </div>
