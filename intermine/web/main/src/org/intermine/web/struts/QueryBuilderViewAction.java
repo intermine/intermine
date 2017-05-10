@@ -45,7 +45,7 @@ public class QueryBuilderViewAction extends InterMineAction
         throws Exception {
         SessionMethods.logQuery(request.getSession());
         return new ForwardParameters(mapping.findForward("results"))
-                            .addParameter("trail", "|query|results.0")
+                            .addParameter("trail", "%7Cquery%7Cresults.0")
                             .addParameter("queryBuilder", "true").forward();
     }
 }

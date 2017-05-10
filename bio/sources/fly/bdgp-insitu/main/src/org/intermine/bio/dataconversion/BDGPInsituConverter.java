@@ -165,8 +165,7 @@ public class BDGPInsituConverter extends BioFileConverter
         }
     }
 
-    private Item getResult(String key, String geneId, String pubId, String stage)
-    {
+    private Item getResult(String key, String geneId, String pubId, String stage) {
         if (results.containsKey(key)) {
             return results.get(key);
         }

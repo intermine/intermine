@@ -115,9 +115,9 @@ public class PollQueryAction extends InterMineAction
 
                 if (forwardId != null) {
                     if (trail != null) {
-                        trail += "|" + forwardId;
+                        trail += "%7C" + forwardId;
                     } else {
-                        trail = "|" + forwardId;
+                        trail = "%7C" + forwardId;
                     }
                     String url = "/report.do?id=" + forwardId + "&trail=" + trail;
                     return new ActionForward(url, true);
@@ -126,9 +126,9 @@ public class PollQueryAction extends InterMineAction
 
             // Send us off to see the results in a table.
             if (trail != null) {
-                trail += "|results." + qid;
+                trail += "%7Cresults." + qid;
             } else {
-                trail = "|results." + qid;
+                trail = "%7Cresults." + qid;
             }
             PathQuery pq = null;
             if (pr != null && pr.getPathQuery() != null) {

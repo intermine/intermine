@@ -160,7 +160,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                     templateManager.getConversionTemplates(), classA, classB, imBag);
             q.setTitle(type2 + "s from list '" + imBag.getName() + "'");
             SessionMethods.loadQuery(q, session, response);
-            final String trail = "|bag." + imBag.getName();
+            final String trail = "%7Cbag." + imBag.getName();
             return new ForwardParameters(mapping.findForward("results"))
                                .addParameter("trail", trail)
                                .forward();
