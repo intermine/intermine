@@ -1386,7 +1386,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException if an error occurs
      */
     protected String generateSqlForCount(Connection c, Query q)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         createTempBagTablesForQuery(c, q);
         return SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_COUNTING,
                 bagConstraintTables);
