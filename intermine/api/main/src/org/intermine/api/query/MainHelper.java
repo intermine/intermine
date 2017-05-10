@@ -473,7 +473,7 @@ public final class MainHelper
                     }
                 }
             }
-            /*for (String view : pathQuery.getView()) {
+            for (String view : pathQuery.getView()) {
                 QueryField qf = (QueryField) queryBits.get(view);
                 if (qf != null) {
                     // If qf IS null, that means it is in another outer join group, as we have
@@ -483,7 +483,7 @@ public final class MainHelper
                         qu.addToOrderBy(qf);
                     }
                 }
-            }*/
+            }
         }
     }
 
