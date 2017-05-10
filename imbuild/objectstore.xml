@@ -105,6 +105,11 @@
     </sequential>
   </target>
 
+  <target name="generate-update-triggers" depends="-init-properties, init, -init-deps, -init-task-xml">
+    <echo message="Generating SQL trigger files for post data build updates"/>
+    <generate-update-triggers osName="${objectstore.name}" destDir="${build.model.dir}"/>
+  </target>
+
   <target name="-pre-generate-properties"
           depends="-init-properties, init, -init-deps, -init-task-xml"
           if="regenerate.java">
