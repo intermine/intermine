@@ -126,8 +126,14 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
         if ((bag != null && bag.getClassDescriptors().contains(sequenceFeatureCd)) || ids != null) {
             Query q = new Query();
             try {
+
+                String type = config.getTypeClass();
+                if (bag != null) {
+                    type = bag.getQualifiedType();
+                }
+
                 Class<? extends InterMineObject> clazz =
-                    (Class<InterMineObject>) Class.forName(bag.getQualifiedType());
+                        (Class<InterMineObject>) Class.forName(type);
                 QueryClass qc = new QueryClass(clazz);
                 QueryFunction count = new QueryFunction();
                 q.addToSelect(count);

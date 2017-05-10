@@ -8,7 +8,58 @@
  *
  */
 
-InterMine 1.6.7 (2016 September)
+InterMine 1.7.3 (2017 May)
+
+#582 - Remove partially implemented GAF export
+#1052 - FlyMine: Stop loading Golden Path Fragments
+#1086 - FlyMine: handle NCBI transcripts correctly
+#1286 - Enable making a list from mRNA lists
+#1410 - Make display names for collections and references available as JSON model
+#1418 - Add UniProt accession as Xrefs.
+#1444 - FlyMine: Don't load protein locations.
+#1493 - Update URL for OMIM download script
+#1496 - Load OMIM disease for Human Phenotypes
+#1502 - Gene length correction missing from GO widget
+#1532 - update-publications job fails if using UTF8 encoding
+#1536 - Add link to ToxyGates
+#1537 - MGI alleles file had an extra tab causing havoc. Always check for valid pubmed id.
+#1538 - Add Signor data source - signalling data
+#1539 - Tomcat 9 errors
+#1545 - OBO Source loader to handle multiple crossReferences
+
+InterMine 1.7.2 (2017 April)
+
+#1533 - Update code to adapt to google API changes
+
+InterMine 1.7.1 (2017 January)
+
+#1482 - Error when creating a list and accessing via the web service via tablerows method.
+
+InterMine 1.7 (2016 Xmas)
+
+#1480 - Check interaction count on client not server side. Works for proteins and genes now.
+#1462 - Removed old style path queries
+#1469 - Error when creating a list and accessing via the web service
+#1473 - Strand specific search off by default
+#1475 - Update postgresql JDBC driver to fix error with postgres 9.6 
+
+InterMine 1.6.9 (2016 November)
+
+#1422 - Constrain widget results. 
+#1425 - Region Search: allow strand-specific search
+#1431 - GFF source: ScoreType is required to parse the file but not required in GFF3 specs 
+#1441 - Region Search: Fix integer truncation bug for Extended Regions
+#1443 - HTTPS - web services using hardcoded HTTP 
+#1451 - The copy of a list by an un-logged user, saves the new list into db with the same name
+#1456 - HPO source: doesn't capture publication if there is more than one
+
+InterMine 1.6.8 (2016 September 20)
+
+Fix for Region search [595e786]
+Fix for FlyAtlas expression widget [#1141]
+Fix for mail update [9211ab7]
+
+InterMine 1.6.7 (2016 September 7)
 
 #421 - Results table forgetting toggle state
 #593 - cdn.intermine.org in generated JavaScript

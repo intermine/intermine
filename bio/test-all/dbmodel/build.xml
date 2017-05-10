@@ -61,6 +61,9 @@
     <merge-additions file="bio/sources/human/omim/omim_additions.xml"/>
     <merge-additions file="bio/sources/human/atlas-express/atlas-express_additions.xml"/>
     <merge-additions file="bio/sources/human/clinvar/clinvar_additions.xml"/>
+    <merge-additions file="bio/sources/signor/signor_additions.xml"/>
+    <merge-additions file="bio/sources/fly/flybase-alleles/flybase-alleles_additions.xml"/>
+    <merge-additions file="bio/sources/do/do_additions.xml"/>
   </target>
 
 </project>

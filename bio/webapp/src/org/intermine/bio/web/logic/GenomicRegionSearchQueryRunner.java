@@ -26,7 +26,6 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.bio.web.model.ChromosomeInfo;
@@ -61,10 +60,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
     private String spanUUIDString = null;
     private GenomicRegionSearchConstraint grsc = null;
     private Map<GenomicRegion, Query> queryMap = null;
-
     private static Map<String, Map<String, ChromosomeInfo>> chrInfoMap = null;
-
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchQueryRunner.class);
 
     /**
      * Constructor
@@ -151,7 +147,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 .synchronizedMap(new LinkedHashMap<GenomicRegion, List<List<String>>>());
 
         Map<GenomicRegion, Map<String, Integer>> spanOverlapResultStatMap = Collections
-        .synchronizedMap(new LinkedHashMap<GenomicRegion, Map<String, Integer>>());
+                .synchronizedMap(new LinkedHashMap<GenomicRegion, Map<String, Integer>>());
 
         if (!spanOverlapFullResultMap.containsKey(spanUUIDString)
                 && !spanOverlapFullStatMap.containsKey(spanUUIDString)) {
@@ -173,7 +169,6 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
                     Map<String, Integer> spanStatMap = new HashMap<String, Integer>();
                     ValueComparator bvc =  new ValueComparator(spanStatMap);
-                    @SuppressWarnings("unchecked")
                     TreeMap<String, Integer> sortedStatMap = new TreeMap<String, Integer>(bvc);
 
                     if (results == null || results.isEmpty()) {
@@ -246,12 +241,9 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         if (chrInfoMap != null) {
             return chrInfoMap;
         } else {
-            long startTime = System.currentTimeMillis();
-
             // a Map contains orgName and its chrInfo accordingly
             // e.g. <D.Melanogaster, <X, (D.Melanogaster, X, x, 5000)>>
             chrInfoMap = new HashMap<String, Map<String, ChromosomeInfo>>();
-
 
             Query q = new Query();
             q.setDistinct(true);
@@ -281,10 +273,8 @@ public class GenomicRegionSearchQueryRunner implements Runnable
             List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
             // a Set contains all the orgName
             Set<String> orgSet = new HashSet<String>();
-            int entryCount = 0;
 
             for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-                entryCount++;
                 ResultsRow<?> row = (ResultsRow<?>) iter.next();
 
                 String orgName = (String) row.get(0);
@@ -302,15 +292,11 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 }
                 // Add ChromosomeInfo to Arraylist
                 chrInfoList.add(chrInfo);
-
             }
 
-
             // Iterate orgSet and chrInfoList to put data in chrInfoMap which
-            // has the key as the
-            // orgName and value as a ArrayList containing a list of chrInfo
-            // which has the same
-            // orgName
+            // has the key as the orgName and value as a ArrayList containing a list of chrInfo
+            // which has the same orgName
             for (String o : orgSet) {
                 // a map to store chrInfo for the same organism
                 Map<String, ChromosomeInfo> chrInfoSubMap = new HashMap<String, ChromosomeInfo>();
@@ -413,8 +399,6 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * @return orgTaxonIdMap - a HashMap with organism  as key and its taxonId as value
      */
     public static Map<String, Integer> getTaxonInfo(InterMineAPI im, int batchSize) {
-        long startTime = System.currentTimeMillis();
-
         Map<String, Integer> orgTaxonIdMap = new HashMap<String, Integer>();
         Query q = new Query();
         QueryClass organisms = new QueryClass(org.intermine.model.bio.Organism.class);
@@ -465,14 +449,14 @@ public class GenomicRegionSearchQueryRunner implements Runnable
  * @author Fengyuan Hu
  *
  */
-class ValueComparator implements Comparator
+class ValueComparator implements Comparator<Object>
 {
     Map<String, Integer> base;
 
     /**
      * @param base the map itself
      */
-    public ValueComparator(Map<String, Integer> base) {
+    ValueComparator(Map<String, Integer> base) {
         this.base = base;
     }
 

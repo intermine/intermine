@@ -63,7 +63,7 @@ public class OrphanetConverter extends BioFileConverter
     }
 
     private void processXML(File file)
-            throws SAXException, IOException, ParserConfigurationException, ObjectStoreException {
+        throws SAXException, IOException, ParserConfigurationException, ObjectStoreException {
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

@@ -125,17 +125,6 @@ public class PathQueryUnmarshalTest extends  TestCase
         fail("Expected exception");
     }
 
-    public void testConfusedStyle() {
-        try {
-            createQuery("ConfusedXMLFormat.xml");
-        } catch (RuntimeException e) {
-            assertEquals("Cannot set path in a constraint inside a node",
-                e.getCause().getMessage());
-            return;
-        }
-        fail("Expected exception");
-    }
-
     public void testBadDescriptionPath() {
         try {
             createQuery("BadDescriptionPath.xml");

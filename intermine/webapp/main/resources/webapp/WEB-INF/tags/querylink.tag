@@ -17,7 +17,7 @@
   <c:set target="${linkParams}" property="query" value="${query}" />
   <c:set target="${linkParams}" property="skipBuilder" value="${skipBuilder}" />
   <c:set target="${linkParams}" property="exportFormat" value="${exportFormat}" />
-  <c:set target="${linkParams}" property="trail" value="|query" />
+  <c:set target="${linkParams}" property="trail" value="%7Cquery" />
   <c:set target="${linkParams}" property="title" value="${title}" />
 
 </jsp:useBean>

@@ -168,7 +168,7 @@
                   <c:choose>
                     <c:when test="${validQuery}">
                       <span class="fakelink"
-                         onclick="return doQueryAction('${savedQuery.key}', '<html:rewrite action='/modifyQueryChange'/>?method=run&amp;type=${type}&trail=|query&amp;name=')"
+                         onclick="return doQueryAction('${savedQuery.key}', '<html:rewrite action='/modifyQueryChange'/>?method=run&amp;type=${type}&trail=%7Cquery&amp;name=')"
                          titleKey="history.action.execute.hover">
                         <fmt:message key="history.action.execute"/></span>
                     </c:when>

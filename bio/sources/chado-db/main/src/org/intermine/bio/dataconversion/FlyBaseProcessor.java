@@ -710,6 +710,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     @Override
     protected String getExtraFeatureConstraint() {
         return "NOT ((cvterm.name = 'golden_path_region'"
+            + " OR cvterm.name = 'unassigned_supercontig'"
             + " OR cvterm.name = 'ultra_scaffold')"
             + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))"
             + " AND " + getLocatedGeneAllesSql();
@@ -732,8 +733,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
-                               String name, String uniqueName,
-                               int seqlen, int taxonId) {
+                               String name, String uniqueName, int seqlen, int taxonId) {
         String realInterMineType = interMineType;
 
         if ("protein".equals(chadoFeatureType) && !uniqueName.startsWith("FBpp")) {
@@ -780,10 +780,8 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
         if ("golden_path_region".equals(chadoFeatureType)) {
-            // For organisms other than D. melanogaster sometimes we can convert a
-            // golden_path_region to an actual chromosome: if name is 2L, 4, etc
-            // 2015 June - most Drosophila are now golden path fragments
-            realInterMineType = "Chromosome";
+            // ignore these, dmel is well mapped, we're not interested. See #1052
+            return null;
         }
 
         if (chadoFeatureType.equals(CHROMOSOME_STRUCTURE_VARIATION_SO_NAME)) {
@@ -808,9 +806,9 @@ public class FlyBaseProcessor extends SequenceProcessor
             // the FBti identifier
             return null;
         }
-        if ("mRNA".equals(chadoFeatureType) && seqlen == 0) {
+        if ("mRNA".equals(chadoFeatureType) && (seqlen == 0 || !uniqueName.startsWith("FBtr"))) {
             // flybase has > 7000 mRNA features that have no sequence and don't appear in their
-            // webapp so we filter them out
+            // webapp so we filter them out. See #1086
             return null;
         }
         if ("protein".equals(chadoFeatureType) && seqlen == 0) {
@@ -1057,7 +1055,17 @@ public class FlyBaseProcessor extends SequenceProcessor
     private void makeAndStoreLocation(Integer chrFeatureId, FeatureData subjectFeatureData,
             int start, int end, int strand, int taxonId)
         throws ObjectStoreException {
+
+        if ("protein".equalsIgnoreCase(subjectFeatureData.getInterMineType())) {
+            // don't make locations for proteins
+            return;
+        }
+
         FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
+        if (chrFeatureData == null) {
+            // chromosome might be empty if we ignored it earlier, e.g. golden path region
+            return;
+        }
         Item location =
             getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
                                                subjectFeatureData.getItemIdentifier(),
@@ -1149,6 +1157,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             int start = fmin + 1;
             int end = fmax;
 
+            // make sure both are relevant features. e.g. we do not load golden paths
+            // but they have insertions. See #1052
             FeatureData subFeatureData = getFeatureMap().get(new Integer(subId));
             if (subFeatureData != null) {
                 // this is a hack - we should make sure that we only query for features that are in

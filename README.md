@@ -17,9 +17,9 @@ the life sciences, including:
   * [YeastMine](http://yeastmine.yeastgenome.org)
   * [ZebrafishMine](http://zebrafishmine.org)
   * [RatMine](http://ratmine.mcw.edu/ratmine/begin.do)
-  * [TargetMine](http://targetmine.nibio.go.jp/)
+  * [TargetMine](http://targetmine.mizuguchilab.org/)
   * [ThaleMine](https://apps.araport.org/thalemine)
-  * [PhytoMine](http://phytozome.jgi.doe.gov/phytomine)
+  * [PhytoMine](https://phytozome.jgi.doe.gov/phytomine)
 
 For details, please visit: [InterMine Documentation][readthedocs]
 
@@ -73,7 +73,8 @@ Please cite
 **InterMine: a flexible data warehouse system for the integration and analysis of heterogeneous biological data.**<br/>
 *Smith RN, Aleksic J, Butano D, Carr A, Contrino S, Hu F, Lyne M, Lyne R, Kalderimis A, Rutherford K, Stepan R, Sullivan J, Wakeling M, Watkins X, Micklem G.* <br/>
 [Bioinformatics (2012) 28 (23): 3163-3165.](http://bioinformatics.oxfordjournals.org/content/28/23/3163.abstract) <br/>
-[![doi](http://img.shields.io/badge/doi-10.1093%2Fbioinformatics%2Fbts577-blue.svg?style=flat)](http://bioinformatics.oxfordjournals.org/content/28/23/3163.abstract) [![pubmed](http://img.shields.io/badge/pubmed-    23023984-blue.svg?style=flat)](http://www.ncbi.nlm.nih.gov/pubmed/23023984)
+[![doi](http://img.shields.io/badge/doi-10.1093%2Fbioinformatics%2Fbts577-blue.svg?style=flat)](http://bioinformatics.oxfordjournals.org/content/28/23/3163.abstract) 
+[![pubmed](http://img.shields.io/badge/pubmed-23023984-blue.svg?style=flat)](http://www.ncbi.nlm.nih.gov/pubmed/23023984)
 
 
 [travis-badge-master]: https://travis-ci.org/intermine/intermine.svg?branch=master

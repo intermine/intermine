@@ -226,7 +226,7 @@ public class BeginAction extends InterMineAction
      * @return response HTTP Servlet Response
      */
     private HttpServletResponse setUserVisitedCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie("visited", "at some point...");
+        Cookie cookie = new Cookie("visited", "at-some-point");
         // see you in a year
         cookie.setMaxAge(365 * 24 * 60 * 60);
         response.addCookie(cookie);

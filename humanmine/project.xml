@@ -72,7 +72,9 @@
      <property name="src.data.dir.includes" value="protein2ipr.dat"/>
      <property name="protein2ipr.organisms" value="9606"/>
     </source>
-
+    <source name="signor" type="signor">
+      <property name="src.data.dir" location="/micklem/data/signor/current" />
+    </source>
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/micklem/data/interpro/current" />
     </source>
@@ -83,11 +85,10 @@
       <property name="src.data.file" location="/micklem/data/metabolic/mouse-pheno/current/MPheno_OBO.obo" />
     </source>
     <source name="go" type="go">
-      <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo" />
+      <property name="src.data.file" location="/micklem/data/go-annotation/current/go.obo" />
     </source>
     <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo" />
-      <property name="src.data.dir" location="/micklem/data/go-annotation/metabolic" />
+      <property name="src.data.dir" location="/micklem/data/go-annotation/current/human" />
       <property name="src.data.includes" value="**/gene_association*" />
     </source>
     <source name="clinvar" type="clinvar">
@@ -95,15 +96,15 @@
       <property name="src.data.includes" value="variant_summary.txt" />
     </source>
     <source name="pdb" type="pdb">
-      <property name="src.data.dir" location="/micklem/data/pdb/current"/>
+      <property name="src.data.dir" location="/micklem/data/pdb"/>
       <property name="pdb.organisms" value="9606"/>
     </source>
-    <source name="psi-intact" type="psi">
+    <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
       <property name="intact.organisms" value="9606" />
     </source>
     <source name="psi-complexes" type="psi-complexes">
-      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/human"/>
+      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/current"/>
       <property name="complexes.source" value="uniprotkb"/>
     </source>
     <source name="biogrid" type="biogrid">
@@ -116,7 +117,7 @@
       <property name="kegg.organisms" value="9606 10090" />
     </source>
     <source name="reactome" type="reactome">
-      <property name="src.data.dir" location="/micklem/data/reactome/uniprot" />
+      <property name="src.data.dir" location="/micklem/data/reactome/current" />
       <property name="reactome.organisms" value="9606 10090" />
     </source>
     <source name="panther" type="panther">
@@ -156,6 +157,7 @@
     </source>
     <source name="hpo-annotation" type="hpo-annotation">
       <property name="src.data.dir" location="/micklem/data/hpo/current" />
+      <property name="hpo.disease.file" location="/micklem/data/metabolic/omim/current/mimTitles.txt" />
     </source>
 
     <source name="orphanet" type="orphanet">

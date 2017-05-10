@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+<class name="DOAnnotation" extends="OntologyAnnotation" is-interface="true">
+  <collection name="evidence" referenced-type="DOEvidence"/>
+</class>
+<class name="Allele" is-interface="true">
+  <collection name="doAnnotation" referenced-type="DOAnnotation"/>
+</class>
+<class name="DOTerm" extends="OntologyTerm" is-interface="true"/>
+<class name="DOEvidence" is-interface="true">
+  <attribute name="evidence" type="java.lang.String" />
+</class>
+</classes>

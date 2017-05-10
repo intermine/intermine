@@ -99,7 +99,7 @@ public class RegulatoryRegionsDisplayer extends ReportDisplayer
 
                 // get the types
                 List<Class<?>> lt = PathQueryResultHelper.
-                queryForTypesInCollection(reportObject.getObject(), "regulatoryRegions",
+                        queryForTypesInCollection(reportObject.getObject(), "regulatoryRegions",
                         im.getObjectStore());
 
                 // make collection into a list
