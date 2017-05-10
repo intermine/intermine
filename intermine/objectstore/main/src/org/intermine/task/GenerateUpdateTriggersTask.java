@@ -31,71 +31,9 @@ import org.intermine.sql.DatabaseUtil;
  * Code for generating SQL files for manual CRUD operations on InterMine
  * database.
  *
- * Sometimes, after a long loading process, you see that something
- * is not right: either typo in a name, or a major issue such as an entire
- * data set in error. Rather than starting over from scratch, you'd like to
- * be able to make a small change. The SQL files generated from this task
- * will allow you to do that.
- *
- * To use, build the SQL files with the ant task "ant generate-update-triggers"
- * from the mine's dbmodel/ subdirectory (after the build-db task). There will be
- * 2 files, add-update-triggers.sql and remove-update-triggers.sql
- * in build/model/ Connect to PostgreSQL using psql and read the command file
- *
- * \i build/model/add-update-triggers.sql
- *
- * You can now do basic create/update/delete operations such as:
- *
- * UPDATE organism set genus='Homo" where genus='Homer';
- * DELETE FROM organism where commonname='yeti';
- *
- * And the operations are propagated to the superclass and InterMineObject
- * tables. If you have not done so, familiarize yourself with the structure
- * of the tables the database.
- *
- * Tables have default values supplied for id and class, so it is possible
- * to create new records
- *
- * INSERT INTO organism (genus,species) values ('Hello','world');
- *
- * The id is supplied from a sequence im_post_build_insert_serial which is
- * initially set to the maximum id of InterMineObject.
- *
- * At the completion of the manual operations, remove all triggers and
- * stored procedures with
- *
- * \i build/model/remove-update-triggers.sql
- *
- * What the triggers and procedures do NOT do:
- *
- * 1) Foreign key constraints are not enforced. If you delete a gene,
- * there may still entries in the genesproteins table or a reference to
- * this from the geneid field in the mrna table. Foreign keys are enforced
- * at the application layer. This means whoever is doing the update needs
- * to keep things straight. (This is possible to implement.  It may be done
- * in the future.)
- *
- * 2) The tracker table is not updated. If you do an integration step after
- * manual operations and the integrator is trying to update a column value
- * that you inserted manually, the integration step will fail.
- *
- * 3) The clob table cannot be manipulated. Again, this may also be changed
- * in the future.
- *
- * 4) If the id field in InterMineObject has exceeded 2^31 and gone negative,
- * the sequence im_post_build_insert_serial cannot be used in INSERT operations
- * without (probably) colliding with another object. The value of the serial
- * must be set manually in this case.
- *
- * Other requirements:
- * 1) plpgsql must be installed in your postgres (select * from pg_language
- * where lanname='plpgsql';) Check the postgreSQL manuals for instructions
- * on installing languages if needed.
- * 2) Backup the database prior to making changes, especially if there are
- * changes that affect foreign keys.
- * 3) Be sure to run remove-update-triggers.sql AND verify it was successful before
- * resuming normal InterMine processing. All triggers and stored procedures
- * are prefixed with 'im_'
+ * Please see
+ * intermine.readthedocs.io/en/latest/database/database-
+ * building/post-build-updating-with-sql-triggers for more details.
  *
  * This is an experimental feature. Use at your own risk.
  */
