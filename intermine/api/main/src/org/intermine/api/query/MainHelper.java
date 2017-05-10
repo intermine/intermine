@@ -660,20 +660,24 @@ public final class MainHelper
                                 + "ObjectStore Query without a BagQueryRunner");
                     }
                     String identifiers = pcl.getValue();
-                    BagQueryResult bagQueryResult;
-                    List<String> identifierList = LOOKUP_TOKENISER.tokenise(identifiers);
-                    try {
-                        bagQueryResult = bagQueryRunner.searchForBag(qc.getType()
-                                .getSimpleName(), identifierList, pcl.getExtraValue(), true);
-                    } catch (ClassNotFoundException e) {
-                        throw new ObjectStoreException(e);
-                    } catch (InterMineException e) {
-                        throw new ObjectStoreException(e);
-                    }
-                    codeToConstraint.put(code, new BagConstraint(new QueryField(qc, "id"),
+                    // if this LOOKUP constraint only includes *, just ignore constraint
+                    // as user wants everything.
+                    if (!"*".equals(identifiers)) {
+                        BagQueryResult bagQueryResult;
+                        List<String> identifierList = LOOKUP_TOKENISER.tokenise(identifiers);
+                        try {
+                            bagQueryResult = bagQueryRunner.searchForBag(qc.getType()
+                                    .getSimpleName(), identifierList, pcl.getExtraValue(), true);
+                        } catch (ClassNotFoundException e) {
+                            throw new ObjectStoreException(e);
+                        } catch (InterMineException e) {
+                            throw new ObjectStoreException(e);
+                        }
+                        codeToConstraint.put(code, new BagConstraint(new QueryField(qc, "id"),
                                 ConstraintOp.IN, bagQueryResult.getMatchAndIssueIds()));
-                    if (returnBagQueryResults != null) {
-                        returnBagQueryResults.put(stringPath, bagQueryResult);
+                        if (returnBagQueryResults != null) {
+                            returnBagQueryResults.put(stringPath, bagQueryResult);
+                        }
                     }
                 } else {
                     throw new ObjectStoreException("Unknown constraint type "
