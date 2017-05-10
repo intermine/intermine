@@ -2191,8 +2191,8 @@ public final class SqlGenerator
                 needComma = true;
             }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)
-                    || (((kind == QUERY_NORMAL) || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING))
-                        && schema.isFlatMode(qc.getType()))
+                    || (((kind == QUERY_NORMAL) || (kind == QUERY_FOR_GOFASTER)
+                        || (kind == QUERY_FOR_COUNTING)) && schema.isFlatMode(qc.getType()))
                     || (kind == QUERY_FOR_PRECOMP)) {
                 Iterator<FieldDescriptor> fieldIter = null;
                 ClassDescriptor cld = schema.getModel().getClassDescriptorByName(qc.getType()
