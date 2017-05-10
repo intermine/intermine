@@ -1360,10 +1360,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
     /**
      * Create temporary tables for the bag in the BagConstraints of the given Query, then call
-     * SqlGenerator.generate().  Entries are placed in the bagConstraintTables Map, which is a
-     * WeakHashMap from BagConstraint -&gt; table name. When the BagConstraint is garbage-
-     * collected, or when the JVM exits, the table associated with the table name is dropped from
-     * the database.
+     * SqlGenerator.generate().
      *
      * @param c a Connection to use
      * @param q the Query
@@ -1374,7 +1371,40 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected String generateSql(Connection c, Query q, int start, int limit)
         throws ObjectStoreException {
+        createTempBagTablesForQuery(c, q);
+        return SqlGenerator.generate(q, start, limit, schema, db, bagConstraintTables);
+    }
 
+    /**
+     * Generate SQL only for counting; no need to order by and no need to calculate LIMIT and OFFSET
+     * Create temporary tables for the bag in the BagConstraints of the given Query, then call
+     * directly SqlGenerator.generate() using as Query type the value QUERY_FOR_COUNTING
+     *
+     * @param c a Connection to use
+     * @param q the Query
+     * @return the SQL for the Query
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected String generateSqlForCount(Connection c, Query q)
+            throws ObjectStoreException {
+        createTempBagTablesForQuery(c, q);
+        return SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_COUNTING,
+                bagConstraintTables);
+    }
+
+    /**
+     * Create temporary tables for the bag in the BagConstraints of the given Query.
+     * Entries are placed in the bagConstraintTables Map, which is a
+     * WeakHashMap from BagConstraint -&gt; table name. When the BagConstraint is garbage-
+     * collected, or when the JVM exits, the table associated with the table name is dropped from
+     * the database.
+     *
+     * @param c a Connection to use
+     * @param q the Query
+     * @throws ObjectStoreException if an error occurs
+     */
+    private void createTempBagTablesForQuery(Connection c, Query q)
+        throws ObjectStoreException {
         if (getMinBagTableSize() != -1) {
             // We have a strong reference to the Query, and therefore all the BagConstraints. We can
             // count on the bagConstraintTables Map to be sane.
@@ -1382,8 +1412,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             createTempBagTables(c, q);
             flushOldTempBagTables(c);
         }
-
-        return SqlGenerator.generate(q, start, limit, schema, db, bagConstraintTables);
     }
 
     /**
@@ -1665,7 +1693,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 sql = "SELECT MAX(" + CLOBPAGE_COLUMN + ") + 1 AS a1_ FROM " + CLOB_TABLE_NAME
                     + " WHERE " + CLOBID_COLUMN + " = " + clob.getClobId();
             } else {
-                sql = generateSql(c, q, 0, Integer.MAX_VALUE);
+                sql = generateSqlForCount(c, q);
                 if (everOptimise()) {
                     sql = QueryOptimiser.optimise(sql, null, db, c, QueryOptimiserContext.DEFAULT)
                         .getBestQueryString();
