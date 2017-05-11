@@ -86,10 +86,10 @@
 <c:if test="${showTags}">
   <div id="${wsListId}_${type}_item_tags_${webSearchable.name}">
      <p class="description">
-     <span id="currentTags-${editorId}" class="current-tags">
-        <tiles:insert page="/currentTags.jsp"></tiles:insert>
-     </span>
-  </p>
+<tiles:insert name="listTags.tile" >
+  <tiles:put name="taggable" value="${webSearchable}"/>
+</tiles:insert>
+     </p>
   </div>
    <div id="${wsListId}_${type}_item_tags_${webSearchable.name}_highlight" style="display:none" class="description"></div>
 </c:if>
