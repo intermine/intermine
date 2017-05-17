@@ -49,6 +49,9 @@ public final class StringUtil
         StringBuilder sb = new StringBuilder();
         boolean firstWord = true;
         for (String s : array) {
+            if (StringUtils.isEmpty(s)) {
+                continue;
+            }
             if (!firstWord) {
                 sb.append("-");
             } else {
