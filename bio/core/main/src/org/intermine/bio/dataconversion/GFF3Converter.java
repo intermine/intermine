@@ -115,7 +115,7 @@ public class GFF3Converter extends DataConverter
 
     // default is gff_config.properties, but can be overridden by a property file for the
     // specific GFF3 source
-    private String getSourceConfig() {
+    private String getConfigFilename() {
         final String suffix = "GFF3RecordHandler";
         String fullSourceName = handler.getClass().getSimpleName();
         // chop off suffix, e.g. LongOligoGFF3RecordHandler
@@ -129,15 +129,23 @@ public class GFF3Converter extends DataConverter
      */
     protected void readConfig() {
         Properties gffConfig = new Properties();
+        final String configFileName = getConfigFilename();
         try {
-            gffConfig.load(handler.getClass().getClassLoader().getResourceAsStream(
-                    getSourceConfig()));
+            // test for red-fly_config.properties
+            gffConfig.load(handler.getClass().getClassLoader().getResourceAsStream(configFileName));
         } catch (Exception e) {
             try {
-                gffConfig.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
-            } catch (IOException e2) {
-                throw new RuntimeException("I/O Problem loading properties '"
-                        + PROP_FILE + "'", e2);
+                // test for redfly_config.properties. no dashes
+                final String cleanString = configFileName.replace("-", "");
+                gffConfig.load(getClass().getClassLoader().getResourceAsStream(cleanString));
+            } catch (Exception e3) {
+                try {
+                    // okay nothing there, use default instead
+                    gffConfig.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+                } catch (IOException e2) {
+                    throw new RuntimeException("I/O Problem loading properties '"
+                            + PROP_FILE + "'", e2);
+                }
             }
         }
 
