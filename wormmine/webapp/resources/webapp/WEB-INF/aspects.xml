@@ -1,0 +1,39 @@
+<aspects>
+  <aspect name="Genomics">
+    <subtitle>Genome annotation</subtitle>
+    <icon-image>model/images/genomics.gif</icon-image>
+    <large-image>model/images/genomics.gif</large-image>
+    <intro-text>
+      The gene structure and other genome annotation in MalariaMine are provided by
+      a variety of curated source databases.  In most cases MalariaMine includes
+      all genome features that have chromosomal locations.
+    </intro-text>
+    <tile-name>model/genomics.jsp</tile-name>
+    <aspect-source name="GeneDB" url="http://www.genedb.org"/>
+  </aspect>
+  <aspect name="Proteins">
+    <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
+    <intro-text>
+      Protein annotation (including family and domain annotation) from UniProt.
+    </intro-text>
+    <tile-name>model/proteins.jsp</tile-name>
+    <aspect-source name="UniProt" url="http://www.uniprot.org"/>
+  </aspect>
+  <aspect name="Expression">
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Genetic Variations">
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Phenotypes">
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Gene Ontology">
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Reagents">
+    <tile-name></tile-name>
+  </aspect>
+</aspects>

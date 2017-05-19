@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<classes>
+	<class name="SNP" extends="SequenceFeature" is-interface="true"/>
+	<class name="CloneInsertEnd" extends="SequenceFeature" is-interface="true"/>
+	
+</classes>
+

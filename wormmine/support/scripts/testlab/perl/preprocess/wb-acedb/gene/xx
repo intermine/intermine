@@ -1,0 +1,5 @@
+perl ../../../purify_xace/purify_xace.pl $DATADIR/wormbase-acedb/gene/Gene.xml $DATADIR/wormbase-acedb/gene/purified_gene.xml
+
+perl prep_wb-acedb-gene.pl $DATADIR/wormbase-acedb/gene/purified_gene.xml $DATADIR/wormbase-acedb/gene/XML/prepped_gene.xml
+
+rm $DATADIR/wormbase-acedb/gene/purified_gene.xml

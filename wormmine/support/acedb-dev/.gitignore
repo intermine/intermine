@@ -1,0 +1,7 @@
+doc/*
+bin/*
+
+*.class
+
+delete.*
+DELETE.*

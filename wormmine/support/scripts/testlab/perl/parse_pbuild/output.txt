@@ -1,0 +1,169 @@
+
+ls: cannot access wormmine_dump.*: No such file or directory
+no backup file found
+Fri Apr 26 17:40:03 EDT 2013
+
+starting command: ant -v -Dsource=go
+
+Fri Apr 26 18:11:32 EDT 2013
+
+finished
+
+
+action go took 1889 seconds
+
+Fri Apr 26 18:11:32 EDT 2013
+
+starting command: ant -v -Dsource=go-annotation
+
+Fri Apr 26 18:20:15 EDT 2013
+
+finished
+
+
+action go-annotation took 523 seconds
+
+Fri Apr 26 18:20:15 EDT 2013
+
+starting command: ant -v -Dsource=celegans-genome-fasta
+
+Fri Apr 26 18:21:32 EDT 2013
+
+finished
+
+
+action celegans-genome-fasta took 77 seconds
+
+Fri Apr 26 18:21:32 EDT 2013
+
+starting command: ant -v -Dsource=celegans-protein-fasta
+
+Fri Apr 26 18:22:56 EDT 2013
+
+finished
+
+
+action celegans-protein-fasta took 84 seconds
+
+Fri Apr 26 18:22:56 EDT 2013
+
+starting command: ant -v -Dsource=celegans-gff3-gene
+
+Fri Apr 26 18:28:09 EDT 2013
+
+finished
+
+
+action celegans-gff3-gene took 313 seconds
+
+Fri Apr 26 18:28:09 EDT 2013
+
+starting command: ant -v -Dsource=celegans-gff3-mrna
+
+Fri Apr 26 18:33:35 EDT 2013
+
+finished
+
+
+action celegans-gff3-mrna took 326 seconds
+
+Fri Apr 26 18:33:35 EDT 2013
+
+starting command: ant -v -Dsource=celegans-gff3-cds
+
+Fri Apr 26 18:54:56 EDT 2013
+
+finished
+
+
+action celegans-gff3-cds took 1281 seconds
+
+Fri Apr 26 18:54:56 EDT 2013
+
+starting command: ant -v -Dsource=wb-acedb-gene
+
+Fri Apr 26 22:23:50 EDT 2013
+
+finished
+
+
+action wb-acedb-gene took 12534 seconds
+
+Fri Apr 26 22:23:50 EDT 2013
+
+starting command: ant -v -Dsource=wb-acedb-transcript
+
+Sat Apr 27 02:17:04 EDT 2013
+
+finished
+
+
+action wb-acedb-transcript took 13994 seconds
+
+Sat Apr 27 02:17:04 EDT 2013
+
+starting command: ant -v -Dsource=wb-acedb-cds
+
+Sat Apr 27 03:43:40 EDT 2013
+
+finished
+
+
+action wb-acedb-cds took 5196 seconds
+
+Sat Apr 27 03:43:40 EDT 2013
+
+starting command: ant -v -Dsource=wb-acedb-variation
+
+Sat Apr 27 11:01:42 EDT 2013
+
+finished
+
+
+action wb-acedb-variation took 26282 seconds
+
+Sat Apr 27 11:01:42 EDT 2013
+
+
+making db copy: createdb -E SQL_ASCII -U intermine -h localhost -T wormmine wormmine:wb-acedb-variation
+
+Sat Apr 27 11:36:53 EDT 2013
+
+finished backup
+
+
+action wb-acedb-variation-dump took 2111 seconds
+
+Sat Apr 27 11:36:53 EDT 2013
+
+starting command: ant -v -Dsource=wb-acedb-protein
+
+Sat Apr 27 20:06:48 EDT 2013
+
+finished
+
+
+action wb-acedb-protein took 30595 seconds
+
+Sat Apr 27 20:06:48 EDT 2013
+
+
+making db copy: createdb -E SQL_ASCII -U intermine -h localhost -T wormmine wormmine:wb-acedb-protein
+
+Sat Apr 27 20:42:33 EDT 2013
+
+finished backup
+
+
+action wb-acedb-protein-dump took 2145 seconds
+
+Sat Apr 27 20:42:33 EDT 2013
+
+starting command: ant -v -Dsource=wb-acedb-phenotype
+
+Sat Apr 27 20:50:51 EDT 2013
+
+finished
+
+
+action wb-acedb-phenotype took 498 seconds

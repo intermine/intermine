@@ -1,0 +1,7 @@
+cd webapp
+$CATALINA_HOME/bin/shutdown.sh
+sleep 2
+$CATALINA_HOME/bin/startup.sh
+./xx
+cd ..
+

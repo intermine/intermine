@@ -1,0 +1,5 @@
+obo=`find $DATADIR/go-annotation/raw -iname "gene_association*.wb"`
+
+sort -k 2,2 $obo > $DATADIR/go-annotation/gene_association_sorted.wb
+
+./filter_out_uniprot.sh $DATADIR/go-annotation/gene_association_sorted.wb $DATADIR/go-annotation/final/gene_association_sorted_filtered.wb

@@ -1,0 +1,3 @@
+cd dbmodel;
+ant clean build-db -v;
+cd ..

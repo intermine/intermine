@@ -1,0 +1,2 @@
+../bio/scripts/project_build -b -v localhost wormmine_dump
+

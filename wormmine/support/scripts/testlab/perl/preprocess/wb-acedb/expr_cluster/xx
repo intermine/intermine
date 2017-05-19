@@ -1,0 +1,1 @@
+perl ../../../purify_xace/purify_xace.pl $DATADIR/wormbase-acedb/expr_cluster/Expression_cluster.xml $DATADIR/wormbase-acedb/expr_cluster/XML/purified_expression_cluster.xml

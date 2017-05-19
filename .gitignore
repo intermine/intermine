@@ -205,3 +205,6 @@ prefixed
 failures.list
 *.jks
 biotestmine/project.xml
+*.DS_Store
+/datadir
+wget-log

@@ -1,0 +1,4 @@
+<project name="wormbase-gff3-core-tasks" default="default" basedir=".">
+  <description>build wormbase-gff3-core tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

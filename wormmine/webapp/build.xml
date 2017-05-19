@@ -1,0 +1,68 @@
+<project name="wormmine-webapp" default="default" basedir=".">
+
+  <description>build, test, package wormmine-webapp</description>
+  <import file="../../imbuild/application.xml"/>
+
+  <target name="-pre-jar"
+          depends="application.-pre-jar, -add-struts-config"/>
+
+  <target name="-add-struts-config"
+          description="Append the struts config modifications to the webapp"
+  	  depends="-pre-init">
+    <unwar src="${dist.war}" dest="${build.dir}/webapp/">
+      <patternset>
+        <include name="WEB-INF/struts-config.xml"/>
+        <include name="WEB-INF/tiles-defs.xml"/>
+        <include name="WEB-INF/classes/InterMineWebApp.properties"/>  
+        <include name="WEB-INF/classes/model.properties"/>  
+        <include name="WEB-INF/web.xml"/>
+      </patternset>
+    </unwar>
+
+    <loadfile property="model.struts.config" srcFile="./resources/struts-config-model.xml"/>
+
+    <replace file="${build.dir}/webapp/WEB-INF/struts-config.xml" value="${model.struts.config}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+
+    <loadfile property="model.struts.form.config" 
+              srcFile="./resources/struts-config-form-model.xml"/>
+
+    <replace file="${build.dir}/webapp/WEB-INF/struts-config.xml"
+             value="${model.struts.form.config}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_FORM_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+
+    <loadfile property="model.tiles.defs" srcFile="./resources/tiles-defs-model.xml"/>
+
+    <replace file="${build.dir}/webapp/WEB-INF/tiles-defs.xml" value="${model.tiles.defs}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+    <loadfile property="model.web" srcFile="./resources/web-model.xml"/>
+
+    <replace file="${build.dir}/webapp/WEB-INF/web.xml" value="${model.web}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+    
+ <!-- merge InterMine and model internationalisation properties files --> 
+ <concat destfile="${build.dir}/webapp/WEB-INF/classes/InterMineWebApp.properties" append="yes"> 
+   <fileset file="resources/model.properties"/> 
+ </concat> 
+ 
+    <war destfile="${dist.war}" update="true" >
+      <webinf dir="${build.dir}/webapp/WEB-INF/">
+  	<filename name="struts-config.xml" />
+        <filename name="tiles-defs.xml" />
+      </webinf>
+    </war>
+
+  </target>
+</project>

@@ -1,0 +1,12 @@
+*dump*.sql
+*~
+intlog.txt
+
+dbmodel/build
+test
+
+# ignore logs
+intermine.log*
+
+# ignore dumps
+wormmine_dump.final*
