@@ -1,5 +1,7 @@
 package org.intermine.web.struts;
 
+import java.net.URLDecoder;
+
 /*
  * Copyright (C) 2002-2016 FlyMine
  *
@@ -67,6 +69,7 @@ public class ObjectTrailController extends TilesAction
         String trail = request.getParameter("trail");
         String queryBuilder = request.getParameter("queryBuilder");
 
+        trail = URLDecoder.decode(trail, "UTF-8");
         String[] ids = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')
                 : new String[0];
         ArrayList<TrailElement> elements = new ArrayList<TrailElement>();
