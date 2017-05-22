@@ -50,7 +50,6 @@ public class FlushJobPostgresCopyImpl implements FlushJob
      */
     public void flush() throws SQLException {
         try {
-            LOG.info("Before postgres copyIn data: " + data);
             copyManager.copyIn(sql, new ByteArrayInputStream(data, 0, size));
             copyManager = null;
             sql = null;
