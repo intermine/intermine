@@ -1253,8 +1253,8 @@ public class GenomicRegionSearchService
             sb.append("<span style=\"padding: 10px;\">"
                     + "<a href='javascript: exportFeatures(\""
                     + s.getFullRegionInfo()
-                    + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
-                    + "region as FASTA\" class=\"fasta\" "
+                    + "\", \"\", \"chrSeg\");'><img title=\"Export sequence for entire region"
+                    + "\" class=\"fasta\" "
                     + "src=\"model/images/fasta.gif\"></a></span>");
         }
 
