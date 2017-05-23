@@ -1,7 +1,5 @@
 package org.intermine.web.struts;
 
-import java.net.URLDecoder;
-
 /*
  * Copyright (C) 2002-2016 FlyMine
  *
@@ -12,6 +10,7 @@ import java.net.URLDecoder;
  *
  */
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
