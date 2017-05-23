@@ -70,7 +70,7 @@ public class PathQueryResultsHelperTest extends TestCase
 
     protected void setUp() throws Exception {
         super.setUp();
-        
+
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         os = ObjectStoreFactory.getObjectStore("os.unittest");
 
@@ -157,21 +157,6 @@ public class PathQueryResultsHelperTest extends TestCase
     public void testGetDefaultViewNoConfig() throws Exception {
         List<String> view = PathQueryResultHelper.getDefaultViewForClass("Address", os.getModel(), webConfig, null);
         assertTrue(view.size() == 1);
-    }
-
-    public void testGetDefaultViewSubClass() {
-        try {
-            List<String> view = PathQueryResultHelper.getDefaultViewForClass(
-                    "Manager", os.getModel(), webConfig, "Department.employees");
-            fail("No exception thrown when getting default view for subclass, got: " + view);
-        } catch (AssertionFailedError e) {
-            throw e;
-        } catch (IllegalArgumentException e) {
-            assertEquals("Mismatch between end type of prefix: Employee and type parameter: Manager",
-                    e.getMessage());
-        } catch (Throwable t) {
-            fail("Unexpected error when getting default view for subclass" + t.getMessage());
-        }
     }
 
     public void testGetDefaultViewBadConfig() {
