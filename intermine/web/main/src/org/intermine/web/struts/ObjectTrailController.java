@@ -71,11 +71,11 @@ public class ObjectTrailController extends TilesAction
         String[] ids = null;
         if (StringUtils.isEmpty(trail)) {
             ids = new String[0];
-        } else {                        
+        } else {
             trail = URLDecoder.decode(trail, "UTF-8");
             ids = StringUtils.split(trail.substring(1), '|');
         }
-        
+
         ArrayList<TrailElement> elements = new ArrayList<TrailElement>();
         String elementTrail = "";
 
