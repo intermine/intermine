@@ -49,4 +49,15 @@ public interface JobInput
      */
     Boolean getWildCards();
 
+    /**
+    * There is config that allows mines to configure match behaviour. e.g. matchOnFirst let's
+    * you select the first / best match. This parameter overrides that setting. see #1494
+    *
+    * Basically we want to use this NOT in LOOKUPs but only in the list upload. However there
+    * is only one bag query runner and it's used on both so we have to set this param for each
+    * request.
+    *
+    * @return TRUE if you should ignore config
+    */
+    Boolean getIgnoreConfig();
 }

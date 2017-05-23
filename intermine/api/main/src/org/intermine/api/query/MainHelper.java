@@ -664,7 +664,7 @@ public final class MainHelper
                     List<String> identifierList = LOOKUP_TOKENISER.tokenise(identifiers);
                     try {
                         bagQueryResult = bagQueryRunner.searchForBag(qc.getType()
-                                .getSimpleName(), identifierList, pcl.getExtraValue(), true);
+                                .getSimpleName(), identifierList, pcl.getExtraValue(), true, true);
                     } catch (ClassNotFoundException e) {
                         throw new ObjectStoreException(e);
                     } catch (InterMineException e) {
