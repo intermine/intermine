@@ -37,7 +37,7 @@ echo 'Release version' $wbrel
 declare -A species=(["c_elegans"]="PRJNA13758")
 
 #sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
-sourcedir='/mnt/data2/acedb_dumps/WS259/WS259-test-data/'
+sourcedir='/mnt/data2/acedb_dumps/WS259/WS259-test-data'
 
 #################### Main dirs ##################
 #                                               #
@@ -102,7 +102,6 @@ do
   else
     echo  raw/"$spe"."${species["$spe"]}"."$wbrel".gff 'found'
   fi
-  cd raw
   for gffile in *.gff;do
     perl -pi -e 's/Gene://g' $gffile
     echo $gffile
