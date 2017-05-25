@@ -320,9 +320,9 @@
       </source>
 
     <source name="wb-acedb-gene-class" type="wormbase-acedb" dump="false">
-          <property name="src.data.dir" location="&datadir;/wormbase-acedb/GeneClass/XML" />
+          <property name="src.data.dir" location="&datadir;/wormbase-acedb/gene-class/XML" />
           <property name="mapping.file"
-              value="&datadir;/wormbase-acedb/GeneClass/mapping/gene-class_mapping.properties" />
+              value="&datadir;/wormbase-acedb/gene-class/mapping/gene_class_mapping.properties" />
           <property name="key.file"
               value="../../bio/sources/wormbase-acedb/resources/wormbase-acedb_keys.properties"/>
           <property name="source.class" value="GeneClass"/>
