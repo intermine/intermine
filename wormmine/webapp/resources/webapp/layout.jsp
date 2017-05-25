@@ -41,6 +41,8 @@
 
   <fmt:message key="${pageName}.title" var="pageNameTitle"/>
 
+ <link type="text/css" href="${WEB_PROPERTIES['webapp.wormbase.url']}/css/main.min.css" rel="stylesheet" />
+
     <tiles:insert name="htmlHead.tile">
       <tiles:put name="bagName" value="${param.bagName}"/>
       <tiles:put name="objectId" value="${param.id}"/>
@@ -254,6 +256,27 @@ if (typeof imtables != 'undefined' && imtables.setMessages) {
       </div>
     </c:if>
   </div>
+  <c:import var="wbfooter" url="${WEB_PROPERTIES['webapp.wormbase.url']}/footer?desktop=true"/>
+  ${wbfooter}
+
+
+
+<!--  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script> -->
+   <script>
+      <!-- Google Analytics -->
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+//ga('create', 'UA-16257183-1', 'auto');  // Replace with your property ID.
+ga('create', 'UA-16257183-1', {'cookieDomain': 'wormbase.org'});
+ga('require', 'displayfeatures');
+ga('send', 'pageview');
+      <!-- End Google Analytics -->
+   </script>
+
+
 </body>
 </html:html>
 <!-- /layout.jsp -->
