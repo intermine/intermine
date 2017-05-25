@@ -73,7 +73,7 @@
           <fmt:message key="menu.customQuery"/>&nbsp;
         </a>
       </li>
-      <!--
+      
       <c:if test="${WEB_PROPERTIES['genomicRegionSearch.display'] == 'true'}">
           <li id="genomicRegionSearch" <c:if test="${tab == 'genomicRegionSearch'}">class="activelink"</c:if>>
             <a href="/${WEB_PROPERTIES['webapp.path']}/genomicRegionSearch.do">
@@ -86,7 +86,7 @@
           <fmt:message key="menu.dataCategories"/>
         </a>
       </li>
-      -->
+      
       <li id="api"  <c:if test="${tab == 'api'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/api.do">
           <fmt:message key="menu.api"/>
