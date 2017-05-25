@@ -10,6 +10,7 @@
 <tiles:useAttribute id="webSearchable" name="webSearchable"
                     classname="org.intermine.api.search.WebSearchable"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<tiles:importAttribute name="showTags" ignore="true"/>
 <tiles:importAttribute name="statusIndex"/>
 <tiles:importAttribute name="wsCheckBoxId" ignore="true"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
@@ -74,6 +75,8 @@
     </c:choose>
   </td>
 </c:if>
+
+
 
 <td>
   <c:if test="${!empty webSearchable.dateCreated}">

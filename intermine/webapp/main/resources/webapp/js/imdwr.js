@@ -469,7 +469,6 @@ function showTags(listId, type, show) {
     var i = 0;
     for (i = 0; i < divs.length; i++) {
         var el = divs[i];
-        // it is div with description
         if (el.id.match(prefix) != null) {
           showElement(el, show);
         }

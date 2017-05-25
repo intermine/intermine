@@ -10,6 +10,7 @@
 <tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<tiles:importAttribute name="showTags" ignore="true"/>
 <tiles:importAttribute name="limit" ignore="true"/>
 <tiles:importAttribute name="height" ignore="true"/>
 <tiles:importAttribute name="tags" ignore="true"/>

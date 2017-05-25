@@ -182,6 +182,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
               <tiles:put name="showNames" value="${showNames}"/>
               <tiles:put name="showTitles" value="${showTitles}"/>
               <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+              <tiles:put name="showTags" value="${showTags}"/>
               <tiles:put name="currentObjectId" value="${currentObjectId}"/>
             </tiles:insert>
           </c:forEach>
@@ -225,6 +226,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
                     ${entry.value.description}
                   </div>
                 </c:if>
+
                </div>
               </li>
             </c:forEach>

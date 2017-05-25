@@ -82,16 +82,12 @@
    <div id="${wsListId}_${type}_item_description_${webSearchable.name}_highlight" style="display:none" class="description"></div>
 </c:if>
 
-
 <c:if test="${showTags}">
   <div id="${wsListId}_${type}_item_tags_${webSearchable.name}">
      <p class="description">
-<tiles:insert name="listTags.tile" >
-  <tiles:put name="taggable" value="${webSearchable}"/>
-</tiles:insert>
+        TAG GOES HERE
      </p>
   </div>
-   <div id="${wsListId}_${type}_item_tags_${webSearchable.name}_highlight" style="display:none" class="description"></div>
 </c:if>
 
 </div>
