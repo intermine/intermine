@@ -70,6 +70,9 @@ public abstract class ListOperationService extends ListMakerService
         }
 
         try {
+            if (type == null) {
+                addOutputInfo(ListMakerService.LIST_TYPE_KEY, operation.getNewBagType());
+            }
             newBag = operation.operate();
             size = newBag.getSize();
         } catch (NoContent e) {

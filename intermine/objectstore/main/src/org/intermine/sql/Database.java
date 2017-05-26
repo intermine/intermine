@@ -60,6 +60,7 @@ public class Database implements Shutdownable
     // Store all the properties this Database was configured with
     protected Properties settings;
     protected String version = null;
+    protected String schema = null;
 
     // protected Map createSituations = new HashMap();
 
@@ -83,11 +84,26 @@ public class Database implements Shutdownable
         if (props.containsKey("datasource.class")
                 && HIKARI_CLASSNAME.equals(props.get("datasource.class"))) {
 
+            // set 'driver', 'platform' and eventually 'schema' on this Database object
+            if (props.containsKey("platform")) {
+                this.platform = props.getProperty("platform");
+            }
+            if (props.containsKey("driver")) {
+                this.driver = props.getProperty("driver");
+            }
+            if (props.containsKey("datasource.schema")) {
+                // used (if not null) when setting the connection
+                this.schema = props.getProperty("datasource.schema");
+                LOG.warn("adding schema! " + schema );
+            }
+
             // HikariCP has different configuration than default postgres, need to adjust properties
             Properties dsProps = PropertiesUtil.getPropertiesStartingWith("datasource", props);
             dsProps = PropertiesUtil.stripStart("datasource", dsProps);
+            // these properties are not processed by Hikari
             removeProperty(dsProps, "class");
             removeProperty(dsProps, "encoding");
+            removeProperty(dsProps, "schema");
 
             // this name is only used for logging
             renameProperty(dsProps, "dataSourceName", "poolName");
@@ -105,13 +121,6 @@ public class Database implements Shutdownable
             HikariConfig conf = new HikariConfig(dsProps);
             datasource = new HikariDataSource(conf);
 
-            // also need to set 'driver' and 'platform' on this Database object
-            if (props.containsKey("platform")) {
-                this.platform = props.getProperty("platform");
-            }
-            if (props.containsKey("driver")) {
-                this.driver = props.getProperty("driver");
-            }
         } else {
             // this is the original PGPoolingDataSource configured by reflection
             LOG.warn("This database connection is configured to use the "
@@ -123,11 +132,10 @@ public class Database implements Shutdownable
             configure(props);
         }
         try {
-            LOG.info("Creating new Database " + getURL() + "(" + toString() + ") with ClassLoader "
-                    + getClass().getClassLoader() + " and parallelism " + parallel);
+            LOG.info("Creating new Database " + getURL() + "(" + toString() + ") and parallelism "
+                    + parallel);
         } catch (Exception e) {
-            LOG.info("Creating new invalid Database with ClassLoader "
-                    + getClass().getClassLoader(), e);
+            LOG.info("Creating new invalid Database ", e);
         }
         ShutdownHook.registerObject(new WeakReference<Database>(this));
     }
@@ -168,6 +176,10 @@ public class Database implements Shutdownable
         }
         try {
             retval = datasource.getConnection();
+            if (schema != null) {
+                retval.setSchema(schema);
+                LOG.warn("SCHEMA CHANGED! using " + schema);
+            }
         } catch (PSQLException e) {
             throw new DatabaseConnectionException("Unable to open database connection (there"
                     + " may not be enough available connections): " + this, e);
@@ -212,8 +224,7 @@ public class Database implements Shutdownable
         LOG.info("Database " + getURL() + "(" + toString() + ") has " + totalConnections
                 + " connections, of which " + activeConnections + " are active");*/
         if (datasource instanceof com.zaxxer.hikari.HikariDataSource) {
-            LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
-                    + ") with ClassLoader " + getClass().getClassLoader());
+            LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString());
             ((com.zaxxer.hikari.HikariDataSource) datasource).close();
         } else if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
             LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
