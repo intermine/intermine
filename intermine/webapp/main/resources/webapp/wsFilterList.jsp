@@ -50,7 +50,7 @@
               pageContext.setAttribute("userShowTags", true);
           }
       } else {
-          pageContext.setAttribute("userShowTags", true);
+          // pageContext.setAttribute("userShowTags", true);
       }
 %>
 <c:set var="ws_input_id" value="${wsListId}_${type}_filter_text"/>

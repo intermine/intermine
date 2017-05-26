@@ -426,6 +426,8 @@
     </action>
     <action path="/initInlineTagEditor" type="org.intermine.web.struts.InlineTagEditorController">
     </action>
+    <action path="/initListTags" type="org.intermine.web.struts.ListTagsController">
+    </action>
     <action path="/initTemplateList" type="org.intermine.web.struts.TemplateListController">
     </action>
     <action path="/initReportTemplateTable" type="org.intermine.web.struts.ReportTemplateController">
