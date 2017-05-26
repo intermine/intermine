@@ -8,6 +8,55 @@
  *
  */
 
+InterMine 1.8 (2017 Spring Cleaning)
+
+#216 - Added authentication docs
+#288 - List actions (set operations) greyed out but active
+#439 - Sharing lists -- need better message when owner hasn't upgraded lists
+#467 - Skeleton script should make a unit test too
+#492 - Datasets.xml
+#498 - Bag Upload Results - download summary needs platform specific line ending
+#615 - Project build script - don't enforce encoding
+#645 - query too long message (#155 again?)
+#702 - Add "Show Tags" option to Lists page
+#707 - FlyBase: Mutagens now annotated using disease ontology
+#715 - pathquery paths can contain $ and _
+#739 - filter encoding property in Database.java
+#786 - Query with outer join does not validate
+#789 - services.json should contain mine appropriate defaults for iodocs
+#802 - Region search should ignore blank lines in files
+#812 - Issues with Date data type
+#819 - testmodel data set needs some dates in it.
+#820 - Documentation on date formats (Items XML)
+#858 - Update count on list upload to be count of all identifiers submitted
+#910 - Usernames containing upper-case letters created via the web service can never log in.
+#964 - quicksearch service should report total hits
+#966 - add db parameter for schema
+#979 - Keyword Search: don't index Gene.length
+#1030 - data sets should have more details - descriptions and pubs
+#1169 - Query results - filtering on summary doesn't work when values > 1000
+#1174 - Can't share lists with google logins
+#1181 - Transfer sequences - not processing transcript sequences correctly
+#1212 - Web service: list union - resulting type is NULL
+#1285 - Results tables - not creating correct list 
+#1296 - List converter with subtype constraint fails
+#1309 - Provide a template's popularity score in /service/templates
+#1325 - GFF parser - gff config should be source-specific
+#1328 - Cannot change LOOKUP filter in results table
+#1382 - Templates page - my mine - add summarise all link
+#1415 - Results: Manage columns problem
+#1420 - ZebrafishMine: Perl client is not working
+#1455 - Don't add ORDER BY clause to count(*) queries
+#1458 - Queries page only shows the last saved query
+#1471 - Drop LOOKUP constraint if value is *
+#1494 - LOOKUP and List upload use BagQueryRunner. Need different "match" behaviour
+#1505 - InterMine webservices are not compatible with Python3
+#1507 - Unescaped pipes in the trail break tomcat 8
+#1515 - GFF3 export - not adding columns
+#1523 - Userprofile backup script - more improvements
+#1557 - Renaming lists when log in
+#1572 - We've lost the trail
+
 InterMine 1.7.3 (2017 May)
 
 #582 - Remove partially implemented GAF export
