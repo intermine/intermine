@@ -128,6 +128,8 @@ public final class SqlGenerator
     public static final int QUERY_SUBQUERY_EXISTS = 5;
     /** query for go faster **/
     public static final int QUERY_FOR_GOFASTER = 6;
+    /** subquery only for counting. SELECT COUNT(*) AS ... FROM (subquery) **/
+    public static final int QUERY_FOR_COUNTING = 7;
 
     protected static Map<DatabaseSchema, Map<Query, CacheEntry>> sqlCache
         = new WeakHashMap<DatabaseSchema, Map<Query, CacheEntry>>();
@@ -500,7 +502,6 @@ public final class SqlGenerator
                 orderBy = buildOrderBy(state, q, schema, kind);
             }
         }
-
         // TODO check here - What on earth does this comment mean, Julie?
 
         StringBuffer retval = new StringBuffer("SELECT ")
@@ -2181,7 +2182,7 @@ public final class SqlGenerator
             if ((kind != QUERY_SUBQUERY_FROM) && (objectAlias != null)) {
                 buffer.append(objectAlias);
                 if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
-                        || (kind == QUERY_FOR_GOFASTER)) {
+                        || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING)) {
                     buffer.append(" AS ")
                         .append(alias.equals(alias.toLowerCase())
                                 ? DatabaseUtil.generateSqlCompatibleName(alias)
@@ -2190,14 +2191,14 @@ public final class SqlGenerator
                 needComma = true;
             }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)
-                    || (((kind == QUERY_NORMAL) || (kind == QUERY_FOR_GOFASTER))
-                        && schema.isFlatMode(qc.getType()))
+                    || (((kind == QUERY_NORMAL) || (kind == QUERY_FOR_GOFASTER)
+                        || (kind == QUERY_FOR_COUNTING)) && schema.isFlatMode(qc.getType()))
                     || (kind == QUERY_FOR_PRECOMP)) {
                 Iterator<FieldDescriptor> fieldIter = null;
                 ClassDescriptor cld = schema.getModel().getClassDescriptorByName(qc.getType()
                         .getName());
                 if (schema.isFlatMode(qc.getType()) && ((kind == QUERY_NORMAL)
-                            || (kind == QUERY_FOR_GOFASTER))) {
+                            || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING))) {
                     List<Iterator<? extends FieldDescriptor>> iterators
                         = new ArrayList<Iterator<? extends FieldDescriptor>>();
                     DatabaseSchema.Fields fields = schema.getTableFields(schema
@@ -2229,7 +2230,7 @@ public final class SqlGenerator
                         buffer.append(" AS ")
                             .append(DatabaseUtil.generateSqlCompatibleName(alias) + columnName);
                     } else if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
-                            || (kind == QUERY_FOR_GOFASTER)) {
+                            || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING)) {
                         buffer.append(" AS ")
                             .append(alias.equals(alias.toLowerCase())
                                     ? DatabaseUtil.generateSqlCompatibleName(alias) + columnName
@@ -2487,7 +2488,7 @@ public final class SqlGenerator
                 needComma = true;
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                 if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
-                        || (kind == QUERY_FOR_GOFASTER)) {
+                        || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING)) {
                     retval.append(" AS " + (alias.equals(alias.toLowerCase())
                             ? DatabaseUtil.generateSqlCompatibleName(alias)
                             : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\""));
