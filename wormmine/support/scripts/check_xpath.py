@@ -1,5 +1,16 @@
 # Paulo Nuin May 2017
-# 
+# Simple script that checks XPATH listed in the mapping properties file for
+# a WormMine against the actual XML.
+# As AceDB XMLs don't have a "root" tag, this script wraps the current XML in
+# a root tag: i.e. 
+# 	<Variations>
+# 		<Variation>
+# 	...
+# 		</Variation>
+# 	</Variations>
+# Ideally this script should be run on prepped XMLs due to the "open"
+# text tags and it should be applied on XMLs ready for build, otherwise
+# root tags will break most of the XPATHs in the mapping file
 
 import sys
 import os
@@ -10,8 +21,16 @@ from lxml import etree
 def wrap_xml(xml_file):
 	
 	xml_contents = open(xml_file).read().splitlines()
-	if xml_contents[0] == '':
-		xml_class = re.search('[A-Z]*>', xml_contents[1], re.IGNORECASE).group(0)[:-1]
+
+	if len(xml_contents[0]) == 0:
+
+		xml_eof = 0
+		while xml_eof < len(xml_contents):
+			try:
+				xml_class = re.search('[A-Z]*>', xml_contents[xml_eof], re.IGNORECASE).group(0)[:-1]
+				break
+			except:
+				xml_eof += 1
 
 		xml_file = open(xml_file, 'r+')
 		xml_text = xml_file.read()
@@ -38,11 +57,15 @@ def get_mapping_file(mapping_file):
 def check_xpath(xml_file, xpaths, xml_class):
 
 
+	print 'Analysing '  + xml_file + '\n'
+
 	xml = etree.parse(xml_file)
 	for i in xpaths:
 		xpath = '/' + xml_class + i.strip()
+		print xpath
 		run = xml.xpath(xpath)
-		print len(run)
+		print 'there are %i items with the above XPATH in the XML\n' % (len(run))
+
 
 
 if __name__ == '__main__':
