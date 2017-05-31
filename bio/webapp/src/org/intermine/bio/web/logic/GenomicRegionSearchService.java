@@ -1249,8 +1249,10 @@ public class GenomicRegionSearchService
             sb.append("<b>" + span + "</b>");
         }
 
+        sb.append("<br>");
+
         if (!"false".equals(exportChromosomeSegment)) {
-            sb.append("<span style=\"padding: 10px;\">"
+            sb.append("<span style=\"padding: 10px;\">Export sequence for entire region: "
                     + "<a href='javascript: exportFeatures(\""
                     + s.getFullRegionInfo()
                     + "\", \"\", \"chrSeg\");'><img title=\"Export sequence for entire region"
@@ -1273,25 +1275,31 @@ public class GenomicRegionSearchService
         }
 
         sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
-                + "<span class='tab export-region'><a href='javascript: "
+                + "<span class='tab export-region'><a title='Export data for this region in "
+                + "tab-delimited format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"tab\");'></a></span>"
-                + "<span class='csv export-region'><a href='javascript: "
+                + "<span class='csv export-region'><a title='Export data for this region in "
+                + "comma-delimited format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"csv\");'></a></span>"
-                + "<span class='gff3 export-region'><a href='javascript: "
+                + "<span class='gff3 export-region'><a title='Export data for this region in "
+                + "GFF3 format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"gff3\");'></a></span>"
-                + "<span class='fasta export-region'><a href='javascript: "
+                + "<span class='fasta export-region'><a title='Export sequence data for this "
+                + "region' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"sequence\");'></a></span>"
-                + "<span class='bed export-region'><a href='javascript: "
+                + "<span class='bed export-region'><a title='Export data for this region in "
+                + "BED format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"bed\");'></a></span>");
 
         // Display galaxy export
         if (!"false".equals(galaxyDisplay)) {
-            sb.append("<span class='galaxy export-region'><a href='javascript: "
+            sb.append("<span class='galaxy export-region'><a title='Export data to Galaxy' "
+                + "href='javascript: "
                 + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
         }
 
@@ -1377,8 +1385,11 @@ public class GenomicRegionSearchService
             sb.append("<b>" + span + "</b>");
         }
 
+        sb.append("<br>");
+
+
         if (!"false".equals(exportChromosomeSegment)) {
-            sb.append("<span style=\"padding: 10px;\">"
+            sb.append("<span style=\"padding: 10px;\">Export sequence for entire region: "
                     + "<a href='javascript: exportFeatures(\""
                     + s.getFullRegionInfo()
                     + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
@@ -1401,19 +1412,24 @@ public class GenomicRegionSearchService
         }
 
         sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
-                + "<span class='tab export-region'><a href='javascript: "
+                + "<span class='tab export-region'><a title='Export data for this region in "
+                + "tab-delimited format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"tab\");'></a></span>"
-                + "<span class='csv export-region'><a href='javascript: "
+                + "<span class='csv export-region'><a title='Export data for this region in "
+                + "comma-delimited format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"csv\");'></a></span>"
-                + "<span class='gff3 export-region'><a href='javascript: "
+                + "<span class='gff3 export-region'><a title='Export data for this region in "
+                + "GFF3 format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"gff3\");'></a></span>"
-                + "<span class='fasta export-region'><a href='javascript: "
+                + "<span class='fasta export-region'><a title='Export sequence data for this "
+                + "region' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"sequence\");'></a></span>"
-                + "<span class='bed export-region'><a href='javascript: "
+                + "<span class='bed export-region'><a title='Export data for this region in "
+                + "BED format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"bed\");'></a></span>");
 
