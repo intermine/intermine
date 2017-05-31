@@ -1287,14 +1287,14 @@ public class GenomicRegionSearchService
                 + "GFF3 format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"gff3\");'></a></span>"
-                + "<span class='fasta export-region'><a title='Export sequence data for features in"
-                + " this region' href='javascript: "
-                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                + facet + "\", \"sequence\");'></a></span>"
                 + "<span class='bed export-region'><a title='Export features in this region in "
                 + "BED format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                + facet + "\", \"bed\");'></a></span>");
+                + facet + "\", \"bed\");'></a></span>"
+                + "<span class='fasta export-region'><a title='Export features in this region as "
+                + "individual sequences' href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"sequence\");'></a></span>");
 
         // Display galaxy export
         if (!"false".equals(galaxyDisplay)) {
