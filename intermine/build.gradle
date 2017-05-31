@@ -5,15 +5,19 @@ task wrapper(type: Wrapper) {
 subprojects {
   apply plugin: "java"
   sourceCompatibility = 1.6
-  targetCompatibility = 1.6  
+  targetCompatibility = 1.6
+  
   repositories {
-      mavenCentral()
+    mavenCentral()
+  }
+
+  dependencies {
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
   }
 }
 
 project(':intermine-model-main') {
     dependencies {
-        compile group: 'log4j', name: 'log4j', version: '1.2.17'
         compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
         compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
         compile group: 'cglib', name: 'cglib', version: '3.1'
@@ -33,7 +37,6 @@ project(':intermine-model-test') {
 project(':intermine-pathquery-main') {
     dependencies {
         compile project(':intermine-model-main')
-        compile group: 'log4j', name: 'log4j', version: '1.2.17'
         compile group: 'antlr', name: 'antlr', version: '2.7.6'
         compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
         runtime group: 'stax', name: 'stax-api', version: '1.0.1'
