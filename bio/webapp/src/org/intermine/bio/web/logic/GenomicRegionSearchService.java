@@ -1082,7 +1082,7 @@ public class GenomicRegionSearchService
             }
         }
 
-        String clHtml = " or Create List by feature type:"
+        String clHtml = " Create list by feature type:"
             + "<select id=\"all-regions\" style=\"margin: 4px 3px\">";
 
         for (String ft : ftSet) {
