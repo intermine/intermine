@@ -411,6 +411,7 @@ function do_filtering(filteredList, type, wsListId) {
         $(wsListId + '_' + type + '_spinner').style.display = 'none';
         $(wsListId + '_' + type + '_container').style.display = 'block';
         showDescriptions(wsListId, type, isDescriptionShown());
+        showTags(wsListId, type, areTagsShown());
     }
 }
 
@@ -459,6 +460,22 @@ function showDescriptions(listId, type, show) {
     AjaxServices.setState(prefix, show);
 }
 
+tagsShown = true;
+
+function showTags(listId, type, show) {
+    tagsShown = show;
+    var prefix = listId + '_' + type + '_item_tags';
+    var divs = document.getElementsByTagName('div');
+    var i = 0;
+    for (i = 0; i < divs.length; i++) {
+        var el = divs[i];
+        if (el.id.match(prefix) != null) {
+          showElement(el, show);
+        }
+    }
+    AjaxServices.setState(prefix, show);
+}
+
 // un-hide all the rows in the webSearchableList
 function showAll(wsListId, type) {
     for(var name in wsNamesMap) {
@@ -498,6 +515,14 @@ function setItemsFiltered(filtered) {
 function isDescriptionShown() {
     if (descriptionShown) {
         return descriptionShown;
+    } else {
+        return false;
+    }
+}
+
+function areTagsShown() {
+    if (tagsShown) {
+        return tagsShown;
     } else {
         return false;
     }

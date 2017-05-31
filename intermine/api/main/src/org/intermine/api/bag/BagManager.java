@@ -489,8 +489,7 @@ public class BagManager
      * @param type an unqualified class name
      * @return a map from bag name to bag
      */
-    public Map<String, InterMineBag> getCompatibleCurrentBags(Profile profile,
-                                                          String type) {
+    public Map<String, InterMineBag> getCompatibleCurrentBags(Profile profile, String type) {
         return filterBagsByType(getBags(profile), type, true, true);
     }
 
