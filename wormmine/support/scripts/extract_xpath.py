@@ -10,25 +10,24 @@ from lxml import etree
 
 def extract_xpaths(xml_file):
 
-	tree = etree.parse(xml_file)
+	root = etree.fromstring(open(xml_file).read())
+	tree = etree.ElementTree(root)
 
-	root = tree.
 
-
+	xpaths = []
 	for node in tree.iter():
-		print etree.getpath(node)
-		# for child in node.getchildren():
-		# 	print node.tag, child.tag
+		xpath = tree.getpath(node)
+		xpaths.append(tree.getpath(node)) 
 
-
-#     
-#          if child.text.strip():
-#             print("{}.{} = {}".format(root, ".".join(tree.getelementpath(child).split("/")), child.text.strip()))
-
-
+	uxpaths = []
+	[uxpaths.append(item) for item in xpaths if item not in uxpaths]
+	print len(uxpaths)
+	return uxpaths
 
 
 if __name__ == '__main__':
 
-	xml_file = sys.argv[1]
-	extract_xpaths(xml_file)
+	# xml_file = sys.argv[1]/
+	xml_file = '../../../../WS259-test-data/Expr_pattern.xml'
+	for i in extract_xpaths(xml_file):
+		print i
