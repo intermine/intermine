@@ -67,7 +67,6 @@ def check_xpath(xml_file, xpaths, xml_class):
 		print 'there are %i items with the above XPATH in the XML\n' % (len(run))
 
 
-
 if __name__ == '__main__':
 
 	xml_file = sys.argv[1]
