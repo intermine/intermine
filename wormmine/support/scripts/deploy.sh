@@ -242,6 +242,13 @@ cp -v $sourcedir/Variation.xml $acexmldir/variation/Variation.xml
 cp -v $intermine'/wormmine/support/properties/variation_mapping.properties' $datadir'/wormbase-acedb/variation/mapping'
 perl $testlab'/perl/preprocess/wb-acedb/variation/purify_variation.pl' $datadir'/wormbase-acedb/variation/Variation.xml' $datadir'/wormbase-acedb/variation/XML/prepped_variation.xml'
 
+#################### gene-class #################
+echo 'gene-class'
+mkdir -vp $datadir/wormbase-acedb/gene-class/XML
+mkdir -vp $datadir/wormbase-acedb/gene-class/mapping
+cp -v $sourcedir/Gene_class.xml $acexmldir/gene-class/Gene_class.xml
+cp -v $intermine'/wormmine/support/properties/gene_class_mapping.properties' $datadir'/wormbase-acedb/gene-class/mapping'
+
 
 # panther
 echo 'panther'
