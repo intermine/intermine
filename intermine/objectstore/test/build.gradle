@@ -22,6 +22,16 @@ sourceSets {
     }
 }
 
+dependencies {
+  compile project(':testmodel')
+  compile project(':intermine-integrate-main')
+  compile fileTree(dir: "$projectDir/lib", include: '*.jar') //org.gnu.readline is not in a public repo
+  compile group: 'junit', name: 'junit', version: '4.8.1'
+  compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
+  compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
+  compile group: 'antlr', name: 'antlr', version: '2.7.6'
+}
+
 task setClassLoader {
   doLast {
     ClassLoader antClassLoader = org.apache.tools.ant.Project.class.classLoader

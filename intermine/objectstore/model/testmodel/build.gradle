@@ -23,9 +23,9 @@ sourceSets {
     }
 }
 
-    dependencies {
-        compile project(':intermine-objectstore-main')
-    }
+dependencies {
+  compile project(':intermine-objectstore-main')
+}
 
 ant.properties['no.dep'] = 'true'
 ant.properties['regenerate.java'] = 'true'

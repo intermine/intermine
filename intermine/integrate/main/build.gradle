@@ -8,3 +8,9 @@ sourceSets {
         }
     }
 }
+
+dependencies {
+  compile project(':intermine-objectstore-main')
+  compile project(':zfulldata')
+  compile group: 'stax', name: 'stax', version: '1.2.0'
+}

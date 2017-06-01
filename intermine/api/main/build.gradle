@@ -8,3 +8,11 @@ sourceSets {
         }
     }
 }
+
+dependencies {
+  compile project(':intermine-pathquery-main')
+  compile project(':userprofile')
+  compile group: 'xalan', name: 'xalan', version: '2.7.2'
+  compile fileTree(dir: "$projectDir/lib", include: '*.jar') //for lucene
+  compile group: 'org.json', name: 'json', version: '20131018'
+}

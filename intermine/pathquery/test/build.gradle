@@ -16,3 +16,8 @@ sourceSets {
         }
     }
 }
+
+dependencies {
+  compile project(':intermine-model-test')
+  compile project(':intermine-pathquery-main')
+}
