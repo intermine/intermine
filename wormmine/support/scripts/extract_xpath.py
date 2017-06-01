@@ -1,5 +1,10 @@
 # Paulo Nuin May 2017
-# Simple script that 
+# Simple script that extracts the XPATHs from a wrapped XML file
+# A wrapper might need to be run on the XML file prior to run this script,
+# and ideally all txt entries should be escaped (TODO)
+# Items and fields with more than one [] entry are not included in the output
+# the same way text() are not output. This script can be used in combination with
+# check_xpaths.py
 
 
 import sys
@@ -28,7 +33,7 @@ def extract_xpaths(xml_file):
 
 if __name__ == '__main__':
 
-	# xml_file = sys.argv[1]/
-	xml_file = '../../../../WS259-test-data/Expr_pattern.xml'
+	xml_file = sys.argv[1]
+	# xml_file = '../../../../WS259-test-data/Expr_pattern.xml'
 	for i in extract_xpaths(xml_file):
 		print i
