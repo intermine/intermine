@@ -5,7 +5,7 @@
 import sys
 import os
 from lxml import etree
-
+import re
 
 
 def extract_xpaths(xml_file):
@@ -17,7 +17,8 @@ def extract_xpaths(xml_file):
 	xpaths = []
 	for node in tree.iter():
 		xpath = tree.getpath(node)
-		xpaths.append(tree.getpath(node)) 
+		new_xpath = re.sub(r'\[[0-9]*\]', '', xpath)
+		xpaths.append(new_xpath) 
 
 	uxpaths = []
 	[uxpaths.append(item) for item in xpaths if item not in uxpaths]
