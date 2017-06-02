@@ -132,10 +132,6 @@ public class BeginAction extends InterMineAction
                                 MAX_TEMPLATES);
                     }
 
-                    if (templates.size() > MAX_TEMPLATES) {
-                        templates = templates.subList(0, MAX_TEMPLATES);
-                    }
-
                     tab.put("templates", templates);
 
                     bagOfTabs.put(Integer.toString(i), tab);
