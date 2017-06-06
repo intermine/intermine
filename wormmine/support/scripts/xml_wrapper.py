@@ -4,6 +4,14 @@ import sys
 import os
 import re
 from lxml import etree
+import click
+
+@click.command()
+@click.option('--wrap', default=True, help='Wrap AceDB XML in a root tag')
+@click.option('--unwrap', default=False, help='Unwrap AceDB from root tag')
+
+
+
 
 def wrap_xml(xml_file):
 	

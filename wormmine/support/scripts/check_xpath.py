@@ -17,7 +17,6 @@ import os
 import re
 from lxml import etree
 
-
 def wrap_xml(xml_file):
 	
 	xml_contents = open(xml_file).read().splitlines()
@@ -40,7 +39,7 @@ def wrap_xml(xml_file):
 		return xml_class
 	else:
 		return os.path.basename(xml_file).replace('.xml', '').strip()
-		return 'already wrapped'
+
 
 def get_mapping_file(mapping_file):
 

@@ -292,7 +292,7 @@ public class WormbaseAcedbConverter extends BioFileConverter
 		        			wmd.debug(fieldName+"=true");
 		        			item.setAttribute(fieldName, "true");
 		        		}
-		        		
+		        		setRefItem(currentClass, ID, item);	
 		        	}else{
 		        	
 			        	String xPathValue = StringUtils.strip( expr.evaluate(doc) );
@@ -307,7 +307,7 @@ public class WormbaseAcedbConverter extends BioFileConverter
 						        			item.getIdentifier()+" with "+existingRecordsIMID);
 						        	item.setIdentifier(existingRecordsIMID);
 						        }
-					        	setRefItem(currentClass, ID, item);
+					        	// setRefItem(currentClass, ID, item);
 				        	}else{
 				        		continue;
 				        	}
@@ -428,7 +428,7 @@ public class WormbaseAcedbConverter extends BioFileConverter
 //	        wmd.debug("Storing "+currentClass+" with ID:"+ID);
 //	        store(item);
 	        
-        	setRefItem(currentClass, ID, item);
+        	// setRefItem(currentClass, ID, item);
 	    	
 	        // TODO remove in final build
 //	        if(count == 100){
@@ -475,7 +475,7 @@ public class WormbaseAcedbConverter extends BioFileConverter
 					+ pID);
 		} else {
 			wmd.debug("new " + className + " object:" + pID);
-			referencedItem = createItem(className);
+			// referencedItem = createItem(className);
 			referencedItem.setAttribute(getClassPIDField(className), pID);
 			storedRefItems.put(className+":"+pID, referencedItem);
 		}
