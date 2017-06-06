@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.operations.IncompatibleTypes;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
@@ -82,8 +83,9 @@ public abstract class ListMakerService extends AuthenticatedListService
      * Calculate the type of the new list.
      * @param input The parsed parameter input.
      * @return The type name.
+     * @throws IncompatibleTypes if the types of the two lists are not compats
      */
-    protected abstract String getNewListType(ListInput input);
+    protected abstract String getNewListType(ListInput input) throws IncompatibleTypes;
 
     @Override
     protected void execute() throws Exception {
