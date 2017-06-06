@@ -16,13 +16,13 @@ sourceSets {
 
 dependencies {
   compile project(':intermine-model-main')
-  compile group: 'org.apache.ant', name: 'ant', version: '1.9.7'
+  compile group: 'ant', name: 'ant', version: '1.6.5'
   compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
-  compile group: 'torque', name: 'torque-gen', version: '3.3'
-  compile group: 'commons-io', name: 'commons-io', version: '2.5'
-  compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.2'
-  compile group: 'com.zaxxer', name: 'HikariCP', version: '2.2.5'
-  compile group: 'net.iharder', name: 'base64', version: '2.3.7'
-  compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4'
+  compile group: 'torque', name: 'torque-gen', version: '3.2'
+  compile group: 'commons-io', name: 'commons-io', version: '1.2'
+  compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.6.1'
+  compile group: 'com.zaxxer', name: 'HikariCP-java6', version: '2.3.8'
+  compile group: 'net.iharder', name: 'base64', version: '2.3.8' //not clear wich version is currently used
+  compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven
   compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
 }
