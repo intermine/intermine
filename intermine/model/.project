@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>intermine-model-test</name>
-	<comment>Project intermine-model-test created by Buildship.</comment>
+	<name>intermine-model</name>
+	<comment>Project intermine-model created by Buildship.</comment>
 	<projects>
 	</projects>
 	<buildSpec>

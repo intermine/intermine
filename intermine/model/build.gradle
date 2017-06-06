@@ -1,24 +1,26 @@
 sourceSets {
     main {
         java {
-            srcDirs = ['src']
+            srcDirs = ['src/java']
         }
         resources {
-            srcDirs = ['resources']
+            srcDirs = ['src/resources']
         }
     }
     test {
         java {
-            srcDirs = ['src']
+            srcDirs = ['src/java']
         }
         resources {
-            srcDirs = ['resources']
+            srcDirs = ['src/resources']
         }
     }
 }
 
 dependencies {
-  compile project(':intermine-model-main')
+  compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+  compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+  compile group: 'cglib', name: 'cglib', version: '3.1'
   compile group: 'commons-io', name: 'commons-io', version: '1.2'
   compile group: 'junit', name: 'junit', version: '4.8.2'
   compile group: 'org.skyscreamer', name: 'jsonassert', version: '1.2.3'

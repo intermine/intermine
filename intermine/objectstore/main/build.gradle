@@ -15,7 +15,7 @@ sourceSets {
 }
 
 dependencies {
-  compile project(':intermine-model-main')
+  compile project(':intermine-model')
   compile group: 'ant', name: 'ant', version: '1.6.5'
   compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
   compile group: 'torque', name: 'torque-gen', version: '3.2'
