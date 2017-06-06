@@ -35,10 +35,15 @@ InterMine 1.8 (2017 June)
 #1455 - Don't add ORDER BY clause to count(*) queries
 #1458 - Queries page only shows the last saved query
 #1471 - Drop LOOKUP constraint if value is *
+#1486 - Allow the name attribute to be missing 
+#1495 - Fix a caching bug in strand specific region search
 #1505 - InterMine webservices are not compatible with Python3
 #1507 - Unescaped pipes in the trail break tomcat 8
 #1515 - GFF3 export - not adding columns
+#1516 - support for DOES_NOT_CONTAIN in query xml 
 #1523 - Userprofile backup script - more improvements
+#1526 - Post build updating with SQL triggers
+#1551 - handle the case where isoforms have multiple accessions. 
 #1557 - Correctly save lists after logging in
 #1569 - Update FASTA text on region search
 #1572 - We've lost the trail
