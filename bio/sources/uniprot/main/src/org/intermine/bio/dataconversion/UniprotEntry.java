@@ -85,9 +85,7 @@ public class UniprotEntry
      * @return variable
      */
     public String getAttribute() {
-        String attribute = temp;
-        temp = null;
-        return attribute;
+        return temp;
     }
 
     /**

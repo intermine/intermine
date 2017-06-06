@@ -23,8 +23,9 @@ public class NameUtilTest extends TestCase {
         assertTrue(NameUtil.isValidName("dot.dot.dot"));
         assertTrue(NameUtil.isValidName("dash-dash-dash"));
         assertTrue(NameUtil.isValidName("colon:colon:colon"));
+        assertTrue(NameUtil.isValidName("Gene List (Tue Sep 27 2016 11:16:31 GMT+0100 (BST))"));
         assertFalse(NameUtil.isValidName("Hello World!"));
-        char[]  badChars  = {'¬','!','£','$','%','^','&','*','(',')','+','}','{','@','~','?','<',',','/',';','\'','#',']','['};
+        char[]  badChars  = {'¬','!','£','$','%','^','&','*','}','{','@','~','?','<',',','/',';','\'','#',']','['};
         for (int i = 0; i < badChars.length; i++) {
             char c = badChars[i];
             String badName = c + "invalid " + c;

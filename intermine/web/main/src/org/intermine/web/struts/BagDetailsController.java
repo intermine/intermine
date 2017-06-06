@@ -123,6 +123,17 @@ public class BagDetailsController extends TilesAction
             return null;
         }
 
+        final String currentState = "CURRENT";
+
+        if (!currentState.equalsIgnoreCase(imBag.getState())) {
+            // list is not current
+            final String msg = "List '" + bagName + "' is currently unavailable. It requires "
+                    + "upgrading by the list owner.";
+            request.setAttribute("errorMessage", msg);
+            request.setAttribute("invalid", true);
+            return null;
+        }
+
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Model model = os.getModel();
         Map<String, Type> types = webConfig.getTypes();

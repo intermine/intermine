@@ -37,8 +37,8 @@ public final class NameUtil
             + "A-Z, a-z, 0-9, underscores and dashes.";
     private static final String QUERY_NAME_PREFIX = "query_";
     private static final Map<String, String> SPEC_CHAR_TO_TEXT = new HashMap<String, String>();
-    // A-Z, a-z, 0-9, underscores and dashes.  And spaces.  And dots.
-    private static final Pattern SPECIAL_CHARS_PATTERN = Pattern.compile("[^\\w\\s\\.\\-:]");
+    // A-Z, a-z, 0-9, underscores and dashes.  And spaces.  And dots. And :+()
+    private static final Pattern SPECIAL_CHARS_PATTERN = Pattern.compile("[^\\w\\s\\.\\-:+()]");
     // A-Z, a-z, 0-9, underscores and dashes.
     private static final Pattern NO_SPECIAL_CHARS_PATTERN = Pattern.compile("[^\\w\\-:]");
 
