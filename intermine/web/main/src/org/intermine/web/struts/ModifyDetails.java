@@ -108,9 +108,9 @@ public class ModifyDetails extends DispatchAction
         // add results table to trail
         String trail = request.getParameter("trail");
         if (trail != null) {
-            trail += "|results." + identifier;
+            trail += "%7Cresults." + identifier;
         } else {
-            trail = "|results." + identifier;
+            trail = "%7Cresults." + identifier;
         }
 
         return new ForwardParameters(mapping.findForward("results"))

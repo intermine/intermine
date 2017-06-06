@@ -1,0 +1,5 @@
+<project name="eco" default="default" basedir=".">
+  <description>build, test, package eco</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

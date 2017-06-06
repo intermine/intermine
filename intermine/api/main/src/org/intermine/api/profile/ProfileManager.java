@@ -523,8 +523,9 @@ public class ProfileManager
         for (SavedQuery query : userProfile.getSavedQuerys()) {
             try {
                 Reader r = new StringReader(query.getQuery());
-                savedQueries = SavedQueryBinding.unmarshal(r, savedBags, pathQueryFormat);
-                if (savedQueries.isEmpty()) {
+                Map<String, org.intermine.api.profile.SavedQuery> savedQueryMap =
+                        SavedQueryBinding.unmarshal(r, savedBags, pathQueryFormat);
+                if (savedQueryMap.isEmpty()) {
                     Map<String, PathQuery> pqs = PathQueryBinding.unmarshalPathQueries(
                             new StringReader(query.getQuery()),
                             pathQueryFormat);
@@ -536,6 +537,9 @@ public class ProfileManager
                                 new org.intermine.api.profile.SavedQuery(name, null,
                                                                   entry.getValue()));
                     }
+                } else {
+                    String savedQueryName = savedQueryMap.keySet().iterator().next();
+                    savedQueries.put(savedQueryName, savedQueryMap.get(savedQueryName));
                 }
             } catch (Exception err) {
                 // Ignore rows that don't unmarshal (they probably reference

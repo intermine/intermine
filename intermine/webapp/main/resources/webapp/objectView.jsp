@@ -17,15 +17,15 @@
 
 <%-- link in results should go to object details unless other link is in config --%>
 <c:choose>
-  <c:when test="${!empty resultElement.linkRedirect}">
-    <c:set var="detailsLink" value="${resultElement.linkRedirect}"
-      scope="request" />
+  <c:when test="${!empty searchResult.linkRedirect}">
+    <c:url value="${resultElement.linkRedirect}" var="detailsLink"/>
     <c:set var="extlink" value="class='extlink' target='_blank'" />
   </c:when>
   <c:otherwise>
-    <c:set var="detailsLink"
-      value="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}"
-      scope="request" />
+    <c:url value="report.do" var="detailsLink">
+      <c:param name="id" value="${resultElement.id}"/>
+      <c:param name="trail" value="${param.trail}|${resultElement.id}"/>
+    </c:url>
   </c:otherwise>
 </c:choose>
 

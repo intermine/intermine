@@ -159,7 +159,7 @@ public class NewUserService extends JSONService
         private final boolean wantsSpam;
 
         NewUserInput() {
-            username = request.getParameter("name");
+            username = request.getParameter("name").toLowerCase();
             password = request.getParameter("password");
             wantsSpam = Boolean.parseBoolean(request.getParameter("subscribe-to-list"));
             validate();

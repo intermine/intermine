@@ -174,7 +174,7 @@ public class PopulateChildFeatures
             Set<String> parentInterMineClassNames = parentClassDescr.getSuperclassNames();
 
             for (String superParent : parentInterMineClassNames) {
-                if (!superParent.equalsIgnoreCase("SequenceFeature")) {
+                if (!"SequenceFeature".equalsIgnoreCase(superParent)) {
                     CollectionHolder h = new CollectionHolder(childClassName, childCollectionName);
                     children.add(h);
                 }

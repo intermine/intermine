@@ -159,6 +159,20 @@ public class TrackerDelegate implements Shutdownable
     }
 
     /**
+     * Return the rank associated to a single template
+     * @param templateManager the template manager
+     * @param templateName the template to get the rank for
+     * @return rank of specified template
+     */
+    public Integer getRank(TemplateManager templateManager, String templateName) {
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            return tt.getRank(templateManager, templateName);
+        }
+        return null;
+    }
+
+    /**
      * Update the template name value into the database
      * @param oldTemplateName the old name
      * @param newTemplateName the new name

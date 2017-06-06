@@ -23,6 +23,7 @@ import org.intermine.api.search.PropertyChangeEvent;
 import org.intermine.api.search.WebSearchWatcher;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.pathquery.PathQuery;
@@ -39,6 +40,8 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
 
     /** SavedTemplateQuery object in the UserProfile database, so we can update summaries. */
     protected SavedTemplateQuery savedTemplateQuery = null;
+
+    TrackerDelegate templateTracker = null;
 
     // so we can include tags
     private InterMineAPI im;
@@ -61,6 +64,7 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
      */
     public ApiTemplate(TemplateQuery template) {
         super(template);
+
     }
 
     /**
@@ -178,7 +182,24 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
             }
             retVal.put("tags", tagNames);
         }
-
+        String rank = getRank();
+        if (rank != null) {
+            retVal.put("rank", rank);
+        }
         return retVal;
+    }
+
+    private String getRank() {
+        if (im != null) {
+            templateTracker = im.getTrackerDelegate();
+            Integer templateRank = templateTracker.getRank(im.getTemplateManager(), name);
+            if (templateRank == null) {
+                // null value for new templates. PathQuery.formatKVPair() doesn't accept anything
+                // but strings. Yo and Josh say to do this.
+                return "unranked";
+            }
+            return String.valueOf(templateRank);
+        }
+        return null;
     }
 }

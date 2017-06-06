@@ -49,7 +49,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class BeginAction extends InterMineAction
 {
-    private static final Integer MAX_TEMPLATES = new Integer(8);
+    private static final int MAX_TEMPLATES = 8;
 
     /**
      * @LinkedHashMap stores tabs of popular templates on the homepage
@@ -109,15 +109,17 @@ public class BeginAction extends InterMineAction
                     // identifier, has to be present
                     identifier = (String) props.get(i + ".id");
                     tab.put("identifier", identifier);
+
                     // (optional) description
                     tab.put("description", props.containsKey(i + ".description")
                             ? (String) props.get(i + ".description") : "");
                     tab.put("description", props.containsKey(i + ".description")
                             ? (String) props.get(i + ".description") : "");
-                    // (optional) custom name, otherwise use identifier
 
+                    // (optional) custom name, otherwise use identifier
                     tab.put("name", props.containsKey(i + ".name")
                             ? (String) props.get(i + ".name") : identifier);
+
                     // fetch the actual template queries
                     TemplateManager tm = im.getTemplateManager();
                     Profile profile = SessionMethods.getProfile(session);
@@ -130,10 +132,6 @@ public class BeginAction extends InterMineAction
                         templates = tm.getPopularTemplatesByAspect(
                                 TagNames.IM_ASPECT_PREFIX + identifier,
                                 MAX_TEMPLATES);
-                    }
-
-                    if (templates.size() > MAX_TEMPLATES) {
-                        templates = templates.subList(0, MAX_TEMPLATES);
                     }
 
                     tab.put("templates", templates);
@@ -226,7 +224,7 @@ public class BeginAction extends InterMineAction
      * @return response HTTP Servlet Response
      */
     private HttpServletResponse setUserVisitedCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie("visited", "at some point...");
+        Cookie cookie = new Cookie("visited", "at-some-point");
         // see you in a year
         cookie.setMaxAge(365 * 24 * 60 * 60);
         response.addCookie(cookie);
