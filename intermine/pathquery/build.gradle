@@ -3,13 +3,21 @@ apply plugin: "antlr"
 sourceSets {
     main {
         java {
-            srcDirs = ['src', 'build/generated-src/antlr/main']
+            srcDirs = ['src/main/java', 'build/generated-src/antlr/main']
         }
         resources {
-            srcDirs = ['resources']
+            srcDirs = ['src/main/resources']
         }
         antlr {
-            srcDirs = ['antlr']
+            srcDirs = ['src/main/antlr']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
         }
     }
 }

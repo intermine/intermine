@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>intermine-pathquery-main</name>
-	<comment>Project intermine-pathquery-main created by Buildship.</comment>
+	<name>intermine-pathquery</name>
+	<comment>Project intermine-pathquery created by Buildship.</comment>
 	<projects>
 	</projects>
 	<buildSpec>
