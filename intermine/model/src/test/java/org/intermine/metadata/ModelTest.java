@@ -44,8 +44,8 @@ public class ModelTest extends TestCase
     }
 
     public void testGetInstanceByNameSameInstance() throws Exception {
-        Model model1 = Model.getInstanceByName("testmodel");
-        Model model2 = Model.getInstanceByName("testmodel");
+        Model model1 = Model.getInstanceByName("basicmodel");
+        Model model2 = Model.getInstanceByName("basicmodel");
         assertTrue(model1 == model2);
     }
 
@@ -80,7 +80,7 @@ public class ModelTest extends TestCase
     }
 
     public void testGetDirectSubs() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
         Set<ClassDescriptor> hasAddressCds =
             model.getClassDescriptorsForClass(org.intermine.model.testmodel.Thing.class);
         assertEquals(1, hasAddressCds.size());
@@ -105,7 +105,7 @@ public class ModelTest extends TestCase
     }
 
     public void testGetAllSubs() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
         Set<ClassDescriptor> hasAddressCds =
             model.getClassDescriptorsForClass(org.intermine.model.testmodel.Thing.class);
         assertEquals(1, hasAddressCds.size());
@@ -123,7 +123,6 @@ public class ModelTest extends TestCase
         expectedCdNames.add("org.intermine.model.testmodel.Address");
         expectedCdNames.add("org.intermine.model.testmodel.Employee");
         expectedCdNames.add("org.intermine.model.testmodel.Manager");
-        expectedCdNames.add("org.intermine.model.testmodel.CEO");
         expectedCdNames.add("org.intermine.model.testmodel.Department");
         expectedCdNames.add("org.intermine.model.testmodel.Contractor");
         Set<String> resultCdNames = new HashSet<String>();
@@ -143,12 +142,12 @@ public class ModelTest extends TestCase
     }
 
     public void testGetCDByNameQualified() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
         assertNotNull(model.getClassDescriptorByName("org.intermine.model.testmodel.Employee"));
     }
 
     public void testGetCDByNameUnqualified() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
         assertNotNull(model.getClassDescriptorByName("Employee"));
     }
 
@@ -161,7 +160,7 @@ public class ModelTest extends TestCase
     }
 
     public void testGetClassDescriptorsForClass() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
         Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(org.intermine.model.testmodel.Employee.class);
         Set<String> expectedCdNames = new HashSet<String>();
         expectedCdNames.add("org.intermine.model.testmodel.Employee");
@@ -261,7 +260,7 @@ public class ModelTest extends TestCase
     }
 
     public void testFieldsInNonInterMineObject() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
         ClassDescriptor cld = model.getClassDescriptorByName("SimpleObject");
         assertEquals(3, cld.getAllFieldDescriptors().size());
         assertEquals(
@@ -270,7 +269,7 @@ public class ModelTest extends TestCase
     }
 
     public void testGetQualifiedTypeName() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
         assertEquals("org.intermine.model.testmodel.Employee",
                      model.getQualifiedTypeName("Employee"));
         assertEquals("java.lang.String",
@@ -298,11 +297,11 @@ public class ModelTest extends TestCase
     }
 
     public void testToString3() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
         InputStream is = getClass().getResourceAsStream("expected_model.xml");
         
         String modelString = IOUtils.toString(is).replaceAll("\n$", "");
-        assertEquals(modelString, model.toString().replaceAll("\t", "    "));        
+        assertEquals(modelString, model.toString().replaceAll("\t", "    "));
     }
 
     public void testGetSimpleObjectClassDescriptors() throws Exception {
@@ -314,7 +313,7 @@ public class ModelTest extends TestCase
     }
 
     public void testGetTopDownTraversal() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
 
         /**
          *         A
@@ -359,7 +358,7 @@ public class ModelTest extends TestCase
     }
 
     public void testGetBottomUpTraversal() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("basicmodel");
 
         /**
          *         A

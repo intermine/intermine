@@ -31,7 +31,7 @@ public class PrimaryKeyUtilTest extends TestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        model = Model.getInstanceByName("testmodel");
+        model = Model.getInstanceByName("basicmodel");
         expected = new HashMap<String, PrimaryKey>();
     }
 

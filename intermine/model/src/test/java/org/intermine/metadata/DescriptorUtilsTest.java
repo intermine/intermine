@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 
 public class DescriptorUtilsTest extends TestCase
 {
-    private final static Model testModel = Model.getInstanceByName("testmodel");
+    private final static Model testModel = Model.getInstanceByName("basicmodel");
     private Set<ClassDescriptor> classes;
 
     public DescriptorUtilsTest(String arg) {
