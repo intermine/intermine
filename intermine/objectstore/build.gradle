@@ -1,0 +1,60 @@
+apply plugin: "antlr" 
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/generated-src/antlr/main']
+        }
+        resources {
+            srcDirs = ['src/main/resources', 'src/main/resources/org/intermine/task']
+        }
+        antlr {
+            srcDirs = ['src/main/antlr']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java', 'model/testmodel/build/gen/src']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+  compile project(':intermine-model')
+  compile group: 'ant', name: 'ant', version: '1.6.5'
+  compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
+  compile group: 'torque', name: 'torque-gen', version: '3.2'
+  compile group: 'commons-io', name: 'commons-io', version: '1.2'
+  compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.6.1'
+  compile group: 'com.zaxxer', name: 'HikariCP-java6', version: '2.3.8'
+  compile group: 'net.iharder', name: 'base64', version: '2.3.8' //not clear wich version is currently used
+  compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven
+  compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
+}
+
+task setAntClassLoader {
+  doLast {
+    ClassLoader antClassLoader = org.apache.tools.ant.Project.class.classLoader
+    configurations.runtime.each { File f ->
+        antClassLoader.addURL(f.toURI().toURL())
+    }
+    antClassLoader.addURL(file('./src/main/resources/org/intermine/task/').toURI().toURL())
+    antClassLoader.addURL(file('./model/testmodel/resources/').toURI().toURL()) //testmodel_model.xml in the classpath
+  }
+}
+
+ant.importBuild('model/testmodel/build.xml') {
+    antTargetName -> 'ant-' + antTargetName
+}
+
+ant.properties['no.dep'] = 'true'
+ant.properties['regenerate.java'] = 'true'
+ant.properties['model.name'] = 'testmodel'
+ant.properties['gen.src.dir'] = 'model/testmodel/build/gen/src'
+
+tasks.testClasses.dependsOn 'setAntClassLoader'
+tasks.testClasses.dependsOn 'ant-generate'
+tasks.'ant-generate'.mustRunAfter 'setAntClassLoader'

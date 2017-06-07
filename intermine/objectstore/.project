@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>intermine-objectstore-main</name>
-	<comment>Project intermine-objectstore-main created by Buildship.</comment>
+	<name>intermine-objectstore</name>
+	<comment>Project intermine-objectstore created by Buildship.</comment>
 	<projects>
 	</projects>
 	<buildSpec>

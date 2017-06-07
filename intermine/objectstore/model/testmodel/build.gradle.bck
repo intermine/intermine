@@ -3,6 +3,7 @@ task setAntClassLoader {
     ClassLoader antClassLoader = org.apache.tools.ant.Project.class.classLoader
     configurations.runtime.each { File f ->
         antClassLoader.addURL(f.toURI().toURL())
+        println f.toURI().toURL()
     }
     antClassLoader.addURL(file('./resources/').toURI().toURL()) //testmodel_model.xml in the classpath
   }
@@ -30,7 +31,7 @@ dependencies {
 ant.properties['no.dep'] = 'true'
 ant.properties['regenerate.java'] = 'true'
 ant.properties['model.name'] = 'testmodel'
-ant.properties['gen.src.dir'] = 'build/gen/src'
+ant.properties['gen.src.dir'] = 'model/testmodel/build/gen/src'
 
 tasks.compileJava.dependsOn 'setAntClassLoader'
 tasks.compileJava.dependsOn 'ant-generate'
