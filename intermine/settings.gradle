@@ -2,7 +2,7 @@ rootProject.name = 'intermine'
 
 include ':intermine-model',
 ':intermine-pathquery',
-':intermine-objectstore'//, ':testmodel', ':zfulldata',
+':intermine-objectstore'//':zfulldata',
 //':intermine-integrate-main', 
 //':userprofile', ':intermine-api-main'//, ':intermine-api-test',
 //':intermine-webservice-client', ':intermine-webservice-test'
@@ -15,9 +15,7 @@ project(':intermine-pathquery').projectDir = new File(settingsDir, './pathquery'
 
 //intermine-objectstore
 project(':intermine-objectstore').projectDir = new File(settingsDir, './objectstore')
-//project(':testmodel').projectDir = new File(settingsDir, './objectstore/model/testmodel')
 //project(':zfulldata').projectDir = new File(settingsDir, './integrate/model/fulldata')
-////project(':intermine-objectstore-test').projectDir = new File(settingsDir, './objectstore/test')
 
 //intermine-integrate
 //project(':intermine-integrate-main').projectDir = new File(settingsDir, './integrate/main')
