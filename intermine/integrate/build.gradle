@@ -1,0 +1,23 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+  compile project(':intermine-objectstore')
+  compile group: 'stax', name: 'stax', version: '1.2.0' //stax-ri 1.0 not available on maven 
+}
