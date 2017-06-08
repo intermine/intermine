@@ -4,9 +4,8 @@
   xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
   
   <description>build, test, package intermine-objectstore-test</description>
-  
-  <import file="../../../imbuild/tests.xml"/>
-  <import file="../../../imbuild/task.xml"/>
+  <import file="../../../../imbuild/tests.xml"/>
+  <import file="../../../../imbuild/task.xml"/>
   
   <target name="-pre-test" depends="build-db-flatmodeunittest, build-db-unittest,
                                     build-db-truncunittest,

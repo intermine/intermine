@@ -6,7 +6,7 @@ sourceSets {
             srcDirs = ['src/main/java', 'build/generated-src/antlr/main']
         }
         resources {
-            srcDirs = ['src/main/resources', 'src/main/resources/org/intermine/task']
+            srcDirs = ['src/main/resources']
         }
         antlr {
             srcDirs = ['src/main/antlr']
@@ -14,7 +14,7 @@ sourceSets {
     }
     test {
         java {
-            srcDirs = ['src/test/java', 'model/testmodel/build/gen/src']
+            srcDirs = ['src/test/java', 'build/gen/src']
         }
         resources {
             srcDirs = ['src/test/resources']
@@ -33,6 +33,9 @@ dependencies {
   compile group: 'net.iharder', name: 'base64', version: '2.3.8' //not clear wich version is currently used
   compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven
   compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
+  compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
+  compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
+  compile fileTree(dir: "$projectDir/lib", include: '*.jar') //org.gnu.readline is not in a public repo
 }
 
 task setAntClassLoader {
@@ -41,20 +44,23 @@ task setAntClassLoader {
     configurations.runtime.each { File f ->
         antClassLoader.addURL(f.toURI().toURL())
     }
-    antClassLoader.addURL(file('./src/main/resources/org/intermine/task/').toURI().toURL())
-    antClassLoader.addURL(file('./model/testmodel/resources/').toURI().toURL()) //testmodel_model.xml in the classpath
+    antClassLoader.addURL(file('./build/classes/main/').toURI().toURL()) //org.intermine.task.ModelOutputTask in the classpath
+    antClassLoader.addURL(file('./src/test/resources/testmodel/').toURI().toURL())  //testmodel_model.xml in the classpath
   }
 }
 
-ant.importBuild('model/testmodel/build.xml') {
-    antTargetName -> 'ant-' + antTargetName
+def generateModel(String model, String destination, String type) {
+    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask')
+    ant.modelOutputTask(model: "$model", destDir: "$destination", type: "$type")
 }
 
-ant.properties['no.dep'] = 'true'
-ant.properties['regenerate.java'] = 'true'
-ant.properties['model.name'] = 'testmodel'
-ant.properties['gen.src.dir'] = 'model/testmodel/build/gen/src'
+task generateTestModel {
+    doLast {
+      generateModel('testmodel', 'build/gen/src', 'java')
+    }    
+}
 
-tasks.testClasses.dependsOn 'setAntClassLoader'
-tasks.testClasses.dependsOn 'ant-generate'
-tasks.'ant-generate'.mustRunAfter 'setAntClassLoader'
+tasks.test.dependsOn 'generateTestModel'
+tasks.test.mustRunAfter 'generateTestModel'
+tasks.generateTestModel.dependsOn 'setAntClassLoader'
+tasks.generateTestModel.mustRunAfter 'setAntClassLoader'
