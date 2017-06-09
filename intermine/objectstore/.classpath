@@ -5,6 +5,11 @@
 			<attribute name="FROM_GRADLE_MODEL" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="build/generated-src/antlr/main">
+		<attributes>
+			<attribute name="FROM_GRADLE_MODEL" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path="src/main/antlr">
 		<attributes>
 			<attribute name="FROM_GRADLE_MODEL" value="true"/>
