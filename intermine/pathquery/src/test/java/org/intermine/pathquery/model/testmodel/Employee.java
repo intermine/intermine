@@ -1,8 +1,8 @@
-package org.intermine.model.testmodel;
+package org.intermine.pathquery.model.testmodel;
 
 import org.intermine.model.FastPathObject;
 
-public class Address implements FastPathObject
+public class Employee implements FastPathObject
 {
     public Object getFieldValue(final String fieldName) throws IllegalAccessException {
         throw new IllegalArgumentException("Unknown field " + fieldName);

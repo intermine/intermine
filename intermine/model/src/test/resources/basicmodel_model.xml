@@ -1,4 +1,4 @@
-<model name="testmodel" package="org.intermine.model.testmodel">
+<model name="testmodel" package="org.intermine.model.basicmodel">
 <class name="Thing" is-interface="true"></class>
 <class name="Employable" extends="Thing" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
