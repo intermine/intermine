@@ -1,4 +1,4 @@
-package org.intermine.model.testmodel;
+package org.intermine.pathquery.model.testmodel;
 
 import org.intermine.model.FastPathObject;
 
