@@ -37,14 +37,14 @@ public class PrimaryKeyUtilTest extends TestCase
 
 
     public void testGetPrimaryKeysCld() {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Employee");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.basicmodel.Employee");
         expected.put("key1", new PrimaryKey("key1", "name, age", cld));
         expected.put("key2", new PrimaryKey("key2", "name, fullTime", cld));
         assertEquals(expected, PrimaryKeyUtil.getPrimaryKeys(cld));
     }
 
     public void testGetPrimaryKeysCldInherited() {
-        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Manager");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.basicmodel.Manager");
         assertEquals(expected, PrimaryKeyUtil.getPrimaryKeys(cld));
     }
 
