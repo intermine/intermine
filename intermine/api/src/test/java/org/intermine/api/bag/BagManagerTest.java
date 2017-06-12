@@ -21,7 +21,7 @@ import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Address;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.DynamicUtil;
