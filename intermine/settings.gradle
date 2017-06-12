@@ -3,8 +3,8 @@ rootProject.name = 'intermine'
 include ':intermine-model',
 ':intermine-pathquery',
 ':intermine-objectstore',
-':intermine-integrate' 
-//':userprofile', ':intermine-api'
+':intermine-integrate',
+':intermine-api' 
 //':intermine-webservice-client', ':intermine-webservice-test'
 
 //intermine-model
@@ -18,10 +18,9 @@ project(':intermine-objectstore').projectDir = new File(settingsDir, './objectst
 
 //intermine-integrate
 project(':intermine-integrate').projectDir = new File(settingsDir, './integrate')
-//project(':userprofile').projectDir = new File(settingsDir, './api/model/userprofile')
 
 //intermine-api
-//project(':intermine-api').projectDir = new File(settingsDir, './api')
+project(':intermine-api').projectDir = new File(settingsDir, './api')
 
 //intermine-webservice
 ////project(':intermine-webservice-client').projectDir = new File(settingsDir, './webservice/client/main')
