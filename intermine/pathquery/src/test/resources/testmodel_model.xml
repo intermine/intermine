@@ -1,4 +1,4 @@
-<model name="testmodel" package="org.intermine.model.testmodel">
+<model name="testmodel" package="org.intermine.pathquery.model.testmodel">
 <class name="Broke" is-interface="true">
     <attribute name="debt" type="int"/>
     <attribute name="interestRate" type="double"/>
