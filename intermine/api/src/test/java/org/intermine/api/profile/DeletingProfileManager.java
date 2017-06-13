@@ -24,7 +24,7 @@ public class DeletingProfileManager extends ProfileManager {
         try {
             UserProfile userProfile = getUserProfile(userId);
             if (userProfile != null) {
-                for (org.intermine.model.userprofile.SavedQuery sq : userProfile.getSavedQuerys()) {
+                for (org.intermine.api.userprofile.SavedQuery sq : userProfile.getSavedQuerys()) {
                     uosw.delete(sq);
                 }
 
