@@ -72,7 +72,7 @@ task buildTestDBs {
     }    
 }
 
-tasks.test.dependsOn 'generateTestModel'
-tasks.test.mustRunAfter 'generateTestModel'
+tasks.compileTestJava.dependsOn 'generateTestModel'
+tasks.compileTestJava.mustRunAfter 'generateTestModel'
 tasks.generateTestModel.dependsOn 'setAntClassLoader'
 tasks.generateTestModel.mustRunAfter 'setAntClassLoader'
