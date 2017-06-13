@@ -22,7 +22,7 @@ import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.track.TemplateTrack;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.UserProfile;
+import org.intermine.api.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;

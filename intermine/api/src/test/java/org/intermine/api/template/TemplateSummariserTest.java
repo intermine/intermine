@@ -25,7 +25,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.UserProfile;
+import org.intermine.api.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;

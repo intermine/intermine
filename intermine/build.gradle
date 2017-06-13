@@ -13,7 +13,7 @@ subprojects {
 
   dependencies {
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
-    compile group: 'junit', name: 'junit', version: '4.8.2'
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
   }
 }
 

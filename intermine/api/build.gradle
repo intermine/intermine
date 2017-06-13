@@ -28,5 +28,6 @@ dependencies {
   compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.0.2'
   compile group: 'com.browseengine.bobo', name: 'bobo-browse', version: '3.0.0'//version 2.5.1 not available in public maven repo
   compile group: 'org.json', name: 'json', version: '20131018'
+  testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
   testCompile project(':intermine-objectstore').sourceSets.test.output
 }
