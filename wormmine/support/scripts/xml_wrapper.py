@@ -6,9 +6,9 @@ import re
 from lxml import etree
 import click
 
-@click.command()
-@click.option('--wrap', default=True, help='Wrap AceDB XML in a root tag')
-@click.option('--unwrap', default=False, help='Unwrap AceDB from root tag')
+# @click.command()
+# @click.option('--wrap', default=True, help='Wrap AceDB XML in a root tag')
+# @click.option('--unwrap', default=False, help='Unwrap AceDB from root tag')
 
 
 
@@ -63,5 +63,6 @@ if __name__ == '__main__':
 
 	xml_file = sys.argv[1]
 
-	# wrap_xml(xml_file)
-	unwrap_xml(xml_file)
+	wrap_xml(xml_file)
+	# unwrap_xml(xml_file)
+
