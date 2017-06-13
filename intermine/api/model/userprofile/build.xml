@@ -1,8 +1,0 @@
-
-<project name="userprofile" default="default" basedir=".">
-  
-  <description>build userprofile model</description>
-  <import file="../../../../imbuild/model.xml"/>
-  
-</project>
-
