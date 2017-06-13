@@ -1,10 +1,10 @@
 package org.intermine.api.profile;
 
 import org.intermine.api.bag.SharedBagManager;
-import org.intermine.model.userprofile.SavedBag;
-import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.model.userprofile.UserProfile;
+import org.intermine.api.userprofile.SavedBag;
+import org.intermine.api.userprofile.SavedTemplateQuery;
+import org.intermine.api.userprofile.Tag;
+import org.intermine.api.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;

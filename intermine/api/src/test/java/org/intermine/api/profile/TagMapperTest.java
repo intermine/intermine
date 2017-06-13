@@ -22,8 +22,8 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.intermine.api.profile.TagMapper.Field;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.model.userprofile.UserProfile;
+import org.intermine.api.userprofile.Tag;
+import org.intermine.api.userprofile.UserProfile;
 import org.junit.Before;
 import org.junit.Test;
 

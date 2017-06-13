@@ -12,7 +12,7 @@ import java.util.Set;
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.xml.ProfileManagerBinding;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.util.DynamicUtil;
 

@@ -38,7 +38,7 @@ import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.UserProfile;
+import org.intermine.api.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreSummary;

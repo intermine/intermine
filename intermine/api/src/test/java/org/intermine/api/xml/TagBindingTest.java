@@ -28,7 +28,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
