@@ -23,7 +23,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.bag.PkQueryIdUpgrader;
+import org.intermine.api.bag.PkQueryIdUpgrader;
 
 /**
  * Tests for the InterMineBagHandler class.
