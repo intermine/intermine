@@ -39,6 +39,8 @@ dependencies {
   compile group: 'org.expressme', name: 'JOpenId', version: '1.08'
   compile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
   compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.50'
+  compile files('lib/stringtree-json-2.0.5.jar')
   testCompile group: 'org.objenesis', name: 'objenesis', version: '2.1'
   testCompile group: 'org.easymock', name: 'easymock', version: '3.2'
+  testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
 }
