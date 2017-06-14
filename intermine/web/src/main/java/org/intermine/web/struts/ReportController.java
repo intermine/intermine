@@ -253,7 +253,7 @@ public class ReportController extends InterMineAction
         try {
             requestedObject = os.getObjectById(id);
         } catch (ObjectStoreException e) {
-            Log.warn("Accessed report page with id: " + id + " but failed to find object.", e);
+            LOG.warn("Accessed report page with id: " + id + " but failed to find object.", e);
         }
         return requestedObject;
     }
