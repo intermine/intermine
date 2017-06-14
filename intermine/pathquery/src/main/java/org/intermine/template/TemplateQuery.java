@@ -614,7 +614,7 @@ public class TemplateQuery extends PathQuery
     * Return the constraint logic modified to contain only the blocks with editable constraints
     * @return the string representing the logic expression modified
     */
-/*    public synchronized String getConstraintLogicForEditableConstraints() {
+    public synchronized String getConstraintLogicForEditableConstraints() {
         List<String> editableConstraintCodes = new ArrayList<String>();
         Map<PathConstraint, String> allConstraints = getConstraints();
         for (PathConstraint pc : editableConstraints) {
@@ -625,5 +625,5 @@ public class TemplateQuery extends PathQuery
             return "";
         }
         return getLogicExpression().getPartialString(editableConstraintCodes);
-    }*/
+    }
 }
