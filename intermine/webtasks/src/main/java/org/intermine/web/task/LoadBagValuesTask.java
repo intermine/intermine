@@ -28,7 +28,7 @@ import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.userprofile.SavedBag;
+import org.intermine.api.userprofile.SavedBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
