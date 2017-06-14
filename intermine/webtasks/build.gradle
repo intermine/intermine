@@ -18,6 +18,6 @@ sourceSets {
 }
 
 dependencies {
-  compile project(':intermine-objectstore')
   compile project(':intermine-integrate')
+  compile project(':intermine-api')
 }
