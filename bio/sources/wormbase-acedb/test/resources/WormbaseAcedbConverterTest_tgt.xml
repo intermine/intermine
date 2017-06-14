@@ -1,0 +1,88 @@
+<items>
+<item id="8_1" class="CrossReference">
+<attribute name="identifier" value="11111"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="7_1"/>
+</item>
+<item id="9_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="11_1" class="InteractionDetail">
+<attribute name="name" value="interaction Short Label"/>
+<attribute name="relationshipType" value="direct interaction"/>
+<attribute name="role1" value="prey"/>
+<attribute name="role2" value="bait"/>
+<attribute name="type" value="physical"/>
+<reference name="experiment" ref_id="5_1"/>
+<reference name="interaction" ref_id="10_1"/>
+<collection name="allInteractors"><reference ref_id="7_2"/><reference ref_id="7_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="InteractionTerm">
+<attribute name="identifier" value="MI:0018"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn001"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="9_1"/>
+<collection name="crossReferences"><reference ref_id="8_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_2" class="Interaction">
+<reference name="participant1" ref_id="7_1"/>
+<reference name="participant2" ref_id="7_2"/>
+</item>
+<item id="11_2" class="InteractionDetail">
+<attribute name="name" value="interaction Short Label"/>
+<attribute name="relationshipType" value="direct interaction"/>
+<attribute name="role1" value="bait"/>
+<attribute name="role2" value="prey"/>
+<attribute name="type" value="physical"/>
+<reference name="experiment" ref_id="5_1"/>
+<reference name="interaction" ref_id="10_2"/>
+<collection name="allInteractors"><reference ref_id="7_2"/><reference ref_id="7_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_2" class="CrossReference">
+<attribute name="identifier" value="12345"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="7_2"/>
+</item>
+<item id="7_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn002"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="9_1"/>
+<collection name="crossReferences"><reference ref_id="8_2"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="BioGRID interaction data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="10_1" class="Interaction">
+<reference name="participant1" ref_id="7_2"/>
+<reference name="participant2" ref_id="7_1"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="3_1" class="Publication">
+<attribute name="pubMedId" value="14605208"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="BioGRID"/>
+</item>
+<item id="5_1" class="InteractionExperiment">
+<attribute name="description" value="A protein interaction map of Drosophila melanogaster."/>
+<attribute name="name" value="Giot L (2003)"/>
+<reference name="publication" ref_id="3_1"/>
+<collection name="interactionDetectionMethods"><reference ref_id="4_1"/></collection>
+</item>
+</items>
