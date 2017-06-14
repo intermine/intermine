@@ -16,8 +16,8 @@ import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.model.userprofile.PermanentToken;
-import org.intermine.model.userprofile.UserProfile;
+import org.intermine.api.userprofile.PermanentToken;
+import org.intermine.api.userprofile.UserProfile;
 import org.intermine.webservice.server.core.ReadWriteJSONService;
 
 /** Service that lets a user inspect their currently active tokens

@@ -31,7 +31,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 
 /**
  * Gets list of help text blurbs for each class, and passes them on to the display page.

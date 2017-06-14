@@ -25,7 +25,7 @@ import org.intermine.api.profile.TagManager.TagNameException;
 import org.intermine.api.profile.TagManager.TagNamePermissionException;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;

@@ -13,7 +13,7 @@ package org.intermine.webservice.server.user;
 import java.util.Collections;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.model.userprofile.PermanentToken;
+import org.intermine.api.userprofile.PermanentToken;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.webservice.server.core.ReadWriteJSONService;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;

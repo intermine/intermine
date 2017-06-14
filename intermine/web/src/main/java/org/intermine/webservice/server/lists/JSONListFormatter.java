@@ -22,7 +22,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.json.JSONObject;

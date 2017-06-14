@@ -27,7 +27,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.xml.TagBinding;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 
 
 /**

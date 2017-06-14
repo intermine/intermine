@@ -13,7 +13,7 @@ package org.intermine.webservice.server.user;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.model.userprofile.PermanentToken;
+import org.intermine.api.userprofile.PermanentToken;
 import org.intermine.webservice.server.core.ISO8601DateFormat;
 
 /** @author Alex Kalderimis **/

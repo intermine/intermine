@@ -33,7 +33,7 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 
 /**
  * Contoller for a single data set tile embedded in a page. Expects the request parameter

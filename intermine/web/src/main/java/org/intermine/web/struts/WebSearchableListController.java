@@ -44,7 +44,7 @@ import org.intermine.api.search.SearchResults;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.WebUtil;

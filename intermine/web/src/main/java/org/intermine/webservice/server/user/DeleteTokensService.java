@@ -13,8 +13,8 @@ package org.intermine.webservice.server.user;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.model.userprofile.PermanentToken;
-import org.intermine.model.userprofile.UserProfile;
+import org.intermine.api.userprofile.PermanentToken;
+import org.intermine.api.userprofile.UserProfile;
 import org.intermine.webservice.server.core.ReadWriteJSONService;
 import org.intermine.webservice.server.exceptions.ServiceException;
 

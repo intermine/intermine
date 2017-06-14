@@ -36,7 +36,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.model.userprofile.Tag;
+import org.intermine.api.userprofile.Tag;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.Constants;
