@@ -1,0 +1,2814 @@
+
+<Strain>AGD568
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00023278</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGD597
+  <Genotype>
+    <Txt>uthEx556.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00016091</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-09-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx556 [sur-5p::rpn-6 + myo-3p::GFP]. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD598
+  <Genotype>
+    <Txt>uthEx557.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019279</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-09-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx557 [sur-5p::rpn-6 + myo-3p::GFP]. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD614
+  <Genotype>
+    <Txt>uthEx633.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00016090</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-09-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx633 [myo-3p::GFP]. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD631
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00023277</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGD638
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019787</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGD710
+  <Genotype>
+    <Txt>uthIs235.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00020281</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x2+</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2015-05-29</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson24011</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthIs235 [sur5p::hsf-1::unc-54 3'UTR + myo-2p::tdTomato::unc-54 3' UTR]. Long-lived, thermotolerant. Small brood size. Reference: Baird NA, et al. Science. 2014 Oct 17;346(6207):360-3.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD731
+  <Genotype>
+    <Txt>uthEx299.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00008554</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-09-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson5137</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx299 [aak-2 (genomic aa1-aa321)::GFP::unc-54 3'UTR + myo-2p::tdTomato]. Pick animals with red pharynx to maintain. Reference: Mair W, et al. Nature. 2011 Feb 17;470(7334):404-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD745
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00023278</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGD794
+  <Genotype>
+    <Txt>hsf-1 (sy441) I; uthIs225.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00002004</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00020280</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x2+</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2015-05-28</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson24011</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthIs225 [sur5p::hsf-1(CT-Delta)::unc-54 3'UTR + myo-2p::tdTomato::unc-54 3' UTR]. Long-lived, thermotolerant. Small brood size. Reference: Baird NA, et al. Science. 2014 Oct 17;346(6207):360-3.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD803
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00023278</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGD850
+  <Genotype>
+    <Txt>rmIs110; uthEx557.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00001966</Transgene>
+      <Transgene>WBTransgene00019279</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-11-22</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>rmIs110 [F25B3.3p::Q40::YFP]. uthEx557 [sur5p::rpn-6 + myo3p::GFP]. All animals will express YFP in nervous system; pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD851
+  <Genotype>
+    <Txt>rmIs284; uthEx557.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00015330</Transgene>
+      <Transgene>WBTransgene00019279</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-09-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>rmIs284 [F25B3.3p::Q67::YFP]. uthEx557 [sur-5p::rpn-6 + myo-3p::GFP]. All animals will express YFP in nervous system; pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD855
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019788</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGD866
+  <Genotype>
+    <Txt>rmIs110; uthEx633.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00001966</Transgene>
+      <Transgene>WBTransgene00016090</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-09-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>rmIs110 [F25B3.3p::Q40::YFP]. uthEx633 [myo-3p::GFP]. All animals will express YFP in nervous system; pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD867
+  <Genotype>
+    <Txt>rmIs284; uthEx633.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00015330</Transgene>
+      <Transgene>WBTransgene00016090</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-09-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>rmIs284 [F25B3.3p::Q67::YFP]. uthEx633 [myo-3p::GFP]. All animals will express YFP in nervous system; pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD885
+  <Genotype>
+    <Txt>rrf-3(b26) II; fem-1(hc17) IV; uthEx633.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00001411</Gene>
+      <Gene>WBGene00004510</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00000354</Variation>
+      <Variation>WBVar00087750</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00016090</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-09-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx633 [myo-3p::GFP]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD886
+  <Genotype>
+    <Txt>rrf-3(b26) II; fem-1(hc17) IV; uthEx557.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00001411</Gene>
+      <Gene>WBGene00004510</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00000354</Variation>
+      <Variation>WBVar00087750</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00019279</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-11-22</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx557 [sur-5p::rpn-6 + myo-3p::GFP]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD925
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019280</Transgene>
+    </Transgene>
+  </Contains>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD926
+  <Genotype>
+    <Txt>zcIs4 V; uthIs269.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00005180</Transgene>
+      <Transgene>WBTransgene00019280</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x5+</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2015-05-28</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson16214</Person>
+  </Made_by>
+  <Remark>
+    <Text>zcIs4 [hsp-4::GFP] V. uthIs269 [sur5p::hsf-1::unc-54 3'UTR + myo-2p::tdTomato::unc-54 3' UTR]. ER stress resistence. Reference: Taylor RC, Dillin A. Cell. 2013 Jun 20;153(7):1435-47.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD927
+  <Genotype>
+    <Txt>uthIs270.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019281</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x8</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-09-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson16214</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthIs270 [rab-3p::xbp-1s (constitutively active) + myo-2p::tdTomato]. Pick animals with red pharynx to maintain. Reference: Taylor RC, Dillin A. Cell. 2013 Jun 20;153(7):1435-47.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD945
+  <Genotype>
+    <Txt>uthEx649.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00016058</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2014-04-25</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx649 [rpn-6p::tdTomato + rol-6(su1006)]. Rollers. Pick rollers to maintain array. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD946
+  <Genotype>
+    <Txt>uthEx650.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00022441</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2014-04-25</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx650 [rpn-6p::tdTomato + rol-6(su1006)]. Rollers. Pick rollers to maintain array. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD1032
+  <Genotype>
+    <Txt>glp-1(e2141) III; xzEx1.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00001609</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00144590</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00009043</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-11-22</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>xzEx1 [unc-54p::Dendra2]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD1033
+  <Genotype>
+    <Txt>glp-1(e2141) III; xzEx3.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00001609</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00144590</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00009044</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-11-22</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>xzEx3 [unc-54p::UbG76V::Dendra2]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD1047
+  <Genotype>
+    <Txt>glp-1(e2141) III; uthEx649.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00001609</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00144590</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00016058</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2014-04-25</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx649 [rpn-6p::tdTomato + rol-6(su1006)]. Temperature-sensitive. Maintain at 15C; sterile at 25C. Rollers. Pick rollers to maintain array. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD1048
+  <Genotype>
+    <Txt>daf-16(mu86) I; glp-1(e2141) III; uthEx649.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00000912</Gene>
+      <Gene>WBGene00001609</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00089216</Variation>
+      <Variation>WBVar00144590</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00016058</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2014-04-25</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson18908</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthEx649 [rpn-6p::tdTomato + rol-6(su1006)]. Temperature-sensitive. Maintain at 15C; sterile at 25C. Rollers. Pick rollers to maintain array. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGD1079
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00021174</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGD1101
+  <Genotype>
+    <Txt>uthIs372.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00020282</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x7</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2015-05-28</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson24011</Person>
+  </Made_by>
+  <Remark>
+    <Text>uthIs372 [sur5p::pat-10::unc-54 3'UTR + myo-2p::tdTomato::unc-54 3' UTR]. Long-lived, thermotolerant. Reference: Baird NA, et al. Science. 2014 Oct 17;346(6207):360-3.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK26
+  <Genotype>
+    <Txt>unc-119(ed3) III; armEx5.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00016218</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-11-20</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>armEx5 [zfp-1(fosmid)::GFP + unc-119(+)]. Pick non-Unc to maintain. Fosmid-based zfp-1::GFP transgene fully rescues stress-sensitivity and reduced lifespan in zfp-1(ok554) homozygotes. Nuclear expression of zfp-1::GFP is observed ubiquitously in somatic cells in all developmental stages; high levels of GFP expression is observed in oocytes with lower levels of expression in the distal germline. References: Mansisidor AR, et al. PLoS Genet. 2011 Sep;7(9):e1002299. Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: Cecere & Mansisidore
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK29
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00018950</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK51
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00016218</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK128
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00016220</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK192
+  <Genotype>
+    <Txt>unc-119(ed3) III; zdIs13 IV; armIs5.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00005199</Transgene>
+      <Transgene>WBTransgene00016220</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-11-20</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>zdIs13 [tph-1p::GFP] IV. armIs5 [zfp-1(fosmid)::FLAG + unc-119(+)]. Integrated zfp-1 transgene expressed in the germline. Fosmid-based zfp-1::FLAG transgene fully rescues stress-sensitivity and reduced lifespan in zfp-1(ok554) homozygotes. ChIP with anti-FLAG antibody detects ZFP-1::FLAG localization to promoters of highly expressed genes. References: Mansisidor AR, et al. PLoS Genet. 2011 Sep;7(9):e1002299. Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015. Cecere G, et al. Mol Cell. 2013 Jun 27;50(6):894-907.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: Cecere & Kennedy
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK233
+  <Genotype>
+    <Txt>unc-119(ed3) III; niDf199 IV; armEx58.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Rearrangement>
+      <Rearrangement>niDf199</Rearrangement>
+    </Rearrangement>
+    <Transgene>
+      <Transgene>WBTransgene00015313</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2014-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>armEx58 [WRM0611aH08-Del8mer + unc-119(+)]. Pick non-Unc to maintain. This strain contains a transgenic array that expresses a derivative WRM0611aH08 fosmid. The WRM0611aH08 fosmid contains the niDF199 locus (around 4 kb) that is deleted in the natural C. elegans isolate strain JU258. JU258 worms lack specific 21U-RNAs normally present in N2 worms due to this deletion of the niDF199 locus. This derivative fosmid construct lacks the upstream 8-mer motif (CTGTTTCA) next to 21U-3372. The expression of this individual 21U-RNA is lost in transgenic animals. unc-119(ed3) was crossed into JU258, the niDf199IV deletion was confirmed by PCR, and these Unc worms were used for bombardment. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: Cecere & Mansisidore
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK234
+  <Genotype>
+    <Txt>unc-119(ed3) III; niDf199 IV; armEx53.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Rearrangement>
+      <Rearrangement>niDf199</Rearrangement>
+    </Rearrangement>
+    <Transgene>
+      <Transgene>WBTransgene00015312</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2014-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>armEx53 [WRM0611aH08 + unc-119(+)]. Pick non-Unc to maintain. unc-119(ed3) was crossed into JU258, the niDf199IV deletion was confirmed by PCR, and these Unc worms were used for bombardment. This strain contains a transgenic array that expresses the WRM0611aH08 fosmid construct. This fosmid contains the niDF199 locus (around 4 kb) that is deleted in the natural C. elegans isolate strain JU258. JU258 worms lack specific 21U-RNAs normally present in N2 worms due to this deletion of the niDF199 locus. Expression of this fosmid construct in JU258 worms restores the expression of the missing 21U-RNAs in the germline, as measured by RT-qPCR. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: Cecere & Mansisidore
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK280
+  <Genotype>
+    <Txt>zfp-1(ok554) unc-119(ed3) III; armEx14.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+      <Gene>WBGene00006975</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00091841</Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00016219</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-11-20</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>armEx14 [PHD1-PHD2::FLAG + zfp-1(short isoform) + unc-119(+)]. Pick non-Unc animals to maintain. The fosmid-based armEx14 transgene rescues zfp-1(ok554)/nDf17 lethality. Reference: Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: Cecere & Mansisidore
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK335
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019685</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK336
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019686</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK339
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019687</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK343
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019684</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK369
+  <Genotype>
+    <Txt>zfp-1(ok554) III; armIs8.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006975</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00091841</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00019243</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2014-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>armIs8 [zfp-1(short isoform)::FLAG::GFP + (pRF4) rol-6(su1006)]. Rollers. The fosmid-based armIs8 transgene rescues the protruded vulva phenotype of zfp-1(ok554). Ubiquitous nuclear localization of zfp-1(long isoform)::FLAG::GFP is observed in somatic cells in all developmental stages, but is silenced in the germline. See AGK26 for germline-expressing zfp-1::GFP. Reference: Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK370
+  <Genotype>
+    <Txt>zfp-1(ok554) III; armIs9.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006975</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00091841</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00019244</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x2</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-11-20</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>armIs9 [zfp-1(long isoform)::FLAG::GFP + (pRF4) rol-6(su1006)]. Rollers. The fosmid-based armIs9 transgene rescues zfp-1(ok554)/nDf17 lethality. Ubiquitous nuclear localization of zfp-1(long isoform)::FLAG::GFP is observed in somatic cells in all developmental stages, but is silenced in the germline. See AGK26 for germline-expressing zfp-1::GFP. Reference: Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: Daphne Avgousti
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK532
+  <Genotype>
+    <Txt>unc-119(ed3) III; niDf199 IV; armEx196.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Rearrangement>
+      <Rearrangement>niDf199</Rearrangement>
+    </Rearrangement>
+    <Transgene>
+      <Transgene>WBTransgene00015314</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2014-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson10009</Person>
+  </Made_by>
+  <Remark>
+    <Text>armEx196 [mex-5p::unc-130::GFP::tbb-2 3'UTR + Cbr-unc-119(+)]. Pick non-Unc to maintain. unc-119(ed3) was crossed into JU258, the niDf199IV deletion was confirmed by PCR, and these Unc worms were used for bombardment. JU258 worms lack specific 21U-RNAs normally present in N2 worms due to deletion of the niDF199 locus. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK537
+  <Genotype>
+    <Txt>unc-119(ed3) III; armEx199.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00015956</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>armEx199 [cdl-1p::cdl-1::GFP + unc-119(+)]. Pick non-Unc to maintain. Nuclear localization of CDL-1::GFP in the germline and early embryos; strong enrichement of CDL-1::GFP in the nuclei of developing oocytes. Reference: Avgousti DC, et al. EMBO J. 2012 Oct 3;31(19):3821-32.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: Daphne Avgousti
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK541
+  <Genotype>
+    <Txt>armSi1 II; unc-119(ed3) III.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar02141399</Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00015239</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2014-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson10009</Person>
+  </Made_by>
+  <Remark>
+    <Text>armSi1 [mex5p::unc-130::GFP::tbb-2 3'UTR + Cbr-unc-119(+)] II. GFP expression from transgene is observed in the germline. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK573
+  <Genotype>
+    <Txt>otIs225 II; daf-18(ok480) IV; armEx218.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00000913</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00091768</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00017680</Transgene>
+      <Transgene>WBTransgene00019551</Transgene>
+      <Transgene>WBTransgene00018895</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson9913</Person>
+  </Made_by>
+  <Remark>
+    <Text>otIs225 [cat-4::GFP] II. armEx218 [unc-119p::daf-18 + unc-119p::tagRFP + rol-6(su1006)]. Pick Rollers to maintain. Transgenic array expresses DAF-18 from unc-119 pan-neuronal promoter; rescues the HSN undermigration phenotype in daf-18 null mutants. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK587
+  <Genotype>
+    <Txt>armEx227.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00018895</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>armEx227 [pak-1p::NLS::tagRFP + rol-6(su1006)]. Pick rollers to maintain. pak-1p::NLS::tagRFP is expressed primarily in the hypodermal tissue during the comma and 1.5-fold stages, and in the CAN cells at the 3-fold stage through adulthood. Expression can also be seen in additional neurons during the larval and adult stages. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK640
+  <Genotype>
+    <Txt>zdIs13 IV; pak-1(ok448) X; armEx252.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00003911</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00091739</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00005199</Transgene>
+      <Transgene>WBTransgene00019552</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson9913</Person>
+  </Made_by>
+  <Remark>
+    <Text>zdIs13 [tph-1p::GFP] IV. armEx252 [dpy-7p::pak-1::tagRFP + myo-2::GFP]. Pick animals with GFP+ pharynx to maintain. armEx252 rescues the pak-1(ok480) HSN undermigration phenotype. pak-1::tagRFP is expressed in the hypodermal tissue throughout development and adulthood. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK650
+  <Genotype>
+    <Txt>daf-16(mu86) I; zdIs13 IV; armEx257.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00000912</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00089216</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00005199</Transgene>
+      <Transgene>WBTransgene00019553</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2013-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson9913</Person>
+  </Made_by>
+  <Remark>
+    <Text>zdIs13 [tph-1p::GFP] IV. armEx257 [dpy-7p::daf-16b::tagRFP + myo-2::GFP]. Pick animals with GFP+ pharynx to maintain. armEx257 rescues the daf-16(mu86) HSN undermigration phenotype. dpy-7p::daf-16b::tagRFP expression is localized to nuclei in hypodermal tissue during the comma, 1.5 and 2-fold stages, becoming cytoplasmic or perinuclear by the 3-fold stage and persisting into adulthood. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AGK688
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019688</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK689
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019689</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK690
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019690</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK710
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019553</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGK711
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00019553</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGP28c
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00020552</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AGP116
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00023119</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AH12
+  <Genotype>
+    <Txt>gap-1(ga133) X.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00001515</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145428</Variation>
+    </Variation>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x4</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Psoralen</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>1997-12-08</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson232</Person>
+  </Made_by>
+  <Remark>
+    <Text>Null allele.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Reference>
+    <Paper>WBPaper00002916</Paper>
+  </Reference>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AH75
+  <Genotype>
+    <Txt>apr-1(zh10) unc-29(e1072) I; zhEx11.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00000156</Gene>
+      <Gene>WBGene00006765</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00275469</Variation>
+      <Variation>WBVar00143722</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00007445</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x6</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>EMS</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2000-07-24</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson232</Person>
+  </Made_by>
+  <Remark>
+    <Text>zhEx11[apr-1(+) + sur-5::GFP]. Unc. Segregates dead eggs that have lost the rescuing array.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Reference>
+    <Paper>WBPaper00003991</Paper>
+  </Reference>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AH102
+  <Genotype>
+    <Txt>lip-1(zh15) IV.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00003043</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00275471</Variation>
+    </Variation>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x8</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>EMS</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2001-05-21</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson2597</Person>
+  </Made_by>
+  <Remark>
+    <Text>Deletion allele which removes exons 2 to 6 of lip-1 (C05B10.1). Incompletely penetrant ovulation defect.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AH142
+  <Genotype>
+    <Txt>zhIs4 III.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00003043</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00005212</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x5</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Gamma Rays</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2001-05-21</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson2597</Person>
+  </Made_by>
+  <Remark>
+    <Text>zhIs4 [lip-1::GFP] III. lip-1::GFP transcriptional reporter expression is upregulated in the secondary VPCs P5.p and P7.p of early L3 animals.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AH159
+  <Genotype>
+    <Txt>sra-13(zh13) II.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00005039</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00275470</Variation>
+    </Variation>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x8</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>EMS</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2003-12-16</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>sra-13(zh13) mutants display stronger chemotaxis to limiting concentrations of isoamylalcohol and diacetyl than WT animals. Deletion allele. 396 bp of 5' promoter sequence and all but the last exon are removed; probably a null allele.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: Gopal Battu
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AH205
+  <Genotype>
+    <Txt>sdn-1(zh20) X.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00004749</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00275474</Variation>
+    </Variation>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x6</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>EMS</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2005-10-26</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson3021</Person>
+  </Made_by>
+  <Remark>
+    <Text>Slightly Unc. Variably Egl. zh20 is a deletion in sdn-1. The sequence of the breakpoint is: TTTGCTTCACAC</Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AH286
+  <Genotype>
+    <Txt>unc-4(e120) ect-2(zh8) II; gap-1(ga133) X.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00001515</Gene>
+      <Gene>WBGene00002297</Gene>
+      <Gene>WBGene00006744</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00142975</Variation>
+      <Variation>WBVar00275468</Variation>
+      <Variation>WBVar00145428</Variation>
+    </Variation>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x3</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>EMS</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2005-12-27</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson3021</Person>
+  </Made_by>
+  <Remark>
+    <Text>Muv and Unc. Semi-dominant mutation in ect-2 (previously called let-21).
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AH346
+  <Genotype>
+    <Txt>dep-1(zh34) unc-4(e120) II; lip-1(zh15) IV.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00003043</Gene>
+      <Gene>WBGene00006744</Gene>
+      <Gene>WBGene00009717</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00275477</Variation>
+      <Variation>WBVar00142975</Variation>
+      <Variation>WBVar00275471</Variation>
+    </Variation>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2005-12-27</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson2597</Person>
+  </Made_by>
+  <Remark>
+    <Text>Pvl and weak Muv. Transformation of secondary to primary vulval cell fates.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AH1747
+  <Genotype>
+    <Txt>unc-119(ed3) III; zhIs35 I.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00020283</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x2</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Bombardment</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2016-02-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>zhIs35 [let-23::GFP + unc-119(+)] I. zhIs35 resuces let-23(sy1) and recapitulates LET-23 anitbody staining in VPCs. let-23::GFP transgene expression is higher in this strain than in AH1779 unc-119(ed3) III; zhIs38. Reference: Haag A, et al. PLoS Genet. 2014 May 1;10(5):e1004341.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: JM Escobar-Restrepo
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AH1779
+  <Genotype>
+    <Txt>unc-119(ed3) III; zhIs38 IV.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00019945</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x2</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Bombardment</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2016-02-18</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>zhIs38 [let-23::GFP + unc-119(+)] IV. zhIs38 resuces let-23(sy1) and recapitulates LET-23 anitbody staining in VPCs. let-23::GFP transgene is expressed at levels similar to endogenous LET-23. Reference: Haag A, et al. PLoS Genet. 2014 May 1;10(5):e1004341.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: JM Escobar-Restrepo
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AK100
+  <Contains>
+    <Gene>
+      <Gene>WBGene00002018</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00004739</Transgene>
+    </Transgene>
+  </Contains>
+  <Location>
+    <Laboratory>AK</Laboratory>
+  </Location>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AK103
+  <Contains>
+    <Gene>
+      <Gene>WBGene00002018</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00004737</Transgene>
+    </Transgene>
+  </Contains>
+  <Location>
+    <Laboratory>AK</Laboratory>
+  </Location>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AL132
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00000635</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>ALF3
+  <Genotype>
+    <Txt>unc-119(ed3) III; daf-12(rh61rh411) X.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00000908</Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+      <Variation>WBVar00241522</Variation>
+      <Variation>WBVar00241609</Variation>
+    </Variation>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2012-05-01</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson4598</Person>
+  </Made_by>
+  <Remark>
+    <Text>Daf-d. Unc.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF4
+  <Genotype>
+    <Txt>unc-119(ed3) III; daf-12(rh61rh411) X; bafIs4.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00000908</Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+      <Variation>WBVar00241522</Variation>
+      <Variation>WBVar00241609</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00016316</Transgene>
+      <Transgene>WBTransgene00009788</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2012-05-01</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson4598</Person>
+  </Made_by>
+  <Remark>
+    <Text>bafIs4 [daf-12 fosmid carrying unc-119(+)]; rescues both daf-12 and unc-119. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF9
+  <Genotype>
+    <Txt>unc-119(ed3) III; daf-12(rh61rh411) X; bafIs9.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00000908</Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+      <Variation>WBVar00241522</Variation>
+      <Variation>WBVar00241609</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00016317</Transgene>
+      <Transgene>WBTransgene00009788</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2012-05-01</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson4598</Person>
+  </Made_by>
+  <Remark>
+    <Text>bafIs9 [daf-12::TAP fosmid carrying unc-119(+)]; rescues both daf-12 and unc-119. TAP tag insertedinto daf-12 fosmid. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF62
+  <Genotype>
+    <Txt>bafIs62.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00009784</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x4</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Bombardment</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2012-05-01</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson14558</Person>
+  </Made_by>
+  <Remark>
+    <Text>bafIs62 [lin-42p::GFP + unc-119(+)]. lin-42p::GFP reporter consists of 2 kb upstream of lin-42a isoform subcloned into modified pPD95.75 vector also carrying unc-119(+). Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF63
+  <Genotype>
+    <Txt>unc-119(ed3) III; bafIs63.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00009787</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x1</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2012-05-01</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson14558</Person>
+  </Made_by>
+  <Remark>
+    <Text>bafIs63 [lin-42p(mut)::GFP + unc-119(+)]. lin-42p(mut)::GFP reporter consists of 2 kb upstream of lin-42a isoform subcloned into modified pPD95.75 vector also carrying unc-119(+); all potential DAF-12 binding sites have been mutated. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF70
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00009785</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>ALF72
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00009786</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>ALF82
+  <Genotype>
+    <Txt>unc-119(ed3) III; daf-12(rh61rh411) X; bafIs62.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00000908</Gene>
+      <Gene>WBGene00006843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00145093</Variation>
+      <Variation>WBVar00241522</Variation>
+      <Variation>WBVar00241609</Variation>
+    </Variation>
+    <Transgene>
+      <Transgene>WBTransgene00009784</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <CGC_received>
+      <Date>2012-05-01</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson14558</Person>
+  </Made_by>
+  <Remark>
+    <Text>bafIs62 [lin-42p::GFP + unc-119(+)]. lin-42p::GFP reporter consists of 2 kb upstream of lin-42a isoform subcloned into modified pPD95.75 vector also carrying unc-119(+). Array was crossed into strain ALF3 to create ALF82. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF85
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00022903</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>ALF100
+  <Contains>
+    <Gene>
+      <Gene>WBGene00019620</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00000119</Transgene>
+    </Transgene>
+  </Contains>
+  <Location>
+    <Laboratory>ALF</Laboratory>
+  </Location>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF101
+  <Contains>
+    <Gene>
+      <Gene>WBGene00019620</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00000120</Transgene>
+    </Transgene>
+  </Contains>
+  <Location>
+    <Laboratory>ALF</Laboratory>
+  </Location>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF102
+  <Contains>
+    <Gene>
+      <Gene>WBGene00019620</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00000121</Transgene>
+    </Transgene>
+  </Contains>
+  <Location>
+    <Laboratory>ALF</Laboratory>
+  </Location>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF103
+  <Evidence>
+    <Paper_evidence>
+      <Paper>WBPaper00031468</Paper>
+    </Paper_evidence>
+  </Evidence>
+  <Genotype>
+    <Txt>F42D1.2(baf1) X.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00009628</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00000435</Variation>
+    </Variation>
+  </Contains>
+  <Location>
+    <Laboratory>ALF</Laboratory>
+  </Location>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF104
+  <Evidence>
+    <Paper_evidence>
+      <Paper>WBPaper00031468</Paper>
+    </Paper_evidence>
+  </Evidence>
+  <Genotype>
+    <Txt>hgo-1(baf2) I.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00001843</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00000436</Variation>
+    </Variation>
+  </Contains>
+  <Location>
+    <Laboratory>ALF</Laboratory>
+  </Location>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>ALF110
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00010120</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>ALF115
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00018951</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>ALF116
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00018952</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AM1
+  <Genotype>
+    <Txt>osr-1(rm1) I.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00016329</Gene>
+    </Gene>
+    <Variation>
+      <Variation>WBVar00241620</Variation>
+    </Variation>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x4</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>EMS</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2004-10-14</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson3909</Person>
+  </Made_by>
+  <Remark>
+    <Text>Osmotic stress resistant. Received new stock May 7, 2008.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM23
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00023442</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AM44
+  <Genotype>
+    <Txt>rmIs190.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00016847</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x5</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Gamma irradiation</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2011-01-06</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>rmIs190 [F25B3.3p::Q67::CFP]. Pan-neuronal CFP expression.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: S Tang & H Brignull
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM49
+  <Genotype>
+    <Txt>rmIs172.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00016846</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x5</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Gamma irradiation</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2011-01-06</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>rmIs172 [F25B3.3p::Q19::CFP]. Pan-neuronal CFP expression. Reference: Gidalevitz T, et al., Science. 2006 Mar 10;311(5766):1471-4.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: S Tang & H Brignull
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM101
+  <Genotype>
+    <Txt>rmIs110.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00009100</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00001966</Transgene>
+      <Transgene>WBTransgene00023439</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x0</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Gamma irradiation</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2011-01-06</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson3267</Person>
+  </Made_by>
+  <Remark>
+    <Text>rmIs110 [F25B3.3p::Q40::YFP]. Pan-neuronal YFP expression. Reference: Gidalevitz T, et al., Science. 2006 Mar 10;311(5766):1471-4.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM102
+  <Contains>
+    <Gene>
+      <Gene>WBGene00009100</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00001967</Transgene>
+    </Transgene>
+  </Contains>
+  <Location>
+    <Laboratory>AM</Laboratory>
+  </Location>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM134
+  <Genotype>
+    <Txt>rmIs126.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006789</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00001968</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x5</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Gamma Rays</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2005-04-05</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>rmIs126 [unc-54p::Q0::YFP]. Diffuse distribution of Q0::YFP throughout the body-wall muscle cells. [NOTE: (04/29/13) Strain is reported as incorrect -- apparently carries 20Q transgene. Working on obtaining a replacement.]
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: S. Garcia/A Chavez
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM138
+  <Genotype>
+    <Txt>rmIs130 II.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00005343</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x5</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Gamma Rays</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2005-04-05</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>rmIs130 [unc-54p::Q24::YFP]. Diffuse distribution of Q24::YFP throughout the body-wall muscle cells.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: S. Garcia
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM140
+  <Genotype>
+    <Txt>rmIs132 I.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006789</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00001969</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x5</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Gamma Rays</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2005-04-05</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>rmIs132 [unc-54p::Q35::YFP]. AM140 animals show a Q35::YFP progressive transition from soluble to aggregated as they age.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: S. Garcia/A Chavez
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM141
+  <Genotype>
+    <Txt>rmIs133.</Txt>
+  </Genotype>
+  <Contains>
+    <Gene>
+      <Gene>WBGene00006789</Gene>
+    </Gene>
+    <Transgene>
+      <Transgene>WBTransgene00001970</Transgene>
+      <Transgene>WBTransgene00023440</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x5</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Gamma Rays</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2005-04-05</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Remark>
+    <Text>rmIs133 [unc-54p::Q40::YFP]. AM141 animals show a soluble Q40::YFP distribution in body wall muscle cells immediately after hatching. As these worms age the rapid formation of foci is observed. When they reach adulthood, AM141 animals show an entirely Q40::YFP aggregated phenotype.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+    <Text>Made_by: S. Garcia/A Chavez
+      <CGC_data_submission></CGC_data_submission>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM263
+  <Genotype>
+    <Txt>rmIs175.</Txt>
+  </Genotype>
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00007638</Transgene>
+    </Transgene>
+  </Contains>
+  <Properties>
+    <Outcrossed>
+      <Txt>x5</Txt>
+    </Outcrossed>
+    <Mutagen>
+      <Txt>Gamma irradiation</Txt>
+    </Mutagen>
+    <CGC_received>
+      <Date>2011-01-06</Date>
+    </CGC_received>
+  </Properties>
+  <Location>
+    <Laboratory>CGC</Laboratory>
+  </Location>
+  <Made_by>
+    <Person>WBPerson5812</Person>
+  </Made_by>
+  <Remark>
+    <Text>rmIs175 [unc-54p::Hsa-sod-1 (WT)::YFP]. Array encodes wild-type human SOD-1. YFP expression in body wall muscle. Array is prone to silencing; maintain by picking worms displaying typical aggregation patterns. Reference: Gidalevitz T, et al., PLoS Genet. 2009 Mar;5(3):e1000399.
+      <Inferred_automatically>
+        <Txt>From CGC strain data</Txt>
+      </Inferred_automatically>
+    </Text>
+  </Remark>
+  <Species>
+    <Species>Caenorhabditis elegans</Species>
+  </Species>
+</Strain>
+
+<Strain>AM265
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00007639</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
+<Strain>AM470
+  <Contains>
+    <Transgene>
+      <Transgene>WBTransgene00010041</Transgene>
+    </Transgene>
+  </Contains>
+</Strain>
+
