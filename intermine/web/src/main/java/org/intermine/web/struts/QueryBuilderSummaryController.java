@@ -26,8 +26,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.querybuilder.QueryBuilderSummaryHelper;
 import org.intermine.web.logic.querybuilder.SummaryPath;
 import org.intermine.web.logic.session.SessionMethods;
-import org.jfree.util.Log;
-
+import org.apache.log4j.Logger;
 /**
  * Controller for the QueryBuilder summary tile.
  *
@@ -36,6 +35,7 @@ import org.jfree.util.Log;
  */
 public class QueryBuilderSummaryController extends TilesAction
 {
+    private static final Logger LOG = Logger.getLogger(QueryBuilderSummaryController.class);
     /**
      * {@inheritDoc}
      */
@@ -57,7 +57,7 @@ public class QueryBuilderSummaryController extends TilesAction
             List<SummaryPath> summaryPaths = QueryBuilderSummaryHelper.getDisplaySummary(query);
             request.setAttribute("summaryPaths", summaryPaths);
         } catch (PathException e) {
-            Log.error("Query is invalid: " + query, e);
+            LOG.error("Query is invalid: " + query, e);
         }
     }
 }

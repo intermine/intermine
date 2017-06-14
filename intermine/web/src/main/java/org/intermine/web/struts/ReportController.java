@@ -51,7 +51,6 @@ import org.intermine.web.logic.results.InlineList;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
-import org.jfree.util.Log;
 import org.apache.commons.lang.StringUtils;
 
 /**

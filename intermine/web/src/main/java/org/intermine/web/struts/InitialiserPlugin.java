@@ -98,7 +98,6 @@ import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.query.result.XMLValidator;
-import org.jfree.util.Log;
 
 /**
  * Initialiser for the InterMine web application.
@@ -531,7 +530,7 @@ public class InitialiserPlugin implements PlugIn
             try {
                 bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
             } catch (Exception e) {
-                Log.error("Error loading class bag queries. ", e);
+                LOG.error("Error loading class bag queries. ", e);
                 blockingErrorKeys.put("errors.init.bagqueries", e.getMessage());
             }
             InputStream isBag = getClass().getClassLoader()
@@ -547,7 +546,7 @@ public class InitialiserPlugin implements PlugIn
                     bagQueryConfig.setConstrainField(bagProperties
                         .getProperty("extraBag.constrainField"));
                 } catch (IOException e) {
-                    Log.error("Error loading extraBag.properties. ", e);
+                    LOG.error("Error loading extraBag.properties. ", e);
                     blockingErrorKeys.put("errors.init.extrabagloading", null);
                 }
             } else {

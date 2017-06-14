@@ -24,7 +24,6 @@ import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.jfree.util.Log;
 
 /**
  * Container for a single result row from the keyword search
@@ -124,7 +123,7 @@ public class KeywordSearchResult
                 value = object.getFieldValue(expression);
             }
         } catch (Exception e) {
-            Log.error("Value/reference not found", e);
+            LOG.error("Value/reference not found", e);
         }
         return value;
     }
