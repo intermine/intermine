@@ -214,7 +214,7 @@
 		<attribute name="species" type="java.lang.String"/> 
 		<attribute name="ncbiTaxonomyID" type="java.lang.String"/> 
 		<reference name="gene" referenced-type="Gene" reverse-reference="strains"/>
-                <collection name="variations" referenced-type="Allele" reverse-reference="strains" />
+         <collection name="variations" referenced-type="Allele" reverse-reference="strains" />
         </class> 
 
 

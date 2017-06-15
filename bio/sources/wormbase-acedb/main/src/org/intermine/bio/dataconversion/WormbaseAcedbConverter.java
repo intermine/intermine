@@ -60,6 +60,7 @@ public class WormbaseAcedbConverter extends BioFileConverter
 	private String currentClass = null; 
 	private String rejectFilePath = null;
 	private String keyFilePath = null;
+	// private String keyFilePath = "/Users/nuin/AeroFS/intermine/intermine/bio/sources/wormbase-acedb/test/resources/strain_mapping.properties";
 
 	// Overridden by setDataSet()
 	private static final String DATASET_TITLE = "WormBaseAcedbConverter"; //"Add DataSet.title here";
@@ -85,7 +86,7 @@ public class WormbaseAcedbConverter extends BioFileConverter
         super(writer, _model, DATA_SOURCE_NAME, DATASET_TITLE);
         
         wmd = new WMDebug();
-        wmd.off(); // turn on for debug output // TODO toggle switch
+        //wmd.off(); // turn on for debug output // TODO toggle switch
         
         wmd.debug("Constructor called");
         
@@ -567,6 +568,7 @@ public class WormbaseAcedbConverter extends BioFileConverter
      * @throws Exception
      */
     public void setKeyFile(String keyFilePath) throws Exception{
+    	System.out.println("keyFilePath");
     	this.keyFilePath = keyFilePath; 
         keyMapping = new HashMap<String, String>();
     	Properties keyFileProps = new Properties();

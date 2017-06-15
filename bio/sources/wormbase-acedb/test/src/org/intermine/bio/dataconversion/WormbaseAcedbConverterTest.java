@@ -26,6 +26,7 @@ public class WormbaseAcedbConverterTest extends ItemsTestCase
 
         // TODO add keyfile
         // converter.setKeyFile(keyFilePath);
+        converter.setKeyFile("strain_mapping.properties");
 
         String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("strain_prepped.xml"));
         converter.process(new StringReader(input));

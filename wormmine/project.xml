@@ -336,7 +336,7 @@
        <property name="panther.organisms" value="6239"/>
        <property name="panther.homologues" value="10090 9606 7955 7227 4932 10116"/>
     </source> -->
-<!--
+
   <source name="wb-acedb-strain" type="wormbase-acedb" dump="false">
         <property name="src.data.dir" location="&datadir;/wormbase-acedb/strain/XML" />
         <property name="mapping.file"
@@ -349,7 +349,7 @@
         <property name="data.set" value="AceDB XML (Species)"/>
 
     </source>
--->
+
 	<source name="entrez-organism" type="entrez-organism">
         <property name="src.data.file" location="&datadir;/entrez-organism/organisms.xml"/>
     </source>
