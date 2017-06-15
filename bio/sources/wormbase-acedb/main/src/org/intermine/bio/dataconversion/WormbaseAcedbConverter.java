@@ -60,7 +60,6 @@ public class WormbaseAcedbConverter extends BioFileConverter
 	private String currentClass = null; 
 	private String rejectFilePath = null;
 	private String keyFilePath = null;
-	// private String keyFilePath = "/Users/nuin/AeroFS/intermine/intermine/bio/sources/wormbase-acedb/test/resources/strain_mapping.properties";
 
 	// Overridden by setDataSet()
 	private static final String DATASET_TITLE = "WormBaseAcedbConverter"; //"Add DataSet.title here";
