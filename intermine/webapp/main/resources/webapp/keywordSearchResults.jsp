@@ -404,11 +404,14 @@ input.submit {
 
 <c:choose>
   <c:when test="${!empty searchResult.linkRedirect}">
-    <c:set var="detailsLink" value="${searchResult.linkRedirect}" scope="request" />
+    <c:url value="${searchResult.linkRedirect}" var="detailsLink"/>
     <c:set var="extlink" value="class='extlink' target='_blank'" />
   </c:when>
   <c:otherwise>
-    <c:set var="detailsLink" value="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}&amp;trail=${param.trail}|${searchResult.id}" scope="request" />
+    <c:url value="report.do" var="detailsLink">
+      <c:param name="id" value="${searchResult.id}"/>
+      <c:param name="trail" value="${param.trail}|${searchResult.id}"/>
+    </c:url>
   </c:otherwise>
 </c:choose>
 

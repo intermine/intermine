@@ -468,7 +468,8 @@ public class GenomicRegionSearchService
      * @return genomic region search constraint
      * @throws Exception e
      */
-    public ActionMessage parseGenomicRegionSearchForm(GenomicRegionSearchForm grsForm) throws Exception {
+    public ActionMessage parseGenomicRegionSearchForm(GenomicRegionSearchForm grsForm)
+        throws Exception {
         grsc = new GenomicRegionSearchConstraint();
 
         ActionMessage actmsg = parseBasicInput(grsForm);
@@ -495,7 +496,7 @@ public class GenomicRegionSearchService
         FormFile formFile = (FormFile) grsForm.get("fileInput");
         String pasteInput = (String) grsForm.get("pasteInput");
         String extendedRegionSize = (String) grsForm.get("extendedRegionSize");
-        boolean strandSpecific = grsForm.get("strandSpecific")!=null;
+        boolean strandSpecific = grsForm.get("strandSpecific") != null;
 
         // Organism
         grsc.setOrgName(organism);
@@ -770,8 +771,6 @@ public class GenomicRegionSearchService
      */
     public Map<String, List<String>> getFeatureTypeToSOTermMap() {
         if (featureTypeToSOTermMap == null) {
-            long startTime = System.currentTimeMillis();
-
             featureTypeToSOTermMap = GenomicRegionSearchQueryRunner
                     .getFeatureAndSOInfo(interMineAPI, classDescrs, initBatchSize);
 
@@ -842,6 +841,10 @@ public class GenomicRegionSearchService
         for (GenomicRegion gr : grsc.getGenomicRegionList()) {
             // User input could be x instead of X for human chromosome, converted to lowercase
             ChromosomeInfo ci = null;
+            // allow for empty lines
+            if (gr == null || gr.getChr() == null) {
+                continue;
+            }
             String chr = gr.getChr().toLowerCase();
 
             if (chrInfo.containsKey(chr)) {
@@ -857,7 +860,7 @@ public class GenomicRegionSearchService
                     continue;
                 }
             }
-            
+
             boolean passed = false; // flag to add to errorSpanList
             if (gr.getStart() > gr.getEnd()) {
                 gr.setChr(ci.getChrPID()); // converted to the right case
@@ -882,7 +885,8 @@ public class GenomicRegionSearchService
                 passed = true;
             }
 
-            // add to errorSpanList here if not passed; shouldn't ever happen, but we'll keep it for now for back-compatibility
+            // add to errorSpanList here if not passed; shouldn't ever happen, but we'll keep it
+            // for now for back-compatibility
             if (!passed) {
                 errorSpanList.add(gr);
             }
@@ -1082,7 +1086,7 @@ public class GenomicRegionSearchService
             }
         }
 
-        String clHtml = " or Create List by feature type:"
+        String clHtml = " Create list by feature type:"
             + "<select id=\"all-regions\" style=\"margin: 4px 3px\">";
 
         for (String ft : ftSet) {
@@ -1249,12 +1253,14 @@ public class GenomicRegionSearchService
             sb.append("<b>" + span + "</b>");
         }
 
+        sb.append("<br>");
+
         if (!"false".equals(exportChromosomeSegment)) {
-            sb.append("<span style=\"padding: 10px;\">"
+            sb.append("<span style=\"padding: 10px;\">Export sequence for entire region: "
                     + "<a href='javascript: exportFeatures(\""
                     + s.getFullRegionInfo()
-                    + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
-                    + "region as FASTA\" class=\"fasta\" "
+                    + "\", \"\", \"chrSeg\");'><img title=\"Export sequence for entire region"
+                    + "\" class=\"fasta\" "
                     + "src=\"model/images/fasta.gif\"></a></span>");
         }
 
@@ -1273,25 +1279,31 @@ public class GenomicRegionSearchService
         }
 
         sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
-                + "<span class='tab export-region'><a href='javascript: "
+                + "<span class='tab export-region'><a title='Export features in this region in "
+                + "tab-delimited format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"tab\");'></a></span>"
-                + "<span class='csv export-region'><a href='javascript: "
+                + "<span class='csv export-region'><a title='Export features in this region in "
+                + "comma-delimited format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"csv\");'></a></span>"
-                + "<span class='gff3 export-region'><a href='javascript: "
+                + "<span class='gff3 export-region'><a title='Export features in this region in "
+                + "GFF3 format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"gff3\");'></a></span>"
-                + "<span class='fasta export-region'><a href='javascript: "
+                + "<span class='bed export-region'><a title='Export features in this region in "
+                + "BED format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                + facet + "\", \"sequence\");'></a></span>"
-                + "<span class='bed export-region'><a href='javascript: "
+                + facet + "\", \"bed\");'></a></span>"
+                + "<span class='fasta export-region'><a title='Export features in this region as "
+                + "individual sequences' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                + facet + "\", \"bed\");'></a></span>");
+                + facet + "\", \"sequence\");'></a></span>");
 
         // Display galaxy export
         if (!"false".equals(galaxyDisplay)) {
-            sb.append("<span class='galaxy export-region'><a href='javascript: "
+            sb.append("<span class='galaxy export-region'><a title='Export data to Galaxy' "
+                + "href='javascript: "
                 + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
         }
 
@@ -1377,8 +1389,11 @@ public class GenomicRegionSearchService
             sb.append("<b>" + span + "</b>");
         }
 
+        sb.append("<br>");
+
+
         if (!"false".equals(exportChromosomeSegment)) {
-            sb.append("<span style=\"padding: 10px;\">"
+            sb.append("<span style=\"padding: 10px;\">Export sequence for entire region: "
                     + "<a href='javascript: exportFeatures(\""
                     + s.getFullRegionInfo()
                     + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
@@ -1401,21 +1416,27 @@ public class GenomicRegionSearchService
         }
 
         sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
-                + "<span class='tab export-region'><a href='javascript: "
+                + "<span class='tab export-region'><a title='Export features in this region in "
+                + "tab-delimited format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"tab\");'></a></span>"
-                + "<span class='csv export-region'><a href='javascript: "
+                + "<span class='csv export-region'><a title='Export features in this region in "
+                + "comma-delimited format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"csv\");'></a></span>"
-                + "<span class='gff3 export-region'><a href='javascript: "
+                + "<span class='gff3 export-region'><a title='Export features in this region in "
+                + "GFF3 format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"gff3\");'></a></span>"
-                + "<span class='fasta export-region'><a href='javascript: "
+                + "<span class='bed export-region'><a title='Export features in this region in "
+                + "BED format' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                + facet + "\", \"sequence\");'></a></span>"
-                + "<span class='bed export-region'><a href='javascript: "
+                + facet + "\", \"bed\");'></a></span>"
+                + "<span class='fasta export-region'><a title='Export features in this region as "
+                + "individual sequences' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                + facet + "\", \"bed\");'></a></span>");
+                + facet + "\", \"sequence\");'></a></span>");
+
 
         // Display galaxy export
         if (!"false".equals(galaxyDisplay)) {

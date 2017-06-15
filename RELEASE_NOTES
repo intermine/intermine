@@ -8,9 +8,68 @@
  *
  */
 
+InterMine 1.8 (2017 June)
+
+#288 - List actions (set operations) greyed out but active
+#439 - Sharing lists -- need better message when owner hasn't upgraded lists
+#702 - Add "Show Tags" option to Lists page
+#739 - filter encoding property in Database.java
+#786 - Query with outer join does not validate
+#789 - services.json should contain mine appropriate defaults
+#802 - Region search file upload doesn't handle blank lines
+#812 - Issues with Date data type
+#820 - Documentation on date formats (Items XML)
+#910 - Usernames containing upper-case letters created via the web service can never log in.
+#942 - Allow superclass lists in template list constraints
+#964 - quicksearch service should report total hits
+#966 - add db parameter for schema
+#1174 - Can't share lists with google logins
+#1181 - Transfer sequences - not processing transcript sequences correctly
+#1212 - Web service: list union - resulting type is NULL
+#1269 - GFF parser - ignoring parents leaves children orphans
+#1296 - List converter with subtype constraint fails
+#1309 - Provide a template's popularity score in /service/templates
+#1325 - GFF parser - gff config should be source-specific
+#1328 - Cannot change LOOKUP filter in results table
+#1382 - Templates page - my mine - add summarise all link
+#1455 - Don't add ORDER BY clause to count(*) queries
+#1458 - Queries page only shows the last saved query
+#1471 - Drop LOOKUP constraint if value is *
+#1486 - Allow the name attribute to be missing 
+#1495 - Fix a caching bug in strand specific region search
+#1505 - InterMine webservices are not compatible with Python3
+#1507 - Unescaped pipes in the trail break tomcat 8
+#1515 - GFF3 export - not adding columns
+#1516 - support for DOES_NOT_CONTAIN in query xml 
+#1523 - Userprofile backup script - more improvements
+#1526 - Post build updating with SQL triggers
+#1551 - handle the case where isoforms have multiple accessions. 
+#1557 - Correctly save lists after logging in
+#1569 - Update FASTA text on region search
+#1572 - We've lost the trail
+
+InterMine 1.7.3 (2017 May)
+
+#582 - Remove partially implemented GAF export
+#1052 - FlyMine: Stop loading Golden Path Fragments
+#1086 - FlyMine: handle NCBI transcripts correctly
+#1286 - Enable making a list from mRNA lists
+#1410 - Make display names for collections and references available as JSON model
+#1418 - Add UniProt accession as Xrefs.
+#1444 - FlyMine: Don't load protein locations.
+#1493 - Update URL for OMIM download script
+#1496 - Load OMIM disease for Human Phenotypes
+#1502 - Gene length correction missing from GO widget
+#1532 - update-publications job fails if using UTF8 encoding
+#1536 - Add link to ToxyGates
+#1537 - MGI alleles file had an extra tab causing havoc. Always check for valid pubmed id.
+#1538 - Add Signor data source - signalling data
+#1539 - Tomcat 9 errors
+#1545 - OBO Source loader to handle multiple crossReferences
+
 InterMine 1.7.2 (2017 April)
 
-#1533 - Update code to adapt to google API changes 
+#1533 - Update code to adapt to google API changes
 
 InterMine 1.7.1 (2017 January)
 

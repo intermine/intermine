@@ -233,8 +233,8 @@ public class ExportService extends JSONService
                 DefaultInteractor bindingInteractor = getInteractor(locatedOn, bindingXref);
 
                 // binding participant
-                DefaultModelledParticipant bindingParticipant
-                     = getParticipant(complex, locatedOn, bindingInteractor, null, null);
+                DefaultModelledParticipant bindingParticipant = getParticipant(complex, locatedOn,
+                    bindingInteractor, null, null);
 
                 // binding feature
                 DefaultModelledFeature bindingFeature = getFeature(locatedOn,

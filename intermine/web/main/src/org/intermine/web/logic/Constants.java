@@ -206,8 +206,9 @@ public final class Constants
      * 17 - Added jbrowse-config.
      * 18 - Added display names to the model output.
      * 19 - Added intermine version
+     * 20 - Added class counts and display names for atts, refs and colls. #1410
      */
-    public static final int WEB_SERVICE_VERSION = 19;
+    public static final int WEB_SERVICE_VERSION = 20;
 
     /**
      * Current version of the InterMine code

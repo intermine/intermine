@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,13 +68,19 @@ public class ObjectTrailController extends TilesAction
         String trail = request.getParameter("trail");
         String queryBuilder = request.getParameter("queryBuilder");
 
-        String[] ids = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')
-                : new String[0];
+        String[] ids = null;
+        if (StringUtils.isEmpty(trail)) {
+            ids = new String[0];
+        } else {
+            trail = URLDecoder.decode(trail, "UTF-8");
+            ids = StringUtils.split(trail.substring(1), '|');
+        }
+
         ArrayList<TrailElement> elements = new ArrayList<TrailElement>();
         String elementTrail = "";
 
         for (int i = 0; i < ids.length; i++) {
-            elementTrail += "|" + ids[i];
+            elementTrail += "%7C" + ids[i];
 
             // split this param pair again with . delimiter
             // will be something like bag.baggieName or results.col0 or itt.template.id

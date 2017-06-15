@@ -1,0 +1,205 @@
+<items>
+<item id="3_16" class="BioEntity">
+<attribute name="primaryIdentifier" value="P46527"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_3" class="BioEntity">
+<attribute name="primaryIdentifier" value="Q99835"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_9" class="BioEntity">
+<attribute name="primaryIdentifier" value="P59768"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_7" class="Signalling">
+<attribute name="identifier" value="SIGNOR-207474"/>
+<reference name="participant1" ref_id="3_13"/>
+<reference name="participant2" ref_id="3_14"/>
+<collection name="details"><reference ref_id="5_7"/></collection>
+</item>
+<item id="5_3" class="SignallingDetail">
+<attribute name="effect" value="up-regulates"/>
+<collection name="publications"><reference ref_id="4_3"/></collection>
+</item>
+<item id="6_5" class="Signalling">
+<attribute name="identifier" value="SIGNOR-154255"/>
+<reference name="participant1" ref_id="3_9"/>
+<reference name="participant2" ref_id="3_10"/>
+<collection name="details"><reference ref_id="5_5"/></collection>
+</item>
+<item id="5_9" class="SignallingDetail">
+<attribute name="effect" value="up-regulates"/>
+<attribute name="effectMechanism" value="phosphorylation"/>
+<attribute name="mechanismResidues" value="Ser10"/>
+<attribute name="mechanismSequences" value="NVRVSNGsPSLERMD"/>
+<collection name="publications"><reference ref_id="4_9"/></collection>
+</item>
+<item id="5_7" class="SignallingDetail">
+<attribute name="effect" value="down-regulates"/>
+<attribute name="effectMechanism" value="&quot;chemical inhibition&quot;"/>
+<attribute name="notes" value="Selleck"/>
+<collection name="publications"><reference ref_id="4_7"/></collection>
+</item>
+<item id="3_14" class="BioEntity">
+<attribute name="primaryIdentifier" value="P49841"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="SignallingDetail">
+<attribute name="effect" value="up-regulates"/>
+<attribute name="effectMechanism" value="binding"/>
+<collection name="publications"><reference ref_id="4_1"/></collection>
+</item>
+<item id="6_3" class="Signalling">
+<attribute name="identifier" value="SIGNOR-113649"/>
+<reference name="participant1" ref_id="3_5"/>
+<reference name="participant2" ref_id="3_6"/>
+<collection name="details"><reference ref_id="5_3"/></collection>
+</item>
+<item id="3_15" class="BioEntity">
+<attribute name="primaryIdentifier" value="Q9H2X6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_4" class="Signalling">
+<attribute name="identifier" value="SIGNOR-174949"/>
+<reference name="participant1" ref_id="3_7"/>
+<reference name="participant2" ref_id="3_8"/>
+<collection name="details"><reference ref_id="5_4"/></collection>
+</item>
+<item id="6_8" class="Signalling">
+<attribute name="identifier" value="SIGNOR-145122"/>
+<reference name="participant1" ref_id="3_9"/>
+<reference name="participant2" ref_id="3_10"/>
+<collection name="details"><reference ref_id="5_8"/></collection>
+</item>
+<item id="5_5" class="SignallingDetail">
+<attribute name="effect" value="up-regulates"/>
+<attribute name="effectMechanism" value="binding"/>
+<collection name="publications"><reference ref_id="4_5"/></collection>
+</item>
+<item id="3_2" class="BioEntity">
+<attribute name="primaryIdentifier" value="Q06413"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="BioEntity">
+<attribute name="primaryIdentifier" value="SIGNOR-C6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_1" class="Signalling">
+<attribute name="identifier" value="SIGNOR-83840"/>
+<reference name="participant1" ref_id="3_1"/>
+<reference name="participant2" ref_id="3_2"/>
+<collection name="details"><reference ref_id="5_1"/></collection>
+</item>
+<item id="3_13" class="BioEntity">
+<attribute name="primaryIdentifier" value="CID:9549289"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="6_9" class="Signalling">
+<attribute name="identifier" value="SIGNOR-174617"/>
+<reference name="participant1" ref_id="3_15"/>
+<reference name="participant2" ref_id="3_16"/>
+<collection name="details"><reference ref_id="5_9"/></collection>
+</item>
+<item id="3_6" class="BioEntity">
+<attribute name="primaryIdentifier" value="Q16539"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_7" class="BioEntity">
+<attribute name="primaryIdentifier" value="Q13315"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_2" class="Publication">
+<attribute name="pubMedId" value="17089004"/>
+</item>
+<item id="3_12" class="BioEntity">
+<attribute name="primaryIdentifier" value="Q15303"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_4" class="Publication">
+<attribute name="pubMedId" value="21763684"/>
+</item>
+<item id="4_9" class="Publication">
+<attribute name="pubMedId" value="21715331"/>
+</item>
+<item id="3_11" class="BioEntity">
+<attribute name="primaryIdentifier" value="P56975"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_8" class="Publication">
+<attribute name="pubMedId" value="16537363"/>
+</item>
+<item id="4_1" class="Publication">
+<attribute name="pubMedId" value="11062529"/>
+</item>
+<item id="4_5" class="Publication">
+<attribute name="pubMedId" value="17419683"/>
+</item>
+<item id="3_8" class="BioEntity">
+<attribute name="primaryIdentifier" value="Q5VTR2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_6" class="SignallingDetail">
+<attribute name="effect" value="up-regulates"/>
+<attribute name="effectMechanism" value="binding"/>
+<collection name="publications"><reference ref_id="4_6"/></collection>
+</item>
+<item id="5_4" class="SignallingDetail">
+<attribute name="effect" value="up-regulates"/>
+<attribute name="effectMechanism" value="phosphorylation"/>
+<collection name="publications"><reference ref_id="4_4"/></collection>
+</item>
+<item id="4_6" class="Publication">
+<attribute name="pubMedId" value="14967450"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Signor"/>
+</item>
+<item id="3_4" class="BioEntity">
+<attribute name="primaryIdentifier" value="Q9NRP7"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_3" class="Publication">
+<attribute name="pubMedId" value="11781339"/>
+</item>
+<item id="5_2" class="SignallingDetail">
+<attribute name="effect" value="up-regulates"/>
+<attribute name="effectMechanism" value="binding"/>
+<collection name="publications"><reference ref_id="4_2"/></collection>
+</item>
+<item id="4_7" class="Publication">
+<attribute name="pubMedId" value="Other"/>
+</item>
+<item id="3_5" class="BioEntity">
+<attribute name="primaryIdentifier" value="P09038"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="Signor data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="5_8" class="SignallingDetail">
+<attribute name="effect" value="up-regulates"/>
+<attribute name="effectMechanism" value="binding"/>
+<collection name="publications"><reference ref_id="4_8"/></collection>
+</item>
+<item id="6_6" class="Signalling">
+<attribute name="identifier" value="and nrg-3 and nrg-4 bind erbb-4.&quot;"/>
+<reference name="participant1" ref_id="3_11"/>
+<reference name="participant2" ref_id="3_12"/>
+<collection name="details"><reference ref_id="5_6"/></collection>
+</item>
+<item id="3_10" class="BioEntity">
+<attribute name="primaryIdentifier" value="P42336"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_2" class="Signalling">
+<attribute name="identifier" value="SIGNOR-150540"/>
+<reference name="participant1" ref_id="3_3"/>
+<reference name="participant2" ref_id="3_4"/>
+<collection name="details"><reference ref_id="5_2"/></collection>
+</item>
+</items>

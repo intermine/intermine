@@ -114,6 +114,12 @@
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/micklem/data/flyatlas/current"/>
     </source>
+    <source name="do" type="do">
+      <property name="src.data.file" location="/micklem/data/do/current/doid-non-classified.obo" />
+    </source>
+    <source name="flybase-alleles" type="flybase-alleles">
+      <property name="src.data.dir" location="/micklem/data/flybase/alleles/current"/>
+    </source>
     <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/micklem/data/flymine/anoph-expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
@@ -139,7 +145,7 @@
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
     <source name="go" type="go">
-      <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
+      <property name="src.data.file" location="/micklem/data/go-annotation/current/go.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>

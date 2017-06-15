@@ -14,6 +14,7 @@
 <tiles:useAttribute id="webSearchable" name="webSearchable"
                     classname="org.intermine.api.search.WebSearchable"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<tiles:importAttribute name="showTags" ignore="true"/>
 <tiles:importAttribute name="statusIndex"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 
@@ -50,10 +51,6 @@
     </c:otherwise>
   </c:choose>
 
-<%--<html:link action="/exportTemplates?scope=${scope}&amp;name=${webSearchable.name}"
-           titleKey="history.action.export.hover">
-  <img src="images/export.png" width="16" height="13" alt="Export">
-</html:link>--%>
 <c:if test="${! empty sharedBagWebSearchables[wsName]}"><i> shared by ${sharedBagWebSearchables[wsName]}</i></c:if>
 <tiles:insert name="setFavourite.tile" >
   <tiles:put name="name" value="${webSearchable.name}"/>
@@ -79,6 +76,17 @@
      <p class="description">${webSearchable.description}</p>
   </div>
    <div id="${wsListId}_${type}_item_description_${webSearchable.name}_highlight" style="display:none" class="description"></div>
+</c:if>
+
+<c:if test="${showTags}">
+  <div id="${wsListId}_${type}_item_tags_${webSearchable.name}">
+     <p class="description">
+        <c:set var="taggable" value="${webSearchable}"/>
+        <tiles:insert name="listTags.tile" >
+            <tiles:put name="taggable" beanName="taggable"/>
+        </tiles:insert>
+     </p>
+  </div>
 </c:if>
 
 </div>

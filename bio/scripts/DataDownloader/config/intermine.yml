@@ -35,6 +35,8 @@ default_sources:
   - "HGNC"
   - "NCBIGeneHuman"
   - "Orphanet"
+  - "DO"
+  - "FlyBaseAlleles"
 
 UniProt:
     organisms:

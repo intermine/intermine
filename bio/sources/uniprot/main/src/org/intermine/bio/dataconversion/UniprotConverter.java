@@ -889,6 +889,7 @@ public class UniprotConverter extends BioDirectoryConverter
             // accessions
             for (String accession : uniprotEntry.getAccessions()) {
                 createSynonym(proteinRefId, accession, true);
+                createCrossReference(proteinRefId, accession, "UniProt", true);
             }
 
             // primaryIdentifier if isoform
@@ -931,6 +932,8 @@ public class UniprotConverter extends BioDirectoryConverter
                     setCrossReference(protein.getIdentifier(), identifier, key, false);
                 }
             }
+
+
         }
 
         // if cross references not listed in CONFIG, load all

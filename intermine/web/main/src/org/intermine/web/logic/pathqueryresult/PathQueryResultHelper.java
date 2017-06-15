@@ -80,19 +80,8 @@ public final class PathQueryResultHelper
         List<String> view = new ArrayList<String>();
         ClassDescriptor cld = model.getClassDescriptorByName(type);
         List<FieldConfig> fieldConfigs = getClassFieldConfigs(webConfig, cld);
-        if (!StringUtils.isEmpty(prefix)) {
-            try {
-                // we can't add a subclass constraint, type must be same as the end of the prefix
-                Path prefixPath = new Path(model, prefix);
-                String prefixEndType = TypeUtil.unqualifiedName(prefixPath.getEndType().getName());
-                if (!prefixEndType.equals(type)) {
-                    throw new IllegalArgumentException("Mismatch between end type of prefix: "
-                            + prefixEndType + " and type parameter: " + type);
-                }
-            } catch (PathException e) {
-                LOG.error("Invalid path configured in webconfig for class: " + type);
-            }
-        } else {
+
+        if (StringUtils.isEmpty(prefix)) {
             prefix = type;
         }
 

@@ -5,10 +5,10 @@
 <!-- add any <class> elements here -->
   <class name="Disease" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
-    <attribute name="source" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="diseases"/>
     <collection name="publications" referenced-type="Publication"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
   <class name="Gene" is-interface="true">
     <collection name="diseases" referenced-type="Disease" reverse-reference="genes"/>
