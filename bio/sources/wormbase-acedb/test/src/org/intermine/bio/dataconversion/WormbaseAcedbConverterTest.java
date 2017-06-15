@@ -1,5 +1,6 @@
 package org.intermine.bio.dataconversion;
 
+import java.io.File;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Set;
@@ -24,10 +25,11 @@ public class WormbaseAcedbConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new WormbaseAcedbConverter(itemWriter, model);
 
-        // TODO add keyfile
-        // converter.setKeyFile(keyFilePath);
-        converter.setKeyFile("resources/strain_mapping.properties");
-        converter.setMappingFile("resources/strain_mapping.properties");
+        File mappingFile = new File(getClass().getClassLoader().getResource("strain_mapping.properties").toURI());
+        File keyFile = new File(getClass().getClassLoader().getResource("wormbase-acedb_keys.properties").toURI());
+
+        converter.setKeyFile(keyFile.getAbsolutePath());
+        converter.setMappingFile(mappingFile.getAbsolutePath());
         converter.setSourceClass("Strain");
 
         String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("strain_prepped.xml"));
