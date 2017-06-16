@@ -10,12 +10,6 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="5_76" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00275470"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_62"/></collection>
-</item>
 <item id="3_98" class="Strain">
 <attribute name="CGCReceived" value="2011-01-06"/>
 <attribute name="genotype" value="rmIs175."/>
@@ -28,130 +22,93 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_71" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00006765"/>
+<item id="5_49" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00275468"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_64"/></collection>
+</item>
+<item id="4_55" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00009717"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_59"/></collection>
+<collection name="strains"><reference ref_id="3_65"/></collection>
 </item>
 <item id="3_32" class="Strain">
 <attribute name="primaryIdentifier" value="AGK51"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_112" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00016329"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_88"/></collection>
-</item>
 <item id="3_9" class="Strain">
 <attribute name="primaryIdentifier" value="AGD745"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_107" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00001843"/>
+<item id="4_59" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00002018"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_84"/></collection>
+<collection name="strains"><reference ref_id="3_68"/><reference ref_id="3_69"/></collection>
 </item>
-<item id="3_72" class="Strain">
-<attribute name="CGCReceived" value="2012-05-01"/>
-<attribute name="genotype" value="unc-119(ed3) III; daf-12(rh61rh411) X; bafIs4."/>
+<item id="3_37" class="Strain">
+<attribute name="CGCReceived" value="2013-11-20"/>
+<attribute name="genotype" value="zfp-1(ok554) unc-119(ed3) III; armEx14."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson4598"/>
 <attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="ALF4"/>
-<attribute name="remark" value="bafIs4 [daf-12 fosmid carrying unc-119(+)]; rescues both daf-12 and unc-119. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179."/>
+<attribute name="primaryIdentifier" value="AGK280"/>
+<attribute name="remark" value="armEx14 [PHD1-PHD2::FLAG + zfp-1(short isoform) + unc-119(+)]. Pick non-Unc animals to maintain. The fosmid-based armEx14 transgene rescues zfp-1(ok554)/nDf17 lethality. Reference: Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_91"/><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/><reference ref_id="5_90"/><reference ref_id="5_91"/></collection>
+<collection name="genes"><reference ref_id="4_17"/><reference ref_id="4_23"/></collection>
+<collection name="variations"><reference ref_id="5_20"/><reference ref_id="5_15"/></collection>
 </item>
-<item id="3_27" class="Strain">
-<attribute name="CGCReceived" value="2014-04-25"/>
-<attribute name="genotype" value="daf-16(mu86) I; glp-1(e2141) III; uthEx649."/>
+<item id="5_20" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00091841"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_37"/><reference ref_id="3_42"/><reference ref_id="3_43"/></collection>
+</item>
+<item id="5_77" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00241620"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_88"/></collection>
+</item>
+<item id="3_62" class="Strain">
+<attribute name="CGCReceived" value="2003-12-16"/>
+<attribute name="genotype" value="sra-13(zh13) II."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson18908"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGD1048"/>
-<attribute name="remark" value="uthEx649 [rpn-6p::tdTomato + rol-6(su1006)]. Temperature-sensitive. Maintain at 15C; sterile at 25C. Rollers. Pick rollers to maintain array. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
+<attribute name="mutagen" value="EMS"/>
+<attribute name="outcrossed" value="x8"/>
+<attribute name="primaryIdentifier" value="AH159"/>
+<attribute name="remark" value="sra-13(zh13) mutants display stronger chemotaxis to limiting concentrations of isoamylalcohol and diacetyl than WT animals. Deletion allele. 396 bp of 5' promoter sequence and all but the last exon are removed; probably a null allele."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_32"/><reference ref_id="4_28"/></collection>
-<collection name="variations"><reference ref_id="5_31"/><reference ref_id="5_27"/></collection>
+<collection name="genes"><reference ref_id="4_44"/></collection>
+<collection name="variations"><reference ref_id="5_43"/></collection>
 </item>
-<item id="5_31" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00089216"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_27"/><reference ref_id="3_50"/></collection>
-</item>
-<item id="3_78" class="Strain">
-<attribute name="CGCReceived" value="2012-05-01"/>
-<attribute name="genotype" value="unc-119(ed3) III; daf-12(rh61rh411) X; bafIs62."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson14558"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="ALF82"/>
-<attribute name="remark" value="bafIs62 [lin-42p::GFP + unc-119(+)]. lin-42p::GFP reporter consists of 2 kb upstream of lin-42a isoform subcloned into modified pPD95.75 vector also carrying unc-119(+). Array was crossed into strain ALF3 to create ALF82. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_91"/><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/><reference ref_id="5_90"/><reference ref_id="5_91"/></collection>
-</item>
-<item id="5_78" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00275474"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_63"/></collection>
-</item>
-<item id="4_101" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00019620"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_80"/><reference ref_id="3_81"/><reference ref_id="3_82"/></collection>
-</item>
-<item id="5_53" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar02141399"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_46"/></collection>
-</item>
-<item id="5_90" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00241522"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_78"/></collection>
-</item>
-<item id="4_76" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00005039"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_62"/></collection>
-</item>
-<item id="4_73" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00003043"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_60"/><reference ref_id="3_61"/><reference ref_id="3_65"/></collection>
-</item>
-<item id="3_94" class="Strain">
+<item id="3_96" class="Strain">
 <attribute name="CGCReceived" value="2005-04-05"/>
-<attribute name="genotype" value="rmIs126."/>
+<attribute name="genotype" value="rmIs132 I."/>
 <attribute name="laboratory" value="CGC"/>
 <attribute name="mutagen" value="Gamma Rays"/>
 <attribute name="outcrossed" value="x5"/>
-<attribute name="primaryIdentifier" value="AM134"/>
-<attribute name="remark" value="rmIs126 [unc-54p::Q0::YFP]. Diffuse distribution of Q0::YFP throughout the body-wall muscle cells. [NOTE: (04/29/13) Strain is reported as incorrect -- apparently carries 20Q transgene. Working on obtaining a replacement.]"/>
+<attribute name="primaryIdentifier" value="AM140"/>
+<attribute name="remark" value="rmIs132 [unc-54p::Q35::YFP]. AM140 animals show a Q35::YFP progressive transition from soluble to aggregated as they age."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_120"/></collection>
+<collection name="genes"><reference ref_id="4_85"/></collection>
 </item>
-<item id="4_11" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00002004"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<item id="3_47" class="Strain">
+<attribute name="CGCReceived" value="2013-12-16"/>
+<attribute name="genotype" value="otIs225 II; daf-18(ok480) IV; armEx218."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson9913"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGK573"/>
+<attribute name="remark" value="otIs225 [cat-4::GFP] II. armEx218 [unc-119p::daf-18 + unc-119p::tagRFP + rol-6(su1006)]. Pick Rollers to maintain. Transgenic array expresses DAF-18 from unc-119 pan-neuronal promoter; rescues the HSN undermigration phenotype in daf-18 null mutants. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_10"/></collection>
+<collection name="genes"><reference ref_id="4_30"/></collection>
+<collection name="variations"><reference ref_id="5_30"/></collection>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
@@ -168,102 +125,67 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_50" class="Strain">
-<attribute name="CGCReceived" value="2013-12-16"/>
-<attribute name="genotype" value="daf-16(mu86) I; zdIs13 IV; armEx257."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson9913"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK650"/>
-<attribute name="remark" value="zdIs13 [tph-1p::GFP] IV. armEx257 [dpy-7p::daf-16b::tagRFP + myo-2::GFP]. Pick animals with GFP+ pharynx to maintain. armEx257 rescues the daf-16(mu86) HSN undermigration phenotype. dpy-7p::daf-16b::tagRFP expression is localized to nuclei in hypodermal tissue during the comma, 1.5 and 2-fold stages, becoming cytoplasmic or perinuclear by the 3-fold stage and persisting into adulthood. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_32"/></collection>
-<collection name="variations"><reference ref_id="5_31"/></collection>
-</item>
-<item id="4_91" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00000908"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_78"/></collection>
-</item>
-<item id="3_60" class="Strain">
-<attribute name="CGCReceived" value="2001-05-21"/>
-<attribute name="genotype" value="lip-1(zh15) IV."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson2597"/>
-<attribute name="mutagen" value="EMS"/>
-<attribute name="outcrossed" value="x8"/>
-<attribute name="primaryIdentifier" value="AH102"/>
-<attribute name="remark" value="Deletion allele which removes exons 2 to 6 of lip-1 (C05B10.1). Incompletely penetrant ovulation defect."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_73"/></collection>
-<collection name="variations"><reference ref_id="5_73"/></collection>
-</item>
-<item id="3_45" class="Strain">
-<attribute name="genotype" value="unc-119(ed3) III; armEx199."/>
+<item id="3_36" class="Strain">
+<attribute name="CGCReceived" value="2014-12-16"/>
+<attribute name="genotype" value="unc-119(ed3) III; niDf199 IV; armEx53."/>
 <attribute name="laboratory" value="CGC"/>
 <attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK537"/>
-<attribute name="remark" value="armEx199 [cdl-1p::cdl-1::GFP + unc-119(+)]. Pick non-Unc to maintain. Nuclear localization of CDL-1::GFP in the germline and early embryos; strong enrichement of CDL-1::GFP in the nuclei of developing oocytes. Reference: Avgousti DC, et al. EMBO J. 2012 Oct 3;31(19):3821-32."/>
+<attribute name="primaryIdentifier" value="AGK234"/>
+<attribute name="remark" value="armEx53 [WRM0611aH08 + unc-119(+)]. Pick non-Unc to maintain. unc-119(ed3) was crossed into JU258, the niDf199IV deletion was confirmed by PCR, and these Unc worms were used for bombardment. This strain contains a transgenic array that expresses the WRM0611aH08 fosmid construct. This fosmid contains the niDF199 locus (around 4 kb) that is deleted in the natural C. elegans isolate strain JU258. JU258 worms lack specific 21U-RNAs normally present in N2 worms due to this deletion of the niDF199 locus. Expression of this fosmid construct in JU258 worms restores the expression of the missing 21U-RNAs in the germline, as measured by RT-qPCR. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/></collection>
 </item>
-<item id="3_88" class="Strain">
-<attribute name="CGCReceived" value="2004-10-14"/>
-<attribute name="genotype" value="osr-1(rm1) I."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson3909"/>
-<attribute name="mutagen" value="EMS"/>
-<attribute name="outcrossed" value="x4"/>
-<attribute name="primaryIdentifier" value="AM1"/>
-<attribute name="remark" value="Osmotic stress resistant. Received new stock May 7, 2008."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_112"/></collection>
-<collection name="variations"><reference ref_id="5_111"/></collection>
-</item>
-<item id="4_44" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00006975"/>
+<item id="4_32" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00003911"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_37"/><reference ref_id="3_42"/><reference ref_id="3_43"/></collection>
+<collection name="strains"><reference ref_id="3_49"/></collection>
 </item>
-<item id="3_80" class="Strain">
-<attribute name="laboratory" value="ALF"/>
-<attribute name="primaryIdentifier" value="ALF100"/>
-<attribute name="species" value="Caenorhabditis elegans"/>
+<item id="4_14" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00000912"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_101"/></collection>
+<collection name="strains"><reference ref_id="3_27"/><reference ref_id="3_50"/></collection>
 </item>
-<item id="3_58" class="Strain">
-<attribute name="CGCReceived" value="1997-12-08"/>
-<attribute name="genotype" value="gap-1(ga133) X."/>
+<item id="4_2" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00002004"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_10"/></collection>
+</item>
+<item id="3_72" class="Strain">
+<attribute name="CGCReceived" value="2012-05-01"/>
+<attribute name="genotype" value="unc-119(ed3) III; daf-12(rh61rh411) X; bafIs4."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson232"/>
-<attribute name="mutagen" value="Psoralen"/>
-<attribute name="outcrossed" value="x4"/>
-<attribute name="primaryIdentifier" value="AH12"/>
-<attribute name="remark" value="Null allele."/>
+<attribute name="madeBy" value="WBPerson4598"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="ALF4"/>
+<attribute name="remark" value="bafIs4 [daf-12 fosmid carrying unc-119(+)]; rescues both daf-12 and unc-119. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_68"/></collection>
-<collection name="variations"><reference ref_id="5_68"/></collection>
+<collection name="genes"><reference ref_id="4_62"/><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/><reference ref_id="5_59"/><reference ref_id="5_61"/></collection>
 </item>
-<item id="3_96" class="Strain">
-<attribute name="CGCReceived" value="2005-04-05"/>
-<attribute name="genotype" value="rmIs132 I."/>
+<item id="5_35" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00145428"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_58"/><reference ref_id="3_64"/></collection>
+</item>
+<item id="3_26" class="Strain">
+<attribute name="CGCReceived" value="2014-04-25"/>
+<attribute name="genotype" value="glp-1(e2141) III; uthEx649."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="mutagen" value="Gamma Rays"/>
-<attribute name="outcrossed" value="x5"/>
-<attribute name="primaryIdentifier" value="AM140"/>
-<attribute name="remark" value="rmIs132 [unc-54p::Q35::YFP]. AM140 animals show a Q35::YFP progressive transition from soluble to aggregated as they age."/>
+<attribute name="madeBy" value="WBPerson18908"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGD1047"/>
+<attribute name="remark" value="uthEx649 [rpn-6p::tdTomato + rol-6(su1006)]. Temperature-sensitive. Maintain at 15C; sterile at 25C. Rollers. Pick rollers to maintain array. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_120"/></collection>
+<collection name="genes"><reference ref_id="4_10"/></collection>
+<collection name="variations"><reference ref_id="5_8"/></collection>
 </item>
 <item id="3_40" class="Strain">
 <attribute name="primaryIdentifier" value="AGK339"/>
@@ -274,30 +196,18 @@
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="5_111" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00241620"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_88"/></collection>
-</item>
-<item id="5_71" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00143722"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_59"/></collection>
-</item>
-<item id="3_18" class="Strain">
-<attribute name="CGCReceived" value="2013-11-22"/>
-<attribute name="genotype" value="rrf-3(b26) II; fem-1(hc17) IV; uthEx557."/>
+<item id="3_71" class="Strain">
+<attribute name="CGCReceived" value="2012-05-01"/>
+<attribute name="genotype" value="unc-119(ed3) III; daf-12(rh61rh411) X."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson18908"/>
-<attribute name="outcrossed" value="x"/>
-<attribute name="primaryIdentifier" value="AGD886"/>
-<attribute name="remark" value="uthEx557 [sur-5p::rpn-6 + myo-3p::GFP]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
+<attribute name="madeBy" value="WBPerson4598"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="ALF3"/>
+<attribute name="remark" value="Daf-d. Unc."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_19"/><reference ref_id="4_20"/></collection>
-<collection name="variations"><reference ref_id="5_18"/><reference ref_id="5_19"/></collection>
+<collection name="genes"><reference ref_id="4_62"/><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/><reference ref_id="5_59"/><reference ref_id="5_61"/></collection>
 </item>
 <item id="3_95" class="Strain">
 <attribute name="CGCReceived" value="2005-04-05"/>
@@ -310,11 +220,20 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="5_35" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00145093"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<item id="4_49" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00002297"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_30"/><reference ref_id="3_34"/><reference ref_id="3_35"/><reference ref_id="3_36"/><reference ref_id="3_37"/><reference ref_id="3_44"/><reference ref_id="3_45"/><reference ref_id="3_46"/><reference ref_id="3_66"/><reference ref_id="3_67"/><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_75"/><reference ref_id="3_78"/></collection>
+<collection name="strains"><reference ref_id="3_64"/></collection>
+</item>
+<item id="3_84" class="Strain">
+<attribute name="genotype" value="hgo-1(baf2) I."/>
+<attribute name="laboratory" value="ALF"/>
+<attribute name="primaryIdentifier" value="ALF104"/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_78"/></collection>
+<collection name="variations"><reference ref_id="5_75"/></collection>
 </item>
 <item id="3_29" class="Strain">
 <attribute name="CGCReceived" value="2015-05-28"/>
@@ -327,19 +246,37 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_63" class="Strain">
-<attribute name="CGCReceived" value="2005-10-26"/>
-<attribute name="genotype" value="sdn-1(zh20) X."/>
+<item id="3_94" class="Strain">
+<attribute name="CGCReceived" value="2005-04-05"/>
+<attribute name="genotype" value="rmIs126."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson3021"/>
-<attribute name="mutagen" value="EMS"/>
-<attribute name="outcrossed" value="x6"/>
-<attribute name="primaryIdentifier" value="AH205"/>
-<attribute name="remark" value="Slightly Unc. Variably Egl. zh20 is a deletion in sdn-1. The sequence of the breakpoint is: TTTGCTTCACAC"/>
+<attribute name="mutagen" value="Gamma Rays"/>
+<attribute name="outcrossed" value="x5"/>
+<attribute name="primaryIdentifier" value="AM134"/>
+<attribute name="remark" value="rmIs126 [unc-54p::Q0::YFP]. Diffuse distribution of Q0::YFP throughout the body-wall muscle cells. [NOTE: (04/29/13) Strain is reported as incorrect -- apparently carries 20Q transgene. Working on obtaining a replacement.]"/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_78"/></collection>
-<collection name="variations"><reference ref_id="5_78"/></collection>
+<collection name="genes"><reference ref_id="4_85"/></collection>
+</item>
+<item id="4_35" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00001515"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_58"/><reference ref_id="3_64"/></collection>
+</item>
+<item id="3_59" class="Strain">
+<attribute name="CGCReceived" value="2000-07-24"/>
+<attribute name="genotype" value="apr-1(zh10) unc-29(e1072) I; zhEx11."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson232"/>
+<attribute name="mutagen" value="EMS"/>
+<attribute name="outcrossed" value="x6"/>
+<attribute name="primaryIdentifier" value="AH75"/>
+<attribute name="remark" value="zhEx11[apr-1(+) + sur-5::GFP]. Unc. Segregates dead eggs that have lost the rescuing array."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_37"/><reference ref_id="4_39"/></collection>
+<collection name="variations"><reference ref_id="5_37"/><reference ref_id="5_39"/></collection>
 </item>
 <item id="6_1" class="SOTerm">
 <attribute name="name" value="gene"/>
@@ -361,65 +298,54 @@
 <attribute name="primaryIdentifier" value="AM470"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_43" class="Strain">
-<attribute name="CGCReceived" value="2013-11-20"/>
-<attribute name="genotype" value="zfp-1(ok554) III; armIs9."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="outcrossed" value="x2"/>
-<attribute name="primaryIdentifier" value="AGK370"/>
-<attribute name="remark" value="armIs9 [zfp-1(long isoform)::FLAG::GFP + (pRF4) rol-6(su1006)]. Rollers. The fosmid-based armIs9 transgene rescues zfp-1(ok554)/nDf17 lethality. Ubiquitous nuclear localization of zfp-1(long isoform)::FLAG::GFP is observed in somatic cells in all developmental stages, but is silenced in the germline. See AGK26 for germline-expressing zfp-1::GFP. Reference: Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_44"/></collection>
-<collection name="variations"><reference ref_id="5_43"/></collection>
-</item>
-<item id="3_93" class="Strain">
-<attribute name="laboratory" value="AM"/>
-<attribute name="primaryIdentifier" value="AM102"/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_117"/></collection>
-</item>
-<item id="4_70" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00000156"/>
+<item id="4_46" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00004749"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_59"/></collection>
+<collection name="strains"><reference ref_id="3_63"/></collection>
 </item>
-<item id="3_26" class="Strain">
-<attribute name="CGCReceived" value="2014-04-25"/>
-<attribute name="genotype" value="glp-1(e2141) III; uthEx649."/>
+<item id="3_49" class="Strain">
+<attribute name="CGCReceived" value="2013-12-16"/>
+<attribute name="genotype" value="zdIs13 IV; pak-1(ok448) X; armEx252."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson18908"/>
+<attribute name="madeBy" value="WBPerson9913"/>
 <attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGD1047"/>
-<attribute name="remark" value="uthEx649 [rpn-6p::tdTomato + rol-6(su1006)]. Temperature-sensitive. Maintain at 15C; sterile at 25C. Rollers. Pick rollers to maintain array. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
+<attribute name="primaryIdentifier" value="AGK640"/>
+<attribute name="remark" value="zdIs13 [tph-1p::GFP] IV. armEx252 [dpy-7p::pak-1::tagRFP + myo-2::GFP]. Pick animals with GFP+ pharynx to maintain. armEx252 rescues the pak-1(ok480) HSN undermigration phenotype. pak-1::tagRFP is expressed in the hypodermal tissue throughout development and adulthood. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_28"/></collection>
-<collection name="variations"><reference ref_id="5_27"/></collection>
+<collection name="genes"><reference ref_id="4_32"/></collection>
+<collection name="variations"><reference ref_id="5_32"/></collection>
 </item>
-<item id="4_28" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00001609"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<item id="5_12" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00089216"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_24"/><reference ref_id="3_25"/><reference ref_id="3_26"/><reference ref_id="3_27"/></collection>
+<collection name="strains"><reference ref_id="3_27"/><reference ref_id="3_50"/></collection>
 </item>
-<item id="3_37" class="Strain">
-<attribute name="CGCReceived" value="2013-11-20"/>
-<attribute name="genotype" value="zfp-1(ok554) unc-119(ed3) III; armEx14."/>
+<item id="3_92" class="Strain">
+<attribute name="CGCReceived" value="2011-01-06"/>
+<attribute name="genotype" value="rmIs110."/>
 <attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson3267"/>
+<attribute name="mutagen" value="Gamma irradiation"/>
 <attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK280"/>
-<attribute name="remark" value="armEx14 [PHD1-PHD2::FLAG + zfp-1(short isoform) + unc-119(+)]. Pick non-Unc animals to maintain. The fosmid-based armEx14 transgene rescues zfp-1(ok554)/nDf17 lethality. Reference: Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015."/>
+<attribute name="primaryIdentifier" value="AM101"/>
+<attribute name="remark" value="rmIs110 [F25B3.3p::Q40::YFP]. Pan-neuronal YFP expression. Reference: Gidalevitz T, et al., Science. 2006 Mar 10;311(5766):1471-4."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/><reference ref_id="4_44"/></collection>
-<collection name="variations"><reference ref_id="5_43"/><reference ref_id="5_35"/></collection>
+<collection name="genes"><reference ref_id="4_82"/></collection>
 </item>
 <item id="3_77" class="Strain">
 <attribute name="primaryIdentifier" value="ALF72"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_82" class="Strain">
+<attribute name="laboratory" value="ALF"/>
+<attribute name="primaryIdentifier" value="ALF102"/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_72"/></collection>
 </item>
 <item id="3_51" class="Strain">
 <attribute name="primaryIdentifier" value="AGK688"/>
@@ -437,42 +363,79 @@
 <attribute name="primaryIdentifier" value="AGD638"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_68" class="Strain">
-<attribute name="laboratory" value="AK"/>
-<attribute name="primaryIdentifier" value="AK100"/>
+<item id="5_47" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00142975"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_64"/><reference ref_id="3_65"/></collection>
+</item>
+<item id="3_35" class="Strain">
+<attribute name="CGCReceived" value="2014-12-16"/>
+<attribute name="genotype" value="unc-119(ed3) III; niDf199 IV; armEx58."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGK233"/>
+<attribute name="remark" value="armEx58 [WRM0611aH08-Del8mer + unc-119(+)]. Pick non-Unc to maintain. This strain contains a transgenic array that expresses a derivative WRM0611aH08 fosmid. The WRM0611aH08 fosmid contains the niDF199 locus (around 4 kb) that is deleted in the natural C. elegans isolate strain JU258. JU258 worms lack specific 21U-RNAs normally present in N2 worms due to this deletion of the niDF199 locus. This derivative fosmid construct lacks the upstream 8-mer motif (CTGTTTCA) next to 21U-3372. The expression of this individual 21U-RNA is lost in transgenic animals. unc-119(ed3) was crossed into JU258, the niDf199IV deletion was confirmed by PCR, and these Unc worms were used for bombardment. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_87"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/></collection>
+</item>
+<item id="3_78" class="Strain">
+<attribute name="CGCReceived" value="2012-05-01"/>
+<attribute name="genotype" value="unc-119(ed3) III; daf-12(rh61rh411) X; bafIs62."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson14558"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="ALF82"/>
+<attribute name="remark" value="bafIs62 [lin-42p::GFP + unc-119(+)]. lin-42p::GFP reporter consists of 2 kb upstream of lin-42a isoform subcloned into modified pPD95.75 vector also carrying unc-119(+). Array was crossed into strain ALF3 to create ALF82. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_62"/><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/><reference ref_id="5_59"/><reference ref_id="5_61"/></collection>
 </item>
 <item id="3_99" class="Strain">
 <attribute name="primaryIdentifier" value="AM265"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_46" class="Strain">
-<attribute name="CGCReceived" value="2014-12-16"/>
-<attribute name="genotype" value="armSi1 II; unc-119(ed3) III."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson10009"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK541"/>
-<attribute name="remark" value="armSi1 [mex5p::unc-130::GFP::tbb-2 3'UTR + Cbr-unc-119(+)] II. GFP expression from transgene is observed in the germline. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
+<item id="5_2" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00000354"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_53"/><reference ref_id="5_35"/></collection>
+<collection name="strains"><reference ref_id="3_17"/><reference ref_id="3_18"/></collection>
 </item>
-<item id="3_62" class="Strain">
-<attribute name="CGCReceived" value="2003-12-16"/>
-<attribute name="genotype" value="sra-13(zh13) II."/>
+<item id="3_18" class="Strain">
+<attribute name="CGCReceived" value="2013-11-22"/>
+<attribute name="genotype" value="rrf-3(b26) II; fem-1(hc17) IV; uthEx557."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="mutagen" value="EMS"/>
-<attribute name="outcrossed" value="x8"/>
-<attribute name="primaryIdentifier" value="AH159"/>
-<attribute name="remark" value="sra-13(zh13) mutants display stronger chemotaxis to limiting concentrations of isoamylalcohol and diacetyl than WT animals. Deletion allele. 396 bp of 5' promoter sequence and all but the last exon are removed; probably a null allele."/>
+<attribute name="madeBy" value="WBPerson18908"/>
+<attribute name="outcrossed" value="x"/>
+<attribute name="primaryIdentifier" value="AGD886"/>
+<attribute name="remark" value="uthEx557 [sur-5p::rpn-6 + myo-3p::GFP]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_76"/></collection>
-<collection name="variations"><reference ref_id="5_76"/></collection>
+<collection name="genes"><reference ref_id="4_4"/><reference ref_id="4_6"/></collection>
+<collection name="variations"><reference ref_id="5_2"/><reference ref_id="5_4"/></collection>
+</item>
+<item id="3_81" class="Strain">
+<attribute name="laboratory" value="ALF"/>
+<attribute name="primaryIdentifier" value="ALF101"/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_72"/></collection>
+</item>
+<item id="3_25" class="Strain">
+<attribute name="CGCReceived" value="2013-11-22"/>
+<attribute name="genotype" value="glp-1(e2141) III; xzEx3."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson18908"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGD1033"/>
+<attribute name="remark" value="xzEx3 [unc-54p::UbG76V::Dendra2]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_10"/></collection>
+<collection name="variations"><reference ref_id="5_8"/></collection>
 </item>
 <item id="3_13" class="Strain">
 <attribute name="CGCReceived" value="2013-09-18"/>
@@ -485,41 +448,35 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="5_91" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00241609"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_78"/></collection>
-</item>
-<item id="3_36" class="Strain">
-<attribute name="CGCReceived" value="2014-12-16"/>
-<attribute name="genotype" value="unc-119(ed3) III; niDf199 IV; armEx53."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK234"/>
-<attribute name="remark" value="armEx53 [WRM0611aH08 + unc-119(+)]. Pick non-Unc to maintain. unc-119(ed3) was crossed into JU258, the niDf199IV deletion was confirmed by PCR, and these Unc worms were used for bombardment. This strain contains a transgenic array that expresses the WRM0611aH08 fosmid construct. This fosmid contains the niDF199 locus (around 4 kb) that is deleted in the natural C. elegans isolate strain JU258. JU258 worms lack specific 21U-RNAs normally present in N2 worms due to this deletion of the niDF199 locus. Expression of this fosmid construct in JU258 worms restores the expression of the missing 21U-RNAs in the germline, as measured by RT-qPCR. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/></collection>
-</item>
-<item id="5_27" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00144590"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_24"/><reference ref_id="3_25"/><reference ref_id="3_26"/><reference ref_id="3_27"/></collection>
-</item>
-<item id="5_104" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00000435"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_83"/></collection>
-</item>
-<item id="4_117" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00009100"/>
+<item id="4_78" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00001843"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_92"/><reference ref_id="3_93"/></collection>
+<collection name="strains"><reference ref_id="3_84"/></collection>
+</item>
+<item id="3_45" class="Strain">
+<attribute name="genotype" value="unc-119(ed3) III; armEx199."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGK537"/>
+<attribute name="remark" value="armEx199 [cdl-1p::cdl-1::GFP + unc-119(+)]. Pick non-Unc to maintain. Nuclear localization of CDL-1::GFP in the germline and early embryos; strong enrichement of CDL-1::GFP in the nuclei of developing oocytes. Reference: Avgousti DC, et al. EMBO J. 2012 Oct 3;31(19):3821-32."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/></collection>
+</item>
+<item id="3_75" class="Strain">
+<attribute name="CGCReceived" value="2012-05-01"/>
+<attribute name="genotype" value="unc-119(ed3) III; bafIs63."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson14558"/>
+<attribute name="outcrossed" value="x1"/>
+<attribute name="primaryIdentifier" value="ALF63"/>
+<attribute name="remark" value="bafIs63 [lin-42p(mut)::GFP + unc-119(+)]. lin-42p(mut)::GFP reporter consists of 2 kb upstream of lin-42a isoform subcloned into modified pPD95.75 vector also carrying unc-119(+); all potential DAF-12 binding sites have been mutated. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/></collection>
 </item>
 <item id="3_33" class="Strain">
 <attribute name="primaryIdentifier" value="AGK128"/>
@@ -536,35 +493,59 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="4_23" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00006975"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_37"/><reference ref_id="3_42"/><reference ref_id="3_43"/></collection>
+</item>
 <item id="3_86" class="Strain">
 <attribute name="primaryIdentifier" value="ALF115"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="4_17" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00006843"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_30"/><reference ref_id="3_34"/><reference ref_id="3_35"/><reference ref_id="3_36"/><reference ref_id="3_37"/><reference ref_id="3_44"/><reference ref_id="3_45"/><reference ref_id="3_46"/><reference ref_id="3_66"/><reference ref_id="3_67"/><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_75"/><reference ref_id="3_78"/></collection>
+</item>
+<item id="4_30" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00000913"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_47"/></collection>
+</item>
+<item id="5_32" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00091739"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_49"/></collection>
+</item>
+<item id="3_93" class="Strain">
+<attribute name="laboratory" value="AM"/>
+<attribute name="primaryIdentifier" value="AM102"/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_82"/></collection>
+</item>
+<item id="5_41" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00275471"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_60"/><reference ref_id="3_65"/></collection>
+</item>
 <item id="1_1" class="DataSource">
 <attribute name="name" value="AceDB XML"/>
 </item>
-<item id="3_92" class="Strain">
-<attribute name="CGCReceived" value="2011-01-06"/>
-<attribute name="genotype" value="rmIs110."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson3267"/>
-<attribute name="mutagen" value="Gamma irradiation"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AM101"/>
-<attribute name="remark" value="rmIs110 [F25B3.3p::Q40::YFP]. Pan-neuronal YFP expression. Reference: Gidalevitz T, et al., Science. 2006 Mar 10;311(5766):1471-4."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
+<item id="5_8" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00144590"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_117"/></collection>
+<collection name="strains"><reference ref_id="3_24"/><reference ref_id="3_25"/><reference ref_id="3_26"/><reference ref_id="3_27"/></collection>
 </item>
 <item id="3_28" class="Strain">
 <attribute name="primaryIdentifier" value="AGD1079"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="5_70" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00275469"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_59"/></collection>
 </item>
 <item id="3_19" class="Strain">
 <attribute name="primaryIdentifier" value="AGD925"/>
@@ -594,44 +575,23 @@
 <attribute name="primaryIdentifier" value="AGK336"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_30" class="Strain">
-<attribute name="CGCReceived" value="2013-11-20"/>
-<attribute name="genotype" value="unc-119(ed3) III; armEx5."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK26"/>
-<attribute name="remark" value="armEx5 [zfp-1(fosmid)::GFP + unc-119(+)]. Pick non-Unc to maintain. Fosmid-based zfp-1::GFP transgene fully rescues stress-sensitivity and reduced lifespan in zfp-1(ok554) homozygotes. Nuclear expression of zfp-1::GFP is observed ubiquitously in somatic cells in all developmental stages; high levels of GFP expression is observed in oocytes with lower levels of expression in the distal germline. References: Mansisidor AR, et al. PLoS Genet. 2011 Sep;7(9):e1002299. Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
+<item id="4_41" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00003043"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/></collection>
+<collection name="strains"><reference ref_id="3_60"/><reference ref_id="3_61"/><reference ref_id="3_65"/></collection>
 </item>
-<item id="3_64" class="Strain">
-<attribute name="CGCReceived" value="2005-12-27"/>
-<attribute name="genotype" value="unc-4(e120) ect-2(zh8) II; gap-1(ga133) X."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson3021"/>
-<attribute name="mutagen" value="EMS"/>
-<attribute name="outcrossed" value="x3"/>
-<attribute name="primaryIdentifier" value="AH286"/>
-<attribute name="remark" value="Muv and Unc. Semi-dominant mutation in ect-2 (previously called let-21)."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
+<item id="5_15" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00145093"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_68"/><reference ref_id="4_80"/><reference ref_id="4_81"/></collection>
-<collection name="variations"><reference ref_id="5_80"/><reference ref_id="5_81"/><reference ref_id="5_68"/></collection>
+<collection name="strains"><reference ref_id="3_30"/><reference ref_id="3_34"/><reference ref_id="3_35"/><reference ref_id="3_36"/><reference ref_id="3_37"/><reference ref_id="3_44"/><reference ref_id="3_45"/><reference ref_id="3_46"/><reference ref_id="3_66"/><reference ref_id="3_67"/><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_75"/><reference ref_id="3_78"/></collection>
 </item>
-<item id="3_61" class="Strain">
-<attribute name="CGCReceived" value="2001-05-21"/>
-<attribute name="genotype" value="zhIs4 III."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson2597"/>
-<attribute name="mutagen" value="Gamma Rays"/>
-<attribute name="outcrossed" value="x5"/>
-<attribute name="primaryIdentifier" value="AH142"/>
-<attribute name="remark" value="zhIs4 [lip-1::GFP] III. lip-1::GFP transcriptional reporter expression is upregulated in the secondary VPCs P5.p and P7.p of early L3 animals."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
+<item id="4_62" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00000908"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_73"/></collection>
+<collection name="strains"><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_78"/></collection>
 </item>
 <item id="3_12" class="Strain">
 <attribute name="CGCReceived" value="2013-11-22"/>
@@ -644,18 +604,11 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_67" class="Strain">
-<attribute name="CGCReceived" value="2016-02-18"/>
-<attribute name="genotype" value="unc-119(ed3) III; zhIs38 IV."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="mutagen" value="Bombardment"/>
-<attribute name="outcrossed" value="x2"/>
-<attribute name="primaryIdentifier" value="AH1779"/>
-<attribute name="remark" value="zhIs38 [let-23::GFP + unc-119(+)] IV. zhIs38 resuces let-23(sy1) and recapitulates LET-23 anitbody staining in VPCs. let-23::GFP transgene is expressed at levels similar to endogenous LET-23. Reference: Haag A, et al. PLoS Genet. 2014 May 1;10(5):e1004341."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
+<item id="5_27" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar02141399"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/></collection>
+<collection name="strains"><reference ref_id="3_46"/></collection>
 </item>
 <item id="3_31" class="Strain">
 <attribute name="primaryIdentifier" value="AGK29"/>
@@ -664,19 +617,6 @@
 <item id="2_1" class="DataSet">
 <attribute name="name" value="WormBaseAcedbConverter"/>
 <reference name="dataSource" ref_id="1_1"/>
-</item>
-<item id="3_17" class="Strain">
-<attribute name="CGCReceived" value="2013-09-18"/>
-<attribute name="genotype" value="rrf-3(b26) II; fem-1(hc17) IV; uthEx633."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson18908"/>
-<attribute name="outcrossed" value="x"/>
-<attribute name="primaryIdentifier" value="AGD885"/>
-<attribute name="remark" value="uthEx633 [myo-3p::GFP]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_19"/><reference ref_id="4_20"/></collection>
-<collection name="variations"><reference ref_id="5_18"/><reference ref_id="5_19"/></collection>
 </item>
 <item id="3_4" class="Strain">
 <attribute name="CGCReceived" value="2013-09-18"/>
@@ -689,96 +629,38 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="5_59" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00241522"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_78"/></collection>
+</item>
 <item id="3_70" class="Strain">
 <attribute name="primaryIdentifier" value="AL132"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_34" class="Strain">
-<attribute name="CGCReceived" value="2013-11-20"/>
-<attribute name="genotype" value="unc-119(ed3) III; zdIs13 IV; armIs5."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK192"/>
-<attribute name="remark" value="zdIs13 [tph-1p::GFP] IV. armIs5 [zfp-1(fosmid)::FLAG + unc-119(+)]. Integrated zfp-1 transgene expressed in the germline. Fosmid-based zfp-1::FLAG transgene fully rescues stress-sensitivity and reduced lifespan in zfp-1(ok554) homozygotes. ChIP with anti-FLAG antibody detects ZFP-1::FLAG localization to promoters of highly expressed genes. References: Mansisidor AR, et al. PLoS Genet. 2011 Sep;7(9):e1002299. Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015. Cecere G, et al. Mol Cell. 2013 Jun 27;50(6):894-907."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
+<item id="4_39" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00006765"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/></collection>
-</item>
-<item id="5_106" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00000436"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_84"/></collection>
+<collection name="strains"><reference ref_id="3_59"/></collection>
 </item>
 <item id="3_41" class="Strain">
 <attribute name="primaryIdentifier" value="AGK343"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_20" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00004510"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_17"/><reference ref_id="3_18"/></collection>
-</item>
-<item id="3_73" class="Strain">
-<attribute name="CGCReceived" value="2012-05-01"/>
-<attribute name="genotype" value="unc-119(ed3) III; daf-12(rh61rh411) X; bafIs9."/>
+<item id="3_61" class="Strain">
+<attribute name="CGCReceived" value="2001-05-21"/>
+<attribute name="genotype" value="zhIs4 III."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson4598"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="ALF9"/>
-<attribute name="remark" value="bafIs9 [daf-12::TAP fosmid carrying unc-119(+)]; rescues both daf-12 and unc-119. TAP tag insertedinto daf-12 fosmid. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179."/>
+<attribute name="madeBy" value="WBPerson2597"/>
+<attribute name="mutagen" value="Gamma Rays"/>
+<attribute name="outcrossed" value="x5"/>
+<attribute name="primaryIdentifier" value="AH142"/>
+<attribute name="remark" value="zhIs4 [lip-1::GFP] III. lip-1::GFP transcriptional reporter expression is upregulated in the secondary VPCs P5.p and P7.p of early L3 animals."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_91"/><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/><reference ref_id="5_90"/><reference ref_id="5_91"/></collection>
-</item>
-<item id="5_18" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00000354"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_17"/><reference ref_id="3_18"/></collection>
-</item>
-<item id="3_84" class="Strain">
-<attribute name="genotype" value="hgo-1(baf2) I."/>
-<attribute name="laboratory" value="ALF"/>
-<attribute name="primaryIdentifier" value="ALF104"/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_107"/></collection>
-<collection name="variations"><reference ref_id="5_106"/></collection>
-</item>
-<item id="3_42" class="Strain">
-<attribute name="CGCReceived" value="2014-12-16"/>
-<attribute name="genotype" value="zfp-1(ok554) III; armIs8."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="outcrossed" value="x"/>
-<attribute name="primaryIdentifier" value="AGK369"/>
-<attribute name="remark" value="armIs8 [zfp-1(short isoform)::FLAG::GFP + (pRF4) rol-6(su1006)]. Rollers. The fosmid-based armIs8 transgene rescues the protruded vulva phenotype of zfp-1(ok554). Ubiquitous nuclear localization of zfp-1(long isoform)::FLAG::GFP is observed in somatic cells in all developmental stages, but is silenced in the germline. See AGK26 for germline-expressing zfp-1::GFP. Reference: Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_44"/></collection>
-<collection name="variations"><reference ref_id="5_43"/></collection>
-</item>
-<item id="3_35" class="Strain">
-<attribute name="CGCReceived" value="2014-12-16"/>
-<attribute name="genotype" value="unc-119(ed3) III; niDf199 IV; armEx58."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK233"/>
-<attribute name="remark" value="armEx58 [WRM0611aH08-Del8mer + unc-119(+)]. Pick non-Unc to maintain. This strain contains a transgenic array that expresses a derivative WRM0611aH08 fosmid. The WRM0611aH08 fosmid contains the niDF199 locus (around 4 kb) that is deleted in the natural C. elegans isolate strain JU258. JU258 worms lack specific 21U-RNAs normally present in N2 worms due to this deletion of the niDF199 locus. This derivative fosmid construct lacks the upstream 8-mer motif (CTGTTTCA) next to 21U-3372. The expression of this individual 21U-RNA is lost in transgenic animals. unc-119(ed3) was crossed into JU258, the niDf199IV deletion was confirmed by PCR, and these Unc worms were used for bombardment. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/></collection>
-</item>
-<item id="3_69" class="Strain">
-<attribute name="laboratory" value="AK"/>
-<attribute name="primaryIdentifier" value="AK103"/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_87"/></collection>
+<collection name="genes"><reference ref_id="4_41"/></collection>
 </item>
 <item id="3_38" class="Strain">
 <attribute name="primaryIdentifier" value="AGK335"/>
@@ -799,11 +681,12 @@
 <attribute name="primaryIdentifier" value="AGK690"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_120" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00006789"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<item id="3_68" class="Strain">
+<attribute name="laboratory" value="AK"/>
+<attribute name="primaryIdentifier" value="AK100"/>
+<attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_94"/><reference ref_id="3_96"/><reference ref_id="3_97"/></collection>
+<collection name="genes"><reference ref_id="4_59"/></collection>
 </item>
 <item id="3_20" class="Strain">
 <attribute name="CGCReceived" value="2015-05-28"/>
@@ -827,35 +710,6 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_59" class="Strain">
-<attribute name="CGCReceived" value="2000-07-24"/>
-<attribute name="genotype" value="apr-1(zh10) unc-29(e1072) I; zhEx11."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson232"/>
-<attribute name="mutagen" value="EMS"/>
-<attribute name="outcrossed" value="x6"/>
-<attribute name="primaryIdentifier" value="AH75"/>
-<attribute name="remark" value="zhEx11[apr-1(+) + sur-5::GFP]. Unc. Segregates dead eggs that have lost the rescuing array."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_70"/><reference ref_id="4_71"/></collection>
-<collection name="variations"><reference ref_id="5_70"/><reference ref_id="5_71"/></collection>
-</item>
-<item id="3_83" class="Strain">
-<attribute name="genotype" value="F42D1.2(baf1) X."/>
-<attribute name="laboratory" value="ALF"/>
-<attribute name="primaryIdentifier" value="ALF103"/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_105"/></collection>
-<collection name="variations"><reference ref_id="5_104"/></collection>
-</item>
-<item id="4_68" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00001515"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_58"/><reference ref_id="3_64"/></collection>
-</item>
 <item id="3_15" class="Strain">
 <attribute name="CGCReceived" value="2013-09-18"/>
 <attribute name="genotype" value="rmIs110; uthEx633."/>
@@ -867,7 +721,20 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_19" class="Gene">
+<item id="3_73" class="Strain">
+<attribute name="CGCReceived" value="2012-05-01"/>
+<attribute name="genotype" value="unc-119(ed3) III; daf-12(rh61rh411) X; bafIs9."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson4598"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="ALF9"/>
+<attribute name="remark" value="bafIs9 [daf-12::TAP fosmid carrying unc-119(+)]; rescues both daf-12 and unc-119. TAP tag insertedinto daf-12 fosmid. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_62"/><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/><reference ref_id="5_59"/><reference ref_id="5_61"/></collection>
+</item>
+<item id="4_4" class="Gene">
 <attribute name="primaryIdentifier" value="WBGene00001411"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -877,129 +744,173 @@
 <attribute name="primaryIdentifier" value="AGK689"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_78" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00004749"/>
+<item id="5_43" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00275470"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_62"/></collection>
+</item>
+<item id="3_66" class="Strain">
+<attribute name="CGCReceived" value="2016-02-18"/>
+<attribute name="genotype" value="unc-119(ed3) III; zhIs35 I."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="mutagen" value="Bombardment"/>
+<attribute name="outcrossed" value="x2"/>
+<attribute name="primaryIdentifier" value="AH1747"/>
+<attribute name="remark" value="zhIs35 [let-23::GFP + unc-119(+)] I. zhIs35 resuces let-23(sy1) and recapitulates LET-23 anitbody staining in VPCs. let-23::GFP transgene expression is higher in this strain than in AH1779 unc-119(ed3) III; zhIs38. Reference: Haag A, et al. PLoS Genet. 2014 May 1;10(5):e1004341."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/></collection>
+</item>
+<item id="3_97" class="Strain">
+<attribute name="CGCReceived" value="2005-04-05"/>
+<attribute name="genotype" value="rmIs133."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="mutagen" value="Gamma Rays"/>
+<attribute name="outcrossed" value="x5"/>
+<attribute name="primaryIdentifier" value="AM141"/>
+<attribute name="remark" value="rmIs133 [unc-54p::Q40::YFP]. AM141 animals show a soluble Q40::YFP distribution in body wall muscle cells immediately after hatching. As these worms age the rapid formation of foci is observed. When they reach adulthood, AM141 animals show an entirely Q40::YFP aggregated phenotype."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_85"/></collection>
+</item>
+<item id="3_30" class="Strain">
+<attribute name="CGCReceived" value="2013-11-20"/>
+<attribute name="genotype" value="unc-119(ed3) III; armEx5."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGK26"/>
+<attribute name="remark" value="armEx5 [zfp-1(fosmid)::GFP + unc-119(+)]. Pick non-Unc to maintain. Fosmid-based zfp-1::GFP transgene fully rescues stress-sensitivity and reduced lifespan in zfp-1(ok554) homozygotes. Nuclear expression of zfp-1::GFP is observed ubiquitously in somatic cells in all developmental stages; high levels of GFP expression is observed in oocytes with lower levels of expression in the distal germline. References: Mansisidor AR, et al. PLoS Genet. 2011 Sep;7(9):e1002299. Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/></collection>
+</item>
+<item id="3_58" class="Strain">
+<attribute name="CGCReceived" value="1997-12-08"/>
+<attribute name="genotype" value="gap-1(ga133) X."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson232"/>
+<attribute name="mutagen" value="Psoralen"/>
+<attribute name="outcrossed" value="x4"/>
+<attribute name="primaryIdentifier" value="AH12"/>
+<attribute name="remark" value="Null allele."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_35"/></collection>
+<collection name="variations"><reference ref_id="5_35"/></collection>
+</item>
+<item id="5_73" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00000435"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_83"/></collection>
+</item>
+<item id="4_10" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00001609"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_24"/><reference ref_id="3_25"/><reference ref_id="3_26"/><reference ref_id="3_27"/></collection>
+</item>
+<item id="3_27" class="Strain">
+<attribute name="CGCReceived" value="2014-04-25"/>
+<attribute name="genotype" value="daf-16(mu86) I; glp-1(e2141) III; uthEx649."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson18908"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGD1048"/>
+<attribute name="remark" value="uthEx649 [rpn-6p::tdTomato + rol-6(su1006)]. Temperature-sensitive. Maintain at 15C; sterile at 25C. Rollers. Pick rollers to maintain array. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_14"/><reference ref_id="4_10"/></collection>
+<collection name="variations"><reference ref_id="5_12"/><reference ref_id="5_8"/></collection>
+</item>
+<item id="3_60" class="Strain">
+<attribute name="CGCReceived" value="2001-05-21"/>
+<attribute name="genotype" value="lip-1(zh15) IV."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson2597"/>
+<attribute name="mutagen" value="EMS"/>
+<attribute name="outcrossed" value="x8"/>
+<attribute name="primaryIdentifier" value="AH102"/>
+<attribute name="remark" value="Deletion allele which removes exons 2 to 6 of lip-1 (C05B10.1). Incompletely penetrant ovulation defect."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_41"/></collection>
+<collection name="variations"><reference ref_id="5_41"/></collection>
+</item>
+<item id="5_45" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00275474"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="strains"><reference ref_id="3_63"/></collection>
 </item>
-<item id="4_58" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00003911"/>
+<item id="4_76" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00009628"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_49"/></collection>
+<collection name="strains"><reference ref_id="3_83"/></collection>
 </item>
-<item id="5_83" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00275477"/>
+<item id="5_30" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00091768"/>
 <reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_65"/></collection>
-</item>
-<item id="3_47" class="Strain">
-<attribute name="CGCReceived" value="2013-12-16"/>
-<attribute name="genotype" value="otIs225 II; daf-18(ok480) IV; armEx218."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson9913"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK573"/>
-<attribute name="remark" value="otIs225 [cat-4::GFP] II. armEx218 [unc-119p::daf-18 + unc-119p::tagRFP + rol-6(su1006)]. Pick Rollers to maintain. Transgenic array expresses DAF-18 from unc-119 pan-neuronal promoter; rescues the HSN undermigration phenotype in daf-18 null mutants. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_55"/></collection>
-<collection name="variations"><reference ref_id="5_55"/></collection>
-</item>
-<item id="3_44" class="Strain">
-<attribute name="CGCReceived" value="2014-12-16"/>
-<attribute name="genotype" value="unc-119(ed3) III; niDf199 IV; armEx196."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson10009"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK532"/>
-<attribute name="remark" value="armEx196 [mex-5p::unc-130::GFP::tbb-2 3'UTR + Cbr-unc-119(+)]. Pick non-Unc to maintain. unc-119(ed3) was crossed into JU258, the niDf199IV deletion was confirmed by PCR, and these Unc worms were used for bombardment. JU258 worms lack specific 21U-RNAs normally present in N2 worms due to deletion of the niDF199 locus. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/></collection>
-</item>
-<item id="3_75" class="Strain">
-<attribute name="CGCReceived" value="2012-05-01"/>
-<attribute name="genotype" value="unc-119(ed3) III; bafIs63."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson14558"/>
-<attribute name="outcrossed" value="x1"/>
-<attribute name="primaryIdentifier" value="ALF63"/>
-<attribute name="remark" value="bafIs63 [lin-42p(mut)::GFP + unc-119(+)]. lin-42p(mut)::GFP reporter consists of 2 kb upstream of lin-42a isoform subcloned into modified pPD95.75 vector also carrying unc-119(+); all potential DAF-12 binding sites have been mutated. Reference: Hochbaum D, et al. PLoS Genet. 2011 Jul;7(7):e1002179."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/></collection>
-</item>
-<item id="4_36" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00006843"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_30"/><reference ref_id="3_34"/><reference ref_id="3_35"/><reference ref_id="3_36"/><reference ref_id="3_37"/><reference ref_id="3_44"/><reference ref_id="3_45"/><reference ref_id="3_46"/><reference ref_id="3_66"/><reference ref_id="3_67"/><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_75"/><reference ref_id="3_78"/></collection>
-</item>
-<item id="4_55" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00000913"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="strains"><reference ref_id="3_47"/></collection>
-</item>
-<item id="4_80" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00002297"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_64"/></collection>
-</item>
-<item id="3_82" class="Strain">
-<attribute name="laboratory" value="ALF"/>
-<attribute name="primaryIdentifier" value="ALF102"/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_101"/></collection>
-</item>
-<item id="4_81" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00006744"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_64"/><reference ref_id="3_65"/></collection>
-</item>
-<item id="5_58" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00091739"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_49"/></collection>
-</item>
-<item id="5_80" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00142975"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_64"/><reference ref_id="3_65"/></collection>
 </item>
 <item id="3_1" class="Strain">
 <attribute name="primaryIdentifier" value="AGD568"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_25" class="Strain">
+<item id="4_44" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00005039"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_62"/></collection>
+</item>
+<item id="4_85" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00006789"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_94"/><reference ref_id="3_96"/><reference ref_id="3_97"/></collection>
+</item>
+<item id="3_24" class="Strain">
 <attribute name="CGCReceived" value="2013-11-22"/>
-<attribute name="genotype" value="glp-1(e2141) III; xzEx3."/>
+<attribute name="genotype" value="glp-1(e2141) III; xzEx1."/>
 <attribute name="laboratory" value="CGC"/>
 <attribute name="madeBy" value="WBPerson18908"/>
 <attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGD1033"/>
-<attribute name="remark" value="xzEx3 [unc-54p::UbG76V::Dendra2]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
+<attribute name="primaryIdentifier" value="AGD1032"/>
+<attribute name="remark" value="xzEx1 [unc-54p::Dendra2]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_28"/></collection>
-<collection name="variations"><reference ref_id="5_27"/></collection>
+<collection name="genes"><reference ref_id="4_10"/></collection>
+<collection name="variations"><reference ref_id="5_8"/></collection>
 </item>
-<item id="3_81" class="Strain">
-<attribute name="laboratory" value="ALF"/>
-<attribute name="primaryIdentifier" value="ALF101"/>
+<item id="3_67" class="Strain">
+<attribute name="CGCReceived" value="2016-02-18"/>
+<attribute name="genotype" value="unc-119(ed3) III; zhIs38 IV."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="mutagen" value="Bombardment"/>
+<attribute name="outcrossed" value="x2"/>
+<attribute name="primaryIdentifier" value="AH1779"/>
+<attribute name="remark" value="zhIs38 [let-23::GFP + unc-119(+)] IV. zhIs38 resuces let-23(sy1) and recapitulates LET-23 anitbody staining in VPCs. let-23::GFP transgene is expressed at levels similar to endogenous LET-23. Reference: Haag A, et al. PLoS Genet. 2014 May 1;10(5):e1004341."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_101"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/></collection>
+</item>
+<item id="5_39" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00143722"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_59"/></collection>
+</item>
+<item id="5_4" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00087750"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_17"/><reference ref_id="3_18"/></collection>
 </item>
 <item id="3_74" class="Strain">
 <attribute name="CGCReceived" value="2012-05-01"/>
@@ -1013,65 +924,46 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_49" class="Strain">
-<attribute name="CGCReceived" value="2013-12-16"/>
-<attribute name="genotype" value="zdIs13 IV; pak-1(ok448) X; armEx252."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson9913"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGK640"/>
-<attribute name="remark" value="zdIs13 [tph-1p::GFP] IV. armEx252 [dpy-7p::pak-1::tagRFP + myo-2::GFP]. Pick animals with GFP+ pharynx to maintain. armEx252 rescues the pak-1(ok480) HSN undermigration phenotype. pak-1::tagRFP is expressed in the hypodermal tissue throughout development and adulthood. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_58"/></collection>
-<collection name="variations"><reference ref_id="5_58"/></collection>
-</item>
-<item id="4_105" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00009628"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_83"/></collection>
-</item>
 <item id="3_55" class="Strain">
 <attribute name="primaryIdentifier" value="AGK711"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_24" class="Strain">
-<attribute name="CGCReceived" value="2013-11-22"/>
-<attribute name="genotype" value="glp-1(e2141) III; xzEx1."/>
+<item id="4_72" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00019620"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_80"/><reference ref_id="3_81"/><reference ref_id="3_82"/></collection>
+</item>
+<item id="5_52" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00275477"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_65"/></collection>
+</item>
+<item id="3_17" class="Strain">
+<attribute name="CGCReceived" value="2013-09-18"/>
+<attribute name="genotype" value="rrf-3(b26) II; fem-1(hc17) IV; uthEx633."/>
 <attribute name="laboratory" value="CGC"/>
 <attribute name="madeBy" value="WBPerson18908"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="AGD1032"/>
-<attribute name="remark" value="xzEx1 [unc-54p::Dendra2]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
+<attribute name="outcrossed" value="x"/>
+<attribute name="primaryIdentifier" value="AGD885"/>
+<attribute name="remark" value="uthEx633 [myo-3p::GFP]. Maintain at 15C; sterile at 25C. Pick animals with GFP expression in body wall muscle to maintain. Reference: Vilchez D, et al. Nature. 2012 Sep 13;489(7415):263-8."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_28"/></collection>
-<collection name="variations"><reference ref_id="5_27"/></collection>
+<collection name="genes"><reference ref_id="4_4"/><reference ref_id="4_6"/></collection>
+<collection name="variations"><reference ref_id="5_2"/><reference ref_id="5_4"/></collection>
 </item>
-<item id="3_97" class="Strain">
-<attribute name="CGCReceived" value="2005-04-05"/>
-<attribute name="genotype" value="rmIs133."/>
+<item id="3_34" class="Strain">
+<attribute name="CGCReceived" value="2013-11-20"/>
+<attribute name="genotype" value="unc-119(ed3) III; zdIs13 IV; armIs5."/>
 <attribute name="laboratory" value="CGC"/>
-<attribute name="mutagen" value="Gamma Rays"/>
-<attribute name="outcrossed" value="x5"/>
-<attribute name="primaryIdentifier" value="AM141"/>
-<attribute name="remark" value="rmIs133 [unc-54p::Q40::YFP]. AM141 animals show a soluble Q40::YFP distribution in body wall muscle cells immediately after hatching. As these worms age the rapid formation of foci is observed. When they reach adulthood, AM141 animals show an entirely Q40::YFP aggregated phenotype."/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGK192"/>
+<attribute name="remark" value="zdIs13 [tph-1p::GFP] IV. armIs5 [zfp-1(fosmid)::FLAG + unc-119(+)]. Integrated zfp-1 transgene expressed in the germline. Fosmid-based zfp-1::FLAG transgene fully rescues stress-sensitivity and reduced lifespan in zfp-1(ok554) homozygotes. ChIP with anti-FLAG antibody detects ZFP-1::FLAG localization to promoters of highly expressed genes. References: Mansisidor AR, et al. PLoS Genet. 2011 Sep;7(9):e1002299. Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015. Cecere G, et al. Mol Cell. 2013 Jun 27;50(6):894-907."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_120"/></collection>
-</item>
-<item id="5_68" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00145428"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_58"/><reference ref_id="3_64"/></collection>
-</item>
-<item id="5_73" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00275471"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_60"/><reference ref_id="3_65"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/></collection>
 </item>
 <item id="3_65" class="Strain">
 <attribute name="CGCReceived" value="2005-12-27"/>
@@ -1083,8 +975,15 @@
 <attribute name="remark" value="Pvl and weak Muv. Transformation of secondary to primary vulval cell fates."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_73"/><reference ref_id="4_81"/><reference ref_id="4_83"/></collection>
-<collection name="variations"><reference ref_id="5_83"/><reference ref_id="5_80"/><reference ref_id="5_73"/></collection>
+<collection name="genes"><reference ref_id="4_41"/><reference ref_id="4_51"/><reference ref_id="4_55"/></collection>
+<collection name="variations"><reference ref_id="5_52"/><reference ref_id="5_47"/><reference ref_id="5_41"/></collection>
+</item>
+<item id="3_80" class="Strain">
+<attribute name="laboratory" value="ALF"/>
+<attribute name="primaryIdentifier" value="ALF100"/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_72"/></collection>
 </item>
 <item id="3_85" class="Strain">
 <attribute name="primaryIdentifier" value="ALF110"/>
@@ -1093,12 +992,6 @@
 <item id="3_11" class="Strain">
 <attribute name="primaryIdentifier" value="AGD803"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="5_43" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00091841"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_37"/><reference ref_id="3_42"/><reference ref_id="3_43"/></collection>
 </item>
 <item id="3_7" class="Strain">
 <attribute name="CGCReceived" value="2015-05-29"/>
@@ -1111,15 +1004,54 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="3_64" class="Strain">
+<attribute name="CGCReceived" value="2005-12-27"/>
+<attribute name="genotype" value="unc-4(e120) ect-2(zh8) II; gap-1(ga133) X."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson3021"/>
+<attribute name="mutagen" value="EMS"/>
+<attribute name="outcrossed" value="x3"/>
+<attribute name="primaryIdentifier" value="AH286"/>
+<attribute name="remark" value="Muv and Unc. Semi-dominant mutation in ect-2 (previously called let-21)."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_35"/><reference ref_id="4_49"/><reference ref_id="4_51"/></collection>
+<collection name="variations"><reference ref_id="5_47"/><reference ref_id="5_49"/><reference ref_id="5_35"/></collection>
+</item>
+<item id="3_42" class="Strain">
+<attribute name="CGCReceived" value="2014-12-16"/>
+<attribute name="genotype" value="zfp-1(ok554) III; armIs8."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="outcrossed" value="x"/>
+<attribute name="primaryIdentifier" value="AGK369"/>
+<attribute name="remark" value="armIs8 [zfp-1(short isoform)::FLAG::GFP + (pRF4) rol-6(su1006)]. Rollers. The fosmid-based armIs8 transgene rescues the protruded vulva phenotype of zfp-1(ok554). Ubiquitous nuclear localization of zfp-1(long isoform)::FLAG::GFP is observed in somatic cells in all developmental stages, but is silenced in the germline. See AGK26 for germline-expressing zfp-1::GFP. Reference: Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_23"/></collection>
+<collection name="variations"><reference ref_id="5_20"/></collection>
+</item>
 <item id="3_14" class="Strain">
 <attribute name="primaryIdentifier" value="AGD855"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_87" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00002018"/>
+<item id="4_51" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00006744"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_68"/><reference ref_id="3_69"/></collection>
+<collection name="strains"><reference ref_id="3_64"/><reference ref_id="3_65"/></collection>
+</item>
+<item id="5_75" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00000436"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_84"/></collection>
+</item>
+<item id="3_69" class="Strain">
+<attribute name="laboratory" value="AK"/>
+<attribute name="primaryIdentifier" value="AK103"/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_59"/></collection>
 </item>
 <item id="3_90" class="Strain">
 <attribute name="CGCReceived" value="2011-01-06"/>
@@ -1132,15 +1064,28 @@
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="5_19" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00087750"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<item id="4_80" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00016329"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_17"/><reference ref_id="3_18"/></collection>
+<collection name="strains"><reference ref_id="3_88"/></collection>
 </item>
 <item id="3_57" class="Strain">
 <attribute name="primaryIdentifier" value="AGP116"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_44" class="Strain">
+<attribute name="CGCReceived" value="2014-12-16"/>
+<attribute name="genotype" value="unc-119(ed3) III; niDf199 IV; armEx196."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson10009"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGK532"/>
+<attribute name="remark" value="armEx196 [mex-5p::unc-130::GFP::tbb-2 3'UTR + Cbr-unc-119(+)]. Pick non-Unc to maintain. unc-119(ed3) was crossed into JU258, the niDf199IV deletion was confirmed by PCR, and these Unc worms were used for bombardment. JU258 worms lack specific 21U-RNAs normally present in N2 worms due to deletion of the niDF199 locus. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_15"/></collection>
 </item>
 <item id="3_10" class="Strain">
 <attribute name="CGCReceived" value="2015-05-28"/>
@@ -1152,26 +1097,7 @@
 <attribute name="remark" value="uthIs225 [sur5p::hsf-1(CT-Delta)::unc-54 3'UTR + myo-2p::tdTomato::unc-54 3' UTR]. Long-lived, thermotolerant. Small brood size. Reference: Baird NA, et al. Science. 2014 Oct 17;346(6207):360-3."/>
 <attribute name="species" value="Caenorhabditis elegans"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_11"/></collection>
-</item>
-<item id="3_66" class="Strain">
-<attribute name="CGCReceived" value="2016-02-18"/>
-<attribute name="genotype" value="unc-119(ed3) III; zhIs35 I."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="mutagen" value="Bombardment"/>
-<attribute name="outcrossed" value="x2"/>
-<attribute name="primaryIdentifier" value="AH1747"/>
-<attribute name="remark" value="zhIs35 [let-23::GFP + unc-119(+)] I. zhIs35 resuces let-23(sy1) and recapitulates LET-23 anitbody staining in VPCs. let-23::GFP transgene expression is higher in this strain than in AH1779 unc-119(ed3) III; zhIs38. Reference: Haag A, et al. PLoS Genet. 2014 May 1;10(5):e1004341."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/></collection>
-</item>
-<item id="4_32" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00000912"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_27"/><reference ref_id="3_50"/></collection>
+<collection name="genes"><reference ref_id="4_2"/></collection>
 </item>
 <item id="3_22" class="Strain">
 <attribute name="CGCReceived" value="2014-04-25"/>
@@ -1198,6 +1124,26 @@
 <attribute name="primaryIdentifier" value="ALF85"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="3_88" class="Strain">
+<attribute name="CGCReceived" value="2004-10-14"/>
+<attribute name="genotype" value="osr-1(rm1) I."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson3909"/>
+<attribute name="mutagen" value="EMS"/>
+<attribute name="outcrossed" value="x4"/>
+<attribute name="primaryIdentifier" value="AM1"/>
+<attribute name="remark" value="Osmotic stress resistant. Received new stock May 7, 2008."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_80"/></collection>
+<collection name="variations"><reference ref_id="5_77"/></collection>
+</item>
+<item id="4_82" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00009100"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_92"/><reference ref_id="3_93"/></collection>
+</item>
 <item id="3_5" class="Strain">
 <attribute name="primaryIdentifier" value="AGD631"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -1206,35 +1152,89 @@
 <attribute name="primaryIdentifier" value="AGK710"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_71" class="Strain">
-<attribute name="CGCReceived" value="2012-05-01"/>
-<attribute name="genotype" value="unc-119(ed3) III; daf-12(rh61rh411) X."/>
-<attribute name="laboratory" value="CGC"/>
-<attribute name="madeBy" value="WBPerson4598"/>
-<attribute name="outcrossed" value="x0"/>
-<attribute name="primaryIdentifier" value="ALF3"/>
-<attribute name="remark" value="Daf-d. Unc."/>
-<attribute name="species" value="Caenorhabditis elegans"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="4_91"/><reference ref_id="4_36"/></collection>
-<collection name="variations"><reference ref_id="5_35"/><reference ref_id="5_90"/><reference ref_id="5_91"/></collection>
-</item>
-<item id="5_81" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00275468"/>
-<reference name="sequenceOntologyTerm" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_64"/></collection>
-</item>
-<item id="4_83" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00009717"/>
+<item id="4_37" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00000156"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_65"/></collection>
+<collection name="strains"><reference ref_id="3_59"/></collection>
 </item>
-<item id="5_55" class="Allele">
-<attribute name="primaryIdentifier" value="WBVar00091768"/>
+<item id="4_6" class="Gene">
+<attribute name="primaryIdentifier" value="WBGene00004510"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_17"/><reference ref_id="3_18"/></collection>
+</item>
+<item id="3_50" class="Strain">
+<attribute name="CGCReceived" value="2013-12-16"/>
+<attribute name="genotype" value="daf-16(mu86) I; zdIs13 IV; armEx257."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson9913"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGK650"/>
+<attribute name="remark" value="zdIs13 [tph-1p::GFP] IV. armEx257 [dpy-7p::daf-16b::tagRFP + myo-2::GFP]. Pick animals with GFP+ pharynx to maintain. armEx257 rescues the daf-16(mu86) HSN undermigration phenotype. dpy-7p::daf-16b::tagRFP expression is localized to nuclei in hypodermal tissue during the comma, 1.5 and 2-fold stages, becoming cytoplasmic or perinuclear by the 3-fold stage and persisting into adulthood. Reference: Kennedy LM, et al. Cell Rep. 2013 Sep 12;4(5):996-1009."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_14"/></collection>
+<collection name="variations"><reference ref_id="5_12"/></collection>
+</item>
+<item id="5_61" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00241609"/>
 <reference name="sequenceOntologyTerm" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="strains"><reference ref_id="3_47"/></collection>
+<collection name="strains"><reference ref_id="3_71"/><reference ref_id="3_72"/><reference ref_id="3_73"/><reference ref_id="3_78"/></collection>
+</item>
+<item id="3_63" class="Strain">
+<attribute name="CGCReceived" value="2005-10-26"/>
+<attribute name="genotype" value="sdn-1(zh20) X."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson3021"/>
+<attribute name="mutagen" value="EMS"/>
+<attribute name="outcrossed" value="x6"/>
+<attribute name="primaryIdentifier" value="AH205"/>
+<attribute name="remark" value="Slightly Unc. Variably Egl. zh20 is a deletion in sdn-1. The sequence of the breakpoint is: TTTGCTTCACAC"/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_46"/></collection>
+<collection name="variations"><reference ref_id="5_45"/></collection>
+</item>
+<item id="5_37" class="Allele">
+<attribute name="primaryIdentifier" value="WBVar00275469"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="strains"><reference ref_id="3_59"/></collection>
+</item>
+<item id="3_43" class="Strain">
+<attribute name="CGCReceived" value="2013-11-20"/>
+<attribute name="genotype" value="zfp-1(ok554) III; armIs9."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="outcrossed" value="x2"/>
+<attribute name="primaryIdentifier" value="AGK370"/>
+<attribute name="remark" value="armIs9 [zfp-1(long isoform)::FLAG::GFP + (pRF4) rol-6(su1006)]. Rollers. The fosmid-based armIs9 transgene rescues zfp-1(ok554)/nDf17 lethality. Ubiquitous nuclear localization of zfp-1(long isoform)::FLAG::GFP is observed in somatic cells in all developmental stages, but is silenced in the germline. See AGK26 for germline-expressing zfp-1::GFP. Reference: Avgousti DC, et al. Mol Cell Biol. 2013 Mar;33(5):999-1015."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_23"/></collection>
+<collection name="variations"><reference ref_id="5_20"/></collection>
+</item>
+<item id="3_46" class="Strain">
+<attribute name="CGCReceived" value="2014-12-16"/>
+<attribute name="genotype" value="armSi1 II; unc-119(ed3) III."/>
+<attribute name="laboratory" value="CGC"/>
+<attribute name="madeBy" value="WBPerson10009"/>
+<attribute name="outcrossed" value="x0"/>
+<attribute name="primaryIdentifier" value="AGK541"/>
+<attribute name="remark" value="armSi1 [mex5p::unc-130::GFP::tbb-2 3'UTR + Cbr-unc-119(+)] II. GFP expression from transgene is observed in the germline. Reference: Cecere G, et al. Mol Cell. 2012 Sep 14;47(5):734-45."/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_17"/></collection>
+<collection name="variations"><reference ref_id="5_27"/><reference ref_id="5_15"/></collection>
+</item>
+<item id="3_83" class="Strain">
+<attribute name="genotype" value="F42D1.2(baf1) X."/>
+<attribute name="laboratory" value="ALF"/>
+<attribute name="primaryIdentifier" value="ALF103"/>
+<attribute name="species" value="Caenorhabditis elegans"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="4_76"/></collection>
+<collection name="variations"><reference ref_id="5_73"/></collection>
 </item>
 </items>
