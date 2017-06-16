@@ -20,10 +20,10 @@ import java.io.InputStreamReader;
  */
 public final class ModelFactory
 {
-
     private ModelFactory() {
         // Hidden.
     }
+
     /**
      * Name of the key under which to store the serialized version of the model
      */
@@ -36,18 +36,21 @@ public final class ModelFactory
      */
     public static Model loadModel(String name) {
         String filename = Util.getFilename(MODEL, name);
+
         InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
+
         if (is == null) {
             throw new IllegalArgumentException("Model definition file '" + filename
                                                + "' cannot be found");
         }
+
         Model model = null;
         try {
             model = new InterMineModelParser().process(new InputStreamReader(is));
         } catch (Exception e) {
             throw new RuntimeException("Error parsing model definition file '" + filename + "'", e);
         }
+
         return model;
     }
-
 }

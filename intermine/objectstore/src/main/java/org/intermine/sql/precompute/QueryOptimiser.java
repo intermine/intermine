@@ -140,6 +140,7 @@ public final class QueryOptimiser
             Connection explainConnection, QueryOptimiserContext context) throws SQLException {
         Database database = null;
         PrecomputedTableManager ptm = null;
+
         if (precompLookup instanceof Database) {
             database = (Database) precompLookup;
             ptm = PrecomputedTableManager.getInstance(database);
@@ -151,12 +152,15 @@ public final class QueryOptimiser
             throw new SQLException("Cannot get a PrecomputedTableManager for lookup object "
                     + precompLookup);
         }
+
         if (ptm.getPrecomputedTables().isEmpty()) {
             if (context.isVerbose()) {
-                System.out .println("QueryOptimiser: no Precomputed Tables");
+                System.out.println("QueryOptimiser: no Precomputed Tables");
             }
+
             return new BestQueryFallback(null, query);
         }
+
         Set<PrecomputedTable> precomputedTables = ptm.getPrecomputedTables();
         OptimiserCache cache = OptimiserCache.getInstance(database);
         return optimiseWith(query, originalQuery, database, explainConnection, context,
@@ -196,18 +200,22 @@ public final class QueryOptimiser
         if (!context.isVerbose()) {
             cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit());
         }
+
         // TODO: fix so that the OptimiserCache is updated when precomputed tables are deleted
         if (cachedQuery != null) {
             LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                     + " ms - cache hit: " + query);
+//            System.out.println("Returning cached query for " + query);
             return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
         }
+
         try {
             boolean openedConnection = false;
             if (explainConnection == null) {
                 openedConnection = true;
                 explainConnection = database.getConnection();
             }
+
             BestQuery bestQuery;
             if (context.getMode() == QueryOptimiserContext.MODE_VERBOSE) {
                 bestQuery = new BestQueryExplainerVerbose(explainConnection,
@@ -221,6 +229,7 @@ public final class QueryOptimiser
             }
             String optimisedQuery = null;
             int expectedTime = 0;
+
             try {
                 // First, add the original string to the BestQuery object, so it has an opportunity
                 // to say optimisation is not worth it, before parsing.
@@ -261,6 +270,7 @@ public final class QueryOptimiser
                     explainConnection.close();
                 }
             }
+
             optimisedQuery = bestQuery.getBestQueryString();
             // Add optimised query to the cache here.
             LimitOffsetQuery limitOffsetOptimisedQuery = new LimitOffsetQuery(optimisedQuery);
@@ -271,6 +281,9 @@ public final class QueryOptimiser
                     + "query took " + ((new Date()).getTime() - start)
                     + (parseTime == 0 ? " ms without parsing " : " ms including "
                         + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
+
+//            System.out.println("Returning optimised query for " + query);
+
             return bestQuery;
         } catch (RuntimeException e) {
             if (context.isVerbose()) {
@@ -281,11 +294,14 @@ public final class QueryOptimiser
             // this error message is 120+ lines long and appears 65000+ times in the log files
             // in one hour
         }
+
         LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
+
         if (context.isVerbose()) {
-            System.out .println("QueryOptimiser: unparsable query");
+            System.out.println("QueryOptimiser: unparsable query for " + query);
         }
+
         return new BestQueryFallback(originalQuery, query);
     }
 

@@ -36,27 +36,32 @@ public final class ObjectStoreFactory
         if (alias == null) {
             throw new NullPointerException("ObjectStore alias cannot be null");
         }
+
         if ("".equals(alias)) {
             throw new IllegalArgumentException("ObjectStore alias cannot be empty");
         }
         Properties props = PropertiesUtil.getPropertiesStartingWith(alias);
+
         if (0 == props.size()) {
             throw new ObjectStoreException("No ObjectStore properties were found for alias '"
                                            + alias + "'");
         }
         props = PropertiesUtil.stripStart(alias, props);
+
         String clsName = props.getProperty("class");
         if (clsName == null) {
             throw new ObjectStoreException(alias + " does not have an ObjectStore class specified"
                                            + " (check properties file)");
         }
-        Class<?> cls = null;
+
+        Class<?> cls;
         try {
             cls = Class.forName(clsName);
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Cannot find specified ObjectStore class '" + clsName
                                            + "' for " + alias + " (check properties file)", e);
         }
+
         Class<?>[] parameterTypes = new Class[] {String.class, Properties.class};
         Method m = cls.getDeclaredMethod("getInstance", parameterTypes);
         try {

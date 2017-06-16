@@ -23,7 +23,6 @@ import junit.framework.*;
  */
 public abstract class DatabaseTestCase extends TestCase
 {
-
     /**
      * Constructor
      *

@@ -32,7 +32,7 @@ public class OptimiserCache
 
     // Caches need to be per-database, so we will provide a static method to retrieve a cache object
     // given a database. We need to be careful about synchronisation in this whole class.
-    private static Map<Database, OptimiserCache> caches = new HashMap<Database, OptimiserCache>();
+    public static Map<Database, OptimiserCache> caches = new HashMap<Database, OptimiserCache>();
 
     /**
      * Returns an OptimiserCache object relevant to the database given.

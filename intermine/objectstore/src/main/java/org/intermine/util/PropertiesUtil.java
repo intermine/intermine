@@ -42,9 +42,11 @@ public final class PropertiesUtil
             InputStream is = PropertiesUtil.class.getClassLoader()
                 .getResourceAsStream("default.intermine.properties");
 
-            if (is != null) {
-                globalProperties.load(is);
+            if (is == null) {
+                throw new RuntimeException("default.intermine.properties is not in the classpath");
             }
+
+            globalProperties.load(is);
 
             is = PropertiesUtil.class.getClassLoader().getResourceAsStream("intermine.properties");
 
@@ -52,9 +54,10 @@ public final class PropertiesUtil
                 throw new RuntimeException("intermine.properties is not in the classpath");
             }
             globalProperties.load(is);
+
             is.close();
         } catch (IOException e) {
-            // Do nothing
+            System.out.println("PropertiesUtil error " + e.toString());
         }
     }
 

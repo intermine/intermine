@@ -26,7 +26,7 @@ public class DatabaseSchemaTest extends TestCase
     private Model model;
 
     public void setUp() throws Exception {
-        model = Model.getInstanceByName("testmodel");
+        model = Model.getInstanceByName("testmodel/testmodel");
     }
 
     public void testInvalidTruncatedList() throws Exception {

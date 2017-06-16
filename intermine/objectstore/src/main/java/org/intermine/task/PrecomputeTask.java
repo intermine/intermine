@@ -47,17 +47,17 @@ public class PrecomputeTask extends Task
     private static final Logger LOG = Logger.getLogger(PrecomputeTask.class);
     protected static final int THREAD_COUNT = 4;
 
-    protected String alias;
+    protected String objectStoreAlias;
+    protected String precomputePropertiesPath;
     protected int minRows = -1;
     // set by readProperties()
 
-    /**
-     * Set the ObjectStore alias.
-     *
-     * @param alias the ObjectStore alias
-     */
-    public void setAlias(String alias) {
-        this.alias = alias;
+    public void setObjectStoreAlias(String objectStoreAlias) {
+        this.objectStoreAlias = objectStoreAlias;
+    }
+
+    public void setPrecomputePropertiesPath(String precomputePropertiesPath) {
+        this.precomputePropertiesPath = precomputePropertiesPath;
     }
 
     /**
@@ -75,8 +75,12 @@ public class PrecomputeTask extends Task
      */
     @Override
     public void execute() {
-        if (alias == null) {
-            throw new BuildException("alias attribute is not set");
+        if (objectStoreAlias == null) {
+            throw new BuildException("objectStoreAlias attribute is not set");
+        }
+
+        if (precomputePropertiesPath == null) {
+            throw new BuildException("precomputePropertiesPath attribute is not set");
         }
 
         if (minRows == -1) {
@@ -86,13 +90,13 @@ public class PrecomputeTask extends Task
         ObjectStore os;
 
         try {
-            os = ObjectStoreFactory.getObjectStore(alias);
+            os = ObjectStoreFactory.getObjectStore(objectStoreAlias);
         } catch (Exception e) {
             throw new BuildException("Exception while creating ObjectStore", e);
         }
 
         if (!(os instanceof ObjectStoreInterMineImpl)) {
-            throw new BuildException(alias + " isn't an ObjectStoreInterMineImpl");
+            throw new BuildException(objectStoreAlias + " isn't an ObjectStoreInterMineImpl");
         }
 
         precompute(false, os, minRows);
@@ -109,7 +113,7 @@ public class PrecomputeTask extends Task
      * @throws BuildException if something goes wrong
      */
     public void precompute(boolean createAllOrders, ObjectStore os, int minRows) {
-        Properties properties = readProperties(os.getModel().getName());
+        Properties properties = readProperties(precomputePropertiesPath);
 
         Map<String, List<Query>> pq = getPrecomputeQueries(createAllOrders, os, properties);
         LOG.info("pq.size(): " + pq.size());
@@ -189,11 +193,11 @@ public class PrecomputeTask extends Task
                     }
                 } else {
                     throw new BuildException("unknown key: '" + precomputeKey
-                            + "' in properties file "
-                            + getPropertiesFileName(os.getModel().getName()));
+                            + "' in properties file");
                 }
             }
         }
+
         return returnMap;
     }
 
@@ -229,7 +233,6 @@ public class PrecomputeTask extends Task
         return queries;
     }
 
-
     /**
      * Return a List containing clones of the given Query, but with all permutations
      * of order by for the QueryClass objects on the from list.
@@ -255,7 +258,6 @@ public class PrecomputeTask extends Task
         return queryList;
     }
 
-
     /**
      * For a given IQL query, return a Query object.
      * @param iqlQueryString the IQL String
@@ -275,23 +277,21 @@ public class PrecomputeTask extends Task
         }
     }
 
-
-
     /**
      * Set precomputeProperties by reading from propertiesFileName.
-     * @param modelName the model name
+     * 
+     * @param propertiesPath the path to the properties
      * @return the Properties
      * @throws BuildException if the file cannot be read.
      */
-    private static Properties readProperties(String modelName) {
-        String propertiesFileName = getPropertiesFileName(modelName);
+    private static Properties readProperties(String propertiesPath) {
 
         try {
             InputStream is =
-                PrecomputeTask.class.getClassLoader().getResourceAsStream(propertiesFileName);
+                PrecomputeTask.class.getClassLoader().getResourceAsStream(propertiesPath);
 
             if (is == null) {
-                throw new BuildException("Cannot find " + propertiesFileName
+                throw new BuildException("Cannot find " + propertiesPath
                                          + " in the class path");
             }
 
@@ -300,19 +300,9 @@ public class PrecomputeTask extends Task
             return precomputeProperties;
         } catch (IOException e) {
             throw new BuildException("Exception while reading properties from "
-                                     + propertiesFileName , e);
+                                     + propertiesPath , e);
         }
     }
-
-    /**
-     * Return the name of the properties file we will read.
-     * @param modelName the model name
-     * @return the properties file name
-     */
-    protected static String getPropertiesFileName(String modelName) {
-        return modelName + "_precompute.properties";
-    }
-
 
     /**
      * Given an integer number, n, return a Set of int arrays with all permutations

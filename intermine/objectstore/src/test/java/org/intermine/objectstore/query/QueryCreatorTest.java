@@ -29,7 +29,7 @@ public class QueryCreatorTest extends QueryTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        model = Model.getInstanceByName("testmodel");
+        model = Model.getInstanceByName("testmodel/testmodel");
     }
 
     public static Test suite() {

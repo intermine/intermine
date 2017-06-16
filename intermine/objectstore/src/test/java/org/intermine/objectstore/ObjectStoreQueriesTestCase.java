@@ -76,6 +76,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
+import org.junit.BeforeClass;
 
 /**
  * TestCase for testing InterMine Queries
@@ -100,13 +101,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         super(arg);
     }
 
-    /**
-     * Set up the test
-     *
-     * @throws Exception if an error occurs
-     */
-    public static void oneTimeSetUp() throws Exception {
-        QueryTestCase.oneTimeSetUp();
+    public void oneTimeSetUp() throws Exception {
         setUpQueries();
         setUpResults();
     }

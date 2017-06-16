@@ -58,6 +58,7 @@ import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.util.DynamicUtil;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.util.XmlBinding;
+import org.junit.BeforeClass;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 {
@@ -69,9 +70,10 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         super(arg);
     }
 
-    public static void oneTimeSetUp() throws Exception {
-        ObjectStoreQueriesTestCase.oneTimeSetUp();
-        model = Model.getInstanceByName("testmodel");
+    public void oneTimeSetUp() throws Exception {
+        super.oneTimeSetUp();
+
+        model = Model.getInstanceByName("testmodel/testmodel");
         Collection col = setUpData();
         setIds(col);
         data = map(col);

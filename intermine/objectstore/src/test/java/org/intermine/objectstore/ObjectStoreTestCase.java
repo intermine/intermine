@@ -53,6 +53,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.iql.IqlQueryParser;
 import org.intermine.util.DynamicUtil;
+import org.junit.BeforeClass;
 
 /**
  * TestCase for all ObjectStores
@@ -66,8 +67,9 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         super(arg);
     }
 
-    public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
+    @BeforeClass
+    public void oneTimeSetUp() throws Exception {
+        super.oneTimeSetUp();
         setUpResults();
     }
 

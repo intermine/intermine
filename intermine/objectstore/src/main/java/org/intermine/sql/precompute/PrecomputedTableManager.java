@@ -50,10 +50,10 @@ public class PrecomputedTableManager
     protected TreeSet<PrecomputedTable> precomputedTables = new TreeSet<PrecomputedTable>();
     protected Map<String, Map<String, PrecomputedTable>> types
         = new HashMap<String, Map<String, PrecomputedTable>>();
-    protected Database database = null;
-    protected Connection conn = null;
-    protected static final String TABLE_INDEX = "precompute_index";
-    protected static Map<Object, PrecomputedTableManager> instances
+    protected Database database;
+    protected Connection conn;
+    public static final String TABLE_INDEX = "precompute_index";
+    public static Map<Object, PrecomputedTableManager> instances
         = new HashMap<Object, PrecomputedTableManager>();
 
     /**
@@ -160,14 +160,17 @@ public class PrecomputedTableManager
         if (pt == null) {
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
+
         String queryString = pt.getOriginalSql();
         Map<String, PrecomputedTable> queryStrings = types.get(pt.getCategory());
+
         if (queryStrings == null) {
             queryStrings = new HashMap<String, PrecomputedTable>();
             types.put(pt.getCategory(), queryStrings);
         }
+
         if (queryStrings.containsKey(queryString)) {
-            throw new IllegalArgumentException("Precomputed table already exists");
+            throw new IllegalArgumentException("Precomputed table " + pt.getName() + " already exists");
         } else {
             addTableToDatabase(pt, indexes, true);
             precomputedTables.add(pt);
@@ -187,6 +190,7 @@ public class PrecomputedTableManager
             deleteTableFromDatabase(pt.getName());
             iter.remove();
         }
+
         types.clear();
     }
 

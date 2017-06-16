@@ -29,7 +29,7 @@ public class ModelMergerTest extends TestCase
 
     public void setUp() throws Exception {
         parser = new InterMineModelParser();
-        testModel = Model.getInstanceByName("testmodel");
+        testModel = Model.getInstanceByName("testmodel/testmodel");
         emptyModel = new Model("testModel", "org.intermine.model.testmodel", Collections.EMPTY_SET);
     }
 

@@ -29,7 +29,11 @@ import org.intermine.model.testmodel.Company;
 public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestCase
 {
     public static void oneTimeSetUp() throws Exception {
-        os = new ObjectStoreTranslatingImpl(Model.getInstanceByName("testmodel"), ObjectStoreFactory.getObjectStore("os.unittest"), new DummyTranslator());
+        os = new ObjectStoreTranslatingImpl(
+            Model.getInstanceByName("testmodel/testmodel"),
+            ObjectStoreFactory.getObjectStore("os.unittest"),
+            new DummyTranslator());
+
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }
 
@@ -83,7 +87,12 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
     }
 
     public void testTranslation() throws Exception {
-        ObjectStore os2 = new ObjectStoreTranslatingImpl(Model.getInstanceByName("testmodel"), ObjectStoreFactory.getObjectStore("os.unittest"), new CompanyTranslator());
+        ObjectStore os2
+            = new ObjectStoreTranslatingImpl(
+                Model.getInstanceByName("testmodel/testmodel"),
+                ObjectStoreFactory.getObjectStore("os.unittest"),
+                new CompanyTranslator());
+
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);

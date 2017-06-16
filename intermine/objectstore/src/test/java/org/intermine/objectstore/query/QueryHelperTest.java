@@ -30,7 +30,7 @@ public class QueryHelperTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        model = Model.getInstanceByName("testmodel");
+        model = Model.getInstanceByName("testmodel/testmodel");
     }
 
     public void testAddConstraintNull() throws Exception {
@@ -49,7 +49,6 @@ public class QueryHelperTest extends TestCase
         } catch (NullPointerException e) {
         }
     }
-
 
     public void testAddConstraintEmpty() throws Exception {
         Query q = new Query();

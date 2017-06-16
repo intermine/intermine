@@ -12,6 +12,7 @@ sourceSets {
             srcDirs = ['src/main/antlr']
         }
     }
+
     test {
         java {
             srcDirs = ['src/test/java', 'build/gen/src']
@@ -23,30 +24,48 @@ sourceSets {
 }
 
 dependencies {
-  compile project(':intermine-model')
-  compile group: 'ant', name: 'ant', version: '1.6.5'
-  compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
-  compile group: 'torque', name: 'torque-gen', version: '3.2'
-  compile group: 'commons-io', name: 'commons-io', version: '1.2'
-  compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.6.1'
-  compile group: 'com.zaxxer', name: 'HikariCP-java6', version: '2.3.8'
-  compile group: 'net.iharder', name: 'base64', version: '2.3.8' //not clear wich version is currently used
-  compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven
-  compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
-  compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
-  compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
-  compile fileTree(dir: "$projectDir/lib", include: '*.jar') //org.gnu.readline is not in a public repo
+    compile project(':intermine-model')
+    compile group: 'ant', name: 'ant', version: '1.6.5'
+    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
+    compile group: 'torque', name: 'torque-gen', version: '3.2'
+    compile group: 'commons-io', name: 'commons-io', version: '1.2'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.6.1'
+    compile group: 'com.zaxxer', name: 'HikariCP-java6', version: '2.3.8'
+    compile group: 'net.iharder', name: 'base64', version: '2.3.8' //not clear wich version is currently used
+    compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven
+    compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
+    compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
+    compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
+    compile fileTree(dir: "$projectDir/lib", include: '*.jar') //org.gnu.readline is not in a public repo
+}
+
+task copyDefaultProperties(type: Copy) {
+    from '../default.intermine.properties'
+    into sourceSets.test.output.resourcesDir
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+task copyTestProperties(type: Copy) {
+    from "${System.env.HOME}/.intermine/intermine-test.properties"
+    into sourceSets.test.output.resourcesDir
+
+    rename { String fileName ->
+        fileName.replace('intermine-test.properties', 'intermine.properties')
+    }
+
+    inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
 task setAntClassLoader {
-  doLast {
-    ClassLoader antClassLoader = org.apache.tools.ant.Project.class.classLoader
-    configurations.runtime.each { File f ->
-        antClassLoader.addURL(f.toURI().toURL())
+    doLast {
+        ClassLoader antClassLoader = org.apache.tools.ant.Project.class.classLoader
+        configurations.runtime.each { File f ->
+            antClassLoader.addURL(f.toURI().toURL())
+        }
+
+        antClassLoader.addURL(file('./build/classes/main/').toURI().toURL()) //org.intermine.task.ModelOutputTask in the classpath
+        antClassLoader.addURL(file('./src/test/resources/testmodel/').toURI().toURL())  //testmodel_model.xml in the classpath
     }
-    antClassLoader.addURL(file('./build/classes/main/').toURI().toURL()) //org.intermine.task.ModelOutputTask in the classpath
-    antClassLoader.addURL(file('./src/test/resources/testmodel/').toURI().toURL())  //testmodel_model.xml in the classpath
-  }
 }
 
 def generateModel(String model, String destination, String type) {
@@ -56,11 +75,9 @@ def generateModel(String model, String destination, String type) {
 
 task generateTestModel {
     doLast {
-      generateModel('testmodel', 'build/gen/src', 'java')
-    }    
+        generateModel('testmodel', 'build/gen/src', 'java')
+    }
 }
 
-tasks.test.dependsOn 'generateTestModel'
-tasks.test.mustRunAfter 'generateTestModel'
-tasks.generateTestModel.dependsOn 'setAntClassLoader'
-tasks.generateTestModel.mustRunAfter 'setAntClassLoader'
+test.dependsOn 'generateTestModel', 'copyDefaultProperties', 'copyTestProperties'
+generateTestModel.dependsOn 'setAntClassLoader'

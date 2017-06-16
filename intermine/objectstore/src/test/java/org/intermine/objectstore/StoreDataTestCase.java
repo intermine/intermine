@@ -19,6 +19,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SingletonResults;
+import org.junit.AfterClass;
 
 public abstract class StoreDataTestCase extends SetupDataTestCase
 {
@@ -28,8 +29,9 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         super(arg);
     }
 
-    public static void oneTimeSetUp() throws Exception {
-        SetupDataTestCase.oneTimeSetUp();
+    public void oneTimeSetUp() throws Exception {
+        super.oneTimeSetUp();
+
         try {
             if (storeDataWriter == null) {
                 storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
@@ -44,8 +46,8 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         }
     }
 
-    public static void oneTimeTearDown() throws Exception {
-        ObjectStoreQueriesTestCase.oneTimeTearDown();
+    @AfterClass
+    public void oneTimeTearDown() throws Exception {
         removeDataFromStore();
         storeDataWriter.close();
         storeDataWriter = null;

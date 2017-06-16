@@ -70,7 +70,8 @@ public class PrecomputeTaskTest extends QueryTestCase
     public void testExecute() throws Exception {
         TestPrecomputeTask task = new TestPrecomputeTask();
 
-        task.setAlias("os.unittest");
+        task.setObjectStoreAlias("os.unittest");
+        task.setPrecomputePropertiesPath("testmodel/testmodel_precompute.properties");
         task.setMinRows(new Integer(1));
 
         Properties summaryProperties;

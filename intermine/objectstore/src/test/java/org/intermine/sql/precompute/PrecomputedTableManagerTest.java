@@ -52,7 +52,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
         Connection con = database.getConnection();
         con.setAutoCommit(false);
-        pt1 = new PrecomputedTable(q1, q1.getSQLString(), "precomp1", "test", con);
+        pt1 = new PrecomputedTable(q1, q1.getSQLString(), "precompA", "test", con);
         con.close();
     }
 
@@ -150,11 +150,11 @@ public class PrecomputedTableManagerTest extends TestCase
                 ptm.add(pt1);
                 assertTrue(ptm.getPrecomputedTables().contains(pt1));
                 assertEquals(pt1, ptm.lookupSql("test", pt1.getOriginalSql()));
-                assertTrue(DatabaseUtil.tableExists(con, "precomp1"));
+                assertTrue(DatabaseUtil.tableExists(con, "precompA"));
                 ptm.delete(pt1);
                 assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
                 assertNull(ptm.lookupSql("test", pt1.getOriginalSql()));
-                assertTrue(!(DatabaseUtil.tableExists(con, "precomp1")));
+                assertTrue(!(DatabaseUtil.tableExists(con, "precompA")));
             } catch (SQLException e) {
                 throw (SQLException) Util.verboseException(e);
             } finally {
@@ -174,11 +174,11 @@ public class PrecomputedTableManagerTest extends TestCase
                 ptm.add(pt1);
                 assertTrue(ptm.getPrecomputedTables().contains(pt1));
                 assertEquals(pt1, ptm.lookupSql("test", pt1.getOriginalSql()));
-                assertTrue(DatabaseUtil.tableExists(con, "precomp1"));
+                assertTrue(DatabaseUtil.tableExists(con, "precompA"));
                 ptm.delete(pt1);
                 assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
                 assertNull(ptm.lookupSql("test", pt1.getOriginalSql()));
-                assertTrue(!(DatabaseUtil.tableExists(con, "precomp1")));
+                assertTrue(!(DatabaseUtil.tableExists(con, "precompA")));
             } catch (SQLException e) {
                 throw (SQLException) Util.verboseException(e);
             } finally {
@@ -193,7 +193,7 @@ public class PrecomputedTableManagerTest extends TestCase
         c.setAutoCommit(false);
         PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
-            ptm.add(new PrecomputedTable(new Query("select table.blah from table"), "select table.blah from table", "precomp1", null, c));
+            ptm.add(new PrecomputedTable(new Query("select table.blah from table"), "select table.blah from table", "precompA", null, c));
             fail("Expected: SQLException");
         } catch (SQLException e) {
         } finally {
@@ -263,18 +263,18 @@ public class PrecomputedTableManagerTest extends TestCase
                 createTable();
                 ptm.add(pt1);
                 assertTrue(ptm.getPrecomputedTables().contains(pt1));
-                assertTrue(DatabaseUtil.tableExists(con, "precomp1"));
-                PrecomputedTable pt2 = new PrecomputedTable(pt1.getQuery(), pt1.getQuery().getSQLString(), "precomp2", "test", con);
+                assertTrue(DatabaseUtil.tableExists(con, "precompA"));
+                PrecomputedTable pt2 = new PrecomputedTable(pt1.getQuery(), pt1.getQuery().getSQLString(), "precompB", "test", con);
                 try {
                     ptm.add(pt2);
                     fail("Should have received an exception");
                 } catch (IllegalArgumentException e) {
                 }
                 assertFalse(ptm.getPrecomputedTables().contains(pt2));
-                assertFalse(DatabaseUtil.tableExists(con, "precomp2"));
+                assertFalse(DatabaseUtil.tableExists(con, "precompB"));
                 ptm.delete(pt1);
                 assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
-                assertTrue(!(DatabaseUtil.tableExists(con, "precomp1")));
+                assertTrue(!(DatabaseUtil.tableExists(con, "precompA")));
             } catch (SQLException e) {
                 throw (SQLException) Util.verboseException(e);
             } finally {
@@ -290,10 +290,11 @@ public class PrecomputedTableManagerTest extends TestCase
         con.setAutoCommit(false);
         PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
-            PrecomputedTable pt2 = new PrecomputedTable(q, q.getSQLString(), "precomp3", "test", con);
+            PrecomputedTable pt2 = new PrecomputedTable(q, q.getSQLString(), "precompC", "test", con);
             ptm.add(pt2);
         } finally {
             con.close();
         }
     }
 }
+

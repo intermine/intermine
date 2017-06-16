@@ -11,6 +11,7 @@ package org.intermine.sql.precompute;
  */
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -34,21 +35,31 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 {
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(QueryOptimiserFunctionalTest.class);
-    protected Map queries = new HashMap();
-    protected Map precomps = new HashMap();
+    protected Map<String, String> queries = new HashMap<String, String>();
+    protected Map<String, String> precomps = new HashMap<String, String>();
     protected PrecomputedTable toDelete;
 
     protected static final int DATA_SIZE = 1000;
 
     public QueryOptimiserFunctionalTest(String arg1) {
         super(arg1);
+
+        precomps.put("precomp_countTable2", "SELECT table2.col2 AS table2_col2, count(*) AS c FROM table2 GROUP BY table2.col2 ORDER BY table2.col2");
+        precomps.put("precomp_avgTable2Table3", "SELECT table2.col1 AS table2_col1, avg(table2.col2 + table3.col2) AS a FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 ORDER BY table2.col1");
+        precomps.put("precomp_table2Table3onCol2", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2, table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table2, table3 WHERE table2.col2 = table3.col2 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
+        precomps.put("precomp_table2Table3onCol1", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2, table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table2, table3 WHERE table2.col1 = table3.col1 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
+        precomps.put("precomp_halfOfTable2", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2 FROM table2 WHERE table2.col1 < " + (DATA_SIZE/2));
+        precomps.put("precomp_halfOfTable3", "SELECT table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table3 WHERE table3.col1 < " + (DATA_SIZE/2));
+        precomps.put("precomp_table4", "SELECT table4.col1 AS col1, table4.col2 AS col2, table4.col3 AS col3 FROM table4 ORDER BY table4.col1, table4.col3, table4.col2");
     }
 
-    private Database database = null;
+    private Database database;
+
     protected Database getDatabase() throws Exception {
         if (database == null) {
             database = DatabaseFactory.getDatabase("db.unittest");
         }
+
         return database;
     }
 
@@ -60,20 +71,16 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
     public void setUp() throws Exception {
         super.setUp();
 
+        // We are clearing these instances and caches to make sure that tests cannot interfere with each other
+        PrecomputedTableManager.instances.clear();
+        OptimiserCache.caches.clear();
+
+        tearDownData();
+        tearDownPrecomputedTables();
+
         setUpData();
         setUpPrecomputedTables();
         setUpQueries();
-    }
-
-    /**
-     * Tear down the test
-     *
-     * @throws Exception if an error occurs
-     */
-    public void tearDown() throws Exception {
-        tearDownData();
-        tearDownPrecomputedTables();
-        super.tearDown();
     }
 
     protected void setUpData() throws Exception {
@@ -161,27 +168,27 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         queries.put("inList", "SELECT table2.col1, table2.col2 FROM table2 WHERE table2.col2 IN (5, 7, 8, 12) AND table2.col1 < " + (DATA_SIZE/2) + " ORDER BY table2.col1, table2.col2");
     }
 
-    // Add some precomputed tables into the database
+    /**
+     * Add some precomputed tables into the database
+     *
+     * @throws Exception
+     */
     public void setUpPrecomputedTables() throws Exception {
         Connection con = getDatabase().getConnection();
         con.setAutoCommit(false);
-        precomps.put("precomp_countTable2", "SELECT table2.col2 AS table2_col2, count(*) AS c FROM table2 GROUP BY table2.col2 ORDER BY table2.col2");
-        precomps.put("precomp_avgTable2Table3", "SELECT table2.col1 AS table2_col1, avg(table2.col2 + table3.col2) AS a FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 ORDER BY table2.col1");
-        precomps.put("precomp_table2Table3onCol2", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2, table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table2, table3 WHERE table2.col2 = table3.col2 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
-        precomps.put("precomp_table2Table3onCol1", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2, table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table2, table3 WHERE table2.col1 = table3.col1 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
-        precomps.put("precomp_halfOfTable2", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2 FROM table2 WHERE table2.col1 < " + (DATA_SIZE/2));
-        precomps.put("precomp_halfOfTable3", "SELECT table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table3 WHERE table3.col1 < " + (DATA_SIZE/2));
-        precomps.put("precomp_table4", "SELECT table4.col1 AS col1, table4.col2 AS col2, table4.col3 AS col3 FROM table4 ORDER BY table4.col1, table4.col3, table4.col2");
 
         PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(getDatabase());
         Iterator precompsIter = precomps.keySet().iterator();
         while (precompsIter.hasNext()) {
             String name = (String) precompsIter.next();
+            System.out.println("Setting up " + name);
             Query q = new Query((String) precomps.get(name));
             PrecomputedTable pt = new PrecomputedTable(q, q.getSQLString(), name, "test", con);
+
             if ("precomp_table2Table3onCol1".equals(name)) {
                 toDelete = pt;
             }
+
             ptm.add(pt);
         }
 
@@ -196,19 +203,32 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         Connection con = getDatabase().getConnection();
         con.setAutoCommit(false);
         Statement stmt = con.createStatement();
-        stmt.addBatch("DROP TABLE table1");
-        stmt.addBatch("DROP TABLE table2");
-        stmt.addBatch("DROP TABLE table3");
+        stmt.addBatch("DROP TABLE IF EXISTS table1");
+        stmt.addBatch("DROP TABLE IF EXISTS table2");
+        stmt.addBatch("DROP TABLE IF EXISTS table3");
         stmt.executeBatch();
         con.commit();
         con.close();
     }
 
     public void tearDownPrecomputedTables() throws Exception {
-        PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(getDatabase());
-        ptm.dropEverything();
-    }
+        Connection con = getDatabase().getConnection();
+        try {
+            con.setAutoCommit(false);
+            PreparedStatement pstmt = con.prepareStatement("DELETE FROM " + PrecomputedTableManager.TABLE_INDEX);
+            pstmt.execute();
 
+            for (String precompTableName : precomps.keySet()) {
+                Statement stmt = con.createStatement();
+                stmt.execute("DROP TABLE IF EXISTS " + precompTableName);
+                System.out.println("Dropped table " + precompTableName);
+            }
+
+            con.commit();
+        } finally {
+            con.close();
+        }
+    }
 
     /**
      * Execute a test for a query. This should run the query and
@@ -242,11 +262,15 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         // can check that it takes less time than the original query.
 
         String optimisedQuery = QueryOptimiser.optimise(queryString, getDatabase());
+
+        /*
         if (queryString.equals(optimisedQuery)) {
             System.out.println(": ORIGINAL " + optimisedQuery);
         } else {
             System.out.println(": OPTIMISED " + queryString + " -> " + optimisedQuery);
         }
+        */
+
         checkResultsForQueries(q, new Query(optimisedQuery));
     }
 
@@ -284,7 +308,6 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         }
     }
 
-
     /**
      * Test the queries produce the appropriate result
      *
@@ -303,6 +326,8 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
     }
 
     public void testCacheFlush() throws Throwable {
+        //executeTest("table2Table3JoinOnCol1");
+        //testQueries();
         StringUtil.setNextUniqueNumber(35);
         String sql1 = "SELECT table2.col1, table2.col2, table3.col1, table3.col2 FROM table2, table3 WHERE table2.col1 = table3.col1 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2";
         //String sql1 = "SELECT table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table3 WHERE table3.col1 < " + (DATA_SIZE/2);

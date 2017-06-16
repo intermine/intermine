@@ -36,6 +36,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.DynamicUtil;
+import org.junit.BeforeClass;
 
 public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
 {
@@ -57,6 +58,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
         super(arg);
     }
 
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
         os = writer;
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();

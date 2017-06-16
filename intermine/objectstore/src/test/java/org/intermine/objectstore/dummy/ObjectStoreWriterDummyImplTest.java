@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 public class ObjectStoreWriterDummyImplTest extends TestCase {
     public void testStore() throws Exception {
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
-        os.setModel(Model.getInstanceByName("testmodel"));
+        os.setModel(Model.getInstanceByName("testmodel/testmodel"));
         ObjectStoreWriterDummyImpl osw = new ObjectStoreWriterDummyImpl(os);
 
         InterMineObject o1 =
@@ -65,7 +65,7 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
 
     public void testStoreTransaction() throws Exception {
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
-        os.setModel(Model.getInstanceByName("testmodel"));
+        os.setModel(Model.getInstanceByName("testmodel/testmodel"));
         ObjectStoreWriterDummyImpl osw = new ObjectStoreWriterDummyImpl(os);
 
         osw.beginTransaction();
