@@ -14,7 +14,7 @@
 	<class name="Gene" is-interface="true">
 		<attribute name="operon" type="java.lang.String"/>
 		<reference name="referenceAllele" referenced-type="Allele" />
-		<collection name="strains" referenced-type="Strain" reverse-reference="gene"/>
+		<collection name="strains" referenced-type="Strain" reverse-reference="genes"/>
 		<collection name="expressionPatterns" referenced-type="ExpressionPattern" reverse-reference="gene"/>
 		<collection name="expressionClusters" referenced-type="ExpressionCluster" reverse-reference="genes"/>
 		<collection name="regulatesExprCluster" referenced-type="ExpressionCluster" reverse-reference="regulatedByGene"/>
@@ -81,14 +81,14 @@
 	  <collection name="strains" referenced-type="Strain" reverse-reference="variations" />
 	  <collection name="fromLabs" referenced-type="Laboratory" reverse-reference="variations" />
 	  <!--  will handle when expanding variation -->
-	  <collection name="geneClass" referenced-type="GeneClass" reverse-reference="variations" /> 
+	  <collection name="geneClass" referenced-type="GeneClass" reverse-reference="variations" />
 	</class>
 
 	<class name="Laboratory" is-interface="true">
 	  <attribute name="primaryIdentifier" type="java.lang.String"/>
 	  <collection name="variations" referenced-type="Allele" reverse-reference="fromLabs" />
 	  <collection name="RNAis" referenced-type="RNAi" reverse-reference="laboratories"/>
-	  <collection name="geneClasses" referenced-type="GeneClass" reverse-reference="designatingLaboratory"/>		
+	  <collection name="geneClasses" referenced-type="GeneClass" reverse-reference="designatingLaboratory"/>
 	  <collection name="formerGeneClasses" referenced-type="GeneClass" reverse-reference="formerDesignatingLaboratory"/>
 	</class>
 
@@ -117,7 +117,7 @@
 	</class>
 	<class name="ExpressionPattern" is-interface="true">
 		<attribute name="primaryIdentifier" type="java.lang.String"/>
-		<attribute name="subcellularLocalization" type="java.lang.String"/> 
+		<attribute name="subcellularLocalization" type="java.lang.String"/>
 		<attribute name="pattern" type="java.lang.String"/>
 		<attribute name="remark" type="java.lang.String"/>
 		<attribute name="reporterGene" type="java.lang.String"/>
@@ -158,7 +158,7 @@
 	<class name="Process" is-interface="true">
 		<attribute name="primaryIdentifier" type="java.lang.String"/>
 		<collection name="expressionClusters" referenced-type="ExpressionCluster" reverse-reference="processes"/>
-		
+
 	</class>
 	<class name="LifeStage" is-interface="true">
 		<attribute name="primaryIdentifier" type="java.lang.String"/>
@@ -173,7 +173,7 @@
 		<collection name="anatomyTerms" referenced-type="AnatomyTerm" reverse-reference="lifeStages"/>
 		<collection name="expressionPatterns" referenced-type="ExpressionPattern" reverse-reference="lifeStages"/>
 		<collection name="expressionClusters" referenced-type="ExpressionCluster" reverse-reference="lifeStages"/>
-		
+
 	</class>
 
 	<class name="RNAi" extends="BioEntity" is-interface="true">
@@ -202,7 +202,7 @@
                 <attribute name="primaryIdentifier" type="java.lang.String"/>
 		<attribute name="genotype" type="java.lang.String"/>
 		<attribute name="otherName" type="java.lang.String"/>
-		<attribute name="inbreedingState" type="java.lang.String"/> 
+		<attribute name="inbreedingState" type="java.lang.String"/>
 		<attribute name="outcrossed" type="java.lang.String"/>
 		<attribute name="mutagen" type="java.lang.String"/>
 		<attribute name="strainHistory" type="java.lang.String"/>
@@ -211,11 +211,11 @@
 		<attribute name="laboratory" type="java.lang.String"/>
 		<attribute name="madeBy" type="java.lang.String"/>
 		<attribute name="remark" type="java.lang.String"/>
-		<attribute name="species" type="java.lang.String"/> 
-		<attribute name="ncbiTaxonomyID" type="java.lang.String"/> 
-		<reference name="gene" referenced-type="Gene" reverse-reference="strains"/>
+		<attribute name="species" type="java.lang.String"/>
+		<attribute name="ncbiTaxonomyID" type="java.lang.String"/>
+		<collection name="genes" referenced-type="Gene" reverse-reference="strains"/>
          <collection name="variations" referenced-type="Allele" reverse-reference="strains" />
-        </class> 
+        </class>
 
 
 </classes>
