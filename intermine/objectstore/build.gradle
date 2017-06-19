@@ -79,5 +79,10 @@ task generateTestModel {
     }
 }
 
+tasks.withType(Test) {
+    scanForTestClasses = false
+    include '**/*Test.class'
+}
+
 test.dependsOn 'generateTestModel', 'copyDefaultProperties', 'copyTestProperties'
 generateTestModel.dependsOn 'setAntClassLoader'
