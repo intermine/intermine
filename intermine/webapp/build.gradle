@@ -1,3 +1,5 @@
+apply plugin: "war"
+
 sourceSets {
     main {
         java {
@@ -44,3 +46,19 @@ dependencies {
   testCompile group: 'org.easymock', name: 'easymock', version: '3.2'
   testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
 }
+/*
+configurations {
+  deploy
+}
+
+dependencies {
+    deploy compile group: 'tomcat', name: 'catalina-ant', version: '5.5.23'
+}
+
+def deployWar(String tomcatManagerUrl, String userName, String password, String path, String war) {
+    ant.taskdef(name: 'deployWebapp',
+                classname: 'org.apache.catalina.ant.DeployTask',
+                classpath: configurations.deploy.asPath)
+    ant.deployWebapp(url: "$tomcatManagerUrl", username: "$userName", password: "$password", path: "$path", war: "$war")
+}
+*/

@@ -18,6 +18,5 @@ sourceSets {
 }
 
 dependencies {
-  compile project(':intermine-integrate')
-  compile project(':intermine-api')
+  compile project(':intermine-webapp')
 }
