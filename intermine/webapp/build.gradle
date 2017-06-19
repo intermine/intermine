@@ -46,7 +46,7 @@ dependencies {
   testCompile group: 'org.easymock', name: 'easymock', version: '3.2'
   testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
 }
-
+/*
 configurations {
   deploy
 }
@@ -61,3 +61,4 @@ def deployWar(String tomcatManagerUrl, String userName, String password, String 
                 classpath: configurations.deploy.asPath)
     ant.deployWebapp(url: "$tomcatManagerUrl", username: "$userName", password: "$password", path: "$path", war: "$war")
 }
+*/
