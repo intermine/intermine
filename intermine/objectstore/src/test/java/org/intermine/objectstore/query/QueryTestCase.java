@@ -15,8 +15,9 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.testing.OneTimeTestCase;
 
-public class QueryTestCase extends TestCase
+public class QueryTestCase extends OneTimeTestCase
 {
     public QueryTestCase(String arg1) {
         super(arg1);
