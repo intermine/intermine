@@ -60,14 +60,14 @@ public class DatabaseUtilTest extends TestCase
 
     protected void createTable() throws Exception {
         try {
-            dropTable();
+            dropTable("table1", false);
         } catch (SQLException e) {
         }
         con.createStatement().execute("CREATE TABLE table1(col1 int)");
     }
 
-    protected void dropTable() throws Exception {
-        con.createStatement().execute("DROP TABLE table1");
+    protected void dropTable(String tableName, boolean ifExists) throws Exception {
+        con.createStatement().execute("DROP TABLE " + (ifExists ? "IF EXISTS " : "") + tableName);
     }
 
     public void testTableExistsNullConnection() throws Exception {
@@ -92,7 +92,7 @@ public class DatabaseUtilTest extends TestCase
         synchronized (con) {
             createTable();
             assertTrue(DatabaseUtil.tableExists(con, "table1"));
-            dropTable();
+            dropTable("table1", false);
         }
     }
 
@@ -104,7 +104,7 @@ public class DatabaseUtilTest extends TestCase
             }
             createTable();
             assertTrue(!(DatabaseUtil.tableExists(con, "table2")));
-            dropTable();
+            dropTable("table1", false);
         }
     }
 
@@ -203,8 +203,16 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testCreateBagTable() throws Exception {
-        Collection bag = new HashSet();
+        String[] tableNames
+            = new String[] {
+                "integer_table", "long_table", "short_table", "bigdecimal_table", "float_table", "double_table",
+                "string_table", "boolean_table", "date_table", "intermineobject_table", "employee_table" };
 
+        for (String tableName : tableNames) {
+            dropTable(tableName, true);
+        }
+
+        Collection bag = new HashSet();
         bag.add(new Integer(-10000));
         bag.add(new Integer(0));
         bag.add(new Integer(10000));
@@ -429,8 +437,6 @@ public class DatabaseUtilTest extends TestCase
         DatabaseUtil.addColumn(con, "table1", "col3", DatabaseUtil.Type.text);
         DatabaseUtil.updateColumnValue(db, "table1", "col3", "bar");
 
-        dropTable();
+        dropTable("table1", false);
     }
-
-
 }
