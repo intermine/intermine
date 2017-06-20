@@ -110,23 +110,16 @@ public class DatabaseUtilTest extends TestCase
 
     public void testGetTableNameOne() throws Exception {
         ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-
-        Model model1 = new Model("test1", "package.name", new HashSet(Arrays.asList(new Object[] {cld})));
-
         assertEquals("Class1", DatabaseUtil.getTableName(cld));
     }
 
     public void testGetTableNameTwo() throws Exception {
         ClassDescriptor cld = new ClassDescriptor("package.name.Array", null, false, new HashSet(), new HashSet(), new HashSet());
-
-        Model model1 = new Model("test1", "package.name", new HashSet(Arrays.asList(new Object[] {cld})));
-
         assertEquals("intermine_Array", DatabaseUtil.getTableName(cld));
     }
 
     public void testGetColumnName() throws Exception {
         FieldDescriptor attr = new AttributeDescriptor("attr1", "int");
-
         assertEquals(DatabaseUtil.generateSqlCompatibleName("attr1"), DatabaseUtil.getColumnName(attr));
     }
 
@@ -140,7 +133,7 @@ public class DatabaseUtilTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs, new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("test", "package.name", clds);
+        new Model("test", "package.name", clds);
 
         try {
             DatabaseUtil.getIndirectionTableName(col1);
@@ -153,11 +146,9 @@ public class DatabaseUtilTest extends TestCase
         CollectionDescriptor col1 = new CollectionDescriptor("col1", "package.name.Class2", null);
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), cols);
-
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("test", "package.name", clds);
+        new Model("test", "package.name", clds);
 
         assertEquals("Class1Col1", DatabaseUtil.getIndirectionTableName(col1));
         assertEquals("Col1", DatabaseUtil.getInwardIndirectionColumnName(col1, 0));
@@ -176,7 +167,7 @@ public class DatabaseUtilTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), cols);
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("test", "package.name", clds);
+        new Model("test", "package.name", clds);
 
         assertEquals("Col1Col2", DatabaseUtil.getIndirectionTableName(col1));
         assertEquals("Col1", DatabaseUtil.getInwardIndirectionColumnName(col1, 0));
