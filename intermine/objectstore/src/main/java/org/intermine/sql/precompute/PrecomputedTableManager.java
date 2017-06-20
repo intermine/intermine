@@ -393,7 +393,7 @@ public class PrecomputedTableManager
 
             // Drop the table
             Statement stmt = con.createStatement();
-            stmt.execute("DROP TABLE " + name);
+            stmt.execute("DROP TABLE IF EXISTS " + name);
             if (!con.getAutoCommit()) {
                 con.commit();
             }

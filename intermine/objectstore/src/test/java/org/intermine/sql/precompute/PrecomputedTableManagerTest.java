@@ -214,7 +214,6 @@ public class PrecomputedTableManagerTest extends TestCase
         }
     }
 
-
     public void testExistingTables() throws Exception {
         synchronized (pt1) {
             PrecomputedTableManager ptm1 = new PrecomputedTableManager(database);
@@ -289,6 +288,8 @@ public class PrecomputedTableManagerTest extends TestCase
         Connection con = database.getConnection();
         con.setAutoCommit(false);
         PrecomputedTableManager ptm = new PrecomputedTableManager(database);
+        ptm.deleteTableFromDatabase("precompC");
+
         try {
             PrecomputedTable pt2 = new PrecomputedTable(q, q.getSQLString(), "precompC", "test", con);
             ptm.add(pt2);
