@@ -18,17 +18,20 @@ public class CacheMapTest extends TestCase
         super(arg1);
     }
 
-    public void test() throws Exception {
-        CacheMap cm = new CacheMap();
-        for (int i = 0; i < 300; i++) {
-            Integer iI = new Integer(i);
-            cm.put(iI, new byte[1048576]);
-        }
-
-        assertTrue(cm.size() < 1500);
-        assertTrue("Expected first two to be missing",!(cm.containsKey(new Integer(2)) && cm.containsKey(new Integer(1))));
-        assertTrue("Expected last two to be present", cm.containsKey(new Integer(298)) || cm.containsKey(new Integer(299)));
-    }
+    // Yeah, we can't test SoftReferences this way without properly mocking the entire CacheMap implementation so
+    // we can control when objects are GC'd.  But don't do try and do this - INSTEAD REPLACE THE HOME-BAKED IMPLEMENTATION
+    // HERE WITH SOMETHING BATTLE-TESTED IN AN EXTERNAL LIBRARY (QUITE POSSIBLY SOMETHING FROM THE JDK ITSELF)
+//    public void test() throws Exception {
+//        CacheMap cm = new CacheMap();
+//        for (int i = 0; i < 300; i++) {
+//            Integer iI = new Integer(i);
+//            cm.put(iI, new byte[1048576]);
+//        }
+//
+//        assertTrue(cm.size() < 1500);
+//        assertTrue("Expected first two to be missing",!(cm.containsKey(new Integer(2)) && cm.containsKey(new Integer(1))));
+//        assertTrue("Expected last two to be present", cm.containsKey(new Integer(298)) || cm.containsKey(new Integer(299)));
+//    }
 
     public void test2() throws Exception {
         CacheMap cm = new CacheMap();
