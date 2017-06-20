@@ -1,0 +1,11 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+}
+
+dependencies {
+  compile project(':intermine-objectstore')
+}

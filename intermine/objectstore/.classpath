@@ -25,11 +25,6 @@
 			<attribute name="FROM_GRADLE_MODEL" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="build/gen/src">
-		<attributes>
-			<attribute name="FROM_GRADLE_MODEL" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" path="src/test/resources">
 		<attributes>
 			<attribute name="FROM_GRADLE_MODEL" value="true"/>

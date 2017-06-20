@@ -73,6 +73,11 @@ def generateModel(String model, String destination, String type) {
     ant.modelOutputTask(model: "$model", destDir: "$destination", type: "$type")
 }
 
+def buildDB(String osname, String model) {
+    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask')
+    ant.buildDBUnittest(osname: "$osname", model: "$model", schemafile:"${osname}-schema.xml", tempDir: 'build/tmp')
+}
+
 task generateTestModel {
     doLast {
         generateModel('testmodel', 'build/gen/src', 'java')

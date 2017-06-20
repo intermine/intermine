@@ -3,25 +3,22 @@ rootProject.name = 'intermine'
 include ':intermine-model',
 ':intermine-pathquery',
 ':intermine-objectstore',
-':intermine-integrate' 
-//':userprofile', ':intermine-api'
+':intermine-testmodel',
+':intermine-integrate',
+':intermine-api',
+':intermine-webapp', 
+':intermine-webtasks' 
 //':intermine-webservice-client', ':intermine-webservice-test'
 
-//intermine-model
 project(':intermine-model').projectDir = new File(settingsDir, './model')
-
-//intermine-pathquery
 project(':intermine-pathquery').projectDir = new File(settingsDir, './pathquery')
-
-//intermine-objectstore
 project(':intermine-objectstore').projectDir = new File(settingsDir, './objectstore')
+project(':intermine-testmodel').projectDir = new File(settingsDir, './testmodel')
 
-//intermine-integrate
 project(':intermine-integrate').projectDir = new File(settingsDir, './integrate')
-//project(':userprofile').projectDir = new File(settingsDir, './api/model/userprofile')
-
-//intermine-api
-//project(':intermine-api').projectDir = new File(settingsDir, './api')
+project(':intermine-api').projectDir = new File(settingsDir, './api')
+project(':intermine-webapp').projectDir = new File(settingsDir, './webapp')
+project(':intermine-webtasks').projectDir = new File(settingsDir, './webtasks')
 
 //intermine-webservice
 ////project(':intermine-webservice-client').projectDir = new File(settingsDir, './webservice/client/main')
