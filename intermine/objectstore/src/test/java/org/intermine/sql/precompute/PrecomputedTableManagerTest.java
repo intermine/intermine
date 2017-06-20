@@ -217,17 +217,20 @@ public class PrecomputedTableManagerTest extends TestCase
     public void testExistingTables() throws Exception {
         synchronized (pt1) {
             PrecomputedTableManager ptm1 = new PrecomputedTableManager(database);
+            for (PrecomputedTable pt : new HashSet<PrecomputedTable>(ptm1.getPrecomputedTables())) {
+                ptm1.delete(pt);
+            }
+
             try {
                 createTable();
                 ptm1.add(pt1);
 
                 PrecomputedTableManager ptm2 = new PrecomputedTableManager(database);
-
-                PrecomputedTable pt2 = (PrecomputedTable) ptm2.getPrecomputedTables().iterator().next();
+                PrecomputedTable pt2 = ptm2.getPrecomputedTables().iterator().next();
 
                 assertEquals(pt1, pt2);
             } catch (SQLException e) {
-                throw (SQLException) Util.verboseException(e);
+                throw Util.verboseException(e);
             } finally {
                 ptm1.delete(pt1);
                 deleteTable();
