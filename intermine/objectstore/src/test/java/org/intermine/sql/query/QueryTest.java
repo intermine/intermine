@@ -1120,8 +1120,8 @@ public class QueryTest extends TestCase
             + "a3_.primaryAccession, a8_.interproId, a8_.identifier, a8_.name, a8_.shortName";
 
         long start = new Date().getTime();
-        Query q1 = new Query(sql);
-        assertTrue(((new Date()).getTime() - start)/1000 < 2);
+        new Query(sql);
+        assertTiming(start, 4000);
     }
 
     public void testLongParseTimeRegression2() throws Exception {
@@ -1132,15 +1132,21 @@ public class QueryTest extends TestCase
             + "= a2_.id) AND a2_.experimentId = a3_.id) ORDER BY a2_.id";
 
         long start = new Date().getTime();
-        Query q1 = new Query(sql);
-        assertTrue(((new Date()).getTime() - start)/1000 < 2);
+        new Query(sql);
+        assertTiming(start, 2000);
     }
 
     public void testLongParseTimeRegression3() throws Exception {
         String sql = "SELECT DISTINCT a1_.id AS a1_id, a2_.id AS a2_id, a4_.type AS a5_, a4_.intermine_value AS a6_ FROM MicroArrayExperiment AS a1_, MicroArrayAssay AS a2_, Sample AS a3_, SampleCharacteristic AS a4_, AssaysSamples AS indirect0, CharacteristicsSample AS indirect1 WHERE (((LOWER(a4_.type) = 'timeunit' OR LOWER(a4_.type) = 'developmentalstage') AND LOWER(a1_.name) = 'arbeitman m: gene expression during the life cycle of drosophila melanogaster') AND a1_.id = a2_.experimentId AND (a2_.id = indirect0.Samples AND indirect0.Assays = a3_.id) AND (a3_.id = indirect1.Characteristics AND indirect1.Sample = a4_.id)) ORDER BY a1_.id, a2_.id, a4_.type, a4_.intermine_value LIMIT 500";
+
         long start = new Date().getTime();
-        Query q1 = new Query(sql);
-        assertTrue(((new Date()).getTime() - start)/1000 < 5);
+        new Query(sql);
+        assertTiming(start, 32000);
+    }
+
+    protected void assertTiming(long start, long aimTime) {
+        long elapsed = new Date().getTime() - start;
+        assertTrue("Threshold was " + aimTime + " but actually elapsed was " + elapsed, elapsed <= aimTime);
     }
 
     public void testToString() throws Exception {

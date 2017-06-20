@@ -190,7 +190,6 @@ public class QueryTest extends TestCase
 
     }
 
-
     public void testClearSelect() {
         clearQuery.clearSelect();
         assertEquals(0, clearQuery.getSelect().size());
