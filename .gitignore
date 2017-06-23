@@ -211,3 +211,4 @@ wget-log
 /WS256-test-data
 /wormmine/support/properties/gene_class_mapping.sync-conflict-20170608-183534.properties
 /bio/sources/wormbase-acedb/test/resources/Anatomy_term.xml
+/bio/sources/wormbase-acedb/test/resources/anatomy_term_mapping.properties
