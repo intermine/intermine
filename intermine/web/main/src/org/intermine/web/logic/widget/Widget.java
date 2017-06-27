@@ -36,6 +36,7 @@ public abstract class Widget
     protected String ids;
     protected ObjectStore os;
     protected int notAnalysed = 0;
+    protected int poplationCount = 0;
 
     /**
      * The constructor
@@ -64,6 +65,20 @@ public abstract class Widget
      */
     public void setNotAnalysed(int notAnalysed) {
         this.notAnalysed = notAnalysed;
+    }
+
+    /**
+     * @return the number of objects in the database annotated with ANY GO term
+     */
+    public int getPopulationCount() {
+        return poplationCount;
+    }
+
+    /**
+     * @param poplationCount the number of objects in the population
+     */
+    public void setPopulationCount(int poplationCount) {
+        this.poplationCount = poplationCount;
     }
 
     /**

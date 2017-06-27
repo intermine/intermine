@@ -156,6 +156,8 @@ public class EnrichmentWidgetResultService extends WidgetService
                                                + input.getWidgetId() + "\"");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
+        // total number of genes in database annotated with ANY GO term
+        addOutputInfo("populationCount", Integer.toString(widget.getPopulationCount()));
         addOutputPathQuery(widget, widgetConfig);
         addOutputExtraAttribute(input, widget);
 
