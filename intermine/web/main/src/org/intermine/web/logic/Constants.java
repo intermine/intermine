@@ -207,8 +207,9 @@ public final class Constants
      * 18 - Added display names to the model output.
      * 19 - Added intermine version
      * 20 - Added class counts and display names for atts, refs and colls. #1410
+     * 21 - Added populationCounts to enrichment output. #1601
      */
-    public static final int WEB_SERVICE_VERSION = 20;
+    public static final int WEB_SERVICE_VERSION = 21;
 
     /**
      * Current version of the InterMine code
