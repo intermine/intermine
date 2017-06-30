@@ -24,8 +24,8 @@ public final class WebJobInput implements JobInput
 
     private final String type;
     private final Collection<String> idents;
-    private final boolean caseSensitive;
-    private final String extraValue;
+    private boolean caseSensitive = false;
+    private String extraValue = "";
 
     /**
      * Create a web-job.
@@ -36,8 +36,10 @@ public final class WebJobInput implements JobInput
     public WebJobInput(String type, Collection<String> idents, BuildBagForm form) {
         this.type = type;
         this.idents = idents;
-        this.caseSensitive = form.getCaseSensitive();
-        this.extraValue = form.getExtraFieldValue();
+        if (form != null) {
+            this.caseSensitive = form.getCaseSensitive();
+            this.extraValue = form.getExtraFieldValue();
+        }
     }
 
     @Override
@@ -48,6 +50,14 @@ public final class WebJobInput implements JobInput
     @Override
     public String getExtraValue() {
         return this.extraValue;
+    }
+
+    /**
+     * Only used in the portal when we have to link directly to the list upload
+     * @param extraValue organism name
+     */
+    public void setExtraValue(String extraValue) {
+        this.extraValue = extraValue;
     }
 
     @Override

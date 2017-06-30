@@ -79,7 +79,6 @@ public class BuildBagForm extends ActionForm
         return formFile;
     }
 
-
     /**
      * Get the value to use when creating an extra constraint on a BagQuery, configured in
      * BagQueryConfig.

@@ -395,6 +395,7 @@
       <forward name="bagDetails" path="/bagDetails.do"/>
       <forward name="results" path="/results.do"/>
       <forward name="noResults" path="/noResults.do"/>
+      <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
     </action>
