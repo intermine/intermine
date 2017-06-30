@@ -89,5 +89,7 @@ tasks.withType(Test) {
     include '**/*Test.class'
 }
 
-test.dependsOn 'generateTestModel', 'copyDefaultProperties', 'copyTestProperties'
-generateTestModel.dependsOn 'setAntClassLoader'
+tasks.compileTestJava.dependsOn 'generateTestModel', 'copyDefaultProperties', 'copyTestProperties'
+tasks.compileTestJava.mustRunAfter 'generateTestModel'
+tasks.generateTestModel.dependsOn 'setAntClassLoader'
+tasks.generateTestModel.mustRunAfter 'setAntClassLoader'
