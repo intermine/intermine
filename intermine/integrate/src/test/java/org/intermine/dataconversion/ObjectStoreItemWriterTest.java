@@ -19,14 +19,11 @@ public class ObjectStoreItemWriterTest extends ItemWriterTestCase {
     }
 
     public void setUp() throws Exception {
-        osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
-        itemWriter = new ObjectStoreItemWriter(osw);
         super.setUp();
     }
 
     public void tearDown() throws Exception {
-        itemWriter.close();
-        osw.close();
+        super.tearDown();
     }
 }
 

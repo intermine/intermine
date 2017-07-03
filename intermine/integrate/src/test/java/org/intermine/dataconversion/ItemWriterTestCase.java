@@ -66,6 +66,7 @@ public class ItemWriterTestCase extends TestCase {
             osw.delete(obj);
         }
         osw.commitTransaction();
+        itemWriter.close();
         osw.close();
     }
 
