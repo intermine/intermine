@@ -8,6 +8,16 @@
  *
  */
 
+
+InterMine 1.8.2 (2017 July)
+
+#205 - add 4 numbers used to calculate enrichment to web services
+#1603 - revert logo changes on footer (temporarily)
+
+InterMine 1.8.1 (2017 June)
+
+Update copyright notice
+
 InterMine 1.8 (2017 June)
 
 #288 - List actions (set operations) greyed out but active

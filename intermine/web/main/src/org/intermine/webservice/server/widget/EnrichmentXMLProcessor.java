@@ -43,7 +43,8 @@ public final class EnrichmentXMLProcessor implements WidgetResultProcessor
             put(Integer.valueOf(0), "identifier");
             put(Integer.valueOf(1), "description");
             put(Integer.valueOf(2), "pValue");
-            put(Integer.valueOf(3), "count"); // Not used for now. May make a return later.
+            put(Integer.valueOf(3), "count");
+            put(Integer.valueOf(4), "populationAnnotationCount");
         }
     };
 
