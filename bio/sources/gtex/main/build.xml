@@ -1,0 +1,4 @@
+<project name="gtex-tasks" default="default" basedir=".">
+  <description>build gtex tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
