@@ -1,0 +1,102 @@
+<items>
+<item id="6_1" class="SOTerm">
+<attribute name="name" value="SNP"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_5" class="SNP">
+<attribute name="primaryIdentifier" value="1_752796_C_T_b37"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_2" class="Gene">
+<attribute name="primaryIdentifier" value="3456"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_8" class="SNP">
+<attribute name="primaryIdentifier" value="1_754503_G_A_b37"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="GTex data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="5_2" class="SNP">
+<attribute name="primaryIdentifier" value="1_739528_G_A_b37"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_4" class="SNP">
+<attribute name="primaryIdentifier" value="1_752721_A_G_b37"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_6" class="SNP">
+<attribute name="primaryIdentifier" value="1_753474_C_G_b37"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_7" class="SNP">
+<attribute name="primaryIdentifier" value="1_754063_G_T_b37"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="SNP">
+<attribute name="primaryIdentifier" value="1_736289_T_A_b37"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="primaryIdentifier" value="123"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_2"/>
+<collection name="SNPs"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_7"/><reference ref_id="5_8"/><reference ref_id="5_9"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_9" class="SNP">
+<attribute name="primaryIdentifier" value="1_754964_C_T_b37"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="GTex"/>
+</item>
+<item id="5_3" class="SNP">
+<attribute name="primaryIdentifier" value="1_752566_G_A_b37"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_2" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>

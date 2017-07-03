@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
-<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
-
 <classes>
-<!-- add any <class> elements here -->
-
+   <class name="SNP" extends="SequenceFeature" is-interface="true">
+     <reference name="gene" referenced-type="Gene" reverse-reference="SNPs"/>
+   </class>
+   <class name="Gene" extends="SequenceFeature" is-interface="true">
+     <collection name="SNPs" referenced-type="SNP" reverse-reference="gene"/>
+   </class>
 </classes>

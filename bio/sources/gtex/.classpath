@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="test/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-test"/>
@@ -11,5 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
