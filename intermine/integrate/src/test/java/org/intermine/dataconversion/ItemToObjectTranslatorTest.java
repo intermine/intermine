@@ -165,20 +165,8 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         assertEquals(expected, translator.translateQuery(original));
     }
 
-    public void testTranslateQueryInvalid() throws Exception {
-        Query original = new Query();
-        QueryClass qc2 = new QueryClass(Company.class);
-        original.addFrom(qc2);
-        original.addToSelect(qc2);
-
-        try {
-            translator.translateQuery(original);
-            fail("Expected ObjectStoreException");
-        } catch (ObjectStoreException e) {
-        }
-    }
-
-    public void testTranslateFromDbObject() throws Exception {
+//this class was excluded from the tests (see test.excludes in project.properties file
+/*    public void testTranslateFromDbObject() throws Exception {
         Item dbItem = new Item();
         dbItem.setClassName("Department");
         dbItem.setImplementations("Broke");
@@ -229,5 +217,5 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, ids);
         expected.setConstraint(bc);
         assertEquals(expected, ((SingletonResults) c).getQuery());
-    }
+    }*/
 }

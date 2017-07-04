@@ -21,14 +21,14 @@ import junit.framework.TestCase;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Item;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.ItemHelper;
 
 public class ItemWriterTestCase extends TestCase {
-    protected List items = new ArrayList();
+    protected List<Item> items = new ArrayList<Item>();
     protected ItemWriter itemWriter;
     protected ObjectStoreWriter osw;
 
@@ -38,7 +38,9 @@ public class ItemWriterTestCase extends TestCase {
 
     public void setUp() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("FullParserTest.xml");
-        List xmlItems = FullParser.parse(is);
+        List<org.intermine.xml.full.Item> xmlItems = FullParser.parse(is);
+        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
+        itemWriter = new ObjectStoreItemWriter(osw);
         Iterator iter = xmlItems.iterator();
         while (iter.hasNext()) {
             items.add((Item) ItemHelper.convert((org.intermine.xml.full.Item) iter.next()));
@@ -64,6 +66,7 @@ public class ItemWriterTestCase extends TestCase {
             osw.delete(obj);
         }
         osw.commitTransaction();
+        itemWriter.close();
         osw.close();
     }
 

@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 public final class JSStrings
 {
 
-    private static final String BUNDLE_NAME = "org.intermine.api.query.codegen.jsmessages";
+    private static final String BUNDLE_NAME = "jsmessages";
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(BUNDLE_NAME);
