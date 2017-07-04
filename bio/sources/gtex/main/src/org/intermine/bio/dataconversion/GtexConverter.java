@@ -1,5 +1,9 @@
 package org.intermine.bio.dataconversion;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -16,9 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -60,11 +61,13 @@ public class GtexConverter extends BioDirectoryConverter
         List<File> files = readFilesInDir(dataDir);
         for (File f : files) {
             String fileName = f.getName();
-            if (fileName.contains("egenes")) {
-                processGeneFile(new FileReader(f));
+            if (fileName.contains("gene_median_rpkm")) {
+                processExpression(new FileReader(f));
             } else if (fileName.contains("signif_snpgene")) {
-                processSNPFile(new FileReader(f));
+                processSNPs(new FileReader(f));
             }
+
+
         }
     }
 
@@ -89,20 +92,20 @@ public class GtexConverter extends BioDirectoryConverter
         return files;
     }
 
-    private void processGeneFile(Reader reader) throws IOException, ObjectStoreException {
-        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-        lineIter.next(); // move past header
-        while (lineIter.hasNext()) {
-            String[] line = (String[]) lineIter.next();
-            if (line.length < 28) {
-                continue;
-            }
-            String geneIdentifier = line[0];
-            Item gene = getGene(geneIdentifier);
-        }
-    }
+//    private void processGeneFile(Reader reader) throws IOException, ObjectStoreException {
+//        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+//        lineIter.next(); // move past header
+//        while (lineIter.hasNext()) {
+//            String[] line = (String[]) lineIter.next();
+//            if (line.length < 28) {
+//                continue;
+//            }
+//            String geneIdentifier = line[0];
+//            Item gene = getGene(geneIdentifier);
+//        }
+//    }
 
-    private void processSNPFile(Reader reader) throws IOException, ObjectStoreException {
+    private void processSNPs(Reader reader) throws IOException, ObjectStoreException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         lineIter.next(); // move past header
         while (lineIter.hasNext()) {
@@ -112,12 +115,49 @@ public class GtexConverter extends BioDirectoryConverter
             }
             String snpIdentifier = line[0];
             String geneIdentifier = line[1];
+            String tssDistance = line[2];
+            String pValue = line[3];
+
             Item gene = getGene(geneIdentifier);
             if (gene == null) {
                 continue;
             }
-            String snp = getSNP(snpIdentifier, gene);
+            String snp = getSNP(snpIdentifier, gene, tssDistance, pValue);
             gene.addToCollection("SNPs", snp);
+        }
+    }
+
+    private void processExpression(Reader reader) throws IOException, ObjectStoreException {
+        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        String[] headers = null;
+
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
+
+            // process header
+            if ("Name".equals(line[0])) {
+                headers = line;
+            }
+            // keep going until we find the column heading
+            if (headers == null) {
+                continue;
+            }
+            String geneIdentifier = line[0];
+            Item gene = getGene(geneIdentifier);
+            if (gene == null) {
+                continue;
+            }
+
+            // skip first two columns, name and description
+            for (int i = 2; i < line.length; i++) {
+                String columnName = headers[i];
+                Item item = createItem("RNASeqResult");
+                item.setReference("gene", gene);
+                item.setAttribute("tissue", columnName);
+                item.setAttribute("expressionScore", line[i]);
+                store(item);
+                gene.addToCollection("rnaSeqResults", item);
+            }
         }
     }
 
@@ -139,9 +179,12 @@ public class GtexConverter extends BioDirectoryConverter
         return item;
     }
 
-    private String getSNP(String primaryIdentifier, Item gene) throws ObjectStoreException {
+    private String getSNP(String primaryIdentifier, Item gene, String tssDistance, String pValue)
+        throws ObjectStoreException {
         Item item = createItem("SNP");
         item.setAttribute("primaryIdentifier", primaryIdentifier);
+        item.setAttribute("tssDistance", tssDistance);
+        item.setAttribute("pValue", pValue);
         item.setReference("organism", getOrganism(TAXON_ID));
         item.setReference("gene", gene);
         store(item);
