@@ -9,7 +9,7 @@ use constant {
     SOURCE_LINK => "http://flybase.org",
     HOST => "ftp.flybase.net",
     SOURCE_DIR => "flybase/homology",
-    REMOTE_DIR => 'releases/current/precomputed_files/genes',
+    REMOTE_DIR => 'releases/current/precomputed_files/orthologs',
 };
 
 sub BUILD {
@@ -21,12 +21,12 @@ sub BUILD {
         map {
           { 
             HOST => 'ftp.flybase.net',
-            REMOTE_DIR => 'releases/current/precomputed_files/genes',
+            REMOTE_DIR => 'releases/current/precomputed_files/orthologs',
             FILE => $_,
             EXTRACT => 1,
           }
         }
-        grep {/^gene_orthologs_fb_/} @files;
+        grep {/^dmel_orthologs_in_drosophila_species_fb_/} @files;
     $self->set_sources([@resources]);
 }
 
