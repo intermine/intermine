@@ -13,7 +13,7 @@ use constant {
     SOURCE_LINK => "www.informatics.jax.org",
     SOURCE_DIR => "mgi-identifiers",
     SOURCES => [{
-        SERVER => "MRK_List2.rpt", 
+        FILE => "MRK_List2.rpt", 
         URI => "http://www.informatics.jax.org/downloads/reports",
     }],
 };
