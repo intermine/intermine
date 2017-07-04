@@ -59,7 +59,7 @@ import org.intermine.util.PropertiesUtil;
  * @author Richard Smith
  *
  */
-public class InterMineAPITestCase extends TestCase {
+public abstract class InterMineAPITestCase extends TestCase {
 
     private static final Logger LOG = Logger.getLogger(InterMineAPITestCase.class);
 
