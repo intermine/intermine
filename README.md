@@ -3,7 +3,7 @@ InterMine
 
 Master: [![Build Status: master][travis-badge-master]][ci]
 Dev: [![Build Status: dev][travis-badge-dev]][ci]
-[![Version](http://img.shields.io/badge/version-1.8.1-blue.svg?style=flat)](https://github.com/intermine/intermine/releases/tag/intermine-1.6.6)
+[![Version](http://img.shields.io/badge/version-1.8.2-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
 
