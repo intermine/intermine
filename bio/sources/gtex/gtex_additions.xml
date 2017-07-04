@@ -3,6 +3,7 @@
    <class name="SNP" extends="SequenceFeature" is-interface="true">
      <attribute name="pValue" type="java.lang.Double"/>
      <attribute name="tssDistance" type="java.lang.Integer"/>
+     <attribute name="tissue" type="java.lang.String"/>
      <reference name="gene" referenced-type="Gene" reverse-reference="SNPs"/>
    </class>
    <class name="Gene" extends="SequenceFeature" is-interface="true">

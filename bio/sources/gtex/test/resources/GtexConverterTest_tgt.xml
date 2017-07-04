@@ -14,6 +14,16 @@
 <attribute name="tissue" value="Colon - Sigmoid"/>
 <reference name="gene" ref_id="3_1"/>
 </item>
+<item id="6_6" class="SNP">
+<attribute name="pValue" value="1.49766e-07"/>
+<attribute name="primaryIdentifier" value="1_753474_C_G_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-9428"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="5_39" class="RNASeqResult">
 <attribute name="expressionScore" value="0"/>
 <attribute name="tissue" value="Nerve - Tibial"/>
@@ -93,6 +103,16 @@
 <attribute name="tissue" value="Esophagus - Mucosa"/>
 <reference name="gene" ref_id="3_1"/>
 </item>
+<item id="6_8" class="SNP">
+<attribute name="pValue" value="4.53263e-06"/>
+<attribute name="primaryIdentifier" value="1_754503_G_A_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-8399"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="5_31" class="RNASeqResult">
 <attribute name="expressionScore" value="0"/>
 <attribute name="tissue" value="Fallopian Tube"/>
@@ -165,6 +185,16 @@
 <attribute name="tissue" value="Liver"/>
 <reference name="gene" ref_id="3_1"/>
 </item>
+<item id="6_4" class="SNP">
+<attribute name="pValue" value="4.38845e-06"/>
+<attribute name="primaryIdentifier" value="1_752721_A_G_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-10181"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="5_99" class="RNASeqResult">
 <attribute name="expressionScore" value="10.6"/>
 <attribute name="tissue" value="Small Intestine - Terminal Ileum"/>
@@ -180,10 +210,11 @@
 <attribute name="tissue" value="Kidney - Cortex"/>
 <reference name="gene" ref_id="3_1"/>
 </item>
-<item id="6_1" class="SNP">
-<attribute name="pValue" value="2.50292e-06"/>
-<attribute name="primaryIdentifier" value="1_736289_T_A_b37"/>
-<attribute name="tssDistance" value="-26613"/>
+<item id="6_9" class="SNP">
+<attribute name="pValue" value="1.80336e-05"/>
+<attribute name="primaryIdentifier" value="1_754964_C_T_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-7938"/>
 <reference name="gene" ref_id="3_1"/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="7_1"/>
@@ -222,10 +253,11 @@
 <attribute name="tissue" value="Cervix - Ectocervix"/>
 <reference name="gene" ref_id="3_2"/>
 </item>
-<item id="6_7" class="SNP">
-<attribute name="pValue" value="8.82435e-10"/>
-<attribute name="primaryIdentifier" value="1_754063_G_T_b37"/>
-<attribute name="tssDistance" value="-8839"/>
+<item id="6_2" class="SNP">
+<attribute name="pValue" value="1.16712e-07"/>
+<attribute name="primaryIdentifier" value="1_739528_G_A_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-23374"/>
 <reference name="gene" ref_id="3_1"/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="7_1"/>
@@ -240,6 +272,16 @@
 <attribute name="expressionScore" value="7.572"/>
 <attribute name="tissue" value="Whole Blood"/>
 <reference name="gene" ref_id="3_2"/>
+</item>
+<item id="6_7" class="SNP">
+<attribute name="pValue" value="8.82435e-10"/>
+<attribute name="primaryIdentifier" value="1_754063_G_T_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-8839"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_23" class="RNASeqResult">
 <attribute name="expressionScore" value="0"/>
@@ -301,6 +343,16 @@
 <attribute name="tissue" value="Brain - Putamen (basal ganglia)"/>
 <reference name="gene" ref_id="3_2"/>
 </item>
+<item id="6_5" class="SNP">
+<attribute name="pValue" value="5.90429e-09"/>
+<attribute name="primaryIdentifier" value="1_752796_C_T_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-10106"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="5_157" class="RNASeqResult">
 <attribute name="expressionScore" value="0"/>
 <attribute name="tissue" value="Uterus"/>
@@ -326,15 +378,6 @@
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_6" class="SNP">
-<attribute name="pValue" value="1.49766e-07"/>
-<attribute name="primaryIdentifier" value="1_753474_C_G_b37"/>
-<attribute name="tssDistance" value="-9428"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="5_154" class="RNASeqResult">
 <attribute name="expressionScore" value="0"/>
 <attribute name="tissue" value="Stomach"/>
@@ -345,19 +388,20 @@
 <attribute name="tissue" value="Brain - Frontal Cortex (BA9)"/>
 <reference name="gene" ref_id="3_2"/>
 </item>
-<item id="5_148" class="RNASeqResult">
-<attribute name="expressionScore" value="0"/>
-<attribute name="tissue" value="Pituitary"/>
-<reference name="gene" ref_id="3_1"/>
-</item>
-<item id="6_9" class="SNP">
-<attribute name="pValue" value="1.80336e-05"/>
-<attribute name="primaryIdentifier" value="1_754964_C_T_b37"/>
-<attribute name="tssDistance" value="-7938"/>
+<item id="6_1" class="SNP">
+<attribute name="pValue" value="2.50292e-06"/>
+<attribute name="primaryIdentifier" value="1_736289_T_A_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-26613"/>
 <reference name="gene" ref_id="3_1"/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_148" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Pituitary"/>
+<reference name="gene" ref_id="3_1"/>
 </item>
 <item id="5_113" class="RNASeqResult">
 <attribute name="expressionScore" value="0"/>
@@ -398,15 +442,6 @@
 <attribute name="expressionScore" value="0"/>
 <attribute name="tissue" value="Artery - Coronary"/>
 <reference name="gene" ref_id="3_1"/>
-</item>
-<item id="6_4" class="SNP">
-<attribute name="pValue" value="4.38845e-06"/>
-<attribute name="primaryIdentifier" value="1_752721_A_G_b37"/>
-<attribute name="tssDistance" value="-10181"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_3" class="RNASeqResult">
 <attribute name="expressionScore" value="0"/>
@@ -468,6 +503,16 @@
 <attribute name="tissue" value="Artery - Coronary"/>
 <reference name="gene" ref_id="3_2"/>
 </item>
+<item id="6_3" class="SNP">
+<attribute name="pValue" value="6.28418e-06"/>
+<attribute name="primaryIdentifier" value="1_752566_G_A_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-10336"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="5_66" class="RNASeqResult">
 <attribute name="expressionScore" value="7.486"/>
 <attribute name="tissue" value="Brain - Cortex"/>
@@ -477,15 +522,6 @@
 <attribute name="expressionScore" value="0"/>
 <attribute name="tissue" value="Brain - Putamen (basal ganglia)"/>
 <reference name="gene" ref_id="3_1"/>
-</item>
-<item id="6_5" class="SNP">
-<attribute name="pValue" value="5.90429e-09"/>
-<attribute name="primaryIdentifier" value="1_752796_C_T_b37"/>
-<attribute name="tssDistance" value="-10106"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_37" class="RNASeqResult">
 <attribute name="expressionScore" value="0"/>
@@ -561,15 +597,6 @@
 <attribute name="expressionScore" value="0"/>
 <attribute name="tissue" value="Cervix - Ectocervix"/>
 <reference name="gene" ref_id="3_1"/>
-</item>
-<item id="6_2" class="SNP">
-<attribute name="pValue" value="1.16712e-07"/>
-<attribute name="primaryIdentifier" value="1_739528_G_A_b37"/>
-<attribute name="tssDistance" value="-23374"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_19" class="RNASeqResult">
 <attribute name="expressionScore" value="0"/>
@@ -741,15 +768,6 @@
 <attribute name="tissue" value="Whole Blood"/>
 <reference name="gene" ref_id="3_1"/>
 </item>
-<item id="6_8" class="SNP">
-<attribute name="pValue" value="4.53263e-06"/>
-<attribute name="primaryIdentifier" value="1_754503_G_A_b37"/>
-<attribute name="tssDistance" value="-8399"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="5_75" class="RNASeqResult">
 <attribute name="expressionScore" value="6.026"/>
 <attribute name="tissue" value="Cells - EBV-transformed lymphocytes"/>
@@ -804,15 +822,6 @@
 <attribute name="expressionScore" value="0"/>
 <attribute name="tissue" value="Skin - Not Sun Exposed (Suprapubic)"/>
 <reference name="gene" ref_id="3_1"/>
-</item>
-<item id="6_3" class="SNP">
-<attribute name="pValue" value="6.28418e-06"/>
-<attribute name="primaryIdentifier" value="1_752566_G_A_b37"/>
-<attribute name="tssDistance" value="-10336"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_97" class="RNASeqResult">
 <attribute name="expressionScore" value="13.6"/>

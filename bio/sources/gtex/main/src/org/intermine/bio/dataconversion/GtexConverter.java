@@ -1,9 +1,5 @@
 package org.intermine.bio.dataconversion;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -27,6 +23,9 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  *
@@ -64,10 +63,8 @@ public class GtexConverter extends BioDirectoryConverter
             if (fileName.contains("gene_median_rpkm")) {
                 processExpression(new FileReader(f));
             } else if (fileName.contains("signif_snpgene")) {
-                processSNPs(new FileReader(f));
+                processSNPs(new FileReader(f), fileName);
             }
-
-
         }
     }
 
@@ -105,9 +102,11 @@ public class GtexConverter extends BioDirectoryConverter
 //        }
 //    }
 
-    private void processSNPs(Reader reader) throws IOException, ObjectStoreException {
+    private void processSNPs(Reader reader, String filename)
+        throws IOException, ObjectStoreException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         lineIter.next(); // move past header
+        String tissue = parseFilename(filename);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             if (line.length != 11) {
@@ -122,9 +121,16 @@ public class GtexConverter extends BioDirectoryConverter
             if (gene == null) {
                 continue;
             }
-            String snp = getSNP(snpIdentifier, gene, tssDistance, pValue);
+            String snp = getSNP(snpIdentifier, gene, tissue, tssDistance, pValue);
             gene.addToCollection("SNPs", snp);
         }
+    }
+
+    // Nerve_Tibial_Analysis.v6p.egenes.txt
+    private String parseFilename(String filename) {
+        String[] bits = filename.split("\\.");
+        String tissue = bits[0];
+        return tissue.replace("_", " ");
     }
 
     private void processExpression(Reader reader) throws IOException, ObjectStoreException {
@@ -179,10 +185,12 @@ public class GtexConverter extends BioDirectoryConverter
         return item;
     }
 
-    private String getSNP(String primaryIdentifier, Item gene, String tssDistance, String pValue)
+    private String getSNP(String primaryIdentifier, Item gene, String tissue,
+        String tssDistance, String pValue)
         throws ObjectStoreException {
         Item item = createItem("SNP");
         item.setAttribute("primaryIdentifier", primaryIdentifier);
+        item.setAttribute("tissue", tissue);
         item.setAttribute("tssDistance", tssDistance);
         item.setAttribute("pValue", pValue);
         item.setReference("organism", getOrganism(TAXON_ID));
