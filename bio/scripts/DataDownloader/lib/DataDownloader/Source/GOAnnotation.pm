@@ -30,8 +30,7 @@ use constant {
     SOURCE_DIR => "go-annotation",
 };
 
-my %GOA_TAXA = (flybase => 'gene_association.fb', wormbase => 'gene_association.wb', mgi => 'gene_association.mgi', human => 'goa_human.gaf', zfin => 'gene_association.zfin', sgd => 'gene_association.sgd', rgd => 'gene_association.rgd',\
- thale => 'gene_association.tair');
+my %GOA_TAXA = (flybase => 'gene_association.fb', wormbase => 'gene_association.wb', mgi => 'gene_association.mgi', human => 'goa_human.gaf', zfin => 'gene_association.zfin', sgd => 'gene_association.sgd', rgd => 'gene_association.rgd');
 sub field2_of { return [ split( /\t/, shift ) ]->[1] || '' }
 my $order = sub { field2_of($a) cmp field2_of($b) };
 
