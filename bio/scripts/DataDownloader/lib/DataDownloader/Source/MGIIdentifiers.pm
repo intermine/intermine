@@ -8,13 +8,13 @@ extends 'DataDownloader::Source::ABC';
 # removed FTP server? April 2017
 
 use constant {
-    TITLE => "MGI Identifiers",
-    DESCRIPTION => "Identifiers from MGI",
-    SOURCE_LINK => "www.informatics.jax.org",
-    SOURCE_DIR => "mgi-identifiers",
+    TITLE => 'MGI Identifiers',
+    DESCRIPTION => 'Identifiers from MGI',
+    SOURCE_LINK => 'www.informatics.jax.org',
+    SOURCE_DIR => 'mgi-identifiers',
     SOURCES => [{
-        FILE => "MRK_List2.rpt", 
-        URI => "http://www.informatics.jax.org/downloads/reports",
+        FILE   => 'MRK_List2.rpt',
+        SERVER => 'http://www.informatics.jax.org/downloads/reports',
     }],
 };
 
