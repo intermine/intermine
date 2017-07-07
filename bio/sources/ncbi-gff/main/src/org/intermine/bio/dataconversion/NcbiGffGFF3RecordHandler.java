@@ -66,7 +66,12 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
                 String description = record.getAttributes().get("description").iterator().next();
                 feature.setAttribute("briefDescription", description);
             }
-        } else if ("transcript".equals(type)) {
+        } else if ("transcript".equals(type) || "MRNA".equalsIgnoreCase(type)) {
+            if ("MRNA".equalsIgnoreCase(type)) {
+                feature.setClassName("MRNA");
+            } else {
+                feature.setClassName("Transcript");
+            }
             feature.setClassName("Transcript");
             String identifier = record.getAttributes().get("transcript_id").iterator().next();
             feature.setAttribute("primaryIdentifier", identifier);
