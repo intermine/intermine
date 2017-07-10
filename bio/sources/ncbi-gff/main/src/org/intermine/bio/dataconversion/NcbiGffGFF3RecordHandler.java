@@ -72,7 +72,6 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
             } else {
                 feature.setClassName("Transcript");
             }
-            feature.setClassName("Transcript");
             String identifier = record.getAttributes().get("transcript_id").iterator().next();
             feature.setAttribute("primaryIdentifier", identifier);
             if (record.getAttributes().get("product") != null) {
