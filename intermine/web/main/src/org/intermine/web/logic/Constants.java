@@ -208,13 +208,14 @@ public final class Constants
      * 19 - Added intermine version
      * 20 - Added class counts and display names for atts, refs and colls. #1410
      * 21 - Added populationCounts to enrichment output. #1601
+     * 22 - Added branding endpoints for use by non-InterMine apps
      */
-    public static final int WEB_SERVICE_VERSION = 21;
+    public static final int WEB_SERVICE_VERSION = 23;
 
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "1.8.2";
+    public static final String INTERMINE_VERSION = "1.8.4";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
