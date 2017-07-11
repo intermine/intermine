@@ -30,6 +30,7 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
         super(model);
         refsAndCollections.put("Exon", "transcripts");
         refsAndCollections.put("Transcript", "gene");
+        refsAndCollections.put("MRNA", "gene");
     }
 
     /**
