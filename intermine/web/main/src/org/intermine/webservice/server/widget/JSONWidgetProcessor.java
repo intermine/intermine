@@ -50,7 +50,6 @@ public final class JSONWidgetProcessor extends WidgetProcessorImpl
         backingMap.put("targets", getClasses(widgetConfig.getTypeClass()));
         backingMap.put("filters", widgetConfig.getFilters());
         backingMap.put("startClass", widgetConfig.getStartClass());
-        backingMap.put("views", widgetConfig.getViews());
         WidgetType widgetType = getWidgetType(widgetConfig);
         backingMap.put("widgetType", widgetType.name().toLowerCase());
         if (widgetType == WidgetType.CHART) {
@@ -63,8 +62,8 @@ public final class JSONWidgetProcessor extends WidgetProcessorImpl
                     .getEnrichIdentifier());
             backingMap.put("startClassDisplay", ((EnrichmentWidgetConfig) widgetConfig)
                     .getStartClassDisplay());
-            backingMap.put("constraints", ((EnrichmentWidgetConfig) widgetConfig)
-                    .getPathConstraintsForView());
+//            backingMap.put("constraints", ((EnrichmentWidgetConfig) widgetConfig)
+//                    .getPathConstraintsForView());
 
         }
         return new LinkedList<String>(Arrays.asList(new JSONObject(backingMap).toString()));
