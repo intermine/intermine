@@ -48,7 +48,7 @@ public class AtlasExpressConverter extends BioFileConverter
     public AtlasExpressConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(Collections.singleton(TAXON_ID));
+            rslv = IdResolverService.getIdResolverByOrganism(TAXON_ID);
         }
     }
 
