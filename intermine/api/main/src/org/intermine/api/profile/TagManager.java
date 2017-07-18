@@ -460,19 +460,6 @@ public class TagManager
             List<Tag> results) {
 
         cache.put(key, new ArrayList<Tag>(results));
-
-        Iterator<?> resIter = results.iterator();
-
-        while (resIter.hasNext()) {
-            Tag tag = (Tag) resIter.next();
-
-            Object[] tagKeys = new Object[4];
-            tagKeys[0] = tag.getTagName();
-            tagKeys[1] = tag.getObjectIdentifier();
-            tagKeys[2] = tag.getType();
-            tagKeys[3] = tag.getUserProfile().getUsername();
-        }
-
     }
 
     private Map<MultiKey, List<Tag>> getTagCache() {
