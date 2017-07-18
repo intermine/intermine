@@ -558,6 +558,7 @@ public class IdResolver
     public void populateFromFile(File f) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String line = null;
+        LOG.info("populating from file: " + f.getAbsolutePath());
         while ((line = reader.readLine()) != null) {
             String[] cols = line.split("\t");
             String taxonId = cols[0];

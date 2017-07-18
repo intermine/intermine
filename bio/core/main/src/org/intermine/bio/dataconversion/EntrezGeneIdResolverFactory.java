@@ -156,6 +156,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             LOG.info("Using cache, already has class: " + type + " for taxons: " + taxonIds);
             return;
         }
+        LOG.info("Not using cache, don't have class: " + type + " for taxons: " + taxonIds);
         if (resolver == null) {
             if (clsCol.size() > 1) { // Not the case, Entrez has gene only
                 resolver = new IdResolver();
