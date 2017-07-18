@@ -151,16 +151,17 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         taxonIds.removeAll(ignoredTaxonIds);
         LOG.info("Ignore taxons: " + ignoredTaxonIds + ", remain taxons: " + taxonIds);
 
-        if (resolver != null
-                && resolver.hasTaxonsAndClassName(taxonIds, this.clsCol
-                        .iterator().next())) {
+        String type = this.clsCol.iterator().next();
+        if (resolver != null && resolver.hasTaxonsAndClassName(taxonIds, type)) {
+            LOG.info("Using cache, already has class: " + type + " for taxons: " + taxonIds);
             return;
         }
         if (resolver == null) {
             if (clsCol.size() > 1) { // Not the case, Entrez has gene only
                 resolver = new IdResolver();
             } else {
-                resolver = new IdResolver(clsCol.iterator().next());
+                resolver = new IdResolver(type);
+                LOG.info("creating new resolver for " + type);
             }
         }
 
