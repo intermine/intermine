@@ -54,7 +54,7 @@ public class GtexConverter extends BioDirectoryConverter
     public void process(File dataDir) throws Exception {
 
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByTaxonId(TAXON_ID, false);
+            rslv = IdResolverService.getIdResolverByOrganism(TAXON_ID);
         }
 
         List<File> files = readFilesInDir(dataDir);
