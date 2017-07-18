@@ -20,7 +20,6 @@ default_sources:
   - "RedFly"
   - "RGDIdentifiers"
   - "UniProt"
-  - "WormIdentifiers"
   - "HomoloGene"
   - "OrthoDB"
   - "SGDIdentifiers"
