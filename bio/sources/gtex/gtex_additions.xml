@@ -14,5 +14,6 @@
     <attribute name="expressionScore" type="java.lang.Double"/>
     <attribute name="tissue" type="java.lang.String"/>
     <reference name="gene" referenced-type="Gene" reverse-reference="rnaSeqResults"/>
+    <collection name="dataSets" referenced-type="DataSet" />
   </class>
 </classes>
