@@ -42,7 +42,7 @@ public class TokensService extends ReadWriteJSONService
                                              .getProfileObjectStoreWriter()
                                              .getObjectById(profile.getUserId());
             String type = getOptionalParameter("type");
-            if (type == null) {
+            if (type == null || "perm".equals(type)) {
                 for (PermanentToken t: up.getPermanentTokens()) {
                     tokens.add(PermaTokens.format(t));
                 }
