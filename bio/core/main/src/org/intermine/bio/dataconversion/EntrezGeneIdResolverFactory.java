@@ -168,7 +168,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         try {
             boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxonsAndClassName(taxonIds, this.clsCol.iterator().next()))) {
+                    && !resolver.hasTaxonsAndClassName(taxonIds, type))) {
                 String resolverFileRoot =
                         PropertiesUtil.getProperties().getProperty(propKey);
 
@@ -179,8 +179,9 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                     return;
                 }
 
-                LOG.info("Creating id resolver from data file and caching it.");
                 String resolverFileName = resolverFileRoot.trim() + "/" + resolverFileSymbo;
+                LOG.info("Creating id resolver for " + taxonIds + " and " + type
+                        + " from data file and writing to:" + resolverFileName);
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f, taxonIds);
