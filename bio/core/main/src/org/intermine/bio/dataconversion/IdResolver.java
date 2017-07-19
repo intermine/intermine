@@ -561,6 +561,10 @@ public class IdResolver
         LOG.info("populating from file: " + f.getAbsolutePath());
         while ((line = reader.readLine()) != null) {
             String[] cols = line.split("\t");
+            if (cols.length < 4) {
+                LOG.error("File formatted incorrectly, expected at least 4 columns:" + line);
+                continue;
+            }
             String taxonId = cols[0];
             String className = cols[1];
             String primaryId = cols[2];

@@ -8,15 +8,22 @@ use constant {
     DESCRIPTION => 'Alleles from FlyBase',
     SOURCE_LINK => 'http://flybase.org',
     SOURCE_DIR => 'flybase/alleles',
-    SOURCES => [
-        {
-            SUBTITLE => 'Human Disease',
-            HOST => 'ftp.flybase.net',
-            REMOTE_DIR => "releases/current/precomputed_files/human_disease",
-            FILE => 'allele_human_disease_model_data_fb_2017_02.tsv.gz',
-            EXTRACT => 1,
-        },
-    ],
+    HOST => "ftp.flybase.net",
 };
+
+use constant FILE_TYPES =>
+  qr/tsv.gz/;
+
+sub BUILD {
+    my $self = shift;
+        for my $file ($self->ls_remote_dir("releases/current/precomputed_files/human_disease")) {
+            $self->add_source(
+                HOST       => 'ftp.flybase.net',
+                REMOTE_DIR => "releases/current/precomputed_files/human_disease",
+                FILE       => $file,
+                EXTRACT    => 1,
+            ) if ( $file =~ FILE_TYPES );
+    }
+}
 
 1;
