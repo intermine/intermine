@@ -57,6 +57,12 @@ public class WebPropertiesService extends JSONService
         // list params, delimiters
         appendProperties(webPropertiesMap, "list");
 
+        // defaults to use for query builder, extra-value is organism
+        appendProperties(webPropertiesMap, "constraint");
+
+        // defaults for iodocs, only setting default query right now
+        appendProperties(webPropertiesMap, "services");
+
         addResultItem(webPropertiesMap, false);
     }
 
