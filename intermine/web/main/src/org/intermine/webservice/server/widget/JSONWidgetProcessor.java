@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.json.JSONObject;
@@ -48,12 +49,22 @@ public final class JSONWidgetProcessor extends WidgetProcessorImpl
         backingMap.put("description", widgetConfig.getDescription());
         backingMap.put("targets", getClasses(widgetConfig.getTypeClass()));
         backingMap.put("filters", widgetConfig.getFilters());
+        backingMap.put("startClass", widgetConfig.getStartClass());
         WidgetType widgetType = getWidgetType(widgetConfig);
         backingMap.put("widgetType", widgetType.name().toLowerCase());
         if (widgetType == WidgetType.CHART) {
-            backingMap.put("chartType",
-                    ((GraphWidgetConfig) widgetConfig).getGraphType());
+            backingMap.put("chartType", ((GraphWidgetConfig) widgetConfig).getGraphType());
             backingMap.put("labels", getLabels((GraphWidgetConfig) widgetConfig));
+        }
+        if (widgetType == WidgetType.ENRICHMENT) {
+            backingMap.put("enrich", ((EnrichmentWidgetConfig) widgetConfig).getEnrich());
+            backingMap.put("enrichIdentifier", ((EnrichmentWidgetConfig) widgetConfig)
+                    .getEnrichIdentifier());
+            backingMap.put("startClassDisplay", ((EnrichmentWidgetConfig) widgetConfig)
+                    .getStartClassDisplay());
+//            backingMap.put("constraints", ((EnrichmentWidgetConfig) widgetConfig)
+//                    .getPathConstraintsForView());
+
         }
         return new LinkedList<String>(Arrays.asList(new JSONObject(backingMap).toString()));
     }

@@ -30,7 +30,7 @@
                <td>Genome sequence and annotation</td>
                <td><a href="http://www.ncbi.nlm.nih.gov">NCBI</a></td>
                <td>Human</td>
-               <td>November 2016</td>
+               <td>July 2017</td>
        </tr>
        <tr>
                <td>GWAS</td>
@@ -42,31 +42,31 @@
                <td>Gene names and symbol</td>
                <td><a href="http://www.genenames.org/">HGNC</a>, <a href="http://www.ncbi.nlm.nih.gov/gene/">NCBI</a>, <a href="http://www.informatics.jax.org/">MGI</a>, <a href="http://rgd.mcw.edu/">RGD</a></td>
                <td>Human, Mouse, Rat</td>
-               <td>November 2016</td>
+               <td>July 2017</td>
        </tr>
        <tr>
                <td>Protein sequence and annotation</a></td>
                <td><a href="http://www.uniprot.org/">UniProt</a></td>
                <td>Human, Mouse</td>
-               <td>2016_10</td>
+               <td>2017_06</td>
        </tr>
        <tr>
                <td>Protein domains</td>
                <td><a href="http://www.ebi.ac.uk/interpro/">InterPro</a></td>
                <td>Human, Mouse</td>
-               <td>November 2016</td>
+               <td>July 2017</td>
        </tr>
        <tr>
                <td>Gene Ontology</td>
                <td><a href="http://www.uniprot.org/">UniProt</a>, <a href="http://www.informatics.jax.org/">MGI</a>, <a href="http://www.geneontology.org/">GO Consortium</a></td>
                <td>Human, Mouse</td>
-               <td>November 2016</td>
+               <td>July 2017</td>
        </tr>
        <tr>
                <td>Pathways</td>
                <td><a href="http://www.reactome.org/">Reactome</a></td>
                <td>Human, Mouse</td>
-               <td>November 2016, v58</td>
+               <td>July 2017, v61</td>
        </tr>
        <tr>
                <td>Pathways</td>
@@ -97,49 +97,55 @@
                <td>Interactions</td>
                <td><a href="http://www.ebi.ac.uk/intact/">IntAct</a></td>
                <td>Human, Mouse</td>
-               <td>Release 201 - October 2016</td>
+               <td>July 2017</td>
        </tr>
        <tr>
                <td>Interactions</td>
                <td><a href="http://thebiogrid.org/">BioGRID</a></td>
                <td>Human, Mouse</td>
-               <td>Release 3.4.142</td>
+               <td>Release 3.4.150</td>
        </tr>
        <tr>
                <td>Publications</td>
                <td><a href="ftp://ftp.ncbi.nih.gov/gene/DATA/">NCBI PubMed (gene to PubMed id mappings)</a></td>
                <td>Human, Mouse</td>
-               <td>November 2016</td>
+               <td>July 2017</td>
        </tr>
        <tr>
                <td>Disease</td>
                <td><a href="http://www.omim.org/">OMIM</a></td>
                <td>Human</td>
-               <td>November 2016</td>
+               <td>July 2017</td>
        </tr>
        <tr>
                <td>Phenotypes</td>
                <td><a href="http://www.human-phenotype-ontology.org/">HPO</a></td>
                <td>Human</td>
-               <td>November 2016</td>
+               <td>July 2017</td>
        </tr>
        <tr>
                <td>Orthologues</td>
                <td><a href="http://www.pantherdb.org/>Panther</a></td>
                <td>Human, Mouse, Rat, Drosophila, C. elegans, S.cerevisiae</td>
-               <td>November 2016, v11.1</td>
+               <td>July 2017, v11.1</td>
        </tr>
        <tr>
                <td>Alleles</td>
                <td><a href="http://www.informatics.jax.org/">MGI</a></td>
                <td>Mouse</td>
-               <td>November 2016</td>
+               <td>July 2017</td>
        </tr>
        <tr>
                <td>Signalling</td>
                <td><a href="http://signor.uniroma2.it/">Signor, Signaling Network Open Resource</a></td>
                <td>Human, mouse</td>
-               <td>April 2017</td>
+               <td>July 2017</td>
+       </tr>
+                      <tr>
+               <td>GTex</td>
+               <td><a href="https://www.gtexportal.org.">GTex, Tissue specific gene expression and eQTLs</a></td>
+               <td>Human</td>
+               <td>July 2017</td>
        </tr>
 </table>
 </div>
