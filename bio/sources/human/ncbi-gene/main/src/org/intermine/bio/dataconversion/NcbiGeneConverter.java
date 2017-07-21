@@ -161,10 +161,7 @@ public class NcbiGeneConverter extends BioFileConverter
         }
 
         if (record.mapLocation != null) {
-            // cytoLocation attribute is set in chado-db_additions.xml
-            if (gene.hasAttribute("cytoLocation")) {
-                gene.setAttribute("cytoLocation", record.mapLocation);
-            }
+            gene.setAttribute("cytoLocation", record.mapLocation);
         }
 
         store(gene);

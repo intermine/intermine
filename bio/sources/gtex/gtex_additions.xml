@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<classes>
+   <class name="SNP" extends="SequenceFeature" is-interface="true">
+     <attribute name="pValue" type="java.lang.Double"/>
+     <attribute name="tssDistance" type="java.lang.Integer"/>
+     <attribute name="tissue" type="java.lang.String"/>
+     <reference name="gene" referenced-type="Gene" reverse-reference="SNPs"/>
+   </class>
+   <class name="Gene" extends="SequenceFeature" is-interface="true">
+     <collection name="SNPs" referenced-type="SNP" reverse-reference="gene"/>
+     <collection name="rnaSeqResults" referenced-type="RNASeqResult" reverse-reference="gene"/>
+   </class>
+  <class name="RNASeqResult" is-interface="true">
+    <attribute name="expressionScore" type="java.lang.Double"/>
+    <attribute name="tissue" type="java.lang.String"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="rnaSeqResults"/>
+    <collection name="dataSets" referenced-type="DataSet" />
+  </class>
+</classes>
