@@ -235,30 +235,37 @@
       <html:link action="/import" titleKey="history.importTemplatesDesc">
         <fmt:message key="history.importTemplates"/>
       </html:link>
+
+        <br/>
+      <c:if test="${IS_SUPERUSER}">
+        <html:link action="/summariseTemplates" titleKey="history.summariseTemplates">
+            <fmt:message key="history.summariseTemplates"/>
+        </html:link>
+      </c:if>
     </span>
-    
+
 <script type="text/javascript">
 (function() {
-	jQuery(window).load(function(){
-		<%-- sort templates by a remembered column --%>
-		var order = im.getCookie("mymine.templates.order");
-		if (order && parseInt(order)) {
-			fdTableSort.jsWrapper(jQuery("form#modifyTemplateForm table").attr("id"), order);
-		}
-		
-		<%-- callback saving sort order of tables into a cookie --%>
-		window.sortCompleteCallback = function() {
-			var table = jQuery("form#modifyTemplateForm table");
-			var th = table.find("th.forwardSort");
-			if (!jQuery(th).exists()) {
-				th = table.find("th.reverseSort");
-			}
-			im.setCookie("mymine.templates.order", th.attr("class").replace(/[^0-9.]/g, ""));
-		};
-	});
+  jQuery(window).load(function(){
+    <%-- sort templates by a remembered column --%>
+    var order = im.getCookie("mymine.templates.order");
+    if (order && parseInt(order)) {
+      fdTableSort.jsWrapper(jQuery("form#modifyTemplateForm table").attr("id"), order);
+    }
+
+    <%-- callback saving sort order of tables into a cookie --%>
+    window.sortCompleteCallback = function() {
+      var table = jQuery("form#modifyTemplateForm table");
+      var th = table.find("th.forwardSort");
+      if (!jQuery(th).exists()) {
+        th = table.find("th.reverseSort");
+      }
+      im.setCookie("mymine.templates.order", th.attr("class").replace(/[^0-9.]/g, ""));
+    };
+  });
 })();
-</script>  
-    
+</script>
+
   </im:body>
 
 <!-- /historyTemplateView.jsp -->

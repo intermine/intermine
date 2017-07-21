@@ -167,12 +167,12 @@
       <forward name="results" redirect="true" path="/results.do"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
-    </action> 
+    </action>
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
-      <forward name="results" redirect="true" path="/results.do"/>  
+      <forward name="results" redirect="true" path="/results.do"/>
       <forward name="template" redirect="true" path="/template.do"/>
     </action>
     <action path="/loadQuery" type="org.intermine.web.struts.LoadQueryAction" parameter="method">
@@ -243,7 +243,7 @@
       <forward name="report" redirect="true" path="/report.do"/>
     </action>
     <action path="/queryBuilderViewAction" name="emptyForm" type="org.intermine.web.struts.QueryBuilderViewAction">
-      <forward name="results" redirect="true" path="/results.do"/>      
+      <forward name="results" redirect="true" path="/results.do"/>
     </action>
     <action path="/createTemplate" name="templateSettingsForm" type="org.intermine.web.struts.CreateTemplateAction" validate="false">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
@@ -257,7 +257,7 @@
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
     <action path="/templateAction" name="templateForm" type="org.intermine.web.struts.TemplateAction" input="template" parameter="action">
-      <forward name="results" redirect="true" path="/results.do"/>  
+      <forward name="results" redirect="true" path="/results.do"/>
       <forward name="query" path="query.page"/>
       <forward name="template" path="template.page"/>
       <forward name="serviceLink" path="/serviceLink.do" redirect="false"/>
@@ -308,7 +308,7 @@
       <forward name="bags" path="bag.page"/>
       <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
-    
+
     <action path="/bagUploadConfirm" name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmAction" validate="false" input="error" parameter="action">
       <forward name="back" path="bag.page"/>
       <forward name="error" path="bagUploadConfirm.page"/>
@@ -372,10 +372,10 @@
     </action>
     <action path="/showProperties" forward="showProperties.page">
     </action>
-	<action path="/editProperty" name="editPropertyForm" type="org.intermine.web.struts.EditPropertiesAction" input="showProperties">
-		<forward name="failure" redirect="true" path="/begin.do"/>
-		<forward name="success" path="/showProperties.do"/>
-	</action>
+  <action path="/editProperty" name="editPropertyForm" type="org.intermine.web.struts.EditPropertiesAction" input="showProperties">
+    <forward name="failure" redirect="true" path="/begin.do"/>
+    <forward name="success" path="/showProperties.do"/>
+  </action>
     <action path="/wsCodeGen" type="org.intermine.web.struts.WebserviceCodeGenAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
@@ -395,6 +395,7 @@
       <forward name="bagDetails" path="/bagDetails.do"/>
       <forward name="results" path="/results.do"/>
       <forward name="noResults" path="/noResults.do"/>
+      <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
     </action>
@@ -425,6 +426,8 @@
     <action path="/initQueryBuilderSummary" type="org.intermine.web.struts.QueryBuilderSummaryController">
     </action>
     <action path="/initInlineTagEditor" type="org.intermine.web.struts.InlineTagEditorController">
+    </action>
+    <action path="/initListTags" type="org.intermine.web.struts.ListTagsController">
     </action>
     <action path="/initTemplateList" type="org.intermine.web.struts.TemplateListController">
     </action>
@@ -489,7 +492,7 @@
     <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
     <action path="/initSharingBagUsers" type="org.intermine.web.struts.SharingBagUsersController"/>
     <action path="/initUsers"  name="modifySuperUserForm" type="org.intermine.web.struts.UsersController" scope="request"  validate="false"/>
-    
+
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>

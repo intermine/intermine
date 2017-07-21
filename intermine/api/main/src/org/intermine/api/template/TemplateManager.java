@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -463,7 +463,7 @@ public class TemplateManager
      * @param size maximum number of templates to return
      * @return List of template names
      */
-    public List<ApiTemplate> getPopularTemplatesByAspect(String aspectTag, Integer size) {
+    public List<ApiTemplate> getPopularTemplatesByAspect(String aspectTag, int size) {
         return getPopularTemplatesByAspect(aspectTag, size, null, null);
     }
 
@@ -476,7 +476,7 @@ public class TemplateManager
      * @param sessionId the session id
      * @return List of template names
      */
-    public List<ApiTemplate> getPopularTemplatesByAspect(String aspectTag, Integer size,
+    public List<ApiTemplate> getPopularTemplatesByAspect(String aspectTag, int size,
                                                            String userName, String sessionId) {
         List<ApiTemplate> templates = getAspectTemplates(aspectTag, null);
         List<String> mostPopularTemplateNames;
@@ -490,11 +490,13 @@ public class TemplateManager
             Collections.sort(templates, new MostPopularTemplateComparator(
                                             mostPopularTemplateNames));
         }
-        if (templates != null && size != null) {
-            if (templates.size() > size.intValue()) {
-                templates = templates.subList(0, size.intValue());
+
+        if (templates != null) {
+            if (templates.size() > size) {
+                templates = templates.subList(0, size);
             }
         }
+
         return templates;
     }
 

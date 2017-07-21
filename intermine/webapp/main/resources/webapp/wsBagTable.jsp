@@ -10,6 +10,7 @@
 <tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<tiles:importAttribute name="showTags" ignore="true"/>
 <tiles:importAttribute name="limit" ignore="true"/>
 <tiles:importAttribute name="height" ignore="true"/>
 <tiles:importAttribute name="tags" ignore="true"/>
@@ -31,6 +32,7 @@
   <tiles:put name="showNames" value="${showNames}"/>
   <tiles:put name="showTitles" value="${showTitles}"/>
   <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+  <tiles:put name="showTags" value="${showTags}"/>
   <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
   <tiles:put name="makeTable" value="false"/>
   <tiles:put name="makeLine" value="true"/>

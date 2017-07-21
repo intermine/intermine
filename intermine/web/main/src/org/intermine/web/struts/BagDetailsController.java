@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -120,6 +120,17 @@ public class BagDetailsController extends TilesAction
                     new ActionMessage("errors.bag.missing", bagName));
             saveErrors(request, actionMessages);
             request.setAttribute("bag", imBag);
+            return null;
+        }
+
+        final String currentState = "CURRENT";
+
+        if (!currentState.equalsIgnoreCase(imBag.getState())) {
+            // list is not current
+            final String msg = "List '" + bagName + "' is currently unavailable. It requires "
+                    + "upgrading by the list owner.";
+            request.setAttribute("errorMessage", msg);
+            request.setAttribute("invalid", true);
             return null;
         }
 

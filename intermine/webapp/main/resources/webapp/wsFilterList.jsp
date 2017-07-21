@@ -16,6 +16,7 @@
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<tiles:importAttribute name="showTags" ignore="true"/>
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
@@ -41,6 +42,15 @@
           }
       } else {
           pageContext.setAttribute("userShowDescription", true);
+      }
+
+      id =  pageContext.getAttribute("wsListId") + "_" + pageContext.getAttribute("type") + "_item_tags";
+      if (webState.getState(id) != null) {
+          if (webState.getState(id).toString().equals("true")) {
+              pageContext.setAttribute("userShowTags", true);
+          }
+      } else {
+          // pageContext.setAttribute("userShowTags", true);
       }
 %>
 <c:set var="ws_input_id" value="${wsListId}_${type}_filter_text"/>
@@ -153,6 +163,12 @@ function clearBagName(element) {
     </c:if>
     <input type="checkbox" <c:out value="${checkboxChecked}" /> id="showCheckbox" onclick="showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
     <label for="showCheckbox">Show descriptions</label>
+
+    <c:if test="${! empty userShowTags}">
+        <c:set var="tagCheckboxChecked" value="checked" />
+    </c:if>
+    <input type="checkbox" <c:out value="${tagCheckboxChecked}" /> id="showTagCheckbox" onclick="showTags('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
+    <label for="showCheckbox">Show Tags</label>
 </div>
 <html:hidden property="listsButton" value="" styleId="listsButton"/>
 <html:hidden property="newBagName" value="" styleId="newBagName"/>
@@ -297,6 +313,7 @@ function clearBagName(element) {
   <tiles:put name="showNames" value="${showNames}"/>
   <tiles:put name="showTitles" value="${showTitles}"/>
   <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+  <tiles:put name="showTags" value="${showTags}"/>
   <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
   <tiles:put name="makeTable" value="${makeTable}"/>
   <tiles:put name="makeLine" value="${makeLine}"/>
@@ -327,6 +344,13 @@ function clearBagName(element) {
     <script type="text/javascript">
 <%-- If show description checkbox is not checked, then descriptions should be hidden --%>
     showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', false);
+    </script>
+</c:if>
+
+<c:if test="${empty userShowTags}">
+    <script type="text/javascript">
+<%-- If show tags checkbox is not checked, then tags should be hidden --%>
+    showTags('<c:out value="${wsListId}" />', '<c:out value="${type}" />', false);
     </script>
 </c:if>
 <!-- /wsFilterList.jsp -->

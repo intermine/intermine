@@ -366,6 +366,8 @@
 <c:otherwise>
 <!--  No list found with this name -->
 <div class="bigmessage">
+<br />
+<b>Error</b>${errorMessage}
  <br />
  <html:link action="/bag?subtab=view">View all lists</html:link>
 </div>

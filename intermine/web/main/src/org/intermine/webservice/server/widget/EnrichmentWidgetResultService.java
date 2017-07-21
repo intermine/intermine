@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -156,6 +156,8 @@ public class EnrichmentWidgetResultService extends WidgetService
                                                + input.getWidgetId() + "\"");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
+        // total number of genes in database annotated with ANY GO term
+        addOutputInfo("populationCount", Integer.toString(widget.getPopulationCount()));
         addOutputPathQuery(widget, widgetConfig);
         addOutputExtraAttribute(input, widget);
 

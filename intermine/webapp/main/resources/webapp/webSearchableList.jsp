@@ -14,6 +14,7 @@
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<tiles:importAttribute name="showTags" ignore="true"/>
 <tiles:importAttribute name="loginMessageKey" ignore="true"/>
 <tiles:importAttribute name="showCount" ignore="true"/>
 
@@ -71,6 +72,10 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
 <c:if test="${empty showDescriptions}">
   <c:set var="showDescriptions" value="true" scope="request"/>
 </c:if>
+<c:if test="${empty showTags}">
+  <c:set var="showTags" value="true" scope="request"/>
+</c:if>
+
 
 <c:set var="heightStyle" value=""/>
 <c:set var="spinnerPaddingStyle" value=""/>
@@ -132,6 +137,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
                     <tiles:put name="showNames" value="${showNames}"/>
                     <tiles:put name="showTitles" value="${showTitles}"/>
                     <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+                    <tiles:put name="showTags" value="${showTags}"/>
                   </tiles:insert>
                 </tr>
               </thead>
@@ -153,6 +159,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
                     <tiles:put name="showNames" value="${showNames}"/>
                     <tiles:put name="showTitles" value="${showTitles}"/>
                     <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+                    <tiles:put name="showTags" value="${showTags}"/>
                     <tiles:put name="currentObjectId" value="${currentObjectId}"/>
                   </tiles:insert>
                 </tr>
@@ -175,6 +182,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
               <tiles:put name="showNames" value="${showNames}"/>
               <tiles:put name="showTitles" value="${showTitles}"/>
               <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+              <tiles:put name="showTags" value="${showTags}"/>
               <tiles:put name="currentObjectId" value="${currentObjectId}"/>
             </tiles:insert>
           </c:forEach>
@@ -218,6 +226,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
                     ${entry.value.description}
                   </div>
                 </c:if>
+
                </div>
               </li>
             </c:forEach>

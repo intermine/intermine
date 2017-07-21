@@ -1,7 +1,7 @@
 package org.intermine.web.logic;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -207,13 +207,15 @@ public final class Constants
      * 18 - Added display names to the model output.
      * 19 - Added intermine version
      * 20 - Added class counts and display names for atts, refs and colls. #1410
+     * 21 - Added populationCounts to enrichment output. #1601
+     * 22 - Updated branding parameters for use by non-InterMine apps #1623
      */
-    public static final int WEB_SERVICE_VERSION = 20;
+    public static final int WEB_SERVICE_VERSION = 22;
 
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "1.7.1";
+    public static final String INTERMINE_VERSION = "1.8.3";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

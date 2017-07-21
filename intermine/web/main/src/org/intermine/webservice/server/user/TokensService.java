@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,7 @@ package org.intermine.webservice.server.user;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,9 +41,20 @@ public class TokensService extends ReadWriteJSONService
             UserProfile up = (UserProfile) im.getProfileManager()
                                              .getProfileObjectStoreWriter()
                                              .getObjectById(profile.getUserId());
-
-            for (PermanentToken t: up.getPermanentTokens()) {
-                tokens.add(PermaTokens.format(t));
+            String type = getOptionalParameter("type");
+            if (type == null || "perm".equals(type)) {
+                for (PermanentToken t: up.getPermanentTokens()) {
+                    tokens.add(PermaTokens.format(t));
+                }
+            } else {
+                if ("api".equals(type)) {
+                    String apiKey = up.getApiKey();
+                    if (apiKey != null) {
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        map.put("token", apiKey);
+                        tokens.add(map);
+                    }
+                }
             }
         }
         addResultItem(tokens, false);

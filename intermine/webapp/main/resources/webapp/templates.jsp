@@ -14,6 +14,7 @@
           <tiles:put name="showNames" value="false"/>
           <tiles:put name="showTitles" value="true"/>
           <tiles:put name="showDescriptions" value="true"/>
+          <tiles:put name="showTags" value="true"/>
           <tiles:put name="showSearchBox" value="true"/>
           <tiles:put name='filter' value='<%=request.getParameter("filter")%>'/>
           <tiles:put name="templatesPublicPage" value="true"/>

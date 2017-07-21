@@ -100,7 +100,7 @@ img.tinyQuestionMark {
   padding-left:3px;
 }
 
-#export-all-div { display: inline; padding: 0px 0px 0px 23px; line-height: 22px; }
+#export-all-div { padding: 0px 0px 0px 23px; line-height: 26px; }
 .export-region { margin-right: 5px; }
 .galaxy a { background-image:url('../../../images/formats/galaxy.gif'); width:59px; height:17px; }
 .csv a { background-image:url('../../../images/formats/csv.gif'); width:35px; height:17px; }

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.bag;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,8 +24,8 @@ public final class WebJobInput implements JobInput
 
     private final String type;
     private final Collection<String> idents;
-    private final boolean caseSensitive;
-    private final String extraValue;
+    private final boolean caseSensitive = false;
+    private final String extraValue = "";
     // TRUE if we are uploading a list.
     // match behaviour is different in LOOKUPs and list uploads. See #1494
     private final boolean ignoreConfig;
@@ -39,9 +39,11 @@ public final class WebJobInput implements JobInput
     public WebJobInput(String type, Collection<String> idents, BuildBagForm form) {
         this.type = type;
         this.idents = idents;
-        this.caseSensitive = form.getCaseSensitive();
-        this.extraValue = form.getExtraFieldValue();
-        ignoreConfig = false;
+        if (form != null) {
+            this.caseSensitive = form.getCaseSensitive();
+            this.extraValue = form.getExtraFieldValue();
+        }
+	ignoreConfig = false;
     }
 
     /**
@@ -69,6 +71,14 @@ public final class WebJobInput implements JobInput
     @Override
     public String getExtraValue() {
         return this.extraValue;
+    }
+
+    /**
+     * Only used in the portal when we have to link directly to the list upload
+     * @param extraValue organism name
+     */
+    public void setExtraValue(String extraValue) {
+        this.extraValue = extraValue;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -71,11 +71,13 @@ public final class EnrichmentCalculation
                     correctedResults, population, annotatedPopulationInfo, maxValue);
         }
         Map<String, BigDecimal> sortedCorrectedResults = ErrorCorrection.sortMap(correctedResults);
-        // record the number of items in the sample that had any values for the attribute
-        int widgetTotal = rawResults.isEmpty() ? 0 : sampleSize;
+        // record the number of items in the sample that had any values for any attribute
+        // used for the "not analysed" total
+        int analysedTotal = rawResults.isEmpty() ? 0 : sampleSize;
 
         EnrichmentResults results = new EnrichmentResults(sortedCorrectedResults,
-                input.getAnnotatedCountsInSample(), input.getLabels(), widgetTotal);
+                input.getAnnotatedCountsInSample(), input.getLabels(), analysedTotal,
+                annotatedPopulationInfo, populationSize);
 
         return results;
     }

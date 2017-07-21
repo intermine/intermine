@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -69,6 +69,8 @@ public class SummariseTemplatesAction extends InterMineAction
             try {
                 summariser.summarise(template);
             } catch (ObjectStoreException e) {
+                recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
+            } catch (RuntimeException e) {
                 recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
             }
         }
