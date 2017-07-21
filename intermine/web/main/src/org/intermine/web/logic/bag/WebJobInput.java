@@ -26,6 +26,9 @@ public final class WebJobInput implements JobInput
     private final Collection<String> idents;
     private boolean caseSensitive = false;
     private String extraValue = "";
+    // TRUE if we are uploading a list.
+    // match behaviour is different in LOOKUPs and list uploads. See #1494
+    private final boolean ignoreConfig;
 
     /**
      * Create a web-job.
@@ -40,7 +43,25 @@ public final class WebJobInput implements JobInput
             this.caseSensitive = form.getCaseSensitive();
             this.extraValue = form.getExtraFieldValue();
         }
+        ignoreConfig = false;
     }
+
+    /**
+     * Create a web-job.
+     * @param type The type of thing to find.
+     * @param idents The identifiers to look for.
+     * @param form The form containing optional properties.
+     * @param ignoreConfig TRUE if this is a LOOKUP query and we want to ignore config
+     */
+    public WebJobInput(String type, Collection<String> idents, BuildBagForm form,
+        boolean ignoreConfig) {
+        this.type = type;
+        this.idents = idents;
+        this.caseSensitive = form.getCaseSensitive();
+        this.extraValue = form.getExtraFieldValue();
+        this.ignoreConfig = ignoreConfig;
+    }
+
 
     @Override
     public Collection<String> getIds() {
@@ -75,4 +96,8 @@ public final class WebJobInput implements JobInput
         return false;
     }
 
+    @Override
+    public Boolean getIgnoreConfig() {
+        return ignoreConfig;
+    }
 }

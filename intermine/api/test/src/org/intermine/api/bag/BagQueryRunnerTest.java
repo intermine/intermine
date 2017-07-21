@@ -97,7 +97,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
     // expect each input string to match one object
     public void testSearchForBagMatches() throws Exception {
         List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});
-        BagQueryResult res = runner.search("Employee", input, null, true, true);
+        BagQueryResult res = runner.search("Employee", input, null, true, true, false);
         assertEquals(2, res.getMatches().values().size());
         assertTrue(res.getIssues().isEmpty());
         assertTrue(res.getUnresolved().isEmpty());
@@ -106,7 +106,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
     // expect each input string to match one object
     public void testCase() throws Exception {
         List input = Arrays.asList(new Object[] {"employeeA1", "employeeA2"});
-        BagQueryResult res = runner.search("Employee", input, null, true, true);
+        BagQueryResult res = runner.search("Employee", input, null, true, true, false);
         assertTrue(res.getMatches().isEmpty());
         assertTrue(res.getIssues().isEmpty());
         assertEquals(2, res.getUnresolved().size());

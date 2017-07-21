@@ -33,7 +33,7 @@ public class HtmlListFormatter implements ListFormatter
             size = "Unknown";
         }
         return Arrays.asList(
-            list.getName(), list.getType(),
+            String.valueOf(list.getSavedBagId()), list.getName(), list.getType(),
             list.getDescription(), size
         );
     }

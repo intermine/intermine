@@ -59,7 +59,8 @@ public class ResolutionJob implements Job
                     input.getIds(),
                     input.getExtraValue(),
                     input.getWildCards(),
-                    input.getCaseSensitive());
+                    input.getCaseSensitive(),
+                    input.getIgnoreConfig());
             this.status = JobStatus.SUCCESS;
         } catch (Exception e) {
             error = e;
