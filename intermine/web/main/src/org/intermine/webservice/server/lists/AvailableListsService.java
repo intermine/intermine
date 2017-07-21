@@ -162,7 +162,7 @@ public class AvailableListsService extends WebService
             attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
         } else if (getFormat() == Format.HTML) {
             attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
-                Arrays.asList("Name", "Type", "Description", "Size"));
+                Arrays.asList("Id", "Name", "Type", "Description", "Size"));
         }
         return attributes;
     }
