@@ -660,6 +660,7 @@ public final class MainHelper
                                 + "ObjectStore Query without a BagQueryRunner");
                     }
                     String identifiers = pcl.getValue();
+
                     // if this LOOKUP constraint only includes *, just ignore constraint
                     // as user wants everything.
                     if (!"*".equals(identifiers)) {
