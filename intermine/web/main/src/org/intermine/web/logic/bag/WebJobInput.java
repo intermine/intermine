@@ -24,8 +24,8 @@ public final class WebJobInput implements JobInput
 
     private final String type;
     private final Collection<String> idents;
-    private final boolean caseSensitive = false;
-    private final String extraValue = "";
+    private boolean caseSensitive = false;
+    private String extraValue = "";
     // TRUE if we are uploading a list.
     // match behaviour is different in LOOKUPs and list uploads. See #1494
     private final boolean ignoreConfig;
@@ -43,7 +43,7 @@ public final class WebJobInput implements JobInput
             this.caseSensitive = form.getCaseSensitive();
             this.extraValue = form.getExtraFieldValue();
         }
-	ignoreConfig = false;
+        ignoreConfig = false;
     }
 
     /**
