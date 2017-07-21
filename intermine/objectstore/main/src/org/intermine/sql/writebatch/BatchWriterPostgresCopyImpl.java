@@ -244,7 +244,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     @Override
     protected int getTableSize(String name, Connection conn) throws SQLException {
         Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = '"
+        ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class c, pg_namespace n WHERE "
+                + "n.oid=c.relnamespace AND n.nspname='public' AND relname = '"
                 + name.toLowerCase() + "'");
         if (r.next()) {
             int returnValue = (int) r.getFloat(1);
