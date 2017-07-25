@@ -762,10 +762,7 @@ public final class KeywordSearch
         return result;
     }
 
-
-
-    private static String parseQueryString(String qs) {
-        String queryString = qs;
+    private static String parseQueryString(String queryString) {
         // keep strings separated by spaces together
         queryString = queryString.replaceAll("\\b(\\s+)\\+(\\s+)\\b", "$1AND$2");
         // i don't know
@@ -773,11 +770,13 @@ public final class KeywordSearch
         // escape special characters, see http://lucene.apache.org/java/2_9_0/queryparsersyntax.html
         final String[] specialCharacters = {"+", "-", "&&", "||", "!", "(", ")", "{", "}", "[",
             "]", "^", "~", "?", ":", "\\"};
+
         for (String s : specialCharacters) {
             if (queryString.contains(s)) {
                 queryString = queryString.replace(s, "*");
             }
         }
+
         return toLowerCase(queryString);
     }
 
