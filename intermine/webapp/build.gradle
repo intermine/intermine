@@ -42,9 +42,13 @@ dependencies {
   compile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
   compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.50'
   compile files('lib/stringtree-json-2.0.5.jar')
+  testCompile project(':intermine-testmodel')
+  testCompile project(':intermine-objectstore').sourceSets.test.output
+  testCompile project(':intermine-api').sourceSets.test.output
   testCompile group: 'org.objenesis', name: 'objenesis', version: '2.1'
   testCompile group: 'org.easymock', name: 'easymock', version: '3.2'
   testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
+  testCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
 }
 /*
 configurations {
