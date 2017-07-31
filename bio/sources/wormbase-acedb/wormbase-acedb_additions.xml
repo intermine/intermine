@@ -111,12 +111,14 @@
 	<class name="OntologyTerm" is-interface="true">
 		<collection name="children" referenced-type="OntologyTerm"/>
 	</class>
+
 	<class name="Phenotype" extends="OntologyTerm" is-interface="true">
 		<collection name="RNAi"  referenced-type="RNAi" reverse-reference="phenotype" />
-		<collection name="RNAi"  referenced-type="RNAi" reverse-reference="phenotype_not_observed" />
+		<collection name="RNAiN"  referenced-type="RNAi" reverse-reference="phenotype_not_observed" />
 		<collection name="observedIn" referenced-type="BioEntity" reverse-reference="phenotypesObserved" />
 		<collection name="notObservedIn" referenced-type="BioEntity" reverse-reference="phenotypesNotObserved" />
 	</class>
+
 	<class name="ExpressionPattern" is-interface="true">
 		<attribute name="primaryIdentifier" type="java.lang.String"/>
 		<attribute name="subcellularLocalization" type="java.lang.String"/>
@@ -192,7 +194,7 @@
 		<reference name="strain" referenced-type="Strain" />
 		<reference name="reference" referenced-type="Publication" />
 		<collection name="phenotype" referenced-type="Phenotype" reverse-reference="RNAi" />
-		<collection name="phenotype_not_observed" referenced-type="Phenotype" reverse-reference="RNAi"/>
+		<collection name="phenotype_not_observed" referenced-type="Phenotype" reverse-reference="RNAiN"/>
 		<collection name="inhibitsGene" referenced-type="Gene" reverse-reference="RNAiResult"/>
 		<collection name="inhibitsPredictedGene" referenced-type="CDS" reverse-reference="RNAi"/>
 		<collection name="laboratories" referenced-type="Laboratory" reverse-reference="RNAis"/>
