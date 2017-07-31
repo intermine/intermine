@@ -231,7 +231,7 @@ echo 'RNAi'
 mkdir -vp $datadir/wormbase-acedb/RNAi/XML
 mkdir -vp $datadir/wormbase-acedb/RNAi/mapping
 cp -v $sourcedir/RNAi.xml $acexmldir/RNAi/RNAi.xml
-cp -v $intermine'/wormmine/support/properties/rnai_mapping.properties' $datadir'/wormbase-acedb/RNAi/mapping'
+cp -v $intermine'/wormmine/support/properties/RNAi_mapping.properties' $datadir'/wormbase-acedb/RNAi/mapping'
 perl $testlab'/perl/preprocess/wb-acedb/RNAi/prep_RNAi.pl' $datadir'/wormbase-acedb/RNAi/RNAi.xml' $datadir'/wormbase-acedb/RNAi/XML/prepped_RNAi.xml'
 
 #################### variation ##################
