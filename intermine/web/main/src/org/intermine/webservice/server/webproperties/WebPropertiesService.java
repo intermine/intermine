@@ -1,7 +1,5 @@
 package org.intermine.webservice.server.webproperties;
 
-import java.util.Arrays;
-
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -12,6 +10,7 @@ import java.util.Arrays;
  *
  */
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -20,7 +19,6 @@ import java.util.Queue;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.core.JSONService;
 
 
@@ -33,7 +31,7 @@ public class WebPropertiesService extends JSONService
 {
     //private static final Logger LOG = Logger.getLogger(WebPropertiesService.class);
     // if there is a parent property with an additional child value, we need a key
-    private static final String DEFAULT_PATH = "default";
+    private static final String DEFAULT_PATH = "null";
 
     /** @param im The InterMine state object. **/
     public WebPropertiesService(InterMineAPI im) {
