@@ -1,5 +1,7 @@
 package org.intermine.webservice.server.webproperties;
 
+import java.util.Arrays;
+
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -16,7 +18,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.context.InterMineContext;
@@ -30,7 +31,9 @@ import org.intermine.webservice.server.core.JSONService;
  */
 public class WebPropertiesService extends JSONService
 {
-    private static final Logger LOG = Logger.getLogger(WebPropertiesService.class);
+    //private static final Logger LOG = Logger.getLogger(WebPropertiesService.class);
+    // if there is a parent property with an additional child value, we need a key
+    private static final String DEFAULT_PATH = "default";
 
     /** @param im The InterMine state object. **/
     public WebPropertiesService(InterMineAPI im) {
@@ -39,7 +42,6 @@ public class WebPropertiesService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        Properties props = InterMineContext.getWebProperties();
         Map<String, Object> webPropertiesMap = new HashMap<String, Object>();
 
         // region search
@@ -90,7 +92,17 @@ public class WebPropertiesService extends JSONService
             final String value) {
         String key = path.remove();
         if (path.isEmpty()) {
-            propertyMap.put(key, value);
+            // make sure that there are no children for this attribute
+            // eg. bag.examples = "eve"
+            //     bag.examples.protein = "EVE_DROME"
+            Map<String, Object> thisLevel = (Map<String, Object>) propertyMap.get(key);
+            if (thisLevel == null || thisLevel.isEmpty()) {
+                propertyMap.put(key, value);
+            } else {
+                // there are other children at this level, so just call this value "default"
+                // see #1631
+                setProperty(thisLevel, new LinkedList<String>(Arrays.asList(DEFAULT_PATH)), value);
+            }
         } else {
             Map<String, Object> thisLevel;
             if (!propertyMap.containsKey(key)) {
