@@ -337,6 +337,9 @@ public class Callback extends LoginHandler
             issues = mergeProfiles(currentProfile, profile);
         }
 
+        // track the user login
+        api.getTrackerDelegate().trackLogin(profile.getUsername());
+
         // Removed the mapping process because it's no longer necessary, and also blank strings
         // in the user preferences might be causing trouble.
         // TODO: Remove related dead code
