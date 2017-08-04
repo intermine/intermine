@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -39,6 +40,7 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.template.TemplateComparator;
 import org.intermine.template.TemplateQuery;
+import org.intermine.util.CacheMap;
 
 /**
  * A TemplateManager provides access to all global and/or user templates and methods to fetch them
@@ -55,7 +57,7 @@ public class TemplateManager
     private final Model model;
     private final TagManager tagManager;
     private TemplateTracker templateTracker;
-
+    private CacheMap<String, ApiTemplate> globalValidTemplateCache = null;
     /**
      * The TemplateManager references the super user profile to fetch global templates.
      * @param superProfile the super user profile
@@ -314,14 +316,23 @@ public class TemplateManager
      * @return a map from template name to template query
      */
     public Map<String, ApiTemplate> getValidGlobalTemplates() {
-        Map<String, ApiTemplate> validTemplates = new HashMap<String, ApiTemplate>();
-        Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
-        for (Map.Entry<String, ApiTemplate> entry : globalTemplates.entrySet()) {
-            if (entry.getValue().isValid()) {
-                validTemplates.put(entry.getKey(), entry.getValue());
+        if (globalValidTemplateCache == null) {
+            globalValidTemplateCache = new CacheMap<String, ApiTemplate>();
+            Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
+            for (Map.Entry<String, ApiTemplate> entry : globalTemplates.entrySet()) {
+                if (entry.getValue().isValid()) {
+                    globalValidTemplateCache.put(entry.getKey(), entry.getValue());
+                }
             }
         }
-        return validTemplates;
+        return globalValidTemplateCache;
+    }
+
+    /**
+     * Empty cache of global valid templates when something happens.
+     */
+    public void invalidateCache() {
+        globalValidTemplateCache = null;
     }
 
     /**
