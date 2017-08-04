@@ -37,7 +37,6 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -83,6 +82,7 @@ public class Profile
     private Map<String, String> preferences;
     @SuppressWarnings("unchecked")
     protected Map<String, SavedQuery> queryHistory = new ListOrderedMap();
+    private TemplateManager templateManager = null;
 
     /**
      * True if this account is purely local. False if it was created
@@ -365,7 +365,6 @@ public class Profile
         return Collections.unmodifiableMap(savedTemplates);
     }
 
-
     /**
      * Save a template
      * @param name the template name
@@ -382,7 +381,7 @@ public class Profile
         }
         searchRepository.receiveEvent(new CreationEvent(template));
         if (isSuperuser()) {
-            getTemplateManager(template.getModel()).invalidateCache();
+            invalidateTemplateCache();
         }
     }
 
@@ -421,10 +420,21 @@ public class Profile
             if (trackerDelegate != null && deleteTracks) {
                 trackerDelegate.updateTemplateName(name, "deleted_" + name);
             }
-            if (isSuperuser()) {
-                getTemplateManager(template.getModel()).invalidateCache();
-            }
+            invalidateTemplateCache();
         }
+    }
+
+    /**
+     * When a template or tag is updated, invalidate cache so it can be refreshed
+     */
+    public void invalidateTemplateCache() {
+        if (!isSuperuser()) {
+            return;
+        }
+        if (templateManager == null) {
+            templateManager = new TemplateManager(this);
+        }
+        templateManager.invalidateCache();
     }
 
     /**
@@ -800,7 +810,7 @@ public class Profile
             moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
         }
         if (isSuperuser()) {
-            getTemplateManager(template.getModel()).invalidateCache();
+            invalidateTemplateCache();
         }
     }
 
@@ -821,10 +831,6 @@ public class Profile
 
     private TagManager getTagManager() {
         return new TagManagerFactory(manager).getTagManager();
-    }
-
-    private TemplateManager getTemplateManager(Model model) {
-        return new TemplateManager(this, model);
     }
 
     private SharedBagManager getSharedBagManager() {

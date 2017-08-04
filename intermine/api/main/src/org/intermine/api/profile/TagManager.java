@@ -144,6 +144,9 @@ public class TagManager
     public void deleteTag(String tagName, WebSearchable ws, Profile profile) {
         deleteTag(tagName, ws.getName(), ws.getTagType(), profile.getUsername());
         ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.REMOVED));
+        if (TagNames.IM_PUBLIC.equals(tagName)) {
+            profile.invalidateTemplateCache();
+        }
     }
 
     /**
@@ -154,6 +157,9 @@ public class TagManager
      * @param profile The profile the tag should be removed from.
      */
     public void deleteTag(String tagName, ClassDescriptor cd, Profile profile) {
+        if (TagNames.IM_PUBLIC.equals(tagName)) {
+            profile.invalidateTemplateCache();
+        }
         deleteTag(tagName, cd.getName(), TagTypes.CLASS, profile.getUsername());
     }
 
@@ -170,6 +176,9 @@ public class TagManager
             deleteTag(tagName, objIdentifier, TagTypes.COLLECTION, profile.getUsername());
         } else {
             deleteTag(tagName, objIdentifier, TagTypes.REFERENCE, profile.getUsername());
+        }
+        if (TagNames.IM_PUBLIC.equals(tagName)) {
+            profile.invalidateTemplateCache();
         }
     }
 
@@ -509,7 +518,9 @@ public class TagManager
         if (!isValidTagName(tagName)) {
             throw new TagNameException();
         }
-
+        if (TagNames.IM_PUBLIC.equals(tagName)) {
+            profile.invalidateTemplateCache();
+        }
         return addTag(tagName, objectIdentifier, type, profile.getUsername());
     }
 

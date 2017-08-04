@@ -52,8 +52,6 @@ public class TemplateManager
 
     private static final TemplateComparator TEMPLATE_COMPARATOR = new TemplateComparator();
     private final Profile superProfile;
-    @SuppressWarnings("unused")
-    private final Model model;
     private final TagManager tagManager;
     private TemplateTracker templateTracker;
     private CacheMap<String, ApiTemplate> globalValidTemplateCache = null;
@@ -63,7 +61,6 @@ public class TemplateManager
      * @param model the object model
      */
     public TemplateManager(Profile superProfile, Model model) {
-        this.model = model;
         this.superProfile = superProfile;
         this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
     }
@@ -75,10 +72,18 @@ public class TemplateManager
      * @param templateTracker the template tracker
      */
     public TemplateManager(Profile superProfile, Model model, TemplateTracker templateTracker) {
-        this.model = model;
         this.superProfile = superProfile;
         this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
         this.templateTracker = templateTracker;
+    }
+
+    /**
+     * The TemplateManager references the super user profile to fetch global templates.
+     * @param superProfile the super user profile
+     */
+    public TemplateManager(Profile superProfile) {
+        this.superProfile = superProfile;
+        this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
     }
 
     /**
