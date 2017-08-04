@@ -515,7 +515,7 @@ public class TemplateManager
     {
         private final List<String> mostPopularTemplateNames;
 
-        public MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
+        MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
             this.mostPopularTemplateNames = mostPopularTemplateNames;
         }
         @Override

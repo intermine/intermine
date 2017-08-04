@@ -30,13 +30,13 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -389,10 +389,7 @@ public class TagManager
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
      * @param userName the use name this tag is associated with
      * @return the matching Tags
-     * @deprecated There are typed methods that are more suitable. Use them instead.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Deprecated
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {
         if (type != null) {
