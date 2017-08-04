@@ -14,8 +14,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
-import java.util.Map;
 
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.BadTemplateException;
@@ -24,7 +22,6 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
-import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;

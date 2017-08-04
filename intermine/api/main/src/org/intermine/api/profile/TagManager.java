@@ -470,8 +470,6 @@ public class TagManager
      * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
      * "ClassName.fieldName".
      *
-     * Don't use this method.... It makes kittens cry,
-     *
      * @param tagName the tag name - any String
      * @param objectIdentifier an object identifier that is appropriate for the given tag type
      * (eg. "Department.name" for the "collection" type)

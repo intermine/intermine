@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;

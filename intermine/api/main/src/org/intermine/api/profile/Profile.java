@@ -33,9 +33,11 @@ import org.intermine.api.search.UserRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -379,6 +381,9 @@ public class Profile
             manager.saveProfile(this);
         }
         searchRepository.receiveEvent(new CreationEvent(template));
+        if (isSuperuser()) {
+            getTemplateManager(template.getModel()).invalidateCache();
+        }
     }
 
     /**
@@ -410,13 +415,14 @@ public class Profile
                     manager.saveProfile(this);
                 }
             }
-
             searchRepository.receiveEvent(new DeletionEvent(template));
-
             TagManager tagManager = getTagManager();
             tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
             if (trackerDelegate != null && deleteTracks) {
                 trackerDelegate.updateTemplateName(name, "deleted_" + name);
+            }
+            if (isSuperuser()) {
+                getTemplateManager(template.getModel()).invalidateCache();
             }
         }
     }
@@ -793,6 +799,9 @@ public class Profile
             searchRepository.receiveEvent(new DeletionEvent(old));
             moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
         }
+        if (isSuperuser()) {
+            getTemplateManager(template.getModel()).invalidateCache();
+        }
     }
 
     private void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type) {
@@ -812,6 +821,10 @@ public class Profile
 
     private TagManager getTagManager() {
         return new TagManagerFactory(manager).getTagManager();
+    }
+
+    private TemplateManager getTemplateManager(Model model) {
+        return new TemplateManager(this, model);
     }
 
     private SharedBagManager getSharedBagManager() {
