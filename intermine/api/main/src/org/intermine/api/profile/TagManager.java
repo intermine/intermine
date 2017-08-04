@@ -157,10 +157,10 @@ public class TagManager
      * @param profile The profile the tag should be removed from.
      */
     public void deleteTag(String tagName, ClassDescriptor cd, Profile profile) {
+        deleteTag(tagName, cd.getName(), TagTypes.CLASS, profile.getUsername());
         if (TagNames.IM_PUBLIC.equals(tagName)) {
             profile.invalidateTemplateCache();
         }
-        deleteTag(tagName, cd.getName(), TagTypes.CLASS, profile.getUsername());
     }
 
     /**

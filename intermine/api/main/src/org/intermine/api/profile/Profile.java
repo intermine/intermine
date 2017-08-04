@@ -827,6 +827,9 @@ public class Profile
             }
             tagManager.deleteTag(tag);
         }
+        if (isSuperUser) {
+            invalidateTemplateCache();
+        }
     }
 
     private TagManager getTagManager() {
