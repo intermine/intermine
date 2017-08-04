@@ -209,9 +209,10 @@ public final class Constants
      * 20 - Added class counts and display names for atts, refs and colls. #1410
      * 21 - Added populationCounts to enrichment output. #1601
      * 22 - Updated branding parameters for use by non-InterMine apps #1623
-     * 23 - Updated the /lists endpoint to return also the persistent list id
+     * 23 - Updated the /lists endpoint to return the persistent list id
+     * 24 - Add web config service
      */
-    public static final int WEB_SERVICE_VERSION = 23;
+    public static final int WEB_SERVICE_VERSION = 24;
 
     /**
      * Current version of the InterMine code
