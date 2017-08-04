@@ -31,7 +31,7 @@ public class WebPropertiesService extends JSONService
 {
     //private static final Logger LOG = Logger.getLogger(WebPropertiesService.class);
     // if there is a parent property with an additional child value, we need a key
-    private static final String DEFAULT_PATH = "null";
+    private static final String DEFAULT_PATH = "default";
 
     /** @param im The InterMine state object. **/
     public WebPropertiesService(InterMineAPI im) {
