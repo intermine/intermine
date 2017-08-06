@@ -12,7 +12,6 @@ import click
 
 
 
-
 def wrap_xml(xml_file):
 	
 	xml_contents = open(xml_file).read().splitlines()
@@ -63,6 +62,6 @@ if __name__ == '__main__':
 
 	xml_file = sys.argv[1]
 
-	# wrap_xml(xml_file)
-	unwrap_xml(xml_file)
+	wrap_xml(xml_file)
+	# unwrap_xml(xml_file)
 

@@ -47,29 +47,32 @@ def get_mapping_file(mapping_file):
 
 	xpaths = []
 	for line in mapping:
-		if line.find('=') >= 0:
+		if line.find('=') >= 0 and not line.startswith('#'):
 			xpaths.append(line.split('=')[1])
-
+	print xpaths
 	return xpaths
 
 
 def check_xpath(xml_file, xpaths, xml_class):
 
 
-	print 'Analysing '  + xml_file + '\n'
-
+	print 'Analysing '  + xml_file
 	xml = etree.parse(xml_file)
+	print 'done'
 	for i in xpaths:
 		xpath = '/' + xml_class + i.strip()
 		print xpath
 		run = xml.xpath(xpath)
-		print 'there are %i items with the above XPATH in the XML\n' % (len(run))
-
+		print 'there are %i items with the above XPATH in the XML' % (len(run))
+		print run[0:5]
+		print
+		print
 
 if __name__ == '__main__':
 
 	xml_file = sys.argv[1]
 	mapping_file = sys.argv[2]
-	xml_class = wrap_xml(xml_file) + 's'
+	# xml_class = wrap_xml(xml_file) + 's'
+	xml_class = 'Variations'
 	xpaths = get_mapping_file(mapping_file)
 	check_xpath(sys.argv[1], xpaths, xml_class)

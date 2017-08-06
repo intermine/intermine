@@ -1,1 +1,0 @@
-perl prep_anatomy_term.pl $DATADIR/wormbase-acedb/anatomy_term/Anatomy_term.xml $DATADIR/wormbase-acedb/anatomy_term/XML/Anatomy_term_prepped.xml

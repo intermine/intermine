@@ -1,1 +1,0 @@
-perl prep_wb-acedb-transcript.pl $DATADIR/wormbase-acedb/transcript/Transcript.xml $DATADIR/wormbase-acedb/transcript/XML/prepped_Transcript.xml

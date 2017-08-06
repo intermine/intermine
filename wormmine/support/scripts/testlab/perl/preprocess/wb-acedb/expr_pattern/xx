@@ -1,1 +1,0 @@
-perl prep_expr_pattern.pl $DATADIR/wormbase-acedb/expr_pattern/Expr_pattern.xml $DATADIR/wormbase-acedb/expr_pattern/XML/Expr_pattern_prepped.xml
