@@ -131,7 +131,7 @@ echo
 
 #################### gene ontology ####################
 mkdir -vp $datadir"/go/"
-if [ ! -f $datadir/go/gene_ontology."$wbrel".obo ];then
+if [ ! -f $datadir/go/gene_ontology.1_2.obo ];then
   echo 'Transferring gene ontology file'
   wget -q --show-progress -O $datadir/go/gene_ontology.1_2.obo "ftp://ftp.wormbase.org/pub/wormbase/releases/"$wbrel"/ONTOLOGY/gene_ontology."$wbrel".obo"
 else
@@ -258,6 +258,7 @@ mkdir -vp $datadir/wormbase-acedb/variation/mapping
 cp -v $sourcedir/Variation.xml $acexmldir/variation/Variation.xml
 cp -v $intermine'/wormmine/support/properties/variation_mapping.properties' $datadir'/wormbase-acedb/variation/mapping'
 perl $testlab'/perl/preprocess/wb-acedb/variation/purify_variation.pl' $datadir'/wormbase-acedb/variation/Variation.xml' $datadir'/wormbase-acedb/variation/XML/prepped_variation.xml'
+sh $testlab'/perl/preprocess/wb-acedb/variation/fix_elements_variation.sh' $acexmldir
 echo
 #################### gene_class #################
 echo 'gene_class'
