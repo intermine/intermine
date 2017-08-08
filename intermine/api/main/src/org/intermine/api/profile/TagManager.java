@@ -142,11 +142,11 @@ public class TagManager
      * @param profile The user who is meant to own the tag.
      */
     public void deleteTag(String tagName, WebSearchable ws, Profile profile) {
-        deleteTag(tagName, ws.getName(), ws.getTagType(), profile.getUsername());
-        ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.REMOVED));
         if (TagNames.IM_PUBLIC.equals(tagName)) {
             profile.invalidateTemplateCacheIfRequired();
         }
+        deleteTag(tagName, ws.getName(), ws.getTagType(), profile.getUsername());
+        ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.REMOVED));
     }
 
     /**
