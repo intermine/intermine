@@ -54,7 +54,7 @@ public class TemplateManager
     private final Profile superProfile;
     private final TagManager tagManager;
     private TemplateTracker templateTracker;
-    private CacheMap<String, ApiTemplate> globalValidTemplateCache = null;
+    private static CacheMap<String, ApiTemplate> globalValidTemplateCache = null;
     /**
      * The TemplateManager references the super user profile to fetch global templates.
      * @param superProfile the super user profile
@@ -319,7 +319,7 @@ public class TemplateManager
      * tagged as public and are valid for the current data model.
      * @return a map from template name to template query
      */
-    public Map<String, ApiTemplate> getValidGlobalTemplates() {
+    public synchronized Map<String, ApiTemplate> getValidGlobalTemplates() {
         if (globalValidTemplateCache == null) {
             globalValidTemplateCache = new CacheMap<String, ApiTemplate>();
             Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
@@ -335,8 +335,10 @@ public class TemplateManager
     /**
      * Empty cache of global valid templates when something happens.
      */
-    public void invalidateCache() {
+    public synchronized void invalidateCache() {
         globalValidTemplateCache = null;
+        // init cache
+        getValidGlobalTemplates();
     }
 
     /**
