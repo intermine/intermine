@@ -91,7 +91,7 @@ public class ImportTagsAction extends InterMineAction
         }
         f.reset();
 
-        profile.invalidateTemplateCache();
+        profile.invalidateTemplateCacheIfRequired();
         return mapping.findForward("success");
     }
 }

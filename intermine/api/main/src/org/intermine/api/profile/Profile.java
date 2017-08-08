@@ -380,9 +380,7 @@ public class Profile
             manager.saveProfile(this);
         }
         searchRepository.receiveEvent(new CreationEvent(template));
-        if (isSuperuser()) {
-            invalidateTemplateCache();
-        }
+        invalidateTemplateCacheIfRequired();
     }
 
     /**
@@ -420,16 +418,14 @@ public class Profile
             if (trackerDelegate != null && deleteTracks) {
                 trackerDelegate.updateTemplateName(name, "deleted_" + name);
             }
-            if (isSuperuser()) {
-                invalidateTemplateCache();
-            }
+            invalidateTemplateCacheIfRequired();
         }
     }
 
     /**
      * When a template or tag is updated, invalidate cache so it can be refreshed
      */
-    public void invalidateTemplateCache() {
+    public void invalidateTemplateCacheIfRequired() {
         if (!isSuperuser()) {
             return;
         }
@@ -811,9 +807,7 @@ public class Profile
             searchRepository.receiveEvent(new DeletionEvent(old));
             moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
         }
-        if (isSuperuser()) {
-            invalidateTemplateCache();
-        }
+        invalidateTemplateCacheIfRequired();
     }
 
     private void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type) {
@@ -829,9 +823,7 @@ public class Profile
             }
             tagManager.deleteTag(tag);
         }
-        if (isSuperUser) {
-            invalidateTemplateCache();
-        }
+        invalidateTemplateCacheIfRequired();
     }
 
     private TagManager getTagManager() {

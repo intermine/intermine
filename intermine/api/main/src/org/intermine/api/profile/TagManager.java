@@ -145,7 +145,7 @@ public class TagManager
         deleteTag(tagName, ws.getName(), ws.getTagType(), profile.getUsername());
         ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.REMOVED));
         if (TagNames.IM_PUBLIC.equals(tagName)) {
-            profile.invalidateTemplateCache();
+            profile.invalidateTemplateCacheIfRequired();
         }
     }
 
@@ -159,7 +159,7 @@ public class TagManager
     public void deleteTag(String tagName, ClassDescriptor cd, Profile profile) {
         deleteTag(tagName, cd.getName(), TagTypes.CLASS, profile.getUsername());
         if (TagNames.IM_PUBLIC.equals(tagName)) {
-            profile.invalidateTemplateCache();
+            profile.invalidateTemplateCacheIfRequired();
         }
     }
 
@@ -178,7 +178,7 @@ public class TagManager
             deleteTag(tagName, objIdentifier, TagTypes.REFERENCE, profile.getUsername());
         }
         if (TagNames.IM_PUBLIC.equals(tagName)) {
-            profile.invalidateTemplateCache();
+            profile.invalidateTemplateCacheIfRequired();
         }
     }
 
@@ -519,7 +519,7 @@ public class TagManager
             throw new TagNameException();
         }
         if (TagNames.IM_PUBLIC.equals(tagName)) {
-            profile.invalidateTemplateCache();
+            profile.invalidateTemplateCacheIfRequired();
         }
         return addTag(tagName, objectIdentifier, type, profile.getUsername());
     }
