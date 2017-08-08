@@ -337,8 +337,6 @@ public class TemplateManager
      */
     public synchronized void invalidateCache() {
         globalValidTemplateCache = null;
-        // init cache
-        getValidGlobalTemplates();
     }
 
     /**
