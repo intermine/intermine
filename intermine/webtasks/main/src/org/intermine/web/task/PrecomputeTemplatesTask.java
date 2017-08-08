@@ -268,7 +268,7 @@ public class PrecomputeTemplatesTask extends Task
     protected Map<String, ApiTemplate> getPrecomputeTemplateQueries() {
         ProfileManager pm = new ProfileManager(os, userProfileOS);
         Profile profile = pm.getSuperuserProfile();
-        TemplateManager templateManager = new TemplateManager(profile, os.getModel());
+        TemplateManager templateManager = new TemplateManager(profile);
         return templateManager.getGlobalTemplates(true);
     }
 }

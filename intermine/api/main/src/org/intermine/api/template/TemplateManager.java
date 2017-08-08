@@ -55,15 +55,6 @@ public class TemplateManager
     private final TagManager tagManager;
     private TemplateTracker templateTracker;
     private static CacheMap<String, ApiTemplate> globalValidTemplateCache = null;
-    /**
-     * The TemplateManager references the super user profile to fetch global templates.
-     * @param superProfile the super user profile
-     * @param model the object model
-     */
-    public TemplateManager(Profile superProfile, Model model) {
-        this.superProfile = superProfile;
-        this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
-    }
 
     /**
      * The TemplateManager references the super user profile to fetch global templates.
@@ -71,7 +62,7 @@ public class TemplateManager
      * @param model the object model
      * @param templateTracker the template tracker
      */
-    public TemplateManager(Profile superProfile, Model model, TemplateTracker templateTracker) {
+    public TemplateManager(Profile superProfile, TemplateTracker templateTracker) {
         this.superProfile = superProfile;
         this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
         this.templateTracker = templateTracker;

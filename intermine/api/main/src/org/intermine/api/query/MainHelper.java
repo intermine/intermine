@@ -1141,8 +1141,7 @@ public final class MainHelper
             BagQueryConfig bagQueryConfig,
             ProfileManager pm,
             boolean occurancesOnly) throws ObjectStoreException {
-        TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
-                os.getModel());
+        TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile());
         BagQueryRunner bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig,
                 templateManager);
         return MainHelper.makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode,

@@ -48,7 +48,7 @@ public class TrackerDelegateTest extends InterMineAPITestCase
         superUser = im.getProfileManager().getProfile("superUser");
         testUser = im.getProfileManager().getProfile("testUser");
         conn = ((ObjectStoreWriterInterMineImpl) uosw).getDatabase().getConnection();
-        templateManager = new TemplateManager(superUser, uosw.getModel());
+        templateManager = new TemplateManager(superUser);
         tagManager = new TagManager(uosw);
         createTemplates();
     }
