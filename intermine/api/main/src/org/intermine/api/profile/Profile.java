@@ -420,7 +420,9 @@ public class Profile
             if (trackerDelegate != null && deleteTracks) {
                 trackerDelegate.updateTemplateName(name, "deleted_" + name);
             }
-            invalidateTemplateCache();
+            if (isSuperuser()) {
+                invalidateTemplateCache();
+            }
         }
     }
 
