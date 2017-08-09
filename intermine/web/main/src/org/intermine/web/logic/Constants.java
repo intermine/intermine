@@ -211,14 +211,14 @@ public final class Constants
      * 22 - Updated branding parameters for use by non-InterMine apps #1623
      * 23 - Updated the /lists endpoint to return the persistent list id
      * 24 - Add web properties service
-     * 24 - Add id to whoami
+     * 25 - Add id to whoami
      */
     public static final int WEB_SERVICE_VERSION = 25;
 
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "1.8.3";
+    public static final String INTERMINE_VERSION = "1.8.4";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
