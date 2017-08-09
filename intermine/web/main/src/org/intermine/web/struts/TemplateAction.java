@@ -179,10 +179,7 @@ public class TemplateAction extends InterMineAction
             return mapping.findForward("template");
         }
 
-
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
-
-
             Properties webProperties = SessionMethods.getWebProperties(request.getSession()
                     .getServletContext());
 

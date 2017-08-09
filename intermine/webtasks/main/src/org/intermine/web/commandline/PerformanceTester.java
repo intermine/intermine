@@ -149,8 +149,7 @@ public final class PerformanceTester
         try {
             //Query q = TemplateHelper.getPrecomputeQuery(entry.getValue(), new ArrayList(), null);
             long queryStartTime = System.currentTimeMillis();
-            TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
-                    productionOs.getModel());
+            TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile());
 
             BagQueryRunner bqr = new BagQueryRunner(productionOs, classKeys, bagQueryConfig,
                     templateManager);

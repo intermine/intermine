@@ -780,8 +780,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
         if ("golden_path_region".equals(chadoFeatureType)) {
-            // ignore these, dmel is well mapped, we're not interested. See #1052
-            return null;
+            realInterMineType = "Chromosome";
         }
 
         if (chadoFeatureType.equals(CHROMOSOME_STRUCTURE_VARIATION_SO_NAME)) {

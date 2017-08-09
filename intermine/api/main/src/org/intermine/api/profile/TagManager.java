@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,13 +30,13 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -143,6 +142,9 @@ public class TagManager
      * @param profile The user who is meant to own the tag.
      */
     public void deleteTag(String tagName, WebSearchable ws, Profile profile) {
+        if (TagNames.IM_PUBLIC.equals(tagName)) {
+            profile.invalidateTemplateCacheIfRequired();
+        }
         deleteTag(tagName, ws.getName(), ws.getTagType(), profile.getUsername());
         ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.REMOVED));
     }
@@ -156,6 +158,9 @@ public class TagManager
      */
     public void deleteTag(String tagName, ClassDescriptor cd, Profile profile) {
         deleteTag(tagName, cd.getName(), TagTypes.CLASS, profile.getUsername());
+        if (TagNames.IM_PUBLIC.equals(tagName)) {
+            profile.invalidateTemplateCacheIfRequired();
+        }
     }
 
     /**
@@ -171,6 +176,9 @@ public class TagManager
             deleteTag(tagName, objIdentifier, TagTypes.COLLECTION, profile.getUsername());
         } else {
             deleteTag(tagName, objIdentifier, TagTypes.REFERENCE, profile.getUsername());
+        }
+        if (TagNames.IM_PUBLIC.equals(tagName)) {
+            profile.invalidateTemplateCacheIfRequired();
         }
     }
 
@@ -390,10 +398,7 @@ public class TagManager
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
      * @param userName the use name this tag is associated with
      * @return the matching Tags
-     * @deprecated There are typed methods that are more suitable. Use them instead.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Deprecated
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {
         if (type != null) {
@@ -460,19 +465,6 @@ public class TagManager
             List<Tag> results) {
 
         cache.put(key, new ArrayList<Tag>(results));
-
-        Iterator<?> resIter = results.iterator();
-
-        while (resIter.hasNext()) {
-            Tag tag = (Tag) resIter.next();
-
-            Object[] tagKeys = new Object[4];
-            tagKeys[0] = tag.getTagName();
-            tagKeys[1] = tag.getObjectIdentifier();
-            tagKeys[2] = tag.getType();
-            tagKeys[3] = tag.getUserProfile().getUsername();
-        }
-
     }
 
     private Map<MultiKey, List<Tag>> getTagCache() {
@@ -486,8 +478,6 @@ public class TagManager
      * Add a new tag.  The format of objectIdentifier depends on the tag type.
      * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
      * "ClassName.fieldName".
-     *
-     * Don't use this method.... It makes kittens cry,
      *
      * @param tagName the tag name - any String
      * @param objectIdentifier an object identifier that is appropriate for the given tag type
@@ -528,7 +518,9 @@ public class TagManager
         if (!isValidTagName(tagName)) {
             throw new TagNameException();
         }
-
+        if (TagNames.IM_PUBLIC.equals(tagName)) {
+            profile.invalidateTemplateCacheIfRequired();
+        }
         return addTag(tagName, objectIdentifier, type, profile.getUsername());
     }
 

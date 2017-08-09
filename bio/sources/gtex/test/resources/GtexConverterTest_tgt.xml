@@ -1,0 +1,926 @@
+<items>
+<item id="5_109" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Adrenal Gland"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_119" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Cortex"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_132" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Colon - Sigmoid"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="6_6" class="SNP">
+<attribute name="pValue" value="1.49766e-07"/>
+<attribute name="primaryIdentifier" value="1_753474_C_G_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-9428"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_39" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Nerve - Tibial"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_32" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Heart - Atrial Appendage"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_60" class="RNASeqResult">
+<attribute name="expressionScore" value="10.48"/>
+<attribute name="tissue" value="Bladder"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_42" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Pituitary"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_96" class="RNASeqResult">
+<attribute name="expressionScore" value="16.34"/>
+<attribute name="tissue" value="Prostate"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_123" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Nucleus accumbens (basal ganglia)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_30" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Esophagus - Muscularis"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_128" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Cells - EBV-transformed lymphocytes"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_46" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Small Intestine - Terminal Ileum"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_118" class="RNASeqResult">
+<attribute name="expressionScore" value="0.01036"/>
+<attribute name="tissue" value="Brain - Cerebellum"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_61" class="RNASeqResult">
+<attribute name="expressionScore" value="4.962"/>
+<attribute name="tissue" value="Brain - Amygdala"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_40" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Ovary"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_114" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Amygdala"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_52" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Vagina"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="5_135" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Esophagus - Mucosa"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="6_8" class="SNP">
+<attribute name="pValue" value="4.53263e-06"/>
+<attribute name="primaryIdentifier" value="1_754503_G_A_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-8399"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_31" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Fallopian Tube"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_95" class="RNASeqResult">
+<attribute name="expressionScore" value="11.65"/>
+<attribute name="tissue" value="Pituitary"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_126" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Substantia nigra"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_62" class="RNASeqResult">
+<attribute name="expressionScore" value="5.554"/>
+<attribute name="tissue" value="Brain - Anterior cingulate cortex (BA24)"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="3_2" class="Gene">
+<attribute name="primaryIdentifier" value="3456"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="rnaSeqResults"><reference ref_id="5_54"/><reference ref_id="5_55"/><reference ref_id="5_56"/><reference ref_id="5_57"/><reference ref_id="5_58"/><reference ref_id="5_59"/><reference ref_id="5_60"/><reference ref_id="5_61"/><reference ref_id="5_62"/><reference ref_id="5_63"/><reference ref_id="5_64"/><reference ref_id="5_65"/><reference ref_id="5_66"/><reference ref_id="5_67"/><reference ref_id="5_68"/><reference ref_id="5_69"/><reference ref_id="5_70"/><reference ref_id="5_71"/><reference ref_id="5_72"/><reference ref_id="5_73"/><reference ref_id="5_74"/><reference ref_id="5_75"/><reference ref_id="5_76"/><reference ref_id="5_77"/><reference ref_id="5_78"/><reference ref_id="5_79"/><reference ref_id="5_80"/><reference ref_id="5_81"/><reference ref_id="5_82"/><reference ref_id="5_83"/><reference ref_id="5_84"/><reference ref_id="5_85"/><reference ref_id="5_86"/><reference ref_id="5_87"/><reference ref_id="5_88"/><reference ref_id="5_89"/><reference ref_id="5_90"/><reference ref_id="5_91"/><reference ref_id="5_92"/><reference ref_id="5_93"/><reference ref_id="5_94"/><reference ref_id="5_95"/><reference ref_id="5_96"/><reference ref_id="5_97"/><reference ref_id="5_98"/><reference ref_id="5_99"/><reference ref_id="5_100"/><reference ref_id="5_101"/><reference ref_id="5_102"/><reference ref_id="5_103"/><reference ref_id="5_104"/><reference ref_id="5_105"/><reference ref_id="5_106"/></collection>
+</item>
+<item id="5_11" class="RNASeqResult">
+<attribute name="expressionScore" value="0.01242"/>
+<attribute name="tissue" value="Brain - Cerebellar Hemisphere"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_74" class="RNASeqResult">
+<attribute name="expressionScore" value="9.756"/>
+<attribute name="tissue" value="Breast - Mammary Tissue"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_155" class="RNASeqResult">
+<attribute name="expressionScore" value="0.8229"/>
+<attribute name="tissue" value="Testis"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_59" class="RNASeqResult">
+<attribute name="expressionScore" value="7.266"/>
+<attribute name="tissue" value="Artery - Tibial"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_120" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Frontal Cortex (BA9)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_112" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Artery - Tibial"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_70" class="RNASeqResult">
+<attribute name="expressionScore" value="5.669"/>
+<attribute name="tissue" value="Brain - Nucleus accumbens (basal ganglia)"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_129" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Cells - Transformed fibroblasts"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_35" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Liver"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="6_4" class="SNP">
+<attribute name="pValue" value="4.38845e-06"/>
+<attribute name="primaryIdentifier" value="1_752721_A_G_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-10181"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_99" class="RNASeqResult">
+<attribute name="expressionScore" value="10.6"/>
+<attribute name="tissue" value="Small Intestine - Terminal Ileum"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_87" class="RNASeqResult">
+<attribute name="expressionScore" value="9.695"/>
+<attribute name="tissue" value="Kidney - Cortex"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_34" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Kidney - Cortex"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="6_9" class="SNP">
+<attribute name="pValue" value="1.80336e-05"/>
+<attribute name="primaryIdentifier" value="1_754964_C_T_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-7938"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_92" class="RNASeqResult">
+<attribute name="expressionScore" value="12.79"/>
+<attribute name="tissue" value="Nerve - Tibial"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_2" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Adipose - Visceral (Omentum)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_94" class="RNASeqResult">
+<attribute name="expressionScore" value="5.895"/>
+<attribute name="tissue" value="Pancreas"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_29" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Esophagus - Mucosa"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_20" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Substantia nigra"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="5_77" class="RNASeqResult">
+<attribute name="expressionScore" value="11.01"/>
+<attribute name="tissue" value="Cervix - Ectocervix"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="6_2" class="SNP">
+<attribute name="pValue" value="1.16712e-07"/>
+<attribute name="primaryIdentifier" value="1_739528_G_A_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-23374"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_55" class="RNASeqResult">
+<attribute name="expressionScore" value="7.283"/>
+<attribute name="tissue" value="Adipose - Visceral (Omentum)"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_106" class="RNASeqResult">
+<attribute name="expressionScore" value="7.572"/>
+<attribute name="tissue" value="Whole Blood"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="6_7" class="SNP">
+<attribute name="pValue" value="8.82435e-10"/>
+<attribute name="primaryIdentifier" value="1_754063_G_T_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-8839"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_23" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Cells - Transformed fibroblasts"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_33" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Heart - Left Ventricle"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_127" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Breast - Mammary Tissue"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_125" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Spinal cord (cervical c-1)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_56" class="RNASeqResult">
+<attribute name="expressionScore" value="6.109"/>
+<attribute name="tissue" value="Adrenal Gland"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_145" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Nerve - Tibial"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_18" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Putamen (basal ganglia)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_152" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Small Intestine - Terminal Ileum"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_90" class="RNASeqResult">
+<attribute name="expressionScore" value="8.433"/>
+<attribute name="tissue" value="Minor Salivary Gland"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_1" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Adipose - Subcutaneous"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_27" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Colon - Transverse"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_71" class="RNASeqResult">
+<attribute name="expressionScore" value="5.755"/>
+<attribute name="tissue" value="Brain - Putamen (basal ganglia)"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="6_5" class="SNP">
+<attribute name="pValue" value="5.90429e-09"/>
+<attribute name="primaryIdentifier" value="1_752796_C_T_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-10106"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_157" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Uterus"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_10" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Caudate (basal ganglia)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_24" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Cervix - Ectocervix"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_49" class="RNASeqResult">
+<attribute name="expressionScore" value="0.8229"/>
+<attribute name="tissue" value="Testis"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="7_1" class="SOTerm">
+<attribute name="name" value="SNP"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_154" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Stomach"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_67" class="RNASeqResult">
+<attribute name="expressionScore" value="6.444"/>
+<attribute name="tissue" value="Brain - Frontal Cortex (BA9)"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="6_1" class="SNP">
+<attribute name="pValue" value="2.50292e-06"/>
+<attribute name="primaryIdentifier" value="1_736289_T_A_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-26613"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_148" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Pituitary"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_113" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Bladder"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_156" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Thyroid"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_73" class="RNASeqResult">
+<attribute name="expressionScore" value="5.956"/>
+<attribute name="tissue" value="Brain - Substantia nigra"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_82" class="RNASeqResult">
+<attribute name="expressionScore" value="7.264"/>
+<attribute name="tissue" value="Esophagus - Mucosa"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_149" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Prostate"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_98" class="RNASeqResult">
+<attribute name="expressionScore" value="13.66"/>
+<attribute name="tissue" value="Skin - Sun Exposed (Lower leg)"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_102" class="RNASeqResult">
+<attribute name="expressionScore" value="12.54"/>
+<attribute name="tissue" value="Testis"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_111" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Artery - Coronary"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_3" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Adrenal Gland"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_147" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Pancreas"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_4" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Artery - Aorta"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_141" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Liver"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_159" class="RNASeqResult">
+<attribute name="expressionScore" value="0.0615"/>
+<attribute name="tissue" value="Whole Blood"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_69" class="RNASeqResult">
+<attribute name="expressionScore" value="6.139"/>
+<attribute name="tissue" value="Brain - Hypothalamus"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_84" class="RNASeqResult">
+<attribute name="expressionScore" value="10.19"/>
+<attribute name="tissue" value="Fallopian Tube"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_72" class="RNASeqResult">
+<attribute name="expressionScore" value="7.037"/>
+<attribute name="tissue" value="Brain - Spinal cord (cervical c-1)"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_107" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Adipose - Subcutaneous"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_103" class="RNASeqResult">
+<attribute name="expressionScore" value="12.55"/>
+<attribute name="tissue" value="Thyroid"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_104" class="RNASeqResult">
+<attribute name="expressionScore" value="13.01"/>
+<attribute name="tissue" value="Uterus"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_58" class="RNASeqResult">
+<attribute name="expressionScore" value="7.85"/>
+<attribute name="tissue" value="Artery - Coronary"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="6_3" class="SNP">
+<attribute name="pValue" value="6.28418e-06"/>
+<attribute name="primaryIdentifier" value="1_752566_G_A_b37"/>
+<attribute name="tissue" value="Liver Analysis"/>
+<attribute name="tssDistance" value="-10336"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_66" class="RNASeqResult">
+<attribute name="expressionScore" value="7.486"/>
+<attribute name="tissue" value="Brain - Cortex"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_124" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Putamen (basal ganglia)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_37" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Minor Salivary Gland"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_131" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Cervix - Endocervix"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_108" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Adipose - Visceral (Omentum)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_110" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Artery - Aorta"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_133" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Colon - Transverse"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_45" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Skin - Sun Exposed (Lower leg)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_89" class="RNASeqResult">
+<attribute name="expressionScore" value="8.815"/>
+<attribute name="tissue" value="Lung"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_68" class="RNASeqResult">
+<attribute name="expressionScore" value="6.31"/>
+<attribute name="tissue" value="Brain - Hippocampus"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_54" class="RNASeqResult">
+<attribute name="expressionScore" value="8.294"/>
+<attribute name="tissue" value="Adipose - Subcutaneous"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_36" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Lung"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_115" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Anterior cingulate cortex (BA24)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_139" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Heart - Left Ventricle"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_28" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Esophagus - Gastroesophageal Junction"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_122" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Hypothalamus"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_130" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Cervix - Ectocervix"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_19" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Spinal cord (cervical c-1)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_65" class="RNASeqResult">
+<attribute name="expressionScore" value="14.05"/>
+<attribute name="tissue" value="Brain - Cerebellum"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_158" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Vagina"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_79" class="RNASeqResult">
+<attribute name="expressionScore" value="10.39"/>
+<attribute name="tissue" value="Colon - Sigmoid"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_21" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Breast - Mammary Tissue"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_15" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Hippocampus"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_48" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Stomach"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_78" class="RNASeqResult">
+<attribute name="expressionScore" value="12.77"/>
+<attribute name="tissue" value="Cervix - Endocervix"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_47" class="RNASeqResult">
+<attribute name="expressionScore" value="0.01884"/>
+<attribute name="tissue" value="Spleen"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_6" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Artery - Tibial"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_83" class="RNASeqResult">
+<attribute name="expressionScore" value="8.939"/>
+<attribute name="tissue" value="Esophagus - Muscularis"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_144" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Muscle - Skeletal"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_22" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Cells - EBV-transformed lymphocytes"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="GTex"/>
+</item>
+<item id="5_9" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Anterior cingulate cortex (BA24)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_150" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Skin - Not Sun Exposed (Suprapubic)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_38" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Muscle - Skeletal"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_151" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Skin - Sun Exposed (Lower leg)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_117" class="RNASeqResult">
+<attribute name="expressionScore" value="0.01242"/>
+<attribute name="tissue" value="Brain - Cerebellar Hemisphere"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_116" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Caudate (basal ganglia)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="primaryIdentifier" value="123"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_2"/>
+<collection name="SNPs"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/><reference ref_id="6_6"/><reference ref_id="6_7"/><reference ref_id="6_8"/><reference ref_id="6_9"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="rnaSeqResults"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_7"/><reference ref_id="5_8"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_11"/><reference ref_id="5_12"/><reference ref_id="5_13"/><reference ref_id="5_14"/><reference ref_id="5_15"/><reference ref_id="5_16"/><reference ref_id="5_17"/><reference ref_id="5_18"/><reference ref_id="5_19"/><reference ref_id="5_20"/><reference ref_id="5_21"/><reference ref_id="5_22"/><reference ref_id="5_23"/><reference ref_id="5_24"/><reference ref_id="5_25"/><reference ref_id="5_26"/><reference ref_id="5_27"/><reference ref_id="5_28"/><reference ref_id="5_29"/><reference ref_id="5_30"/><reference ref_id="5_31"/><reference ref_id="5_32"/><reference ref_id="5_33"/><reference ref_id="5_34"/><reference ref_id="5_35"/><reference ref_id="5_36"/><reference ref_id="5_37"/><reference ref_id="5_38"/><reference ref_id="5_39"/><reference ref_id="5_40"/><reference ref_id="5_41"/><reference ref_id="5_42"/><reference ref_id="5_43"/><reference ref_id="5_44"/><reference ref_id="5_45"/><reference ref_id="5_46"/><reference ref_id="5_47"/><reference ref_id="5_48"/><reference ref_id="5_49"/><reference ref_id="5_50"/><reference ref_id="5_51"/><reference ref_id="5_52"/><reference ref_id="5_53"/><reference ref_id="5_107"/><reference ref_id="5_108"/><reference ref_id="5_109"/><reference ref_id="5_110"/><reference ref_id="5_111"/><reference ref_id="5_112"/><reference ref_id="5_113"/><reference ref_id="5_114"/><reference ref_id="5_115"/><reference ref_id="5_116"/><reference ref_id="5_117"/><reference ref_id="5_118"/><reference ref_id="5_119"/><reference ref_id="5_120"/><reference ref_id="5_121"/><reference ref_id="5_122"/><reference ref_id="5_123"/><reference ref_id="5_124"/><reference ref_id="5_125"/><reference ref_id="5_126"/><reference ref_id="5_127"/><reference ref_id="5_128"/><reference ref_id="5_129"/><reference ref_id="5_130"/><reference ref_id="5_131"/><reference ref_id="5_132"/><reference ref_id="5_133"/><reference ref_id="5_134"/><reference ref_id="5_135"/><reference ref_id="5_136"/><reference ref_id="5_137"/><reference ref_id="5_138"/><reference ref_id="5_139"/><reference ref_id="5_140"/><reference ref_id="5_141"/><reference ref_id="5_142"/><reference ref_id="5_143"/><reference ref_id="5_144"/><reference ref_id="5_145"/><reference ref_id="5_146"/><reference ref_id="5_147"/><reference ref_id="5_148"/><reference ref_id="5_149"/><reference ref_id="5_150"/><reference ref_id="5_151"/><reference ref_id="5_152"/><reference ref_id="5_153"/><reference ref_id="5_154"/><reference ref_id="5_155"/><reference ref_id="5_156"/><reference ref_id="5_157"/><reference ref_id="5_158"/><reference ref_id="5_159"/></collection>
+</item>
+<item id="5_86" class="RNASeqResult">
+<attribute name="expressionScore" value="3.359"/>
+<attribute name="tissue" value="Heart - Left Ventricle"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_12" class="RNASeqResult">
+<attribute name="expressionScore" value="0.01036"/>
+<attribute name="tissue" value="Brain - Cerebellum"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_100" class="RNASeqResult">
+<attribute name="expressionScore" value="13.47"/>
+<attribute name="tissue" value="Spleen"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_57" class="RNASeqResult">
+<attribute name="expressionScore" value="7.445"/>
+<attribute name="tissue" value="Artery - Aorta"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_50" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Thyroid"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_146" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Ovary"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_25" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Cervix - Endocervix"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_26" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Colon - Sigmoid"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_43" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Prostate"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="GTex data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="5_76" class="RNASeqResult">
+<attribute name="expressionScore" value="3.4"/>
+<attribute name="tissue" value="Cells - Transformed fibroblasts"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_143" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Minor Salivary Gland"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_53" class="RNASeqResult">
+<attribute name="expressionScore" value="0.0615"/>
+<attribute name="tissue" value="Whole Blood"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_75" class="RNASeqResult">
+<attribute name="expressionScore" value="6.026"/>
+<attribute name="tissue" value="Cells - EBV-transformed lymphocytes"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_93" class="RNASeqResult">
+<attribute name="expressionScore" value="12.76"/>
+<attribute name="tissue" value="Ovary"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_64" class="RNASeqResult">
+<attribute name="expressionScore" value="13.18"/>
+<attribute name="tissue" value="Brain - Cerebellar Hemisphere"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_80" class="RNASeqResult">
+<attribute name="expressionScore" value="9.098"/>
+<attribute name="tissue" value="Colon - Transverse"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_134" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Esophagus - Gastroesophageal Junction"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_105" class="RNASeqResult">
+<attribute name="expressionScore" value="11.36"/>
+<attribute name="tissue" value="Vagina"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_138" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Heart - Atrial Appendage"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_13" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Cortex"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_91" class="RNASeqResult">
+<attribute name="expressionScore" value="4.621"/>
+<attribute name="tissue" value="Muscle - Skeletal"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_140" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Kidney - Cortex"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_44" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Skin - Not Sun Exposed (Suprapubic)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_97" class="RNASeqResult">
+<attribute name="expressionScore" value="13.6"/>
+<attribute name="tissue" value="Skin - Not Sun Exposed (Suprapubic)"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_16" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Hypothalamus"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_5" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Artery - Coronary"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_41" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Pancreas"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_142" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Lung"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_153" class="RNASeqResult">
+<attribute name="expressionScore" value="0.01884"/>
+<attribute name="tissue" value="Spleen"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_136" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Esophagus - Muscularis"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_7" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Bladder"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_63" class="RNASeqResult">
+<attribute name="expressionScore" value="5.676"/>
+<attribute name="tissue" value="Brain - Caudate (basal ganglia)"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_121" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Hippocampus"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_8" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Amygdala"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_17" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Nucleus accumbens (basal ganglia)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_101" class="RNASeqResult">
+<attribute name="expressionScore" value="8.051"/>
+<attribute name="tissue" value="Stomach"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_85" class="RNASeqResult">
+<attribute name="expressionScore" value="4.368"/>
+<attribute name="tissue" value="Heart - Atrial Appendage"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_81" class="RNASeqResult">
+<attribute name="expressionScore" value="9.414"/>
+<attribute name="tissue" value="Esophagus - Gastroesophageal Junction"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_14" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Brain - Frontal Cortex (BA9)"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="7_2" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_88" class="RNASeqResult">
+<attribute name="expressionScore" value="4.836"/>
+<attribute name="tissue" value="Liver"/>
+<reference name="gene" ref_id="3_2"/>
+</item>
+<item id="5_137" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Fallopian Tube"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_51" class="RNASeqResult">
+<attribute name="expressionScore" value="0"/>
+<attribute name="tissue" value="Uterus"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+</items>

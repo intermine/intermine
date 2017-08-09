@@ -11,7 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class AtlasExpressConverter extends BioFileConverter
     public AtlasExpressConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(Collections.singleton(TAXON_ID));
+            rslv = IdResolverService.getIdResolverByOrganism(TAXON_ID);
         }
     }
 

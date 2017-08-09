@@ -109,7 +109,7 @@ public class InterMineAPI
         Profile superUser = profileManager.getSuperuserProfile(classKeys);
         this.bagManager = new BagManager(superUser, model);
         this.templateManager =
-                new TemplateManager(superUser, model, trackerDelegate.getTemplateTracker());
+                new TemplateManager(superUser, trackerDelegate.getTemplateTracker());
         this.templateSummariser =
                 new TemplateSummariser(objectStore, userProfileWriter, oss);
         this.bagQueryRunner =
