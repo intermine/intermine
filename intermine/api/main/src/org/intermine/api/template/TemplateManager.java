@@ -32,7 +32,6 @@ import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.tracker.TemplateTracker;
-import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
@@ -59,7 +58,6 @@ public class TemplateManager
     /**
      * The TemplateManager references the super user profile to fetch global templates.
      * @param superProfile the super user profile
-     * @param model the object model
      * @param templateTracker the template tracker
      */
     public TemplateManager(Profile superProfile, TemplateTracker templateTracker) {
