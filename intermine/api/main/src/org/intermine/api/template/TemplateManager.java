@@ -48,12 +48,12 @@ import org.intermine.util.CacheMap;
  */
 public class TemplateManager
 {
-
     private static final TemplateComparator TEMPLATE_COMPARATOR = new TemplateComparator();
     private final Profile superProfile;
     private final TagManager tagManager;
     private TemplateTracker templateTracker;
-    private static CacheMap<String, ApiTemplate> globalValidTemplateCache = null;
+    private static CacheMap<String, ApiTemplate> globalValidTemplateCache
+        = new CacheMap<String, ApiTemplate>();
 
     /**
      * The TemplateManager references the super user profile to fetch global templates.
@@ -308,24 +308,30 @@ public class TemplateManager
      * tagged as public and are valid for the current data model.
      * @return a map from template name to template query
      */
-    public synchronized Map<String, ApiTemplate> getValidGlobalTemplates() {
-        if (globalValidTemplateCache == null) {
-            globalValidTemplateCache = new CacheMap<String, ApiTemplate>();
-            Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
-            for (Map.Entry<String, ApiTemplate> entry : globalTemplates.entrySet()) {
-                if (entry.getValue().isValid()) {
-                    globalValidTemplateCache.put(entry.getKey(), entry.getValue());
+    public Map<String, ApiTemplate> getValidGlobalTemplates() {
+        // TODO: We should likely also be using a cache for getAspectTemplates()
+        // and getGlobalTemplates()
+        synchronized (globalValidTemplateCache) {
+            if (globalValidTemplateCache.isEmpty()) {
+                Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
+                for (Map.Entry<String, ApiTemplate> entry : globalTemplates.entrySet()) {
+                    if (entry.getValue().isValid()) {
+                        globalValidTemplateCache.put(entry.getKey(), entry.getValue());
+                    }
                 }
             }
+
+            return globalValidTemplateCache;
         }
-        return globalValidTemplateCache;
     }
 
     /**
-     * Empty cache of global valid templates when something happens.
+     * Empty cache of global valid templates when these change.
      */
-    public synchronized void invalidateCache() {
-        globalValidTemplateCache = null;
+    public void invalidateCache() {
+        synchronized (globalValidTemplateCache) {
+            globalValidTemplateCache.clear();
+        }
     }
 
     /**
