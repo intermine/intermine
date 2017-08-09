@@ -210,9 +210,10 @@ public final class Constants
      * 21 - Added populationCounts to enrichment output. #1601
      * 22 - Updated branding parameters for use by non-InterMine apps #1623
      * 23 - Updated the /lists endpoint to return the persistent list id
-     * 24 - Add web config service
+     * 24 - Add web properties service
+     * 24 - Add id to whoami
      */
-    public static final int WEB_SERVICE_VERSION = 24;
+    public static final int WEB_SERVICE_VERSION = 25;
 
     /**
      * Current version of the InterMine code
