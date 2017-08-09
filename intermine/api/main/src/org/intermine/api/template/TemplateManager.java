@@ -32,13 +32,13 @@ import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.tracker.TemplateTracker;
-import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.template.TemplateComparator;
 import org.intermine.template.TemplateQuery;
+import org.intermine.util.CacheMap;
 
 /**
  * A TemplateManager provides access to all global and/or user templates and methods to fetch them
@@ -48,36 +48,31 @@ import org.intermine.template.TemplateQuery;
  */
 public class TemplateManager
 {
-
     private static final TemplateComparator TEMPLATE_COMPARATOR = new TemplateComparator();
     private final Profile superProfile;
-    @SuppressWarnings("unused")
-    private final Model model;
     private final TagManager tagManager;
     private TemplateTracker templateTracker;
+    private static CacheMap<String, ApiTemplate> globalValidTemplateCache
+        = new CacheMap<String, ApiTemplate>();
 
     /**
      * The TemplateManager references the super user profile to fetch global templates.
      * @param superProfile the super user profile
-     * @param model the object model
+     * @param templateTracker the template tracker
      */
-    public TemplateManager(Profile superProfile, Model model) {
-        this.model = model;
+    public TemplateManager(Profile superProfile, TemplateTracker templateTracker) {
         this.superProfile = superProfile;
         this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
+        this.templateTracker = templateTracker;
     }
 
     /**
      * The TemplateManager references the super user profile to fetch global templates.
      * @param superProfile the super user profile
-     * @param model the object model
-     * @param templateTracker the template tracker
      */
-    public TemplateManager(Profile superProfile, Model model, TemplateTracker templateTracker) {
-        this.model = model;
+    public TemplateManager(Profile superProfile) {
         this.superProfile = superProfile;
         this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
-        this.templateTracker = templateTracker;
     }
 
     /**
@@ -314,14 +309,29 @@ public class TemplateManager
      * @return a map from template name to template query
      */
     public Map<String, ApiTemplate> getValidGlobalTemplates() {
-        Map<String, ApiTemplate> validTemplates = new HashMap<String, ApiTemplate>();
-        Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
-        for (Map.Entry<String, ApiTemplate> entry : globalTemplates.entrySet()) {
-            if (entry.getValue().isValid()) {
-                validTemplates.put(entry.getKey(), entry.getValue());
+        // TODO: We should likely also be using a cache for getAspectTemplates()
+        // and getGlobalTemplates()
+        synchronized (globalValidTemplateCache) {
+            if (globalValidTemplateCache.isEmpty()) {
+                Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
+                for (Map.Entry<String, ApiTemplate> entry : globalTemplates.entrySet()) {
+                    if (entry.getValue().isValid()) {
+                        globalValidTemplateCache.put(entry.getKey(), entry.getValue());
+                    }
+                }
             }
+
+            return globalValidTemplateCache;
         }
-        return validTemplates;
+    }
+
+    /**
+     * Empty cache of global valid templates when these change.
+     */
+    public void invalidateCache() {
+        synchronized (globalValidTemplateCache) {
+            globalValidTemplateCache.clear();
+        }
     }
 
     /**
@@ -504,7 +514,7 @@ public class TemplateManager
     {
         private final List<String> mostPopularTemplateNames;
 
-        public MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
+        MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
             this.mostPopularTemplateNames = mostPopularTemplateNames;
         }
         @Override

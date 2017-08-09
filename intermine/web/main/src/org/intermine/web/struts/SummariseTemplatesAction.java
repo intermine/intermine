@@ -59,8 +59,7 @@ public class SummariseTemplatesAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         final TemplateSummariser summariser = im.getTemplateSummariser();
 
-        TemplateManager templateManager = new TemplateManager(profile,
-                im.getObjectStore().getModel());
+        TemplateManager templateManager = new TemplateManager(profile);
         Map<String, ApiTemplate> templates = templateManager.getGlobalTemplates();
 
         for (Map.Entry<String, ApiTemplate> entry : templates.entrySet()) {

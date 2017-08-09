@@ -49,7 +49,7 @@ public class TestInterMineAPI extends InterMineAPI
         this.oss = oss;
         this.profileManager = pm;
         this.bagManager = new BagManager(pm.getSuperuserProfile(), model);
-        this.templateManager = new TemplateManager(pm.getSuperuserProfile(), model);
+        this.templateManager = new TemplateManager(pm.getSuperuserProfile());
         this.templateSummariser = new TemplateSummariser(objectStore,
                 pm.getProfileObjectStoreWriter(), oss);
         this.bagQueryRunner =

@@ -60,6 +60,7 @@ public class ImportTagsAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         ProfileManager pm = im.getProfileManager();
+
         if (f.isOverwriting()) {
             TagManager tm = im.getTagManager();
             tm.deleteTags(null, null, null, profile.getUsername());
@@ -89,6 +90,8 @@ public class ImportTagsAction extends InterMineAction
             }
         }
         f.reset();
+
+        profile.invalidateTemplateCacheIfRequired();
         return mapping.findForward("success");
     }
 }

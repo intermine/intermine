@@ -169,8 +169,7 @@ public final class PathQueryAPI
      */
     public static TemplateManager getTemplateManager() {
         if (templateManager == null) {
-            templateManager = new TemplateManager(getProfile(),
-                    getObjectStore().getModel());
+            templateManager = new TemplateManager(getProfile());
         }
         return templateManager;
     }
