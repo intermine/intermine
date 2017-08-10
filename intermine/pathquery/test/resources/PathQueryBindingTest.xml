@@ -21,7 +21,6 @@
   </query>
   <query name="hasJoins" model="testmodel" view="Employee.name Employee.department.name Employee.address.address" longDescription="">
     <join path="Employee.department" style="OUTER"/>
-      <join path="Employee.address" style="INNER"/>
   </query>
   <query name="hasOrder" model="testmodel" view="Employee.name Employee.department.name Employee.address.address" longDescription="" sortOrder="Employee.department.name asc Employee.address.address desc"/>
   <query name="viewOnly" model="testmodel" view="Company.name Company.vatNumber" longDescription=""/>

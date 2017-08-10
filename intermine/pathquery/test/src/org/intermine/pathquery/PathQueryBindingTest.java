@@ -15,13 +15,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import junit.framework.TestCase;
-
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Model;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for the PathQueryBinding class
@@ -120,6 +121,15 @@ public class PathQueryBindingTest extends TestCase
         assertEquals(pq.toString(), savedQueries.get("multitype").toString());
     }
 
+    public void testIdBags() throws Exception {
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Company.name");
+        pq.addViews("Company.vatNumber");
+        List ids = Arrays.asList("1","5","7");
+        pq.addConstraint(new PathConstraintIds("Company", ConstraintOp.IN, ids));
+        assertEquals(pq.toString(), savedQueries.get("idBagConstraints").toString());
+    }
+
     public void testMarshallings() throws Exception {
         // Test marshallings
         String xml = PathQueryBinding.marshal(expected.get("employeesWithOldManagers"),
@@ -160,6 +170,12 @@ public class PathQueryBindingTest extends TestCase
             q.clearDescriptions();
             assertEquals(q, PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false)));
         }
+
+        for (Entry<String, PathQuery> entry : savedQueries.entrySet()) {
+            q = entry.getValue();
+            q.clearDescriptions();
+            assertEquals(q, PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false)));
+        }
     }
 
     private PathQuery getQuery2(Model model) {
@@ -194,5 +210,28 @@ public class PathQueryBindingTest extends TestCase
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = getQuery2(model);
         assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name\" longDescription=\"Flibble\" sortOrder=\"Employee.age asc\" constraintLogic=\"A or B\"><join path=\"Employee.department\" style=\"INNER\"/><pathDescription pathString=\"Employee.name\" description=\"Albert\"/><constraint path=\"Employee.age\" code=\"A\" op=\"&lt;\" value=\"50\"/><constraint path=\"Employee.department.name\" code=\"B\" op=\"=\" value=\"Fred\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+    }
+
+    private PathQuery createQuery(String fileName)  {
+        String path = "PathQueryBindingUnmarshal/" + fileName;
+        InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+        if (is == null) {
+            throw new RuntimeException("Could not find the required XML file: " + path);
+        }
+        Model.getInstanceByName("testmodel");
+        PathQuery ret = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).values().iterator().next();
+        return ret;
+    }
+
+    public void testUnknownModel() {
+        /*
+         * Just now throws exception. It will change later.
+         */
+        try {
+            createQuery("UnknownModel.xml");
+        } catch (Exception ex) {
+            return;
+        }
+        fail("Expected exception");
     }
 }

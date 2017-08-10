@@ -12,14 +12,18 @@ package org.intermine.pathquery;
 
 import java.io.Reader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.SAXParser;
@@ -296,7 +300,6 @@ public class PathQueryBinding
         throws JSONException {
         System.out.println(jsonString);
         JSONObject obj = new JSONObject(jsonString);
-
         PathQuery query = new PathQuery(model);
         String name = "query";
         if (obj.has("name")) {
@@ -311,51 +314,13 @@ public class PathQueryBinding
         }
 
         // WHERE statement
-        if (obj.has("where")) {
-            JSONArray constraints = obj.getJSONArray("where");
-            for (int i = 0; i < constraints.length(); i++) {
-                JSONObject constraintObj = constraints.getJSONObject(i);
-                PathConstraint constraint = null;
-                String path = constraintObj.getString("path");
-                if (constraintObj.has("op")) {
-                    String op = constraintObj.getString("op");
-                    ConstraintOp constraintOp = ConstraintOp.getConstraintOp(
-                            constraintObj.getString("op"));
-                    String value = constraintObj.getString("value");
-                    String code = constraintObj.getString("code");
-
-                    if ("IN".equals(op)) {
-                        // bag constraint
-                        constraint = new PathConstraintBag(path, constraintOp, value);
-                    } else {
-                        // attribute constraint
-                        constraint = new PathConstraintAttribute(path, constraintOp, value);
-                    }
-                    query.addConstraint(constraint, code);
-                } else if (constraintObj.has("type")) {
-                    String type = constraintObj.getString("type");
-                    // subclass
-                    constraint = new PathConstraintSubclass(path, type);
-                    query.addConstraint(constraint);
-                }
-            }
-        }
+        setConstraints(obj, query);
 
         // outer join status
-        if (obj.has("outerJoinStatus")) {
-            JSONArray outerJoinStatus = obj.getJSONArray("outerJoinStatus");
-            for (int i = 0; i < outerJoinStatus.length(); i++) {
-                JSONObject outerJoins = outerJoinStatus.getJSONObject(i);
-                Iterator keys = outerJoins.keys();
-                while (keys.hasNext()) {
-                    String outerPath = (String) keys.next();
-                    String joinStatus = outerJoins.getString(outerPath);
-                    if ("outer".equalsIgnoreCase(joinStatus)) {
-                        query.setOuterJoinStatus(outerPath, OuterJoinStatus.OUTER);
-                    } else {
-                        query.setOuterJoinStatus(outerPath, OuterJoinStatus.INNER);
-                    }
-                }
+        if (obj.has("joins")) {
+            JSONArray outerJoins = obj.getJSONArray("joins");
+            for (int i = 0; i < outerJoins.length(); i++) {
+                query.setOuterJoinStatus(outerJoins.getString(i), OuterJoinStatus.OUTER);
             }
         }
 
@@ -390,6 +355,79 @@ public class PathQueryBinding
         }
 
         return query;
+    }
+
+    private static void setConstraints(JSONObject obj, PathQuery query) throws JSONException {
+        // WHERE statement
+        if (obj.has("where")) {
+            JSONArray constraints = obj.getJSONArray("where");
+            for (int i = 0; i < constraints.length(); i++) {
+                JSONObject constraintObj = constraints.getJSONObject(i);
+                PathConstraint constraint = null;
+                String path = constraintObj.getString("path");
+                if (constraintObj.has("op")) {
+                    String op = constraintObj.getString("op");
+                    ConstraintOp constraintOp = ConstraintOp.getConstraintOp(
+                            constraintObj.getString("op"));
+                    String code = constraintObj.getString("code");
+                    String value = null;
+                    JSONArray values = null;
+                    JSONArray idArray = null;
+                    if (constraintObj.has("value")) {
+                        value = constraintObj.getString("value");
+                    } else if (constraintObj.has("values"))  {
+                        values = constraintObj.getJSONArray("values");
+                    } else if (constraintObj.has("ids"))  {
+                        // if the constraint doesn't have a list name, it will have a set of ids
+                        idArray = constraintObj.getJSONArray("ids");
+                    }
+
+                    if ("IN".equals(op)) {
+                        if (StringUtils.isNotEmpty(value)) {
+                            constraint = new PathConstraintBag(path, constraintOp, value);
+                        } else if (idArray != null) {
+                            List<Integer> ids = new ArrayList<Integer>();
+                            for (int j = 0; j < idArray.length(); j++) {
+                                ids.add((int) idArray.get(j));
+                            }
+                            constraint = new PathConstraintIds(path, constraintOp, ids);
+                        }
+                    } else if ("LOOKUP".equals(op)) {
+                        String extraValue = null;
+                        if (constraintObj.has("extraValue")) {
+                            extraValue = constraintObj.getString("extraValue");
+                        }
+                        constraint = new PathConstraintLookup(path, value, extraValue);
+                    } else if ("ONE OF".equals(op)) {
+                        List<String> oneOfValues = new ArrayList<String>();
+                        for (int j = 0; j < values.length(); j++) {
+                            oneOfValues.add(values.get(j).toString());
+                        }
+                        constraint = new PathConstraintMultiValue(path, constraintOp, oneOfValues);
+                    } else if ("WITHIN".equals(op) || "OVERLAPS".equals(op)) {
+                        List<String> ranges = new ArrayList<String>();
+                        for (int j = 0; j < values.length(); j++) {
+                            ranges.add(values.get(j).toString());
+                        }
+                        constraint = new PathConstraintRange(path, constraintOp, ranges);
+                    } else if ("ISA".equals(op)) {
+                        List<String> types = new ArrayList<String>();
+                        for (int j = 0; j < values.length(); j++) {
+                            types.add(values.get(j).toString());
+                        }
+                        constraint = new PathConstraintMultitype(path, constraintOp, types);
+                    } else {
+                        constraint = new PathConstraintAttribute(path, constraintOp, value);
+                    }
+                    query.addConstraint(constraint, code);
+                } else if (constraintObj.has("type")) {
+                    String type = constraintObj.getString("type");
+                    // subclass
+                    constraint = new PathConstraintSubclass(path, type);
+                    query.addConstraint(constraint);
+                }
+            }
+        }
     }
 
     /**
