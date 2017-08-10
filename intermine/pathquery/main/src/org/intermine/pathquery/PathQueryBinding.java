@@ -12,6 +12,7 @@ package org.intermine.pathquery;
 
 import java.io.Reader;
 import java.io.StringWriter;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -19,14 +20,18 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.SAXParser;
 import org.intermine.metadata.StringUtil;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Convert PathQueries to and from XML
+ * Convert PathQueries to and from XML or JSON
  *
  * @author Matthew Wakeling
  */
@@ -267,8 +272,8 @@ public class PathQueryBinding
      * @param model The model to use in preference. May be null.
      * @return a Map from query name to PathQuery
      */
-    public static Map<String, PathQuery> unmarshalPathQueries(
-            Reader reader, int version, Model model) {
+    public static Map<String, PathQuery> unmarshalPathQueries(Reader reader, int version,
+        Model model) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
             InputSource src = new InputSource(reader);
@@ -278,6 +283,113 @@ public class PathQueryBinding
             throw new RuntimeException(e.getMessage(), e);
         }
         return queries;
+    }
+
+    /**
+     * Parse PathQueries from JSON
+     * @param model the data model
+     * @param jsonString the query in JSON format
+     * @return a Map from query name to PathQuery
+     * @throws JSONException if poorly formatted JSON
+     */
+    public static PathQuery unmarshalJSONPathQuery(Model model, String jsonString)
+        throws JSONException {
+        System.out.println(jsonString);
+        JSONObject obj = new JSONObject(jsonString);
+
+        PathQuery query = new PathQuery(model);
+        String name = "query";
+        if (obj.has("name")) {
+            name = obj.getString("name");
+        }
+        query.setTitle(name);
+
+        // SELECT statement
+        JSONArray viewPaths = obj.getJSONArray("select");
+        for (int i = 0; i < viewPaths.length(); i++) {
+            query.addView(viewPaths.getString(i));
+        }
+
+        // WHERE statement
+        if (obj.has("where")) {
+            JSONArray constraints = obj.getJSONArray("where");
+            for (int i = 0; i < constraints.length(); i++) {
+                JSONObject constraintObj = constraints.getJSONObject(i);
+                PathConstraint constraint = null;
+                String path = constraintObj.getString("path");
+                if (constraintObj.has("op")) {
+                    String op = constraintObj.getString("op");
+                    ConstraintOp constraintOp = ConstraintOp.getConstraintOp(
+                            constraintObj.getString("op"));
+                    String value = constraintObj.getString("value");
+                    String code = constraintObj.getString("code");
+
+                    if ("IN".equals(op)) {
+                        // bag constraint
+                        constraint = new PathConstraintBag(path, constraintOp, value);
+                    } else {
+                        // attribute constraint
+                        constraint = new PathConstraintAttribute(path, constraintOp, value);
+                    }
+                    query.addConstraint(constraint, code);
+                } else if (constraintObj.has("type")) {
+                    String type = constraintObj.getString("type");
+                    // subclass
+                    constraint = new PathConstraintSubclass(path, type);
+                    query.addConstraint(constraint);
+                }
+            }
+        }
+
+        // outer join status
+        if (obj.has("outerJoinStatus")) {
+            JSONArray outerJoinStatus = obj.getJSONArray("outerJoinStatus");
+            for (int i = 0; i < outerJoinStatus.length(); i++) {
+                JSONObject outerJoins = outerJoinStatus.getJSONObject(i);
+                Iterator keys = outerJoins.keys();
+                while (keys.hasNext()) {
+                    String outerPath = (String) keys.next();
+                    String joinStatus = outerJoins.getString(outerPath);
+                    if ("outer".equalsIgnoreCase(joinStatus)) {
+                        query.setOuterJoinStatus(outerPath, OuterJoinStatus.OUTER);
+                    } else {
+                        query.setOuterJoinStatus(outerPath, OuterJoinStatus.INNER);
+                    }
+                }
+            }
+        }
+
+        // constraint logic
+        if (obj.has("constraintLogic")) {
+            String constraintLogic = obj.getString("constraintLogic");
+            query.setConstraintLogic(constraintLogic);
+        }
+
+        // description
+        if (obj.has("description")) {
+            String description = obj.getString("description");
+            query.setDescription(description);
+        }
+
+        // order by
+        if (obj.has("orderBy")) {
+            JSONArray orderBys = obj.getJSONArray("orderBy");
+            for (int i = 0; i < orderBys.length(); i++) {
+                JSONObject orderBy = orderBys.getJSONObject(i);
+                Iterator keys = orderBy.keys();
+                while (keys.hasNext()) {
+                    String orderPath = (String) keys.next();
+                    String direction = orderBy.getString(orderPath);
+                    if ("desc".equalsIgnoreCase(direction)) {
+                        query.addOrderBy(orderPath, OrderDirection.DESC);
+                    } else {
+                        query.addOrderBy(orderPath, OrderDirection.ASC);
+                    }
+                }
+            }
+        }
+
+        return query;
     }
 
     /**

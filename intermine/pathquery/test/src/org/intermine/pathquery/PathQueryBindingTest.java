@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import junit.framework.TestCase;
 
@@ -101,21 +102,21 @@ public class PathQueryBindingTest extends TestCase
     public void testQueryWithConstraint() throws Exception {
         assertEquals(expected.get("queryWithConstraint").toString(), savedQueries.get("queryWithConstraint").toString());
     }
-    
+
     public void testRangeQuery() throws Exception {
         PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
         pq.addViews("Employee.name");
         pq.addConstraint(new PathConstraintRange("Employee.age", ConstraintOp.WITHIN, Arrays.asList("40 .. 50", "55 .. 60")));
         pq.addConstraint(new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.OVERLAPS, Arrays.asList("01-01-2012")));
-        
+
         assertEquals(pq.toString(), savedQueries.get("rangeQueries").toString());
     }
-    
+
     public void testMultiTypeQuery() throws Exception {
         PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
         pq.addViews("Employable.name");
         pq.addConstraint(new PathConstraintMultitype("Employable", ConstraintOp.ISA, Arrays.asList("Contractor", "Manager")));
-        
+
         assertEquals(pq.toString(), savedQueries.get("multitype").toString());
     }
 
@@ -141,16 +142,27 @@ public class PathQueryBindingTest extends TestCase
         assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
     }
 
-    public void testNewPathQuery() throws Exception {
+    public void testJson() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        PathQuery q = new PathQuery(model);
-        q.addView("Employee.name");
-        q.addConstraint(new PathConstraintAttribute("Employee.age", ConstraintOp.LESS_THAN, "50"));
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\"><constraint path=\"Employee.age\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        PathQuery q = getQuery1(model);
+        assertEquals(q, PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false)));
+
+/**     this test fails because
+          the JSON only includes Outer joins that are outer joins
+          JSON doesn't have descriptions for paths
+      q = getQuery2(model);
+      assertEquals(q, PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false)));
+*/
+
+        Map<String, PathQuery> queries = getExpectedQueries();
+        for (Entry<String, PathQuery> entry : queries.entrySet()) {
+            q = entry.getValue();
+            q.clearDescriptions();
+            assertEquals(q, PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false)));
+        }
     }
 
-    public void testNewPathQuery2() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+    private PathQuery getQuery2(Model model) {
         PathQuery q = new PathQuery(model);
         q.addView("Employee.name");
         q.addView("Employee.department.name");
@@ -161,6 +173,26 @@ public class PathQueryBindingTest extends TestCase
         q.setOuterJoinStatus("Employee.department", OuterJoinStatus.INNER);
         q.setDescription("Flibble");
         q.setDescription("Employee.name", "Albert");
+        return q;
+    }
+
+    private PathQuery getQuery1(Model model) {
+        PathQuery q = new PathQuery(model);
+        q.addView("Employee.name");
+        q.addConstraint(new PathConstraintAttribute("Employee.age", ConstraintOp.LESS_THAN, "50"));
+        return q;
+    }
+
+
+    public void testNewPathQuery() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = getQuery1(model);
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\"><constraint path=\"Employee.age\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+    }
+
+    public void testNewPathQuery2() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = getQuery2(model);
         assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name\" longDescription=\"Flibble\" sortOrder=\"Employee.age asc\" constraintLogic=\"A or B\"><join path=\"Employee.department\" style=\"INNER\"/><pathDescription pathString=\"Employee.name\" description=\"Albert\"/><constraint path=\"Employee.age\" code=\"A\" op=\"&lt;\" value=\"50\"/><constraint path=\"Employee.department.name\" code=\"B\" op=\"=\" value=\"Fred\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
     }
 }
