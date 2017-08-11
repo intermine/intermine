@@ -13,7 +13,6 @@ package org.intermine.pathquery;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -298,7 +297,6 @@ public class PathQueryBinding
      */
     public static PathQuery unmarshalJSONPathQuery(Model model, String jsonString)
         throws JSONException {
-        System.out.println(jsonString);
         JSONObject obj = new JSONObject(jsonString);
         PathQuery query = new PathQuery(model);
         String name = "query";
@@ -405,6 +403,8 @@ public class PathQueryBinding
                             oneOfValues.add(values.get(j).toString());
                         }
                         constraint = new PathConstraintMultiValue(path, constraintOp, oneOfValues);
+                    } else if ("IS NULL".equals(op) || "IS NOT NULL".equals(op)) {
+                        constraint = new PathConstraintNull(path, constraintOp);
                     } else if ("WITHIN".equals(op) || "OVERLAPS".equals(op)
                         || "DOES NOT OVERLAP".equals(op) || "OUTSIDE".equals(op)) {
                         List<String> ranges = new ArrayList<String>();
@@ -419,7 +419,12 @@ public class PathQueryBinding
                         }
                         constraint = new PathConstraintMultitype(path, constraintOp, types);
                     } else {
-                        constraint = new PathConstraintAttribute(path, constraintOp, value);
+                        if (constraintObj.has("loopPath")) {
+                            String loopPath = constraintObj.getString("loopPath");
+                            constraint = new PathConstraintLoop(path, constraintOp, loopPath);
+                        } else {
+                            constraint = new PathConstraintAttribute(path, constraintOp, value);
+                        }
                     }
                     query.addConstraint(constraint, code);
                 } else if (constraintObj.has("type")) {

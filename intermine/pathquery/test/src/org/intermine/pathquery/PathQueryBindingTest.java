@@ -141,7 +141,7 @@ public class PathQueryBindingTest extends TestCase
     public void testLoopConstraints() throws Exception {
         PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
         pq.addViews("Employee.name");
-        pq.addViews("Employee.department.name");
+        pq.addViews("Employee.department.manager.name");
         pq.addConstraint(new PathConstraintLoop("Employee.department.employees", ConstraintOp.EQUALS, "Employee"));
         pq.addOrderBy("Employee.name", OrderDirection.ASC);
         assertEquals(pq.toString(), savedQueries.get("loopConstraint").toString());
@@ -191,7 +191,8 @@ public class PathQueryBindingTest extends TestCase
         for (Entry<String, PathQuery> entry : savedQueries.entrySet()) {
             q = entry.getValue();
             q.clearDescriptions();
-            assertEquals(q, PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false)));
+            PathQuery actualPathQuery = PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false));
+            assertEquals(q, actualPathQuery);
         }
     }
 

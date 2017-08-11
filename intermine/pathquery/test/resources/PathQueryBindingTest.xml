@@ -48,7 +48,7 @@
 </query>
 
 <!-- loop constraints -->
-<query name="loopConstraint" model="testmodel" view="Employee.name Employee.department.name" longDescription="" sortOrder="Employee.name asc">
+<query name="loopConstraint" model="testmodel" view="Employee.name Employee.department.manager.name" longDescription="" sortOrder="Employee.name asc">
   <constraint path="Employee.department.employees" op="=" loopPath="Employee"/>
 </query>
 
