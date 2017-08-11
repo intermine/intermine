@@ -145,6 +145,8 @@ public class PathQueryBindingTest extends TestCase
         pq.addConstraint(new PathConstraintLoop("Employee.department.employees", ConstraintOp.EQUALS, "Employee"));
         pq.addOrderBy("Employee.name", OrderDirection.ASC);
         assertEquals(pq.toString(), savedQueries.get("loopConstraint").toString());
+        // try query with `value` instead of `loopPath`
+        assertEquals(pq.toString(), savedQueries.get("loopConstraintAlt").toString());
     }
 
     public void testMarshallings() throws Exception {

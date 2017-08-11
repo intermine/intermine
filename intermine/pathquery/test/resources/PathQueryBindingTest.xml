@@ -52,4 +52,8 @@
   <constraint path="Employee.department.employees" op="=" loopPath="Employee"/>
 </query>
 
+<query name="loopConstraintAlt" model="testmodel" view="Employee.name Employee.department.manager.name" longDescription="" sortOrder="Employee.name asc">
+  <constraint path="Employee.department.employees" op="=" value="Employee"/>
+</query>
+
 </query-list>
