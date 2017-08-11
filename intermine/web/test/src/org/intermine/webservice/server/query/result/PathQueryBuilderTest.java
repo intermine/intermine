@@ -80,7 +80,7 @@ public class PathQueryBuilderTest extends TestCase {
     }
 
     public void testBuildGoodQuery() {
-        pqb.buildQuery(goodXML, schemaUrl, bags);
+        pqb.buildXMLQuery(goodXML, schemaUrl, bags);
         assertEquals(expectedGoodQuery.toString(), pqb.getQuery().toString());
 
     }
@@ -88,7 +88,7 @@ public class PathQueryBuilderTest extends TestCase {
     public void testBuildBadQueryNoView() {
 
         try {
-            pqb.buildQuery(invalidXML, schemaUrl, bags);
+            pqb.buildXMLQuery(invalidXML, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -105,7 +105,7 @@ public class PathQueryBuilderTest extends TestCase {
     public void testBuildBadQueryMultipleRoots() {
 
         try {
-            pqb.buildQuery(badQuery, schemaUrl, bags);
+            pqb.buildXMLQuery(badQuery, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -122,7 +122,7 @@ public class PathQueryBuilderTest extends TestCase {
     public void testBuildBadQueryUnknownList() {
 
         try {
-            pqb.buildQuery(bagXML, schemaUrl, bags);
+            pqb.buildXMLQuery(bagXML, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;

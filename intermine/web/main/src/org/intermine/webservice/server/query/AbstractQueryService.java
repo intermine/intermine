@@ -77,7 +77,7 @@ public abstract class AbstractQueryService extends WebService
         if (formatIsJsonObj()) {
             return new PathQueryBuilderForJSONObj(input, getXMLSchemaUrl(), listManager);
         } else {
-            return new PathQueryBuilder(input, getXMLSchemaUrl(), listManager);
+            return new PathQueryBuilder(im, input, getXMLSchemaUrl(), listManager);
         }
     }
 

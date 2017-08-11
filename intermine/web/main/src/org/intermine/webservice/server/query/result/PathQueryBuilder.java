@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.pathquery.PathQuery;
@@ -35,7 +36,7 @@ public class PathQueryBuilder
 {
 
     private PathQuery pathQuery;
-
+    private InterMineAPI im;
     private static Logger logger = Logger.getLogger(PathQueryBuilder.class);
 
     /**
@@ -48,12 +49,70 @@ public class PathQueryBuilder
     /**
      * PathQueryBuilder constructor.
      * @param input xml or JSON string from which will be PathQuery constructed
+     * @param im InterMine API to access the data model
      * @param schemaUrl url of XML Schema file, validation is performed according this file
      * @param bagSource previously saved bags
      */
-    public PathQueryBuilder(String input, String schemaUrl,
+    public PathQueryBuilder(InterMineAPI im, String input, String schemaUrl,
         Producer<Map<String, InterMineBag>> bagSource) {
-        buildQuery(input, schemaUrl, bagSource);
+        if (input.startsWith("<query")) {
+            buildXMLQuery(input, schemaUrl, bagSource);
+        } else {
+            buildJSONQuery(input, bagSource);
+        }
+        this.im = im;
+    }
+
+    /**
+     * Perform the build operation.
+     * @param json json string from which will be PathQuery constructed
+     * @param bagSource previously saved bags.
+     */
+    private void buildJSONQuery(String json, Producer<Map<String, InterMineBag>> bagSource) {
+        try {
+            pathQuery = PathQueryBinding.unmarshalJSONPathQuery(im.getModel(), json);
+        } catch (Exception e) {
+            String message = String.format("JSON is not well formatted. Got %s.", json);
+            throw new BadRequestException(message, e);
+        }
+
+        if (!pathQuery.isValid()) {
+            throw new BadRequestException("JSON is well formatted but query contains errors:\n"
+                    + formatMessage(pathQuery.verifyQuery()));
+        }
+        // check bags used by this query exist and are current
+        checkBags(bagSource);
+    }
+
+    private void checkBags(Producer<Map<String, InterMineBag>> bagSource) {
+        // check bags used by this query exist and are current
+        Set<String> missingBags = new HashSet<String>();
+        Set<String> toUpgrade = new HashSet<String>();
+        for (String bagName : pathQuery.getBagNames()) {
+            // Use a producer so we only have to hit the userprofile if there
+            // actually are any bags to query.
+            Map<String, InterMineBag> savedBags = bagSource.produce();
+            if (!savedBags.containsKey(bagName)) {
+                missingBags.add(bagName);
+            } else {
+                InterMineBag bag = savedBags.get(bagName);
+                if (BagState.CURRENT != BagState.valueOf(bag.getState())) {
+                    toUpgrade.add(bagName);
+                }
+            }
+        }
+        if (!missingBags.isEmpty()) {
+            throw new BadRequestException(
+                    "The query JSON is well formatted but you do not have access to the "
+                            + "following mentioned lists:\n"
+                            + formatMessage(missingBags));
+        }
+        if (!toUpgrade.isEmpty()) {
+            throw new ServiceException(
+                    "The query JSON is well formatted, but the following lists"
+                            + " are not 'current', and need to be manually upgraded:\n"
+                            + formatMessage(toUpgrade));
+        }
     }
 
     /**
@@ -62,7 +121,8 @@ public class PathQueryBuilder
      * @param schemaUrl url of XML Schema file, validation is performed according this file
      * @param bagSource previously saved bags.
      */
-    void buildQuery(String xml, String schemaUrl, Producer<Map<String, InterMineBag>> bagSource) {
+    private void buildXMLQuery(String xml, String schemaUrl,
+        Producer<Map<String, InterMineBag>> bagSource) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
@@ -80,33 +140,7 @@ public class PathQueryBuilder
             }
 
             // check bags used by this query exist and are current
-            Set<String> missingBags = new HashSet<String>();
-            Set<String> toUpgrade = new HashSet<String>();
-            for (String bagName : pathQuery.getBagNames()) {
-                // Use a producer so we only have to hit the userprofile if there
-                // actually are any bags to query.
-                Map<String, InterMineBag> savedBags = bagSource.produce();
-                if (!savedBags.containsKey(bagName)) {
-                    missingBags.add(bagName);
-                } else {
-                    InterMineBag bag = savedBags.get(bagName);
-                    if (BagState.CURRENT != BagState.valueOf(bag.getState())) {
-                        toUpgrade.add(bagName);
-                    }
-                }
-            }
-            if (!missingBags.isEmpty()) {
-                throw new BadRequestException(
-                        "The query XML is well formatted but you do not have access to the "
-                        + "following mentioned lists:\n"
-                        + formatMessage(missingBags));
-            }
-            if (!toUpgrade.isEmpty()) {
-                throw new ServiceException(
-                        "The query XML is well formatted, but the following lists"
-                        + " are not 'current', and need to be manually upgraded:\n"
-                        + formatMessage(toUpgrade));
-            }
+            checkBags(bagSource);
         } else {
             logger.debug("Received invalid xml: " + xml);
             throw new BadRequestException("Query does not pass XML validation. "
