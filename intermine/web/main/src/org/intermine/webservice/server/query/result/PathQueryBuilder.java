@@ -47,15 +47,13 @@ public class PathQueryBuilder
 
     /**
      * PathQueryBuilder constructor.
-     * @param xml xml string from which will be PathQuery constructed
+     * @param input xml or JSON string from which will be PathQuery constructed
      * @param schemaUrl url of XML Schema file, validation is performed according this file
      * @param bagSource previously saved bags
      */
-    public PathQueryBuilder(
-            String xml,
-            String schemaUrl,
-            Producer<Map<String, InterMineBag>> bagSource) {
-        buildQuery(xml, schemaUrl, bagSource);
+    public PathQueryBuilder(String input, String schemaUrl,
+        Producer<Map<String, InterMineBag>> bagSource) {
+        buildQuery(input, schemaUrl, bagSource);
     }
 
     /**
@@ -64,10 +62,7 @@ public class PathQueryBuilder
      * @param schemaUrl url of XML Schema file, validation is performed according this file
      * @param bagSource previously saved bags.
      */
-    void buildQuery(
-            String xml,
-            String schemaUrl,
-            Producer<Map<String, InterMineBag>> bagSource) {
+    void buildQuery(String xml, String schemaUrl, Producer<Map<String, InterMineBag>> bagSource) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {

@@ -69,16 +69,15 @@ public abstract class AbstractQueryService extends WebService
 
     /**
      * Get a path-query builder.
-     * @param xml The query XML.
+     * @param input The query XML or JSON.
      * @return A builder for this query.
      */
-    protected PathQueryBuilder getQueryBuilder(String xml) {
+    protected PathQueryBuilder getQueryBuilder(String input) {
         final ListManager listManager = new ListManager(im, getPermission().getProfile());
-
         if (formatIsJsonObj()) {
-            return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(), listManager);
+            return new PathQueryBuilderForJSONObj(input, getXMLSchemaUrl(), listManager);
         } else {
-            return new PathQueryBuilder(xml, getXMLSchemaUrl(), listManager);
+            return new PathQueryBuilder(input, getXMLSchemaUrl(), listManager);
         }
     }
 
