@@ -102,13 +102,13 @@ public class PathQueryBuilder
         }
         if (!missingBags.isEmpty()) {
             throw new BadRequestException(
-                    "The query JSON is well formatted but you do not have access to the "
+                    "The query is well formatted but you do not have access to the "
                             + "following mentioned lists:\n"
                             + formatMessage(missingBags));
         }
         if (!toUpgrade.isEmpty()) {
             throw new ServiceException(
-                    "The query JSON is well formatted, but the following lists"
+                    "The query is well formatted, but the following lists"
                             + " are not 'current', and need to be manually upgraded:\n"
                             + formatMessage(toUpgrade));
         }

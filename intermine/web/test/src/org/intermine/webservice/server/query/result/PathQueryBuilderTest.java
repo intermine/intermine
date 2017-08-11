@@ -41,7 +41,7 @@ public class PathQueryBuilderTest extends TestCase {
     }
 
     private final Model model = Model.getInstanceByName("testmodel");
-    private final String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
+    private final String schemaUrl = this.getClass().getClassLoader().getResource("query.xsd").toString();
     private final String goodXML = "<query model=\"testmodel\" view=\"Employee.age Employee.name\">" +
         "<constraint path=\"Employee.name\" op=\"=\" value=\"Tim Canterbury\" />" +
         "</query>";
@@ -101,7 +101,7 @@ public class PathQueryBuilderTest extends TestCase {
             fail("Unexpected error when building a query from bad xml" + t.getMessage());
         }
     }
-    
+
     public void testBuildBadQueryMultipleRoots() {
 
         try {
@@ -120,7 +120,6 @@ public class PathQueryBuilderTest extends TestCase {
     }
 
     public void testBuildBadQueryUnknownList() {
-
         try {
             pqb.buildXMLQuery(bagXML, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
@@ -128,7 +127,7 @@ public class PathQueryBuilderTest extends TestCase {
             throw e;
         } catch (BadRequestException e) {
             assertEquals(
-                    "The query XML is well formatted but you do not have access to the following " +
+                    "The query is well formatted but you do not have access to the following " +
                     "mentioned lists:\nDecent Human Beings.",
                     e.getMessage().trim()
             );
