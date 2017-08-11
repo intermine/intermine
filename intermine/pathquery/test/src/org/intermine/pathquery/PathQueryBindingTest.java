@@ -130,6 +130,23 @@ public class PathQueryBindingTest extends TestCase
         assertEquals(pq.toString(), savedQueries.get("idBagConstraints").toString());
     }
 
+    public void testNullConstraints() throws Exception {
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Department.name");
+        pq.addConstraint(new PathConstraintNull("Department.manager", ConstraintOp.IS_NULL));
+        pq.addOrderBy("Department.name", OrderDirection.ASC);
+        assertEquals(pq.toString(), savedQueries.get("nullConstraint").toString());
+    }
+
+    public void testLoopConstraints() throws Exception {
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Employee.name");
+        pq.addViews("Employee.department.name");
+        pq.addConstraint(new PathConstraintLoop("Employee.department.employees", ConstraintOp.EQUALS, "Employee"));
+        pq.addOrderBy("Employee.name", OrderDirection.ASC);
+        assertEquals(pq.toString(), savedQueries.get("loopConstraint").toString());
+    }
+
     public void testMarshallings() throws Exception {
         // Test marshallings
         String xml = PathQueryBinding.marshal(expected.get("employeesWithOldManagers"),

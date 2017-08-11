@@ -382,13 +382,14 @@ public class PathQueryBinding
                         idArray = constraintObj.getJSONArray("ids");
                     }
 
-                    if ("IN".equals(op)) {
+                    if ("IN".equals(op) || "NOT IN".equals(op)) {
                         if (StringUtils.isNotEmpty(value)) {
                             constraint = new PathConstraintBag(path, constraintOp, value);
                         } else if (idArray != null) {
                             List<Integer> ids = new ArrayList<Integer>();
                             for (int j = 0; j < idArray.length(); j++) {
-                                ids.add((int) idArray.get(j));
+                                String id = idArray.getString(j);
+                                ids.add(Integer.parseInt(id));
                             }
                             constraint = new PathConstraintIds(path, constraintOp, ids);
                         }
@@ -398,19 +399,20 @@ public class PathQueryBinding
                             extraValue = constraintObj.getString("extraValue");
                         }
                         constraint = new PathConstraintLookup(path, value, extraValue);
-                    } else if ("ONE OF".equals(op)) {
+                    } else if ("ONE OF".equals(op) || "NONE OF".equals(op)) {
                         List<String> oneOfValues = new ArrayList<String>();
                         for (int j = 0; j < values.length(); j++) {
                             oneOfValues.add(values.get(j).toString());
                         }
                         constraint = new PathConstraintMultiValue(path, constraintOp, oneOfValues);
-                    } else if ("WITHIN".equals(op) || "OVERLAPS".equals(op)) {
+                    } else if ("WITHIN".equals(op) || "OVERLAPS".equals(op)
+                        || "DOES NOT OVERLAP".equals(op) || "OUTSIDE".equals(op)) {
                         List<String> ranges = new ArrayList<String>();
                         for (int j = 0; j < values.length(); j++) {
                             ranges.add(values.get(j).toString());
                         }
                         constraint = new PathConstraintRange(path, constraintOp, ranges);
-                    } else if ("ISA".equals(op)) {
+                    } else if ("ISA".equals(op) || "ISNT".equals(op)) {
                         List<String> types = new ArrayList<String>();
                         for (int j = 0; j < values.length(); j++) {
                             types.add(values.get(j).toString());

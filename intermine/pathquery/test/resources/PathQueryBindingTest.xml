@@ -42,5 +42,14 @@
   <query name="idBagConstraints" model="testmodel" view="Company.name Company.vatNumber" longDescription="">
     <constraint path="Company" op="IN" ids="1,5,7"/>
   </query>
+<!-- null constraint -->
+<query name="nullConstraint" model="testmodel" view="Department.name" sortOrder="Department.name ASC" >
+  <constraint path="Department.manager" op="IS NULL" code="A" />
+</query>
+
+<!-- loop constraints -->
+<query name="loopConstraint" model="testmodel" view="Employee.name Employee.department.name" longDescription="" sortOrder="Employee.name asc">
+  <constraint path="Employee.department.employees" op="=" loopPath="Employee"/>
+</query>
 
 </query-list>
