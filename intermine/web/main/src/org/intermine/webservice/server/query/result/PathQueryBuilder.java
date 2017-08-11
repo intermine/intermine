@@ -36,7 +36,6 @@ public class PathQueryBuilder
 {
 
     private PathQuery pathQuery;
-    private InterMineAPI im;
     private static Logger logger = Logger.getLogger(PathQueryBuilder.class);
 
     /**
@@ -58,9 +57,8 @@ public class PathQueryBuilder
         if (input.startsWith("<query")) {
             buildXMLQuery(input, schemaUrl, bagSource);
         } else {
-            buildJSONQuery(input, bagSource);
+            buildJSONQuery(im, input, bagSource);
         }
-        this.im = im;
     }
 
     /**
@@ -68,7 +66,8 @@ public class PathQueryBuilder
      * @param json json string from which will be PathQuery constructed
      * @param bagSource previously saved bags.
      */
-    private void buildJSONQuery(String json, Producer<Map<String, InterMineBag>> bagSource) {
+    private void buildJSONQuery(InterMineAPI im, String json,
+        Producer<Map<String, InterMineBag>> bagSource) {
         try {
             pathQuery = PathQueryBinding.unmarshalJSONPathQuery(im.getModel(), json);
         } catch (Exception e) {
@@ -121,7 +120,7 @@ public class PathQueryBuilder
      * @param schemaUrl url of XML Schema file, validation is performed according this file
      * @param bagSource previously saved bags.
      */
-    private void buildXMLQuery(String xml, String schemaUrl,
+    void buildXMLQuery(String xml, String schemaUrl,
         Producer<Map<String, InterMineBag>> bagSource) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
