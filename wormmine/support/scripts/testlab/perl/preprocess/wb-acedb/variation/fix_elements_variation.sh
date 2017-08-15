@@ -41,4 +41,4 @@ sed -i -e 's/\<degrees\>/degrees/g' $variation_dir/prepped_variation.xml
 echo 'Author'
 sed -i -e 's/\/Author/\<\/Author/g' $variation_dir/prepped_variation.xml
 echo 'Misc <>'
-sed -i -e 's/\<\</\</g' $variation_dir/prepped_variation.xml
+# sed -i -e 's/\<\</\</g' $variation_dir/prepped_variation.xml
