@@ -66,6 +66,7 @@
 	  <attribute name="donorSpliceSite" type="java.lang.String" />
 	  <attribute name="acceptorSpliceSite" type="java.lang.String" />
 	  <attribute name="productionMethod" type="java.lang.String" />
+	  <attribute name="sequenceDetails" type="java.lang.String" />
       <attribute name="status" type="java.lang.String" />
 	  <attribute name="NemaGENETAGConsortiumAllele" type="java.lang.String" />
 	  <attribute name="missense" type="java.lang.String" />
