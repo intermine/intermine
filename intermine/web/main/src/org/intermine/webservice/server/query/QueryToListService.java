@@ -91,7 +91,6 @@ public class QueryToListService extends AbstractQueryService
         ListInput input = new ListInput(request, bagManager, profile);
         PathQuery pq = getQuery(request);
 
-        //setHeaderAttributes(input.getListName());
         generateListFromQuery(
                 pq,
                 input.getListName(),
