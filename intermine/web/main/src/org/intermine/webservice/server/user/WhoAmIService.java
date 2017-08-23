@@ -60,7 +60,8 @@ public class WhoAmIService extends JSONService
         Profile profile = getPermission().getProfile();
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("username", profile.getUsername());
-        data.put("id", profile.getUserId().toString());
+        String id = (profile.getUserId() != null) ? profile.getUserId().toString() : null;
+        data.put("id", id);
         data.put("preferences", profile.getPreferences());
         addResultItem(data, false);
     }
