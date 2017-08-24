@@ -64,7 +64,7 @@ void generateModel(model, destination, type) {
       }
     }
 
-    ant.modelOutputTask(model: "$model", destDir: "$destination", type: "$type")
+    ant.modelOutputTask(model: model, destDir: destination, type: type)
 }
 
 void buildDB(String osname, String model) {
