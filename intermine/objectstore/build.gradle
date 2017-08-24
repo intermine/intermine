@@ -56,24 +56,14 @@ task copyTestProperties(type: Copy) {
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
-task setAntClassLoader {
-    doLast {
-        ClassLoader antClassLoader = org.apache.tools.ant.Project.class.classLoader
-        configurations.runtime.each { File f ->
-            antClassLoader.addURL(f.toURI().toURL())
-        }
-
-        antClassLoader.addURL(file('./build/classes/main/').toURI().toURL()) //org.intermine.task.ModelOutputTask in the classpath
-        antClassLoader.addURL(file('./src/test/resources/testmodel/').toURI().toURL())  //testmodel_model.xml in the classpath
+void generateModel(model, destination, type) {
+    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
+      classpath { fileset(dir: './build/libs/', includes: '*.jar') }
     }
-}
-
-def generateModel(String model, String destination, String type) {
-    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask')
     ant.modelOutputTask(model: "$model", destDir: "$destination", type: "$type")
 }
 
-def buildDB(String osname, String model) {
+void buildDB(String osname, String model) {
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask')
     ant.buildDBUnittest(osname: "$osname", model: "$model", schemafile:"${osname}-schema.xml", tempDir: 'build/tmp')
 }
@@ -91,5 +81,3 @@ tasks.withType(Test) {
 
 tasks.compileTestJava.dependsOn 'generateTestModel', 'copyDefaultProperties', 'copyTestProperties'
 tasks.compileTestJava.mustRunAfter 'generateTestModel'
-tasks.generateTestModel.dependsOn 'setAntClassLoader'
-tasks.generateTestModel.mustRunAfter 'setAntClassLoader'
