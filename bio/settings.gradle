@@ -1,0 +1,9 @@
+rootProject.name = 'bio'
+
+include ':bio-core',
+':bio-postprocess',
+':bio-tools'
+
+project(':bio-core').projectDir = new File(settingsDir, './core')
+project(':bio-postprocess').projectDir = new File(settingsDir, './postprocess')
+project(':bio-tools').projectDir = new File(settingsDir, './tools')

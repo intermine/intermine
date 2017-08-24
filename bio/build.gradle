@@ -1,0 +1,19 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.0'
+}
+
+subprojects {
+  apply plugin: "java"
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6
+  
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+  }
+}
+
