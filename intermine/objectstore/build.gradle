@@ -49,9 +49,7 @@ task copyTestProperties(type: Copy) {
     from "${System.env.HOME}/.intermine/intermine-test.properties"
     into sourceSets.test.output.resourcesDir
 
-    rename { String fileName ->
-        fileName.replace('intermine-test.properties', 'intermine.properties')
-    }
+    rename { fileName -> fileName.replace('intermine-test.properties', 'intermine.properties') }
 
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
