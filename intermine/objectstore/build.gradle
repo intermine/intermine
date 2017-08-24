@@ -36,7 +36,7 @@ dependencies {
     compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
     compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
     compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
-    compile fileTree(dir: "$projectDir/lib", include: '*.jar') //org.gnu.readline is not in a public repo
+    compile fileTree(dir: 'libs', include: '*.jar') // org.gnu.readline is not in a public repo
 }
 
 task copyDefaultProperties(type: Copy) {
