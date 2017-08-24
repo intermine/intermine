@@ -44,7 +44,6 @@ public abstract class AbstractBagOperationTestCase extends InterMineAPITestCase 
     }
 
     private void insertData() throws Exception {
-        System.out.println("Storing test data");
         Long start = System.currentTimeMillis();
         ObjectStoreWriter osw = os.getNewWriter();
     
@@ -108,7 +107,6 @@ public abstract class AbstractBagOperationTestCase extends InterMineAPITestCase 
         }
     
         osw.close();
-        System.out.printf("Finished storing test data. Took %d ms.\n", System.currentTimeMillis() - start);
     }
 
     private void setUpBags() throws Exception {

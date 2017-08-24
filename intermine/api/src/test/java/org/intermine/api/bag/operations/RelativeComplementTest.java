@@ -2,8 +2,6 @@ package org.intermine.api.bag.operations;
 
 import java.util.Arrays;
 
-import org.intermine.api.bag.operations.BagOperation;
-import org.intermine.api.bag.operations.RelativeComplement;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.testmodel.Company;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -29,7 +27,6 @@ public class RelativeComplementTest extends AbstractBagOperationTestCase {
         osw.close();
         hasAddresses.addIdToBag(c.getId(), "Company");
         hasAddresses.addIdsToBag(managers, "Manager");
-        System.out.printf("Finished extra set-up. Took %d ms.\n", System.currentTimeMillis() - start);
     }
 
     public void testManyFromOne() throws Exception {
