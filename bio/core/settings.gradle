@@ -1,0 +1,3 @@
+rootProject.name = 'bio-core'
+
+includeBuild '../../intermine/model'

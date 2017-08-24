@@ -1,0 +1,25 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+  //compile project(':intermine-api')
+  compile group: 'jakarta-regexp', name: 'jakarta-regexp', version: '1.4'
+  compile fileTree(dir: "$projectDir/lib", include: '*.jar') //biojava-1.7.1.jar not found in public repo, obo and bbop not available in the public maven repo
+
+}
