@@ -10,33 +10,33 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import junit.framework.Test;
-
-import org.intermine.model.testmodel.Company;
+import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreTestUtils;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
+import org.junit.BeforeClass;
 
-public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMineImplTest
+import java.util.Collection;
+
+public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMineCommonTests
 {
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.notxmlunittest");
-        ObjectStoreInterMineImplTest.oneTimeSetUp();
-        os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.notxmlunittest");
+        os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore("os.notxmlunittest");
+        Model model = Model.getInstanceByName("testmodel/testmodel");
+        Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, "testmodel_data.xml");
+        ObjectStoreTestUtils.setIdsOnItems(items);
+        data = ObjectStoreTestUtils.mapItemsToNames(items);
+        System.out.println(data.size() + " entries in data mapItemsToNames");
+        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.notxmlunittest");
+        ObjectStoreTestUtils.storeData(storeDataWriter, data);
     }
 
-    public WithNotXmlObjectStoreInterMineImplTest(String arg) throws Exception {
-        super(arg);
-    }
-
-    public static Test suite() {
-        return buildSuite(WithNotXmlObjectStoreInterMineImplTest.class);
-    }
-
+    @org.junit.Test
     public void testFailFast2() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
@@ -44,7 +44,7 @@ public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMine
         q.addToSelect(qc);
 
         Results r = os.execute(q);
-        storeDataWriter.store((Company) data.get("CompanyA"));
+        storeDataWriter.store(data.get("CompanyA"));
         r.iterator().hasNext();
     }
 }

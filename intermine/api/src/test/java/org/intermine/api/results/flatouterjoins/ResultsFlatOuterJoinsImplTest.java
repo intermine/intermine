@@ -190,7 +190,7 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
      * those expected.
      *
      * @param type the type of query we are testing (ie. the key in the queries Map)
-     * @throws Exception if type does not appear in the queries map
+     * @throws Exception if type does not appear in the queries mapItemsToNames
      */
     public void executeTest(String type) throws Exception {
         if (results.get(type) instanceof Failure) {

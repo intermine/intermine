@@ -10,25 +10,25 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import junit.framework.Test;
-
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreTestUtils;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.junit.BeforeClass;
 
-public class TruncatedObjectStoreInterMineImplTest extends ObjectStoreInterMineImplTest
+import java.util.Collection;
+
+public class TruncatedObjectStoreInterMineImplTest extends ObjectStoreInterMineCommonTests
 {
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.truncunittest");
-        ObjectStoreInterMineImplTest.oneTimeSetUp();
-        os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest");
-    }
-
-    public TruncatedObjectStoreInterMineImplTest(String arg) throws Exception {
-        super(arg);
-    }
-
-    public static Test suite() {
-        return buildSuite(TruncatedObjectStoreInterMineImplTest.class);
+        os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore("os.truncunittest");
+        Model model = Model.getInstanceByName("testmodel/testmodel");
+        Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, "testmodel_data.xml");
+        ObjectStoreTestUtils.setIdsOnItems(items);
+        data = ObjectStoreTestUtils.mapItemsToNames(items);
+        System.out.println(data.size() + " entries in data mapItemsToNames");
+        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.truncunittest");
+        ObjectStoreTestUtils.storeData(storeDataWriter, data);
     }
 }

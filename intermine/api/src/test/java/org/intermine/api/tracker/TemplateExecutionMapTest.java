@@ -114,8 +114,8 @@ public class TemplateExecutionMapTest extends TestCase
     public class MokaTemplatesExecutionMap extends TemplatesExecutionMap
     {
         /**
-         * Return the template execxutions map
-         * @return the map
+         * Return the template execxutions mapItemsToNames
+         * @return the mapItemsToNames
          */
         Map<String, Map<String, Integer>> getTemplateExecutions() {
             return templateExecutions;

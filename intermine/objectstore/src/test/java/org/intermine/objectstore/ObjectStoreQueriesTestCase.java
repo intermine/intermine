@@ -80,7 +80,7 @@ import org.intermine.objectstore.query.SubqueryExistsConstraint;
 /**
  * TestCase for testing InterMine Queries
  * To check results:
- * add results to the results map
+ * add results to the results mapItemsToNames
  * override executeTest to run query and assert that the result is what is expected
  */
 
@@ -120,7 +120,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
      * those expected.
      *
      * @param type the type of query we are testing (ie. the key in the queries Map)
-     * @throws Exception if type does not appear in the queries map
+     * @throws Exception if type does not appear in the queries mapItemsToNames
      */
     public abstract void executeTest(String type) throws Exception;
 
@@ -135,9 +135,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         int failureCount = 0;
         int errorCount = 0;
         for (String type: results.keySet()) {
-                        // Does this appear in the queries map;
+                        // Does this appear in the queries mapItemsToNames;
             if (!(queries.containsKey(type))) {
-                writer.println("\n" + type + " does not appear in the queries map");
+                writer.println("\n" + type + " does not appear in the queries mapItemsToNames");
                 failureCount++;
             } else {
                 Object result = results.get(type);
@@ -163,7 +163,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
             Object result = results.get(type);
             if (result == null) {
                 if (strictTestQueries) {
-                    writer.println("\n" + type + " does not appear in the results map");
+                    writer.println("\n" + type + " does not appear in the results mapItemsToNames");
                     failureCount++;
                 }
             }

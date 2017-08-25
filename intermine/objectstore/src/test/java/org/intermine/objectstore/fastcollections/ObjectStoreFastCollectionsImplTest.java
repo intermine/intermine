@@ -136,7 +136,7 @@ public class ObjectStoreFastCollectionsImplTest
         Collection col = setUpData();
         setIds(col);
         data = map(col);
-        System.out.println(data.size() + " entries in data map");
+        System.out.println(data.size() + " entries in data mapItemsToNames");
         storeData();
         //ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }

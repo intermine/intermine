@@ -92,7 +92,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
             writer.store(o);
             fail("Expected: error");
         } catch (ObjectStoreException e) {
-            assertEquals("Object [interface org.intermine.model.InterMineObject] does not map onto any database table.", e.getMessage());
+            assertEquals("Object [interface org.intermine.model.InterMineObject] does not mapItemsToNames onto any database table.", e.getMessage());
         } finally {
             writer.delete(o);
         }

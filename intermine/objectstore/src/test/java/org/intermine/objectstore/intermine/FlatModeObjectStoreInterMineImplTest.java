@@ -10,67 +10,35 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import junit.framework.Test;
-
-import org.intermine.model.testmodel.CEO;
+import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreTestUtils;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
+import org.junit.BeforeClass;
 
-public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineImplTest
+import java.util.Collection;
+
+public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineCommonTests
 {
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        alternateDataFile = "testmodel_data_flatmode.xml";
-        storeDataWriter = ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.flatmodeunittest");
-        ObjectStoreInterMineImplTest.oneTimeSetUp();
-        os = ObjectStoreFactory.getObjectStore("os.flatmodeunittest");
-        results.put("SelectInterfaceAndSubClasses", NO_RESULT);
-        results.put("SelectInterfaceAndSubClasses2", NO_RESULT);
-        results.put("InterfaceField", NO_RESULT);
-        results.put("InterfaceReference", NO_RESULT);
-        results.put("InterfaceCollection", NO_RESULT);
-        results.put("DynamicInterfacesAttribute", NO_RESULT);
-        results.put("DynamicClassInterface", NO_RESULT);
-        results.put("DynamicClassRef1", NO_RESULT);
-        results.put("DynamicClassRef2", NO_RESULT);
-        results.put("DynamicClassRef3", NO_RESULT);
-        results.put("DynamicClassRef4", NO_RESULT);
-        results.put("DynamicClassConstraint", NO_RESULT);
-        results.put("DynamicBagConstraint2", NO_RESULT);
-        results.put("OrSubquery", NO_RESULT);
-        results.put("SelectClassFromInterMineObject", NO_RESULT);
-        Object[][] r = new Object[][] { { CEO.class, new Long(1) },
-                                        { Employee.class, new Long(3) },
-                                        { Manager.class, new Long(2) } };
-        results.put("SelectClassFromEmployee", toList(r));
-        results.put("SelectClassFromBrokeEmployable", NO_RESULT);
-        results.put("SubclassCollection2", NO_RESULT);
-        results.put("ConstrainClass1", NO_RESULT);
-        results.put("ConstrainClass2", NO_RESULT);
+        os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore("os.unittest");
+        Model model = Model.getInstanceByName("testmodel/testmodel");
+        Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, "testmodel_data_flatmode.xml");
+        ObjectStoreTestUtils.setIdsOnItems(items);
+        data = ObjectStoreTestUtils.mapItemsToNames(items);
+        System.out.println(data.size() + " entries in data mapItemsToNames");
+        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.flatmodeunittest");
+        ObjectStoreTestUtils.storeData(storeDataWriter, data);
+        os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore("os.flatmodeunittest");
     }
 
-    public static void oneTimeTearDown() throws Exception {
-        ObjectStoreInterMineImplTest.oneTimeTearDown();
-        alternateDataFile = null;
-    }
-
-    public FlatModeObjectStoreInterMineImplTest(String arg) throws Exception {
-        super(arg);
-    }
-
-    public static Test suite() {
-        return buildSuite(FlatModeObjectStoreInterMineImplTest.class);
-    }
-
-    public void testLazyCollectionMtoN() throws Exception {
-    }
-
+    @org.junit.Test
     public void testFailFast2() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);

@@ -67,13 +67,13 @@ public abstract class MockItemsTestCase extends TestCase
         }
     }
 
-    // use identifiers to map relationships, then throw identifier away
+    // use identifiers to mapItemsToNames relationships, then throw identifier away
     private static Set<MockItem> createMockItems(Set<Item> a) {
         Set<MockItem> items = new LinkedHashSet<MockItem>();
         Map<String, MockItem> identifiers = new HashMap<String, MockItem>();
         Iterator<Item> iter = a.iterator();
 
-        // map identifier - mockItem
+        // mapItemsToNames identifier - mockItem
         while (iter.hasNext()) {
             Item item = (Item) iter.next();
             MockItem mockItem = new MockItem(item);
