@@ -18,7 +18,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.junit.BeforeClass;
 
-public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineCommonTests
+public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineImplCommonTests
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {

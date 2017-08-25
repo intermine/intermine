@@ -10,13 +10,9 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import java.util.*;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.*;
 import org.junit.BeforeClass;
 
-public class ObjectStoreInterMineImplTest extends ObjectStoreInterMineCommonTests
+public class ObjectStoreInterMineImplTest extends ObjectStoreInterMineImplCommonTests
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {

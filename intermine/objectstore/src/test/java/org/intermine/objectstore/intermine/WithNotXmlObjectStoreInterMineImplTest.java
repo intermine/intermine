@@ -16,7 +16,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.junit.BeforeClass;
 
-public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMineCommonTests
+public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMineImplCommonTests
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
