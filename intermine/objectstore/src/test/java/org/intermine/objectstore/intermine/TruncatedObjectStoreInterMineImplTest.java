@@ -22,13 +22,6 @@ public class TruncatedObjectStoreInterMineImplTest extends ObjectStoreInterMineC
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore("os.truncunittest");
-        Model model = Model.getInstanceByName("testmodel/testmodel");
-        Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, "testmodel_data.xml");
-        ObjectStoreTestUtils.setIdsOnItems(items);
-        data = ObjectStoreTestUtils.mapItemsToNames(items);
-        System.out.println(data.size() + " entries in data mapItemsToNames");
-        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.truncunittest");
-        ObjectStoreTestUtils.storeData(storeDataWriter, data);
+        setupCommonComponents("os.truncunittest", "testmodel/testmodel", "testmodel_data.xml", "osw.truncunittest");
     }
 }

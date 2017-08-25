@@ -10,31 +10,20 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreTestUtils;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.junit.BeforeClass;
 
-import java.util.Collection;
-
 public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineCommonTests
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore("os.unittest");
-        Model model = Model.getInstanceByName("testmodel/testmodel");
-        Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, "testmodel_data_flatmode.xml");
-        ObjectStoreTestUtils.setIdsOnItems(items);
-        data = ObjectStoreTestUtils.mapItemsToNames(items);
-        System.out.println(data.size() + " entries in data mapItemsToNames");
-        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.flatmodeunittest");
-        ObjectStoreTestUtils.storeData(storeDataWriter, data);
+        setupCommonComponents(
+            "os.unittest", "testmodel/testmodel", "testmodel_data_flatmode.xml", "osw.flatmodeunittest");
         os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore("os.flatmodeunittest");
     }
 

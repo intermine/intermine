@@ -11,12 +11,10 @@ package org.intermine.objectstore.intermine;
  */
 
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreQueriesTestCase;
-import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.*;
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.junit.Assert;
@@ -42,6 +40,17 @@ public class ObjectStoreInterMineCommonTests {
     public static final Object NO_RESULT = new Object() {
         public String toString() { return "NO RESULT"; }
     };
+
+    public static void setupCommonComponents(
+            String osName, String modelName, String itemsXmlFilename, String osWriterName) throws Exception {
+        os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore(osName);
+        Model model = Model.getInstanceByName(modelName);
+        Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, itemsXmlFilename);
+        ObjectStoreTestUtils.setIdsOnItems(items);
+        data = ObjectStoreTestUtils.mapItemsToNames(items);
+        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter(osWriterName);
+        ObjectStoreTestUtils.storeData(storeDataWriter, data);
+    }
 
     @Test
     public void testLargeOffset() throws Exception {

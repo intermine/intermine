@@ -20,13 +20,6 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreInterMineCommonTest
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore("os.unittest");
-        Model model = Model.getInstanceByName("testmodel/testmodel");
-        Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, "testmodel_data.xml");
-        ObjectStoreTestUtils.setIdsOnItems(items);
-        data = ObjectStoreTestUtils.mapItemsToNames(items);
-        System.out.println(data.size() + " entries in data mapItemsToNames");
-        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        ObjectStoreTestUtils.storeData(storeDataWriter, data);
+        setupCommonComponents("os.unittest", "testmodel/testmodel", "testmodel_data.xml", "osw.unittest");
     }
 }
