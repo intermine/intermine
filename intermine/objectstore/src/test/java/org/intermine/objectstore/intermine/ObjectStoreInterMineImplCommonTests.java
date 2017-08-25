@@ -11,12 +11,9 @@ package org.intermine.objectstore.intermine;
  */
 
 import org.intermine.metadata.ConstraintOp;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.*;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.SqlGenerator;
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.junit.Assert;
@@ -34,103 +31,22 @@ import java.util.*;
  * We test this way instead of putting these in the ancestor class of an infrastucture for clarity of
  * test code.
  */
-public class ObjectStoreInterMineImplCommonTests {
+public class ObjectStoreInterMineImplCommonTests extends ObjectStoreAbstractImplTests {
     protected static ObjectStoreInterMineImpl os;
     protected static ObjectStoreWriter storeDataWriter;
     protected static Map data;
-
-    protected static Map<String, Query> queries = new HashMap<String, Query>();
 
     public static final Object NO_RESULT = new Object() {
         public String toString() { return "NO RESULT"; }
     };
 
-    public static void setupCommonComponents(
+    public static void oneTimeSetUp(
             String osName, String modelName, String itemsXmlFilename, String osWriterName) throws Exception {
         os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore(osName);
         data = ObjectStoreTestUtils.getTestData(modelName, itemsXmlFilename);
         storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter(osWriterName);
         ObjectStoreTestUtils.storeData(storeDataWriter, data);
-
-        queries.put("SelectSimpleObject", generateSelectSimpleObjectQuery());
-    }
-
-    /*
-      select Alias
-      from Company AS Alias
-      NOT DISTINCT
-    */
-    public static Query generateSelectSimpleObjectQuery() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        Query q1 = new Query();
-        q1.setDistinct(false);
-        q1.alias(c1, "Alias");
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        return q1;
-    }
-
-    @Test
-    public void testCheckStartLimit() throws Exception {
-        int oldOffset = os.maxOffset;
-        os.maxOffset = 10;
-        try {
-            os.checkStartLimit(11,0,(Query) queries.get("SelectSimpleObject"));
-            Assert.fail("Expected ObjectStoreLimitReachedException");
-        } catch (ObjectStoreLimitReachedException e) {
-        }
-        os.maxOffset = oldOffset;
-
-        int oldLimit = os.maxLimit;
-        os.maxLimit = 10;
-        try {
-            os.checkStartLimit(0,11,(Query) queries.get("SelectSimpleObject"));
-            Assert.fail("Expected ObjectStoreLimitReachedException");
-        } catch (ObjectStoreLimitReachedException e) {
-        }
-        os.maxLimit = oldLimit;
-    }
-
-    @Test
-    public void testLimitTooHigh() throws Exception {
-        // try to run query with limit higher than imposed maximum
-        int before = os.maxLimit;
-        os.maxLimit = 99;
-        try{
-            os.execute((Query) queries.get("SelectSimpleObject"), 10, 100, true, true, ObjectStore.SEQUENCE_IGNORE);
-            Assert.fail("Expected: ObjectStoreException");
-        } catch (ObjectStoreLimitReachedException e) {
-        } finally {
-            os.maxLimit = before;
-        }
-    }
-
-    @Test
-    public void testOffsetTooHigh() throws Exception {
-        // try to run query with offset higher than imposed maximum
-        int before = os.maxOffset;
-        os.maxOffset = 99;
-        try {
-            os.execute((Query) queries.get("SelectSimpleObject"), 100, 50, true, true, ObjectStore.SEQUENCE_IGNORE);
-            Assert.fail("Expected: ObjectStoreException");
-        } catch (ObjectStoreLimitReachedException e) {
-        } finally {
-            os.maxOffset = before;
-        }
-    }
-
-    @Test
-    public void testTooMuchTime()  throws Exception {
-        // try to run a query that takes longer than max amount of time
-        long before = os.maxTime;
-        os.maxTime = -1;
-        try {
-            os.execute((Query) queries.get("SelectSimpleObject"), 0, 1, true, true, ObjectStore.SEQUENCE_IGNORE);
-            Assert.fail("Expected: ObjectStoreException");
-        } catch (ObjectStoreException e) {
-        } finally {
-            os.maxTime = before;
-        }
+        oneTimeSetUp(os);
     }
 
     @Test

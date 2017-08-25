@@ -20,7 +20,7 @@ public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMine
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        setupCommonComponents("os.notxmlunittest", "testmodel/testmodel", "testmodel_data.xml", "osw.notxmlunittest");
+        oneTimeSetUp("os.notxmlunittest", "testmodel/testmodel", "testmodel_data.xml", "osw.notxmlunittest");
     }
 
     @org.junit.Test

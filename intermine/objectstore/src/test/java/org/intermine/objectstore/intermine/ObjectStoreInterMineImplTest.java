@@ -16,6 +16,6 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreInterMineImplCommon
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        setupCommonComponents("os.unittest", "testmodel/testmodel", "testmodel_data.xml", "osw.unittest");
+        oneTimeSetUp("os.unittest", "testmodel/testmodel", "testmodel_data.xml", "osw.unittest");
     }
 }

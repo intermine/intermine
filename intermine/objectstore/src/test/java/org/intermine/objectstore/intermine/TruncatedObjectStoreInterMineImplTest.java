@@ -16,6 +16,6 @@ public class TruncatedObjectStoreInterMineImplTest extends ObjectStoreInterMineI
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        setupCommonComponents("os.truncunittest", "testmodel/testmodel", "testmodel_data.xml", "osw.truncunittest");
+        oneTimeSetUp("os.truncunittest", "testmodel/testmodel", "testmodel_data.xml", "osw.truncunittest");
     }
 }
