@@ -51,9 +51,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected static Random rand = new Random();
 
     protected Model model;
-    protected int maxOffset = Integer.MAX_VALUE;
-    protected int maxLimit = Integer.MAX_VALUE;
-    protected long maxTime = Long.MAX_VALUE;
+    public int maxOffset = Integer.MAX_VALUE;
+    public int maxLimit = Integer.MAX_VALUE;
+    public long maxTime = Long.MAX_VALUE;
     // Optimiser will use a default query parse time if none is provided from properties
     protected Long maxQueryParseTime = null;
     protected CacheMap<Integer, InterMineObject> cache;
@@ -341,13 +341,14 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * maximum start allowed or the limit greater than the maximum
      * limit allowed
      */
-    protected void checkStartLimit(int start, int limit, Query query)
+    public void checkStartLimit(int start, int limit, Query query)
         throws ObjectStoreLimitReachedException {
         if (start > maxOffset) {
             throw (new ObjectStoreLimitReachedException("offset parameter (" + start
                                             + ") is greater than permitted maximum ("
                                             + maxOffset + ") for query " + query));
         }
+
         if (limit > maxLimit) {
             throw (new ObjectStoreLimitReachedException("number of rows required (" + limit
                                             + ") is greater than permitted maximum ("
