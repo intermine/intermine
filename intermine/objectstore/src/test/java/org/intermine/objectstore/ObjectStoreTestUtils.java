@@ -23,12 +23,12 @@ import java.util.*;
  * Utility functions for creating ObjectStore test infrastructure.
  */
 public class ObjectStoreTestUtils {
-    protected static List toList(Object[][] o) {
-        List rows = new ArrayList();
-        for(int i=0;i<o.length;i++) {
-            rows.add(new ResultsRow(Arrays.asList((Object[])o[i])));
-        }
-        return rows;
+
+    public static Map getTestData(String modelName, String itemsXmlFilename) throws Exception {
+        Model model = Model.getInstanceByName(modelName);
+        Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, itemsXmlFilename);
+        ObjectStoreTestUtils.setIdsOnItems(items);
+        return ObjectStoreTestUtils.mapItemsToNames(items);
     }
 
     public static Collection loadItemsFromXml(Model model, String resourceName) throws Exception {
@@ -101,5 +101,13 @@ public class ObjectStoreTestUtils {
         }
 
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data");
+    }
+
+    protected static List toList(Object[][] o) {
+        List rows = new ArrayList();
+        for(int i=0;i<o.length;i++) {
+            rows.add(new ResultsRow(Arrays.asList((Object[])o[i])));
+        }
+        return rows;
     }
 }

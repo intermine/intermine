@@ -48,10 +48,7 @@ public class ObjectStoreInterMineImplCommonTests {
     public static void setupCommonComponents(
             String osName, String modelName, String itemsXmlFilename, String osWriterName) throws Exception {
         os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore(osName);
-        Model model = Model.getInstanceByName(modelName);
-        Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, itemsXmlFilename);
-        ObjectStoreTestUtils.setIdsOnItems(items);
-        data = ObjectStoreTestUtils.mapItemsToNames(items);
+        data = ObjectStoreTestUtils.getTestData(modelName, itemsXmlFilename);
         storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter(osWriterName);
         ObjectStoreTestUtils.storeData(storeDataWriter, data);
 
