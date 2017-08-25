@@ -10,41 +10,138 @@ package org.intermine.objectstore.fastcollections;
  *
  */
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import junit.framework.Test;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
-import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.XmlBinding;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplTestCase
+public class ObjectStoreFastCollectionsImplTest
 {
+    private static Map data = new LinkedHashMap();
+    private static Model model;
+
+    private static ObjectStoreInterMineImpl osai;
+    private static ObjectStoreFastCollectionsImpl os;
+
+    private static Collection setUpData() throws Exception {
+        XmlBinding binding = new XmlBinding(model);
+        return binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream("testmodel_data.xml"));
+    }
+
+    private static void setIds(Collection c) throws Exception {
+        int i=1;
+        Iterator iter = c.iterator();
+        while (iter.hasNext()) {
+            try {
+                DynamicUtil.setFieldValue(iter.next(), "id", new Integer(i++));
+            } catch (IllegalArgumentException e) {
+            }
+        }
+    }
+
+    private static Map map(Collection c) throws Exception {
+        Map returnData = new LinkedHashMap();
+        Iterator iter = c.iterator();
+        while(iter.hasNext()) {
+            Object o = iter.next();
+            returnData.put(simpleObjectToName(o), o);
+        }
+        return returnData;
+    }
+
+    private static Object simpleObjectToName(Object o) throws Exception {
+        Method name = null;
+        try {
+            name = o.getClass().getMethod("getName", new Class[] {});
+        } catch (Exception e) {
+            try {
+                name = o.getClass().getMethod("getAddress", new Class[] {});
+            } catch (Exception e2) {
+            }
+        }
+        if (name != null) {
+            return name.invoke(o, new Object[] {});
+        } else if (o instanceof InterMineObject) {
+            return new Integer(o.hashCode());
+        } else {
+            return o;
+        }
+    }
+
+    private static void storeData() throws Exception {
+        ObjectStoreWriter storeDataWriter = null;
+
+        try {
+            storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+            storeDataWithWriter(storeDataWriter);
+        } finally {
+            if (storeDataWriter != null) {
+                storeDataWriter.close();
+            }
+        }
+    }
+
+    private static void storeDataWithWriter(ObjectStoreWriter storeDataWriter) throws Exception {
+        //checkIsEmpty();
+        System.out.println("Storing data");
+        long start = new Date().getTime();
+        try {
+            //Iterator iter = data.entrySet().iterator();
+            //while (iter.hasNext()) {
+            //    InterMineObject o = (InterMineObject) ((Map.Entry) iter.next())
+            //        .getValue();
+            //    o.setId(null);
+            //}
+            storeDataWriter.beginTransaction();
+            Iterator iter = data.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                Object o = entry.getValue();
+                storeDataWriter.store(o);
+            }
+            storeDataWriter.commitTransaction();
+        } catch (Exception e) {
+            storeDataWriter.abortTransaction();
+            throw new Exception(e);
+        }
+
+        System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data");
+    }
+
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
         osai = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         os = new ObjectStoreFastCollectionsImpl(osai);
-        ObjectStoreAbstractImplTestCase.oneTimeSetUp();
+
+        model = Model.getInstanceByName("testmodel/testmodel");
+        Collection col = setUpData();
+        setIds(col);
+        data = map(col);
+        System.out.println(data.size() + " entries in data map");
+        storeData();
+        //ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }
 
-    public ObjectStoreFastCollectionsImplTest(String arg) {
-        super(arg);
-    }
-
-    public static Test suite() {
-        return buildSuite(ObjectStoreFastCollectionsImplTest.class);
-    }
-
+    @Test
     public void testLazyCollectionMtoN() throws Exception {
         ((ObjectStoreFastCollectionsImpl) os).setFetchFields(true, Collections.EMPTY_SET);
         // query for company and check contractors
@@ -60,30 +157,30 @@ public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplT
         ResultsRow rr = (ResultsRow) r.get(0);
         Company c = (Company) rr.get(0);
         Collection coll = c.getContractors();
-        assertTrue("Expected " + coll.getClass() + " to be a ProxyCollection object", coll instanceof ProxyCollection);
-        assertNotNull("Expected collection to be materialised", ((ProxyCollection) coll).getMaterialisedCollection());
-        assertTrue("Expected materialised collection to be a HashSet, but was " + ((ProxyCollection) coll).getMaterialisedCollection().getClass(), ((ProxyCollection) coll).getMaterialisedCollection() instanceof HashSet);
+        Assert.assertTrue("Expected " + coll.getClass() + " to be a ProxyCollection object", coll instanceof ProxyCollection);
+        Assert.assertNotNull("Expected collection to be materialised", ((ProxyCollection) coll).getMaterialisedCollection());
+        Assert.assertTrue("Expected materialised collection to be a HashSet, but was " + ((ProxyCollection) coll).getMaterialisedCollection().getClass(), ((ProxyCollection) coll).getMaterialisedCollection() instanceof HashSet);
         Set contractors = new HashSet(coll);
         Set expected1 = new HashSet();
         expected1.add(data.get("ContractorA"));
         expected1.add(data.get("ContractorB"));
-        assertEquals(expected1, contractors);
+        Assert.assertEquals(expected1, contractors);
 
         Contractor contractor1 = (Contractor) contractors.iterator().next();
         Collection subColl = contractor1.getCompanys();
-        assertTrue("Expected " + subColl.getClass() + " to be a ProxyCollection object", subColl instanceof ProxyCollection);
+        Assert.assertTrue("Expected " + subColl.getClass() + " to be a ProxyCollection object", subColl instanceof ProxyCollection);
         Collection matColl = ((ProxyCollection) subColl).getMaterialisedCollection();
-        assertNull("Expected collection to not be materialised, but was: " + (matColl == null ? "" : "" + matColl.getClass()), matColl);
+        Assert.assertNull("Expected collection to not be materialised, but was: " + (matColl == null ? "" : "" + matColl.getClass()), matColl);
         Set expected2 = new HashSet();
         expected2.add(data.get("CompanyA"));
         expected2.add(data.get("CompanyB"));
-        assertEquals(expected2, new HashSet(contractor1.getCompanys()));
+        Assert.assertEquals(expected2, new HashSet(contractor1.getCompanys()));
     }
 
     public void testLazyCollectionMtoN2() throws Exception {
         os.flushObjectById();
         FieldDescriptor fd = os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Company").getCollectionDescriptorByName("contractors");
-        assertNotNull(fd);
+        Assert.assertNotNull(fd);
         ((ObjectStoreFastCollectionsImpl) os).setFetchFields(true, Collections.singleton(fd));
         // query for company and check contractors
         QueryClass c1 = new QueryClass(Company.class);
@@ -94,12 +191,12 @@ public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplT
         ResultsRow rr = (ResultsRow) r.get(0);
         Company c = (Company) rr.get(0);
         Collection coll = c.getContractors();
-        assertTrue("Expected " + coll.getClass() + " to be a ProxyCollection object", coll instanceof ProxyCollection);
+        Assert.assertTrue("Expected " + coll.getClass() + " to be a ProxyCollection object", coll instanceof ProxyCollection);
         Collection matColl = ((ProxyCollection) coll).getMaterialisedCollection();
-        assertNull("Expected collection to not be materialised, but was: " + (matColl == null ? "" : "" + matColl.getClass()), matColl);
+        Assert.assertNull("Expected collection to not be materialised, but was: " + (matColl == null ? "" : "" + matColl.getClass()), matColl);
         coll = c.getDepartments();
-        assertTrue("Expected " + coll.getClass() + " to be a ProxyCollection object", coll instanceof ProxyCollection);
+        Assert.assertTrue("Expected " + coll.getClass() + " to be a ProxyCollection object", coll instanceof ProxyCollection);
         matColl = ((ProxyCollection) coll).getMaterialisedCollection();
-        assertNotNull("Expected collection to be materialised", matColl);
+        Assert.assertNotNull("Expected collection to be materialised", matColl);
     }
 }
