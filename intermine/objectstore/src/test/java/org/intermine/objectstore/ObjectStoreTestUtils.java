@@ -12,7 +12,10 @@ package org.intermine.objectstore;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.XmlBinding;
 
@@ -101,6 +104,25 @@ public class ObjectStoreTestUtils {
         }
 
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data");
+    }
+
+    /**
+     * Delete all objects in the objectstore that have the given class.
+     *
+     * @param os
+     * @param writer
+     * @param clazz
+     * @throws Exception
+     */
+    public static void deleteAllObjectsInClass(ObjectStore os, ObjectStoreWriter writer, Class clazz) throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(clazz);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        SingletonResults res = os.executeSingleton(q);
+        for (Object o : res) {
+            writer.delete(((InterMineObject)o));
+        }
     }
 
     protected static List toList(Object[][] o) {

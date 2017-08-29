@@ -10,26 +10,42 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import junit.framework.Test;
-
-import org.intermine.objectstore.ObjectStoreWriterTestCase;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.junit.*;
 
-public class WithNotXmlObjectStoreWriterInterMineImplTest extends ObjectStoreWriterInterMineImplTest
+public class WithNotXmlObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTests
 {
+    protected static ObjectStoreWriter writer;
+
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        writer = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.notxmlunittest");
-        storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.notxmlunittest");
-        ObjectStoreWriterTestCase.oneTimeSetUp();
+        writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.notxmlunittest");
     }
 
-    public WithNotXmlObjectStoreWriterInterMineImplTest(String arg) throws Exception {
-        super(arg);
+    @AfterClass
+    public static void oneTimeTearDown() throws Exception {
+        writer.close();
     }
 
-    public static Test suite() {
-        return buildSuite(WithNotXmlObjectStoreWriterInterMineImplTest.class);
+    @Test
+    public void testExceptionOutOfTransaction() throws Exception {
+        Assert.assertFalse(writer.isInTransaction());
+        // First, cause an exception outside a transaction
+        try {
+            writer.store(new Employee() {
+                public Integer getId() {
+                    throw new RuntimeException();
+                }
+                public void setId(Integer id) {
+                    throw new RuntimeException();
+                }
+            });
+        } catch (Exception e) {
+        }
+        Assert.assertFalse(writer.isInTransaction());
+        // Now try and do something normal.
+        Object o = writer.getObjectById(new Integer(2));
     }
 }
-
-
