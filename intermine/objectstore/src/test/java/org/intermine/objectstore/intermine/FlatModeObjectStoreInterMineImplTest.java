@@ -12,7 +12,6 @@ package org.intermine.objectstore.intermine;
 
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
@@ -24,7 +23,6 @@ public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineIm
     public static void oneTimeSetUp() throws Exception {
         oneTimeSetUp(
             "os.flatmodeunittest", "osw.flatmodeunittest", "testmodel/testmodel", "testmodel_data_flatmode.xml");
-        //os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore("os.flatmodeunittest");
     }
 
     @org.junit.Test
