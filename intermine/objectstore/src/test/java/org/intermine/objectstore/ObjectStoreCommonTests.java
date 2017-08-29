@@ -502,21 +502,23 @@ public class ObjectStoreCommonTests {
         q.setConstraint(con);
 
         // Clean up any leftover objects in case of previous test run failures
-        storeDataWriter.delete(qc, con);
-        SingletonResults res = osForOsTests.executeSingleton(q);
-        Assert.assertEquals(0, res.size());
+        deleteObjects(qc, con, q);
 
         SimpleObject so = new SimpleObject();
         so.setName("Albert");
         storeDataWriter.store(so);
-        res = osForOsTests.executeSingleton(q);
+        SingletonResults res = osForOsTests.executeSingleton(q);
         Assert.assertEquals(1, res.size());
         SimpleObject got = (SimpleObject)res.get(0);
         Assert.assertEquals("Albert", got.getName());
         Assert.assertNull(got.getEmployee());
 
+        deleteObjects(qc, con, q);
+    }
+
+    private void deleteObjects(QueryClass qc, Constraint con, Query checkQuery) throws Exception {
         storeDataWriter.delete(qc, con);
-        res = osForOsTests.executeSingleton(q);
+        SingletonResults res = osForOsTests.executeSingleton(checkQuery);
         Assert.assertEquals(0, res.size());
     }
 
