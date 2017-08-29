@@ -33,20 +33,15 @@ import java.util.*;
  */
 public class ObjectStoreInterMineImplCommonTests extends ObjectStoreAbstractImplTests {
     protected static ObjectStoreInterMineImpl os;
-    protected static ObjectStoreWriter storeDataWriter;
-    protected static Map data;
 
     public static final Object NO_RESULT = new Object() {
         public String toString() { return "NO RESULT"; }
     };
 
     public static void oneTimeSetUp(
-            String osName, String modelName, String itemsXmlFilename, String osWriterName) throws Exception {
-        os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore(osName);
-        data = ObjectStoreTestUtils.getTestData(modelName, itemsXmlFilename);
-        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter(osWriterName);
-        ObjectStoreTestUtils.storeData(storeDataWriter, data);
-        oneTimeSetUp(os);
+            String osName, String osWriterName, String modelName, String itemsXmlFilename) throws Exception {
+        os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore(osName);
+        ObjectStoreAbstractImplTests.oneTimeSetUp(os, osWriterName, modelName, itemsXmlFilename);
     }
 
     @Test

@@ -19,29 +19,15 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ObjectStoreAbstractImplTests {
+public class ObjectStoreAbstractImplTests extends ObjectStoreCommonTests {
 
     private static ObjectStoreAbstractImpl osForOsaiTests;
-    protected static Map<String, Query> queries = new HashMap<String, Query>();
 
-    public static void oneTimeSetUp(ObjectStoreAbstractImpl osForOsaiTests) throws Exception {
+    public static void oneTimeSetUp(
+            ObjectStoreAbstractImpl osForOsaiTests, String osWriterName, String modelName, String itemsXmlFilename)
+            throws Exception {
         ObjectStoreAbstractImplTests.osForOsaiTests = osForOsaiTests;
-        queries.put("SelectSimpleObject", generateSelectSimpleObjectQuery());
-    }
-
-    /*
-      select Alias
-      from Company AS Alias
-      NOT DISTINCT
-    */
-    public static Query generateSelectSimpleObjectQuery() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        Query q1 = new Query();
-        q1.setDistinct(false);
-        q1.alias(c1, "Alias");
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        return q1;
+        ObjectStoreCommonTests.oneTimeSetUp(osForOsaiTests, osWriterName, modelName, itemsXmlFilename);
     }
 
     @Test

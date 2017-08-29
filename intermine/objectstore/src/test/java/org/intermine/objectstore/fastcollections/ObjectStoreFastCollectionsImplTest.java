@@ -28,16 +28,12 @@ import org.junit.Test;
 public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplTests
 {
     private static ObjectStoreFastCollectionsImpl osFastCollections;
-    private static Map data;
 
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
         ObjectStoreAbstractImpl os = (ObjectStoreAbstractImpl)ObjectStoreFactory.getObjectStore("os.unittest");
-        data = ObjectStoreTestUtils.getTestData("testmodel/testmodel", "testmodel_data.xml");
-        ObjectStoreWriter storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        ObjectStoreTestUtils.storeData(storeDataWriter, data);
+        oneTimeSetUp(os, "osw.unittest", "testmodel/testmodel", "testmodel_data.xml");
         osFastCollections = new ObjectStoreFastCollectionsImpl(os);
-        oneTimeSetUp(os);
     }
 
     @Test
