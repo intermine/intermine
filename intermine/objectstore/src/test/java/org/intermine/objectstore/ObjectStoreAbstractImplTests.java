@@ -10,14 +10,9 @@ package org.intermine.objectstore;
  *
  */
 
-import org.intermine.model.testmodel.Company;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ObjectStoreAbstractImplTests extends ObjectStoreCommonTests {
 
@@ -32,64 +27,80 @@ public class ObjectStoreAbstractImplTests extends ObjectStoreCommonTests {
 
     @Test
     public void testCheckStartLimit() throws Exception {
-        int oldOffset = osForOsaiTests.maxOffset;
-        osForOsaiTests.maxOffset = 10;
-        try {
-            osForOsaiTests.checkStartLimit(11,0,(Query) queries.get("SelectSimpleObject"));
-            Assert.fail("Expected ObjectStoreLimitReachedException");
-        } catch (ObjectStoreLimitReachedException e) {
-        }
-        osForOsaiTests.maxOffset = oldOffset;
-
-        int oldLimit = osForOsaiTests.maxLimit;
-        osForOsaiTests.maxLimit = 10;
-        try {
-            osForOsaiTests.checkStartLimit(0,11,(Query) queries.get("SelectSimpleObject"));
-            Assert.fail("Expected ObjectStoreLimitReachedException");
-        } catch (ObjectStoreLimitReachedException e) {
-        }
-        osForOsaiTests.maxLimit = oldLimit;
+        testCheckStartLimit(osForOsaiTests);
     }
 
     @Test
     public void testLimitTooHigh() throws Exception {
-        // try to run query with limit higher than imposed maximum
-        int before = osForOsaiTests.maxLimit;
-        osForOsaiTests.maxLimit = 99;
-        try{
-            osForOsaiTests.execute((Query) queries.get("SelectSimpleObject"), 10, 100, true, true, ObjectStore.SEQUENCE_IGNORE);
-            Assert.fail("Expected: ObjectStoreException");
-        } catch (ObjectStoreLimitReachedException e) {
-        } finally {
-            osForOsaiTests.maxLimit = before;
-        }
+        testLimitTooHigh(osForOsaiTests);
     }
 
     @Test
     public void testOffsetTooHigh() throws Exception {
-        // try to run query with offset higher than imposed maximum
-        int before = osForOsaiTests.maxOffset;
-        osForOsaiTests.maxOffset = 99;
-        try {
-            osForOsaiTests.execute((Query) queries.get("SelectSimpleObject"), 100, 50, true, true, ObjectStore.SEQUENCE_IGNORE);
-            Assert.fail("Expected: ObjectStoreException");
-        } catch (ObjectStoreLimitReachedException e) {
-        } finally {
-            osForOsaiTests.maxOffset = before;
-        }
+        testOffsetTooHigh(osForOsaiTests);
     }
 
     @Test
-    public void testTooMuchTime()  throws Exception {
-        // try to run a query that takes longer than max amount of time
-        long before = osForOsaiTests.maxTime;
-        osForOsaiTests.maxTime = -1;
+    public void testTooMuchTime() throws Exception {
+        testTooMuchTime(osForOsaiTests);
+    }
+
+    public static void testCheckStartLimit(ObjectStoreAbstractImpl osai) throws Exception {
+        int oldOffset = osai.maxOffset;
+        osai.maxOffset = 10;
         try {
-            osForOsaiTests.execute((Query) queries.get("SelectSimpleObject"), 0, 1, true, true, ObjectStore.SEQUENCE_IGNORE);
+            osai.checkStartLimit(11, 0, queries.get("SelectSimpleObject"));
+            Assert.fail("Expected ObjectStoreLimitReachedException");
+        } catch (ObjectStoreLimitReachedException e) {
+        }
+        osai.maxOffset = oldOffset;
+
+        int oldLimit = osai.maxLimit;
+        osai.maxLimit = 10;
+        try {
+            osai.checkStartLimit(0,11,(Query) queries.get("SelectSimpleObject"));
+            Assert.fail("Expected ObjectStoreLimitReachedException");
+        } catch (ObjectStoreLimitReachedException e) {
+        }
+        osai.maxLimit = oldLimit;
+    }
+
+    public static void testLimitTooHigh(ObjectStoreAbstractImpl osai) throws Exception {
+        // try to run query with limit higher than imposed maximum
+        int before = osai.maxLimit;
+        osai.maxLimit = 99;
+        try{
+            osForOsaiTests.execute(queries.get("SelectSimpleObject"), 10, 100, true, true, ObjectStore.SEQUENCE_IGNORE);
+            Assert.fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreLimitReachedException e) {
+        } finally {
+            osai.maxLimit = before;
+        }
+    }
+
+    public void testOffsetTooHigh(ObjectStoreAbstractImpl osai) throws Exception {
+        // try to run query with offset higher than imposed maximum
+        int before = osai.maxOffset;
+        osai.maxOffset = 99;
+        try {
+            osai.execute(queries.get("SelectSimpleObject"), 100, 50, true, true, ObjectStore.SEQUENCE_IGNORE);
+            Assert.fail("Expected: ObjectStoreException");
+        } catch (ObjectStoreLimitReachedException e) {
+        } finally {
+            osai.maxOffset = before;
+        }
+    }
+    
+    public void testTooMuchTime(ObjectStoreAbstractImpl osai) throws Exception {
+        // try to run a query that takes longer than max amount of time
+        long before = osai.maxTime;
+        osai.maxTime = -1;
+        try {
+            osai.execute(queries.get("SelectSimpleObject"), 0, 1, true, true, ObjectStore.SEQUENCE_IGNORE);
             Assert.fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         } finally {
-            osForOsaiTests.maxTime = before;
+            osai.maxTime = before;
         }
     }
 }
