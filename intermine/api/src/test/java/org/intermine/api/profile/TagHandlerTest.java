@@ -15,17 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPITestCase;
-import org.intermine.api.bag.BagQueryHandler;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.util.SAXParser;
 import org.xml.sax.InputSource;
 
 /**
  * Tests for the TagHandler class.
  */
-
 public class TagHandlerTest extends InterMineAPITestCase
 {
 
@@ -44,7 +41,7 @@ public class TagHandlerTest extends InterMineAPITestCase
     }
 
     public void testParse() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = Model.getInstanceByName("testmodel/testmodel");
         InputStream is = getClass().getClassLoader().getResourceAsStream("TagHandlerTest.xml");
         if (is == null) {
             throw new IllegalArgumentException("is was null");

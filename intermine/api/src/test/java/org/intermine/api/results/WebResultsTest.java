@@ -60,7 +60,7 @@ public class WebResultsTest extends InterMineAPITestCase
     private Manager man2;
     private CEO man3;
     private ObjectStoreDummyImpl osd;
-    private final Model model = Model.getInstanceByName("testmodel");
+    private final Model model = Model.getInstanceByName("testmodel/testmodel");
     private Map classKeys;
 
 
