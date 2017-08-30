@@ -43,7 +43,6 @@ task buildTestModelJar(type: Jar) {
 }
 
 tasks.compileTestJava.dependsOn 'generateTestModel'
-//tasks.test.dependsOn 'buildTestModelJar'
 tasks.buildTestModelJar.dependsOn 'testClasses'
 
 artifacts {

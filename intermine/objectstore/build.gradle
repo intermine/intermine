@@ -64,5 +64,4 @@ tasks.withType(Test) {
     include '**/*Test.class'
 }
 
-//tasks.compileTestJava.dependsOn ':intermine-testmodel:buildTestModelJar', 'copyDefaultProperties', 'copyTestProperties'
 tasks.compileTestJava.dependsOn 'copyDefaultProperties', 'copyTestProperties'
