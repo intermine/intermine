@@ -12,7 +12,6 @@ import org.xml.sax.InputSource;
 
 public class BagQueryHandlerTest extends TestCase
 {
-
     public BagQueryHandlerTest(String arg0) {
         super(arg0);
     }

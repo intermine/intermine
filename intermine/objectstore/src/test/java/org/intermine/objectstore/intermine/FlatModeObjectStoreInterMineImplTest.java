@@ -22,7 +22,7 @@ public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineIm
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
         oneTimeSetUp(
-            "os.flatmodeunittest", "osw.flatmodeunittest", "testmodel/testmodel", "testmodel_data_flatmode.xml");
+            "os.flatmodeunittest", "osw.flatmodeunittest", "testmodel", "testmodel_data_flatmode.xml");
     }
 
     @org.junit.Test

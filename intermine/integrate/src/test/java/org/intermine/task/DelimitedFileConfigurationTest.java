@@ -12,7 +12,6 @@ package org.intermine.task;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.task.DelimitedFileConfiguration;
 
 import junit.framework.TestCase;
 

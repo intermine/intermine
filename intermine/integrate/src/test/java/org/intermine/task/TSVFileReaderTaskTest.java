@@ -11,7 +11,6 @@ package org.intermine.task;
  */
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -146,7 +145,7 @@ public class TSVFileReaderTaskTest extends TestCase
     }
 
     public void tearDown() throws Exception {
-        LOG.info("in tear down");
+        System.out.println("in tear down");
         ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
 
         if (osw.isInTransaction()) {
@@ -157,18 +156,18 @@ public class TSVFileReaderTaskTest extends TestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         SingletonResults res = osw.getObjectStore().executeSingleton(q);
-        LOG.info("created results");
+        System.out.println("created results");
         Iterator resIter = res.iterator();
         osw.beginTransaction();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
-            LOG.info("deleting: " + o.getId());
+            System.out.println("deleting: " + o.getId());
             osw.delete(o);
         }
         osw.commitTransaction();
-        LOG.info("committed transaction");
+        System.out.println("committed transaction");
         osw.close();
-        LOG.info("closed objectstore");
+        System.out.println("closed objectstore");
     }
 
 }

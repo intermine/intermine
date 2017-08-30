@@ -73,7 +73,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     public static void oneTimeSetUp() throws Exception {
         ObjectStoreQueriesTestCase.oneTimeSetUp();
 
-        model = Model.getInstanceByName("testmodel/testmodel");
+        model = Model.getInstanceByName("testmodel");
         Collection col = setUpData();
         setIds(col);
         data = map(col);

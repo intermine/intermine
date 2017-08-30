@@ -32,7 +32,7 @@ public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplT
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
         ObjectStoreAbstractImpl os = (ObjectStoreAbstractImpl)ObjectStoreFactory.getObjectStore("os.unittest");
-        oneTimeSetUp(os, "osw.unittest", "testmodel/testmodel", "testmodel_data.xml");
+        oneTimeSetUp(os, "osw.unittest", "testmodel", "testmodel_data.xml");
         osFastCollections = new ObjectStoreFastCollectionsImpl(os);
     }
 

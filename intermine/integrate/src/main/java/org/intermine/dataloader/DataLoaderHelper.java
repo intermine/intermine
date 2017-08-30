@@ -265,10 +265,9 @@ public final class DataLoaderHelper
                 String keyList = (String) entry.getValue();
 
                 // fetch from keyDefs
-                if  (cld != null) {
-                    Map<String, PrimaryKey> keysForCls = PrimaryKeyUtil
-                            .getPrimaryKeys(cld);
+                if (cld != null) {
                     if (keyList != null) {
+                        Map<String, PrimaryKey> keysForCls = PrimaryKeyUtil.getPrimaryKeys(cld);
                         String[] tokens = keyList.split(",");
                         for (int i = 0; i < tokens.length; i++) {
                             String token = tokens[i].trim();

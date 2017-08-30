@@ -41,7 +41,7 @@ public class TagHandlerTest extends InterMineAPITestCase
     }
 
     public void testParse() throws Exception {
-        Model model = Model.getInstanceByName("testmodel/testmodel");
+        Model model = Model.getInstanceByName("testmodel");
         InputStream is = getClass().getClassLoader().getResourceAsStream("TagHandlerTest.xml");
         if (is == null) {
             throw new IllegalArgumentException("is was null");

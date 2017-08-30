@@ -11,25 +11,14 @@ package org.intermine.dataconversion;
  */
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import junit.framework.Test;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
-import org.intermine.model.fulldata.Reference;
-import org.intermine.model.fulldata.ReferenceList;
-import org.intermine.model.testmodel.Broke;
-import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -39,9 +28,6 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryTestCase;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.util.DynamicBean;
-
 
 public class ItemToObjectTranslatorTest extends QueryTestCase
 {

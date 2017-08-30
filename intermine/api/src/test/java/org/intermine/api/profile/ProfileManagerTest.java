@@ -77,7 +77,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
         bobProfile = pm.createBasicLocalProfile(bobName, bobPass, bobKey);
         Integer bobId = bobProfile.getUserId();
 
-        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel/testmodel"));
+        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
         SavedQuery sq = new SavedQuery("query1", new Date(), query);
 
         // bob's details
@@ -100,7 +100,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
 
         ApiTemplate template =
             new ApiTemplate("template", "ttitle", "tcomment",
-                              new PathQuery(Model.getInstanceByName("testmodel/testmodel")));
+                              new PathQuery(Model.getInstanceByName("testmodel")));
 
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
@@ -112,7 +112,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
         sallyProfile = pm.createBasicLocalProfile(sallyName, sallyPass, null);
         Integer sallyId = sallyProfile.getUserId();
 
-        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel/testmodel"));
+        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
         SavedQuery sq = new SavedQuery("query1", new Date(), query);
 
         // sally details
@@ -132,7 +132,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
         objectBag.addIdToBag(ceoB1.getId(), "CEO");
 
         ApiTemplate template = new ApiTemplate("template", "ttitle", "tcomment",
-                                     new PathQuery(Model.getInstanceByName("testmodel/testmodel")));
+                                     new PathQuery(Model.getInstanceByName("testmodel")));
 
         sallyProfile.saveQuery("query1", sq);
         sallyProfile.saveBag("sally_bag1", objectBag);
