@@ -60,6 +60,25 @@ public class ObjectStoreTestUtils {
         return returnData;
     }
 
+    private static Object objectToName(Object o) throws Exception {
+        if (o instanceof Collection) {
+            StringBuffer sb = new StringBuffer();
+            boolean needComma = false;
+            sb.append("[");
+            for (Object p : ((Collection) o)) {
+                if (needComma) {
+                    sb.append(", ");
+                }
+                needComma = true;
+                sb.append(objectToName(p));
+            }
+            sb.append("]");
+            return sb.toString();
+        } else {
+            return simpleObjectToName(o);
+        }
+    }
+
     public static Object simpleObjectToName(Object o) throws Exception {
         Method name = null;
         try {
@@ -77,6 +96,30 @@ public class ObjectStoreTestUtils {
         } else {
             return o;
         }
+    }
+
+    public static List queryResultsToNames(List res) throws Exception {
+        List aNames = new ArrayList();
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            List row = (List) resIter.next();
+            List toRow = new ArrayList();
+            Iterator rowIter = row.iterator();
+            while (rowIter.hasNext()) {
+                Object o = rowIter.next();
+                if (o instanceof List) {
+                    List newO = new ArrayList();
+                    for (Object p : ((List) o)) {
+                        newO.add(objectToName(p));
+                    }
+                    toRow.add(newO);
+                } else {
+                    toRow.add(objectToName(o));
+                }
+            }
+            aNames.add(toRow);
+        }
+        return aNames;
     }
 
     public static void storeData(ObjectStoreWriter dataWriter, Map data) throws Exception {
@@ -112,20 +155,26 @@ public class ObjectStoreTestUtils {
      * @param os
      * @param writer
      * @param clazz
+     * @returns Number of objects deleted.
      * @throws Exception
      */
-    public static void deleteAllObjectsInClass(ObjectStore os, ObjectStoreWriter writer, Class clazz) throws Exception {
+    public static int deleteAllObjectsInClass(ObjectStore os, ObjectStoreWriter writer, Class clazz) throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(clazz);
         q.addFrom(qc);
         q.addToSelect(qc);
         SingletonResults res = os.executeSingleton(q);
+
+        int count = res.size();
+
         for (Object o : res) {
             writer.delete(((InterMineObject)o));
         }
+
+        return count;
     }
 
-    protected static List toList(Object[][] o) {
+    public static List toList(Object[][] o) {
         List rows = new ArrayList();
         for(int i=0;i<o.length;i++) {
             rows.add(new ResultsRow(Arrays.asList((Object[])o[i])));

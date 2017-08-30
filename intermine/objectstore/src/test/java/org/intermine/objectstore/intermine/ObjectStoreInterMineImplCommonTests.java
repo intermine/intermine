@@ -34,10 +34,6 @@ import java.util.*;
 public class ObjectStoreInterMineImplCommonTests extends ObjectStoreAbstractImplTests {
     protected static ObjectStoreInterMineImpl os;
 
-    public static final Object NO_RESULT = new Object() {
-        public String toString() { return "NO RESULT"; }
-    };
-
     public static void oneTimeSetUp(
             String osName, String osWriterName, String modelName, String itemsXmlFilename) throws Exception {
         os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore(osName);

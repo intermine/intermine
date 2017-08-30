@@ -90,7 +90,7 @@ public class ObjectStoreAbstractImplTests extends ObjectStoreCommonTests {
             osai.maxOffset = before;
         }
     }
-    
+
     public void testTooMuchTime(ObjectStoreAbstractImpl osai) throws Exception {
         // try to run a query that takes longer than max amount of time
         long before = osai.maxTime;

@@ -11,7 +11,9 @@ package org.intermine.objectstore;
  */
 
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.query.iql.IqlQuery;
@@ -25,16 +27,18 @@ import java.util.*;
 
 public class ObjectStoreCommonTests {
 
-    protected static Map data;
-    protected static Map<String, Query> queries = new HashMap<String, Query>();
     private static ObjectStore osForOsTests;
     protected static ObjectStoreWriter storeDataWriter;
 
+    protected static Map<String, Query> queries = new HashMap<String, Query>();
+    protected static Map data;
+
     public static void oneTimeSetUp(
             ObjectStore os, String osWriterName, String modelName, String itemsXmlFilename) throws Exception {
-        ObjectStoreCommonTests.osForOsTests = os;
-        data = ObjectStoreTestUtils.getTestData(modelName, itemsXmlFilename);
+        osForOsTests = os;
         storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter(osWriterName);
+
+        data = ObjectStoreTestUtils.getTestData(modelName, itemsXmlFilename);
         ObjectStoreTestUtils.storeData(storeDataWriter, data);
 
         queries.put("ContainsDuplicatesMN", generateContainsDuplicatesMNQuery());
