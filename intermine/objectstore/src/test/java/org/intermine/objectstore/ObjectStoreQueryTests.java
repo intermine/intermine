@@ -59,10 +59,10 @@ public abstract class ObjectStoreQueryTests {
         // TODO: Really we should just wipe the objectstore between tests or at least test classes, if this is
         // performance feasible
 
-        System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(os, storeDataWriter, Contractor.class) + " " + Contractor.class);
+        System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(storeDataWriter, Contractor.class) + " " + Contractor.class);
         //System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(os, storeDataWriter, Employable.class) + " " + Employable.class);
-        System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(os, storeDataWriter, Employee.class) + " " + Employee.class);
-        System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(os, storeDataWriter, Secretary.class) + " " + Employee.class);
+        System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(storeDataWriter, Employee.class) + " " + Employee.class);
+        System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(storeDataWriter, Secretary.class) + " " + Employee.class);
 
         data = ObjectStoreTestUtils.getTestData(modelName, itemsXmlFilename);
         ObjectStoreTestUtils.storeData(storeDataWriter, data);

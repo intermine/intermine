@@ -158,12 +158,12 @@ public class ObjectStoreTestUtils {
      * @returns Number of objects deleted.
      * @throws Exception
      */
-    public static int deleteAllObjectsInClass(ObjectStore os, ObjectStoreWriter writer, Class clazz) throws Exception {
+    public static int deleteAllObjectsInClass(ObjectStoreWriter writer, Class clazz) throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(clazz);
         q.addFrom(qc);
         q.addToSelect(qc);
-        SingletonResults res = os.executeSingleton(q);
+        SingletonResults res = writer.getObjectStore().executeSingleton(q);
 
         int count = res.size();
 
