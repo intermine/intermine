@@ -59,9 +59,4 @@ void buildDB(String osname, String model) {
     ant.buildDBUnittest(osname: "$osname", model: "$model", schemafile:"${osname}-schema.xml", tempDir: 'build/tmp')
 }
 
-tasks.withType(Test) {
-    scanForTestClasses = false
-    include '**/*Test.class'
-}
-
 tasks.compileTestJava.dependsOn 'copyDefaultProperties', 'copyTestProperties'
