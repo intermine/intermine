@@ -42,7 +42,7 @@ testing purposes. The model itself has 19 classes based around
 a hierarchical company structure. 
 
 To view the model as an xml file, see:
-L<http://trac.flymine.org/browser/trunk/intermine/objectstore/model/testmodel/testmodel_model.xml>
+L<http://trac.flymine.org/browser/trunk/intermine/objectstore/model/testmodel_model.xml>
 
 Useful classes in the model are 
 

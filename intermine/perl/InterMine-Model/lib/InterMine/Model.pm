@@ -50,7 +50,7 @@ name, and the C<make_new()> method will return an instantiated object
 of the given class.
 
 For an example model see:
-L<http://trac.flymine.org/browser/trunk/intermine/objectstore/model/testmodel/testmodel_model.xml>
+L<http://trac.flymine.org/browser/trunk/intermine/objectstore/model/testmodel_model.xml>
 
 =head1 CLASS METHODS
 

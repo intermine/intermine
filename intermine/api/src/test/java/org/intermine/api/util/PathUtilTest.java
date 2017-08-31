@@ -21,7 +21,7 @@ public class PathUtilTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        model = Model.getInstanceByName("testmodel/testmodel");
+        model = Model.getInstanceByName("testmodel");
     }
 
     public void testResolveShort() throws Exception {

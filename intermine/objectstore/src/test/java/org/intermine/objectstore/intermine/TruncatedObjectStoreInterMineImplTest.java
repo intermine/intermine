@@ -16,6 +16,6 @@ public class TruncatedObjectStoreInterMineImplTest extends ObjectStoreInterMineI
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        oneTimeSetUp("os.truncunittest", "osw.truncunittest", "testmodel/testmodel", "testmodel_data.xml");
+        oneTimeSetUp("os.truncunittest", "osw.truncunittest", "testmodel", "testmodel_data.xml");
     }
 }

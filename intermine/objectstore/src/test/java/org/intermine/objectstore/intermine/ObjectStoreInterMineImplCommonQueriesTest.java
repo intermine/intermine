@@ -17,6 +17,6 @@ public class ObjectStoreInterMineImplCommonQueriesTest extends ObjectStoreQueryT
 
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        oneTimeSetUp("os.unittest", "osw.unittest", "testmodel/testmodel", "testmodel_data.xml");
+        oneTimeSetUp("os.unittest", "osw.unittest", "testmodel", "testmodel_data.xml");
     }
 }

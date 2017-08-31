@@ -20,7 +20,7 @@ public class FlatModeObjectStoreCommonQueriesTest extends ObjectStoreQueryTests 
 
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        oneTimeSetUp("os.flatmodeunittest", "osw.flatmodeunittest", "testmodel/testmodel", "testmodel_data_flatmode.xml");
+        oneTimeSetUp("os.flatmodeunittest", "osw.flatmodeunittest", "testmodel", "testmodel_data_flatmode.xml");
 
         results.put("SelectInterfaceAndSubClasses", NO_RESULT);
         results.put("SelectInterfaceAndSubClasses2", NO_RESULT);

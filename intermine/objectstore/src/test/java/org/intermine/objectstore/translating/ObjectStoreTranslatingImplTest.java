@@ -30,11 +30,11 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreCommonTests
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
         os = new ObjectStoreTranslatingImpl(
-            Model.getInstanceByName("testmodel/testmodel"),
+            Model.getInstanceByName("testmodel"),
             ObjectStoreFactory.getObjectStore("os.unittest"),
             new DummyTranslator());
 
-        ObjectStoreCommonTests.oneTimeSetUp(os, "osw.unittest", "testmodel/testmodel", "testmodel_data.xml");
+        ObjectStoreCommonTests.oneTimeSetUp(os, "osw.unittest", "testmodel", "testmodel_data.xml");
     }
 
     public void testNullFields() throws Exception { // Don't run this test
@@ -83,7 +83,7 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreCommonTests
     public void testTranslation() throws Exception {
         ObjectStore os2
             = new ObjectStoreTranslatingImpl(
-                Model.getInstanceByName("testmodel/testmodel"),
+                Model.getInstanceByName("testmodel"),
                 ObjectStoreFactory.getObjectStore("os.unittest"),
                 new CompanyTranslator());
 

@@ -30,7 +30,7 @@ public class QueryHelperTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        model = Model.getInstanceByName("testmodel/testmodel");
+        model = Model.getInstanceByName("testmodel");
     }
 
     public void testAddConstraintNull() throws Exception {
