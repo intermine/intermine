@@ -37,7 +37,7 @@ task generateTestModel {
 }
 
 task buildTestModelJar(type: Jar) {
-    from('build/classes/java/test')
+    from(sourceSets.test.output)
     archiveName 'testmodel.jar'
 }
 
