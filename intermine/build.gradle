@@ -4,6 +4,11 @@ task wrapper(type: Wrapper) {
 
 subprojects {
   apply plugin: "java"
+
+  test {
+    ignoreFailures = true
+  }
+
   sourceCompatibility = 1.6
   targetCompatibility = 1.6
   
