@@ -11,9 +11,7 @@ package org.intermine.objectstore;
  */
 
 import org.intermine.metadata.ConstraintOp;
-import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.query.iql.IqlQuery;
