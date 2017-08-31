@@ -15,7 +15,7 @@ sourceSets {
 
     test {
         java {
-            srcDirs = ['src/test/java', 'build/gen/src']
+            srcDirs = ['src/test/java']
         }
         resources {
             srcDirs = ['src/test/resources']
@@ -25,7 +25,6 @@ sourceSets {
 
 dependencies {
     compile project(':intermine-model')
-    compile group: 'ant', name: 'ant', version: '1.6.5'
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
     compile group: 'torque', name: 'torque-gen', version: '3.2'
     compile group: 'commons-io', name: 'commons-io', version: '1.2'
@@ -36,7 +35,8 @@ dependencies {
     compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
     compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
     compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
-    compile fileTree(dir: "$projectDir/lib", include: '*.jar') //org.gnu.readline is not in a public repo
+    compile fileTree(dir: 'libs', include: '*.jar') // org.gnu.readline is not in a public repo
+    testCompile project(path: ':intermine-testmodel', configuration: 'testArtifacts')
 }
 
 task copyDefaultProperties(type: Copy) {
@@ -54,22 +54,9 @@ task copyTestProperties(type: Copy) {
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
-void generateModel(model, destination, type) {
-    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
-      classpath { fileset(dir: './build/libs/', includes: '*.jar') }
-    }
-    ant.modelOutputTask(model: "$model", destDir: "$destination", type: "$type")
-}
-
 void buildDB(String osname, String model) {
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask')
     ant.buildDBUnittest(osname: "$osname", model: "$model", schemafile:"${osname}-schema.xml", tempDir: 'build/tmp')
-}
-
-task generateTestModel {
-    doLast {
-        generateModel('testmodel', 'build/gen/src', 'java')
-    }
 }
 
 tasks.withType(Test) {
@@ -77,5 +64,4 @@ tasks.withType(Test) {
     include '**/*Test.class'
 }
 
-tasks.compileTestJava.dependsOn 'generateTestModel', 'copyDefaultProperties', 'copyTestProperties'
-tasks.compileTestJava.mustRunAfter 'generateTestModel'
+tasks.compileTestJava.dependsOn 'copyDefaultProperties', 'copyTestProperties'

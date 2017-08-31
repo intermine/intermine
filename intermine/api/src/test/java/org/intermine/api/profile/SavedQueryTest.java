@@ -24,7 +24,7 @@ public class SavedQueryTest extends TestCase
 
     protected void setUp() throws Exception {
         super.setUp();
-        model = Model.getInstanceByName("testmodel");
+        model = Model.getInstanceByName("testmodel/testmodel");
         created = new Date();
     }
 

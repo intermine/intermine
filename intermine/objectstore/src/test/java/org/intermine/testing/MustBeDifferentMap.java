@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * A restrictive implementation of the Map interface.
  *
- * Every time put() is called, the value must be different to the value currently in the map.
+ * Every time put() is called, the value must be different to the value currently in the mapItemsToNames.
  * This is intended for enforcing the simplification of tests.
  *
  * @author Matthew Wakeling
@@ -38,7 +38,7 @@ public class MustBeDifferentMap implements Map
 
     public void clear() {
         if (underlying.isEmpty()) {
-            System.err.println("Clear called on empty map");
+            System.err.println("Clear called on empty mapItemsToNames");
         }
         underlying.clear();
     }
@@ -79,7 +79,7 @@ public class MustBeDifferentMap implements Map
         Object retval = underlying.put(key, value);
         try {
             if ((retval != null) && retval.equals(value)) {
-                System.err.println("Same value put into map: (" + key + ", " + value + ")");
+                System.err.println("Same value put into mapItemsToNames: (" + key + ", " + value + ")");
             }
         } catch (ClassCastException e) {
         }

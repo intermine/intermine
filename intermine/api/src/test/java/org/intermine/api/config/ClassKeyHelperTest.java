@@ -24,7 +24,7 @@ public class ClassKeyHelperTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        model = Model.getInstanceByName("testmodel");
+        model = Model.getInstanceByName("testmodel/testmodel");
     }
 
     public void testReadKeys() throws Exception {

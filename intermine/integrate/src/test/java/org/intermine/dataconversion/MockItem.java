@@ -12,7 +12,7 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
 /**
- * Class used in place of Item for testing.  Uses internal identifier to map relationships to
+ * Class used in place of Item for testing.  Uses internal identifier to mapItemsToNames relationships to
  * other items, then throws the identifier away.
  *
  * Often when you add an item to

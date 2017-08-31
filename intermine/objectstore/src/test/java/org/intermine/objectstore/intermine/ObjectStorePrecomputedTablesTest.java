@@ -20,13 +20,11 @@ import junit.framework.TestCase;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreTestUtils;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCloner;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.*;
 
 public class ObjectStorePrecomputedTablesTest extends TestCase
 {
@@ -46,6 +44,12 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
         ObjectStoreWriterInterMineImpl writer = (ObjectStoreWriterInterMineImpl)
             ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) writer.getObjectStore();
+
+        // First of all, clean up any junk left behind by other tests to stop interference.
+        // FIXME: Really, the objectstore should be completely cleared between all tests
+        ObjectStoreTestUtils.deleteAllObjectsInClass(os, writer, Department.class);
+        ObjectStoreTestUtils.deleteAllObjectsInClass(os, writer, Employee.class);
+
         writer.sequenceBase = sequenceMillions * 1000000;
         writer.sequenceOffset = 0;
         List toRemove = new ArrayList();

@@ -1115,7 +1115,7 @@ public class QueryOptimiserTest extends TestCase
         assertEquals("SELECT a.id AS aa FROM Department AS a, Employee AS b WHERE b.departmentid = a.id ORDER BY a.id", pt3.getSQLString());
 
         // TODO: Eventually we should be able to do this.
-        //doTestAddToMap(map, "pt1", pt1, q1, "SELECT DISTINCT P42.c FROM precomp1 AS P42 WHERE P42.aa = 5 ORDER BY P42.orderby_field");
+        //doTestAddToMap(mapItemsToNames, "pt1", pt1, q1, "SELECT DISTINCT P42.c FROM precomp1 AS P42 WHERE P42.aa = 5 ORDER BY P42.orderby_field");
         doTestAddToMap(map, "pt2", pt2, q1, null);
         doTestAddToMap(map, "pt3", pt3, q1, "SELECT DISTINCT COUNT(*) AS c FROM precomp3 AS P42 WHERE P42.aa = 5 ORDER BY COUNT(*)");
 

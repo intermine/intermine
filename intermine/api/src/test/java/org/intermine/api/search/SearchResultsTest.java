@@ -73,7 +73,7 @@ public class SearchResultsTest extends InterMineAPITestCase {
         Profile su = pm.getSuperuserProfile();
         SearchRepository gsr = new GlobalRepository(su);
 
-        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
+        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel/testmodel"));
         Date date = new Date();
         SavedQuery sq = new SavedQuery("query1", date, query);
 
@@ -98,7 +98,7 @@ public class SearchResultsTest extends InterMineAPITestCase {
 
         ApiTemplate template =
             new ApiTemplate("template", "ttitle", "tcomment",
-                              new PathQuery(Model.getInstanceByName("testmodel")));
+                              new PathQuery(Model.getInstanceByName("testmodel/testmodel")));
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
                 Collections.EMPTY_MAP, Collections.EMPTY_MAP, Collections.EMPTY_MAP, bobKey,
@@ -108,7 +108,7 @@ public class SearchResultsTest extends InterMineAPITestCase {
         bobProfile.saveBag("bag1", bag);
         bobProfile.saveTemplate("template", template);
 
-        query = new PathQuery(Model.getInstanceByName("testmodel"));
+        query = new PathQuery(Model.getInstanceByName("testmodel/testmodel"));
         sq = new SavedQuery("query1", date, query);
 
         // sally details
@@ -150,7 +150,7 @@ public class SearchResultsTest extends InterMineAPITestCase {
         su.saveBag(nonGlobalBag);
 
         template = new ApiTemplate("template", "ttitle", "tcomment",
-                                     new PathQuery(Model.getInstanceByName("testmodel")));
+                                     new PathQuery(Model.getInstanceByName("testmodel/testmodel")));
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
                   Collections.EMPTY_MAP, Collections.EMPTY_MAP, Collections.EMPTY_MAP, true, false);
         pm.createProfile(sallyProfile);
@@ -161,7 +161,7 @@ public class SearchResultsTest extends InterMineAPITestCase {
         sallyProfile.saveTemplate("template", template);
 
         ApiTemplate globalTemplate = new ApiTemplate("gtemplate", "gttitle", "gtcomment",
-                new PathQuery(Model.getInstanceByName("testmodel")));
+                new PathQuery(Model.getInstanceByName("testmodel/testmodel")));
         su.saveTemplate(globalTemplate.getName(), globalTemplate);
 
         TagManager tm = im.getTagManager();

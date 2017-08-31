@@ -10,82 +10,76 @@ package org.intermine.objectstore.translating;
  *
  */
 
-import junit.framework.Test;
-
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.*;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 
 import org.intermine.model.testmodel.Bank;
-import org.intermine.model.testmodel.Company;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestCase
+public class ObjectStoreTranslatingImplTest extends ObjectStoreCommonTests
 {
+    private static ObjectStoreTranslatingImpl os;
+
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
         os = new ObjectStoreTranslatingImpl(
             Model.getInstanceByName("testmodel/testmodel"),
             ObjectStoreFactory.getObjectStore("os.unittest"),
             new DummyTranslator());
 
-        ObjectStoreAbstractImplTestCase.oneTimeSetUp();
+        ObjectStoreCommonTests.oneTimeSetUp(os, "osw.unittest", "testmodel/testmodel", "testmodel_data.xml");
     }
 
-    public ObjectStoreTranslatingImplTest(String arg) throws Exception {
-        super(arg);
+    public void testNullFields() throws Exception { // Don't run this test
     }
 
-    public static Test suite() {
-        return buildSuite(ObjectStoreTranslatingImplTest.class);
-    }
+    @Test
+    public void testCheckStartLimit() throws Exception { ObjectStoreAbstractImplTests.testCheckStartLimit(os); }
 
-    public void testLimitTooHigh() throws Exception {
-    }
-
-    public void testOffsetTooHigh() throws Exception {
-    }
-
-    public void testTooMuchTime() throws Exception {
-    }
-
+    @Test
     public void testGetObjectByExampleNull() throws Exception {
         try {
             super.testGetObjectByExampleNull();
-            fail("Expected: UnsupportedOperationException");
+            Assert.fail("Expected: UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
     }
 
+    @Test
     public void testGetObjectByExampleNonExistent() throws Exception {
         try {
             super.testGetObjectByExampleNonExistent();
-            fail("Expected: UnsupportedOperationException");
+            Assert.fail("Expected: UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
     }
 
+    @Test
     public void testGetObjectByExampleAttribute() throws Exception {
         try {
             super.testGetObjectByExampleAttribute();
-            fail("Expected: UnsupportedOperationException");
+            Assert.fail("Expected: UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
     }
 
+    @Test
     public void testGetObjectByExampleFields() throws Exception {
         try {
             super.testGetObjectByExampleFields();
-            fail("Expected: UnsupportedOperationException");
+            Assert.fail("Expected: UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
     }
 
+    @Test
     public void testTranslation() throws Exception {
         ObjectStore os2
             = new ObjectStoreTranslatingImpl(
@@ -98,67 +92,8 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
         q.addToSelect(qc);
         q.addFrom(qc);
         Results res = os2.execute(q);
-        assertEquals(2, res.size());
-        assertEquals("CompanyA", ((Bank) ((ResultsRow) res.get(0)).get(0)).getName());
-        assertEquals("CompanyB", ((Bank) ((ResultsRow) res.get(1)).get(0)).getName());
-    }
-
-    public void testNullFields() throws Exception {
-        // Don't run this test
-    }
-
-    static class DummyTranslator extends Translator
-    {
-        public void setObjectStore(ObjectStore os) {
-        }
-
-        public Query translateQuery(Query query) throws ObjectStoreException {
-            return query;
-        }
-
-        public Object translateToDbObject(Object o) {
-            return o;
-        }
-
-        public Object translateFromDbObject(Object o) {
-            return o;
-        }
-
-        public Object translateIdToIdentifier(Integer id) {
-            return id;
-        }
-    }
-
-    static class CompanyTranslator extends Translator
-    {
-        public void setObjectStore(ObjectStore os) {
-        }
-
-        public Query translateQuery(Query query) throws ObjectStoreException {
-            Query q = new Query();
-            QueryClass qc = new QueryClass(Company.class);
-            q.addToSelect(qc);
-            q.addFrom(qc);
-            return q;
-        }
-
-        public Object translateToDbObject(Object o) {
-            return o;
-        }
-
-        public Object translateFromDbObject(Object o) {
-            if (o instanceof Company) {
-                Bank bank = new Bank();
-                bank.setId(((Company) o).getId());
-                bank.setName(((Company) o).getName());
-                return bank;
-            } else {
-                return o;
-            }
-        }
-
-        public Object translateIdToIdentifier(Integer id) {
-            return id;
-        }
+        Assert.assertEquals(2, res.size());
+        Assert.assertEquals("CompanyA", ((Bank) ((ResultsRow) res.get(0)).get(0)).getName());
+        Assert.assertEquals("CompanyB", ((Bank) ((ResultsRow) res.get(1)).get(0)).getName());
     }
 }

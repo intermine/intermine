@@ -10,25 +10,12 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import junit.framework.Test;
+import org.junit.BeforeClass;
 
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-
-public class TruncatedObjectStoreInterMineImplTest extends ObjectStoreInterMineImplTest
+public class TruncatedObjectStoreInterMineImplTest extends ObjectStoreInterMineImplCommonTests
 {
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.truncunittest");
-        ObjectStoreInterMineImplTest.oneTimeSetUp();
-        os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest");
-    }
-
-    public TruncatedObjectStoreInterMineImplTest(String arg) throws Exception {
-        super(arg);
-    }
-
-    public static Test suite() {
-        return buildSuite(TruncatedObjectStoreInterMineImplTest.class);
+        oneTimeSetUp("os.truncunittest", "osw.truncunittest", "testmodel/testmodel", "testmodel_data.xml");
     }
 }

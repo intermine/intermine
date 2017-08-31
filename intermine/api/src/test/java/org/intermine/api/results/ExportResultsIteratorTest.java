@@ -45,7 +45,7 @@ import org.intermine.util.IteratorIterable;
 
 public class ExportResultsIteratorTest extends TestCase
 {
-    private final Model model = Model.getInstanceByName("testmodel");
+    private final Model model = Model.getInstanceByName("testmodel/testmodel");
     private Map classKeys;
 
     public ExportResultsIteratorTest (String arg) {

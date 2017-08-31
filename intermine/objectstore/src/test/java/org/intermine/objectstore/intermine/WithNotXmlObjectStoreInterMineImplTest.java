@@ -10,33 +10,20 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import junit.framework.Test;
-
-import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
+import org.junit.BeforeClass;
 
-public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMineImplTest
+public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMineImplCommonTests
 {
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.notxmlunittest");
-        ObjectStoreInterMineImplTest.oneTimeSetUp();
-        os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.notxmlunittest");
+        oneTimeSetUp("os.notxmlunittest", "osw.notxmlunittest", "testmodel/testmodel", "testmodel_data.xml");
     }
 
-    public WithNotXmlObjectStoreInterMineImplTest(String arg) throws Exception {
-        super(arg);
-    }
-
-    public static Test suite() {
-        return buildSuite(WithNotXmlObjectStoreInterMineImplTest.class);
-    }
-
+    @org.junit.Test
     public void testFailFast2() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
@@ -44,7 +31,7 @@ public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMine
         q.addToSelect(qc);
 
         Results r = os.execute(q);
-        storeDataWriter.store((Company) data.get("CompanyA"));
+        storeDataWriter.store(data.get("CompanyA"));
         r.iterator().hasNext();
     }
 }

@@ -1,14 +1,50 @@
 sourceSets {
-    main {
+    test {
         java {
-            srcDirs = ['src/main/java']
+            srcDirs = ['src/test/java']
         }
         resources {
-            srcDirs = ['src/main/resources']
+            srcDirs = ['src/test/resources']
         }
     }
 }
 
 dependencies {
-  compile project(':intermine-objectstore')
+    testCompile project(':intermine-objectstore')
+    testCompile 'commons-lang:commons-lang:2.6'
+}
+
+configurations {
+    testArtifacts
+}
+
+void generateModel(model, destination, type) {
+    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
+      classpath {
+        fileset(dir: '../model/build/libs/', includes: '*.jar')
+        dirset(dir: '../objectstore/src/test/resources/testmodel')
+        pathelement(path: configurations.testCompile.asPath)
+      }   
+    }   
+
+    ant.modelOutputTask(model: model, destDir: destination, type: type)
+}
+
+task generateTestModel {
+    doLast {
+        generateModel('testmodel', 'src/test/java', 'java')
+    }   
+}
+
+task buildTestModelJar(type: Jar) {
+    dependsOn 'generateTestModel'
+    from('build/classes/java/test')
+    archiveName 'testmodel.jar'
+}
+
+tasks.compileTestJava.dependsOn 'generateTestModel'
+tasks.buildTestModelJar.dependsOn 'testClasses'
+
+artifacts {
+    testArtifacts buildTestModelJar
 }

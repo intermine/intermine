@@ -10,26 +10,45 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import junit.framework.Test;
-
-import org.intermine.objectstore.ObjectStoreWriterTestCase;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class TruncatedObjectStoreWriterInterMineImplTest extends ObjectStoreWriterInterMineImplTest
+public class TruncatedObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTests
 {
+    protected static ObjectStoreWriter writer;
+
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        writer = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.truncunittest");
-        storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.truncunittest");
-        ObjectStoreWriterTestCase.oneTimeSetUp();
+        writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.truncunittest");
     }
 
-    public TruncatedObjectStoreWriterInterMineImplTest(String arg) throws Exception {
-        super(arg);
+    @AfterClass
+    public static void oneTimeTearDown() throws Exception {
+        writer.close();
     }
 
-    public static Test suite() {
-        return buildSuite(TruncatedObjectStoreWriterInterMineImplTest.class);
+    @Test
+    public void testExceptionOutOfTransaction() throws Exception {
+        Assert.assertFalse(writer.isInTransaction());
+        // First, cause an exception outside a transaction
+        try {
+            writer.store(new Employee() {
+                public Integer getId() {
+                    throw new RuntimeException();
+                }
+                public void setId(Integer id) {
+                    throw new RuntimeException();
+                }
+            });
+        } catch (Exception e) {
+        }
+        Assert.assertFalse(writer.isInTransaction());
+        // Now try and do something normal.
+        Object o = writer.getObjectById(new Integer(2));
     }
 }
-
-

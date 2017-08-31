@@ -983,7 +983,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             schema.useRangeTypes = false;
             schema.hasBioSeg = true;
 
-            // here we can use queries from map
+            // here we can use queries from mapItemsToNames
             q = rangeOverlaps();
             expected = getOverlapQuery("bioseg", "RangeOverlaps");
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
