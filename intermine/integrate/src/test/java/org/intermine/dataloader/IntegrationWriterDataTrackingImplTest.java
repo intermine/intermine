@@ -10,14 +10,7 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import junit.framework.Test;
+import java.util.*;
 
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.FastPathObject;
@@ -31,10 +24,7 @@ import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.SetupDataTestCase;
+import org.intermine.objectstore.*;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -42,33 +32,37 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
+import org.junit.*;
 
-public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
+public class IntegrationWriterDataTrackingImplTest
 {
-    protected static ObjectStoreWriter writer;
-    protected static ObjectStore os;
-    protected static IntegrationWriterDataTrackingImpl iw;
-    protected boolean doIds;
+    private static Map data;
+    private static ObjectStoreWriter writer;
+    private static IntegrationWriterDataTrackingImpl iw;
+    private boolean doIds = true;
 
-    public IntegrationWriterDataTrackingImplTest(String arg) {
-        super(arg);
-        doIds = true;
+    @BeforeClass
+    public static void oneTimeSetUp() throws Exception {
+        SetupDataTestCase.oneTimeSetUp();
+        iw = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
+        writer = iw.getObjectStoreWriter();
     }
 
-    public static Test suite() {
-        return OneTimeTestCase.buildSuite(IntegrationWriterDataTrackingImplTest.class);
+    @AfterClass
+    public static void oneTimeTearDown() throws Exception {
+        iw.close();
+        SetupDataTestCase.oneTimeTearDown();
     }
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
-        strictTestQueries = false;
         if (iw.isInTransaction()) {
             iw.abortTransaction();
         }
+
         iw.getDataTracker().clear();
+        removeDataFromStore();
         storeData();
         iw.reset();
         iw.skeletons.clear();
@@ -76,32 +70,21 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         //iw.setEof(new HintingFetcher(iw.getObjectStoreWriter().getObjectStore(), iw));
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
         iw.commitTransaction();
         iw.getDataTracker().clear();
         removeDataFromStore();
         iw.reset();
-        super.tearDown();
     }
 
-    public static void oneTimeSetUp() throws Exception {
-        SetupDataTestCase.oneTimeSetUp();
-        iw = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
-        writer = iw.getObjectStoreWriter();
-        os = iw.getObjectStore();
-    }
-
-    public static void oneTimeTearDown() throws Exception {
-        iw.close();
-        SetupDataTestCase.oneTimeTearDown();
-    }
-
-    public static void storeData() throws Exception {
+    private static void storeData() throws Exception {
         if (iw == null) {
             throw new NullPointerException("iw must be set before trying to store data");
         }
         long start = new Date().getTime();
+
+        data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
 
         try {
             iw.beginTransaction();
@@ -124,11 +107,11 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }
 
-    public static void removeDataFromStore() throws Exception {
+    private static void removeDataFromStore() throws Exception {
         removeDataFromStore(writer);
     }
 
-    public static void removeDataFromStore(ObjectStoreWriter writer) throws Exception {
+    private static void removeDataFromStore(ObjectStoreWriter writer) throws Exception {
         System.out.println("Removing data from store");
         long start = new Date().getTime();
         if (writer == null) {
@@ -154,14 +137,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data from store");
     }
 
-
-
-
-    // Not doing the Query tests here
-    @Override
-    public void executeTest(String type) throws Exception {
-    }
-
+    @Test
     public void testStoreObject() throws Exception {
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         Address a = new Address();
@@ -179,20 +155,21 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         iw.store(c, source, skelSource);  // method we are testing
 
-        Company example = (Company) iw.getObjectByExample(c, Collections.singleton("name"));
-        assertNotNull("example from db should not be null", example);
+        Company example = iw.getObjectByExample(c, Collections.singleton("name"));
+        Assert.assertNotNull("example from db should not be null", example);
 
-        assertEquals(c.getVatNumber(), example.getVatNumber());
-        assertEquals(c.getName(), example.getName());
-        assertNotNull(example.getAddress());
-        assertEquals(c.getAddress().getAddress(), example.getAddress().getAddress());
+        Assert.assertEquals(c.getVatNumber(), example.getVatNumber());
+        Assert.assertEquals(c.getName(), example.getName());
+        Assert.assertNotNull(example.getAddress());
+        Assert.assertEquals(c.getAddress().getAddress(), example.getAddress().getAddress());
 
         Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c2.setName("CompanyA");
-        Company example2 = (Company) iw.getObjectByExample(c2, Collections.singleton("name"));
-        assertEquals(example.getAddress(), example2.getAddress());
+        Company example2 = iw.getObjectByExample(c2, Collections.singleton("name"));
+        Assert.assertEquals(example.getAddress(), example2.getAddress());
     }
 
+    @Test
     public void testUpdateObjectField() throws Exception {
         Employee e = new Employee();
         Department d = new Department();
@@ -218,15 +195,16 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(d, source, skelSource);
         iw.store(c, source, skelSource);
 
-        Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
-        assertNotNull("Object from db should not be null", re);
-        assertEquals(32, re.getAge());
-        assertEquals("2", re.getEnd());
-        assertTrue(re.getFullTime());
-        assertNotNull(re.getAddress());
-        assertNotNull(re.getDepartment());
+        Employee re = iw.getObjectByExample(e, Collections.singleton("name"));
+        Assert.assertNotNull("Object from db should not be null", re);
+        Assert.assertEquals(32, re.getAge());
+        Assert.assertEquals("2", re.getEnd());
+        Assert.assertTrue(re.getFullTime());
+        Assert.assertNotNull(re.getAddress());
+        Assert.assertNotNull(re.getDepartment());
     }
 
+    @Test
     public void testUpdateObjectOneToOne() throws Exception {
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         Address a = new Address();
@@ -260,30 +238,31 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(ceo, source, skelSource);
         iw.store(a2, source, skelSource);
 
-        Company rc = (Company) iw.getObjectByExample(c, Collections.singleton("name"));
-        assertNotNull("Object from db should not be null", rc);
+        Company rc = iw.getObjectByExample(c, Collections.singleton("name"));
+        Assert.assertNotNull("Object from db should not be null", rc);
 
-        assertEquals(c.getVatNumber(), rc.getVatNumber());
+        Assert.assertEquals(c.getVatNumber(), rc.getVatNumber());
         CEO rceo = rc.getcEO();
-        assertNotNull(rceo);
-        assertEquals(ceo.getName(), rceo.getName());
-        assertNotNull(rceo.getCompany());
-        assertEquals(rc, rceo.getCompany());
+        Assert.assertNotNull(rceo);
+        Assert.assertEquals(ceo.getName(), rceo.getName());
+        Assert.assertNotNull(rceo.getCompany());
+        Assert.assertEquals(rc, rceo.getCompany());
 
-        Company exampleOC = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company exampleOC = (Company)DynamicUtil.createObject(Collections.singleton(Company.class));
         exampleOC.setName("CompanyB");
-        Company oc = (Company) iw.getObjectByExample(exampleOC, Collections.singleton("name"));
+        Company oc = iw.getObjectByExample(exampleOC, Collections.singleton("name"));
 
-        assertNotNull(oc);
-        assertNull(oc.getcEO());
+        Assert.assertNotNull(oc);
+        Assert.assertNull(oc.getcEO());
     }
 
+    @Test
     public void testUpdateObjectOneToOne2() throws Exception {
         Source source = iw.getMainSource("testsource", "testsource");
         Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         {
-            Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+            Company companyA = (Company)DynamicUtil.createObject(Collections.singleton(Company.class));
             CEO ceoA = new CEO();
             Address companyAAddress = new Address();
             Address ceoAAddress = new Address();
@@ -323,19 +302,19 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         CEO exampleCEOB = new CEO();
         exampleCEOB.setName("EmployeeB1");
 
-        Company rCompanyA = (Company) iw.getObjectByExample(exampleCompanyA, Collections.singleton("name"));
-        Company rCompanyB = (Company) iw.getObjectByExample(exampleCompanyB, Collections.singleton("name"));
-        CEO rCEOA = (CEO) iw.getObjectByExample(exampleCEOA, Collections.singleton("name"));
-        CEO rCEOB = (CEO) iw.getObjectByExample(exampleCEOB, Collections.singleton("name"));
+        Company rCompanyA = iw.getObjectByExample(exampleCompanyA, Collections.singleton("name"));
+        Company rCompanyB = iw.getObjectByExample(exampleCompanyB, Collections.singleton("name"));
+        CEO rCEOA = iw.getObjectByExample(exampleCEOA, Collections.singleton("name"));
+        CEO rCEOB = iw.getObjectByExample(exampleCEOB, Collections.singleton("name"));
 
-        assertNotNull(rCompanyA);
-        assertNotNull(rCompanyB);
-        assertNotNull(rCEOA);
-        assertNotNull(rCEOB);
-        assertEquals(rCompanyA, rCEOA.getCompany());
-        assertEquals(rCompanyB, rCEOB.getCompany());
-        assertEquals(rCEOA, rCompanyA.getcEO());
-        assertEquals(rCEOB, rCompanyB.getcEO());
+        Assert.assertNotNull(rCompanyA);
+        Assert.assertNotNull(rCompanyB);
+        Assert.assertNotNull(rCEOA);
+        Assert.assertNotNull(rCEOB);
+        Assert.assertEquals(rCompanyA, rCEOA.getCompany());
+        Assert.assertEquals(rCompanyB, rCEOB.getCompany());
+        Assert.assertEquals(rCEOA, rCompanyA.getcEO());
+        Assert.assertEquals(rCEOB, rCompanyB.getcEO());
 
         Source source2 = iw.getMainSource("testsource2", "testsource2");
         Source skelSource2 = iw.getSkeletonSource("testsource2", "testsource2");
@@ -377,23 +356,24 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             //          CompanyB ------- CEOB            CompanyB -   `-- CEOB
         }
 
-        rCompanyA = (Company) iw.getObjectByExample(exampleCompanyA, Collections.singleton("name"));
-        rCompanyB = (Company) iw.getObjectByExample(exampleCompanyB, Collections.singleton("name"));
-        rCEOA = (CEO) iw.getObjectByExample(exampleCEOA, Collections.singleton("name"));
-        rCEOB = (CEO) iw.getObjectByExample(exampleCEOB, Collections.singleton("name"));
+        rCompanyA = iw.getObjectByExample(exampleCompanyA, Collections.singleton("name"));
+        rCompanyB = iw.getObjectByExample(exampleCompanyB, Collections.singleton("name"));
+        rCEOA = iw.getObjectByExample(exampleCEOA, Collections.singleton("name"));
+        rCEOB = iw.getObjectByExample(exampleCEOB, Collections.singleton("name"));
 
-        assertNotNull(rCompanyA);
-        assertNotNull(rCompanyB);
-        assertNotNull(rCEOA);
-        assertNotNull(rCEOB);
-        assertEquals(null, rCEOA.getCompany());
-        assertEquals(rCompanyA, rCEOB.getCompany());
-        assertEquals(rCEOB, rCompanyA.getcEO());
-        assertEquals(null, rCompanyB.getcEO());
+        Assert.assertNotNull(rCompanyA);
+        Assert.assertNotNull(rCompanyB);
+        Assert.assertNotNull(rCEOA);
+        Assert.assertNotNull(rCEOB);
+        Assert.assertEquals(null, rCEOA.getCompany());
+        Assert.assertEquals(rCompanyA, rCEOB.getCompany());
+        Assert.assertEquals(rCEOB, rCompanyA.getcEO());
+        Assert.assertEquals(null, rCompanyB.getcEO());
     }
 
+    @Test
     public void testUpdateObjectOneToOneNull() throws Exception {
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c = (Company)DynamicUtil.createObject(Collections.singleton(Company.class));
         Address a = new Address();
         a.setAddress("Company Street, BVille");
         c.setAddress(a);
@@ -410,19 +390,20 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         iw.store(c, source, skelSource); // method we are testing
 
-        Company result = (Company) iw.getObjectByExample(c, Collections.singleton("name"));
-        assertNotNull("Object from db should not be null", result);
+        Company result = iw.getObjectByExample(c, Collections.singleton("name"));
+        Assert.assertNotNull("Object from db should not be null", result);
 
-        assertEquals(c.getVatNumber(), result.getVatNumber());
-        assertNull(result.getcEO());
+        Assert.assertEquals(c.getVatNumber(), result.getVatNumber());
+        Assert.assertNull(result.getcEO());
 
         CEO ceo = new CEO();
         ceo.setName("EmployeeB1");
-        CEO result2 = (CEO) iw.getObjectByExample(ceo, Collections.singleton("name"));
-        assertNotNull(result2);
-        assertNull(result2.getCompany());
+        CEO result2 = iw.getObjectByExample(ceo, Collections.singleton("name"));
+        Assert.assertNotNull(result2);
+        Assert.assertNull(result2.getCompany());
     }
 
+    @Test
     public void testUpdateObjectManyToOne() throws Exception {
         Manager e = new Manager();
         Department d = new Department();
@@ -458,23 +439,24 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(e, source, skelSource);  // method we are testing
 
         Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
-        assertNotNull(re);
+        Assert.assertNotNull(re);
 
         Department rd = re.getDepartment();
 
-        assertNotNull(rd);                          // Employee has a department
-        assertEquals(d.getName(), rd.getName());    // Department is the right one
+        Assert.assertNotNull(rd);                          // Employee has a department
+        Assert.assertEquals(d.getName(), rd.getName());    // Department is the right one
 
-        assertTrue(rd.getEmployees().contains(re)); // And that department has the employee
+        Assert.assertTrue(rd.getEmployees().contains(re)); // And that department has the employee
 
         Department exampleOD = new Department();
         exampleOD.setName("DepartmentA1");
         Department od = (Department) iw.getObjectByExample(exampleOD, Collections.singleton("name"));
 
-        assertNotNull(od);                          // The old department exists
-        assertTrue(!od.getEmployees().contains(re));// And does not have the employee
+        Assert.assertNotNull(od);                          // The old department exists
+        Assert.assertTrue(!od.getEmployees().contains(re));// And does not have the employee
     }
 
+    @Test
     public void testUpdateObjectManyToOneNull() throws Exception {
         Manager e = new Manager();
         Address a2 = new Address();
@@ -496,19 +478,20 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         iw.store(e, source, skelSource);  // method we are testing
 
-        Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
-        assertNotNull(re);
+        Employee re = iw.getObjectByExample(e, Collections.singleton("name"));
+        Assert.assertNotNull(re);
 
-        assertNull(re.getDepartment());             // Employee no longer has a department
+        Assert.assertNull(re.getDepartment());             // Employee no longer has a department
 
         Department exampleOD = new Department();
         exampleOD.setName("DepartmentA1");
-        Department od = (Department) iw.getObjectByExample(exampleOD, Collections.singleton("name"));
+        Department od = iw.getObjectByExample(exampleOD, Collections.singleton("name"));
 
-        assertNotNull(od);                          // The old department exists
-        assertTrue(!od.getEmployees().contains(re));// And does not have the employee
+        Assert.assertNotNull(od);                          // The old department exists
+        Assert.assertTrue(!od.getEmployees().contains(re));// And does not have the employee
     }
 
+    @Test
     public void testUpdateObjectOneToMany() throws Exception {
         Manager e = new Manager();
         Department d = new Department();
@@ -545,8 +528,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         Department rd = (Department) iw.getObjectByExample(d, Collections.singleton("name"));
         Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
-        assertNotNull(rd);
-        assertNotNull(re);
+        Assert.assertNotNull(rd);
+        Assert.assertNotNull(re);
 
         //   ----------  NOTE - don't uncomment these tests. They don't work, and are not meant to,
         //   because the Integration Writer assumes that you will later on go and store the rest of
@@ -563,6 +546,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         //assertTrue(!od.getEmployees().contains(re));// And does not have the employee
     }
 
+    @Test
     public void testUpdateObjectManyToMany() throws Exception {
         Contractor con = new Contractor();
         Address companyAAddress = new Address();
@@ -587,17 +571,17 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         Company rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
         Contractor rcon = (Contractor) iw.getObjectByExample(con, Collections.singleton("name"));
-        assertNotNull(rca);
-        assertNotNull(rcon);
+        Assert.assertNotNull(rca);
+        Assert.assertNotNull(rcon);
 
-        assertTrue(rca.getContractors().contains(rcon));
-        assertTrue(rcon.getCompanys().contains(rca));
+        Assert.assertTrue(rca.getContractors().contains(rcon));
+        Assert.assertTrue(rcon.getCompanys().contains(rca));
 
         Source source2 = iw.getMainSource("testsource2", "testsource2");
         Source skelSource2 = iw.getSkeletonSource("testsource2", "testsource2");
 
         Address companyBAddress = new Address();
-        Company companyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company companyB = (Company)DynamicUtil.createObject(Collections.singleton(Company.class));
         companyBAddress.setAddress("Company Street, BVille");
         companyB.setAddress(companyBAddress);
         companyB.setName("CompanyB");
@@ -615,34 +599,35 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.beginTransaction();
         iw.store(con, source2, skelSource2);
 
-        rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
-        Company rcb = (Company) iw.getObjectByExample(companyB, Collections.singleton("name"));
-        rcon = (Contractor) iw.getObjectByExample(con, Collections.singleton("name"));
-        assertNotNull(rca);
-        assertNotNull(rcb);
-        assertNotNull(rcon);
+        rca = iw.getObjectByExample(companyA, Collections.singleton("name"));
+        Company rcb = iw.getObjectByExample(companyB, Collections.singleton("name"));
+        rcon = iw.getObjectByExample(con, Collections.singleton("name"));
+        Assert.assertNotNull(rca);
+        Assert.assertNotNull(rcb);
+        Assert.assertNotNull(rcon);
 
-        assertTrue(rca.getContractors().contains(rcon));
-        assertTrue(rcon.getCompanys().contains(rca));
-        assertTrue(rcb.getContractors().contains(rcon));
-        assertTrue(rcon.getCompanys().contains(rcb));
+        Assert.assertTrue(rca.getContractors().contains(rcon));
+        Assert.assertTrue(rcon.getCompanys().contains(rca));
+        Assert.assertTrue(rcb.getContractors().contains(rcon));
+        Assert.assertTrue(rcon.getCompanys().contains(rcb));
     }
 
+    @Test
     public void testUpdateObjectManyToManyWithMerge() throws Exception {
         // Add a duplicate CompanyA and ContractorA, plus a ContractorD only attached to the duplicate CompanyA, and a ContractorC only attached to the original CompanyA.
         Address exampleCAA = new Address();
         exampleCAA.setAddress("Company Street, AVille");
-        Address dbCAA = (Address) iw.getObjectByExample(exampleCAA, Collections.singleton("address"));
+        Address dbCAA = iw.getObjectByExample(exampleCAA, Collections.singleton("address"));
         Company ca = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         ca.setAddress(dbCAA);
         ca.setName("CompanyA");
         Contractor exampleConA = new Contractor();
         exampleConA.setName("ContractorA");
-        Contractor dbConA = (Contractor) iw.getObjectByExample(exampleConA, Collections.singleton("name"));
+        Contractor dbConA = iw.getObjectByExample(exampleConA, Collections.singleton("name"));
         ca.addContractors(dbConA);
         Contractor exampleConB = new Contractor();
         exampleConB.setName("ContractorB");
-        Contractor dbConB = (Contractor) iw.getObjectByExample(exampleConB, Collections.singleton("name"));
+        Contractor dbConB = iw.getObjectByExample(exampleConB, Collections.singleton("name"));
         ca.addContractors(dbConB);
 
         Contractor conA = new Contractor();
@@ -650,13 +635,13 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         conA.setName("ContractorA");
         conA.setSeniority(new Integer(128764));
         conA.addCompanys(ca);
-        Company exampleCA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company exampleCA = (Company)DynamicUtil.createObject(Collections.singleton(Company.class));
         exampleCA.setName("CompanyA");
-        Company dbCA = (Company) iw.getObjectByExample(exampleCA, Collections.singleton("name"));
+        Company dbCA = iw.getObjectByExample(exampleCA, Collections.singleton("name"));
         conA.addCompanys(dbCA);
-        Company exampleCB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company exampleCB = (Company)DynamicUtil.createObject(Collections.singleton(Company.class));
         exampleCB.setName("CompanyB");
-        Company dbCB = (Company) iw.getObjectByExample(exampleCB, Collections.singleton("name"));
+        Company dbCB = iw.getObjectByExample(exampleCB, Collections.singleton("name"));
         conA.addCompanys(dbCB);
 
         Contractor conC = new Contractor();
@@ -708,7 +693,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         // Now set up a standard store operation that will set off a object merge.
         Contractor con = new Contractor();
         Address companyAAddress = new Address();
-        Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company companyA = (Company)DynamicUtil.createObject(Collections.singleton(Company.class));
         companyAAddress.setAddress("Company Street, AVille");
         companyA.setAddress(companyAAddress);
         companyA.setName("CompanyA");
@@ -726,16 +711,14 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         // Make sure there are currently multiple copies of CompanyA and ContractorA.
         try {
-            @SuppressWarnings("unused")
-            Company rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
-            fail("Expected an exception, because there are multiple objects matching this pattern");
+            iw.getObjectByExample(companyA, Collections.singleton("name"));
+            Assert.fail("Expected an exception, because there are multiple objects matching this pattern");
         } catch (IllegalArgumentException e) {
         }
 
         try {
-            @SuppressWarnings("unused")
-            Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
-            fail("Expected an exception, because there are multiple objects matching this pattern");
+            iw.getObjectByExample(conA, Collections.singleton("name"));
+            Assert.fail("Expected an exception, because there are multiple objects matching this pattern");
         } catch (IllegalArgumentException e) {
         }
 
@@ -747,37 +730,38 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(companyA, source2, skelSource2);
 
         // Get objects (and test that there is only one copy of everything).
-        Company rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
-        Contractor rconC = (Contractor) iw.getObjectByExample(conC, Collections.singleton("name"));
-        Contractor rconD = (Contractor) iw.getObjectByExample(conD, Collections.singleton("name"));
-        Contractor rconZ = (Contractor) iw.getObjectByExample(con, Collections.singleton("name"));
-        assertNotNull(rca);
-        assertNotNull(rconC);
-        assertNotNull(rconD);
-        assertNotNull(rconZ);
+        Company rca = iw.getObjectByExample(companyA, Collections.singleton("name"));
+        Contractor rconC = iw.getObjectByExample(conC, Collections.singleton("name"));
+        Contractor rconD = iw.getObjectByExample(conD, Collections.singleton("name"));
+        Contractor rconZ = iw.getObjectByExample(con, Collections.singleton("name"));
+        Assert.assertNotNull(rca);
+        Assert.assertNotNull(rconC);
+        Assert.assertNotNull(rconD);
+        Assert.assertNotNull(rconZ);
 
         // Test that everything is in the right collections.
-        assertTrue(rca.getContractors().contains(rconC));
-        assertTrue(rca.getContractors().contains(rconD));
-        assertTrue(rca.getContractors().contains(rconZ));
-        assertTrue(rconC.getCompanys().contains(rca));
-        assertTrue(rconD.getCompanys().contains(rca));
-        assertTrue(rconZ.getCompanys().contains(rca));
+        Assert.assertTrue(rca.getContractors().contains(rconC));
+        Assert.assertTrue(rca.getContractors().contains(rconD));
+        Assert.assertTrue(rca.getContractors().contains(rconZ));
+        Assert.assertTrue(rconC.getCompanys().contains(rca));
+        Assert.assertTrue(rconD.getCompanys().contains(rca));
+        Assert.assertTrue(rconZ.getCompanys().contains(rca));
 
         conA.setCompanys(new HashSet<Company>());
         //Contractor sConA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
         Query equivQuery = iw.beof.createPKQuery(conA, source2, false);
         Set<InterMineObject> equiv = iw.getEquivalentObjects(conA, source2);
-        assertEquals(equiv.getClass().getName() + ": " + equiv + ", " + equivQuery, 2, equiv.size());
+        Assert.assertEquals(equiv.getClass().getName() + ": " + equiv + ", " + equivQuery, 2, equiv.size());
         iw.store(conA, source2, skelSource2);
-        Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
-        assertNotNull(rconA);
-        assertTrue(rca.getContractors().contains(rconA));
-        assertTrue(rconA.getCompanys().contains(rca));
+        Contractor rconA = iw.getObjectByExample(conA, Collections.singleton("name"));
+        Assert.assertNotNull(rconA);
+        Assert.assertTrue(rca.getContractors().contains(rconA));
+        Assert.assertTrue(rconA.getCompanys().contains(rca));
     }
 
+    @Test
     public void testAddClass() throws Exception {
-        Employee e = (Employee) DynamicUtil.createObject(new HashSet<Class<? extends InterMineObject>>(Arrays.asList(Employee.class, Broke.class)));
+        Employee e = (Employee)DynamicUtil.createObject(new HashSet<Class<? extends InterMineObject>>(Arrays.asList(Employee.class, Broke.class)));
         e.setName("EmployeeA1");
         ((Broke) e).setDebt(8762);
 
@@ -791,14 +775,15 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(e, source, skelSource);  // method we are testing
 
         InterMineObject re = iw.getObjectByExample(e, Collections.singleton("name"));
-        assertNotNull(re);
-        assertTrue(re instanceof Broke);
-        assertTrue(re instanceof Employee);
-        assertTrue(re instanceof Manager);
-        assertEquals(8762, ((Broke) re).getDebt());
-        assertEquals(new Integer(876123), ((Manager) re).getSeniority());
+        Assert.assertNotNull(re);
+        Assert.assertTrue(re instanceof Broke);
+        Assert.assertTrue(re instanceof Employee);
+        Assert.assertTrue(re instanceof Manager);
+        Assert.assertEquals(8762, ((Broke) re).getDebt());
+        Assert.assertEquals(new Integer(876123), ((Manager)re).getSeniority());
     }
 
+    @Test
     public void testSourceWithMultipleCopies() throws Exception {
         Employee e1 = new Employee();
         e1.setName("EmployeeA1");
@@ -817,11 +802,12 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         try {
             iw.store(e2, source, skelSource);
-            fail("Expected: IllegalArgumentException");
+            Assert.fail("Expected: IllegalArgumentException");
         } catch (RuntimeException e) {
         }
     }
 
+    @Test
     public void testMergeWithSuperclass() throws Exception {
         Manager e1 = new Manager();
         e1.setName("EmployeeA2");
@@ -838,11 +824,12 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         Employee e2 = new Employee();
         e2.setName("EmployeeA2");
-        Manager e3 = (Manager) iw.getObjectByExample(e2, Collections.singleton("name"));
-        assertEquals("Mr.", e3.getTitle());
-        assertEquals("EmployeeA2", e3.getName());
+        Manager e3 = (Manager)iw.getObjectByExample(e2, Collections.singleton("name"));
+        Assert.assertEquals("Mr.", e3.getTitle());
+        Assert.assertEquals("EmployeeA2", e3.getName());
     }
 
+    @Test
     public void testMergeWithDifferentFields() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Company.class);
@@ -876,7 +863,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a4.setId(new Integer(2));
         }
 
-        assertEquals(0, iw.executeSingleton(q).size());
+        Assert.assertEquals(0, iw.executeSingleton(q).size());
 
         Source source2 = iw.getMainSource("testsource2", "testsource2");
         Source skelSource2 = iw.getSkeletonSource("testsource2", "testsource2");
@@ -887,7 +874,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.commitTransaction();
         iw.reset();
         iw.beginTransaction();
-        assertEquals(1, iw.executeSingleton(q).size());
+        Assert.assertEquals(1, iw.executeSingleton(q).size());
 
         Source source3 = iw.getMainSource("testsource3", "testsource3");
         Source skelSource3 = iw.getSkeletonSource("testsource3", "testsource3");
@@ -897,7 +884,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.commitTransaction();
         iw.reset();
         iw.beginTransaction();
-        assertEquals(2, iw.executeSingleton(q).size());
+        Assert.assertEquals(2, iw.executeSingleton(q).size());
 
         Source source4 = iw.getMainSource("testsource4", "testsource4");
         Source skelSource4 = iw.getSkeletonSource("testsource4", "testsource4");
@@ -909,16 +896,17 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.reset();
         iw.beginTransaction();
         //assertEquals(eof.createPKQuery(iw.getModel(), c4, source4, iw.idMap, null, false).toString(), 1, iw.executeSingleton(q).size());
-        assertEquals(1, iw.executeSingleton(q).size());
+        Assert.assertEquals(1, iw.executeSingleton(q).size());
     }
 
     // a bug existed whereby storing a skeleton then a real object retrieved and failed to materialise
     // a ProxyReference - failing a check that a field being processed was a member of the class
+    @Test
     public void testStoreObjectAfterSkeleton() throws Exception {
         // CompanyA is in db with source "storedata"
         // source "testsource3" has a lower priority than "storedata"
 
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c = (Company)DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setVatNumber(1234);
 
         Department d = new Department();
@@ -932,8 +920,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Source source = iw.getMainSource("testsource3", "testsource3");
         Source skelSource = iw.getSkeletonSource("testsource3", "testsource3");
 
-        Company before = (Company) iw.getObjectByExample(c, Collections.singleton("vatNumber"));
-        assertNotNull("before example from db should not be null", before);
+        Company before = iw.getObjectByExample(c, Collections.singleton("vatNumber"));
+        Assert.assertNotNull("before example from db should not be null", before);
 
         // storing the dept should store CompanyA as a skeleton
         iw.store(d, source, skelSource);  // method we are testing
@@ -941,28 +929,28 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         // assert that storing a CompanyA with no vatNumber does not overwrite
         // the existing higher priority value
-        Company after = (Company) iw.getObjectByExample(c, Collections.singleton("vatNumber"));
-        assertNotNull("after example from db should not be null", after);
+        Company after = iw.getObjectByExample(c, Collections.singleton("vatNumber"));
+        Assert.assertNotNull("after example from db should not be null", after);
 
-        assertEquals(before.getVatNumber(), after.getVatNumber());
-        assertEquals(before.getName(), after.getName());
-        assertEquals(before.getAddress().getAddress(), after.getAddress().getAddress());
-
+        Assert.assertEquals(before.getVatNumber(), after.getVatNumber());
+        Assert.assertEquals(before.getName(), after.getName());
+        Assert.assertEquals(before.getAddress().getAddress(), after.getAddress().getAddress());
     }
 
+    @Test
     public void testGetEquivalentObjects() throws Exception {
 
         Bank b = (Bank) DynamicUtil.createObject(Collections.singleton(Bank.class));
         b.setName("bank1");
 
         Source source = iw.getMainSource("testsource", "testsource");
-        @SuppressWarnings("unused")
-        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
+        iw.getSkeletonSource("testsource", "testsource");
         Set<InterMineObject> objects = iw.getEquivalentObjects(b, source);
         System.out.println(objects);
-        assertTrue(objects.isEmpty());
+        Assert.assertTrue(objects.isEmpty());
     }
 
+    @Test
     public void testSkeletonsNoException() throws Exception {
         Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
         a.setAddress("address1");
@@ -974,11 +962,12 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         iw.store(a, source, skelSource, IntegrationWriterDataTrackingImpl.SKELETON);
-        assertTrue(iw.skeletons.size() == 1);
+        Assert.assertTrue(iw.skeletons.size() == 1);
         iw.store(a, source, skelSource, IntegrationWriterDataTrackingImpl.SOURCE);
-        assertTrue(iw.skeletons.size() == 0);
+        Assert.assertTrue(iw.skeletons.size() == 0);
     }
 
+    @Test
     public void testSkeletonsException() throws Exception {
         Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
         a.setAddress("address1");
@@ -987,21 +976,20 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         }
 
         IntegrationWriterDataTrackingImpl iw2 = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
-        ObjectStoreWriter writer2 = iw2.getObjectStoreWriter();
         Source source = iw2.getMainSource("testsource", "testsource");
         Source skelSource = iw2.getSkeletonSource("testsource", "testsource");
 
         iw2.store(a, source, skelSource, IntegrationWriterDataTrackingImpl.SKELETON);
-        assertTrue(iw2.skeletons.size() == 1);
+        Assert.assertTrue(iw2.skeletons.size() == 1);
 
         try {
             iw2.close();
-            fail("Expected exception because not all skeletons replaced by real objects");
+            Assert.fail("Expected exception because not all skeletons replaced by real objects");
         } catch (ObjectStoreException e) {
         } finally {
             iw2 = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
             try {
-                writer2 = iw2.getObjectStoreWriter();
+                ObjectStoreWriter writer2 = iw2.getObjectStoreWriter();
                 removeDataFromStore(writer2);
             } finally {
                 iw2.close();
@@ -1009,6 +997,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         }
     }
 
+    @Test
     public void testCircularRecursionBug() throws Exception {
         Department d = new Department();
         Manager m = new Manager();
@@ -1033,13 +1022,13 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("Fred")));
         SingletonResults r = iw.executeSingleton(q);
-        assertEquals("Results: " + r, 1, r.size());
+        Assert.assertEquals("Results: " + r, 1, r.size());
 
-        Manager rm = (Manager) r.get(0);
-        assertNotNull(rm);
+        Manager rm = (Manager)r.get(0);
+        Assert.assertNotNull(rm);
         Department rd = rm.getDepartment();
-        assertNotNull(rd);
-        assertEquals(d.getName(), rd.getName());
+        Assert.assertNotNull(rd);
+        Assert.assertEquals(d.getName(), rd.getName());
 
         Query q2 = new Query();
         QueryClass qc2 = new QueryClass(Department.class);
@@ -1047,9 +1036,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         q2.addToSelect(qc2);
         q2.setConstraint(new SimpleConstraint(new QueryField(qc2, "name"), ConstraintOp.EQUALS, new QueryValue("Bob")));
         SingletonResults r2 = iw.executeSingleton(q2);
-        assertEquals("Results: " + r2, 1, r2.size());
+        Assert.assertEquals("Results: " + r2, 1, r2.size());
     }
 
+    @Test
     public void testHintedPrimaryKeyReference() throws Exception {
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
@@ -1075,9 +1065,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("CompanyA")));
         SingletonResults r = iw.executeSingleton(q);
-        assertEquals(2, r.size());
+        Assert.assertEquals(2, r.size());
     }
 
+    @Test
     public void testPrimaryKeyReferenceContainsNull() throws Exception {
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
@@ -1103,10 +1094,11 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("CompanyA")));
         SingletonResults r = iw.executeSingleton(q);
-        assertEquals(2, r.size());
+        Assert.assertEquals(2, r.size());
     }
 
     // Investigate problem with merging, described in ticket #341
+    @Test
     public void testMergeBug() throws Exception {
         Employee e = new Employee();
         e.setName("abc");
@@ -1142,14 +1134,14 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("abc")));
         SingletonResults r = iw.executeSingleton(q);
-        assertEquals(2, r.size());
+        Assert.assertEquals(2, r.size());
         Query q2 = new Query();
         QueryClass qc2 = new QueryClass(Address.class);
         q2.addFrom(qc2);
         q2.addToSelect(qc2);
         q2.setConstraint(new SimpleConstraint(new QueryField(qc2, "address"), ConstraintOp.EQUALS, new QueryValue("abc")));
         SingletonResults r2 = iw.executeSingleton(q2);
-        assertEquals(2, r2.size());
+        Assert.assertEquals(2, r2.size());
 
         source = iw.getMainSource("testsource2", "testsource2");
         skelSource = iw.getSkeletonSource("testsource2", "testsource2");
@@ -1158,8 +1150,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(a, source, skelSource);
 
         r = iw.executeSingleton(q);
-        assertEquals(1, r.size());
+        Assert.assertEquals(1, r.size());
         r2 = iw.executeSingleton(q2);
-        assertEquals(1, r2.size());
+        Assert.assertEquals(1, r2.size());
     }
 }
