@@ -37,7 +37,6 @@ task generateTestModel {
 }
 
 task buildTestModelJar(type: Jar) {
-    dependsOn 'generateTestModel'
     from('build/classes/java/test')
     archiveName 'testmodel.jar'
 }
