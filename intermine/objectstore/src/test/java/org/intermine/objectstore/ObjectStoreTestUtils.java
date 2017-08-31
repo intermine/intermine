@@ -174,6 +174,40 @@ public class ObjectStoreTestUtils {
         return count;
     }
 
+    /**
+     * Delete all objects int he given objectstore
+     *
+     * @param writer
+     * @throws Exception
+     */
+    public static void deleteAllObjectsInStore(ObjectStoreWriter writer) throws Exception {
+        System.out.println("Removing data from store");
+
+        long start = new Date().getTime();
+        if (writer == null) {
+            throw new NullPointerException("writer must be set before trying to remove data");
+        }
+        try {
+            writer.beginTransaction();
+            Query q = new Query();
+            QueryClass qc = new QueryClass(InterMineObject.class);
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            SingletonResults dataToRemove = writer.getObjectStore().executeSingleton(q);
+            Iterator<Object> iter = dataToRemove.iterator();
+            while (iter.hasNext()) {
+                InterMineObject toDelete = (InterMineObject)iter.next();
+                writer.delete(toDelete);
+            }
+            writer.commitTransaction();
+        } catch (Exception e) {
+            writer.abortTransaction();
+            throw e;
+        }
+
+        System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data from store");
+    }
+
     public static List toList(Object[][] o) {
         List rows = new ArrayList();
         for(int i=0;i<o.length;i++) {

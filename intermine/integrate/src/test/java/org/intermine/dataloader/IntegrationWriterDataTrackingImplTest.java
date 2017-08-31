@@ -62,7 +62,7 @@ public class IntegrationWriterDataTrackingImplTest
         }
 
         iw.getDataTracker().clear();
-        removeDataFromStore();
+        ObjectStoreTestUtils.deleteAllObjectsInStore(writer);
         storeData();
         iw.reset();
         iw.skeletons.clear();
@@ -74,7 +74,7 @@ public class IntegrationWriterDataTrackingImplTest
     public void tearDown() throws Exception {
         iw.commitTransaction();
         iw.getDataTracker().clear();
-        removeDataFromStore();
+        ObjectStoreTestUtils.deleteAllObjectsInStore(writer);
         iw.reset();
     }
 
@@ -105,36 +105,6 @@ public class IntegrationWriterDataTrackingImplTest
         }
 
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
-    }
-
-    private static void removeDataFromStore() throws Exception {
-        removeDataFromStore(writer);
-    }
-
-    private static void removeDataFromStore(ObjectStoreWriter writer) throws Exception {
-        System.out.println("Removing data from store");
-        long start = new Date().getTime();
-        if (writer == null) {
-            throw new NullPointerException("writer must be set before trying to remove data");
-        }
-        try {
-            writer.beginTransaction();
-            Query q = new Query();
-            QueryClass qc = new QueryClass(InterMineObject.class);
-            q.addFrom(qc);
-            q.addToSelect(qc);
-            SingletonResults dataToRemove = writer.getObjectStore().executeSingleton(q);
-            Iterator<Object> iter = dataToRemove.iterator();
-            while (iter.hasNext()) {
-                InterMineObject toDelete = (InterMineObject) iter.next();
-                writer.delete(toDelete);
-            }
-            writer.commitTransaction();
-        } catch (Exception e) {
-            writer.abortTransaction();
-            throw e;
-        }
-        System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data from store");
     }
 
     @Test
@@ -990,7 +960,7 @@ public class IntegrationWriterDataTrackingImplTest
             iw2 = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
             try {
                 ObjectStoreWriter writer2 = iw2.getObjectStoreWriter();
-                removeDataFromStore(writer2);
+                ObjectStoreTestUtils.deleteAllObjectsInStore(writer2);
             } finally {
                 iw2.close();
             }
