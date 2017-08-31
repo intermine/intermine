@@ -1,9 +1,14 @@
 rootProject.name = 'bio'
 
-include ':bio-core'
-//':bio-postprocess',
-//':bio-tools'
+include ':bio-core', 
+//dependencies on intermine
+':intermine-model', ':intermine-objectstore', ':intermine-integrate', ':intermine-testmodel'
+
 
 project(':bio-core').projectDir = new File(settingsDir, './core')
+project(':intermine-model').projectDir = new File(settingsDir, '../intermine/model')
+project(':intermine-objectstore').projectDir = new File(settingsDir, '../intermine/objectstore')
+project(':intermine-integrate').projectDir = new File(settingsDir, '../intermine/integrate')
+project(':intermine-testmodel').projectDir = new File(settingsDir, '../intermine/testmodel')
 //project(':bio-postprocess').projectDir = new File(settingsDir, './postprocess')
 //project(':bio-tools').projectDir = new File(settingsDir, './tools')
