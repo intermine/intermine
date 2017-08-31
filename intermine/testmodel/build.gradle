@@ -38,7 +38,6 @@ task generateTestModel {
 
 task buildTestModelJar(type: Jar) {
     from(sourceSets.test.output)
-    archiveName 'testmodel.jar'
 }
 
 tasks.compileTestJava.dependsOn 'generateTestModel'
