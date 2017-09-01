@@ -1,11 +1,5 @@
 package org.intermine.task;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.StoreDataTestCase;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.sql.Database;
-
 /*
  * Copyright (C) 2002-2016 FlyMine
  *
@@ -16,52 +10,37 @@ import org.intermine.sql.Database;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.intermine.objectstore.*;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.sql.Database;
 
 import org.apache.tools.ant.BuildException;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import junit.framework.Test;
-
-/**
- * AcceptanceTestTaskTest class
- *
- * @author Kim Rutherford
- */
-
-public class AcceptanceTestTaskTest extends StoreDataTestCase
+public class AcceptanceTestTaskTest
 {
-    ObjectStore os;
+    private static ObjectStore os;
 
-    public AcceptanceTestTaskTest (String arg) {
-        super(arg);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        os = osw.getObjectStore();
+        Map data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
+        ObjectStoreTestUtils.storeData(osw, data);
+        osw.close();
     }
 
-    public void setUp() throws Exception {
-        super.setUp();
-
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
-    }
-
-    public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
-    }
-
-    public void executeTest(String type) {
-
-    }
-
-    public static Test suite() {
-        return buildSuite(AcceptanceTestTaskTest.class);
-    }
-
+    @Test
     public void testReadOneTest1() throws Exception {
         String expSql = "select * from intermineobject";
 
@@ -74,10 +53,11 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
         LineNumberReader reader = new LineNumberReader(sr);
         AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
 
-        assertEquals(expSql, test.getSql());
-        assertNull(test.getNote());
+        Assert.assertEquals(expSql, test.getSql());
+        Assert.assertNull(test.getNote());
     }
 
+    @Test
     public void testReadOneTest2() throws Exception {
         String expSql = "select * from intermineobject";
         String expNote = "some note";
@@ -91,10 +71,11 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
         LineNumberReader reader = new LineNumberReader(sr);
         AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
 
-        assertEquals(expSql, test.getSql());
-        assertEquals(expNote, test.getNote());
+        Assert.assertEquals(expSql, test.getSql());
+        Assert.assertEquals(expNote, test.getNote());
     }
 
+    @Test
     public void testReadOneTest3() throws Exception {
         String expSql = "select * from intermineobject";
         String expNote = "some note referring to ticket #123";
@@ -110,19 +91,21 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
         LineNumberReader reader = new LineNumberReader(sr);
         AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
 
-        assertEquals(expSql, test.getSql());
-        assertEquals(expNote, test.getNote());
-        assertEquals(new Integer(10), test.getMaxResults());
+        Assert.assertEquals(expSql, test.getSql());
+        Assert.assertEquals(expNote, test.getNote());
+        Assert.assertEquals(new Integer(10), test.getMaxResults());
     }
 
+    @Test
     public void testHyperlinking() throws Exception {
         String note = "some note referring to ticket #123";
         String expNote = "some note referring to ticket <a href=\""
             + AcceptanceTestTask.TRAC_TICKET_URL_PREFIX + "123\">#123</a>";
         String hyperlinkedNote = AcceptanceTestTask.hyperLinkNote(note);
-        assertEquals(expNote, hyperlinkedNote);
+        Assert.assertEquals(expNote, hyperlinkedNote);
     }
 
+    @Test
     public void testReadOneTestError1() throws Exception {
         String testConf =
             "no-results {\n"
@@ -133,12 +116,13 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
 
         try {
             AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
-            fail("expected IOException");
+            Assert.fail("expected IOException");
         } catch (IOException e) {
             // expected
         }
     }
 
+    @Test
     public void testReadOneTestError2() throws Exception {
         String testConf =
             "no-results {\n"
@@ -149,12 +133,13 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
 
         try {
             AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
-            fail("expected IOException");
+            Assert.fail("expected IOException");
         } catch (IOException e) {
             // expected
         }
     }
 
+    @Test
     public void testReadOneTestError3() throws Exception {
         String testConf =
             "bogus_type {\n"
@@ -166,12 +151,13 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
 
         try {
             AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
-            fail("expected IOException");
+            Assert.fail("expected IOException");
         } catch (IOException e) {
             // expected
         }
     }
 
+    @Test
     public void testAcceptanceTestReadAll() throws Exception {
         String configFile = "acceptance_test.conf";
 
@@ -188,25 +174,20 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(inputStream));
         List testResults = task.runAllTests(db, reader);
 
-        assertEquals(5, testResults.size());
+        Assert.assertEquals(5, testResults.size());
 
         for (int i = 0; i < testResults.size(); i++) {
             AcceptanceTestResult atr = (AcceptanceTestResult) testResults.get(i);
 
             if (i < 4) {
                 if (!atr.isSuccessful()) {
-                    fail("test for " + atr.getTest().getSql() + " failed");
+                    Assert.fail("test for " + atr.getTest().getSql() + " failed");
                 }
             } else {
                 if (atr.isSuccessful()) {
-                    fail("test for " + atr.getTest().getSql() + " should have failed");
+                    Assert.fail("test for " + atr.getTest().getSql() + " should have failed");
                 }
             }
         }
     }
-
-    public void testQueries() {
-
-    }
-
 }
