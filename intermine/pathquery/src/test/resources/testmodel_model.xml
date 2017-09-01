@@ -1,3 +1,7 @@
+<!-- 
+Note, this model lacks Types.clobobjType:org.intermine.objectstore.query.ClobAccess, probably because its inclusion forces ClassDescriptor to try loading org.intermine.model.InterMineObject (and promptly failing).
+Use of an objectstore class as a type is a massive design flaw but not something we want to try and address now.
+-->
 <model name="testmodel" package="org.intermine.pathquery.model.testmodel">
 <class name="Broke" is-interface="true">
     <attribute name="debt" type="int"/>
