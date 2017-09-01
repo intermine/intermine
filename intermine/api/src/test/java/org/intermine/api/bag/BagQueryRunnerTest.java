@@ -31,11 +31,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/*
- * NOTE - this test depends on data being present in os.unittest which is
- * currently inserted before running the testmodel webapp tests.  If this
- * changes then this class will need to extend StoreDataTestCase.
- */
 public class BagQueryRunnerTest {
 
     private ObjectStoreWriter osw;
