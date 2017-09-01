@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><session><database-file-name>/Users/nuin/AeroFS/intermine/intermine/bio/sources/wormbase-acedb/</database-file-name></session>

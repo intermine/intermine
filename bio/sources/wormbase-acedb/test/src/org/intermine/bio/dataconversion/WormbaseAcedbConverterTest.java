@@ -25,14 +25,14 @@ public class WormbaseAcedbConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new WormbaseAcedbConverter(itemWriter, model);
 
-        File mappingFile = new File(getClass().getClassLoader().getResource("strain_mapping.properties").toURI());
+        File mappingFile = new File(getClass().getClassLoader().getResource("RNAi_mapping.properties").toURI());
         File keyFile = new File(getClass().getClassLoader().getResource("wormbase-acedb_keys.properties").toURI());
 
         converter.setKeyFile(keyFile.getAbsolutePath());
         converter.setMappingFile(mappingFile.getAbsolutePath());
-        converter.setSourceClass("Strain");
+        converter.setSourceClass("RNAi");
 
-        String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("strain_prepped.xml"));
+        String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("RNAi.xml"));
         converter.process(new StringReader(input));
         converter.close();
 
