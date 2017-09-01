@@ -20,3 +20,20 @@ sourceSets {
 dependencies {
   compile project(':intermine-webapp')
 }
+
+task copyDefaultProperties(type: Copy) {
+    from '../default.intermine.properties'
+    into sourceSets.test.output.resourcesDir
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+task copyTestProperties(type: Copy) {
+    from "${System.env.HOME}/.intermine/intermine-test.properties"
+    into sourceSets.test.output.resourcesDir
+
+    rename { fileName -> fileName.replace('intermine-test.properties', 'intermine.properties') }
+
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+tasks.compileTestJava.dependsOn 'copyDefaultProperties', 'copyTestProperties'
