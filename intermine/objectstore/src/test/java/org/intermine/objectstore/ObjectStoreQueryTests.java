@@ -24,6 +24,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.*;
 import org.intermine.util.DynamicUtil;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 /**
@@ -68,6 +69,11 @@ public abstract class ObjectStoreQueryTests {
 
         setUpQueries();
         setUpResults();
+    }
+
+    @AfterClass
+    public static void oneTimeShutdown() throws Exception {
+        storeDataWriter.close();
     }
 
     /**

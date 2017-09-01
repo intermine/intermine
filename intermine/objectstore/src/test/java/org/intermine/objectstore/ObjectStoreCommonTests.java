@@ -17,6 +17,7 @@ import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.iql.IqlQueryParser;
 import org.intermine.util.DynamicUtil;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,6 +46,11 @@ public class ObjectStoreCommonTests {
         queries.put("SimpleGroupBy", generateSimpleGroupByQuery());
         queries.put("WhereClassClass", generateWhereClassClassQuery());
         queries.put("WhereClassObject", generateWhereClassObjectQuery());
+    }
+
+    @AfterClass
+    public static void oneTimeShutdown() throws Exception {
+        storeDataWriter.close();
     }
 
     /*
