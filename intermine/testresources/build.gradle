@@ -22,7 +22,7 @@ void generateModel(model, destination, type) {
     ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
         classpath {
             fileset(dir: '../model/build/libs/', includes: '*.jar')
-            dirset(dir: '../objectstore/src/test/resources/')
+            dirset(dir: 'src/test/resources/')
             pathelement(path: configurations.testCompile.asPath)
         }
     }   
