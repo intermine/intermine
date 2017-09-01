@@ -28,16 +28,9 @@ import org.junit.Test;
 
 public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTests
 {
-    protected static ObjectStoreWriter writer;
-
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.flatmodeunittest");
-    }
-
-    @AfterClass
-    public static void oneTimeTearDown() throws Exception {
-        writer.close();
+        oneTimeSetUp(ObjectStoreWriterFactory.getObjectStoreWriter("osw.flatmodeunittest"));
     }
 
     @Test
