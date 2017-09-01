@@ -19,12 +19,7 @@ sourceSets {
 
 dependencies {
   compile project(':intermine-webapp')
-}
-
-task copyDefaultProperties(type: Copy) {
-    from '../default.intermine.properties'
-    into sourceSets.test.output.resourcesDir
-    inputs.sourceFiles.stopExecutionIfEmpty()
+  testCompile project(path: ':intermine-testmodel', configuration: 'testArtifacts')
 }
 
 task copyTestProperties(type: Copy) {
@@ -36,4 +31,4 @@ task copyTestProperties(type: Copy) {
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
-tasks.compileTestJava.dependsOn 'copyDefaultProperties', 'copyTestProperties'
+tasks.compileTestJava.dependsOn 'copyTestProperties'

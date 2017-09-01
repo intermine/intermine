@@ -39,12 +39,6 @@ dependencies {
     testCompile project(path: ':intermine-testmodel', configuration: 'testArtifacts')
 }
 
-task copyDefaultProperties(type: Copy) {
-    from '../default.intermine.properties'
-    into sourceSets.test.output.resourcesDir
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
-
 task copyTestProperties(type: Copy) {
     from "${System.env.HOME}/.intermine/intermine-test.properties"
     into sourceSets.test.output.resourcesDir
@@ -59,4 +53,4 @@ void buildDB(String osname, String model) {
     ant.buildDBUnittest(osname: "$osname", model: "$model", schemafile:"${osname}-schema.xml", tempDir: 'build/tmp')
 }
 
-tasks.compileTestJava.dependsOn 'copyDefaultProperties', 'copyTestProperties'
+tasks.compileTestJava.dependsOn 'copyTestProperties'
