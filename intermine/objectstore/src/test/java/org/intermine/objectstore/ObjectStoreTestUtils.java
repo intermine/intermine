@@ -60,7 +60,7 @@ public class ObjectStoreTestUtils {
         return returnData;
     }
 
-    private static Object objectToName(Object o) throws Exception {
+    public static Object objectToName(Object o) throws Exception {
         if (o instanceof Collection) {
             StringBuffer sb = new StringBuffer();
             boolean needComma = false;
@@ -79,7 +79,7 @@ public class ObjectStoreTestUtils {
         }
     }
 
-    public static Object simpleObjectToName(Object o) throws Exception {
+    private static Object simpleObjectToName(Object o) throws Exception {
         Method name = null;
         try {
             name = o.getClass().getMethod("getName", new Class[] {});
@@ -152,7 +152,6 @@ public class ObjectStoreTestUtils {
     /**
      * Delete all objects in the objectstore that have the given class.
      *
-     * @param os
      * @param writer
      * @param clazz
      * @returns Number of objects deleted.

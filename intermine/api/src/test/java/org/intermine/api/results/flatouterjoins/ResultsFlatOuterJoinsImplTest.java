@@ -22,33 +22,23 @@ import java.util.Set;
 
 import junit.framework.Test;
 
-import org.intermine.objectstore.Failure;
-import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
-import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.*;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 
-public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCase
+public class ResultsFlatOuterJoinsImplTest extends ObjectStoreQueryTests
 {
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        osai = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        os = osai;
-        ObjectStoreAbstractImplTestCase.oneTimeSetUp();
+        oneTimeSetUp("os.unittest", "osw.unittest", "testmodel", "testmodel_data.xml");
         setUpResults();
     }
 
-    public ResultsFlatOuterJoinsImplTest(String arg) {
-        super(arg);
-    }
-
-    public static Test suite() {
-        return buildSuite(ResultsFlatOuterJoinsImplTest.class);
-    }
-
     public static void setUpResults() throws Exception {
-        ObjectStoreAbstractImplTestCase.setUpResults();
         Map newResults = new LinkedHashMap();
         for (Map.Entry<String, Object> resultsEntry : results.entrySet()) {
             String testName = (String) resultsEntry.getKey();
@@ -200,9 +190,9 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
                 while (iter.hasNext()) {
                     iter.next();
                 }
-                fail(type + " was expected to fail");
+                Assert.fail(type + " was expected to fail");
             } catch (Exception e) {
-                assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
+                Assert.assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
             }
         } else {
             Results res = os.execute((Query)queries.get(type), 2, true, true, true);
@@ -211,53 +201,50 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
             if ((expected != null) && (!expected.equals(newRes))) {
                 Set a = new HashSet(expected);
                 Set b = new HashSet(newRes);
-                List la = resToNames(expected);
-                List lb = resToNames(newRes);
+                List la = queryResultsToNames(expected);
+                List lb = queryResultsToNames(newRes);
                 if (a.equals(b)) {
-                    assertEquals(type + " has failed - wrong order", la, lb);
+                    Assert.assertEquals(type + " has failed - wrong order", la, lb);
                 }
-                fail(type + " has failed. Expected " + la + " but was " + lb);
+                Assert.fail(type + " has failed. Expected " + la + " but was " + lb);
             }
             //assertEquals(type + " has failed", results.get(type), newRes);
         }
     }
 
-    public Object objectToName(Object o) throws Exception {
+    // TODO: Redo this with method passing and combine with ObjectStoreTestUtils.queryResultsToNames() once we are Java 8
+    public static List queryResultsToNames(List res) throws Exception {
+        List aNames = new ArrayList();
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            List row = (List) resIter.next();
+            List toRow = new ArrayList();
+            Iterator rowIter = row.iterator();
+            while (rowIter.hasNext()) {
+                Object o = rowIter.next();
+                if (o instanceof List) {
+                    List newO = new ArrayList();
+                    for (Object p : ((List) o)) {
+                        newO.add(objectToName(p));
+                    }
+                    toRow.add(newO);
+                } else {
+                    toRow.add(objectToName(o));
+                }
+            }
+            aNames.add(toRow);
+        }
+        return aNames;
+    }
+
+    public static Object objectToName(Object o) throws Exception {
         if (o instanceof MultiRowFirstValue) {
             MultiRowFirstValue mrfv = (MultiRowFirstValue) o;
             return "MRFV(" + objectToName(mrfv.getValue()) + ", " + mrfv.getRowspan() + ")";
         } else if (o instanceof MultiRowLaterValue) {
             return "MRLV(" + objectToName(((MultiRowLaterValue) o).getValue()) + ")";
         } else {
-            return super.objectToName(o);
+            return ObjectStoreTestUtils.objectToName(o);
         }
-    }
-
-    public void testResults() throws Exception {
-        // Don't
-    }
-
-    public void testCEOWhenSearchingForManager() throws Exception {
-        // Don't
-    }
-
-    public void testLazyCollection() throws Exception {
-        // Don't
-    }
-
-    public void testLazyCollectionMtoN() throws Exception {
-        // Don't
-    }
-
-    public void testDataTypes() throws Exception {
-        // Don't
-    }
-
-    public void testGetObjectMultipleTimes() throws Exception {
-        // Don't
-    }
-
-    public void testSimpleObjects() throws Exception {
-        // Don't
     }
 }
