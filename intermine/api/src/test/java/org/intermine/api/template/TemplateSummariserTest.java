@@ -19,20 +19,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.Test;
-
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.api.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.StoreDataTestCase;
+import org.intermine.objectstore.*;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -43,27 +36,26 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 
-/**
- * Tests for the TemplateSummariser.
- */
-
-public class TemplateSummariserTest extends StoreDataTestCase
+public class TemplateSummariserTest
 {
     private Profile profile;
     private ProfileManager pm;
     private ObjectStore os;
     private ObjectStoreWriter uosw;
 
-    public TemplateSummariserTest(String arg) {
-        super(arg);
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
+        Model model = Model.getInstanceByName("testmodel");
+        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        os = osw.getObjectStore();
+
+        Map data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
+        ObjectStoreTestUtils.storeData(osw, data);
+        osw.close();
 
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         pm = new ProfileManager(os, uosw);
@@ -82,8 +74,8 @@ public class TemplateSummariserTest extends StoreDataTestCase
         profile.saveTemplate("template", new ApiTemplate(twoConstraints));
     }
 
-    @Override
-    public void tearDown() throws Exception {
+    @After
+    public void teardown() throws Exception {
         profile.deleteTemplate("template", null, true);
         removeUserProfile(profile.getUsername());
         uosw.close();
@@ -104,34 +96,20 @@ public class TemplateSummariserTest extends StoreDataTestCase
             uosw.delete(o);
         }
     }
-    @Override
-    public void executeTest(String type) {
-    }
 
-    @Override
-    public void testQueries() throws Throwable {
-    }
-
-    public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
-    }
-
-    public static Test suite() {
-        return buildSuite(TemplateSummariserTest.class);
-    }
-
+    @org.junit.Test
     public void test1() throws Exception {
         Properties ossConfig = new Properties();
         ObjectStoreSummary oss = new ObjectStoreSummary(ossConfig);
         ApiTemplate t = profile.getSavedTemplates().get("template");
         TemplateSummariser summariser = new TemplateSummariser(os, uosw, oss);
-        assertFalse(summariser.isSummarised(t));
+        Assert.assertFalse(summariser.isSummarised(t));
         summariser.summarise(t);
-        assertTrue(summariser.isSummarised(t));
+        Assert.assertTrue(summariser.isSummarised(t));
         Map<String, List<Object>> possibleValues = summariser.getPossibleValues(t);
-        assertEquals(2, possibleValues.size());
-        assertEquals("Employee.age", possibleValues.keySet().iterator().next());
+        Assert.assertEquals(2, possibleValues.size());
+        Assert.assertEquals("Employee.age", possibleValues.keySet().iterator().next());
         Set<Object> expected = new HashSet<Object>(Arrays.asList(10, 20, 30, 40, 50, 60));
-        assertEquals(expected, new HashSet<Object>(possibleValues.values().iterator().next()));
+        Assert.assertEquals(expected, new HashSet<Object>(possibleValues.values().iterator().next()));
     }
 }
