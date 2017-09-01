@@ -21,14 +21,3 @@ dependencies {
   compile project(':intermine-webapp')
   testCompile project(path: ':intermine-testmodel', configuration: 'testArtifacts')
 }
-
-task copyTestProperties(type: Copy) {
-    from "${System.env.HOME}/.intermine/intermine-test.properties"
-    into sourceSets.test.output.resourcesDir
-
-    rename { fileName -> fileName.replace('intermine-test.properties', 'intermine.properties') }
-
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
-
-tasks.compileTestJava.dependsOn 'copyTestProperties'

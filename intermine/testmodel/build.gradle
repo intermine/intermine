@@ -30,6 +30,15 @@ void generateModel(model, destination, type) {
     ant.modelOutputTask(model: model, destDir: destination, type: type)
 }
 
+task copyTestProperties(type: Copy) {
+    from "${System.env.HOME}/.intermine/intermine-test.properties"
+    into sourceSets.test.output.resourcesDir
+
+    rename { fileName -> fileName.replace('intermine-test.properties', 'intermine.properties') }
+
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
 task generateTestModel {
     doLast {
         generateModel('testmodel', 'src/test/java', 'java')
@@ -41,7 +50,7 @@ task buildTestModelJar(type: Jar) {
 }
 
 tasks.compileTestJava.dependsOn 'generateTestModel'
-tasks.buildTestModelJar.dependsOn 'testClasses'
+tasks.buildTestModelJar.dependsOn 'copyTestProperties', 'testClasses'
 
 artifacts {
     testArtifacts buildTestModelJar
