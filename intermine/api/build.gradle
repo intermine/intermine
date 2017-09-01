@@ -26,7 +26,7 @@ dependencies {
   compile group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.2'
   compile group: 'org.apache.lucene', name: 'lucene-highlighter', version: '3.0.2'
   compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.0.2'
-  compile group: 'org.json', name: 'json', version: '20131018'
+  compile files('libs/json20110106.jar') // Unfortunately, we cannot yet use later versions in the repository since they cause unit test failures
   compile files('libs/bobo-browse-2.5.1.jar') // This version is not in a Maven repository so we will include directly until we update search
   testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
   testCompile project(':intermine-objectstore').sourceSets.test.output
