@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.Test;
-
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
@@ -26,46 +24,38 @@ import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class ObjectStoreSummaryTest extends StoreDataTestCase
+public class ObjectStoreSummaryTest
 {
-    public ObjectStoreSummaryTest(String arg) {
-        super(arg);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        Map data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
+        ObjectStoreTestUtils.storeData(osw, data);
+        osw.close();
     }
 
-    public void setUp() throws Exception {
-        super.setUp();
-        strictTestQueries = false;
-    }
-
-    public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
-    }
-
-    public void executeTest(String type) {
-
-    }
-
-    public static Test suite() {
-        return buildSuite(ObjectStoreSummaryTest.class);
-    }
-
+    @Test
     public void testGetCount() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, new Properties());
-        assertEquals(2, oss.getClassCount("org.intermine.model.testmodel.Company"));
+        Assert.assertEquals(2, oss.getClassCount("org.intermine.model.testmodel.Company"));
     }
 
+    @Test
     public void testIgnore() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         Properties config = new Properties();
         config.put("max.field.value", "10");
         config.put("ignore.counts", "org.intermine.model.testmodel.Employee.age");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
-        assertNull(oss.getFieldValues("org.intermine.model.testmodel.Employee", "age"));
+        Assert.assertNull(oss.getFieldValues("org.intermine.model.testmodel.Employee", "age"));
     }
 
-
+    @Test
     public void testGetFieldValues() throws Exception {
         Properties config = new Properties();
         config.put("max.field.value", "10");
@@ -73,20 +63,21 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         config.put("org.intermine.model.testmodel.Manager.fields", "title");
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
-        assertEquals(Arrays.asList(new Object [] {"10", "20", "30", "40", "50", "60"}),
+        Assert.assertEquals(Arrays.asList(new Object [] {"10", "20", "30", "40", "50", "60"}),
                      oss.getFieldValues("org.intermine.model.testmodel.Employee", "age"));
 
-        assertEquals(Arrays.asList(new Object [] {"Mr.", null}),
+        Assert.assertEquals(Arrays.asList(new Object [] {"Mr.", null}),
                      oss.getFieldValues("org.intermine.model.testmodel.Manager", "title"));
 
         // null because Bank.name isn't in the objectstoresummary.config.properties file
-        assertNull(oss.getFieldValues("org.intermine.model.testmodel.Bank", "name"));
+        Assert.assertNull(oss.getFieldValues("org.intermine.model.testmodel.Bank", "name"));
 
         // null because max.field.values exceeded
-        assertNull(oss.getFieldValues("org.intermine.model.testmodel.Thing", "id"));
-        assertNull(oss.getFieldValues("org.intermine.model.InterMineObject", "id"));
+        Assert.assertNull(oss.getFieldValues("org.intermine.model.testmodel.Thing", "id"));
+        Assert.assertNull(oss.getFieldValues("org.intermine.model.InterMineObject", "id"));
     }
 
+    @Test
     public void testEmptyAttributes() throws Exception {
         // delete names of existing employees so we have some empty attributes
         Query q = new Query();
@@ -104,6 +95,7 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
             osw.store(employee);
         }
         osw.commitTransaction();
+        osw.close();
 
         ObjectStoreSummary oss = new ObjectStoreSummary(os, new Properties());
 
@@ -114,32 +106,34 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         expectedEmptyAttributes.put(CEO.class.getName(), nameSet);
         // Types.clobObjType also empty for some reason
         expectedEmptyAttributes.put(Types.class.getName(), new HashSet<String>(Arrays.asList(new String[] {"clobObjType"})));
-        assertEquals(expectedEmptyAttributes, oss.emptyAttributesMap);
+        Assert.assertEquals(expectedEmptyAttributes, oss.emptyAttributesMap);
 
         // the contents should be the same after a round-trip to the properties file
         Properties ossProps = oss.toProperties();
         ObjectStoreSummary ossFromProps = new ObjectStoreSummary(ossProps);
-        assertEquals(expectedEmptyAttributes, ossFromProps.emptyAttributesMap);
+        Assert.assertEquals(expectedEmptyAttributes, ossFromProps.emptyAttributesMap);
     }
 
+    @Test
     public void testMaxValues() throws Exception {
         Properties config = new Properties();
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
 
         // nothing in config
-        assertEquals(ObjectStoreSummary.DEFAULT_MAX_VALUES, oss.getMaxValues());
+        Assert.assertEquals(ObjectStoreSummary.DEFAULT_MAX_VALUES, oss.getMaxValues());
 
         // config should overwrite
         config.put("max.field.values", "10");
         oss = new ObjectStoreSummary(os, config);
-        assertEquals(10, oss.getMaxValues());
+        Assert.assertEquals(10, oss.getMaxValues());
 
         // value should be written and read from properties
         ObjectStoreSummary ossFromProps = new ObjectStoreSummary(oss.toProperties());
-        assertEquals(10, ossFromProps.getMaxValues());
+        Assert.assertEquals(10, ossFromProps.getMaxValues());
     }
 
+    @Test
     public void testPropertiesRoundTrip() throws Exception {
         Properties config = new Properties();
         config.put("max.field.values", "10");
@@ -149,8 +143,8 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         Properties out = oss.toProperties();
         ObjectStoreSummary ossFromProps = new ObjectStoreSummary(out);
 
-        assertEquals(out, ossFromProps.toProperties());
-        assertEquals(10, oss.maxValues);
-        assertEquals(10, ossFromProps.maxValues);
+        Assert.assertEquals(out, ossFromProps.toProperties());
+        Assert.assertEquals(10, oss.maxValues);
+        Assert.assertEquals(10, ossFromProps.maxValues);
     }
 }
