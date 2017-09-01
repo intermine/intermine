@@ -24,7 +24,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.*;
 import org.intermine.util.DynamicUtil;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -41,7 +40,7 @@ public abstract class ObjectStoreQueryTests {
         }
     };
 
-    private static ObjectStore os;
+    protected static ObjectStore os;
     protected static ObjectStoreWriter storeDataWriter;
 
     protected static Map data;
@@ -923,33 +922,7 @@ public abstract class ObjectStoreQueryTests {
      * @param type the type of query we are testing (ie. the key in the queries Map)
      * @throws Exception if type does not appear in the queries map
      */
-    public void executeTest(String type) throws Exception {
-        if (results.get(type) instanceof Failure) {
-            try {
-                Results res = os.execute(queries.get(type), 2, true, true, true);
-                Iterator iter = res.iterator();
-                while (iter.hasNext()) {
-                    iter.next();
-                }
-                Assert.fail(type + " was expected to fail");
-            } catch (Exception e) {
-                Assert.assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
-            }
-        } else {
-            Results res = os.execute(queries.get(type), 2, true, true, true);
-            List expected = (List) results.get(type);
-            if ((expected != null) && (!expected.equals(res))) {
-                Set a = new HashSet(expected);
-                Set b = new HashSet(res);
-                List la = ObjectStoreTestUtils.queryResultsToNames(expected);
-                List lb = ObjectStoreTestUtils.queryResultsToNames(res);
-                if (a.equals(b)) {
-                    Assert.assertEquals(type + " has failed - wrong order", la, lb);
-                }
-                Assert.fail(type + " has failed. Expected " + la + " but was " + lb);
-            }
-        }
-    }
+    public abstract void executeTest(String type) throws Exception;
 
     /*
       select Alias

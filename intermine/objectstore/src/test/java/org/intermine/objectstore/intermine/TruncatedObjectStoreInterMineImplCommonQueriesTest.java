@@ -10,10 +10,10 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import org.intermine.objectstore.ObjectStoreQueryTests;
+import org.intermine.objectstore.ObjectStoreImplQueryTests;
 import org.junit.BeforeClass;
 
-public class TruncatedObjectStoreInterMineImplCommonQueriesTest extends ObjectStoreQueryTests {
+public class TruncatedObjectStoreInterMineImplCommonQueriesTest extends ObjectStoreImplQueryTests {
 
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
