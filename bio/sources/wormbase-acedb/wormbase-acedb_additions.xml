@@ -67,7 +67,7 @@
 	  <attribute name="acceptorSpliceSite" type="java.lang.String" />
 	  <attribute name="productionMethod" type="java.lang.String" />
 	  <attribute name="sequenceDetails" type="java.lang.String" />
-      <attribute name="status" type="java.lang.String" />
+          <attribute name="status" type="java.lang.String" />
 	  <attribute name="NemaGENETAGConsortiumAllele" type="java.lang.String" />
 	  <attribute name="missense" type="java.lang.String" />
 	  <attribute name="detectionMethod" type="java.lang.String" />
@@ -79,7 +79,8 @@
 	  <attribute name="mutagen" type="java.lang.String" />
 	  <attribute name="natureOfVariation" type="java.lang.String" />
 	  <attribute name="interpolatedMapPosition" type="java.lang.String" />
-	  <attribute name="rearrangement" type="java.lang.String" />
+	  <attribute name="species" type="java.lang.String" />
+          <attribute name="rearrangement" type="java.lang.String" />
 	  <attribute name="linkedTo" type="java.lang.String" />
 	  <collection name="affectsGenes" referenced-type="Gene" reverse-reference="affectedByAlleles" />
 	  <collection name="affectsCDSs" referenced-type="CDS" reverse-reference="affectedByAlleles" />
