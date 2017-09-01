@@ -36,7 +36,7 @@ dependencies {
     compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
     compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
     compile fileTree(dir: 'libs', include: '*.jar') // org.gnu.readline is not in a public repo
-    testCompile project(path: ':intermine-testmodel', configuration: 'testArtifacts')
+    testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
 }
 
 void buildDB(String osname, String model) {
