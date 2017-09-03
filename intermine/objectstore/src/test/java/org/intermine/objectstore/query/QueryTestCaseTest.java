@@ -55,7 +55,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(q1, q2);
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
         }
         finally {
             if (failed) {
@@ -92,7 +92,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(q1, q2);
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
         }
         finally {
             if (failed) {
@@ -129,7 +129,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(q1, q2);
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
         }
         finally {
             if (failed) {
@@ -168,7 +168,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(q1, q2);
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
         }
         finally {
             if (failed) {
@@ -191,8 +191,6 @@ public class QueryTestCaseTest extends QueryTestCase
         cs1.addConstraint(c1);
         cs1.addConstraint(c2);
         q1.setConstraint(cs1);
-
-
 
         Query q2 = new Query();
         QueryClass qc2 = new QueryClass(Department.class);
@@ -218,7 +216,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(q1, q2);
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
         }
         finally {
             if (failed) {
@@ -232,7 +230,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(null, new Query());
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
         }
         finally {
             if (failed) {
@@ -246,7 +244,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(new Query(), null);
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
         }
         finally {
             if (failed) {
@@ -285,7 +283,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(q1, q2);
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
         } finally {
             if (failed) {
                 fail("Failure should have happened");
@@ -304,7 +302,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(q1, q2);
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
         } finally {
             if (failed) {
                 fail("Failure should have happened");
@@ -345,7 +343,7 @@ public class QueryTestCaseTest extends QueryTestCase
         try {
             assertEquals(q1, q2);
             failed = true;
-        } catch (AssertionFailedError e) {
+        } catch (AssertionError e) {
             try {
                 assertEquals(e.getMessage(), "asserting equal: expected <" + q1.toString() + "> but was <" + q2.toString() + ">: SELECT lists are not equal: query nodes are not the same: field members of different subquery aliases expected:<...1...> but was:<...2...>", e.getMessage());
             } catch (AssertionFailedError e2) {
