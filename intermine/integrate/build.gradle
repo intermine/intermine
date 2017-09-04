@@ -19,7 +19,7 @@ sourceSets {
 
 dependencies {
   compile project(':intermine-objectstore')
-  testCompile project(path: ':intermine-testmodel', configuration: 'testArtifacts')
+  testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
   compile group: 'stax', name: 'stax', version: '1.2.0' //stax-ri 1.0 not available on maven
   testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'  
   testCompile project(':intermine-objectstore').sourceSets.test.output

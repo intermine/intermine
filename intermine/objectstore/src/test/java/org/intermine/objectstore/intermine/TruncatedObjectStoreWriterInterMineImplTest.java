@@ -10,26 +10,16 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TruncatedObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTests
 {
-    protected static ObjectStoreWriter writer;
-
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.truncunittest");
-    }
-
-    @AfterClass
-    public static void oneTimeTearDown() throws Exception {
-        writer.close();
+        oneTimeSetUp(ObjectStoreWriterFactory.getObjectStoreWriter("osw.truncunittest"));
     }
 
     @Test
@@ -37,18 +27,11 @@ public class TruncatedObjectStoreWriterInterMineImplTest extends ObjectStoreWrit
         Assert.assertFalse(writer.isInTransaction());
         // First, cause an exception outside a transaction
         try {
-            writer.store(new Employee() {
-                public Integer getId() {
-                    throw new RuntimeException();
-                }
-                public void setId(Integer id) {
-                    throw new RuntimeException();
-                }
-            });
-        } catch (Exception e) {
-        }
+            writer.store(new RuntimeExceptionEmployee());
+        } catch (Exception e) {}
+
         Assert.assertFalse(writer.isInTransaction());
         // Now try and do something normal.
-        Object o = writer.getObjectById(new Integer(2));
+        writer.getObjectById(new Integer(2));
     }
 }

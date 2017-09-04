@@ -17,36 +17,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Test;
-
-import org.intermine.objectstore.Failure;
-import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.*;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 
-public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
+public class ReallyFlatIteratorCommonQueriesTest extends ObjectStoreQueryTests
 {
+    @BeforeClass
     public static void oneTimeSetUp() throws Exception {
-        osai = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        os = osai;
-        ObjectStoreAbstractImplTestCase.oneTimeSetUp();
+        oneTimeSetUp("os.unittest", "osw.unittest", "testmodel", "testmodel_data.xml");
         setUpResults();
     }
 
-    public ReallyFlatIteratorTest(String arg) {
-        super(arg);
-    }
-
-    public static Test suite() {
-        return buildSuite(ReallyFlatIteratorTest.class);
-    }
-
     public static void setUpResults() throws Exception {
-        ObjectStoreAbstractImplTestCase.setUpResults();
-
         results.put("CollectionPathExpression", Arrays.asList(
                     Arrays.asList(data.get("DepartmentA1"), data.get("EmployeeA1")),
                     Arrays.asList(data.get("DepartmentA1"), data.get("EmployeeA2")),
@@ -133,9 +119,9 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
                 while (iter.hasNext()) {
                     iter.next();
                 }
-                fail(type + " was expected to fail");
+                Assert.fail(type + " was expected to fail");
             } catch (Exception e) {
-                assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
+                Assert.assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
             }
         } else {
             Results res = os.execute((Query)queries.get(type), 2, true, true, true);
@@ -148,43 +134,14 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
             if ((expected != null) && (!expected.equals(newRes))) {
                 Set a = new HashSet(expected);
                 Set b = new HashSet(newRes);
-                List la = resToNames(expected);
-                List lb = resToNames(newRes);
+                List la = ObjectStoreTestUtils.queryResultsToNames(expected);
+                List lb = ObjectStoreTestUtils.queryResultsToNames(newRes);
                 if (a.equals(b)) {
-                    assertEquals(type + " has failed - wrong order", la, lb);
+                    Assert.assertEquals(type + " has failed - wrong order", la, lb);
                 }
-                fail(type + " has failed. Expected " + la + " but was " + lb);
+                Assert.fail(type + " has failed. Expected " + la + " but was " + lb);
             }
             //assertEquals(type + " has failed", results.get(type), newRes);
         }
-    }
-
-
-    public void testResults() throws Exception {
-        // Don't
-    }
-
-    public void testCEOWhenSearchingForManager() throws Exception {
-        // Don't
-    }
-
-    public void testLazyCollection() throws Exception {
-        // Don't
-    }
-
-    public void testLazyCollectionMtoN() throws Exception {
-        // Don't
-    }
-
-    public void testDataTypes() throws Exception {
-        // Don't
-    }
-
-    public void testGetObjectMultipleTimes() throws Exception {
-        // Don't
-    }
-
-    public void testSimpleObjects() throws Exception {
-        // Don't
     }
 }

@@ -20,14 +20,23 @@ configurations {
 
 void generateModel(model, destination, type) {
     ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
-      classpath {
-        fileset(dir: '../model/build/libs/', includes: '*.jar')
-        dirset(dir: '../objectstore/src/test/resources/')
-        pathelement(path: configurations.testCompile.asPath)
-      }   
+        classpath {
+            fileset(dir: '../model/build/libs/', includes: '*.jar')
+            dirset(dir: 'src/test/resources/')
+            pathelement(path: configurations.testCompile.asPath)
+        }
     }   
 
     ant.modelOutputTask(model: model, destDir: destination, type: type)
+}
+
+task copyTestProperties(type: Copy) {
+    from "${System.env.HOME}/.intermine/intermine-test.properties"
+    into sourceSets.test.output.resourcesDir
+
+    rename { fileName -> fileName.replace('intermine-test.properties', 'intermine.properties') }
+
+    inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
 task generateTestModel {
@@ -37,12 +46,11 @@ task generateTestModel {
 }
 
 task buildTestModelJar(type: Jar) {
-    from('build/classes/java/test')
-    archiveName 'testmodel.jar'
+    from(sourceSets.test.output)
 }
 
 tasks.compileTestJava.dependsOn 'generateTestModel'
-tasks.buildTestModelJar.dependsOn 'testClasses'
+tasks.buildTestModelJar.dependsOn 'copyTestProperties', 'testClasses'
 
 artifacts {
     testArtifacts buildTestModelJar

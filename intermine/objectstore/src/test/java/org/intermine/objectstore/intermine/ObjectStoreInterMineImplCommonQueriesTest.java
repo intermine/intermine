@@ -13,7 +13,7 @@ package org.intermine.objectstore.intermine;
 import org.intermine.objectstore.*;
 import org.junit.BeforeClass;
 
-public class ObjectStoreInterMineImplCommonQueriesTest extends ObjectStoreQueryTests {
+public class ObjectStoreInterMineImplCommonQueriesTest extends ObjectStoreImplQueryTests {
 
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {

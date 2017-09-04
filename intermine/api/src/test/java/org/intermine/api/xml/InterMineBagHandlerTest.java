@@ -12,18 +12,21 @@ package org.intermine.api.xml;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-
-import junit.framework.Test;
 
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreTestUtils;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.util.DynamicUtil;
 import org.intermine.api.bag.PkQueryIdUpgrader;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the InterMineBagHandler class.
@@ -31,57 +34,44 @@ import org.intermine.api.bag.PkQueryIdUpgrader;
  * @author Kim Rutherford
  */
 
-public class InterMineBagHandlerTest extends StoreDataTestCase
+public class InterMineBagHandlerTest
 {
     ObjectStoreWriter osw;
     private ObjectStore os;
     private int idCounter;
 
-    public InterMineBagHandlerTest (String arg) {
-        super(arg);
-    }
-
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         os = osw.getObjectStore();
-        idCounter = 0;
+        Map data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
+        ObjectStoreTestUtils.storeData(osw, data);
     }
 
-    public void tearDown() throws Exception {
+    @After
+    public void teardown() throws Exception {
         osw.close();
     }
 
-    public void executeTest(String type) {
-    }
-
-    public void testQueries() throws Throwable {
-    }
-
-    public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
-    }
-
-    public static Test suite() {
-        return buildSuite(InterMineBagHandlerTest.class);
-    }
-
+    @Test
     public void testNoNewObject() throws Exception {
         Company oldCompany = createCompanyWithId("Old company");
 
         // no new object so expect an empt set
         Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
-        assertEquals(new HashSet<Integer>(), newIds);
+        Assert.assertEquals(new HashSet<Integer>(), newIds);
     }
 
+    @Test
     public void testFindCompanyByVatNumber() throws Exception {
         Company oldCompany = createCompanyWithId("Old company");
         oldCompany.setVatNumber(5678);
 
         Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
-        assertEquals(1, newIds.size());
+        Assert.assertEquals(1, newIds.size());
     }
 
+    @Test
     public void testFindCompanyByName() throws Exception {
         Address oldAddress = createAddressWithId("Company Street, BVille");
         Company oldCompany = createCompanyWithId("CompanyB");
@@ -89,16 +79,18 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
 
         Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
 
-        assertEquals(1, newIds.size());
+        Assert.assertEquals(1, newIds.size());
     }
 
+    @Test
     public void testFindCompanyByNameNoAddress() throws Exception {
         Company oldCompany = createCompanyWithId("CompanyB");
         // can't find a new object so expect empty set
         Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
-        assertEquals(new HashSet<Integer>(), newIds);
+        Assert.assertEquals(new HashSet<Integer>(), newIds);
     }
 
+    @Test
     public void testFindCompanyByNameAndVat() throws Exception {
         Address oldAddress = createAddressWithId("Company Street, BVille");
         Company oldCompany = createCompanyWithId("CompanyB");
@@ -106,13 +98,14 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
         oldCompany.setVatNumber(5678);
 
         Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
-        assertEquals(1, newIds.size());
+        Assert.assertEquals(1, newIds.size());
     }
 
     /**
      * For the case when it returns two Objects
      * @throws Exception
      */
+    @Test
     public void testFindCompanyByNameAndDifferentVat() throws Exception {
         Address oldAddress = createAddressWithId("Company Street, BVille");
         Company oldCompany = createCompanyWithId("CompanyB");
@@ -120,9 +113,8 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
         oldCompany.setVatNumber(1234);
 
         Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
-        assertEquals(2, newIds.size());
+        Assert.assertEquals(2, newIds.size());
     }
-
 
     private Company createCompanyWithId(String companyName) {
         Company company =

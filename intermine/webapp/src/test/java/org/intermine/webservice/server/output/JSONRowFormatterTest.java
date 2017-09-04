@@ -193,6 +193,8 @@ public class JSONRowFormatterTest extends TestCase {
         JSONRowFormatter fmtr = new JSONRowFormatter();
 
         String expected = testProps.getProperty("result.header");
+        //System.out.println("expected |" + expected + "|");
+        //System.out.println("got      |" + fmtr.formatHeader(attributes) + "|");
         assertEquals(expected, fmtr.formatHeader(attributes));
 
         String callback = "user_defined_callback";

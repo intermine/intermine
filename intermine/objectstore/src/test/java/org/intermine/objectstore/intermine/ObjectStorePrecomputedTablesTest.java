@@ -47,8 +47,8 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
 
         // First of all, clean up any junk left behind by other tests to stop interference.
         // FIXME: Really, the objectstore should be completely cleared between all tests
-        ObjectStoreTestUtils.deleteAllObjectsInClass(os, writer, Department.class);
-        ObjectStoreTestUtils.deleteAllObjectsInClass(os, writer, Employee.class);
+        ObjectStoreTestUtils.deleteAllObjectsInClass(writer, Department.class);
+        ObjectStoreTestUtils.deleteAllObjectsInClass(writer, Employee.class);
 
         writer.sequenceBase = sequenceMillions * 1000000;
         writer.sequenceOffset = 0;

@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Test;
-
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
@@ -30,12 +28,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.api.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.StoreDataTestCase;
+import org.intermine.objectstore.*;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -52,26 +45,30 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.template.TemplateQuery;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Matthew Wakeling
  * @author Richard Smith
  */
-public class TypeConverterTest extends StoreDataTestCase
+public class TypeConverterTest
 {
     List<ApiTemplate> conversionTemplates;
     ObjectStoreWriter uosw;
     ObjectStore os;
     Profile profile;
 
-    public TypeConverterTest(String arg1) {
-        super(arg1);
-    }
-
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
+        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        os = osw.getObjectStore();
+        Map data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
+        ObjectStoreTestUtils.storeData(osw, data);
+        osw.close();
+
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
         profile = new Profile(pm, "test", null, "test", null, null, null, true, false);
@@ -85,6 +82,7 @@ public class TypeConverterTest extends StoreDataTestCase
         conversionTemplates = new ArrayList<ApiTemplate>(Collections.singleton(template));
     }
 
+    @After
     public void tearDown() throws Exception {
         removeUserProfile(profile.getUsername());
         uosw.close();
@@ -107,25 +105,11 @@ public class TypeConverterTest extends StoreDataTestCase
         }
     }
 
-    public void executeTest(String type) {
-    }
-
-    public void testQueries() throws Throwable {
-        // We don't want to run the standard queries, just load the test data
-    }
-
-    public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
-    }
-
-    public static Test suite() {
-        return buildSuite(TypeConverterTest.class);
-    }
-
+    @Test
     public void testGetConvertedObjectMap() throws Exception {
 
         Results r = getEmployeesAndAddresses();
-        assertEquals("Results: " + r, 2, r.size());
+        Assert.assertEquals("Results: " + r, 2, r.size());
         List<String> classKeys = new ArrayList<String>();
         classKeys.add("name");
         InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(),
@@ -139,7 +123,7 @@ public class TypeConverterTest extends StoreDataTestCase
         Map<InterMineObject, List<InterMineObject>> got =
                 TypeConverter.getConvertedObjectMap(conversionTemplates, Employee.class, Address.class, imb, os);
 
-        assertEquals(expected, got);
+        Assert.assertEquals(expected, got);
     }
 
     private Results getEmployeesAndAddresses() throws Exception {
@@ -159,33 +143,35 @@ public class TypeConverterTest extends StoreDataTestCase
         return os.execute(q);
     }
 
+    @Test
     public void testGetConversionMapQuery() throws Exception {
         List<String> classKeys = new ArrayList<String>();
         classKeys.add("name");
         InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(),
                                             BagState.CURRENT, os, null, uosw, classKeys);
         PathQuery resQuery = TypeConverter.getConversionMapQuery(conversionTemplates, Employee.class, Address.class, bag);
-        assertEquals(1, resQuery.getConstraints().size());
+        Assert.assertEquals(1, resQuery.getConstraints().size());
         PathConstraintBag resCon = (PathConstraintBag) resQuery.getConstraints().keySet().iterator().next();
-        assertNotNull(resCon);
-        assertEquals("Employee", resCon.getPath());
-        assertEquals(ConstraintOp.IN, resCon.getOp());
-        assertEquals(bag.getName(), resCon.getBag());
+        Assert.assertNotNull(resCon);
+        Assert.assertEquals("Employee", resCon.getPath());
+        Assert.assertEquals(ConstraintOp.IN, resCon.getOp());
+        Assert.assertEquals(bag.getName(), resCon.getBag());
     }
 
+    @Test
     public void testGetConversionQuery() throws Exception {
         List<String> classKeys = new ArrayList<String>();
         classKeys.add("name");
         InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(),
                                             BagState.CURRENT, os, null, uosw, classKeys);
         PathQuery resQuery = TypeConverter.getConversionQuery(conversionTemplates, Employee.class, Address.class, bag);
-        assertEquals(1, resQuery.getConstraints().size());
+        Assert.assertEquals(1, resQuery.getConstraints().size());
         PathConstraintBag resCon = (PathConstraintBag) resQuery.getConstraints().keySet().iterator().next();
-        assertNotNull(resCon);
-        assertEquals("Employee", resCon.getPath());
-        assertEquals(ConstraintOp.IN, resCon.getOp());
-        assertEquals(bag.getName(), resCon.getBag());
+        Assert.assertNotNull(resCon);
+        Assert.assertEquals("Employee", resCon.getPath());
+        Assert.assertEquals(ConstraintOp.IN, resCon.getOp());
+        Assert.assertEquals(bag.getName(), resCon.getBag());
         List<String> expectedView = new ArrayList<String>(Collections.singleton("Employee.address.id"));
-        assertEquals(expectedView, resQuery.getView());
+        Assert.assertEquals(expectedView, resQuery.getView());
     }
 }

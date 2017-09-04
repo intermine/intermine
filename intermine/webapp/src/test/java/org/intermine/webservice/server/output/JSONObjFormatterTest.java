@@ -143,6 +143,8 @@ public class JSONObjFormatterTest extends TestCase {
         JSONObjectFormatter fmtr = new JSONObjectFormatter();
 
         String expected = testProps.getProperty("result.header");
+        //System.out.println("expected |" + expected + "|");
+        //System.out.println("got |" + fmtr.formatHeader(attributes) + "|");
         assertEquals(expected, fmtr.formatHeader(attributes));
     }
 

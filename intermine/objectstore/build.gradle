@@ -36,32 +36,10 @@ dependencies {
     compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
     compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
     compile fileTree(dir: 'libs', include: '*.jar') // org.gnu.readline is not in a public repo
-    testCompile project(path: ':intermine-testmodel', configuration: 'testArtifacts')
-}
-
-task copyDefaultProperties(type: Copy) {
-    from '../default.intermine.properties'
-    into sourceSets.test.output.resourcesDir
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
-
-task copyTestProperties(type: Copy) {
-    from "${System.env.HOME}/.intermine/intermine-test.properties"
-    into sourceSets.test.output.resourcesDir
-
-    rename { fileName -> fileName.replace('intermine-test.properties', 'intermine.properties') }
-
-    inputs.sourceFiles.stopExecutionIfEmpty()
+    testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
 }
 
 void buildDB(String osname, String model) {
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask')
     ant.buildDBUnittest(osname: "$osname", model: "$model", schemafile:"${osname}-schema.xml", tempDir: 'build/tmp')
 }
-
-tasks.withType(Test) {
-    scanForTestClasses = false
-    include '**/*Test.class'
-}
-
-tasks.compileTestJava.dependsOn 'copyDefaultProperties', 'copyTestProperties'

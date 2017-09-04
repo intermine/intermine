@@ -60,7 +60,7 @@ public class ObjectStoreTestUtils {
         return returnData;
     }
 
-    private static Object objectToName(Object o) throws Exception {
+    public static Object objectToName(Object o) throws Exception {
         if (o instanceof Collection) {
             StringBuffer sb = new StringBuffer();
             boolean needComma = false;
@@ -79,7 +79,7 @@ public class ObjectStoreTestUtils {
         }
     }
 
-    public static Object simpleObjectToName(Object o) throws Exception {
+    private static Object simpleObjectToName(Object o) throws Exception {
         Method name = null;
         try {
             name = o.getClass().getMethod("getName", new Class[] {});
@@ -152,18 +152,17 @@ public class ObjectStoreTestUtils {
     /**
      * Delete all objects in the objectstore that have the given class.
      *
-     * @param os
      * @param writer
      * @param clazz
      * @returns Number of objects deleted.
      * @throws Exception
      */
-    public static int deleteAllObjectsInClass(ObjectStore os, ObjectStoreWriter writer, Class clazz) throws Exception {
+    public static int deleteAllObjectsInClass(ObjectStoreWriter writer, Class clazz) throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(clazz);
         q.addFrom(qc);
         q.addToSelect(qc);
-        SingletonResults res = os.executeSingleton(q);
+        SingletonResults res = writer.getObjectStore().executeSingleton(q);
 
         int count = res.size();
 
@@ -172,6 +171,40 @@ public class ObjectStoreTestUtils {
         }
 
         return count;
+    }
+
+    /**
+     * Delete all objects int he given objectstore
+     *
+     * @param writer
+     * @throws Exception
+     */
+    public static void deleteAllObjectsInStore(ObjectStoreWriter writer) throws Exception {
+        System.out.println("Removing data from store");
+
+        long start = new Date().getTime();
+        if (writer == null) {
+            throw new NullPointerException("writer must be set before trying to remove data");
+        }
+        try {
+            writer.beginTransaction();
+            Query q = new Query();
+            QueryClass qc = new QueryClass(InterMineObject.class);
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            SingletonResults dataToRemove = writer.getObjectStore().executeSingleton(q);
+            Iterator<Object> iter = dataToRemove.iterator();
+            while (iter.hasNext()) {
+                InterMineObject toDelete = (InterMineObject)iter.next();
+                writer.delete(toDelete);
+            }
+            writer.commitTransaction();
+        } catch (Exception e) {
+            writer.abortTransaction();
+            throw e;
+        }
+
+        System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data from store");
     }
 
     public static List toList(Object[][] o) {
