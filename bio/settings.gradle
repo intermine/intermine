@@ -1,11 +1,12 @@
 rootProject.name = 'bio'
 
-include ':bio-core', 
+include ':bio-core', ':bio-test-all', 
 //dependencies on intermine
 ':intermine-model', ':intermine-pathquery', ':intermine-objectstore', ':intermine-integrate', ':intermine-api',':intermine-testmodel'
 
 
 project(':bio-core').projectDir = new File(settingsDir, './core')
+project(':bio-test-all').projectDir = new File(settingsDir, './test-all')
 project(':intermine-model').projectDir = new File(settingsDir, '../intermine/model')
 project(':intermine-pathquery').projectDir = new File(settingsDir, '../intermine/pathquery')
 project(':intermine-objectstore').projectDir = new File(settingsDir, '../intermine/objectstore')

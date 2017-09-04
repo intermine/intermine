@@ -1,0 +1,49 @@
+sourceSets {
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+    testCompile project(':intermine-objectstore')
+    testCompile 'commons-lang:commons-lang:2.6'
+}
+
+configurations {
+    testArtifacts
+}
+
+void generateModel(model, destination, type) {
+    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
+      classpath {
+        fileset(dir: '../../intermine/model/build/libs/', includes: '*.jar')
+        dirset(dir: '../../intermine/api/src/test/resources/')
+        pathelement(path: configurations.testCompile.asPath)
+      }   
+    }   
+
+    ant.modelOutputTask(model: model, destDir: destination, type: type)
+}
+
+task generateBioModel {
+    doLast {
+        generateModel('genomic', 'src/test/java', 'java')
+    }   
+}
+
+task buildBioModelJar(type: Jar) {
+    from('build/classes/java/test')
+    archiveName 'genomicmodel.jar'
+}
+
+tasks.compileTestJava.dependsOn 'generateBioModel'
+tasks.buildBioModelJar.dependsOn 'testClasses'
+
+artifacts {
+    testArtifacts buildBioModelJar
+}
