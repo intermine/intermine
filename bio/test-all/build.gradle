@@ -15,7 +15,7 @@ dependencies {
 }
 
 configurations {
-    testArtifacts
+    testBioArtifacts
 }
 
 void generateModel(model, destination, type) {
@@ -38,12 +38,11 @@ task generateBioModel {
 
 task buildBioModelJar(type: Jar) {
     from('build/classes/java/test')
-    archiveName 'genomicmodel.jar'
 }
 
 tasks.compileTestJava.dependsOn 'generateBioModel'
 tasks.buildBioModelJar.dependsOn 'testClasses'
 
 artifacts {
-    testArtifacts buildBioModelJar
+    testBioArtifacts buildBioModelJar
 }

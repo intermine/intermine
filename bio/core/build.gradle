@@ -21,4 +21,7 @@ dependencies {
   compile project(':intermine-pathquery')
   compile project(':intermine-api')
   compile fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar not found in public repo, obo and bbop not available in the public maven repo
+  testCompile project(':intermine-integrate').sourceSets.test.output
+  testCompile project(path: ':bio-testall', configuration: 'testBioArtifacts')
+  testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
 }
