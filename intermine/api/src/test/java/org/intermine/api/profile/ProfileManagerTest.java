@@ -46,7 +46,7 @@ import org.intermine.pathquery.PathQuery;
 
 public class ProfileManagerTest extends InterMineAPITestCase
 {
-    ObjectStoreWriter storeDataWriter;
+    private ObjectStoreWriter storeDataWriter;
 
     private Profile bobProfile, sallyProfile;
     private ProfileManager pm;
@@ -72,7 +72,6 @@ public class ProfileManagerTest extends InterMineAPITestCase
     }
 
     public void tearDown() throws Exception {
-        //StoreDataTestCase.removeDataFromStore();
         ObjectStoreTestUtils.deleteAllObjectsInStore(storeDataWriter);
         if (storeDataWriter != null) {
             storeDataWriter.close();
@@ -138,7 +137,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
 
         CEO ceoEx = new CEO();
         ceoEx.setName("EmployeeB1");
-        CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, Collections.singleton("name"));
+        CEO ceoB1 = os.getObjectByExample(ceoEx, Collections.singleton("name"));
 
         InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description",
                 new Date(), BagState.CURRENT, os, sallyId, uosw, Arrays.asList("name"));
