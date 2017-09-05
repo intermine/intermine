@@ -30,6 +30,15 @@ void generateModel(model, destination, type) {
     ant.modelOutputTask(model: model, destDir: destination, type: type)
 }
 
+task copyBioTestProperties(type: Copy) {
+    from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
+    into sourceSets.test.output.resourcesDir
+
+    rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
+
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
 task generateBioModel {
     doLast {
         generateModel('genomic', 'src/test/java', 'java')
@@ -37,11 +46,11 @@ task generateBioModel {
 }
 
 task buildBioModelJar(type: Jar) {
-    from('build/classes/java/test')
+    from(sourceSets.test.output)
 }
 
 tasks.compileTestJava.dependsOn 'generateBioModel'
-tasks.buildBioModelJar.dependsOn 'testClasses'
+tasks.buildBioModelJar.dependsOn 'copyBioTestProperties', 'testClasses'
 
 artifacts {
     testBioArtifacts buildBioModelJar
