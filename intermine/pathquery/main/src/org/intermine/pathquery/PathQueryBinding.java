@@ -22,6 +22,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
@@ -282,6 +283,30 @@ public class PathQueryBinding
             InputSource src = new InputSource(reader);
             DefaultHandler handler = new PathQueryHandler(queries, version, model);
             SAXParser.parse(src, handler);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return queries;
+    }
+
+    /**
+     * Parse PathQueries from JSON
+     *
+     * @param reader the saved queries
+     * @param model The model to use in preference. May be null.
+     * @return a Map from query name to PathQuery
+     */
+    public static Map<String, PathQuery> unmarshalJSONPathQueries(Reader reader, Model model) {
+        Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
+        try {
+            String jsonQueries = IOUtils.toString(reader);
+            JSONObject obj = new JSONObject(jsonQueries);
+            JSONArray jsonQueryArray = obj.getJSONArray("query");
+            for (int i = 0; i < jsonQueryArray.length(); i++) {
+                JSONObject jsonQuery = jsonQueryArray.getJSONObject(i);
+                PathQuery pathQuery = unmarshalJSONPathQuery(model, jsonQuery.toString());
+                queries.put(pathQuery.getTitle(), pathQuery);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

@@ -98,7 +98,6 @@ public class QueryToListService extends AbstractQueryService
                 input.getDescription(),
                 input.getTags(),
                 profile);
-
     }
 
     /**

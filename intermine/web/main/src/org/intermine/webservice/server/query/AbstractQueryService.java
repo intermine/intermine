@@ -34,6 +34,7 @@ public abstract class AbstractQueryService extends WebService
 {
 
     private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
+    private static final String JSON_SCHEMA_LOCATION = "webservice/query.json";
 
     /**
      * Constructor.
@@ -44,22 +45,28 @@ public abstract class AbstractQueryService extends WebService
     }
 
     /**
+     * @param queryFormat JSON or XML
      * @return The XML Schema url.
      */
-    protected String getXMLSchemaUrl() {
-        return AbstractQueryService.getSchemaLocation(request);
+    protected String getXMLSchemaUrl(String queryFormat) {
+        return AbstractQueryService.getSchemaLocation(request, queryFormat);
     }
 
     /**
      * @param request A request for a mine, so we can work out where the schema probably is.
-     * @return The XML Schema url.
+     * @param queryFormat JSON or XML
+     * @return The Schema url.
      */
-    public static String getSchemaLocation(HttpServletRequest request) {
+    public static String getSchemaLocation(HttpServletRequest request, String queryFormat) {
+        String schemaLocation = XML_SCHEMA_LOCATION;
+        if ("JSON".equalsIgnoreCase(queryFormat)) {
+            schemaLocation = JSON_SCHEMA_LOCATION;
+        }
         try {
             final Properties webProperties = InterMineContext.getWebProperties();
             String baseUrl = webProperties.getProperty("webapp.baseurl");
             String path = webProperties.getProperty("webapp.path");
-            String relPath = path + "/" + XML_SCHEMA_LOCATION;
+            String relPath = path + "/" + schemaLocation;
             URL url = new URL(baseUrl + "/" + relPath);
             return url.toString();
         } catch (MalformedURLException e) {
@@ -74,10 +81,14 @@ public abstract class AbstractQueryService extends WebService
      */
     protected PathQueryBuilder getQueryBuilder(String input) {
         final ListManager listManager = new ListManager(im, getPermission().getProfile());
+        String queryFormat = "XML";
+        if (!input.startsWith("<query")) {
+            queryFormat = "JSON";
+        }
         if (formatIsJsonObj()) {
-            return new PathQueryBuilderForJSONObj(input, getXMLSchemaUrl(), listManager);
+            return new PathQueryBuilderForJSONObj(input, getXMLSchemaUrl(queryFormat), listManager);
         } else {
-            return new PathQueryBuilder(im, input, getXMLSchemaUrl(), listManager);
+            return new PathQueryBuilder(im, input, getXMLSchemaUrl(queryFormat), listManager);
         }
     }
 

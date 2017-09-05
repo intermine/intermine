@@ -47,6 +47,7 @@ public class PathQueryBuilder
 
     /**
      * PathQueryBuilder constructor.
+     *
      * @param input xml or JSON string from which will be PathQuery constructed
      * @param im InterMine API to access the data model
      * @param schemaUrl url of XML Schema file, validation is performed according this file
@@ -62,16 +63,17 @@ public class PathQueryBuilder
     }
 
     /**
-     * Perform the build operation.
-     * @param json json string from which will be PathQuery constructed
+     * Build a path query using JSON string
+     *
+     * @param jsonQuery json string from which will be PathQuery constructed
      * @param bagSource previously saved bags.
      */
-    private void buildJSONQuery(InterMineAPI im, String json,
+    private void buildJSONQuery(InterMineAPI im, String jsonQuery,
         Producer<Map<String, InterMineBag>> bagSource) {
         try {
-            pathQuery = PathQueryBinding.unmarshalJSONPathQuery(im.getModel(), json);
+            pathQuery = PathQueryBinding.unmarshalJSONPathQuery(im.getModel(), jsonQuery);
         } catch (Exception e) {
-            String message = String.format("JSON is not well formatted. Got %s.", json);
+            String message = String.format("JSON is not well formatted. Got %s.", jsonQuery);
             throw new BadRequestException(message, e);
         }
 
