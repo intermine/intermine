@@ -95,7 +95,7 @@ public class TemplateUploadService extends WebService
             if (templatesXML.startsWith("<")) {
                 templates = TemplateQueryBinding.unmarshalTemplates(r, version);
             } else {
-                templates = TemplateQueryBinding.unmarshalJSONTemplates(r);
+                templates = TemplateQueryBinding.unmarshalJSONTemplates(r, im.getModel());
             }
 
         } catch (Exception e) {

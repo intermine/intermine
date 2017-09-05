@@ -20,6 +20,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.intermine.metadata.Model;
 import org.intermine.metadata.SAXParser;
 import org.intermine.pathquery.JSONQueryHandler;
 import org.intermine.pathquery.PathConstraint;
@@ -153,9 +154,10 @@ public class TemplateQueryBinding extends PathQueryBinding
      * Parse TemplateQueries from JSON.
      *
      * @param reader the saved templates
+     * @param model the model
      * @return a Map from template name to TemplateQuery
      */
-    public static Map<String, TemplateQuery> unmarshalJSONTemplates(Reader reader) {
+    public static Map<String, TemplateQuery> unmarshalJSONTemplates(Reader reader, Model model) {
         Map<String, TemplateQuery> templates = new LinkedHashMap<String, TemplateQuery>();
         try {
             String jsonQueries = IOUtils.toString(reader);
@@ -172,7 +174,7 @@ public class TemplateQueryBinding extends PathQueryBinding
                 }
                 String jsonQuery = jsonTemplate.getString("query");
 
-                PathQuery pathQuery = JSONQueryHandler.parse(null, jsonQuery);
+                PathQuery pathQuery = JSONQueryHandler.parse(model, jsonQuery);
                 TemplateQuery template = new TemplateQuery(name, title, comment, pathQuery);
                 templates.put(name, template);
             }
