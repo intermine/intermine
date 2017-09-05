@@ -15,14 +15,14 @@ dependencies {
 }
 
 configurations {
-    testArtifacts
+    testBioArtifacts
 }
 
 void generateModel(model, destination, type) {
     ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
       classpath {
         fileset(dir: '../../intermine/model/build/libs/', includes: '*.jar')
-        dirset(dir: '../../intermine/api/src/test/resources/')
+        dirset(dir: 'src/test/resources/')
         pathelement(path: configurations.testCompile.asPath)
       }   
     }   
@@ -37,13 +37,12 @@ task generateBioModel {
 }
 
 task buildBioModelJar(type: Jar) {
-    from('build/classes/java/test')
-    archiveName 'genomicmodel.jar'
+    sourceSets.test.output
 }
 
 tasks.compileTestJava.dependsOn 'generateBioModel'
 tasks.buildBioModelJar.dependsOn 'testClasses'
 
 artifacts {
-    testArtifacts buildBioModelJar
+    testBioArtifacts buildBioModelJar
 }
