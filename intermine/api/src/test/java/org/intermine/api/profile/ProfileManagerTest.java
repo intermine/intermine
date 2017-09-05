@@ -35,7 +35,9 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Department;
-import org.intermine.objectstore.StoreDataTestCase;
+import org.intermine.objectstore.ObjectStoreTestUtils;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -44,6 +46,8 @@ import org.intermine.pathquery.PathQuery;
 
 public class ProfileManagerTest extends InterMineAPITestCase
 {
+    private ObjectStoreWriter storeDataWriter;
+
     private Profile bobProfile, sallyProfile;
     private ProfileManager pm;
     private final String bobName = "bob", sallyName = "sally", bobPass = "bob_pass", sallyPass = "sally_pass";
@@ -59,12 +63,20 @@ public class ProfileManagerTest extends InterMineAPITestCase
         super.setUp();
         classKeys = im.getClassKeys();
         pm = im.getProfileManager();
-        StoreDataTestCase.oneTimeSetUp();
+
+        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        Map data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
+        ObjectStoreTestUtils.storeData(storeDataWriter, data);
+
         setUpUserProfiles();
     }
 
     public void tearDown() throws Exception {
-        StoreDataTestCase.removeDataFromStore();
+        ObjectStoreTestUtils.deleteAllObjectsInStore(storeDataWriter);
+        if (storeDataWriter != null) {
+            storeDataWriter.close();
+        }
+
         super.tearDown();
     }
 
@@ -90,12 +102,12 @@ public class ProfileManagerTest extends InterMineAPITestCase
         deptEx.setName("DepartmentA1");
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("name");
-        Department departmentA1 = (Department) os.getObjectByExample(deptEx, fieldNames);
+        Department departmentA1 = os.getObjectByExample(deptEx, fieldNames);
         bag.addIdToBag(departmentA1.getId(), "Department");
 
         Department deptEx2 = new Department();
         deptEx2.setName("DepartmentB1");
-        Department departmentB1 = (Department) os.getObjectByExample(deptEx2, fieldNames);
+        Department departmentB1 = os.getObjectByExample(deptEx2, fieldNames);
         bag.addIdToBag(departmentB1.getId(), "Department");
 
         ApiTemplate template =
@@ -125,7 +137,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
 
         CEO ceoEx = new CEO();
         ceoEx.setName("EmployeeB1");
-        CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, Collections.singleton("name"));
+        CEO ceoB1 = os.getObjectByExample(ceoEx, Collections.singleton("name"));
 
         InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description",
                 new Date(), BagState.CURRENT, os, sallyId, uosw, Arrays.asList("name"));
@@ -194,8 +206,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
     }
 
     public void testGetRWPermission() throws Exception {
-        ApiPermission permission = null;
-        permission = pm.getPermission(bobKey, classKeys);
+        ApiPermission permission = pm.getPermission(bobKey, classKeys);
         assertNotNull(permission);
         assertTrue(permission.isRW());
         assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
@@ -253,10 +264,8 @@ public class ProfileManagerTest extends InterMineAPITestCase
     }
 
     public void testGetROPermission() throws Exception {
-        ApiPermission permission = null;
-
         String key = pm.generateSingleUseKey(bobProfile);
-        permission = pm.getPermission(key, classKeys);
+        ApiPermission permission = pm.getPermission(key, classKeys);
         assertNotNull(permission);
         assertTrue(permission.isRO());
         assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
@@ -291,6 +300,5 @@ public class ProfileManagerTest extends InterMineAPITestCase
             assertTrue(permission.isRO());
             assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
         }
-
     }
 }

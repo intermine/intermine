@@ -32,11 +32,15 @@ import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.StoreDataTestCase;
+import org.intermine.objectstore.ObjectStoreTestUtils;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
 import org.junit.Test;
 
 public class SearchResultsTest extends InterMineAPITestCase {
+
+    private ObjectStoreWriter storeDataWriter;
 
     private Profile bobProfile, sallyProfile;
     private ProfileManager pm;
@@ -55,15 +59,22 @@ public class SearchResultsTest extends InterMineAPITestCase {
         super.setUp();
         classKeys = im.getClassKeys();
         pm = im.getProfileManager();
-        StoreDataTestCase.oneTimeSetUp();
+
+        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        Map data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
+        ObjectStoreTestUtils.storeData(storeDataWriter, data);
 
         setUpUserProfiles();
-//        StoreDataTestCase.storeData();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        StoreDataTestCase.removeDataFromStore();
+
+        ObjectStoreTestUtils.deleteAllObjectsInStore(storeDataWriter);
+        if (storeDataWriter != null) {
+            storeDataWriter.close();
+        }
+
         SearchRepository.clearGlobalRepositories();
     }
 
@@ -88,12 +99,12 @@ public class SearchResultsTest extends InterMineAPITestCase {
         deptEx.setName("DepartmentA1");
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("name");
-        Department departmentA1 = (Department) os.getObjectByExample(deptEx, fieldNames);
+        Department departmentA1 = os.getObjectByExample(deptEx, fieldNames);
         bag.addIdToBag(departmentA1.getId(), "Department");
 
         Department deptEx2 = new Department();
         deptEx2.setName("DepartmentB1");
-        Department departmentB1 = (Department) os.getObjectByExample(deptEx2, fieldNames);
+        Department departmentB1 = os.getObjectByExample(deptEx2, fieldNames);
         bag.addIdToBag(departmentB1.getId(), "Department");
 
         ApiTemplate template =
@@ -123,10 +134,10 @@ public class SearchResultsTest extends InterMineAPITestCase {
         ceoEx.setName("EmployeeB1");
         fieldNames = new HashSet<String>();
         fieldNames.add("name");
-        CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
+        CEO ceoB1 = os.getObjectByExample(ceoEx, fieldNames);
         Employee empA1Ex = new Employee();
         empA1Ex.setName("EmployeeA1");
-        Employee empA1 = (Employee) os.getObjectByExample(empA1Ex, fieldNames);
+        Employee empA1 = os.getObjectByExample(empA1Ex, fieldNames);
 
         InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description including the "
                 + "word 'orthologue'", new Date(), BagState.CURRENT, os, sallyId, uosw, classKeys);
@@ -312,7 +323,5 @@ public class SearchResultsTest extends InterMineAPITestCase {
 
         results = SearchResults.runLuceneSearch("easy", SearchTarget.ALL_BAGS, sr);
         assertEquals(2, results.size());
-
     }
-
 }
