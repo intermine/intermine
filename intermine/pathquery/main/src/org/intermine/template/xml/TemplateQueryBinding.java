@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.SAXParser;
+import org.intermine.pathquery.JSONQueryHandler;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -159,7 +160,7 @@ public class TemplateQueryBinding extends PathQueryBinding
         try {
             String jsonQueries = IOUtils.toString(reader);
             JSONObject obj = new JSONObject(jsonQueries);
-            JSONArray jsonTemplateArray = obj.getJSONArray("templates");
+            JSONArray jsonTemplateArray = obj.getJSONArray("template-queries");
             for (int i = 0; i < jsonTemplateArray.length(); i++) {
                 JSONObject jsonTemplate = jsonTemplateArray.getJSONObject(i);
 
@@ -168,8 +169,7 @@ public class TemplateQueryBinding extends PathQueryBinding
                 String comment = jsonTemplate.getString("comment");
                 String jsonQuery = jsonTemplate.getString("query");
 
-                PathQuery pathQuery = unmarshalJSONPathQuery(null, jsonQuery);
-
+                PathQuery pathQuery = JSONQueryHandler.parse(null, jsonQuery);
                 TemplateQuery template = new TemplateQuery(name, title, comment, pathQuery);
                 templates.put(name, template);
             }
