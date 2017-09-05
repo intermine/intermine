@@ -166,7 +166,10 @@ public class TemplateQueryBinding extends PathQueryBinding
 
                 String name = jsonTemplate.getString("name");
                 String title = jsonTemplate.getString("title");
-                String comment = jsonTemplate.getString("comment");
+                String comment = null;
+                if (jsonTemplate.has("comment")) {
+                    comment = jsonTemplate.getString("comment");
+                }
                 String jsonQuery = jsonTemplate.getString("query");
 
                 PathQuery pathQuery = JSONQueryHandler.parse(null, jsonQuery);
