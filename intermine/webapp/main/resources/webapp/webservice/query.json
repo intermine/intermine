@@ -1,0 +1,39 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Query",
+    "description": "A representation of a path query.",
+    "type": "object",
+    "required": ["model", "select"],
+    "properties": {
+        "model": {
+            "description": "Name of data model",
+            "type": "string",
+            "required": true
+        },
+        "select": {
+            "description": "The view list for the query",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "required": true,
+            "uniqueItems": true
+        },
+        "where": {
+            "description": "Constraints for the query",
+            "type": "string",
+            "uniqueItems": true
+        },
+        "joins": {
+            "description": "List of paths that are outer joins.",
+            "type": "string",
+            "uniqueItems": true
+        },
+        "orderBy": {
+            "description": "List of paths to sort the query results",
+            "type": "string",
+            "uniqueItems": true
+        }
+    }
+}
+

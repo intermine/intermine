@@ -301,7 +301,7 @@ public class PathQueryBinding
         try {
             String jsonQueries = IOUtils.toString(reader);
             JSONObject obj = new JSONObject(jsonQueries);
-            JSONArray jsonQueryArray = obj.getJSONArray("query");
+            JSONArray jsonQueryArray = obj.getJSONArray("queries");
             for (int i = 0; i < jsonQueryArray.length(); i++) {
                 JSONObject jsonQuery = jsonQueryArray.getJSONObject(i);
                 PathQuery pathQuery = unmarshalJSONPathQuery(model, jsonQuery.toString());
@@ -314,15 +314,15 @@ public class PathQueryBinding
     }
 
     /**
-     * Parse PathQueries from JSON
+     * Parse PathQuery from JSON
      * @param model the data model
-     * @param jsonString the query in JSON format
+     * @param jsonQueryString the query in JSON format
      * @return a Map from query name to PathQuery
      * @throws JSONException if poorly formatted JSON
      */
-    public static PathQuery unmarshalJSONPathQuery(Model model, String jsonString)
+    public static PathQuery unmarshalJSONPathQuery(Model model, String jsonQueryString)
         throws JSONException {
-        JSONObject obj = new JSONObject(jsonString);
+        JSONObject obj = new JSONObject(jsonQueryString);
         PathQuery query = new PathQuery(model);
         String name = "query";
         if (obj.has("name")) {

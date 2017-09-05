@@ -19,12 +19,15 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.SAXParser;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.xml.sax.InputSource;
 
 /**
@@ -141,6 +144,37 @@ public class TemplateQueryBinding extends PathQueryBinding
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+        return templates;
+    }
+
+    /**
+     * Parse TemplateQueries from JSON.
+     *
+     * @param reader the saved templates
+     * @return a Map from template name to TemplateQuery
+     */
+    public static Map<String, TemplateQuery> unmarshalJSONTemplates(Reader reader) {
+        Map<String, TemplateQuery> templates = new LinkedHashMap<String, TemplateQuery>();
+        try {
+            String jsonQueries = IOUtils.toString(reader);
+            JSONObject obj = new JSONObject(jsonQueries);
+            JSONArray jsonTemplateArray = obj.getJSONArray("templates");
+            for (int i = 0; i < jsonTemplateArray.length(); i++) {
+                JSONObject jsonTemplate = jsonTemplateArray.getJSONObject(i);
+
+                String name = jsonTemplate.getString("name");
+                String title = jsonTemplate.getString("title");
+                String comment = jsonTemplate.getString("comment");
+                String jsonQuery = jsonTemplate.getString("query");
+
+                PathQuery pathQuery = unmarshalJSONPathQuery(null, jsonQuery);
+
+                TemplateQuery template = new TemplateQuery(name, title, comment, pathQuery);
+                templates.put(name, template);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
         return templates;
     }
