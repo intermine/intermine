@@ -3,22 +3,20 @@ package org.intermine.api.profile;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.xml.ProfileManagerBinding;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.api.userprofile.Tag;
-import org.intermine.objectstore.StoreDataTestCase;
+import org.intermine.objectstore.ObjectStoreTestUtils;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
 
 public class XMLReadTest extends InterMineAPITestCase
 {
-
+    private ObjectStoreWriter storeDataWriter;
     private ProfileManager pm;
 
     public XMLReadTest(String arg) {
@@ -28,12 +26,19 @@ public class XMLReadTest extends InterMineAPITestCase
     public void setUp() throws Exception {
         super.setUp();
         pm = im.getProfileManager();
-        StoreDataTestCase.oneTimeSetUp();
+
+        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        Map data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
+        ObjectStoreTestUtils.storeData(storeDataWriter, data);
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        StoreDataTestCase.removeDataFromStore();
+
+        ObjectStoreTestUtils.deleteAllObjectsInStore(storeDataWriter);
+        if (storeDataWriter != null) {
+            storeDataWriter.close();
+        }
     }
 
     public void testXMLRead() throws Exception {
@@ -134,5 +139,4 @@ public class XMLReadTest extends InterMineAPITestCase
                  + actualTag.getType());
         }
     }
-
 }
