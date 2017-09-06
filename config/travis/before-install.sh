@@ -1,4 +1,7 @@
 #!/bin/bash
+sudo apt-get -q update
+# ant-optional is needed for ant junit
+sudo apt-get install ant-optional
 
 set -e
 
