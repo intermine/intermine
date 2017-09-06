@@ -14,14 +14,13 @@ env:
   - TEST_SUITE=all
   - TEST_SUITE=webtasks
   - TEST_SUITE=checkstyle
-sudo: false
+sudo: true
 jdk:
 - openjdk7
 - openjdk6
 before_script:
 - "./config/travis/init.sh"
 before_install:
-- sudo: required
 - export DISPLAY=:99.0
 - "./config/travis/before-install.sh"
 script:
