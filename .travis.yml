@@ -21,6 +21,7 @@ jdk:
 before_script:
 - "./config/travis/init.sh"
 before_install:
+- sudo: required
 - export DISPLAY=:99.0
 - "./config/travis/before-install.sh"
 script:
