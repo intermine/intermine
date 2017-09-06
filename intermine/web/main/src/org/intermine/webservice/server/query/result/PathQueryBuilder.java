@@ -29,9 +29,10 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.examples.Utils;
+
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import java.io.IOException;
@@ -102,12 +103,18 @@ public class PathQueryBuilder
 
     private ProcessingReport validateJsonData(String jsonSchema, String jsonQuery)
         throws IOException, ProcessingException {
-        JsonNode queryNode = Utils.loadResource(jsonQuery);
-        JsonNode schemaNode = Utils.loadResource(jsonSchema);
+        JsonNode queryNode = loadJSONString(jsonQuery);
+        JsonNode schemaNode = loadJSONString(jsonSchema);
         JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
         JsonSchema schema = factory.getJsonSchema(schemaNode);
         ProcessingReport report = schema.validate(queryNode);
         return report;
+    }
+
+    private JsonNode loadJSONString(String jsonString) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(jsonString);
+        return node;
     }
 
     private void checkBags(Producer<Map<String, InterMineBag>> bagSource) {
