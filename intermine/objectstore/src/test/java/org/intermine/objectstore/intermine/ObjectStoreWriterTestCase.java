@@ -19,10 +19,7 @@ import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.*;
 import org.intermine.objectstore.query.*;
 import org.intermine.util.DynamicUtil;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import static org.junit.Assert.fail;
 
@@ -37,6 +34,8 @@ public class ObjectStoreWriterTestCase
 
     public static void oneTimeSetUp(ObjectStoreWriter writer) throws Exception {
         ObjectStoreWriterTestCase.writer = writer;
+        ObjectStoreTestUtils.deleteAllObjectsInStore(writer);
+
         os = writer.getObjectStore();
         data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
     }
@@ -44,6 +43,11 @@ public class ObjectStoreWriterTestCase
     @AfterClass
     public static void oneTimeTearDown() throws Exception {
         writer.close();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        ObjectStoreTestUtils.deleteAllObjectsInStore(writer);
     }
 
     /**

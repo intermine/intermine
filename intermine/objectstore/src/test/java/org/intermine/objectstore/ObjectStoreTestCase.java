@@ -50,6 +50,7 @@ public class ObjectStoreTestCase {
 
     @AfterClass
     public static void oneTimeShutdown() throws Exception {
+        ObjectStoreTestUtils.deleteAllObjectsInStore(storeDataWriter);
         storeDataWriter.close();
     }
 
