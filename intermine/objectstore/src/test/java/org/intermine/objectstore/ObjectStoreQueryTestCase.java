@@ -34,7 +34,7 @@ import org.junit.Test;
  * override executeTest to run query and assert that the result is what is expected
  */
 
-public abstract class ObjectStoreQueryTests {
+public abstract class ObjectStoreQueryTestCase {
     public static final Object NO_RESULT = new Object() {
         public String toString() {
             return "NO RESULT";

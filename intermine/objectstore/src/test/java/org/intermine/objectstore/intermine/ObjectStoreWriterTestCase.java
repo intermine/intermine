@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.fail;
 
-public class ObjectStoreWriterTests
+public class ObjectStoreWriterTestCase
 {
     protected static ObjectStoreWriter writer;
     protected static ObjectStore os;
@@ -36,7 +36,7 @@ public class ObjectStoreWriterTests
     private Throwable failureException = null;
 
     public static void oneTimeSetUp(ObjectStoreWriter writer) throws Exception {
-        ObjectStoreWriterTests.writer = writer;
+        ObjectStoreWriterTestCase.writer = writer;
         os = writer.getObjectStore();
         data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
     }

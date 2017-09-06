@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ObjectStoreTranslatingImplTest extends ObjectStoreCommonTests
+public class ObjectStoreTranslatingImplTest extends ObjectStoreTestCase
 {
     private static ObjectStoreTranslatingImpl os;
 
@@ -34,14 +34,14 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreCommonTests
             ObjectStoreFactory.getObjectStore("os.unittest"),
             new DummyTranslator());
 
-        ObjectStoreCommonTests.oneTimeSetUp(os, "osw.unittest", "testmodel", "testmodel_data.xml");
+        ObjectStoreTestCase.oneTimeSetUp(os, "osw.unittest", "testmodel", "testmodel_data.xml");
     }
 
     public void testNullFields() throws Exception { // Don't run this test
     }
 
     @Test
-    public void testCheckStartLimit() throws Exception { ObjectStoreAbstractImplTests.testCheckStartLimit(os); }
+    public void testCheckStartLimit() throws Exception { ObjectStoreAbstractImplTestCase.testCheckStartLimit(os); }
 
     @Test
     public void testGetObjectByExampleNull() throws Exception {

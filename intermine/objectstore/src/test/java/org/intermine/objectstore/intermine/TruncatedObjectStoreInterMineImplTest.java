@@ -12,7 +12,7 @@ package org.intermine.objectstore.intermine;
 
 import org.junit.BeforeClass;
 
-public class TruncatedObjectStoreInterMineImplTest extends ObjectStoreInterMineImplCommonTests
+public class TruncatedObjectStoreInterMineImplTest extends ObjectStoreInterMineImplTestCase
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {

@@ -15,7 +15,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TruncatedObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTests
+public class TruncatedObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCase
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {

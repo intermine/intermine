@@ -25,7 +25,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplTests
+public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplTestCase
 {
     private static ObjectStoreFastCollectionsImpl osFastCollections;
 
