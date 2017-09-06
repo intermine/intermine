@@ -1,5 +1,8 @@
 package org.intermine.webservice.server.query.result;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -14,11 +17,13 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.BagState;
@@ -30,8 +35,6 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 /**
  * PathQueryBuilder builds PathQuery object from xml and validates it.
@@ -80,9 +83,16 @@ public class PathQueryBuilder
             // throws a ValidationException if this object is invalid
             schema.validate(jsonQuery);
             pathQuery = PathQueryBinding.unmarshalJSONPathQuery(im.getModel(), jsonQuery);
+        } catch (ValidationException e) {
+            StringBuilder errorMessage = new StringBuilder();
+            errorMessage.append(e.getMessage());
+            Iterator<ValidationException> errors = e.getCausingExceptions().listIterator();
+            while (errors.hasNext()) {
+                errorMessage.append(errors.next());
+            }
+            throw new BadRequestException(errorMessage.toString());
         } catch (Exception e) {
-            String message = String.format("JSON is not well formatted. Got %s.", jsonQuery);
-            throw new BadRequestException(message, e);
+            throw new ServiceException(e);
         }
 
         if (!pathQuery.isValid()) {
