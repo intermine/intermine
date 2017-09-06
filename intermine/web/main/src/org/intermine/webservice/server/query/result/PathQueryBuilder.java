@@ -11,11 +11,13 @@ package org.intermine.webservice.server.query.result;
  */
 
 import java.io.StringReader;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.BagState;
@@ -26,6 +28,15 @@ import org.intermine.webservice.server.core.Producer;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.examples.Utils;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * PathQueryBuilder builds PathQuery object from xml and validates it.
@@ -37,6 +48,7 @@ public class PathQueryBuilder
 
     private PathQuery pathQuery;
     private static Logger logger = Logger.getLogger(PathQueryBuilder.class);
+    private static final Logger LOG = Logger.getLogger(PathQueryBuilder.class);
 
     /**
      * Constructor for testing.
@@ -58,19 +70,22 @@ public class PathQueryBuilder
         if (input.startsWith("<query")) {
             buildXMLQuery(input, schemaUrl, bagSource);
         } else {
-            buildJSONQuery(im, input, bagSource);
+            buildJSONQuery(im, input, schemaUrl, bagSource);
         }
     }
 
-    /**
-     * Build a path query using JSON string
-     *
-     * @param jsonQuery json string from which will be PathQuery constructed
-     * @param bagSource previously saved bags.
-     */
-    private void buildJSONQuery(InterMineAPI im, String jsonQuery,
+    private void buildJSONQuery(InterMineAPI im, String jsonQuery, String schemaUrl,
         Producer<Map<String, InterMineBag>> bagSource) {
         try {
+            LOG.info("Using the schemaUrl " + schemaUrl);
+            URL schemaLocation = new URL(schemaUrl);
+            Reader schemaReader = new InputStreamReader(schemaLocation.openStream());
+            String jsonSchema = IOUtils.toString(schemaReader);
+            ProcessingReport report = validateJsonData(jsonSchema, jsonQuery);
+            if (!report.isSuccess()) {
+                String message = String.format("JSON is not well formatted. Got %s.", report);
+                throw new BadRequestException(message);
+            }
             pathQuery = PathQueryBinding.unmarshalJSONPathQuery(im.getModel(), jsonQuery);
         } catch (Exception e) {
             String message = String.format("JSON is not well formatted. Got %s.", jsonQuery);
@@ -83,6 +98,16 @@ public class PathQueryBuilder
         }
         // check bags used by this query exist and are current
         checkBags(bagSource);
+    }
+
+    private ProcessingReport validateJsonData(String jsonSchema, String jsonQuery)
+        throws IOException, ProcessingException {
+        JsonNode queryNode = Utils.loadResource(jsonQuery);
+        JsonNode schemaNode = Utils.loadResource(jsonSchema);
+        JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+        JsonSchema schema = factory.getJsonSchema(schemaNode);
+        ProcessingReport report = schema.validate(queryNode);
+        return report;
     }
 
     private void checkBags(Producer<Map<String, InterMineBag>> bagSource) {

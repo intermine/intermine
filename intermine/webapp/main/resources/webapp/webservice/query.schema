@@ -21,17 +21,34 @@
         },
         "where": {
             "description": "Constraints for the query",
-            "type": "string",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "description": "operator, code, path and value for constraint"
+                }
+            },
             "uniqueItems": true
         },
         "joins": {
             "description": "List of paths that are outer joins.",
-            "type": "string",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
             "uniqueItems": true
         },
         "orderBy": {
             "description": "List of paths to sort the query results",
-            "type": "string",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "description": "path to sort by plus ASC or DESC"
+                }
+            },
             "uniqueItems": true
         }
     }
