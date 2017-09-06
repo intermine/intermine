@@ -1,4 +1,6 @@
 #!/bin/bash
+echo '#---> Installing ant requirements'
+sudo apt-get install ant-optional
 
 set -e
 
