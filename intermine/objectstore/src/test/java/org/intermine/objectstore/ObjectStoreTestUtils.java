@@ -169,8 +169,6 @@ public class ObjectStoreTestUtils {
     public static int deleteAllObjectsInClass(ObjectStoreWriter writer, Class clazz) throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(clazz);
-        // We are not simply calling writer.delete(qc, null) here because some classes in the test model have
-        // is-interface = "false", which generates model classes that do not inherit from InterMineObject
         q.addFrom(qc);
         q.addToSelect(qc);
         SingletonResults res = writer.getObjectStore().executeSingleton(q);

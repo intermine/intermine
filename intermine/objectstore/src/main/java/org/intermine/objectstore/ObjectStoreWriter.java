@@ -74,9 +74,8 @@ public interface ObjectStoreWriter extends ObjectStore
     /**
      * Deletes a set of objects from this ObjectStore.
      *
-     * @param qc a QueryClass for the class of objects to delete. The class given in the query class must inherit
-     *           from org.intermine.model.InterMineObject. Thus, classes whose model XML has is-interface = "false"
-     *           cannot be given.
+     * @param qc a QueryClass for the class of objects to delete. The class given in the query class must not inherit
+     *           from org.intermine.model.InterMineObject.
      * @param c a Constraint based on the QueryClass to filter the objects to delete, or null to
      * delete all objects
      * @throws ObjectStoreException if an error occurs while deleting the objects
