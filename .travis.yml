@@ -14,7 +14,7 @@ env:
   - TEST_SUITE=all
   - TEST_SUITE=webtasks
   - TEST_SUITE=checkstyle
-sudo: false
+sudo: true
 jdk:
 - openjdk7
 - openjdk6
