@@ -17,8 +17,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.loader.SchemaLoader;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
@@ -27,15 +28,8 @@ import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.server.core.Producer;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import java.io.IOException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
@@ -81,12 +75,10 @@ public class PathQueryBuilder
             LOG.info("Using the schemaUrl " + schemaUrl);
             URL schemaLocation = new URL(schemaUrl);
             Reader schemaReader = new InputStreamReader(schemaLocation.openStream());
-            String jsonSchema = IOUtils.toString(schemaReader);
-            ProcessingReport report = validateJsonData(jsonSchema, jsonQuery);
-            if (!report.isSuccess()) {
-                String message = String.format("JSON is not well formatted. Got %s.", report);
-                throw new BadRequestException(message);
-            }
+            JSONObject rawSchema = new JSONObject(new JSONTokener(schemaReader));
+            Schema schema = SchemaLoader.load(rawSchema);
+            // throws a ValidationException if this object is invalid
+            schema.validate(jsonQuery);
             pathQuery = PathQueryBinding.unmarshalJSONPathQuery(im.getModel(), jsonQuery);
         } catch (Exception e) {
             String message = String.format("JSON is not well formatted. Got %s.", jsonQuery);
@@ -99,22 +91,6 @@ public class PathQueryBuilder
         }
         // check bags used by this query exist and are current
         checkBags(bagSource);
-    }
-
-    private ProcessingReport validateJsonData(String jsonSchema, String jsonQuery)
-        throws IOException, ProcessingException {
-        JsonNode queryNode = loadJSONString(jsonQuery);
-        JsonNode schemaNode = loadJSONString(jsonSchema);
-        JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-        JsonSchema schema = factory.getJsonSchema(schemaNode);
-        ProcessingReport report = schema.validate(queryNode);
-        return report;
-    }
-
-    private JsonNode loadJSONString(String jsonString) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(jsonString);
-        return node;
     }
 
     private void checkBags(Producer<Map<String, InterMineBag>> bagSource) {

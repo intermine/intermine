@@ -35,12 +35,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/org.apache.oltu.oauth2.client-1.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.apache.oltu.oauth2.common-1.0.0.jar"/>
 	<classpathentry kind="src" path="/intermine-model-main"/>
-	<classpathentry kind="lib" path="lib/json-schema-validator-2.2.6.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-databind-2.9.0.jar"/>
-	<classpathentry kind="lib" path="lib/json-schema-core-1.2.5.jar"/>
-	<classpathentry kind="lib" path="lib/btf-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-annotations-2.8.9.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core-2.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-coreutils-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/org.everit.json.schema-1.5.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
