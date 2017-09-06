@@ -1,8 +1,5 @@
 package org.intermine.webservice.server.query.result;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -35,6 +32,8 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * PathQueryBuilder builds PathQuery object from xml and validates it.
@@ -80,7 +79,6 @@ public class PathQueryBuilder
             Reader schemaReader = new InputStreamReader(schemaLocation.openStream());
             JSONObject rawSchema = new JSONObject(new JSONTokener(schemaReader));
             Schema schema = SchemaLoader.load(rawSchema);
-            // throws a ValidationException if this object is invalid
             schema.validate(jsonQuery);
             pathQuery = PathQueryBinding.unmarshalJSONPathQuery(im.getModel(), jsonQuery);
         } catch (ValidationException e) {
