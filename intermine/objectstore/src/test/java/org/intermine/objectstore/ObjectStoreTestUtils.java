@@ -200,6 +200,7 @@ public class ObjectStoreTestUtils {
         // FIXME: This is a hack to avoid an Exception if we try and iterate through flatmode objects (even before
         // deletion).  This appears to be an InterMine bug that needs to be fixed, but in the meantime we simply
         // won't clean up these objects (which is not currently causing a problem.
+        // See https://gist.github.com/justinccdev/242bb0c4f35eb0b0a1601e0c8844e90c for the failure
         ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl)writer;
         if (osimi.getSchema().getMissingTables().contains("intermineobject")) {
             System.out.println("Skipping deletion of all objects in objectstore because intermineobject table is missing");
