@@ -27,6 +27,14 @@ import java.util.*;
  */
 public class ObjectStoreTestUtils {
 
+    /**
+     * Get InterMine Item objects from the given item XML without persitently storing them.
+     *
+     * @param modelName
+     * @param itemsXmlFilename
+     * @return
+     * @throws Exception
+     */
     public static Map getTestData(String modelName, String itemsXmlFilename) throws Exception {
         Model model = Model.getInstanceByName(modelName);
         Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, itemsXmlFilename);
