@@ -25,5 +25,4 @@ dependencies {
   testCompile project(':intermine-api').sourceSets.test.output //genomic_model.xml
   testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
   testCompile project(path: ':bio-testall', configuration: 'testBioArtifacts')
-  testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
 }

@@ -18,6 +18,24 @@ configurations {
     testBioArtifacts
 }
 
+void mergeSourceModels(model, extraModel) {
+    ant.taskdef(name: 'mergeSourceModelsTask', classname: 'org.intermine.task.MergeSourceModelsTask') {
+      classpath {
+        fileset(dir: '../../intermine/model/build/libs/', includes: '*.jar')
+        dirset(dir: '../../intermine/api/src/test/resources/')
+        dirset(dir: '../core/')
+        pathelement(path: configurations.testCompile.asPath)
+      }   
+    }   
+    ant.mergeSourceModelsTask(modelFile: model, extraModelPathsStart: extraModel, baseDir: '../..')
+}
+
+task mergeBioSourceModel {
+    doLast {
+        mergeSourceModels('genomic', 'bio/core/genomic_additions.xml')
+    }   
+}
+
 void generateModel(model, destination, type) {
     ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
       classpath {
@@ -26,8 +44,13 @@ void generateModel(model, destination, type) {
         pathelement(path: configurations.testCompile.asPath)
       }   
     }   
-
     ant.modelOutputTask(model: model, destDir: destination, type: type)
+}
+
+task generateBioModel {
+    doLast {
+        generateModel('genomic', 'src/test/java', 'java')
+    }   
 }
 
 task copyBioTestProperties(type: Copy) {
@@ -39,17 +62,12 @@ task copyBioTestProperties(type: Copy) {
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
-task generateBioModel {
-    doLast {
-        generateModel('genomic', 'src/test/java', 'java')
-    }   
-}
-
 task buildBioModelJar(type: Jar) {
     from(sourceSets.test.output)
 }
 
 tasks.compileTestJava.dependsOn 'generateBioModel'
+tasks.generateBioModel.dependsOn 'mergeBioSourceModel'
 tasks.buildBioModelJar.dependsOn 'copyBioTestProperties', 'testClasses'
 
 artifacts {
