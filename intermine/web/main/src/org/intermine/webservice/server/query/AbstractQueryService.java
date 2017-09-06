@@ -34,7 +34,7 @@ public abstract class AbstractQueryService extends WebService
 {
 
     private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
-    private static final String JSON_SCHEMA_LOCATION = "webservice/query.json";
+    private static final String JSON_SCHEMA_LOCATION = "webservice/query.schema";
 
     /**
      * Constructor.
@@ -48,7 +48,7 @@ public abstract class AbstractQueryService extends WebService
      * @param queryFormat JSON or XML
      * @return The XML Schema url.
      */
-    protected String getXMLSchemaUrl(String queryFormat) {
+    protected String getSchemaUrl(String queryFormat) {
         return AbstractQueryService.getSchemaLocation(request, queryFormat);
     }
 
@@ -86,9 +86,9 @@ public abstract class AbstractQueryService extends WebService
             queryFormat = "JSON";
         }
         if (formatIsJsonObj()) {
-            return new PathQueryBuilderForJSONObj(input, getXMLSchemaUrl(queryFormat), listManager);
+            return new PathQueryBuilderForJSONObj(input, getSchemaUrl(queryFormat), listManager);
         } else {
-            return new PathQueryBuilder(im, input, getXMLSchemaUrl(queryFormat), listManager);
+            return new PathQueryBuilder(im, input, getSchemaUrl(queryFormat), listManager);
         }
     }
 
