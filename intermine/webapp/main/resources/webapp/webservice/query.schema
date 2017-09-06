@@ -3,12 +3,14 @@
     "title": "Query",
     "description": "A representation of a path query.",
     "type": "object",
-    "required": ["model", "select"],
     "properties": {
         "model": {
             "description": "Name of data model",
-            "type": "string",
-            "required": true
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"}
+            },
+            "required": ["name"]
         },
         "select": {
             "description": "The view list for the query",
@@ -16,7 +18,7 @@
             "items": {
                 "type": "string"
             },
-            "required": true,
+            "minItems": 1,
             "uniqueItems": true
         },
         "where": {
@@ -25,9 +27,16 @@
             "items": {
                 "type": "object",
                 "additionalProperties": {
-                    "type": "object",
-                    "description": "operator, code, path and value for constraint"
-                }
+                    "path": "string",
+                    "op": "string",
+                    "code": "string",
+                    "value": "string",
+                    "values": "array",
+                    "ids": "array",
+                    "loopPath": "string",
+                    "type": "string"
+                },
+                "required": ["path"]
             },
             "uniqueItems": true
         },
@@ -51,6 +60,7 @@
             },
             "uniqueItems": true
         }
-    }
+    },
+    "required": ["model"]
 }
 
