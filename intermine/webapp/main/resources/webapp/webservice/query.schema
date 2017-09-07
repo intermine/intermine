@@ -52,11 +52,7 @@
             "description": "List of paths to sort the query results",
             "type": "array",
             "items": {
-                "type": "object",
-                "additionalProperties": {
-                    "type": "object",
-                    "description": "path to sort by plus ASC or DESC"
-                }
+                "type": "object"
             },
             "uniqueItems": true
         }

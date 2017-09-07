@@ -79,7 +79,7 @@ public class PathQueryBuilder
             Reader schemaReader = new InputStreamReader(schemaLocation.openStream());
             JSONObject rawSchema = new JSONObject(new JSONTokener(schemaReader));
             Schema schema = SchemaLoader.load(rawSchema);
-            schema.validate(jsonQuery);
+            schema.validate(new JSONObject(jsonQuery));
             pathQuery = PathQueryBinding.unmarshalJSONPathQuery(im.getModel(), jsonQuery);
         } catch (ValidationException e) {
             StringBuilder errorMessage = new StringBuilder();
