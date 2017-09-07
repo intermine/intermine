@@ -581,7 +581,7 @@ public class SequenceOntology
     }
 
     private static void removeReference(Map<String, Set<String>> relationshipMap, String child,
-    String collection) {
+        String collection) {
         Set<String> childRefs = relationshipMap.get(collection);
         if (childRefs != null) {
             childRefs.remove(child);
