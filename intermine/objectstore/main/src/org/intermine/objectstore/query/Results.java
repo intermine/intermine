@@ -439,9 +439,4 @@ public class Results extends AbstractList<Object> implements LazyCollection<Obje
         // Stringification must not hit the DB.
         return "[Results " + hashCode + "]";
     }
-
-    @Override
-    public Spliterator<Object> spliterator() {
-        return super.spliterator();
-    }
 }

@@ -69,9 +69,4 @@ public class SingletonResults extends Results implements Set<Object>
         }
         return rows;
     }
-
-    @Override
-    public Spliterator<Object> spliterator() {
-        return super.spliterator();
-    }
 }
