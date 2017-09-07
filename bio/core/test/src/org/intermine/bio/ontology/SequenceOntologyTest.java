@@ -51,7 +51,8 @@ public class SequenceOntologyTest extends XMLTestCase
         Model model = so.getModel();
         String targetXML = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("so-target-default.xml"));
 
-        // This is failing and I don't know why
+        // the failure looks like some XML reordering issue that doesn't appear to be an actual
+        // failure, so disabling test for now
         // FIXME
         // assertXMLEqual(targetXML, model.toString());
         assertNotNull(targetXML);
