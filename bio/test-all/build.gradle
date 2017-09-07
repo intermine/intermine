@@ -18,32 +18,25 @@ configurations {
     testBioArtifacts
 }
 
-void mergeSourceModels(model, extraModel) {
-    ant.taskdef(name: 'mergeSourceModelsTask', classname: 'org.intermine.task.MergeSourceModelsTask') {
+void generateModel(model, destination, type) {
+    //retrieve model form database
+    ant.taskdef(name: 'retrieveModelTask', classname: 'org.intermine.task.RetrieveMetadataTask') {
       classpath {
-        fileset(dir: '../../intermine/model/build/libs/', includes: '*.jar')
-        dirset(dir: '../../intermine/api/src/test/resources/')
-        dirset(dir: '../core/')
+        dirset(dir: 'src/test/resources/') //to be able to load default.itermine.properties
+        dirset(dir: 'build/resources/test/')
         pathelement(path: configurations.testCompile.asPath)
       }   
-    }   
-    ant.mergeSourceModelsTask(modelFile: model, extraModelPathsStart: extraModel, baseDir: '../..')
-}
+    }
+    ant.retrieveModelTask(osName: 'os.bio-test', destDir: 'build/resources/test/')
 
-task mergeBioSourceModel {
-    doLast {
-        mergeSourceModels('genomic', 'bio/core/genomic_additions.xml')
-    }   
-}
-
-void generateModel(model, destination, type) {
+    //generate the java classes
     ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
       classpath {
-        fileset(dir: '../../intermine/model/build/libs/', includes: '*.jar')
-        dirset(dir: '../../intermine/api/src/test/resources/')
+        dirset(dir: 'src/test/resources/')
+        dirset(dir: 'build/resources/test/')
         pathelement(path: configurations.testCompile.asPath)
       }   
-    }   
+    }    
     ant.modelOutputTask(model: model, destDir: destination, type: type)
 }
 
@@ -67,7 +60,6 @@ task buildBioModelJar(type: Jar) {
 }
 
 tasks.compileTestJava.dependsOn 'generateBioModel'
-tasks.generateBioModel.dependsOn 'mergeBioSourceModel'
 tasks.buildBioModelJar.dependsOn 'copyBioTestProperties', 'testClasses'
 
 artifacts {
