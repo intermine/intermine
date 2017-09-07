@@ -25,7 +25,7 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class SingletonResults extends Results implements List<Object>
+public class SingletonResults extends Results implements Set<Object>
 {
     /**
      * Constructor for a SingletonResults object
