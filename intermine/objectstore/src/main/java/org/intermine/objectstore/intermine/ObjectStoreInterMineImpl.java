@@ -807,6 +807,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     retval = null;
                 }
             }
+
             if (retval == null) {
                 String batchesKey = q.toString();
                 synchronized (batchesCache) {
@@ -815,6 +816,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         batches = new CacheMap<Integer, ResultsBatches>();
                         batchesCache.put(batchesKey, batches);
                     }
+
                     ResultsBatches batch = getResultsBatches(batches, batchSize);
                     if (batch != null) {
                         retval = new SingletonResults(batch, optimise, explain, prefetch);
@@ -822,12 +824,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         retval = super.executeSingleton(q, batchSize, optimise, explain, prefetch);
                         batches.put(new Integer(batchSize), retval.getResultsBatches());
                     }
+
                     singletonResultsCache.put(cacheKey, retval);
                 }
                 //LOG.error("Results cache miss for " + q);
             //} else {
                 //LOG.error("Results cache hit for " + q);
             }
+
             return retval;
         }
     }
