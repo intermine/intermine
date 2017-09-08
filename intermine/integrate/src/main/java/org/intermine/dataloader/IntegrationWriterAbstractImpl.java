@@ -385,16 +385,18 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @throws ObjectStoreException if an attempt is made to change an existing mapping
      */
     public void assignMapping(Integer source, Integer dest) throws ObjectStoreException {
-        if ((source != null) && (dest != null)) {
+        if (source != null && dest != null) {
             Integer existingValue = idMap.get(source);
-            if ((existingValue != null) && (!existingValue.equals(dest))) {
+            if (existingValue != null && !existingValue.equals(dest)) {
                 throw new ObjectStoreException("Error: Attempt to put " + source + " -> "
                         + dest + " into ID Map, but " + source + " -> " + existingValue
                         + "exists already");
             }
+
             idMap.put(source, dest);
             dbIdsStored.add(dest);
             idMapOps++;
+
             if (idMapOps % 100000 == 0) {
                 LOG.info("idMap size = " + idMap.size() + ", ops = " + idMapOps);
             }
