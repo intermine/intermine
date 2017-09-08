@@ -57,7 +57,11 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected static final int SKELETON = 0;
     protected static final int FROM_DB = 1;
     protected static final int SOURCE = 2;
+
+    // Maps the IDs of loaded Items onto the final canonical InterMineObject, which may be the result of merging many
+    // loaded items
     protected IntToIntMap idMap = new IntToIntMap();
+
     protected IntPresentSet dbIdsStored = new IntPresentSet();
     protected int idMapOps = 0;
     protected boolean ignoreDuplicates = false;
