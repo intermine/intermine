@@ -259,13 +259,16 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             long time2 = System.currentTimeMillis();
             timeSpentEquiv += time2 - time1;
 
-            if ((type != FROM_DB) && ((equivObjects.size() == 0) || ((equivObjects.size() == 1)
-                    && (o.getId() != null) && (pureObjects.contains(o.getId()))
-                    && (type == SOURCE)))) {
+            if (type != FROM_DB
+                && (equivObjects.size() == 0
+                    || (equivObjects.size() == 1
+                        && o.getId() != null
+                        && pureObjects.contains(o.getId())
+                        && type == SOURCE))) {
                 return shortcut(o, equivObjects, type, time2, source, skelSource);
             }
 
-            if ((equivObjects.size() == 1) && (type == SKELETON)) {
+            if (equivObjects.size() == 1 && type == SKELETON) {
                 InterMineObject onlyEquivalent = equivObjects.iterator().next();
                 assignMapping(o.getId(), onlyEquivalent.getId());
                 return onlyEquivalent;
