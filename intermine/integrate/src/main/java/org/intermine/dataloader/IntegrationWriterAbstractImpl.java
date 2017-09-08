@@ -162,7 +162,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         + (idMap.size() < 100 ? ", idMap = " : ""));
             }
 
-            if ((obj.getId() == null) || ignoreDuplicates) {
+            if (obj.getId() == null || ignoreDuplicates) {
                 return beof.queryEquivalentObjects(obj, source);
             } else {
                 return eof.queryEquivalentObjects(obj, source);
