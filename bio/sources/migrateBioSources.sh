@@ -3,6 +3,7 @@ for dir in `ls -d */`
 do
 prj="${dir%%/}"
 
+cd $prj
   if [ -d main ]
     then
     echo "Converting $prj project to gradle"
@@ -14,9 +15,10 @@ prj="${dir%%/}"
     cd src/main
     git mv src java
     echo "Done!"
+    cd ../..
   fi
 
-  cd ../..
+  
   if [ -d test ]
   then
     echo "Moving test dir under src ..."
