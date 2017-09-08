@@ -49,7 +49,6 @@ import org.intermine.util.IntToIntMap;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-
 public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
     private static final Logger LOG = Logger.getLogger(IntegrationWriterAbstractImpl.class);
@@ -144,10 +143,12 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if (obj == null) {
             throw new NullPointerException("obj should not be null");
         }
+
         Integer destId = null;
         if (obj.getId() != null) {
             destId = idMap.get(obj.getId());
         }
+
         if (destId == null) {
             // query database by primary key for equivalent objects
             if (obj instanceof ProxyReference) {
@@ -156,6 +157,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         + " Source object ID: " + obj.toString()
                         + (idMap.size() < 100 ? ", idMap = " : ""));
             }
+
             if ((obj.getId() == null) || ignoreDuplicates) {
                 return beof.queryEquivalentObjects(obj, source);
             } else {
@@ -176,16 +178,17 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if (o == null) {
             throw new NullPointerException("Object o should not be null");
         }
+
         long time = (new Date()).getTime();
         store(o, source, skelSource, SOURCE);
         long now = (new Date()).getTime();
+
         if (now - time > 20000) {
             LOG.info("Stored object " + o.getClass().getName() + (o instanceof InterMineObject
                         ? ":" + ((InterMineObject) o).getId() : "") + " - took " + (now - time)
                     + " ms");
         }
     }
-
 
     /**
      * Stores the given object in the objectstore. This method recurses into the object's fields
@@ -397,12 +400,6 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             }
         }
     }
-
-
-
-
-
-
 
     /* The following methods are implementing the ObjectStoreWriter interface */
 
