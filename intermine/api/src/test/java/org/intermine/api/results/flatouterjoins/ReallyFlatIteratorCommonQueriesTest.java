@@ -24,7 +24,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
-public class ReallyFlatIteratorCommonQueriesTest extends ObjectStoreQueryTests
+public class ReallyFlatIteratorCommonQueriesTest extends ObjectStoreQueryTestCase
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {

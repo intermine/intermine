@@ -12,6 +12,7 @@ package org.intermine.objectstore;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.ResultsRow;
@@ -27,6 +28,14 @@ import java.util.*;
  */
 public class ObjectStoreTestUtils {
 
+    /**
+     * Get InterMine Item objects from the given item XML without persitently storing them.
+     *
+     * @param modelName
+     * @param itemsXmlFilename
+     * @return
+     * @throws Exception
+     */
     public static Map getTestData(String modelName, String itemsXmlFilename) throws Exception {
         Model model = Model.getInstanceByName(modelName);
         Collection items = ObjectStoreTestUtils.loadItemsFromXml(model, itemsXmlFilename);
@@ -174,18 +183,28 @@ public class ObjectStoreTestUtils {
     }
 
     /**
-     * Delete all objects int he given objectstore
+     * Delete all objects in the given objectstore
      *
      * @param writer
      * @throws Exception
      */
     public static void deleteAllObjectsInStore(ObjectStoreWriter writer) throws Exception {
         System.out.println("Removing data from store");
-
         long start = new Date().getTime();
         if (writer == null) {
             throw new NullPointerException("writer must be set before trying to remove data");
         }
+
+        // FIXME: This is a hack to avoid an Exception if we try and iterate through flatmode objects (even before
+        // deletion).  This appears to be an InterMine bug that needs to be fixed, but in the meantime we simply
+        // won't clean up these objects (which is not currently causing a problem.
+        // See https://gist.github.com/justinccdev/242bb0c4f35eb0b0a1601e0c8844e90c for the failure
+        ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl)writer;
+        if (osimi.getSchema().getMissingTables().contains("intermineobject")) {
+            System.out.println("Skipping deletion of all objects in objectstore because intermineobject table is missing");
+            return;
+        }
+
         try {
             writer.beginTransaction();
             Query q = new Query();

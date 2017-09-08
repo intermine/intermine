@@ -10,14 +10,52 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import org.intermine.model.InterMineObject;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Bank;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.SimpleObject;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.QueryClass;
 import org.junit.*;
 
-public class ObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTests
+public class ObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCase
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
         oneTimeSetUp(ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest"));
+    }
+
+    @Test
+    public void testDeleteNonInterMineObjectByQueryClass() throws Exception {
+        // SimpleObject is just a FastPathObject, not an InterMineObject
+        SimpleObject itemA = new SimpleObject();
+        itemA.setName("simpleobject A");
+
+        writer.store(itemA);
+
+        QueryClass qc = new QueryClass(SimpleObject.class);
+        writer.delete(qc, null);
+    }
+
+    @Test
+    public void testDeleteInterMineObjectByQueryClass() throws Exception {
+        Address addressA = new Address();
+        addressA.setAddress("Address A");
+
+        writer.store(addressA);
+
+        boolean gotException = false;
+
+        try {
+            QueryClass addressQc = new QueryClass(Address.class);
+            writer.delete(addressQc, null);
+        } catch (ObjectStoreException e) {
+            gotException = true;
+        }
+
+        Assert.assertTrue(gotException);
     }
 
     @Test

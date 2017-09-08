@@ -21,12 +21,11 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.*;
 import org.intermine.util.DynamicUtil;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTests
+public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCase
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {

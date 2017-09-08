@@ -10,22 +10,10 @@ package org.intermine.objectstore;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.util.*;
 
-import junit.framework.AssertionFailedError;
-
-import org.intermine.SummaryAssertionFailedError;
-import org.intermine.SummaryException;
-import org.intermine.metadata.ConstraintOp;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.*;
-import org.intermine.util.DynamicUtil;
 import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * TestCase for testing InterMine Queries
@@ -34,7 +22,7 @@ import org.junit.Test;
  * override executeTest to run query and assert that the result is what is expected
  */
 
-public abstract class ObjectStoreImplQueryTests extends ObjectStoreQueryTests {
+public abstract class ObjectStoreImplQueryTestCase extends ObjectStoreQueryTestCase {
 
     /**
      * Execute a test for a query. This should run the query and

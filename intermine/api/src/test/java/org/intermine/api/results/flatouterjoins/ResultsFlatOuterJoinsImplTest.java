@@ -20,17 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Test;
-
 import org.intermine.objectstore.*;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
-public class ResultsFlatOuterJoinsImplTest extends ObjectStoreQueryTests
+public class ResultsFlatOuterJoinsImplTest extends ObjectStoreQueryTestCase
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {

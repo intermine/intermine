@@ -31,13 +31,13 @@ import java.util.*;
  * We test this way instead of putting these in the ancestor class of an infrastucture for clarity of
  * test code.
  */
-public class ObjectStoreInterMineImplCommonTests extends ObjectStoreAbstractImplTests {
+public class ObjectStoreInterMineImplTestCase extends ObjectStoreAbstractImplTestCase {
     protected static ObjectStoreInterMineImpl os;
 
     public static void oneTimeSetUp(
             String osName, String osWriterName, String modelName, String itemsXmlFilename) throws Exception {
         os = (ObjectStoreInterMineImpl)ObjectStoreFactory.getObjectStore(osName);
-        ObjectStoreAbstractImplTests.oneTimeSetUp(os, osWriterName, modelName, itemsXmlFilename);
+        ObjectStoreAbstractImplTestCase.oneTimeSetUp(os, osWriterName, modelName, itemsXmlFilename);
     }
 
     @Test

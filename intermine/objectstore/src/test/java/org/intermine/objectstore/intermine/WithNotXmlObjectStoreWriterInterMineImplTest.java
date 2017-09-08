@@ -13,7 +13,7 @@ package org.intermine.objectstore.intermine;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.junit.*;
 
-public class WithNotXmlObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTests
+public class WithNotXmlObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCase
 {
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {

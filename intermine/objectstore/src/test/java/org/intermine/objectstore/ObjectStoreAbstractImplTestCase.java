@@ -14,15 +14,15 @@ import org.intermine.objectstore.query.Query;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ObjectStoreAbstractImplTests extends ObjectStoreCommonTests {
+public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase {
 
     private static ObjectStoreAbstractImpl osForOsaiTests;
 
     public static void oneTimeSetUp(
             ObjectStoreAbstractImpl osForOsaiTests, String osWriterName, String modelName, String itemsXmlFilename)
             throws Exception {
-        ObjectStoreAbstractImplTests.osForOsaiTests = osForOsaiTests;
-        ObjectStoreCommonTests.oneTimeSetUp(osForOsaiTests, osWriterName, modelName, itemsXmlFilename);
+        ObjectStoreAbstractImplTestCase.osForOsaiTests = osForOsaiTests;
+        ObjectStoreTestCase.oneTimeSetUp(osForOsaiTests, osWriterName, modelName, itemsXmlFilename);
     }
 
     @Test
