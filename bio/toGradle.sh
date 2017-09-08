@@ -11,11 +11,18 @@ echo "Done!"
 
 cd src/main
 git mv src java
+rm .project
+rm .classpath
+rm .checkstyle
+
 cd ../test
 git mv src java
+rm .project
+rm .classpath
+rm .checkstyle
 echo "Renamed main/src into main/java and test/src into test/java"
 
-cd ..
+cd ../..
 cp ../skeleton-build.gradle build.gradle
 echo "Created a build.gradle skeleton"  
 
