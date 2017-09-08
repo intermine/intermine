@@ -1,7 +1,10 @@
-#!/bin/bash
+#!/bin/sh
+for dir in `ls -d */`
+do
+prj="${dir%%/}"
 
-echo "Converting $1 project to gradle"
-cd $1
+echo "Converting $prj project to gradle"
+cd $prj
 echo "Creating src dir"
 mkdir -p src
 echo "Moving main and test dirs under src ..."
@@ -23,7 +26,8 @@ rm .checkstyle
 echo "Renamed main/src into main/java and test/src into test/java"
 
 cd ../..
-cp ../skeleton-build.gradle build.gradle
-echo "Created a build.gradle skeleton"  
+cp ../../skeleton-build.gradle build.gradle
+echo "Created a build.gradle skeleton"
+cd ..  
 
- 
+done
