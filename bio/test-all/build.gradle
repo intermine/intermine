@@ -19,15 +19,31 @@ configurations {
 }
 
 void generateModel(model, destination, type) {
-    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
+    //retrieve model form database
+    ant.taskdef(name: 'retrieveModelTask', classname: 'org.intermine.task.RetrieveMetadataTask') {
       classpath {
-        fileset(dir: '../../intermine/model/build/libs/', includes: '*.jar')
-        dirset(dir: '../../intermine/api/src/test/resources/')
+        dirset(dir: 'src/test/resources/') //to be able to load default.itermine.properties
+        dirset(dir: 'build/resources/test/')
         pathelement(path: configurations.testCompile.asPath)
       }   
-    }   
+    }
+    ant.retrieveModelTask(osName: 'os.bio-test', destDir: 'build/resources/test/')
 
+    //generate the java classes
+    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
+      classpath {
+        dirset(dir: 'src/test/resources/')
+        dirset(dir: 'build/resources/test/')
+        pathelement(path: configurations.testCompile.asPath)
+      }   
+    }    
     ant.modelOutputTask(model: model, destDir: destination, type: type)
+}
+
+task generateBioModel {
+    doLast {
+        generateModel('genomic', 'src/test/java', 'java')
+    }   
 }
 
 task copyBioTestProperties(type: Copy) {
@@ -37,12 +53,6 @@ task copyBioTestProperties(type: Copy) {
     rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
 
     inputs.sourceFiles.stopExecutionIfEmpty()
-}
-
-task generateBioModel {
-    doLast {
-        generateModel('genomic', 'src/test/java', 'java')
-    }   
 }
 
 task buildBioModelJar(type: Jar) {
