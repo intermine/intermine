@@ -201,6 +201,7 @@ public class QueryToListService extends AbstractQueryService
     /**
      * Sets the header attributes map on the current output object.
      * @param name The name of the list.
+     * @param id intermine id for list
      */
     protected void setHeaderAttributes(String name, Integer id) {
         Map<String, Object> attributes = new HashMap<String, Object>();
