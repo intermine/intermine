@@ -7,7 +7,7 @@
 # TODO: not process XML files already processed
 
 #set the version to be accessed
-wbrel="WS260"
+wbrel="WS261"
 echo 'Release version' $wbrel
 
 
@@ -38,7 +38,8 @@ declare -A species=(["c_elegans"]="PRJNA13758")
 echo 'Deploying ' $species
 echo
 #sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
-sourcedir='/Users/nuin/AeroFS/intermine/'$wbrel'/'$wbrel'-test-data'
+sourcedir='/mnt/data2/acedb_dumps/'$wbrel'/'$wbrel'-test-data'
+# /mnt/data2/acedb_dumps/WS261/WS261-test-data
 echo 'Source directory is at' $sourcedir
 echo
 #################### Main dirs ##################
@@ -48,8 +49,8 @@ echo
 #  pp - pre-processing dir with perl and bash   #
 #                                               #
 #################### Species ####################
-# intermine='/mnt/data2/intermine'
-intermine='/Users/nuin/AeroFS/intermine/intermineTEST' #local test
+intermine='/mnt/data2/intermine'
+#intermine='/Users/nuin/AeroFS/intermine/intermineTEST' #local test
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
@@ -278,11 +279,11 @@ perl $testlab'/perl/preprocess/wb-acedb/strain/prep_strain.pl' $datadir'/wormbas
 echo
 
 # panther
-# echo 'panther'
-# mkdir -p $datadir/panther
-# wget -O $datadir'/panther/RefGenomeOrthologs.tar.gz' ftp://ftp.pantherdb.org/ortholog/current_release/RefGenomeOrthologs.tar.gz
-# tar xzvf $datadir'/panther/RefGenomeOrthologs.tar.gz' -C $datadir'/panther'
-# rm -v $datadir'/panther/RefGenomeOrthologs.tar.gz'
+echo 'panther'
+mkdir -p $datadir/panther
+wget -O $datadir'/panther/RefGenomeOrthologs.tar.gz' ftp://ftp.pantherdb.org/ortholog/current_release/RefGenomeOrthologs.tar.gz
+tar xzvf $datadir'/panther/RefGenomeOrthologs.tar.gz' -C $datadir'/panther'
+rm -v $datadir'/panther/RefGenomeOrthologs.tar.gz'
 
 echo
 echo 'Success: deployment and pre-processing complete'
