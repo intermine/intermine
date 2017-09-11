@@ -54,6 +54,8 @@ public class ListAppendService extends ListUploadService
 
         setListSize(bag.size());
 
+        addOutputInfo("listId", bag.getSavedBagId().toString());
+
         for (Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
             List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
             if (i.hasNext()) {
