@@ -109,6 +109,14 @@ public class ListUploadService extends ListMakerService
     }
 
     /**
+     * Sets the id of the list on the header attributes.
+     * @param id The id of the newly created list.
+     */
+    protected void setListId(final Integer id) {
+        addOutputInfo(LIST_ID_KEY, id + "");
+    }
+
+    /**
      * Get the String Matcher for parsing the list of identifiers.
      * @return The matcher to use.
      */

@@ -213,7 +213,7 @@ public class QueryToListService extends AbstractQueryService
         }
         Map<String, String> kvPairs = new HashMap<String, String>();
         kvPairs.put("listName", name);
-        kvPairs.put("listId", Integer.toString(id));
+//        kvPairs.put("listId", Integer.toString(id));
         attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
         output.setHeaderAttributes(attributes);
     }

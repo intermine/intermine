@@ -84,7 +84,7 @@ public abstract class ListOperationService extends ListMakerService
                 input.getDescription(),
                 im.getClassKeys());
         }
-        addOutputInfo("listId", newBag.getSavedBagId().toString());
+        addOutputInfo(LIST_ID_KEY, newBag.getSavedBagId().toString());
 
         if (input.getDescription() != null) {
             newBag.setDescription(input.getDescription());
