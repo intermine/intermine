@@ -170,6 +170,7 @@ public class ListUploadService extends ListMakerService
         processIdentifiers(type, input, ids, unmatchedIds, tempBag);
 
         setListSize(tempBag.size());
+        setListId(tempBag.getSavedBagId());
 
         for (final Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
             final List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
