@@ -60,7 +60,6 @@ public class ObjectStoreDataLoader extends DataLoader
         process(os, source, skelSource, InterMineObject.class);
     }
 
-
     /**
      * Loads only a specified class reading data from the given ObjectStore, which must use the
      * same model as the destination IntegrationWriter.  If the class is InterMineObject then
@@ -80,6 +79,7 @@ public class ObjectStoreDataLoader extends DataLoader
             if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
                 ((ObjectStoreFastCollectionsForTranslatorImpl) os).setSource(source);
             }
+
             if (getIntegrationWriter() instanceof IntegrationWriterDataTrackingImpl) {
                 Properties props = PropertiesUtil.getPropertiesStartingWith(
                         "equivalentObjectFetcher");
@@ -107,13 +107,16 @@ public class ObjectStoreDataLoader extends DataLoader
                     os = eof.getNoseyObjectStore(os);
                 }
             }
+
             Properties props = PropertiesUtil.getPropertiesStartingWith("dataLoader");
             boolean allowMultipleErrors = "true".equals(props.getProperty(
                             "dataLoader.allowMultipleErrors"));
+
             long[] times = new long[20];
             for (int i = 0; i < 20; i++) {
                 times[i] = -1;
             }
+
             Query q = new Query();
             QueryClass qc = new QueryClass(queryClass);
             q.addFrom(qc);
@@ -132,6 +135,7 @@ public class ObjectStoreDataLoader extends DataLoader
             long time1, time2, time3;
             @SuppressWarnings({ "unchecked", "rawtypes" })
             Collection<FastPathObject> tmpRes = (Collection) res;
+
             for (FastPathObject obj : tmpRes) {
                 time1 = System.currentTimeMillis();
                 timeSpentLoop += time1 - time4;
@@ -169,9 +173,11 @@ public class ObjectStoreDataLoader extends DataLoader
                                     + " because\n") + e.getMessage(), e);
                     }
                 }
+
                 time3 = System.currentTimeMillis();
                 timeSpentWrite += time3 - time2;
                 opCount++;
+
                 if (opCount % 10000 == 0) {
                     long now = System.currentTimeMillis();
                     if (times[(int) ((opCount / 10000) % 20)] == -1) {
@@ -188,15 +194,19 @@ public class ObjectStoreDataLoader extends DataLoader
                                 + ") objects per minute -- now on "
                                 + Util.getFriendlyName(obj.getClass()));
                     }
+
                     time = now;
                     times[(int) ((opCount / 10000) % 20)] = now;
+
                     if (opCount % 500000 == 0) {
                         getIntegrationWriter().batchCommitTransaction();
                     }
                 }
+
                 time4 = System.currentTimeMillis();
                 timeSpentCommit += time4 - time3;
             }
+
             time3 = System.currentTimeMillis();
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().close();
