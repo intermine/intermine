@@ -3,7 +3,7 @@
   xmlns:tests="http://www.intermine.org/ns/im-tests-proj/1">
 
   <dirname property="tests.xml.basedir" file="${ant.file.tests}"/>
-  
+
   <import file="${tests.xml.basedir}/library.xml"/>
   <import file="${tests.xml.basedir}/task.xml"/>
 
@@ -11,7 +11,7 @@
     <property name="test.excludes" value=""/>
   </target>
 
-  
+
   <target name="-pre-init" depends="library.-pre-init">
     <!-- emma properties -->
     <property name="emma.enabled" value="false"/>
@@ -33,9 +33,9 @@
     </condition>
     <property environment="ENV"/>
   </target>
-  
+
   <!-- RUN TESTS -->
-  
+
   <target name="init-test" depends="init, -init-deps">
     <mkdir dir="${test.results.dir}"/>
     <mkdir dir="${build.test.resources.dir}"/>
@@ -44,7 +44,7 @@
       <and><equals arg1="${emma.enabled}" arg2="true" casesensitive="false"/></and>
     </condition>
   </target>
-  
+
   <target name="-init-emma" depends="init">
     <property name="emma.lib.path" value="${tests.xml.basedir}/lib/emma.jar:${tests.xml.basedir}/lib/emma_ant.jar"/>
     <mkdir dir="${build.instrumented.dir}"/>
@@ -52,11 +52,11 @@
     <mkdir dir="${build.coverage.results.dir}"/>
     <taskdef resource="emma_ant.properties" classpath="${emma.lib.path}"/>
   </target>
-  
+
   <target name="-pre-test"/>
-  
+
   <target name="-post-test"/>
-  
+
   <target name="instrument" depends="-init-emma">
     <emma enabled="${emma.enabled}">
       <instr instrpath="${instrument.path}"
@@ -65,11 +65,11 @@
         merge="true"/>
     </emma>
   </target>
-  
+
   <target name="do-test" depends="-init-macrodef-junit">
     <tests:junit/>
   </target>
-  
+
   <target name="test-report" depends="init" if="gen.report">
     <junitreport todir="${test.results.dir}">
       <fileset dir="${test.results.dir}">
@@ -78,7 +78,7 @@
       <report format="frames" todir="${test.results.dir}"/>
     </junitreport>
   </target>
-  
+
   <target name="coverage-report" depends="-init-emma" if="produce.emma.report">
     <emma enabled="${emma.enabled}">
       <report sourcepath="${instrument.src.path}">
@@ -92,12 +92,12 @@
   <target name="live-test" depends=" -init-live-test, -init-properties, init-test, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
 
   <target name="test" depends="-init-properties, init-test, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
-  
+
   <target name="test-all" depends="init, -init-deps, jar">
     <dependencies basedir="${tests.xml.basedir}/.." target="default"/>
     <runtarget target="test"/>
   </target>
-  
+
   <target name="default" depends="test"/>
 
   <!-- RUN LIVE TESTS -->
@@ -106,9 +106,9 @@
       <fail message="You must run this target with -Dtest=TestName"/>
   </target>
 
-  <target name="onetest" description="Runs the test you specify on the command 
+  <target name="onetest" description="Runs the test you specify on the command
       line with -Dtest=" depends="ensure-test-name, -init-properties, init-test, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test, ensure-test-name">
-      <junit printsummary="withOutAndErr" fork="yes"> 
+      <junit printsummary="withOutAndErr" fork="yes">
           <classpath refid="classpath" />
           <formatter type="plain" usefile="false"/>
           <batchtest>
@@ -118,15 +118,15 @@
           </batchtest>
       </junit>
   </target>
-  
+
   <!-- CLEAN -->
-  
+
   <target name="clean-results" depends="init">
     <delete dir="${test.results.dir}"/>
   </target>
-  
+
   <!-- MACRO DEFINITIONS -->
-  
+
   <target name="-init-macrodef-junit">
     <echoproperties/>
     <macrodef name="junit" uri="http://www.intermine.org/ns/im-tests-proj/1">
@@ -136,14 +136,14 @@
     <attribute name="forkmode" default="${test.forkmode}"/>
     <element name="customize" optional="true"/>
     <sequential>
-	    <!--
+      <!--
       <echo>ANT_OPTS = ${ENV.ANT_OPTS}</echo>
       <echo>fork = @{fork}</echo>
-    	-->
+      -->
       <junit showoutput="false" reloading="false" printsummary="on"
              failureproperty="tests.failed" errorproperty="tests.failed"
              fork="@{fork}" forkmode="@{forkmode}">
-        <jvmarg line="${ENV.ANT_OPTS}"/>
+        <jvmarg line="${ENV.ANT_OPTS} -noverify" />
         <customize/>
         <formatter type="xml"/>
         <batchtest todir="${test.results.dir}" fork="@{fork}">
@@ -173,5 +173,5 @@
     </sequential>
     </macrodef>
   </target>
-  
+
 </project>
