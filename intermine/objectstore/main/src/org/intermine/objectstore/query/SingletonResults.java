@@ -12,7 +12,6 @@ package org.intermine.objectstore.query;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Spliterator;
 import java.util.Collection;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -68,11 +67,4 @@ public class SingletonResults extends Results implements Collection<Object>
         }
         return rows;
     }
-
-    @Override
-    public Spliterator<Object> spliterator() {
-        return super.spliterator();
-    }
-
-
 }
