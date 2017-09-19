@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <model name="genomic" package="org.intermine.model.bio">
 
+ <class name="Annotatable" is-interface="true"> 
+  <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/> 
+ </class> 
+
   <class name="Author" is-interface="true">
     <attribute name="firstName" type="java.lang.String"/>
     <attribute name="lastName" type="java.lang.String"/>
@@ -9,7 +13,7 @@
     <collection name="publications" referenced-type="Publication" reverse-reference="authors"/>
   </class>
 
-  <class name="BioEntity" is-interface="true">
+  <class name="BioEntity" is-interface="true" extends="Annotatable">
     <attribute name="primaryIdentifier" type="java.lang.String"/>
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
     <attribute name="symbol" type="java.lang.String"/>
@@ -105,9 +109,9 @@
 
   <class name="OntologyAnnotation" is-interface="true">
     <attribute name="qualifier" type="java.lang.String"/>
-    <reference name="subject" referenced-type="BioEntity" reverse-reference="ontologyAnnotations"/>
-    <collection name="dataSets" referenced-type="DataSet" />
+    <reference name="subject" referenced-type="Annotatable" reverse-reference="ontologyAnnotations"/>
     <reference name="ontologyTerm" referenced-type="OntologyTerm" reverse-reference="ontologyAnnotations"/>
+    <collection name="dataSets" referenced-type="DataSet" />    
   </class>
 
   <class name="OntologyTermSynonym" is-interface="true">
@@ -180,4 +184,12 @@
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
+  <class name="SyntenyBlock" is-interface="true">    
+    <collection name="syntenicRegions" referenced-type="SyntenicRegion" reverse-reference="syntenyBlock" />
+    <collection name="dataSets" referenced-type="DataSet" />
+    <collection name="publications" referenced-type="Publication" />
+  </class>
+  <class name="SyntenicRegion" extends="SequenceFeature" is-interface="true">
+    <reference name="syntenyBlock" referenced-type="SyntenyBlock" reverse-reference="syntenicRegions"/>
+  </class>
 </model>
