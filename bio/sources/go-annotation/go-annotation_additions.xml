@@ -7,7 +7,7 @@
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
 </class>
 <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
-<class name="GOEvidence" extends="Evidence" is-interface="true">
+<class name="GOEvidence" extends="OntologyEvidence" is-interface="true">
   <attribute name="withText" type="java.lang.String"/>
   <collection name="with" referenced-type="BioEntity"/>
 </class>
