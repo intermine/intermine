@@ -124,7 +124,7 @@
     <reference name="subject" referenced-type="Annotatable" reverse-reference="ontologyAnnotations"/>
     <reference name="ontologyTerm" referenced-type="OntologyTerm" reverse-reference="ontologyAnnotations"/>
     <collection name="dataSets" referenced-type="DataSet" />    
-    <collection name="evidence" referenced-type="Evidence"/>
+    <collection name="evidence" referenced-type="OntologyEvidence"/>
   </class>
 
   <class name="OntologyTermSynonym" is-interface="true">
