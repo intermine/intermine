@@ -64,7 +64,7 @@ def check_xpath(xml_file, xpaths, xml_class):
 		print xpath
 		run = xml.xpath(xpath)
 		print 'there are %i items with the above XPATH in the XML' % (len(run))
-		print run[0:5]
+		print run[0:500]
 		print
 		print
 

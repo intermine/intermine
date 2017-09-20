@@ -96,8 +96,6 @@ public class WormbaseAcedbConverter extends BioFileConverter
 
         storedRefItems = new HashMap<String, Item>();
         model = _model;
-
-
     }
 
     /**
@@ -161,15 +159,23 @@ public class WormbaseAcedbConverter extends BioFileConverter
         	wmd.debug("=== "+propKey.getRawKey()+" ===");
         	wmd.debug("cast type: "+propKey.getCastType());
         	wmd.debug("datapath: "+propKey.getDataPath());
-
-
+        	wmd.debug(rawPropKey);
+        	wmd.debug("passed");
         	String xpathQuery = dataMapping.getProperty(rawPropKey); // ex: "/Transcript/text()[1]"
+			wmd.debug(xpathQuery);
+
+
 
         	// The XPath object compiles the XPath expression
+        	wmd.debug("new1 "+getClassPIDField(classCD.getSimpleName()));
 	        XPathExpression expr = xpath.compile( xpathQuery );
+	        wmd.debug("new2 "+getClassPIDField(classCD.getSimpleName()));
+	        String str = String.valueOf(rawPropKey.equals(getClassPIDField(classCD.getSimpleName())));
+	        wmd.debug(str);
 
 	        if(rawPropKey.equals(getClassPIDField(classCD.getSimpleName()))){
 	        	PIDKey = propKey;
+	        	wmd.debug(propKey.getDataPath());
 	        }
 	        prop2XpathExpr.put(propKey, expr);
         }
@@ -267,15 +273,7 @@ public class WormbaseAcedbConverter extends BioFileConverter
 
 		        // '.' indicates join, aka reference or collection
 
-
-
-
-
 //		       	wmd.debug("This is an attribute");
-
-
-
-
 
 
 		        FieldDescriptor fd = classCD.getFieldDescriptorByName(fieldName);
@@ -360,20 +358,18 @@ public class WormbaseAcedbConverter extends BioFileConverter
 			        	item.setReference(rd.getName(), referencedItem.getIdentifier());
 
 			        	if( 		rd.relationType() == FieldDescriptor.ONE_ONE_RELATION ){
-	//				        		wmd.debug("1:1");
+					        		wmd.debug("1:1");
 			        		setRevRefIfExists(item, referencedItem, rd);
 			        	}else if(	rd.relationType() == FieldDescriptor.N_ONE_RELATION){
-	//				        		wmd.debug("N:1");
+					        		wmd.debug("N:1");
 			        		addToRevColIfExists(item, referencedItem, rd);
 			        	}
 
 		        	}else if( rd.isCollection() ){
-	//			        		wmd.debug("This is a collection");
+				        		wmd.debug("This is a collection");
 		        		CollectionDescriptor cd = (CollectionDescriptor) rd;
 
 		        		//if(cd.relationType() == FieldDescriptor.ONE_N_RELATION ){wmd.debug("1:N");}else if(cd.relationType() == FieldDescriptor.M_N_RELATION){wmd.debug("M:N");}
-
-
 
 			        	// Get set of IDs referenced
 				        NodeList resultNodes = (NodeList) expr.evaluate(doc,  XPathConstants.NODESET);
@@ -431,7 +427,7 @@ public class WormbaseAcedbConverter extends BioFileConverter
 	        	throw new Exception(getClassPIDField(classCD.getSimpleName())+
 	        			" set as class ID but not defined. Record ending at line:"+fp.getCurrentLine());
 	        }
-//	        wmd.debug("Storing "+currentClass+" with ID:"+ID);
+	        wmd.debug("Storing "+currentClass+" with ID:"+ID);
 //	        store(item);
 
         	setRefItem(currentClass, ID, item);
