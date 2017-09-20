@@ -59,18 +59,6 @@
     <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="dataSets"/>
   </class>
 
-  <class name="EvidenceCode" is-interface="true">
-    <attribute name="code" type="java.lang.String"/>
-    <attribute name="name" type="java.lang.String"/>
-    <attribute name="description" type="java.lang.String"/>
-    <attribute name="url" type="java.lang.String"/>
-  </class>
-
-  <class name="OntologyEvidence" is-interface="true">
-    <reference name="code" referenced-type="EvidenceCode"/>
-    <collection name="publications" referenced-type="Publication"/>
-  </class>
-
   <class name="Gene" extends="SequenceFeature" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <attribute name="briefDescription" type="java.lang.String"/>
@@ -94,6 +82,18 @@
   <class name="Ontology" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
+  </class>
+
+  <class name="OntologyAnnotationEvidenceCode" is-interface="true">
+    <attribute name="code" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="url" type="java.lang.String"/>
+  </class>
+
+  <class name="OntologyEvidence" is-interface="true">
+    <reference name="code" referenced-type="OntologyAnnotationEvidenceCode"/>
+    <collection name="publications" referenced-type="Publication"/>
   </class>
 
   <class name="OntologyTerm" is-interface="true">

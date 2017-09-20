@@ -6,6 +6,7 @@
 <class name="Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
 </class>
+<class name="GOEvidenceCode" extends="OntologyAnnotationEvidenceCode" is-interface="true"/>
 <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
 <class name="GOEvidence" extends="OntologyEvidence" is-interface="true">
   <attribute name="withText" type="java.lang.String"/>

@@ -305,7 +305,7 @@ public class HpoConverter extends BioDirectoryConverter
     private String getEvidenceCode(String code) throws ObjectStoreException {
         String refId = evidenceCodes.get(code);
         if (refId == null) {
-            Item item = createItem("GOEvidenceCode");
+            Item item = createItem("OntologyAnnotationEvidenceCode");
             item.setAttribute("code", code);
             refId = item.getIdentifier();
             evidenceCodes.put(code, refId);
