@@ -42,14 +42,15 @@ import org.intermine.postprocess.PostProcessor;
 
 /**
  * Take any GOAnnotation objects assigned to proteins and copy them to corresponding genes.
- *
+ * Merge evidence where duplication is found.
+ * Update evidence codes with names and descriptions.
  * @author Richard Smith
+ * @author julie sullivan
  */
 public class GoPostprocess extends PostProcessor
 {
     private static final Logger LOG = Logger.getLogger(GoPostprocess.class);
     protected ObjectStore os;
-
 
     /**
      * Create a new UpdateOrthologes object from an ObjectStoreWriter
@@ -60,9 +61,10 @@ public class GoPostprocess extends PostProcessor
         this.os = osw.getObjectStore();
     }
 
-
     /**
      * Copy all GO annotations from the Protein objects to the corresponding Gene(s)
+
+     *
      * @throws ObjectStoreException if anything goes wrong
      */
     @Override

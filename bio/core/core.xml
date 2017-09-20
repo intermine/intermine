@@ -87,7 +87,6 @@
   <class name="OntologyAnnotationEvidenceCode" is-interface="true">
     <attribute name="code" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
-    <attribute name="description" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
   </class>
 
