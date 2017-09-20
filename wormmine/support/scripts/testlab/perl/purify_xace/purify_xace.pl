@@ -1,4 +1,4 @@
-# use strict;
+use strict;
 
 =info
 
@@ -27,7 +27,7 @@ my ($infilename, $outfilename) = @ARGV;
 
 my ($infile, $outfile);
 open( $infile, $infilename) or die;
-# open( $outfile, '>'.$outfilename) or die;
+open( $outfile, '>'.$outfilename) or die;
 
 my $strbuffer = '';
 while(<$infile>){
@@ -43,7 +43,6 @@ sub processpg{
 	return undef if $strbuffer eq "\n";
 	
 	$strbuffer =~ s/(<Text>|<Txt>)(.*?)(<[^ \d@-]+>)/$1<![CDATA[$2]]>$3/sg;
-	print $strbuffer
 	$strbuffer =~ s/(<\/?)(\d+)(\w*>)/$1$strnum{$2}$3/sg;
 	print $outfile $strbuffer;
 	
