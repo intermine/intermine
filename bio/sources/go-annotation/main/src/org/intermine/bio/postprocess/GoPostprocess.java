@@ -19,7 +19,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.ConstraintOp;
-import org.intermine.model.bio.EvidenceCode;
+import org.intermine.model.bio.GOEvidenceCode;
 import org.intermine.model.bio.GOAnnotation;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.OntologyEvidence;
@@ -148,11 +148,11 @@ public class GoPostprocess extends PostProcessor
     // we've seen this term, merge instead of storing new object
     private void mergeEvidence(Set<OntologyEvidence> evidence, GOAnnotation alreadySeenAnnotation) {
         for (OntologyEvidence g : evidence) {
-            EvidenceCode c = g.getCode();
+            GOEvidenceCode c = g.getCode();
             Set<Publication> pubs = g.getPublications();
             boolean foundMatch = false;
             for (OntologyEvidence alreadySeenEvidence : alreadySeenAnnotation.getEvidence()) {
-                EvidenceCode alreadySeenCode = alreadySeenEvidence.getCode();
+                GOEvidenceCode alreadySeenCode = alreadySeenEvidence.getCode();
                 Set<Publication> alreadySeenPubs = alreadySeenEvidence.getPublications();
                 // we've already seen this evidence code, just merge pubs
                 if (c.equals(alreadySeenCode)) {
