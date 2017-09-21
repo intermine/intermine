@@ -1,7 +1,5 @@
 package org.intermine.objectstore.query;
 
-
-
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
