@@ -2060,7 +2060,7 @@ public final class SqlGenerator
             buffer.append(" && ");
         } else {
             throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
-            + " for range");
+                + " for range");
         }
         buffer.append(rangeFunction);
         queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
