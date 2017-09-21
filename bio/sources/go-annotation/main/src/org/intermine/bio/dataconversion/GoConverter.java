@@ -11,10 +11,10 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -169,9 +169,9 @@ public class GoConverter extends BioFileConverter
 
     private void loadEvidenceCodes() throws URISyntaxException, FileNotFoundException,
         IOException, ObjectStoreException {
-        File f = new File(getClass().getClassLoader().getResource(EVIDENCE_CODES_FILE).toURI());
+        InputStream is = getClass().getClassLoader().getResourceAsStream(EVIDENCE_CODES_FILE);
         Iterator<String[]> lineIter = FormattedTextParser
-                .parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
+                .parseTabDelimitedReader(new InputStreamReader(is));
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String code = line[0];
