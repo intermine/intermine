@@ -1,5 +1,7 @@
 package org.intermine.objectstore.query;
 
+
+
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -12,9 +14,7 @@ package org.intermine.objectstore.query;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Spliterator;
-
+import java.util.Collection;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -25,7 +25,7 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class SingletonResults extends Results implements Set<Object>
+public class SingletonResults extends Results implements Collection<Object>
 {
     /**
      * Constructor for a SingletonResults object
@@ -68,10 +68,5 @@ public class SingletonResults extends Results implements Set<Object>
             rows.set(i, ((List<?>) rows.get(i)).get(0));
         }
         return rows;
-    }
-
-    @Override
-    public Spliterator<Object> spliterator() {
-        return super.spliterator();
     }
 }
