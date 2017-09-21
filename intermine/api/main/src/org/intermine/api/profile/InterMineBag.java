@@ -245,12 +245,14 @@ public class InterMineBag extends StorableBag implements Cloneable
      * @return a List of Integers
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Set<Integer> getContentsAsIds() {
+    public List<Integer> getContentsAsIds() {
         Query q = new Query();
         q.addToSelect(osb);
         q.setDistinct(false);
         SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
-        return new HashSet(res);
+        Set resultSet = new HashSet(res);
+        // See #1686
+        return new ArrayList(resultSet);
     }
 
     /**
