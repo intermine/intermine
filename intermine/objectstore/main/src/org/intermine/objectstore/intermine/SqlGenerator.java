@@ -2039,76 +2039,37 @@ public final class SqlGenerator
             .append(state.getFieldToAlias(rightParent.getQueryClass()).get(rightParent
                     .getFieldName()))
             .append(" AND ");
-
-        // TODO get column type and use appropriate range type, currently uses int4range which is
-        // correct for integer columns, we could support other range types
-        boolean useRangeFunction = schema.hasBioSeg() || schema.useRangeTypes();
-
-        if (useRangeFunction) {
-            // either built in ranges or bioseg, prefer to use build int ranges
-            String rangeFunction = (schema.useRangeTypes()) ? "int4range(" : "bioseg_create(";
-            buffer.append(rangeFunction);
-            queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
-            buffer.append(", ");
-            queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
-            // if int4range, request it includes extremes (default: include lower, exclude upper)
-            if (rangeFunction.startsWith("int")) {
-                buffer.append(", '[]')");
-            } else {
-                buffer.append(")");
-            }
-            if ((ConstraintOp.CONTAINS == c.getOp())
-                    || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
-                buffer.append(" @> ");
-            } else if ((ConstraintOp.IN == c.getOp()) || (ConstraintOp.NOT_IN == c.getOp())) {
-                buffer.append(" <@ ");
-            } else if ((ConstraintOp.OVERLAPS == c.getOp())
-                    || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
-                buffer.append(" && ");
-            } else {
-                throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
-                        + " for range");
-            }
-            buffer.append(rangeFunction);
-            queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
-            buffer.append(", ");
-            queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
-            if (rangeFunction.startsWith("int")) {
-                buffer.append(", '[]')");
-            } else {
-                buffer.append(")");
-            }
+        String rangeFunction = "int4range(";
+        buffer.append(rangeFunction);
+        queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
+        buffer.append(", ");
+        queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
+        // if int4range, request it includes extremes (default: include lower, exclude upper)
+        if (rangeFunction.startsWith("int")) {
+            buffer.append(", '[]')");
         } else {
-            if ((ConstraintOp.CONTAINS == c.getOp())
-                    || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
-                queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
-                buffer.append(" <= ");
-                queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
-                buffer.append(" AND ");
-                queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
-                buffer.append(" >= ");
-                queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
-            } else if ((ConstraintOp.IN == c.getOp()) || (ConstraintOp.NOT_IN == c.getOp())) {
-                queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
-                buffer.append(" >= ");
-                queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
-                buffer.append(" AND ");
-                queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
-                buffer.append(" <= ");
-                queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
-            } else if ((ConstraintOp.OVERLAPS == c.getOp())
-                    || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
-                queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
-                buffer.append(" <= ");
-                queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
-                buffer.append(" AND ");
-                queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
-                buffer.append(" >= ");
-                queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
-            } else {
-                throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
-                        + " for range");
-            }
+            buffer.append(")");
+        }
+        if ((ConstraintOp.CONTAINS == c.getOp())
+                || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
+            buffer.append(" @> ");
+        } else if ((ConstraintOp.IN == c.getOp()) || (ConstraintOp.NOT_IN == c.getOp())) {
+            buffer.append(" <@ ");
+        } else if ((ConstraintOp.OVERLAPS == c.getOp())
+                || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
+            buffer.append(" && ");
+        } else {
+            throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
+            + " for range");
+        }
+        buffer.append(rangeFunction);
+        queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
+        buffer.append(", ");
+        queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
+        if (rangeFunction.startsWith("int")) {
+            buffer.append(", '[]')");
+        } else {
+            buffer.append(")");
         }
         if (not) {
             buffer.append("))");
