@@ -36,6 +36,7 @@ dependencies {
     compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
     compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
     compile fileTree(dir: 'libs', include: '*.jar') // org.gnu.readline is not in a public repo
+    runtime group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.7'
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
 }
 

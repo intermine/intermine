@@ -4,7 +4,7 @@ echo "Converting $1 project to gradle"
 cd $1
 echo "Creating src dir"
 mkdir -p src
-echo "Moving main and test dirs under src ..."cd sr
+echo "Moving main and test dirs under src ..."
 git mv main/ src/
 git mv test/ src/
 echo "Done!"

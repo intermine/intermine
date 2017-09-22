@@ -6,6 +6,7 @@ include ':intermine-model',
 ':intermine-objectstore',
 ':intermine-integrate',
 ':intermine-api',
+':intermine-resources',
 ':intermine-webapp', 
 ':intermine-webtasks' 
 //':intermine-webservice-client', ':intermine-webservice-test'
@@ -18,6 +19,7 @@ project(':intermine-objectstore').projectDir = new File(settingsDir, './objectst
 project(':intermine-integrate').projectDir = new File(settingsDir, './integrate')
 project(':intermine-api').projectDir = new File(settingsDir, './api')
 project(':intermine-webapp').projectDir = new File(settingsDir, './webapp')
+project(':intermine-resources').projectDir = new File(settingsDir, './resources')
 project(':intermine-webtasks').projectDir = new File(settingsDir, './webtasks')
 
 //intermine-webservice

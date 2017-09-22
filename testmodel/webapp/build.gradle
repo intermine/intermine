@@ -1,20 +1,95 @@
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.0'
+apply plugin: 'war'
+apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
 }
 
-
-apply plugin: "java"
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-  
-repositories {
-  mavenCentral()
+gretty {
+  overlay ':intermine-webapp'
 }
 
-dependencies {
-  compile group: 'log4j', name: 'log4j', version: '1.2.17'
-  compile project(':intermine-webapp')
-  testCompile group: 'junit', name: 'junit', version: '4.8.2'
+configurations {
+    commonResources
 }
+
+dependencies { 
+  compile project(path: ':intermine-testresources', configuration: 'testArtifacts')
+  compile project(':intermine-resources')
+  commonResources project(':intermine-resources')
+  compile project(':testmodel-db')
+  compile project(':intermine-integrate')
+  compile group: 'javax.servlet', name: 'jstl', version: '1.2'
+  testCompile project(':intermine-api')
+  testCompile project(':intermine-webtasks')
+}
+
+processResources {
+  exclude 'default-template-queries.xml'
+  exclude 'main/'
+  dependsOn 'copyDefaultProperties', 'copyTestModelProperties'
+}
+
+task copyDefaultProperties(type: Copy) {
+    description "Copies intermine.default.properties file (from resources project) into resources output to be included in the war"
+    from({ zipTree(configurations.commonResources.singleFile) })
+    into sourceSets.main.output.resourcesDir
+}
+
+task copyTestModelProperties(type: Copy) {
+    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
+    from "${System.env.HOME}/.intermine/testmodel.properties"
+    into sourceSets.main.output.resourcesDir
+    rename { fileName -> fileName.replace('testmodel.properties', 'intermine.properties') }
+
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+task summariseTestObjectStore {
+    description "Summarise Test model ObjectStore into objectstoresummary.properties file"
+    doLast {
+      ant.taskdef(name: 'summarizeObjectStoreTask', classname: 'org.intermine.task.SummariseObjectStoreTask') {
+        classpath {
+          pathelement(path: configurations.compile.asPath)
+        }   
+      }    
+      ant.summarizeObjectStoreTask(alias: 'os.unittest', configFileName: 'objectstoresummary.config.properties', outputFile: 'build/props/objectstoresummary.properties')
+    }
+}
+
+war { 
+  doFirst {
+    tasks.mergeProperties.execute();
+    tasks.summariseTestObjectStore.execute()
+  }
+
+  exclude 'WEB-INF/web.properties'
+  webInf { from 'build/props' }
+}
+
+task mergeProperties(type: Copy) {
+    description "Appendes intermine.properties to web.properties file"
+    from "${webAppDirName}/WEB-INF/web.properties"
+    into "build/props"
+    doLast {
+      file('build/props/web.properties').append(file('build/resources/main/intermine.properties').getText())
+    }   
+}
+
 
 
