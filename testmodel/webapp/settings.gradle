@@ -1,4 +1,0 @@
-rootProject.name = 'testmodel-webapp'
-
-include ':intermine-webapp'
-project(':intermine-webapp').projectDir = new File(settingsDir, '../../intermine/webapp')
