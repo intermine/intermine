@@ -13,8 +13,8 @@ package org.intermine.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-
-import net.sourceforge.iharder.Base64;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 
 /**
  * Utility methods for managing hashed passwords
@@ -42,11 +42,12 @@ public final class PasswordHasher
             byte[] salt = new byte[32];
             SecureRandom sr = new SecureRandom();
             sr.nextBytes(salt);
-            String saltString = Base64.encodeBytes(salt);
+            Encoder encoder = Base64.getEncoder();
+            String saltString = encoder.encodeToString(salt);
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update((saltString + password).getBytes());
             byte[] digest = md.digest();
-            String hashString = Base64.encodeBytes(digest);
+            String hashString = encoder.encodeToString(digest);
             return saltString + hashString;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
@@ -70,7 +71,8 @@ public final class PasswordHasher
                 MessageDigest md = MessageDigest.getInstance("SHA-256");
                 md.update((saltString + password).getBytes());
                 byte[] digest = md.digest();
-                String hashString = Base64.encodeBytes(digest);
+                Encoder encoder = Base64.getEncoder();
+                String hashString = encoder.encodeToString(digest);
                 if (hashString.equals(hash.substring(44))) {
                     return true;
                 }

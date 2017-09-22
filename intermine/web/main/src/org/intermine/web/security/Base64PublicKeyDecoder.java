@@ -15,8 +15,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
+import java.util.Base64.Decoder;
 
 /**
  * A public key decoder that reads public keys encoded as base64 strings.
@@ -25,15 +25,14 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class Base64PublicKeyDecoder implements KeyDecoder
 {
-
-    Base64 decoder;
+    Decoder decoder;
     KeyFactory fact;
 
     /**
      * Construct a new decoder.
      */
     public Base64PublicKeyDecoder() {
-        decoder = new Base64();
+        decoder = Base64.getDecoder();
         try {
             fact = KeyFactory.getInstance("RSA");
         } catch (NoSuchAlgorithmException e) {
@@ -52,5 +51,4 @@ public class Base64PublicKeyDecoder implements KeyDecoder
             throw new DecodingException(e);
         }
     }
-
 }

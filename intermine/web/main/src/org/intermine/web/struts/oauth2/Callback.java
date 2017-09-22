@@ -11,15 +11,16 @@ package org.intermine.web.struts.oauth2;
  */
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Base64.Decoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oltu.oauth2.client.OAuthClient;
@@ -130,7 +131,7 @@ public class Callback extends LoginHandler
         LOG.debug("GOOGLE RESPONSE: " + resp.getBody());
 
         MigrationMapping migrationMapping = null;
-        Base64 decoder = new Base64();
+        Decoder decoder = Base64.getDecoder();
         String accessToken = resp.getAccessToken();
         JSONObject respData;
         try {
@@ -213,7 +214,7 @@ public class Callback extends LoginHandler
     }
 
     private OAuthAccessTokenResponse
-    getTokenResponse(String redirect, OAuthAuthzResponse oar, OAuthProvider provider)
+        getTokenResponse(String redirect, OAuthAuthzResponse oar, OAuthProvider provider)
         throws OAuthSystemException, OAuthProblemException {
         OAuthClient oauthClient = new OAuthClient(new URLConnectionClient());
         OAuthClientRequest clientReq;

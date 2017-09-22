@@ -15,9 +15,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.util.Base64;
+import java.util.Base64.Decoder;
 import java.util.Properties;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.web.security.KeySourceException;
 import org.intermine.web.security.PublicKeySource;
@@ -75,7 +76,7 @@ public class JWTVerifier
      * @throws VerificationError if this claim cannot be verified.
      */
     public Verification verify(final String rawString) throws VerificationError {
-        Base64 decoder = new Base64();
+        Decoder decoder = Base64.getDecoder();
         if (StringUtils.isBlank(rawString)) {
             throw new VerificationError("token is blank");
         }

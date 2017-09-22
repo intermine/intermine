@@ -15,10 +15,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.intermine.api.profile.Profile;
 import org.json.JSONObject;
@@ -155,16 +156,17 @@ public final class JWTBuilder
         claims.put("http://wso2.org/claims/emailaddress", email);
 
         String toSign = encodeContent(header, claims);
-
+        Encoder encoder = Base64.getUrlEncoder();
         byte[] signature = sign(toSign);
-        return toSign + "." + Base64.encodeBase64URLSafeString(signature);
+        return toSign + "." + encoder.encode(signature);
     }
 
     private String encodeContent(Map<String, Object> header,
             Map<String, Object> claims) {
+        Encoder encoder = Base64.getUrlEncoder();
         String toSign = String.format("%s.%s",
-                Base64.encodeBase64URLSafeString(new JSONObject(header).toString().getBytes()),
-                Base64.encodeBase64URLSafeString(new JSONObject(claims).toString().getBytes()));
+                encoder.encode(new JSONObject(header).toString().getBytes()),
+                encoder.encode(new JSONObject(claims).toString().getBytes()));
         return toSign;
     }
 

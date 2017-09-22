@@ -12,8 +12,9 @@ package org.intermine.webservice.client.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 
-import org.apache.commons.codec.binary.Base64;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
 
@@ -164,7 +165,8 @@ public class Service
 
         if (userName != null && password != null) {
             String authValue = userName + ":" + password;
-            String encodedValue = new String(Base64.encodeBase64(authValue.getBytes()));
+            Encoder encoder = Base64.getEncoder();
+            String encodedValue = encoder.encodeToString(authValue.getBytes());
             request.setHeader(AUTHENTICATION_FIELD_NAME, encodedValue);
         } else if (authToken != null) {
             if (getAPIVersion() < 14) {
