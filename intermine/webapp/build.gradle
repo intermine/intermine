@@ -1,4 +1,5 @@
-apply plugin: "war"
+apply plugin: 'war'
+apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
 
 sourceSets {
     main {
@@ -50,19 +51,4 @@ dependencies {
   testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
   testCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
 }
-/*
-configurations {
-  deploy
-}
 
-dependencies {
-    deploy compile group: 'tomcat', name: 'catalina-ant', version: '5.5.23'
-}
-
-def deployWar(String tomcatManagerUrl, String userName, String password, String path, String war) {
-    ant.taskdef(name: 'deployWebapp',
-                classname: 'org.apache.catalina.ant.DeployTask',
-                classpath: configurations.deploy.asPath)
-    ant.deployWebapp(url: "$tomcatManagerUrl", username: "$userName", password: "$password", path: "$path", war: "$war")
-}
-*/
