@@ -1089,6 +1089,7 @@ div.heading.results #tool_bar_div ul#button_bar li {
     font-family: "Lucida Grande", Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
+    text-align:justify;
 }
 
 #funding-footer img {
@@ -1686,11 +1687,14 @@ div.bagDetails-page div.widget { width:460px; height:auto; max-height:none !impo
   box-sizing: border-box;
   padding: 0.5em;
 }
-.funding-footer p {
+.funding-footer p {text-align:justify;margin:1em;}
+.funding-footer .intermine-default-footer {
   max-width: 250px;
   margin:0em 2em;
   text-align:justify;
 }
+
+
 .funders {display:flex;align-items:center;}
 .funders .wide-n-narrow {
  display:flex;
