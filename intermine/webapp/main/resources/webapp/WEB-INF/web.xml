@@ -1283,7 +1283,7 @@ to will also be returned.
 
   <servlet-mapping>
     <servlet-name>ws-code-gen</servlet-name>
-    <url-pattern>/service/query</url-pattern>
+    <url-pattern>/service/query/code</url-pattern>
     <metadata>
         <name>Generated Code</name>
         <minVersion>7</minVersion>
