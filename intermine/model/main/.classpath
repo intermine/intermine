@@ -11,6 +11,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/json-20170516.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/json-20170516.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
