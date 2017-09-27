@@ -213,6 +213,8 @@ public class AjaxServices
                         + templateName);
                 e2.initCause(e);
                 throw e2;
+            } catch (IOException e) {
+                LOG.error("Failed to summarise " + templateName, e);
             } finally {
                 session.removeAttribute("summarising_" + templateName);
             }
@@ -700,7 +702,7 @@ public class AjaxServices
      * @return the links to friendly intermines
      */
     public static Collection<PartnerLink>
-    getFriendlyMineLinks(String mineName, String domains, String idents) {
+        getFriendlyMineLinks(String mineName, String domains, String idents) {
         if (StringUtils.isEmpty(mineName)
                 || StringUtils.isEmpty(domains)
                 || StringUtils.isEmpty(idents)) {
