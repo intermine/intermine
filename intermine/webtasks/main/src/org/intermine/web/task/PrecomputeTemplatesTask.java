@@ -1,7 +1,5 @@
 package org.intermine.web.task;
 
-import java.io.IOException;
-
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -18,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
