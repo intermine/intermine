@@ -1294,7 +1294,7 @@ to will also be returned.
               languages based on a pathquery provided in serialised form.
           </description>
             <param type="enumerated" default="py" values="pl,py,rb,js,java" required="true" description="The language to generate code in.">lang</param>
-            <param type="XML" required="true" description="The query to generate code for, in XML form." schema="/service/schema/query.xsd">query</param>
+            <param type="String" required="true" description="The query to generate code for, in XML or JSON form.">query</param>
             <returns>
                 <format accept="text/plain">text</format>
               <format accept="application/json" key="code">json</format>
