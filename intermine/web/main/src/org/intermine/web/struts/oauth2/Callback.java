@@ -213,9 +213,8 @@ public class Callback extends LoginHandler
         return provider;
     }
 
-    private OAuthAccessTokenResponse
-        getTokenResponse(String redirect, OAuthAuthzResponse oar, OAuthProvider provider)
-        throws OAuthSystemException, OAuthProblemException {
+    private OAuthAccessTokenResponse getTokenResponse(String redirect, OAuthAuthzResponse oar,
+        OAuthProvider provider) throws OAuthSystemException, OAuthProblemException {
         OAuthClient oauthClient = new OAuthClient(new URLConnectionClient());
         OAuthClientRequest clientReq;
         TokenRequestBuilder requestBuilder = OAuthClientRequest

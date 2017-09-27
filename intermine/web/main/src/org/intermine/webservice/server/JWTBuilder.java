@@ -156,17 +156,16 @@ public final class JWTBuilder
         claims.put("http://wso2.org/claims/emailaddress", email);
 
         String toSign = encodeContent(header, claims);
-        Encoder encoder = Base64.getUrlEncoder();
         byte[] signature = sign(toSign);
-        return toSign + "." + encoder.encode(signature);
+        return toSign + "." + Base64.getUrlEncoder().encodeToString(signature);
     }
 
     private String encodeContent(Map<String, Object> header,
             Map<String, Object> claims) {
         Encoder encoder = Base64.getUrlEncoder();
         String toSign = String.format("%s.%s",
-                encoder.encode(new JSONObject(header).toString().getBytes()),
-                encoder.encode(new JSONObject(claims).toString().getBytes()));
+                encoder.encodeToString(new JSONObject(header).toString().getBytes()),
+                encoder.encodeToString(new JSONObject(claims).toString().getBytes()));
         return toSign;
     }
 

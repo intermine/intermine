@@ -76,7 +76,7 @@ public class JWTVerifier
      * @throws VerificationError if this claim cannot be verified.
      */
     public Verification verify(final String rawString) throws VerificationError {
-        Decoder decoder = Base64.getDecoder();
+        Decoder decoder = Base64.getUrlDecoder();
         if (StringUtils.isBlank(rawString)) {
             throw new VerificationError("token is blank");
         }
