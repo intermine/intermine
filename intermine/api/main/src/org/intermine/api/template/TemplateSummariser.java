@@ -11,22 +11,25 @@ package org.intermine.api.template;
  */
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import net.sourceforge.iharder.Base64;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.model.userprofile.TemplateSummary;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -67,8 +70,9 @@ public class TemplateSummariser
      *
      * @param templateQuery a TemplateQuery to summarise
      * @throws ObjectStoreException if something goes wrong
+     * @throws IOException if something goes wrong storing summary
      */
-    public void summarise(ApiTemplate templateQuery) throws ObjectStoreException {
+    public void summarise(ApiTemplate templateQuery) throws ObjectStoreException, IOException {
         HashMap<String, List<Object>> templatePossibleValues = possibleValues.get(templateQuery);
         if (templatePossibleValues == null) {
             templatePossibleValues = new HashMap<String, List<Object>>();
@@ -118,10 +122,13 @@ public class TemplateSummariser
             }
             TemplateSummary templateSummary = new TemplateSummary();
             templateSummary.setTemplate(savedTemplateQuery);
-            String summaryText = Base64.encodeObject(templatePossibleValues);
-            if (summaryText == null) {
-                throw new RuntimeException("Serialised summary is null");
-            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(templatePossibleValues);
+            objectOutputStream.close();
+            String summaryText  = new String(Base64.getEncoder().encode(
+                    byteArrayOutputStream.toByteArray()));
             templateSummary.setSummary(summaryText);
             osw.store(templateSummary);
         } catch (ObjectStoreException e) {
@@ -134,6 +141,9 @@ public class TemplateSummariser
             if (osw.isInTransaction()) {
                 osw.abortTransaction();
             }
+            LOG.error("ObjectStoreException while storing summary for " + templateQuery.getName());
+            throw e;
+        } catch (IOException e) {
             LOG.error("ObjectStoreException while storing summary for " + templateQuery.getName());
             throw e;
         } finally {
@@ -184,14 +194,18 @@ public class TemplateSummariser
                     Iterator<TemplateSummary> summaryIter = template.getSummaries().iterator();
                     if (summaryIter.hasNext()) {
                         TemplateSummary summary = summaryIter.next();
-                        templatePossibleValues = (HashMap<String, List<Object>>) Base64
-                            .decodeToObject(summary.getSummary());
+                        byte[] bytes = Base64.getDecoder().decode(summary.getSummary());
+                        Object object = null;
+                        ObjectInputStream objectInputStream = new ObjectInputStream(
+                                new ByteArrayInputStream(bytes));
+                        object = objectInputStream.readObject();
+                        templatePossibleValues = (HashMap<String, List<Object>>) object;
                     }
                 } catch (Exception err) {
                     // Ignore rows that don't unmarshal (they probably reference
                     // another model.
                     LOG.warn("Failed to unmarshal saved template query: "
-                             + template.getTemplateQuery(), err);
+                            + template.getTemplateQuery(), err);
                 }
             }
             possibleValues.put(templateQuery, templatePossibleValues);
