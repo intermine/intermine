@@ -701,8 +701,8 @@ public class AjaxServices
      * @param idents The external object identifiers.
      * @return the links to friendly intermines
      */
-    public static Collection<PartnerLink>
-        getFriendlyMineLinks(String mineName, String domains, String idents) {
+    public static Collection<PartnerLink> getFriendlyMineLinks(String mineName, String domains,
+        String idents) {
         if (StringUtils.isEmpty(mineName)
                 || StringUtils.isEmpty(domains)
                 || StringUtils.isEmpty(idents)) {

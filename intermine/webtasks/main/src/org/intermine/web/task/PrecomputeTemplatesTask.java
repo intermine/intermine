@@ -1,5 +1,7 @@
 package org.intermine.web.task;
 
+import java.io.IOException;
+
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -225,6 +227,8 @@ public class PrecomputeTemplatesTask extends Task
                 try {
                     summariser.summarise(template);
                 } catch (ObjectStoreException e) {
+                    LOG.error("Exception while summarising template " + template.getName(), e);
+                } catch (IOException e) {
                     LOG.error("Exception while summarising template " + template.getName(), e);
                 }
             }
