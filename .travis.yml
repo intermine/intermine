@@ -6,5 +6,5 @@ jdk:
 
 script:
   - cd intermine
-  - gradle build
+  - ./gradlew build
 #  - gradle checkstyleMain Julie is going to fix these
