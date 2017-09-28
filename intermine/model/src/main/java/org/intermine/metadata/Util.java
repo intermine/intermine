@@ -510,14 +510,14 @@ public final class Util
     }
 
     /**
-     * <p>Strips the given string off the keys of the given
+     * Strips the given string off the keys of the given
      * Properties, and returns a new set of properties. The
-     * original properties are not altered.<br/>
-     * For example, given the property:<br/>
+     * original properties are not altered.<br>
+     * For example, given the property:<br>
      * <ul><li><code>database.name=production</code></li></ul>
-     * a call to <code>stripStart("database", props)</code> will produce:<br/>
+     * a call to <code>stripStart("database", props)</code> will produce:<br>
      * <ul><li><code>name=production</code></li></ul>
-     * Note that a dot will be added to the prefix.</p>
+     * Note that a dot will be added to the prefix.
      *
      * @param prefix the String to strip off - a "." will be appended to this string.
      * @param props the Properties object to change

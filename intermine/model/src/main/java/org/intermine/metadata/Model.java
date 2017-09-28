@@ -37,7 +37,7 @@ import org.intermine.model.InterMineFastPathObject;
 public class Model
 {
     /**
-     * A Map<String, Object with slightly more type information.
+     * A Map with slightly more type information.
      * @author Alex Kalderimis
      */
     public class ModelAST extends HashMap<String, Object>

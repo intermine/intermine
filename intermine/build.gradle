@@ -4,6 +4,26 @@ subprojects {
 
   apply plugin: "java"
   apply plugin: "maven"
+  apply plugin: "checkstyle"
+
+  checkstyle {
+    configFile = rootProject.file('../config/checkstyle/checkstyle.xml')
+    configProperties 'checkstyle.header.file': rootProject.file('../config/checkstyle/copyright_header.txt');
+    showViolations = false
+    ignoreFailures = true
+    toolVersion = '6.4.1'
+    sourceSets = [sourceSets.main]
+  }
+
+  checkstyleTest {
+    enabled = false
+  }
+
+  tasks.withType(Checkstyle) {
+    reports {
+      html.destination rootProject.file("build/reports/checkstyle.html")
+    }
+  }
 
   test {
     ignoreFailures = true
