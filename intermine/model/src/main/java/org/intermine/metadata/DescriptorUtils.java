@@ -165,8 +165,8 @@ public final class DescriptorUtils
 
     // Return a collection of ClassDescriptors sorted so that the most specific one (ie. the one
     // with the longest inheritance tree) is at index 0.
-    private static List<ClassDescriptor> sortClassesBySpecificity
-    (Collection<ClassDescriptor> classes) {
+    private static List<ClassDescriptor> sortClassesBySpecificity (Collection<ClassDescriptor>
+        classes) {
         List<ClassDescriptor> superList = new ArrayList<ClassDescriptor>(classes);
 
         Collections.sort(superList, new Comparator<ClassDescriptor>() {
