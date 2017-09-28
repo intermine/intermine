@@ -8,4 +8,6 @@ script:
   - cd intermine
   - ./gradlew :intermine-model:build
   - ./gradlew :intermine-model:checkstyleMain
-#  - gradle checkstyleMain Julie is going to fix these
+  - ./gradlew :intermine-pathquery:build
+  - ./gradlew :intermine-pathquery:checkstyleMain
+
