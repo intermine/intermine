@@ -35,7 +35,7 @@ void generateModel(model, destination, type) {
 }
 
 task copyTestProperties(type: Copy) {
-    from "${System.env.HOME}/.intermine/intermine-test.properties"
+    from "../../config/intermine-test.properties"
     into sourceSets.test.output.resourcesDir
 
     rename { fileName -> fileName.replace('intermine-test.properties', 'intermine.properties') }
