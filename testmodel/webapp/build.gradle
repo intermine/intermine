@@ -1,21 +1,21 @@
-apply plugin: 'war'
-apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
+apply plugin: "war"
+apply from: "https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin"
 
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java']
+            srcDirs = ["src/main/java"]
         }
         resources {
-            srcDirs = ['src/main/resources']
+            srcDirs = ["src/main/resources"]
         }
     }
     test {
         java {
-            srcDirs = ['src/test/java']
+            srcDirs = ["src/test/java"]
         }
         resources {
-            srcDirs = ['src/test/resources']
+            srcDirs = ["src/test/resources"]
         }
     }
 }
@@ -29,55 +29,42 @@ configurations {
 }
 
 dependencies { 
-  compile project(':testmodel-db')
-  compile group: 'org.intermine', name: 'intermine-resources', version: version
-  compile group: 'org.intermine', name: 'intermine-testresources', version: version
-  compile group: 'org.intermine', name: 'intermine-webapp', version: version, classifier: 'classes'
-  compile group: 'org.intermine', name: 'intermine-integrate', version: version
-  compile group: 'org.intermine', name: 'intermine-api', version: version
-  compile group: 'javax.servlet', name: 'jstl', version: '1.2'
-  compile group: 'org.apache.struts', name: 'struts-core', version: '1.3.10'
-  commonResources group: 'org.intermine', name: 'intermine-resources', version: version
-  imWebApp group: 'org.intermine', name: 'intermine-webapp', version: version, ext: 'war'
-  testCompile group: 'org.intermine', name: 'intermine-webtasks', version: version
+  compile project(":testmodel-db")
+  compile group: "org.intermine", name: "intermine-resources", version: version
+  compile group: "org.intermine", name: "intermine-testresources", version: version
+  compile group: "org.intermine", name: "intermine-webapp", version: version, classifier: "classes"
+  compile group: "org.intermine", name: "intermine-integrate", version: version
+  compile group: "org.intermine", name: "intermine-api", version: version
+  compile group: "javax.servlet", name: "jstl", version: "1.2"
+  compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
+  commonResources group: "org.intermine", name: "intermine-resources", version: version
+  imWebApp group: "org.intermine", name: "intermine-webapp", version: version, ext: "war"
+  testCompile group: "org.intermine", name: "intermine-webtasks", version: version
 }
 
 processResources {
-  exclude 'default-template-queries.xml'
-  exclude 'main/'
-  dependsOn 'copyDefaultProperties', 'copyTestModelProperties'
+  exclude "default-template-queries.xml"
+  exclude "main/"
+  dependsOn "copyDefaultProperties", "copyTestModelProperties"
 }
 
 task copyDefaultProperties(type: Copy) {
-    description 'Copies intermine.default.properties file (from resources project) into resources output to be included in the war'
+    description "Copies intermine.default.properties file (from resources project) into resources output to be included in the war"
     from({ zipTree(configurations.commonResources.singleFile) })
     into sourceSets.main.output.resourcesDir
 }
 
 task copyTestModelProperties(type: Copy) {
-    description 'Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war'
+    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
     from "${System.env.HOME}/.intermine/testmodel.properties"
     into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace('testmodel.properties', 'intermine.properties') }
+    rename { fileName -> fileName.replace("testmodel.properties", "intermine.properties") }
 
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
-task summariseTestObjectStore {
-    description 'Summarise Test model ObjectStore into objectstoresummary.properties file'
-    doLast {
-      ant.taskdef(name: 'summarizeObjectStoreTask', classname: 'org.intermine.task.SummariseObjectStoreTask') {
-        classpath {
-          pathelement(path: configurations.compile.asPath)
-        }   
-      }    
-      ant.summarizeObjectStoreTask(alias: 'os.unittest', configFileName: 'objectstoresummary.config.properties', outputFile: 'build/props/objectstoresummary.properties')
-    }
-}
-
 war {
-  //archiveName 'partial.war'
-  exclude 'WEB-INF/web.properties'
+  exclude "WEB-INF/web.properties"
   webInf { from "${mergePropsDir}" }  
 
   doFirst {
@@ -92,7 +79,7 @@ war {
 }
 
 task mergeProperties(type: Copy) {
-    description 'Appendes intermine.properties to web.properties file'
+    description "Appendes intermine.properties to web.properties file"
     from "${webAppDirName}/WEB-INF/web.properties"
     into "${mergePropsDir}"
     doLast {
@@ -100,14 +87,27 @@ task mergeProperties(type: Copy) {
     }   
 }
 
+task summariseTestObjectStore {
+    description "Summarise Test model ObjectStore into objectstoresummary.properties file"
+    doLast {
+      ant.taskdef(name: "summarizeObjectStoreTask", classname: "org.intermine.task.SummariseObjectStoreTask") {
+        classpath {
+          pathelement(path: configurations.compile.asPath)
+        }   
+      }    
+      ant.summarizeObjectStoreTask(alias: "os.unittest", configFileName: "objectstoresummary.config.properties", outputFile: "build/props/objectstoresummary.properties")
+    }
+}
+
 task unwarIMWebApp(type: Copy) {  
+  description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
   from { zipTree(configurations.imWebApp.singleFile) }
   destinationDir = new File("$explodedWebAppDir")
 }
 
 task warTestModelWebApp(type: War) {
+  description "Create the war from the build/explodedWebAppDir directory"
   from "${explodedWebAppDir}"
-  exclude 'WEB-INF/web.properties'
+  exclude "WEB-INF/web.properties"
   webInf { from "${mergePropsDir}" }
 }
-
