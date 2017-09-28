@@ -1,4 +1,9 @@
 language: java
+sudo: false # faster builds
 
 jdk:
   - openjdk7
+
+script:
+  - cd intermine
+  - gradle checkstyleMain
