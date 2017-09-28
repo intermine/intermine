@@ -9,7 +9,7 @@ subprojects {
   checkstyle {
     configFile = rootProject.file('../config/checkstyle/checkstyle.xml')
     configProperties 'checkstyle.header.file': rootProject.file('../config/checkstyle/copyright_header.txt');
-    showViolations = false
+    showViolations = true
     ignoreFailures = true
     toolVersion = '6.4.1'
     sourceSets = [sourceSets.main]
@@ -20,6 +20,7 @@ subprojects {
   }
 
   tasks.withType(Checkstyle) {
+    source = "src/main/java"
     reports {
       html.destination rootProject.file("build/reports/checkstyle.html")
     }
