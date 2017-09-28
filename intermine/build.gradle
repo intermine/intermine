@@ -4,6 +4,7 @@ task wrapper(type: Wrapper) {
 
 subprojects {
   apply plugin: "java"
+  apply plugin: "checkstyle"
 
   test {
     ignoreFailures = true
