@@ -21,22 +21,25 @@ sourceSets {
 }
 
 gretty {
-  overlay ':intermine-webapp'
+  //overlay 'org.intermine:intermine-webapp:2.0.0-SNAPSHOT'
 }
 
 configurations {
-    commonResources
+  commonResources
 }
 
 dependencies { 
-  compile project(path: ':intermine-testresources', configuration: 'testArtifacts')
-  compile project(':intermine-resources')
-  commonResources project(':intermine-resources')
   compile project(':testmodel-db')
-  compile project(':intermine-integrate')
+  compile group: 'org.intermine', name: 'intermine-resources', version: version
+  compile group: 'org.intermine', name: 'intermine-testresources', version: version
+  compile group: 'org.intermine', name: 'intermine-webapp', version: version, classifier: 'classes'
+  compile group: 'org.intermine', name: 'intermine-webapp', version: version
+  compile group: 'org.intermine', name: 'intermine-integrate', version: version
+  compile group: 'org.intermine', name: 'intermine-api', version: version
   compile group: 'javax.servlet', name: 'jstl', version: '1.2'
-  testCompile project(':intermine-api')
-  testCompile project(':intermine-webtasks')
+  compile group: 'org.apache.struts', name: 'struts-core', version: '1.3.10'
+  commonResources group: 'org.intermine', name: 'intermine-resources', version: version
+  testCompile group: 'org.intermine', name: 'intermine-webtasks', version: version
 }
 
 processResources {
@@ -90,6 +93,4 @@ task mergeProperties(type: Copy) {
       file('build/props/web.properties').append(file('build/resources/main/intermine.properties').getText())
     }   
 }
-
-
 

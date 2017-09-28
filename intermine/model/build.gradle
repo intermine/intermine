@@ -1,3 +1,15 @@
+/*
+buildscript {
+  repositories {
+    jcenter()
+  }
+}
+
+plugins {
+  id "com.jfrog.bintray" version "1.7.3"
+}
+*/
+
 sourceSets {
     main {
         java {
@@ -18,7 +30,6 @@ sourceSets {
     }
 }
 
-
 dependencies {
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
@@ -27,3 +38,17 @@ dependencies {
     compile group: 'org.skyscreamer', name: 'jsonassert', version: '1.2.3'
     compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
 }
+
+/*
+bintray {
+  user = System.getenv('BINTRAY_USER')
+  key = System.getenv('BINTRAY_KEY')
+  pkg {
+        repo = 'intermine'
+        name = 'intermine-model'
+        userOrg = ''
+        licenses = project.packageLicenses
+        vcsUrl = 'https://github.com/intermine/intermine.git'
+  }
+  configurations = ['archives']
+}*/
