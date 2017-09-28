@@ -429,7 +429,7 @@ public final class TypeUtil
     }
 
     /**
-     * Encapsulate the logic of requesting an object of a class named <code>name</name>
+     * Encapsulate the logic of requesting an object of a class named <code>name</code>
      * where that class has a default no-arguments constructor. If any of the contracts are
      * violated you will get an IllegalArgumentException.
      * @param <T> The type of the object we are instantiating, for type inference purposes.

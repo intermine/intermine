@@ -249,10 +249,10 @@ public final class StringUtil
     /**
      * Returns a decapitalised version of the given String unless string is an acronym.
      *
-     * Gene    --> gene
-     * Protein --> protein
-     * MRNA    --> MRNA
-     * CDS     --> CDS
+     * Gene    to gene
+     * Protein to protein
+     * MRNA    to MRNA
+     * CDS     to CDS
      *
      * @param str the String to decapitalise
      * @return the decapitalised version of str
@@ -438,7 +438,7 @@ public final class StringUtil
     }
     /**
      * Take a collection of Strings and return a combined string as a comma separated list
-     * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c".
+     * with 'and' between the final pair.  For example: [a, b, c] to "a, b and c".
      *
      * @param elements a collection of strings to put in the list.
      * @return a string with all the elements suitable for inclusion in a sentence.
@@ -449,7 +449,7 @@ public final class StringUtil
 
     /**
      * Take a collection of Strings and return a combined string as a comma separated list
-     * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c".
+     * with 'and' between the final pair.  For example: [a, b, c] to "a, b and c".
      *
      * @param elements a collection of strings to put in the list.
      * @param sort if true then order the strings alphabetically

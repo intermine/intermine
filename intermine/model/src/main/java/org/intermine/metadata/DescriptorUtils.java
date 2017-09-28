@@ -113,7 +113,7 @@ public final class DescriptorUtils
      * ie:, given <code>Employee, Manager, CEO</code>, this method should return
      * a list such as <code>Employee, Employable, HasAddress, Thing</code>. The returned
      * list should never contain <code>InterMineObject</code>. All returned classes are guaranteed
-     * to be subclasses of {@link InterMineObject}. The returned list is guaranteed to never
+     * to be subclasses of InterMineObject. The returned list is guaranteed to never
      * be empty.
      *
      * @param classes The classes to investigate.
