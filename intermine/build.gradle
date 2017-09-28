@@ -6,6 +6,23 @@ subprojects {
   apply plugin: "java"
   apply plugin: "checkstyle"
 
+  checkstyle {
+    configFile = rootProject.file('../config/checkstyle/checkstyle.xml')
+    configProperties 'checkstyle.header.file': rootProject.file('../config/checkstyle/copyright_header.txt');
+    showViolations = false
+    ignoreFailures = true
+  }
+
+  checkstyleTest {
+    enabled = false
+  }
+
+  tasks.withType(Checkstyle) {
+    reports {
+      html.enabled = true
+    }
+  }
+
   test {
     ignoreFailures = true
   }
