@@ -6,5 +6,6 @@ jdk:
 
 script:
   - cd intermine
-  - ./gradlew build
+  - ./gradlew :intermine-model:build
+  - ./gradlew :intermine-model:checkstyleMain
 #  - gradle checkstyleMain Julie is going to fix these
