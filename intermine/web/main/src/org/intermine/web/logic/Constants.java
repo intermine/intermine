@@ -212,8 +212,9 @@ public final class Constants
      * 23 - Updated the /lists endpoint to return the persistent list id
      * 24 - Add web properties service
      * 25 - Add id to whoami
+     * 26 - Add listId to all web services. #1669
      */
-    public static final int WEB_SERVICE_VERSION = 25;
+    public static final int WEB_SERVICE_VERSION = 26;
 
     /**
      * Current version of the InterMine code

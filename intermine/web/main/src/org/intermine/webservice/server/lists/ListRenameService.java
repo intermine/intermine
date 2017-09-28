@@ -55,7 +55,6 @@ public class ListRenameService extends AuthenticatedListService
 
         addOutputInfo(LIST_NAME_KEY, list.getName());
         addOutputInfo(LIST_SIZE_KEY, "" + list.size());
-
+        addOutputInfo(LIST_ID_KEY, "" + list.getSavedBagId());
     }
-
 }

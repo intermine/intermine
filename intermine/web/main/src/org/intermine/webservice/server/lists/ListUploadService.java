@@ -109,6 +109,14 @@ public class ListUploadService extends ListMakerService
     }
 
     /**
+     * Sets the id of the list on the header attributes.
+     * @param id The id of the newly created list.
+     */
+    protected void setListId(final Integer id) {
+        addOutputInfo(LIST_ID_KEY, id + "");
+    }
+
+    /**
      * Get the String Matcher for parsing the list of identifiers.
      * @return The matcher to use.
      */
@@ -162,6 +170,7 @@ public class ListUploadService extends ListMakerService
         processIdentifiers(type, input, ids, unmatchedIds, tempBag);
 
         setListSize(tempBag.size());
+        setListId(tempBag.getSavedBagId());
 
         for (final Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
             final List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
