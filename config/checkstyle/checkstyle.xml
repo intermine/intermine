@@ -181,13 +181,8 @@
     -->
 
     <module name="EmptyBlock">
-      <property name="option" value="stmt"/>
-      <property name="tokens" value="LITERAL_DO, LITERAL_FINALLY, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
-    </module>
-
-    <module name="EmptyBlock">
       <property name="option" value="text"/>
-      <property name="tokens" value="LITERAL_TRY"/>
+      <property name="tokens" value="LITERAL_DO, LITERAL_FINALLY, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
     </module>
 
     <module name="LeftCurly">
