@@ -1,6 +1,6 @@
 package org.intermine;
 
-public class InterMineException extends Exceptionx
+public class InterMineException extends Exception
 {
     /**
      * Constructs an InterMineException
