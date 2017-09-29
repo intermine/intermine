@@ -1,3 +1,5 @@
+jar.enabled = false
+
 sourceSets {
     test {
         java {
@@ -10,7 +12,7 @@ sourceSets {
 }
 
 dependencies {
-    testCompile project(':intermine-objectstore')
+    testCompile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     testCompile 'commons-lang:commons-lang:2.6'
 }
 
