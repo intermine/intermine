@@ -99,7 +99,7 @@ task summariseTestObjectStore {
     }
 }
 
-task unwarIMWebApp(type: Copy) {  
+task unwarIMWebApp(type: Copy) {
   description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
   from { zipTree(configurations.imWebApp.singleFile) }
   destinationDir = new File("$explodedWebAppDir")
@@ -110,4 +110,8 @@ task warTestModelWebApp(type: War) {
   from "${explodedWebAppDir}"
   exclude "WEB-INF/web.properties"
   webInf { from "${mergePropsDir}" }
+}
+
+gretty {
+    jvmArgs = ['-Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true']
 }
