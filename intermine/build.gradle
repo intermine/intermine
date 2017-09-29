@@ -1,9 +1,9 @@
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
-}
-
 subprojects {
+  group = 'org.intermine'
+  version = '2.0.0-SNAPSHOT'
+
   apply plugin: "java"
+  apply plugin: "maven"
   apply plugin: "checkstyle"
 
   checkstyle {
@@ -35,13 +35,21 @@ subprojects {
   
   repositories {
     mavenCentral()
+    mavenLocal()
+    //jcenter()
+    //maven {
+      //url  "https://dl.bintray.com/danielabutano/intermine"
+    //}
+    
   }
 
-  dependencies {
-    compile group: 'ant', name: 'ant', version: '1.6.5'
-    compile group: 'log4j', name: 'log4j', version: '1.2.17'
-    testCompile group: 'antlr', name:'antlr', version: '2.7.7'
-    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+  if (it.name != 'intermine-resources') {
+    dependencies {
+      compile group: 'ant', name: 'ant', version: '1.6.5'
+      compile group: 'log4j', name: 'log4j', version: '1.2.17'
+      testCompile group: 'antlr', name:'antlr', version: '2.7.7'
+      testCompile group: 'junit', name: 'junit', version: '4.8.2'
+    }
   }
 
   tasks.withType(Test) {
@@ -49,4 +57,14 @@ subprojects {
       include '**/*Test.class'
   }
 }
+
+ext {
+  packageLicenses = ['LGPL-2.1 ']
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1'
+}
+
+
 

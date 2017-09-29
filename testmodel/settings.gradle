@@ -1,17 +1,5 @@
 rootProject.name = 'testmodel'
 
-include ':intermine-test', ':testmodel-db', ':intermine-webapp', ':intermine-api',
-':intermine-pathquery', ':intermine-integrate', ':intermine-model',
-':intermine-testresources', ':intermine-objectstore', ':intermine-webtasks', ':intermine-resources'
-
+include ':intermine-test', ':testmodel-db'
 project(':intermine-test').projectDir = new File(settingsDir, './webapp')
 project(':testmodel-db').projectDir = new File(settingsDir, './dbmodel')
-project(':intermine-webapp').projectDir = new File(settingsDir, '../intermine/webapp')
-project(':intermine-api').projectDir = new File(settingsDir, '../intermine/api')
-project(':intermine-pathquery').projectDir = new File(settingsDir, '../intermine/pathquery')
-project(':intermine-integrate').projectDir = new File(settingsDir, '../intermine/integrate')
-project(':intermine-model').projectDir = new File(settingsDir, '../intermine/model')
-project(':intermine-testresources').projectDir = new File(settingsDir, '../intermine/testresources')
-project(':intermine-objectstore').projectDir = new File(settingsDir, '../intermine/objectstore')
-project(':intermine-webtasks').projectDir = new File(settingsDir, '../intermine/webtasks')
-project(':intermine-resources').projectDir = new File(settingsDir, '../intermine/resources')
