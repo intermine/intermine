@@ -60,7 +60,7 @@ public class AttributeDescriptorTest extends TestCase
         AttributeDescriptor attr2 = new AttributeDescriptor("name1", "int");
         AttributeDescriptor attr3 = new AttributeDescriptor("name2", "int");
         AttributeDescriptor attr4 = new AttributeDescriptor("name1", "float");
-        assertEquals("false", attr2);
+        assertEquals(attr1, attr2);
         assertEquals(attr1.hashCode(), attr2.hashCode());
         assertFalse(attr1.equals(attr3));
         assertFalse(attr1.equals(attr4));
