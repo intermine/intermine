@@ -1,22 +1,10 @@
 rootProject.name = 'bio'
 
-include ':bio-core', ':bio-testall', ':bio-postprocess', ':bio-tools',':bio-sources', 
-//dependencies on intermine
-':intermine-model', ':intermine-pathquery', ':intermine-objectstore', ':intermine-integrate', ':intermine-api',':intermine-testresources',
-':intermine-webapp',':intermine-webtasks'
-
+include ':bio-core', ':bio-testall', ':bio-postprocess', ':bio-tools'//,':bio-sources'
 
 project(':bio-core').projectDir = new File(settingsDir, './core')
 project(':bio-testall').projectDir = new File(settingsDir, './test-all')
 project(':bio-postprocess').projectDir = new File(settingsDir, './postprocess')
 project(':bio-tools').projectDir = new File(settingsDir, './tools')
-project(':bio-sources').projectDir = new File(settingsDir, './sources')
+//project(':bio-sources').projectDir = new File(settingsDir, './sources')
 
-project(':intermine-model').projectDir = new File(settingsDir, '../intermine/model')
-project(':intermine-pathquery').projectDir = new File(settingsDir, '../intermine/pathquery')
-project(':intermine-objectstore').projectDir = new File(settingsDir, '../intermine/objectstore')
-project(':intermine-integrate').projectDir = new File(settingsDir, '../intermine/integrate')
-project(':intermine-api').projectDir = new File(settingsDir, '../intermine/api')
-project(':intermine-testresources').projectDir = new File(settingsDir, '../intermine/testresources')
-project(':intermine-webapp').projectDir = new File(settingsDir, '../intermine/webapp')
-project(':intermine-webtasks').projectDir = new File(settingsDir, '../intermine/webtasks')
