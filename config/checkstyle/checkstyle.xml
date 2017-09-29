@@ -47,7 +47,11 @@
 
     <!--                         code conventions -->
 
-    <!-- naming conventions -->
+    <!--
+    ===================
+    naming conventions
+    ===================
+    -->
     <module name="ConstantName">
       <property name="format" value="^[A-Z](_?[A-Z0-9]+)*$" />
     </module>
@@ -86,16 +90,22 @@
     </module>
 
 
-    <!-- imports -->
+    <!--
+    ===================
+    imports
+    ===================
+    -->
 
     <module name="AvoidStarImport"/>
-
     <module name="IllegalImport"/>
-
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
 
-    <!-- size violations -->
+    <!--
+    ===================
+    size violations
+    ===================
+    -->
 
     <module name="LineLength">
       <property name="max" value="100"/>
@@ -113,7 +123,11 @@
     </module>
 
 
-    <!-- whitespace -->
+    <!--
+    ===================
+    whitespace
+    ===================
+    -->
 
     <module name="NoWhitespaceAfter">
       <property name="tokens" value="ARRAY_INIT, BNOT, DEC, DOT, INC, LNOT, UNARY_MINUS, UNARY_PLUS"/>
@@ -130,6 +144,8 @@
       <property name="option" value="nl"/>
     </module>
 
+    <!-- This property represents the policy for padding with white space. -->
+    <!--  	Do not pad. For example, method(a, b); -->
     <module name="ParenPad">
       <property name="tokens" value="CTOR_CALL, METHOD_CALL, SUPER_CTOR_CALL"/>
       <property name="option" value="nospace"/>
@@ -144,7 +160,11 @@
       <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, DIV, DIV_ASSIGN, EQUAL, GE, GT, LAND, LCURLY, LE, LITERAL_ASSERT, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, RCURLY, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN, TYPE_EXTENSION_AND"/>
     </module>
 
-    <!-- modifier checks -->
+    <!--
+    ===================
+    modifier checks
+    ===================
+    -->
 
     <module name="ModifierOrder"/>
 
@@ -154,10 +174,14 @@
     </module>
 
 
-    <!-- block checks -->
+    <!--
+    ===================
+    block checks
+    ===================
+    -->
 
     <module name="EmptyBlock">
-      <property name="option" value="stmt"/>
+      <property name="option" value="statement"/>
       <property name="tokens" value="LITERAL_DO, LITERAL_FINALLY, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
     </module>
 
@@ -186,7 +210,11 @@
     </module>
 
 
-    <!-- misc -->
+    <!--
+    ===================
+    misc
+    ===================
+    -->
 
     <module name="EqualsHashCode"/>
 
@@ -222,8 +250,6 @@
     <module name="DefaultComesLast"/>
     <module name="AnnotationUseStyle"/>
     <module name="MissingDeprecated"/>
-    <!-- Not this rule, as it forces us towards Java 6, which we are not ready for. See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5008260
-    <module name="MissingOverride"/>-->
     <module name="FinalClass"/>
     <module name="InterfaceIsType"/>
     <module name="HideUtilityClassConstructor"/>
@@ -233,7 +259,6 @@
       <property name="tokens" value="VARIABLE_DEF"/>
     </module>
     <module name="MissingSwitchDefault"/>
-    <!--<module name="ModifiedControlVariable"/>-->
     <module name="SuperClone"/>
     <module name="ArrayTypeStyle"/>
     <module name="RedundantModifier"/>
