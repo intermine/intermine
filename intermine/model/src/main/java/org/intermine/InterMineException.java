@@ -1,11 +1,30 @@
 package org.intermine;
 
+<<<<<<< HEAD
+=======
+/*
+ * Copyright (C) 2002-2016 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+/**
+ * An Exception that may be thrown by client facing parts
+ * of InterMine code.
+ *
+ * @author Richard Smith
+ */
+>>>>>>> parent of 8645d8a... testing travis, dummy commit
 public class InterMineException extends Exception
 {
     /**
      * Constructs an InterMineException
      */
-    protected InterMineException() {
+    public InterMineException() {
         super();
     }
 
