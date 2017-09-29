@@ -13,6 +13,10 @@ subprojects {
     mavenLocal()
   }
 
+  test {
+    ignoreFailures = true
+  }
+
   if (it.name != 'intermine-resources') {
     dependencies {
       compile group: 'ant', name: 'ant', version: '1.6.5'
