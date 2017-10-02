@@ -41,7 +41,7 @@ public class PathQueryBuilderTest extends TestCase {
     }
 
     private final Model model = Model.getInstanceByName("testmodel");
-    private final String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
+    private final String schemaUrl = this.getClass().getClassLoader().getResource("query.xsd").toString();
     private final String goodXML = "<query model=\"testmodel\" view=\"Employee.age Employee.name\">" +
         "<constraint path=\"Employee.name\" op=\"=\" value=\"Tim Canterbury\" />" +
         "</query>";
