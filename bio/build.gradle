@@ -1,9 +1,9 @@
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
-}
-
 subprojects {
+  group = 'org.intermine'
+  version = '2.0.0-SNAPSHOT'
+
   apply plugin: "java"
+  apply plugin: "maven"
 
   test {
     ignoreFailures = true
@@ -14,6 +14,7 @@ subprojects {
   
   repositories {
     mavenCentral()
+    mavenLocal()
   }
 
   dependencies {
@@ -23,4 +24,13 @@ subprojects {
     testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
   }
 }
+
+ext {
+  imVersion = "2.0.0-SNAPSHOT"
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.1'
+}
+
 

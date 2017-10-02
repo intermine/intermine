@@ -24,3 +24,12 @@ dependencies {
   testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'  
   testCompile project(':intermine-objectstore').sourceSets.test.output
 }
+
+task testClassesJar(type: Jar) {
+    classifier = 'testClasses'
+    from sourceSets.test.output
+}
+
+artifacts {
+  archives testClassesJar
+}
