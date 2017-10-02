@@ -157,14 +157,6 @@
     <!-- block checks -->
 
     <module name="EmptyBlock">
-<<<<<<< HEAD
-=======
-      <property name="option" value="stmt"/>
-      <property name="tokens" value="LITERAL_DO, LITERAL_FINALLY, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
-    </module>
-
-    <module name="EmptyBlock">
->>>>>>> parent of 8645d8a... testing travis, dummy commit
       <property name="option" value="text"/>
       <property name="tokens" value="LITERAL_DO, LITERAL_FINALLY, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
     </module>
