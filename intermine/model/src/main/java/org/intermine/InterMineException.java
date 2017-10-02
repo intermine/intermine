@@ -1,7 +1,5 @@
 package org.intermine;
 
-<<<<<<< HEAD
-=======
 /*
  * Copyright (C) 2002-2016 FlyMine
  *
@@ -18,7 +16,6 @@ package org.intermine;
  *
  * @author Richard Smith
  */
->>>>>>> parent of 8645d8a... testing travis, dummy commit
 public class InterMineException extends Exception
 {
     /**

@@ -370,7 +370,8 @@ public class TemplateAction extends InterMineAction
                                     TemplateValue.ValueType.SIMPLE_VALUE, switchOffAbility);
                         }
                     } else {
-                        String op = (String) tf.getAttributeOps(key);
+                        String[] ops = (String[]) tf.getAttributeOps(key);
+                        String op = ops[0];
                         if (op == null) {
                             if (c instanceof PathConstraintLookup) {
                                 value = new TemplateValue(c, ConstraintOp.LOOKUP,
@@ -405,8 +406,10 @@ public class TemplateAction extends InterMineAction
                                         TemplateValue.ValueType.SIMPLE_VALUE, multiValues,
                                         switchOffAbility);
                             } else {
-                                constraintValue = (String) tf.getAttributeValues(key);
-                                String extraValue = (String) tf.getExtraValues(key);
+                                String[] attributes = (String[]) tf.getAttributeValues(key);
+                                constraintValue = attributes[0];
+                                String[] extraValues = (String[]) tf.getExtraValues(key);
+                                String extraValue = extraValues[0];
                                 value = new TemplateValue(c, constraintOp, constraintValue,
                                         TemplateValue.ValueType.SIMPLE_VALUE, extraValue,
                                         switchOffAbility);
