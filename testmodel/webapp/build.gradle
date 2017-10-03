@@ -20,8 +20,10 @@ sourceSets {
     }
 }
 
+def mineRelease = hasProperty('release') ? "." + release : ''
 def explodedWebAppDir = "$buildDir/explodedWebApp"
 def mergePropsDir = "$buildDir/props"
+def minePropertyFile = "${System.env.HOME}/.intermine/testmodel.properties$mineRelease"
 
 configurations {
   commonResources
@@ -55,17 +57,17 @@ task copyDefaultProperties(type: Copy) {
 }
 
 task copyTestModelProperties(type: Copy) {
+    println "Using properties file: '$minePropertyFile'"
     description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
-    from "${System.env.HOME}/.intermine/testmodel.properties"
+    from minePropertyFile
     into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace("testmodel.properties", "intermine.properties") }
-
+    rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
 war {
   exclude "WEB-INF/web.properties"
-  webInf { from "${mergePropsDir}" }  
+  webInf { from "${mergePropsDir}" }
 
   doFirst {
     tasks.mergeProperties.execute();
@@ -112,6 +114,12 @@ task warTestModelWebApp(type: War) {
   webInf { from "${mergePropsDir}" }
 }
 
+// read in testmodel.properties to get the contextPath
+def props = new Properties()
+file(minePropertyFile).withInputStream { props.load(it) }
+
 gretty {
     jvmArgs = ['-Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true']
+    contextPath = props.getProperty("webapp.path")
 }
+
