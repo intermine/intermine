@@ -1,4 +1,0 @@
-<project name="pdb-tasks" default="default" basedir=".">
-  <description>build pdb tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

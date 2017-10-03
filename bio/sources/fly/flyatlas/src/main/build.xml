@@ -1,4 +1,0 @@
-<project name="flyatlas-tasks" default="default" basedir=".">
-  <description>build flyatlas tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>

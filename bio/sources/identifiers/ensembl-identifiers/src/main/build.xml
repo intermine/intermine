@@ -1,4 +1,0 @@
-<project name="ensembl-identifiers-tasks" default="default" basedir=".">
-  <description>build ensembl-identifiers tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>

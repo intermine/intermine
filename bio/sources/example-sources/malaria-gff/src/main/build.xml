@@ -1,4 +1,0 @@
-<project name="malaria-gff-tasks" default="default" basedir=".">
-  <description>build malaria-gff tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>

@@ -1,4 +1,0 @@
-<project name="drosophila-homology-tasks" default="default" basedir=".">
-  <description>build drosophila-homology tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>
