@@ -1,5 +1,0 @@
-<project name="tiffin-expression-tasks" default="default" basedir=".">
-  <description>build tiffin-expression tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>
-

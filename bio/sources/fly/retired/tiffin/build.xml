@@ -1,8 +1,0 @@
-<project name="tiffin" default="default" basedir=".">
-
-  <description>build, test, package tiffin</description>
-
-  <import file="../../../../imbuild/source.xml"/>
-
-</project>
-
