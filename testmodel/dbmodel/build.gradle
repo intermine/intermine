@@ -1,8 +1,29 @@
+apply plugin: 'idea'
+
 sourceSets {
     main {
         resources {
             srcDirs = ['resources']
         }
     }
+}
+
+configurations {
+    objectStore
+}
+
+dependencies {
+    objectStore group: "org.intermine", name: "intermine-objectstore", version: version
+}
+
+void buildDB() {
+    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask', classpath:configurations.objectStore.asPath)
+    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: 'build/tmp')
+}
+
+task buildDB {
+    doLast {
+        buildDB()
+   }
 }
 
