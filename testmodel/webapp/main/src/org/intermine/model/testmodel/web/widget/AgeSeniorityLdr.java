@@ -21,8 +21,6 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.DataSetLdr;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 public class AgeSeniorityLdr implements DataSetLdr {
 
     private final ObjectStore os;
