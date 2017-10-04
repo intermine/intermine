@@ -9,16 +9,30 @@ sourceSets {
 }
 
 configurations {
-    objectStore
+    compile
 }
 
 dependencies {
-    objectStore group: "org.intermine", name: "intermine-objectstore", version: version
+    compile group: "org.intermine", name: "intermine-objectstore", version: version
+    compile group: "org.intermine", name: "intermine-testresources", version: version
 }
 
 void buildDB() {
-    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask', classpath:configurations.objectStore.asPath)
-    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: 'build/tmp')
+    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask', classpath:configurations.compile.asPath)
+            {
+                classpath {
+                    dirset(dir: 'build/')
+                }
+            }
+    ant.torque(osname: 'os.unittest', destFile:"$buildDir/os.unittest-schema.xml")
+    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask', classpath:configurations.compile.asPath)
+            {
+                classpath {
+                    dirset(dir: 'build/')
+                }
+            }
+    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
+
 }
 
 task buildDB {
