@@ -1,5 +1,0 @@
-<project name="flybase-alleles" default="default" basedir=".">
-  <description>build, test, package flybase-alleles</description>
-  
-  <import file="../../../../imbuild/source.xml"/>
-</project>

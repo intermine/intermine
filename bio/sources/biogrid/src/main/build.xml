@@ -1,6 +1,0 @@
-
-<project name="biogrid-tasks" default="default" basedir=".">
-  <description>build biogrid tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>
-

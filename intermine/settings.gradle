@@ -8,7 +8,8 @@ include ':intermine-model',
 ':intermine-api',
 ':intermine-resources',
 ':intermine-webapp', 
-':intermine-webtasks' 
+':intermine-webtasks', 
+':intermine-jbrowse-endpoint' 
 //':intermine-webservice-client', ':intermine-webservice-test'
 
 project(':intermine-model').projectDir = new File(settingsDir, './model')
@@ -21,6 +22,7 @@ project(':intermine-api').projectDir = new File(settingsDir, './api')
 project(':intermine-webapp').projectDir = new File(settingsDir, './webapp')
 project(':intermine-resources').projectDir = new File(settingsDir, './resources')
 project(':intermine-webtasks').projectDir = new File(settingsDir, './webtasks')
+project(':intermine-jbrowse-endpoint').projectDir = new File(settingsDir, './jbrowse-endpoint')
 
 //intermine-webservice
 ////project(':intermine-webservice-client').projectDir = new File(settingsDir, './webservice/client/main')

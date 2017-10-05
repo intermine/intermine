@@ -1,4 +1,0 @@
-<project name="arbeitman-items-xml-tasks" default="default" basedir=".">
-  <description>build arbeitman-items-xml tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>

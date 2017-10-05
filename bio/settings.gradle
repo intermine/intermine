@@ -1,10 +1,64 @@
 rootProject.name = 'bio'
 
-include ':bio-core', ':bio-testall', ':bio-postprocess', ':bio-tools'//,':bio-sources'
+include ':bio-core', ':bio-testall', ':bio-postprocess', ':bio-tools', ':bio-webapp',
+':bio-sources:biogrid',
+':bio-sources:chado-db',
+':bio-sources:entrez-organism',
+':bio-sources:fasta',
+':bio-sources:go-annotation',
+':bio-sources:homologene',
+':bio-sources:interpro',
+':bio-sources:interpro-go',
+':bio-sources:kegg-orthologues',
+':bio-sources:kegg-pathway',
+':bio-sources:ncbi-gff',
+':bio-sources:orthodb',
+':bio-sources:panther',
+':bio-sources:pdb',
+':bio-sources:protein2ipr',
+':bio-sources:psi-complexes',
+':bio-sources:psi',
+':bio-sources:pubmed-gene',
+':bio-sources:reactome',
+':bio-sources:signor',
+':bio-sources:treefam',
+':bio-sources:uniprot',
+':bio-sources:uniprot-keywords',
+':bio-sources:update-data-sources',
+':bio-sources:update-publications',
+':bio-sources:vcf'
 
 project(':bio-core').projectDir = new File(settingsDir, './core')
 project(':bio-testall').projectDir = new File(settingsDir, './test-all')
 project(':bio-postprocess').projectDir = new File(settingsDir, './postprocess')
 project(':bio-tools').projectDir = new File(settingsDir, './tools')
-//project(':bio-sources').projectDir = new File(settingsDir, './sources')
+project(':bio-tools').projectDir = new File(settingsDir, './tools')
+project(':bio-webapp').projectDir = new File(settingsDir, './webapp')
+//bio-sources
+project(':bio-sources:biogrid').projectDir = new File(settingsDir, './sources/biogrid')
+project(':bio-sources:chado-db').projectDir = new File(settingsDir, './sources/chado-db')
+project(':bio-sources:entrez-organism').projectDir = new File(settingsDir, './sources/entrez-organism')
+project(':bio-sources:fasta').projectDir = new File(settingsDir, './sources/fasta')
+project(':bio-sources:go-annotation').projectDir = new File(settingsDir, './sources/go-annotation')
+project(':bio-sources:homologene').projectDir = new File(settingsDir, './sources/homologene')
+project(':bio-sources:interpro').projectDir = new File(settingsDir, './sources/interpro')
+project(':bio-sources:interpro-go').projectDir = new File(settingsDir, './sources/interpro-go')
+project(':bio-sources:kegg-orthologues').projectDir = new File(settingsDir, './sources/kegg-orthologues')
+project(':bio-sources:kegg-pathway').projectDir = new File(settingsDir, './sources/kegg-pathway')
+project(':bio-sources:ncbi-gff').projectDir = new File(settingsDir, './sources/ncbi-gff')
+project(':bio-sources:orthodb').projectDir = new File(settingsDir, './sources/orthodb')
+project(':bio-sources:panther').projectDir = new File(settingsDir, './sources/panther')
+project(':bio-sources:pdb').projectDir = new File(settingsDir, './sources/pdb')
+project(':bio-sources:protein2ipr').projectDir = new File(settingsDir, './sources/protein2ipr')
+project(':bio-sources:psi-complexes').projectDir = new File(settingsDir, './sources/psi-complexes')
+project(':bio-sources:psi').projectDir = new File(settingsDir, './sources/psi')
+project(':bio-sources:pubmed-gene').projectDir = new File(settingsDir, './sources/pubmed-gene')
+project(':bio-sources:reactome').projectDir = new File(settingsDir, './sources/reactome')
+project(':bio-sources:signor').projectDir = new File(settingsDir, './sources/signor')
+project(':bio-sources:treefam').projectDir = new File(settingsDir, './sources/treefam')
+project(':bio-sources:uniprot').projectDir = new File(settingsDir, './sources/uniprot')
+project(':bio-sources:uniprot-keywords').projectDir = new File(settingsDir, './sources/uniprot-keywords')
+project(':bio-sources:update-data-sources').projectDir = new File(settingsDir, './sources/update-data-sources')
+project(':bio-sources:update-publications').projectDir = new File(settingsDir, './sources/update-publications')
+project(':bio-sources:vcf').projectDir = new File(settingsDir, './sources/vcf')
 

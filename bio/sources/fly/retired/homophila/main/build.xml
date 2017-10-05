@@ -1,6 +1,0 @@
-
-<project name="homophila-tasks" default="default" basedir=".">
-  <description>build homophila tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>
-

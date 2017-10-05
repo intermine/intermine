@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/modmine-dbmodel"/>
-	<classpathentry kind="output" path="bin"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
-</classpath>

@@ -1,5 +1,0 @@
-<project name="cdna-clone" default="default" basedir=".">
-  <description>build, test, package cdna-clones</description>
-  
-  <import file="../../../../imbuild/source.xml"/>
-</project>

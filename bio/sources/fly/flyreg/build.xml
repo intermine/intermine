@@ -1,6 +1,0 @@
-<project name="flyreg" default="default" basedir=".">
-  <description>build, test, package flyreg</description>
-
-  <import file="../../../../imbuild/source.xml"/>
-
-</project>

@@ -1,0 +1,40 @@
+apply plugin: 'war'
+apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+  compile project(':bio-core')
+  compile project(':bio-tools')
+  compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
+  compile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: imVersion
+  compile project(path: ':bio-testall', configuration: 'testBioArtifacts')
+  compile fileTree(dir: 'libs', include: '*.jar')
+}
+
+task classesJar(type: Jar) {
+    classifier = 'classes'
+    from sourceSets.main.output
+}
+
+artifacts {
+  archives classesJar
+}
+

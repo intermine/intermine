@@ -1,8 +1,0 @@
-
-<project name="drosophila-homology" default="default" basedir=".">
-  <description>build, test, package drosophila-homology</description>
-  
-  <import file="../../../../imbuild/source.xml"/>
-  
-</project>
-

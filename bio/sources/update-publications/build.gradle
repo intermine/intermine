@@ -18,4 +18,5 @@ sourceSets {
 }
 
 dependencies {
+  compile group: 'com.sleepycat', name: 'je', version: '4.0.92'
 }
