@@ -21,7 +21,12 @@ sourceSets {
 }
 
 dependencies {
-
+  compile project(':bio-core')
+  compile project(':bio-tools')
+  compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
+  compile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: imVersion
+  compile project(path: ':bio-testall', configuration: 'testBioArtifacts')
+  compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 task classesJar(type: Jar) {

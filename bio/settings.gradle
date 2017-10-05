@@ -1,6 +1,6 @@
 rootProject.name = 'bio'
 
-include ':bio-core', ':bio-testall', ':bio-postprocess', ':bio-tools',
+include ':bio-core', ':bio-testall', ':bio-postprocess', ':bio-tools', ':bio-webapp',
 ':bio-sources:biogrid',
 ':bio-sources:chado-db',
 ':bio-sources:entrez-organism',
@@ -32,7 +32,8 @@ project(':bio-core').projectDir = new File(settingsDir, './core')
 project(':bio-testall').projectDir = new File(settingsDir, './test-all')
 project(':bio-postprocess').projectDir = new File(settingsDir, './postprocess')
 project(':bio-tools').projectDir = new File(settingsDir, './tools')
-project(':bio-sources').projectDir = new File(settingsDir, './sources')
+project(':bio-tools').projectDir = new File(settingsDir, './tools')
+project(':bio-webapp').projectDir = new File(settingsDir, './webapp')
 //bio-sources
 project(':bio-sources:biogrid').projectDir = new File(settingsDir, './sources/biogrid')
 project(':bio-sources:chado-db').projectDir = new File(settingsDir, './sources/chado-db')
