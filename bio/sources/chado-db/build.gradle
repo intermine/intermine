@@ -18,4 +18,5 @@ sourceSets {
 }
 
 dependencies {
+  compile project(':bio-postprocess')
 }

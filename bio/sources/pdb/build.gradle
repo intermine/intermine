@@ -18,4 +18,5 @@ sourceSets {
 }
 
 dependencies {
+  compile group: 'org.biojava', name: 'biojava-structure', version: '4.1.0'
 }

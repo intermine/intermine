@@ -1,21 +1,30 @@
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java']
-        }
-        resources {
-            srcDirs = ['src/main/resources']
-        }
-    }
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
-        }
-    }
+subprojects {
+  group = 'org.intermine'
+  version = '2.0.0-SNAPSHOT'
+
+  apply plugin: 'java'
+  apply plugin: 'maven'
+
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6
+  
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+
+  test {
+    ignoreFailures = true
+  }
+
+  dependencies {
+    compile project(':bio-core')
+    compile group: 'ant', name: 'ant', version: '1.6.5'
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile project(path: ':bio-testall', configuration: 'testBioArtifacts')
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+    testCompile group: "org.intermine", name: "intermine-integrate", version: imVersion, classifier: "testClasses"
+  }
 }
 
-dependencies {
-}
+jar.enabled = false

@@ -18,4 +18,5 @@ sourceSets {
 }
 
 dependencies {
+  compile fileTree(dir: 'libs', include: '*.jar') //jami libs
 }
