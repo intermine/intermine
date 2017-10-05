@@ -26,7 +26,8 @@ sourceSets {
 dependencies {
     compile project(':intermine-model')
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
-    //compile group: 'torque', name: 'torque-gen', version: '3.2'
+    compile group: 'torque', name: 'torque-gen', version: '3.3'
+    //compile group: 'torque', name: 'torque', version: '3.3'
     compile group: 'commons-io', name: 'commons-io', version: '1.2'
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.6.1'
     compile group: 'com.zaxxer', name: 'HikariCP-java6', version: '2.3.8'
