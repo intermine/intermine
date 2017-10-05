@@ -14,17 +14,18 @@ configurations {
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: version
+    //compile fileTree(dir: 'libs', include: '*.jar')
     compile group: "org.intermine", name: "intermine-testresources", version: version
     compile group: "org.intermine", name: "intermine-integrate", version: version
 }
 
 void buildDB() {
-    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask', classpath:configurations.compile.asPath)
-            {
-                classpath {
-                    dirset(dir: 'build/')
-                }
-            }
+    println configurations.compile.asPath
+    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+        }
+    }
     ant.torque(osname: 'os.unittest', destFile:"$buildDir/os.unittest-schema.xml")
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask', classpath:configurations.compile.asPath)
             {
@@ -37,7 +38,7 @@ void buildDB() {
     // <analyse-db osName="${objectstore.name}"/>
 }
 
-void insertDataUnittest() {
+void insertDUnittest() {
     // TODO this
     // <delete file="${objectstoresummary.properties}"/>
    ant.taskdef(name: 'insertDataUnittest', classname: 'org.intermine.dataloader.XmlDataLoaderTask', classpath:configurations.compile.asPath)
@@ -53,11 +54,11 @@ void insertDataUnittest() {
 task insertDataUnittest {
     doLast {
         buildDB()
-        insertDataUnittest()
+        insertDUnittest()
    }
 }
 
-task buildDB {
+task buildDataBase {
     doLast {
         buildDB()
    }
