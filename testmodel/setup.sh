@@ -89,7 +89,7 @@ for db in $USERPROFILEDB $PRODDB; do
 done
 
 echo "------> Removing current webapp"
-cd $DIR/webapp/main
+cd $DIR/webapp
 ant -Drelease=demo -Ddont.minify=true remove-webapp >> $DIR/setup.log
 
 cd $DIR/dbmodel
