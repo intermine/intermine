@@ -207,3 +207,4 @@ failures.list
 biotestmine/project.xml
 *.iml
 out/
+.gradle/
