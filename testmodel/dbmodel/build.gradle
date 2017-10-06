@@ -14,13 +14,12 @@ configurations {
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: version
-    //compile fileTree(dir: 'libs', include: '*.jar')
+    compile fileTree(dir: 'libs', include: '*.jar')
     compile group: "org.intermine", name: "intermine-testresources", version: version
     compile group: "org.intermine", name: "intermine-integrate", version: version
 }
 
 void buildDB() {
-    println configurations.compile.asPath
     ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
         classpath {
             pathelement(path: configurations.compile.asPath)
@@ -51,14 +50,14 @@ void insertDUnittest() {
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_webapp_data.xml", sourceName: "testsource", sourceType: "testsource")
 }
 
-task insertDataUnittest {
+task insertDataUnittest(dependsOn: 'build') {
     doLast {
         buildDB()
         insertDUnittest()
    }
 }
 
-task buildDataBase {
+task buildDataBase(dependsOn: 'build') {
     doLast {
         buildDB()
    }
