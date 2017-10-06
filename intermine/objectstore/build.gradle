@@ -39,8 +39,3 @@ dependencies {
     runtime group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.7'
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
 }
-
-void buildDB(String osname, String model) {
-    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask')
-    ant.buildDBUnittest(osname: "$osname", model: "$model", schemafile:"${osname}-schema.xml", tempDir: 'build/tmp')
-}
