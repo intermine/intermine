@@ -20,6 +20,12 @@ sourceSets {
     }
 }
 
+def explodedWebAppDir = "$buildDir/explodedWebApp"
+
+configurations {
+  imWebApp
+}
+
 dependencies {
   compile project(':bio-core')
   compile project(':bio-tools')
@@ -27,6 +33,25 @@ dependencies {
   compile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: imVersion
   compile project(path: ':bio-testall', configuration: 'testBioArtifacts')
   compile fileTree(dir: 'libs', include: '*.jar')
+  imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, ext: "war"
+}
+
+task unwarIMWebApp(type: Copy) {
+  description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
+  from { zipTree(configurations.imWebApp.singleFile) }
+  destinationDir = new File("$explodedWebAppDir")
+}
+
+task warBioWebApp(type: War) {
+  description "Create the war from the build/explodedWebAppDir directory"
+  from "${explodedWebAppDir}"
+}
+
+war {
+  doLast {
+    unwarIMWebApp.execute()
+    warBioWebApp.execute()	
+  }
 }
 
 task classesJar(type: Jar) {
