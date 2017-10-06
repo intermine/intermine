@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Query>
+<Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" >
+			
+	<Dataset name = "celegans_gene_ensembl" interface = "default" >
+		<Filter name = "with_hsapiens_homolog" excluded = "0"/>
+		<Attribute name = "ensembl_gene_id" />
+		<Attribute name = "dmelanogaster_homolog_ensembl_gene" />
+	</Dataset>
+</Query>
