@@ -53,13 +53,13 @@
 
 <!-- 	<source name="go" type="go" dump="true">
 		<property name="src.data.file" location="&datadir;/go/gene_ontology.1_2.obo"/>
-	</source> -->
+	</source> 
 
-<!--         <source name="anatomy_ontology" type="go" dump="true">
+        <source name="anatomy_ontology" type="go" dump="true">
 		<property name="src.data.file" location="&datadir;/ontology/anatomy_ontology.obo"/>
 	</source> -->
 	
-	<source name="go-annotation" type="go-annotation" dump="true">
+	<source name="go-annotation" type="go-annotation" dump="false">
 		<property name="ontologyfile" location="&datadir;/go/gene_ontology.1_2.obo"/>
 		<property name="src.data.dir" location="&datadir;/go-annotation/final"/>
 	</source>
@@ -94,7 +94,7 @@
 
 
 	<!-- CORE GENOMIC ANNOTATION IN GFF3 -->
-	<source name="celegans-gff3" type="gff" dump="true">
+	<source name="celegans-gff3" type="gff" dump="false">
 		<property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
 		<property name="gff3.seqDataSourceName" value="WormBase"/>
 		<property name="gff3.dataSourceName"    value="WormBase"/>
@@ -102,14 +102,14 @@
 		<property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
 		<!--<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>-->
 		
-		<property name="src.data.dir"           location="&datadir;/wormbase-gff3/final"/> 
+		<property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/three"/> 
 		
 		<!-- 
 		Only GFF3 records with a third column matching this value 
 		are processed.  Case insensitive.
 		gene, mrna, cds, exon
 		-->
-		<property name="gff3.allowedClasses" 	 value="gene,mrna,cds,exon"/>
+		<property name="gff3.allowedClasses" 	 value="gene,cds,exon"/>
 		
 		<!-- 
 		This file maps IDs from GFF3 into a type compatible with other 
@@ -119,35 +119,37 @@
 		<property name="gff3.IDMappingFile"	 value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/> 
 		
 	</source>
-	<!--
-	<source name="celegans-gff3-mrna" type="gff" dump="false">
-		<property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
-		<property name="gff3.seqDataSourceName" value="WormBase"/>
-		<property name="gff3.dataSourceName"    value="WormBase"/>
-		<property name="gff3.seqClsName"        value="Chromosome"/>
-		<property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 mRNA)"/>
-		<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>
-		<property name="src.data.dir"           location="&datadir;/wormbase-gff3/final"/> 
-		<property name="gff3.allowedClasses" 	value="mrna"/>
-		<property name="gff3.IDMappingFile"	 value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/> 
-		
-		Maps type names from GFF3 into recognized InterMine class names
-		Format: key \t value. All other columns ignored 
-		<property name="gff3.typeMappingFile"    value="&datadir;/wormbase-gff3/mapping/typeMapping.tab"/>
-	</source>
-	<source name="celegans-gff3-cds" type="gff" dump="false">
-		<property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
-		<property name="gff3.seqDataSourceName" value="WormBase"/>
-		<property name="gff3.dataSourceName"    value="WormBase"/>
-		<property name="gff3.seqClsName"        value="Chromosome"/>
-		<property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 CDS)"/>
-		<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>
-		<property name="src.data.dir"           location="&datadir;/wormbase-gff3/final"/> 
-		<property name="gff3.allowedClasses" 	 value="cds"/>
-	</source>
-	-->
+
+        <source name="celegans-gff3-mrna" type="gff" dump="false">
+                <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
+                <property name="gff3.seqDataSourceName" value="WormBase"/>
+                <property name="gff3.dataSourceName"    value="WormBase"/>
+                <property name="gff3.seqClsName"        value="Chromosome"/>
+                <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
+                <!--<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>-->
+
+                <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/mrna"/>
+
+                <!--
+                Only GFF3 records with a third column matching this value
+                are processed.  Case insensitive.
+                gene, mrna, cds, exon
+                -->
+                <property name="gff3.allowedClasses"     value="mrna"/>
+
+                <!--
+                This file maps IDs from GFF3 into a type compatible with other
+                data sources
+                Format: key \t value. All other columns ignored
+                -->
+                <property name="gff3.IDMappingFile"      value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/>
+
+        </source>
+
+
+
 	<!-- WormBase aceDB data loader.  Base dir is wormmine/integrate -->
-	<source name="wb-acedb-gene" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-gene" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/gene/XML" />
 		<!--
 			This file maps intermine data classes to an XPath query.
@@ -180,7 +182,7 @@
 	</source>
 
 
-	<source name="wb-acedb-transcript" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-transcript" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/transcript/XML" />
 
 		<property name="mapping.file"
@@ -199,7 +201,7 @@
 	</source>
 
 
-	<source name="wb-acedb-cds" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-cds" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/cds/XML" />
 
 		<property name="mapping.file"
@@ -216,7 +218,7 @@
 	</source>
 
 
-	<source name="wb-acedb-phenotype" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-phenotype" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/phenotype/XML" />
 		<property name="mapping.file"
 				value = "&datadir;/wormbase-acedb/phenotype/mapping/phenotype_mapping.properties" />
@@ -229,7 +231,7 @@
 		<property name="debug" value="false"/>
 	</source>
 
-	<source name="wb-acedb-expr_pattern" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-expr_pattern" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/expr_pattern/XML" />
 		<property name="mapping.file"
 				value = "&datadir;/wormbase-acedb/expr_pattern/mapping/expr_pattern_mapping.properties" />
@@ -242,7 +244,7 @@
 		<property name="debug" value="false"/>
 	</source>
 
-	<source name="wb-acedb-anatomy_term" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-anatomy_term" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/anatomy_term/XML" />
 		<property name="mapping.file"
 				value = "&datadir;/wormbase-acedb/anatomy_term/mapping/anatomy_term_mapping.properties" />
@@ -256,7 +258,7 @@
 
 
 
-	<source name="wb-acedb-life_stage" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-life_stage" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/life_stage/XML" />
 		<property name="mapping.file"
 				value = "&datadir;/wormbase-acedb/life_stage/mapping/life_stage_mapping.properties" />
@@ -269,7 +271,7 @@
 
 	</source>
 
-	<source name="wb-acedb-expr_cluster" type="wormbase-acedb" dump="true">
+	<source name="wb-acedb-expr_cluster" type="wormbase-acedb" dump="false">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/expr_cluster/XML" />
 		<property name="mapping.file"
 				value = "&datadir;/wormbase-acedb/expr_cluster/mapping/expr_cluster_mapping.properties" />
@@ -293,6 +295,19 @@
 		<property name="data.set" value="AceDB XML (Protein)"/>
 	</source>
 
+  <source name="wb-acedb-strain" type="wormbase-acedb" dump="false">
+        <property name="src.data.dir" location="&datadir;/wormbase-acedb/strain/XML" />
+        <property name="mapping.file"
+                value="&datadir;/wormbase-acedb/strain/mapping/strain_mapping.properties" />
+        <property name="key.file"
+            value="../../bio/sources/wormbase-acedb/resources/wormbase-acedb_keys.properties"/>
+        <property name="source.class" value="Strain"/>
+        <property name="rejects.file"
+            value="&datadir;/wormbase-acedb/strain/wormbase-acedb-species-rejects.xml"/>
+        <property name="data.set" value="AceDB XML (Species)"/>
+
+    </source> 
+
 
 	<source name="wb-acedb-variation" type="wormbase-acedb" dump="true">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/variation/XML" />
@@ -311,7 +326,7 @@
 		<property name="debug" value="false"/>
 	</source>
 
-    <source name="wb-acedb-RNAi" type="wormbase-acedb" dump="true">
+    <source name="wb-acedb-RNAi" type="wormbase-acedb" dump="false">
           <property name="src.data.dir" location="&datadir;/wormbase-acedb/RNAi/XML" />
           <property name="mapping.file"
               value="&datadir;/wormbase-acedb/RNAi/mapping/RNAi_mapping.properties" />
@@ -324,9 +339,9 @@
       </source>
 
     <source name="wb-acedb-gene-class" type="wormbase-acedb" dump="false">
-          <property name="src.data.dir" location="&datadir;/wormbase-acedb/gene-class/XML" />
+          <property name="src.data.dir" location="&datadir;/wormbase-acedb/gene_class/XML" />
           <property name="mapping.file"
-              value="&datadir;/wormbase-acedb/gene-class/mapping/gene_class_mapping.properties" />
+              value="&datadir;/wormbase-acedb/gene_class/mapping/gene_class_mapping.properties" />
           <property name="key.file"
               value="../../bio/sources/wormbase-acedb/resources/wormbase-acedb_keys.properties"/>
           <property name="source.class" value="GeneClass"/>
@@ -335,24 +350,23 @@
           <property name="data.set" value="AceDB XML (Gene Class)"/>
       </source>
 
-<!--	<source name="panther" type="panther">
+	<source name="panther" type="panther" dump="true">
       <property name="src.data.dir" location="&datadir;/panther"/>
        <property name="panther.organisms" value="6239"/>
        <property name="panther.homologues" value="10090 9606 7955 7227 4932 10116"/>
-    </source> -->
+    </source> 
 
-  <source name="wb-acedb-strain" type="wormbase-acedb" dump="false">
-        <property name="src.data.dir" location="&datadir;/wormbase-acedb/strain/XML" />
-        <property name="mapping.file"
-                value="&datadir;/wormbase-acedb/strain/mapping/strain_mapping.properties" />
-        <property name="key.file"
-            value="../../bio/sources/wormbase-acedb/resources/wormbase-acedb_keys.properties"/>
-        <property name="source.class" value="Strain"/>
-        <property name="rejects.file"
-            value="&datadir;/wormbase-acedb/strain/wormbase-acedb-species-rejects.xml"/>
-        <property name="data.set" value="AceDB XML (Species)"/>
+     <source name="ensembl-compara" type="ensembl-compara">
+         <property name="src.data.dir" location="&datadir;/ensembl/compara"/>
+         <property name="ensemblcompara.organisms" value="6239"/>
+         <property name="ensemblcompara.homologues" value="9606"/>
+     </source>
 
-    </source>
+     <source name="ensembl-compara2" type="ensembl-compara">
+         <property name="src.data.dir" location="&datadir;/ensembl/compara"/>
+         <property name="ensemblcompara.organisms" value="6239"/>
+         <property name="ensemblcompara.homologues" value="7955"/>
+     </source>
 
 	<source name="entrez-organism" type="entrez-organism">
         <property name="src.data.file" location="&datadir;/entrez-organism/organisms.xml"/>
