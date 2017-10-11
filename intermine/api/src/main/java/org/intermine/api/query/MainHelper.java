@@ -1,7 +1,7 @@
 package org.intermine.api.query;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -660,6 +660,7 @@ public final class MainHelper
                                 + "ObjectStore Query without a BagQueryRunner");
                     }
                     String identifiers = pcl.getValue();
+
                     // if this LOOKUP constraint only includes *, just ignore constraint
                     // as user wants everything.
                     if (!"*".equals(identifiers)) {
@@ -1140,8 +1141,7 @@ public final class MainHelper
             BagQueryConfig bagQueryConfig,
             ProfileManager pm,
             boolean occurancesOnly) throws ObjectStoreException {
-        TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
-                os.getModel());
+        TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile());
         BagQueryRunner bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig,
                 templateManager);
         return MainHelper.makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode,

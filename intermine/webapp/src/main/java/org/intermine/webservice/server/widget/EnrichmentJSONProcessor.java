@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,10 +40,9 @@ public final class EnrichmentJSONProcessor implements WidgetResultProcessor
         backingMap.put("identifier", row.get(0));
         backingMap.put("description", row.get(1));
         backingMap.put("p-value", row.get(2));
-        // Counts (index 3) are not necessary here, as it it trivial to
-        // fetch from the matches array (as result.matches.length)
-        //List<Map<String, Object>> matchesDetail = (List<Map<String, Object>>) row.get(4);
         backingMap.put("matches", row.get(3));
+        // how many in the database were annotated with this GO term
+        backingMap.put("populationAnnotationCount", row.get(4));
         JSONObject jo = new JSONObject(backingMap);
         return new LinkedList<String>(Arrays.asList(jo.toString()));
     }

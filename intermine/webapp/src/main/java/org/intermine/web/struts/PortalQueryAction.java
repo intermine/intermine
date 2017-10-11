@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,6 +35,8 @@ import org.intermine.api.bag.AdditionalConverter;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.idresolution.IDResolver;
+import org.intermine.api.idresolution.Job;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
@@ -48,6 +50,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConverter;
+import org.intermine.web.logic.bag.WebJobInput;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.session.SessionMethods;
@@ -91,8 +94,13 @@ public class PortalQueryAction extends InterMineAction
         if (StringUtils.isBlank(extId)) {
             extId = request.getParameter("externalids");
         }
-
         String extraFieldValue = request.getParameter("extraValue");
+
+        // if TRUE, go to disambiguation page
+        boolean goToListUpload = false;
+        if ("true".equalsIgnoreCase(request.getParameter("goToListUpload"))) {
+            goToListUpload = true;
+        }
 
         // Add a message to welcome the user
         Properties properties = SessionMethods.getWebProperties(servletContext);
@@ -183,7 +191,9 @@ public class PortalQueryAction extends InterMineAction
 
         // There's only one node, get the first value
         BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
-        bagList.addAll(bagQueryResult.getMatchAndIssueIds());
+        if (!goToListUpload || idList.length == 1) {
+            bagList.addAll(bagQueryResult.getMatchAndIssueIds());
+        }
 
         DisplayLookupMessageHandler.handleMessages(bagQueryResult, session, properties, className,
                 null);
@@ -237,6 +247,18 @@ public class PortalQueryAction extends InterMineAction
         // one ID searched for one ID found
         } else if ((bagList.size() == 1) && (idList.length == 1)) {
             return goToReport(mapping, bagList.get(0).toString());
+        // lots of results, go to list upload page
+        } else if (goToListUpload) {
+            BuildBagForm buildBagForm = null;
+            WebJobInput input = new WebJobInput(className, Arrays.asList(idList), buildBagForm);
+            input.setExtraValue(extraFieldValue);
+            Job job = IDResolver.getInstance().submit(im.getBagQueryRunner(), input);
+
+            session.setAttribute("idresolutionjobid", job.getUid());
+            request.setAttribute("bagType", className);
+            request.setAttribute("bagExtraFilter", extraFieldValue);
+            request.setAttribute("buildNewBag", "true");
+            return mapping.findForward("bagUploadConfirm");
         // lots of results, make a list
         } else if (bagList.size() >= 1) {
             InterMineBag imBag = profile.createBag(bagName, className, "", im.getClassKeys());

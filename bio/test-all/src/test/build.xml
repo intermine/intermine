@@ -64,6 +64,7 @@
     <merge-additions file="bio/sources/signor/signor_additions.xml"/>
     <merge-additions file="bio/sources/fly/flybase-alleles/flybase-alleles_additions.xml"/>
     <merge-additions file="bio/sources/do/do_additions.xml"/>
+    <merge-additions file="bio/sources/gtex/gtex_additions.xml"/>
   </target>
 
 </project>

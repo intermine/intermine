@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,6 +36,7 @@ public abstract class Widget
     protected String ids;
     protected ObjectStore os;
     protected int notAnalysed = 0;
+    protected int poplationCount = 0;
 
     /**
      * The constructor
@@ -64,6 +65,20 @@ public abstract class Widget
      */
     public void setNotAnalysed(int notAnalysed) {
         this.notAnalysed = notAnalysed;
+    }
+
+    /**
+     * @return the number of objects in the database annotated with ANY GO term
+     */
+    public int getPopulationCount() {
+        return poplationCount;
+    }
+
+    /**
+     * @param poplationCount the number of objects in the population
+     */
+    public void setPopulationCount(int poplationCount) {
+        this.poplationCount = poplationCount;
     }
 
     /**

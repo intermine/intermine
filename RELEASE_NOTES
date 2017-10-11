@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,6 +7,40 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 1.8.5 (2017 August)
+
+#1661 - Anonymous session tokens are not authenticating
+
+InterMine 1.8.4 (2017 August)
+
+#961 - Need way of referring to lists stably
+#1494 - LOOKUP and List upload use BagQueryRunner. Need different "match" behaviour
+#1555 - Add cytological data to humanMine
+#1600 - Need web service endpoint to generate permanent API tokens
+#1606 - Portal - go to disambiguation page if there are issues
+#1607 - Add GTEx data
+#1611 - remove obsolete constraint operators
+#1613 - OBO files have terms without names
+#1614 - HumanMine: missing exons
+#1621 - HumanMine: add cytolocation
+#1626 - Remove intermine/scripts
+#1631 - Add defaults web service for each mine
+#1636 - Only look in public schema when counting rows in a table
+#1648 - Templates export in JSON format causes deadlock.
+#1652 - Add user ID to web service output
+
+InterMine 1.8.3 (2017 July 12)
+
+#1623 Add branding parameters for external apps. 
+
+InterMine 1.8.2 (2017 July)
+
+#205 - add 4 numbers used to calculate enrichment to web services
+#1603 - revert logo changes on footer (temporarily)
+
+InterMine 1.8.1 (2017 June)
+
+Update copyright notice
 
 InterMine 1.8 (2017 June)
 

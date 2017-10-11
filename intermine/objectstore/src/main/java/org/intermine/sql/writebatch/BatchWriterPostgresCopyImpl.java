@@ -1,7 +1,7 @@
 package org.intermine.sql.writebatch;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -244,7 +244,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     @Override
     protected int getTableSize(String name, Connection conn) throws SQLException {
         Statement s = conn.createStatement();
-        ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = '"
+        ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class c, pg_namespace n WHERE "
+                + "n.oid=c.relnamespace AND n.nspname='public' AND relname = '"
                 + name.toLowerCase() + "'");
         if (r.next()) {
             int returnValue = (int) r.getFloat(1);

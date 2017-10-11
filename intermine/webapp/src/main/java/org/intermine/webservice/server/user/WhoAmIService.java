@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,6 +60,8 @@ public class WhoAmIService extends JSONService
         Profile profile = getPermission().getProfile();
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("username", profile.getUsername());
+        String id = (profile.getUserId() != null) ? profile.getUserId().toString() : null;
+        data.put("id", id);
         data.put("preferences", profile.getPreferences());
         addResultItem(data, false);
     }

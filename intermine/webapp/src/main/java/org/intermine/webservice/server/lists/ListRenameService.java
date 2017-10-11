@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,7 +55,6 @@ public class ListRenameService extends AuthenticatedListService
 
         addOutputInfo(LIST_NAME_KEY, list.getName());
         addOutputInfo(LIST_SIZE_KEY, "" + list.size());
-
+        addOutputInfo(LIST_ID_KEY, "" + list.getSavedBagId());
     }
-
 }

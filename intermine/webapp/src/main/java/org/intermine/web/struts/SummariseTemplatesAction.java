@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -59,8 +59,7 @@ public class SummariseTemplatesAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         final TemplateSummariser summariser = im.getTemplateSummariser();
 
-        TemplateManager templateManager = new TemplateManager(profile,
-                im.getObjectStore().getModel());
+        TemplateManager templateManager = new TemplateManager(profile);
         Map<String, ApiTemplate> templates = templateManager.getGlobalTemplates();
 
         for (Map.Entry<String, ApiTemplate> entry : templates.entrySet()) {

@@ -83,7 +83,7 @@ public class BagQueryRunnerTest {
     @Test
     public void testSearchForBagMatches() throws Exception {
         List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});
-        BagQueryResult res = runner.search("Employee", input, null, true, true);
+        BagQueryResult res = runner.search("Employee", input, null, true, true, false);
         Assert.assertEquals(2, res.getMatches().values().size());
         Assert.assertTrue(res.getIssues().isEmpty());
         Assert.assertTrue(res.getUnresolved().isEmpty());
@@ -93,7 +93,7 @@ public class BagQueryRunnerTest {
     @Test
     public void testCase() throws Exception {
         List input = Arrays.asList(new Object[] {"employeeA1", "employeeA2"});
-        BagQueryResult res = runner.search("Employee", input, null, true, true);
+        BagQueryResult res = runner.search("Employee", input, null, true, true, false);
         Assert.assertTrue(res.getMatches().isEmpty());
         Assert.assertTrue(res.getIssues().isEmpty());
         Assert.assertEquals(2, res.getUnresolved().size());

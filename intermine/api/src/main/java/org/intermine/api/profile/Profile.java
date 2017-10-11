@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,6 +33,7 @@ import org.intermine.api.search.UserRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
@@ -81,6 +82,7 @@ public class Profile
     private Map<String, String> preferences;
     @SuppressWarnings("unchecked")
     protected Map<String, SavedQuery> queryHistory = new ListOrderedMap();
+    private TemplateManager templateManager = null;
 
     /**
      * True if this account is purely local. False if it was created
@@ -363,7 +365,6 @@ public class Profile
         return Collections.unmodifiableMap(savedTemplates);
     }
 
-
     /**
      * Save a template
      * @param name the template name
@@ -379,6 +380,7 @@ public class Profile
             manager.saveProfile(this);
         }
         searchRepository.receiveEvent(new CreationEvent(template));
+        invalidateTemplateCacheIfRequired();
     }
 
     /**
@@ -410,15 +412,27 @@ public class Profile
                     manager.saveProfile(this);
                 }
             }
-
             searchRepository.receiveEvent(new DeletionEvent(template));
-
             TagManager tagManager = getTagManager();
             tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
             if (trackerDelegate != null && deleteTracks) {
                 trackerDelegate.updateTemplateName(name, "deleted_" + name);
             }
+            invalidateTemplateCacheIfRequired();
         }
+    }
+
+    /**
+     * When a template or tag is updated, invalidate cache so it can be refreshed
+     */
+    public void invalidateTemplateCacheIfRequired() {
+        if (!isSuperuser()) {
+            return;
+        }
+        if (templateManager == null) {
+            templateManager = new TemplateManager(this);
+        }
+        templateManager.invalidateCache();
     }
 
     /**
@@ -793,6 +807,7 @@ public class Profile
             searchRepository.receiveEvent(new DeletionEvent(old));
             moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
         }
+        invalidateTemplateCacheIfRequired();
     }
 
     private void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type) {
@@ -808,6 +823,7 @@ public class Profile
             }
             tagManager.deleteTag(tag);
         }
+        invalidateTemplateCacheIfRequired();
     }
 
     private TagManager getTagManager() {

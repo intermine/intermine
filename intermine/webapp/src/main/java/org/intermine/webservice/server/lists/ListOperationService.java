@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -84,6 +84,7 @@ public abstract class ListOperationService extends ListMakerService
                 input.getDescription(),
                 im.getClassKeys());
         }
+        addOutputInfo(LIST_ID_KEY, newBag.getSavedBagId().toString());
 
         if (input.getDescription() != null) {
             newBag.setDescription(input.getDescription());

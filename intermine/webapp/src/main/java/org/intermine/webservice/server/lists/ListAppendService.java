@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -53,6 +53,7 @@ public class ListAppendService extends ListUploadService
         processIdentifiers(bag.getType(), input, ids, unmatchedIds, bag);
 
         setListSize(bag.size());
+        setListId(bag.getSavedBagId());
 
         for (Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
             List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
@@ -61,7 +62,5 @@ public class ListAppendService extends ListUploadService
             }
             output.addResultItem(row);
         }
-
     }
-
 }

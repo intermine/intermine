@@ -1,7 +1,7 @@
 package org.intermine.web.task;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -268,7 +268,7 @@ public class PrecomputeTemplatesTask extends Task
     protected Map<String, ApiTemplate> getPrecomputeTemplateQueries() {
         ProfileManager pm = new ProfileManager(os, userProfileOS);
         Profile profile = pm.getSuperuserProfile();
-        TemplateManager templateManager = new TemplateManager(profile, os.getModel());
+        TemplateManager templateManager = new TemplateManager(profile);
         return templateManager.getGlobalTemplates(true);
     }
 }

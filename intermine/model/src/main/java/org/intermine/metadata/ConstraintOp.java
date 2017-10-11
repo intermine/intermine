@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -102,12 +102,6 @@ public final class ConstraintOp
 
     /** Require that the first argument be of the type named by the right argument **/
     public static final ConstraintOp ISNT = new ConstraintOp("ISNT");
-
-    /** Require that the left argument has at least one of the right argument. **/
-    public static final ConstraintOp HAS = new ConstraintOp("HAS");
-
-    /** Require that the left argument does not have any of the right argument. **/
-    public static final ConstraintOp DOES_NOT_HAVE = new ConstraintOp("DOES NOT HAVE");
 
     private ConstraintOp(String name) {
         this.name = name;

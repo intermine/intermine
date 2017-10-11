@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -1097,7 +1097,7 @@ public class ProfileManager
         private final String username;
         private final Date expiry;
 
-        public PasswordChangeToken(String username, Date expiry) {
+        PasswordChangeToken(String username, Date expiry) {
             this.username = username;
             this.expiry = expiry;
         }
@@ -1127,7 +1127,7 @@ public class ProfileManager
     {
         private final Profile profile;
 
-        public LimitedAccessToken(Profile profile) {
+        LimitedAccessToken(Profile profile) {
             this.profile = profile;
         }
 
@@ -1163,7 +1163,7 @@ public class ProfileManager
         private final int maxUses = 1;
         private int uses = 0;
 
-        public SingleAccessToken(Profile profile) {
+        SingleAccessToken(Profile profile) {
             super(profile);
         }
 
@@ -1187,7 +1187,7 @@ public class ProfileManager
     {
         private final Date createdAt;
 
-        public DayToken(Profile profile) {
+        DayToken(Profile profile) {
             super(profile);
             createdAt = new Date();
         }

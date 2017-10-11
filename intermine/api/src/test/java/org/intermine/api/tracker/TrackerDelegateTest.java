@@ -1,7 +1,7 @@
 package org.intermine.api.tracker;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,8 +14,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
-import java.util.Map;
 
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.BadTemplateException;
@@ -24,7 +22,6 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
-import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
@@ -51,7 +48,7 @@ public class TrackerDelegateTest extends InterMineAPITestCase
         superUser = im.getProfileManager().getProfile("superUser");
         testUser = im.getProfileManager().getProfile("testUser");
         conn = ((ObjectStoreWriterInterMineImpl) uosw).getDatabase().getConnection();
-        templateManager = new TemplateManager(superUser, uosw.getModel());
+        templateManager = new TemplateManager(superUser);
         tagManager = new TagManager(uosw);
         createTemplates();
     }

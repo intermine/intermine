@@ -17,11 +17,6 @@
     <source name="ncbi-summaries" type="ncbi-summaries">
       <property name="src.data.dir" location="/micklem/data/ncbi/gene-summaries/current/" />
     </source>
-    <source name="pubmed-gene" type="pubmed-gene">
-      <property name="src.data.dir" location="/micklem/data/pubmed/current" />
-      <property name="pubmed.organisms" value="9606 10090" />
-      <property name="src.data.dir.includes" value="gene2pubmed" />
-    </source>
     <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
     </source>
@@ -99,7 +94,7 @@
       <property name="src.data.dir" location="/micklem/data/pdb"/>
       <property name="pdb.organisms" value="9606"/>
     </source>
-    <source name="psi-intact" type="psi" dump="true">
+    <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
       <property name="intact.organisms" value="9606" />
     </source>
@@ -141,7 +136,7 @@
       <property name="fasta.includes" value="*.fa"/>
     </source>
 
-    <source name="ncbi-gff" type="ncbi-gff" dump="true">
+    <source name="ncbi-gff" type="ncbi-gff">
       <property name="gff3.taxonId" value="9606"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -160,8 +155,18 @@
       <property name="hpo.disease.file" location="/micklem/data/metabolic/omim/current/mimTitles.txt" />
     </source>
 
-    <source name="orphanet" type="orphanet">
+    <source name="orphanet" type="orphanet" dump="true">
       <property name="src.data.dir" location="/micklem/data/human/orphanet/current" />
+    </source>
+
+    <source name="pubmed-gene" type="pubmed-gene">
+      <property name="src.data.dir" location="/micklem/data/pubmed/current" />
+      <property name="pubmed.organisms" value="9606 10090" />
+      <property name="src.data.dir.includes" value="gene2pubmed" />
+    </source>
+
+    <source name="gtex" type="gtex">
+      <property name="src.data.dir" location="/micklem/data/human/GTEx/current" />
     </source>
 
     <source name="update-publications" type="update-publications">
@@ -185,7 +190,7 @@
     <post-process name="create-gene-flanking-features" />
     <post-process name="create-bioseg-location-index" />
     <post-process name="create-overlap-view" />
-    <post-process name="populate-child-features"/>    
+<!--    <post-process name="populate-child-features"/>    -->
     <post-process name="create-attribute-indexes" />
     <post-process name="summarise-objectstore" />
     <post-process name="create-autocomplete-index" />
