@@ -1,9 +1,5 @@
 package org.intermine.objectstore.query;
 
-<<<<<<< HEAD:intermine/objectstore/src/test/java/org/intermine/objectstore/query/QueryAssert.java
-import org.intermine.objectstore.query.iql.IqlQuery;
-import org.junit.Assert;
-=======
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -13,8 +9,9 @@ import org.junit.Assert;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
->>>>>>> upstream/dev:intermine/objectstore/test/src/org/intermine/objectstore/query/QueryTestCase.java
 
+import org.intermine.objectstore.query.iql.IqlQuery;
+import org.junit.Assert;
 import java.util.Collection;
 import java.util.Iterator;
 
