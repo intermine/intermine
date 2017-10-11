@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
@@ -45,7 +44,6 @@ import org.intermine.util.CollectionUtil;
  */
 public class BagQueryRunner
 {
-    private static final Logger LOG = Logger.getLogger(BagQueryRunner.class);
     private ObjectStore os;
     private Model model;
     private Map<String, List<FieldDescriptor>> classKeys;
@@ -87,7 +85,7 @@ public class BagQueryRunner
      */
     public BagQueryResult searchForBag(String type, List<String> input, String extraFieldValue,
             boolean doWildcards) throws ClassNotFoundException, InterMineException {
-        return search(type, input, extraFieldValue, doWildcards, false);
+        return search(type, input, extraFieldValue, doWildcards, false, false);
     }
 
     /**
@@ -101,13 +99,37 @@ public class BagQueryRunner
      * "Organism" and the constrainField is "name", the extraFieldValue might be "Drosophila
      * melanogaster")
      * @param doWildcards true if the strings should be evaluated as wildcards
+     * @param ignoreConfig TRUE if we should ignore the config that controls match behaviour
+     * @return the matches, issues and unresolved input
+     * @throws ClassNotFoundException if the type isn't in the model
+     * @throws InterMineException if there is any other exception
+     */
+    public BagQueryResult searchForBag(String type, List<String> input, String extraFieldValue,
+            boolean doWildcards, boolean ignoreConfig)
+        throws ClassNotFoundException, InterMineException {
+        return search(type, input, extraFieldValue, doWildcards, false, ignoreConfig);
+    }
+
+
+    /**
+     * Given an input list of string identifiers search for corresponding objects. First run a
+     * default query then any queries configured for the specified type.
+     *
+     * @param type an unqualified class name to search for objects
+     * @param input a list of strings to query
+     * @param extraFieldValue the value used when adding an extra constraint to the bag query,
+     * configured in BagQueryConfig (e.g. if connectField is "organism", the extraClassName is
+     * "Organism" and the constrainField is "name", the extraFieldValue might be "Drosophila
+     * melanogaster")
+     * @param doWildcards true if the strings should be evaluated as wildcards
      * @param caseSensitive true if the strings have to match case too
+     * @param ignoreConfig TRUE if we should ignore configuration on how matches should work
      * @return the matches, issues and unresolved input
      * @throws ClassNotFoundException if the type isn't in the model
      * @throws InterMineException if there is any other exception
      */
     public BagQueryResult search(String type, Collection<String> input, String extraFieldValue,
-            boolean doWildcards, boolean caseSensitive)
+            boolean doWildcards, boolean caseSensitive, boolean ignoreConfig)
         throws ClassNotFoundException, InterMineException {
 
         Map<String, String> lowerCaseInput = new HashMap<String, String>();
@@ -151,7 +173,12 @@ public class BagQueryRunner
 
         BagQueryResult bqr = new BagQueryResult();
         // return first record ONLY for identifier.  otherwise, run all queries and return all
-        boolean matchOnFirst = bagQueryConfig.getMatchOnFirst();
+        boolean matchOnFirst = true;
+        if (!ignoreConfig) {
+            // ignoreConfig will be TRUE for lookup queries only. We only want to get all matches
+            // for the list upload. See #1494
+            matchOnFirst = bagQueryConfig.getMatchOnFirst();
+        }
 
         for (BagQuery bq : queries) {
             // run the next query on identifiers not yet resolved

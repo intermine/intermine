@@ -1,7 +1,7 @@
 package org.intermine.api.lucene;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -54,9 +53,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.QueryParser.Operator;
 import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermsFilter;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
@@ -512,75 +509,6 @@ public final class KeywordSearch
     }
 
     /**
-     * perform a keyword search over all document metadata fields with lucene
-     * @param searchString
-     *            string to search for
-     * @return map of document IDs with their respective scores
-     * @deprecated Use runBrowseSearch instead.
-     */
-    @Deprecated
-    public static Map<Integer, Float> runLuceneSearch(String searchString) {
-        LinkedHashMap<Integer, Float> matches = new LinkedHashMap<Integer, Float>();
-
-        String queryString = parseQueryString(searchString);
-
-        long time = System.currentTimeMillis();
-
-        IndexSearcher searcher = null;
-        try {
-            searcher = new IndexSearcher(reader);
-
-            Analyzer analyzer = new WhitespaceAnalyzer();
-            org.apache.lucene.search.Query query;
-
-            // pass entire list of field names to the multi-field parser
-            // => search through all fields
-            String[] fieldNamesArray = new String[index.getFieldNames().size()];
-            index.getFieldNames().toArray(fieldNamesArray);
-            QueryParser queryParser =
-                    new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer, index
-                            .getFieldBoosts());
-            query = queryParser.parse(queryString);
-
-            // required to expand search terms
-            query = query.rewrite(reader);
-            LOG.debug("Actual query: " + query);
-
-            TopDocs topDocs = searcher.search(query, 500);
-            // Filter filter = new TermsFilter();
-            // searcher.search(query, filter, collector);
-
-            LOG.debug("Found " + topDocs.totalHits + " document(s) that matched query '"
-                    + queryString + "'");
-
-            for (int i = 0; (i < MAX_HITS && i < topDocs.totalHits); i++) {
-                Document doc = searcher.doc(topDocs.scoreDocs[i].doc);
-                Integer id = Integer.valueOf(doc.get("id"));
-
-                matches.put(id, new Float(topDocs.scoreDocs[i].score));
-            }
-        } catch (ParseException e) {
-            // just return an empty list
-            LOG.info("Exception caught, returning no results", e);
-        } catch (IOException e) {
-            // just return an empty list
-            LOG.info("Exception caught, returning no results", e);
-        } finally {
-            try {
-                if (searcher != null) {
-                    searcher.close();
-                }
-            } catch (IOException e) {
-                LOG.warn("Error closing searcher", e);
-            }
-        }
-
-        LOG.info("Lucene search finished in " + (System.currentTimeMillis() - time) + " ms");
-
-        return matches;
-    }
-
-    /**
      * @param result search result
      * @param facetVector facets for search results
      * @param facetValues values for facets
@@ -831,10 +759,7 @@ public final class KeywordSearch
         return result;
     }
 
-
-
-    private static String parseQueryString(String qs) {
-        String queryString = qs;
+    private static String parseQueryString(String queryString) {
         // keep strings separated by spaces together
         queryString = queryString.replaceAll("\\b(\\s+)\\+(\\s+)\\b", "$1AND$2");
         // i don't know
@@ -842,11 +767,13 @@ public final class KeywordSearch
         // escape special characters, see http://lucene.apache.org/java/2_9_0/queryparsersyntax.html
         final String[] specialCharacters = {"+", "-", "&&", "||", "!", "(", ")", "{", "}", "[",
             "]", "^", "~", "?", ":", "\\"};
+
         for (String s : specialCharacters) {
             if (queryString.contains(s)) {
                 queryString = queryString.replace(s, "*");
             }
         }
+
         return toLowerCase(queryString);
     }
 

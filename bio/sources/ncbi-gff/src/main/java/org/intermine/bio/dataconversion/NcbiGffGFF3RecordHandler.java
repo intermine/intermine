@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,6 +30,7 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
         super(model);
         refsAndCollections.put("Exon", "transcripts");
         refsAndCollections.put("Transcript", "gene");
+        refsAndCollections.put("MRNA", "gene");
     }
 
     /**
@@ -66,8 +67,12 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
                 String description = record.getAttributes().get("description").iterator().next();
                 feature.setAttribute("briefDescription", description);
             }
-        } else if ("transcript".equals(type)) {
-            feature.setClassName("Transcript");
+        } else if ("transcript".equals(type) || "MRNA".equalsIgnoreCase(type)) {
+            if ("MRNA".equalsIgnoreCase(type)) {
+                feature.setClassName("MRNA");
+            } else {
+                feature.setClassName("Transcript");
+            }
             String identifier = record.getAttributes().get("transcript_id").iterator().next();
             feature.setAttribute("primaryIdentifier", identifier);
             if (record.getAttributes().get("product") != null) {

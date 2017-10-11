@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -51,7 +51,7 @@ public class NcbiGeneConverterTest extends ItemsTestCase
      */
     public void testSimpleFiles() throws Exception {
         process("gene_info");
-        assertEquals(75, itemWriter.getItems().size());
+        assertEquals(89, itemWriter.getItems().size());
     }
 
 
@@ -61,7 +61,7 @@ public class NcbiGeneConverterTest extends ItemsTestCase
      */
     public void testGeneCount() throws Exception {
         process("gene_info");
-        assertEquals(10, getGenes().size());
+        assertEquals(13, getGenes().size());
     }
 
     /**

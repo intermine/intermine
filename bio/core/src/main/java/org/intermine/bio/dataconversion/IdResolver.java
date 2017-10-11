@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -558,8 +558,13 @@ public class IdResolver
     public void populateFromFile(File f) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String line = null;
+        LOG.info("populating from file: " + f.getAbsolutePath());
         while ((line = reader.readLine()) != null) {
             String[] cols = line.split("\t");
+            if (cols.length < 4) {
+                LOG.error("File formatted incorrectly, expected at least 4 columns:" + line);
+                continue;
+            }
             String taxonId = cols[0];
             String className = cols[1];
             String primaryId = cols[2];

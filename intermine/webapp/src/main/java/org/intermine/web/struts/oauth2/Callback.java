@@ -1,7 +1,7 @@
 package org.intermine.web.struts.oauth2;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -336,6 +336,9 @@ public class Callback extends LoginHandler
             // The current profile was for an anonymous guest.
             issues = mergeProfiles(currentProfile, profile);
         }
+
+        // track the user login
+        api.getTrackerDelegate().trackLogin(profile.getUsername());
 
         // Removed the mapping process because it's no longer necessary, and also blank strings
         // in the user preferences might be causing trouble.

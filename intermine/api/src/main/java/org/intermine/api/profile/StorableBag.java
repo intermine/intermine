@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -176,6 +176,7 @@ public abstract class StorableBag implements WebSearchable
     protected SavedBag storeSavedBag() throws ObjectStoreException {
         SavedBag savedBag = new SavedBag();
         savedBag.setId(getSavedBagId());
+
         if (profileId != null) {
             savedBag.setName(getName());
             savedBag.setType(getType());
@@ -185,7 +186,12 @@ public abstract class StorableBag implements WebSearchable
             savedBag.setOsbId(getOsb().getBagId());
             savedBag.setState(getState());
             getUserProfileWriter().store(savedBag);
+        } else if (savedBag.getId() == null) {
+            // Even if the list is not saved because we're using an anonymous profile, still
+            // give it an ID so that calling code can manipulate all lists by ID
+            savedBag.setId(getUserProfileWriter().getSerial());
         }
+
         return savedBag;
     }
 

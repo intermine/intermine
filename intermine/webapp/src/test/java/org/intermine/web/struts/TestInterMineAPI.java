@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -49,7 +49,7 @@ public class TestInterMineAPI extends InterMineAPI
         this.oss = oss;
         this.profileManager = pm;
         this.bagManager = new BagManager(pm.getSuperuserProfile(), model);
-        this.templateManager = new TemplateManager(pm.getSuperuserProfile(), model);
+        this.templateManager = new TemplateManager(pm.getSuperuserProfile());
         this.templateSummariser = new TemplateSummariser(objectStore,
                 pm.getProfileObjectStoreWriter(), oss);
         this.bagQueryRunner =

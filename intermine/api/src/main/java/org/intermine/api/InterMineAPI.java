@@ -1,7 +1,7 @@
 package org.intermine.api;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -109,7 +109,7 @@ public class InterMineAPI
         Profile superUser = profileManager.getSuperuserProfile(classKeys);
         this.bagManager = new BagManager(superUser, model);
         this.templateManager =
-                new TemplateManager(superUser, model, trackerDelegate.getTemplateTracker());
+                new TemplateManager(superUser, trackerDelegate.getTemplateTracker());
         this.templateSummariser =
                 new TemplateSummariser(objectStore, userProfileWriter, oss);
         this.bagQueryRunner =

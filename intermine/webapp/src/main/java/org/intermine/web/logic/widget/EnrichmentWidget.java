@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -168,6 +168,7 @@ public class EnrichmentWidget extends Widget
                 size = idArray.length;
             }
             setNotAnalysed(size - results.getAnalysedTotal());
+            setPopulationCount(results.getPopulationTotal());
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
@@ -250,12 +251,15 @@ public class EnrichmentWidget extends Widget
             Map<String, BigDecimal> pValues = results.getPValues();
             Map<String, Integer> counts = results.getCounts();
             Map<String, String> labels = results.getLabels();
+            Map<String, PopulationInfo> annotatedPopulationInfo
+                = results.getPopulationAnnotations();
             for (String id : pValues.keySet()) {
                 List<Object> row = new LinkedList<Object>();
                 row.add(id);
                 row.add(labels.get(id));
                 row.add(pValues.get(id).doubleValue());
                 row.add(counts.get(id));
+                row.add(annotatedPopulationInfo.get(id).getSize());
                 exportResults.add(row);
             }
         }

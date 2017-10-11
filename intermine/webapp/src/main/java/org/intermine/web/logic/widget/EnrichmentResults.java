@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,7 +25,8 @@ public class EnrichmentResults
     private final Map<String, BigDecimal> pValues;
     private final Map<String, Integer> counts;
     private final Map<String, String> labels;
-    private final int analysedTotal;
+    private final Map<String, PopulationInfo> populationAnnotations;
+    private final int analysedTotal, populationTotal;
 
     /**
      * Construct with pre-populated maps from enriched attributes to p-values, counts and labels.
@@ -33,13 +34,20 @@ public class EnrichmentResults
      * @param counts number of items in sample per attribute value
      * @param labels an additional label for each attribute value, used for display
      * @param analysedTotal the number of items in the sample that had data for the given attribute
+     * @param populationAnnotations per GO term, number of genes total in database / background
+     * population annotated
+     * @param populationTotal total size of the population, e.g. count of genes in the database
+     * (or background population)
      */
     protected EnrichmentResults(Map<String, BigDecimal> pValues, Map<String, Integer> counts,
-            Map<String, String> labels, int analysedTotal) {
+            Map<String, String> labels, int analysedTotal,
+            Map<String, PopulationInfo> populationAnnotations, int populationTotal) {
         this.pValues = pValues;
         this.counts = counts;
         this.labels = labels;
         this.analysedTotal = analysedTotal;
+        this.populationAnnotations = populationAnnotations;
+        this.populationTotal = populationTotal;
     }
 
     /**
@@ -68,6 +76,15 @@ public class EnrichmentResults
         return labels;
     }
 
+    /**
+     * Get the count of of each attribute value in the population, e.g. number of total genes
+     * annotated per GO term.
+     * @return labels for each attribute value in the sample
+     */
+    public Map<String, PopulationInfo> getPopulationAnnotations() {
+        return populationAnnotations;
+    }
+
     // this is the number of objects in the bag that had data
     /**
      * Get the number of items in the sample that had an attribute value.  For example if performing
@@ -78,4 +95,18 @@ public class EnrichmentResults
     public int getAnalysedTotal() {
         return analysedTotal;
     }
+
+    // this is the number of objects in the database that had data
+    /**
+     * Get the number of items in the database (or background population) that were annotated.
+     *
+     * NOTE: This is NOT the count of items in the database. We only include genes that have ANY
+     * GO terms because we have a lot of garbage genes.
+     *
+     * @return the number of items in the population that were annotated with ANY value
+     */
+    public int getPopulationTotal() {
+        return populationTotal;
+    }
+
 }

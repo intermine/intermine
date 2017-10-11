@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.idresolution;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -70,6 +70,7 @@ public class IdResolutionService extends JSONService
         private final String type;
         private final Boolean caseSensitive;
         private final Boolean wildCards;
+        private final Boolean ignoreConfig;
 
         WebserviceJobInput() throws JSONException, IOException {
             JSONObject requestDetails
@@ -83,6 +84,7 @@ public class IdResolutionService extends JSONService
             caseSensitive = requestDetails.optBoolean("caseSensitive", false);
             wildCards = requestDetails.optBoolean("wildCards", false);
             extraValue = requestDetails.optString("extra", null);
+            ignoreConfig = requestDetails.optBoolean("ignoreConfig", false);
         }
 
         @Override
@@ -108,6 +110,11 @@ public class IdResolutionService extends JSONService
         @Override
         public Boolean getWildCards() {
             return wildCards;
+        }
+
+        @Override
+        public Boolean getIgnoreConfig() {
+            return ignoreConfig;
         }
 
         @Override

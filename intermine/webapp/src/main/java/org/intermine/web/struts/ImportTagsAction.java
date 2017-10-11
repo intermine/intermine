@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,6 +60,7 @@ public class ImportTagsAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         ProfileManager pm = im.getProfileManager();
+
         if (f.isOverwriting()) {
             TagManager tm = im.getTagManager();
             tm.deleteTags(null, null, null, profile.getUsername());
@@ -89,6 +90,8 @@ public class ImportTagsAction extends InterMineAction
             }
         }
         f.reset();
+
+        profile.invalidateTemplateCacheIfRequired();
         return mapping.findForward("success");
     }
 }

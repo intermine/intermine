@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -161,10 +161,7 @@ public class NcbiGeneConverter extends BioFileConverter
         }
 
         if (record.mapLocation != null) {
-            // cytoLocation attribute is set in chado-db_additions.xml
-            if (gene.hasAttribute("cytoLocation")) {
-                gene.setAttribute("cytoLocation", record.mapLocation);
-            }
+            gene.setAttribute("cytoLocation", record.mapLocation);
         }
 
         store(gene);

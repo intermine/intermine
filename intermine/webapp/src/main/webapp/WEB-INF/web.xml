@@ -3036,6 +3036,34 @@ The different token types are:
    </servlet-mapping>
 
 
+   <!-- New in version 24 -->
+
+  <servlet>
+    <servlet-name>ws-web-properties</servlet-name>
+    <servlet-class>org.intermine.webservice.server.webproperties.WebPropertiesServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-web-properties</servlet-name>
+    <url-pattern>/service/web-properties/*</url-pattern>
+    <metadata>
+        <name>Web properties</name>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get a description of the data model</summary>
+            <description>
+                The InterMine user interface can be customised with a set of properties, e.g.
+                default values for the list upload, default values for the region search etc.
+            </description>
+            <returns>
+                <format>json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>

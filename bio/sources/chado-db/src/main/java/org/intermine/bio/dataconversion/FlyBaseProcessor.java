@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -780,8 +780,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
         if ("golden_path_region".equals(chadoFeatureType)) {
-            // ignore these, dmel is well mapped, we're not interested. See #1052
-            return null;
+            realInterMineType = "Chromosome";
         }
 
         if (chadoFeatureType.equals(CHROMOSOME_STRUCTURE_VARIATION_SO_NAME)) {

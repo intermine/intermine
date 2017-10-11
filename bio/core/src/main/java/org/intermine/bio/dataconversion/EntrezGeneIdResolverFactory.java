@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -151,23 +151,25 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         taxonIds.removeAll(ignoredTaxonIds);
         LOG.info("Ignore taxons: " + ignoredTaxonIds + ", remain taxons: " + taxonIds);
 
-        if (resolver != null
-                && resolver.hasTaxonsAndClassName(taxonIds, this.clsCol
-                        .iterator().next())) {
+        String type = this.clsCol.iterator().next();
+        if (resolver != null && resolver.hasTaxonsAndClassName(taxonIds, type)) {
+            LOG.info("Using cache, already has class: " + type + " for taxons: " + taxonIds);
             return;
         }
+        LOG.info("Not using cache, don't have class: " + type + " for taxons: " + taxonIds);
         if (resolver == null) {
             if (clsCol.size() > 1) { // Not the case, Entrez has gene only
                 resolver = new IdResolver();
             } else {
-                resolver = new IdResolver(clsCol.iterator().next());
+                resolver = new IdResolver(type);
+                LOG.info("creating new resolver for " + type);
             }
         }
 
         try {
             boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxonsAndClassName(taxonIds, this.clsCol.iterator().next()))) {
+                    && !resolver.hasTaxonsAndClassName(taxonIds, type))) {
                 String resolverFileRoot =
                         PropertiesUtil.getProperties().getProperty(propKey);
 
@@ -178,8 +180,9 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                     return;
                 }
 
-                LOG.info("Creating id resolver from data file and caching it.");
                 String resolverFileName = resolverFileRoot.trim() + "/" + resolverFileSymbo;
+                LOG.info("Creating id resolver for " + taxonIds + " and " + type
+                        + " from data file and writing to:" + resolverFileName);
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f, taxonIds);
