@@ -94,59 +94,49 @@
 
 
 	<!-- CORE GENOMIC ANNOTATION IN GFF3 -->
-	<source name="celegans-gff3" type="gff" dump="false">
+	<source name="celegans-gff3-cds" type="gff" dump="false">
 		<property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
 		<property name="gff3.seqDataSourceName" value="WormBase"/>
 		<property name="gff3.dataSourceName"    value="WormBase"/>
 		<property name="gff3.seqClsName"        value="Chromosome"/>
 		<property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
-		<!--<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>-->
-		
-		<property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/three"/> 
-		
-		<!-- 
-		Only GFF3 records with a third column matching this value 
-		are processed.  Case insensitive.
-		gene, mrna, cds, exon
-		-->
-		<property name="gff3.allowedClasses" 	 value="gene,cds,exon"/>
-		
-		<!-- 
-		This file maps IDs from GFF3 into a type compatible with other 
-		data sources
-		Format: key \t value. All other columns ignored 
-		-->
+		<property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/cds"/> 
+		<property name="gff3.allowedClasses" 	 value="cds"/>
 		<property name="gff3.IDMappingFile"	 value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/> 
-		
 	</source>
 
-        <source name="celegans-gff3-mrna" type="gff" dump="false">
-                <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
-                <property name="gff3.seqDataSourceName" value="WormBase"/>
-                <property name="gff3.dataSourceName"    value="WormBase"/>
-                <property name="gff3.seqClsName"        value="Chromosome"/>
-                <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
-                <!--<property name="src.data.dir"           location="&datadir;/c_elegans_gff3"/>-->
+    <source name="celegans-gff3-mrna" type="gff" dump="false">
+        <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
+        <property name="gff3.seqDataSourceName" value="WormBase"/>
+        <property name="gff3.dataSourceName"    value="WormBase"/>
+        <property name="gff3.seqClsName"        value="Chromosome"/>
+        <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
+        <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/mrna"/>
+        <property name="gff3.allowedClasses"     value="mrna"/>
+        <property name="gff3.IDMappingFile"      value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/>
+    </source>
 
-                <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/mrna"/>
+    <source name="celegans-gff3-gene" type="gff" dump="false">
+        <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
+        <property name="gff3.seqDataSourceName" value="WormBase"/>
+        <property name="gff3.dataSourceName"    value="WormBase"/>
+        <property name="gff3.seqClsName"        value="Chromosome"/>
+        <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
+        <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/gene"/>
+        <property name="gff3.allowedClasses"     value="gene"/>
+        <property name="gff3.IDMappingFile"      value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/>
+    </source>
 
-                <!--
-                Only GFF3 records with a third column matching this value
-                are processed.  Case insensitive.
-                gene, mrna, cds, exon
-                -->
-                <property name="gff3.allowedClasses"     value="mrna"/>
-
-                <!--
-                This file maps IDs from GFF3 into a type compatible with other
-                data sources
-                Format: key \t value. All other columns ignored
-                -->
-                <property name="gff3.IDMappingFile"      value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/>
-
-        </source>
-
-
+    <source name="celegans-gff3-exon" type="gff" dump="false">
+        <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
+        <property name="gff3.seqDataSourceName" value="WormBase"/>
+        <property name="gff3.dataSourceName"    value="WormBase"/>
+        <property name="gff3.seqClsName"        value="Chromosome"/>
+        <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
+        <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/exon"/>
+        <property name="gff3.allowedClasses"     value="exon"/>
+        <property name="gff3.IDMappingFile"      value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/>
+    </source>
 
 	<!-- WormBase aceDB data loader.  Base dir is wormmine/integrate -->
 	<source name="wb-acedb-gene" type="wormbase-acedb" dump="false">

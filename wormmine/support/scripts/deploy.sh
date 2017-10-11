@@ -105,29 +105,34 @@ do
   mkdir -vp $datadir'/wormbase-gff3/final/cds'
   mkdir -vp $datadir'/wormbase-gff3/final/mrna'
   mkdir -vp $datadir'/wormbase-gff3/final/gene'
+  mkdir -vp $datadir'/wormbase-gff3/final/exon'
   cd $datadir'/wormbase-gff3'
   # if [ ! -f raw/"$spe"."${species["$spe"]}"."$wbrel".gff ]; then
     echo 'transferring' "$spe"."${species["$spe"]}"."$wbrel".gff
     # wget -q --show-progress -O raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz  "ftp://ftp.wormbase.org/pub/wormbase/releases/"$wbrel"/species/"$spe"/"${species["$spe"]}"/"$spe"."${species["$spe"]}"."$wbrel".annotations.gff3.gz"
-    gunzip -v raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz
+    # gunzip -v raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz
     echo 'Starting GFF3 pre-processing'
-    # bash "$intermine"wormmine/support/scripts/gff3/scrape_gff3.sh $datadir/wormbase-gff3/raw/"$spe"."${species["$spe"]}"."$wbrel".gff $datadir/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff
+
+    cd $datadir'/wormbase-gff3/final'
+    for gffile in */*.gff;do
+      echo 'Removing Gene: from lines'
+      perl -pi -e 's/Gene://g' $gffile
+      echo 'Removing Transcript: from lines'
+      perl -pi -e 's/Transcript://g' $gffile
+      echo 'Removing CDS: from lines'
+      perl -pi -e 's/CDS://g' $gffile
+      echo $gffile
+    done
+
+    bash "$intermine"wormmine/support/scripts/gff3/scrape_gff3.sh $datadir/wormbase-gff3/raw/"$spe"."${species["$spe"]}"."$wbrel".gff $datadir/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff
     bash $intermine/wormmine/support/scripts/gff3/gff3_gene.sh $datadir/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff $datadir/wormbase-gff3/final/gene/gene.gff
     bash "$intermine"/wormmine/support/scripts/gff3/gff3_cds.sh  "$datadir"/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff "$datadir"/wormbase-gff3/final/cds/cds.gff
+    bash "$intermine"/wormmine/support/scripts/gff3/gff3_mrna.sh "$datadir"/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff "$datadir"/wormbase-gff3/final/mrna/mrna.gff
+    bash "$intermine"/wormmine/support/scripts/gff3/gff3_exon.sh "$datadir"/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff "$datadir"/wormbase-gff3/final/exon/exon.gff
     echo 'Done #########################'
 #   else
 #     echo  raw/"$spe"."${species["$spe"]}"."$wbrel".gff 'found'
 #   fi
-#   cd $datadir'/wormbase-gff3/final'
-#   for gffile in */*.gff;do
-#     echo 'Removing Gene: from lines'
-#     perl -pi -e 's/Gene://g' $gffile
-#     echo 'Removing Transcript: from lines'
-#     perl -pi -e 's/Transcript://g' $gffile
-#     echo 'Removing CDS: from lines'
-#     perl -pi -e 's/CDS://g' $gffile
-#     echo $gffile
-#   done
 #   echo
 done
 # echo 'Setting up GFF3 mapping'
