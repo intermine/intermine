@@ -296,6 +296,7 @@ if [ ! -f $datadir'/panther/RefGenomeOrthologs' ];then
   rm -v $datadir'/panther/RefGenomeOrthologs.tar.gz'
 else
   echo 'Panther already deployed'
+fi
 echo
 
 echo 'ncbi'
@@ -305,6 +306,7 @@ if [ ! -f $datadir'/ncbi/gene_info' ];then
   gunzip -v $datadir'/ncbi/gene_info.gz'
 else
   echo 'NCBI gene_info already deployed'
+fi
 echo
 
 echo 'wormid'
