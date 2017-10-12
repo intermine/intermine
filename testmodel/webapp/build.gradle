@@ -41,7 +41,6 @@ dependencies {
   compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
   commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
   imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, ext: "war"
-  testCompile group: "org.intermine", name: "intermine-webtasks", version: imVersion
 }
 
 processResources {
@@ -81,6 +80,7 @@ war {
 }
 
 task mergeProperties(type: Copy) {
+    group "${taskGroup}"
     description "Appendes intermine.properties to web.properties file"
     from "${webAppDirName}/WEB-INF/web.properties"
     into "${mergePropsDir}"
@@ -90,6 +90,7 @@ task mergeProperties(type: Copy) {
 }
 
 task summariseTestObjectStore {
+    group "${taskGroup}"
     description "Summarise Test model ObjectStore into objectstoresummary.properties file"
     doLast {
       ant.taskdef(name: "summarizeObjectStoreTask", classname: "org.intermine.task.SummariseObjectStoreTask") {
@@ -102,12 +103,14 @@ task summariseTestObjectStore {
 }
 
 task unwarIMWebApp(type: Copy) {
+  group "${taskGroup}"
   description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
   from { zipTree(configurations.imWebApp.singleFile) }
   destinationDir = new File("$explodedWebAppDir")
 }
 
 task warTestModelWebApp(type: War) {
+  group "${taskGroup}"
   description "Create the war from the build/explodedWebAppDir directory"
   from "${explodedWebAppDir}"
   exclude "WEB-INF/web.properties"
