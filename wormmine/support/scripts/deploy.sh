@@ -289,26 +289,34 @@ echo
 
 # panther
 echo 'panther'
-mkdir -p $datadir'/panther'
-wget -O $datadir'/panther/RefGenomeOrthologs.tar.gz' ftp://ftp.pantherdb.org/ortholog/current_release/RefGenomeOrthologs.tar.gz
-tar xzvf $datadir'/panther/RefGenomeOrthologs.tar.gz' -C $datadir'/panther'
-rm -v $datadir'/panther/RefGenomeOrthologs.tar.gz'
+if [ ! -f $datadir'/panther/RefGenomeOrthologs' ];then
+  mkdir -p $datadir'/panther'
+  wget -O $datadir'/panther/RefGenomeOrthologs.tar.gz' ftp://ftp.pantherdb.org/ortholog/current_release/RefGenomeOrthologs.tar.gz
+  tar xzvf $datadir'/panther/RefGenomeOrthologs.tar.gz' -C $datadir'/panther'
+  rm -v $datadir'/panther/RefGenomeOrthologs.tar.gz'
+else
+  echo 'Panther already deployed'
 echo
 
 echo 'ncbi'
-mkdir -p $datadir'/ncbi'
-wget  -q --show-progress -O $datadir'/ncbi/gene_info.gz' "ftp://ftp.ncbi.nih.gov/gene/DATA/gene_info.gz"
-gunzip -v $datadir'/ncbi/gene_info.gz'
- 
+if [ ! -f $datadir'/ncbi/gene_info' ];then
+  mkdir -p $datadir'/ncbi'
+  wget  -q --show-progress -O $datadir'/ncbi/gene_info.gz' "ftp://ftp.ncbi.nih.gov/gene/DATA/gene_info.gz"
+  gunzip -v $datadir'/ncbi/gene_info.gz'
+else
+  echo 'NCBI gene_info already deployed'
+echo
+
 echo 'wormid'
 mkdir -p $datadir'/worm'
 cp -v $intermine'/wormmine/support/panther/wormid' $datadir'/worm'
+echo
 
 echo 'idresolver'
 mkdir -p $datadir/idresolver
 ln -s $datadir'/ncbi/gene_info' $datadir'/idresolver/entrez'
-ln -s $datadir'/worm/wormid' $datador'/idresolver/wormid'
-
+ln -s $datadir'/worm/wormid' $datadir'/idresolver/wormid'
+echo
 
 echo 'compara'
 
