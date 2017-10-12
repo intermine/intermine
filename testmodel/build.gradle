@@ -28,6 +28,7 @@ subprojects {
 
 ext {
   imVersion = "2.0.0-SNAPSHOT"
+  taskGroup = "InterMine"
 }
 
 task wrapper(type: Wrapper) {
