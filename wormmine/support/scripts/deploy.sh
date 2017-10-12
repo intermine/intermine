@@ -40,7 +40,6 @@ echo 'Deploying ' $species
 echo
 # sourcedir='/Users/nuin/WS261/WS261-test-data/'
 sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
-# sourcedir='/mnt/data2/acedb_dumps/'$wbrel'/'$wbrel'-test-data'
 # /mnt/data2/acedb_dumps/WS261/WS261-test-data
 echo 'Source directory is at' $sourcedir
 echo
@@ -113,6 +112,8 @@ do
     gunzip -v raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz
     echo 'Starting GFF3 pre-processing'
 
+    bash "$intermine"wormmine/support/scripts/gff3/scrape_gff3.sh $datadir/wormbase-gff3/raw/"$spe"."${species["$spe"]}"."$wbrel".gff $datadir/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff
+
     cd $datadir'/wormbase-gff3/final'
     for gffile in */*.gff;do
       echo 'Removing Gene: from lines'
@@ -124,7 +125,6 @@ do
       echo $gffile
     done
 
-    bash "$intermine"wormmine/support/scripts/gff3/scrape_gff3.sh $datadir/wormbase-gff3/raw/"$spe"."${species["$spe"]}"."$wbrel".gff $datadir/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff
     bash $intermine/wormmine/support/scripts/gff3/gff3_gene.sh $datadir/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff $datadir/wormbase-gff3/final/gene/gene.gff
     bash "$intermine"/wormmine/support/scripts/gff3/gff3_cds.sh  "$datadir"/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff "$datadir"/wormbase-gff3/final/cds/cds.gff
     bash "$intermine"/wormmine/support/scripts/gff3/gff3_mrna.sh "$datadir"/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff "$datadir"/wormbase-gff3/final/mrna/mrna.gff
@@ -184,7 +184,6 @@ mkdir -vp $datadir/wormbase-acedb/cds/mapping
 cp -v $sourcedir/CDS.xml $acexmldir/cds/CDS.xml
 cp -v $intermine'/wormmine/support/properties/cds_mapping.properties' $datadir'/wormbase-acedb/cds/mapping/'
 perl $testlab'/perl/purify_xace/purify_xace.pl' $datadir'/wormbase-acedb/cds/CDS.xml' $datadir'/wormbase-acedb/cds/purified_CDS.xml'
-perl $testlab'/perl/preprocess/wb-acedb/cds/prep_wb-acedb-cds.pl' $datadir'/wormbase-acedb/cds/purified_CDS.xml' $datadir'/wormbase-acedb/cds/XML/prepped_CDS.xml'
 rm -v $datadir/wormbase-acedb/cds/purified_CDS.xml
 echo
 #################### expression cluster ##############
@@ -253,7 +252,6 @@ mkdir -vp $datadir/wormbase-acedb/transcript/XML
 mkdir -vp $datadir/wormbase-acedb/transcript/mapping
 cp -v $sourcedir/Transcript.xml $acexmldir/transcript/Transcript.xml
 cp -v $intermine'/wormmine/support/properties/transcript_mapping.properties' $datadir'/wormbase-acedb/transcript/mapping'
-perl $testlab'/perl/preprocess/wb-acedb/transcript/prep_wb-acedb-transcript.pl' $datadir'/wormbase-acedb/transcript/Transcript.xml' $datadir'/wormbase-acedb/transcript/XML/prepped_Transcript.xml'
 echo
 #################### RNAi  ######################
 echo 'RNAi'
