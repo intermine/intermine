@@ -13,51 +13,53 @@ configurations {
 }
 
 dependencies {
-    compile group: "org.intermine", name: "intermine-objectstore", version: version
+    compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
+    compile group: "org.intermine", name: "intermine-testresources", version: imVersion
+    compile group: "org.intermine", name: "intermine-integrate", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile group: "org.intermine", name: "intermine-testresources", version: version
-    compile group: "org.intermine", name: "intermine-integrate", version: version
 }
 
 void buildDB() {
     ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
         classpath {
-            pathelement(path: configurations.compile.asPath)
+          pathelement(path: configurations.compile.asPath)
         }
     }
     ant.torque(osname: 'os.unittest', destFile:"$buildDir/os.unittest-schema.xml")
-    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask', classpath:configurations.compile.asPath)
-            {
-                classpath {
-                    dirset(dir: 'build/')
-                }
-            }
+    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
+        classpath {
+          dirset(dir:"$buildDir")
+          pathelement(path: configurations.compile.asPath)
+        }
+    }
     ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
     // <create-indexes alias="${objectstore.name}" />
     // <analyse-db osName="${objectstore.name}"/>
 }
 
-void insertDUnittest() {
+void insertDataUnitTest() {
     // TODO this
     // <delete file="${objectstoresummary.properties}"/>
-   ant.taskdef(name: 'insertDataUnittest', classname: 'org.intermine.dataloader.XmlDataLoaderTask', classpath:configurations.compile.asPath)
-            {
-                classpath {
-                    dirset(dir: 'build/')
-                    dirset(dir: 'resources/')
-                }
-            }
+    ant.taskdef(name: 'insertDataUnittest', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
+        classpath {
+          pathelement(path: configurations.testCompile.asPath)
+        }
+    }   
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_webapp_data.xml", sourceName: "testsource", sourceType: "testsource")
 }
 
-task insertDataUnittest(dependsOn: 'build') {
+task insertData(dependsOn: 'build') {
+    group "${taskGroup}"
+    description "Build database and load data for intermine-test webapp"
     doLast {
         buildDB()
-        insertDUnittest()
+        insertDataUnitTest()
    }
 }
 
 task buildDataBase(dependsOn: 'build') {
+    group "${taskGroup}"
+    description "Build database for intermine-test webapp"
     doLast {
         buildDB()
    }
