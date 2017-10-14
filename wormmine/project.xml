@@ -352,11 +352,37 @@
          <property name="ensemblcompara.homologues" value="9606"/>
      </source>
 
-     <source name="ensembl-compara2" type="ensembl-compara">
+     <source name="ensembl-compara-zebra" type="ensembl-compara">
          <property name="src.data.dir" location="&datadir;/ensembl/compara"/>
          <property name="ensemblcompara.organisms" value="6239"/>
          <property name="ensemblcompara.homologues" value="7955"/>
      </source>
+
+      <source name="ensembl-compara-mouse" type="ensembl-compara">
+         <property name="src.data.dir" location="&datadir;/ensembl/compara"/>
+         <property name="ensemblcompara.organisms" value="6239"/>
+         <property name="ensemblcompara.homologues" value="10090"/>
+     </source>
+
+	 <source name="ensembl-compara-drosophila" type="ensembl-compara">
+         <property name="src.data.dir" location="&datadir;/ensembl/compara"/>
+         <property name="ensemblcompara.organisms" value="6239"/>
+         <property name="ensemblcompara.homologues" value="7227"/>
+     </source>
+
+	<source name="ensembl-compara-rat" type="ensembl-compara">
+         <property name="src.data.dir" location="&datadir;/ensembl/compara"/>
+         <property name="ensemblcompara.organisms" value="6239"/>
+         <property name="ensemblcompara.homologues" value="10116"/>
+     </source>
+
+	<source name="ensembl-compara-yeast" type="ensembl-compara">
+         <property name="src.data.dir" location="&datadir;/ensembl/compara"/>
+         <property name="ensemblcompara.organisms" value="6239"/>
+         <property name="ensemblcompara.homologues" value="4932"/>
+     </source>
+
+
 
 	<source name="entrez-organism" type="entrez-organism">
         <property name="src.data.file" location="&datadir;/entrez-organism/organisms.xml"/>
