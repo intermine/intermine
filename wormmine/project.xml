@@ -109,7 +109,7 @@
         <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
         <property name="gff3.seqDataSourceName" value="WormBase"/>
         <property name="gff3.dataSourceName"    value="WormBase"/>
-        <property name="gff3.seqClsName"        value="Chromosome"/>
+	<property name="gff3.seqClsName"        value="Chromosome"/>
         <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
         <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/mrna"/>
         <property name="gff3.allowedClasses"     value="mrna"/>
@@ -120,7 +120,7 @@
         <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
         <property name="gff3.seqDataSourceName" value="WormBase"/>
         <property name="gff3.dataSourceName"    value="WormBase"/>
-        <property name="gff3.seqClsName"        value="Chromosome"/>
+	<property name="gff3.seqClsName"        value="Chromosome"/>
         <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
         <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/gene"/>
         <property name="gff3.allowedClasses"     value="gene"/>
@@ -132,7 +132,7 @@
         <property name="gff3.seqDataSourceName" value="WormBase"/>
         <property name="gff3.dataSourceName"    value="WormBase"/>
         <property name="gff3.seqClsName"        value="Chromosome"/>
-        <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
+	<property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
         <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/exon"/>
         <property name="gff3.allowedClasses"     value="exon"/>
         <property name="gff3.IDMappingFile"      value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/>
@@ -346,7 +346,7 @@
        <property name="panther.homologues" value="10090 9606 7955 7227 4932 10116"/>
     </source> 
 
-     <source name="ensembl-compara" type="ensembl-compara">
+     <source name="ensembl-compara-human" type="ensembl-compara">
          <property name="src.data.dir" location="&datadir;/ensembl/compara"/>
          <property name="ensemblcompara.organisms" value="6239"/>
          <property name="ensemblcompara.homologues" value="9606"/>
