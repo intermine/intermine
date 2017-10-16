@@ -61,7 +61,8 @@ else
         done
     elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" -o "$TEST_SUITE" = "webtasks" -o "$TEST_SUITE" = "all" ]; then
         # api, webtasks, web and all need the testmodel to be built
-        ant -f testmodel/dbmodel/build.xml build-db
+        # ant -f testmodel/dbmodel/build.xml build-db
+        (cd testmodel && ./gradlew buildDB)
     fi
 
     if [[ "$TEST_SUITE" = "bio-webapp" ]]; then
