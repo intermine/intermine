@@ -38,9 +38,9 @@ elif [ "$TEST_SUITE" = "webtasks" ]; then
     ant_test 'intermine/webtasks'
 elif [ "$TEST_SUITE" = "all" ]; then
     echo "RUNNING test-all"
-    ./intermine/gradlew build
+    (cd intermine && ./gradlew build)
     echo CHECKING results
-    ./config/lib/parse_test_report.py "intermine/model/build/test-results/test"
+    ./config/lib/parse_test_report.py "intermine/objectstore/build/test-results/test"
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "bio" ]; then
     echo "RUNNING bio tests"
