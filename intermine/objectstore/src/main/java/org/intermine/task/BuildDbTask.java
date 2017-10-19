@@ -16,13 +16,14 @@ import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -138,11 +139,12 @@ public class BuildDbTask extends Task
         sql.setSqlDbMap(tempDir + "/sqldb.map");
         sql.setOutputFile("report.sql.generation");
         sql.setTargetDatabase(database.getPlatform().toLowerCase()); // "postgresql"
-        InputStream schemaFileInputStream =
-            getClass().getClassLoader().getResourceAsStream(schemaFile);
-
-        if (schemaFileInputStream == null) {
-            throw new BuildException("cannot open schema file (" + schemaFile + ")");
+        File file = new File(schemaFile);
+        InputStream schemaFileInputStream = null;
+        try {
+            schemaFileInputStream = new FileInputStream(file);
+        } catch (FileNotFoundException e1) {
+            throw new RuntimeException("cannot open schema file (" + schemaFile + ")");
         }
 
         File tempFile;

@@ -29,6 +29,8 @@ configurations {
 }
 
 dependencies {
+    testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
+    testCompile project(':intermine-resources')
     compile project(':intermine-model')
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
     compile group: 'commons-io', name: 'commons-io', version: '1.2'
@@ -39,16 +41,63 @@ dependencies {
     compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
     compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
     compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
-    provided fileTree(dir: 'libs', include: '*.jar') // org.gnu.readline is not in a public repo
+    provided fileTree(dir: 'libs', include: '*.jar') // eventually replace torque
     runtime group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.7'
-    testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
 }
 
 jar {
     dependsOn configurations.runtime
+    // put all the JARs included in `provided` config and include them in the JAR
     from {
         (configurations.provided).collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
 }
+
+void buildTestModelDatabase() {
+    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
+        classpath {
+            dirset(dir: "$buildDir")
+            pathelement(path: configurations.testCompile.asPath)
+        }
+    }
+    ant.torque(osname: 'os.unittest', destFile:"$buildDir/os.unittest-schema.xml")
+    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
+        classpath {
+            fileset(dir: "$buildDir")
+            dirset(dir: "$buildDir/resources/test")
+            pathelement(path: configurations.compile.asPath)
+            pathelement(path: configurations.testCompile.asPath)
+        }
+    }
+    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"$buildDir/os.unittest-schema.xml", tempDir: "$buildDir/tmp")
+    // <analyse-db osName="${objectstore.name}"/>
+}
+
+task copyTestProperties(type: Copy) {
+    description "Creates properties file to use for unit tests"
+
+    // read in file
+    String contents = new File("$rootDir/testresources/src/test/resources/intermine-test.properties").getText('UTF-8')
+
+    // use ENV VARs for default username and password for postgres
+    contents = contents.replaceAll( 'PSQL_USER', System.getenv('USER'))
+    contents = contents.replaceAll( 'PSQL_PWD', System.getenv('USER'))
+
+    // write to new file
+    new File("$buildDir/intermine.properties").write(contents, 'UTF-8')
+}
+
+// build unittest.
+task buildTestModelDB() {
+    description "Build database for intermine-tests"
+    doLast {
+        buildTestModelDatabase()
+    }
+}
+
+
+
+//tasks.compileTestJava.dependsOn 'buildTestModelDB'
+tasks.buildTestModelDB.dependsOn 'copyTestProperties'
