@@ -75,20 +75,6 @@ void buildTestModelDatabase() {
     // <analyse-db osName="${objectstore.name}"/>
 }
 
-task copyTestProperties(type: Copy) {
-    description "Creates properties file to use for unit tests"
-
-    // read in file
-    String contents = new File("$rootDir/testresources/src/test/resources/intermine-test.properties").getText('UTF-8')
-
-    // use ENV VARs for default username and password for postgres
-    contents = contents.replaceAll( 'PSQL_USER', System.getenv('USER'))
-    contents = contents.replaceAll( 'PSQL_PWD', System.getenv('USER'))
-
-    // write to new file
-    new File("$buildDir/intermine.properties").write(contents, 'UTF-8')
-}
-
 // build unittest.
 task buildTestModelDB() {
     description "Build database for intermine-tests"
@@ -112,4 +98,4 @@ task createUnitTestDatabases(type:Exec) {
 }
 
 //tasks.compileTestJava.dependsOn 'buildTestModelDB'
-tasks.buildTestModelDB.dependsOn 'copyTestProperties'
+tasks.buildTestModelDB.dependsOn 'createInterMineProperties'

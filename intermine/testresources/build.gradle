@@ -34,16 +34,29 @@ void generateModel(model, destination, type) {
     ant.modelOutputTask(model: model, destDir: destination, type: type)
 }
 
-task copyTestProperties(type: Copy) {
-    //from "../../config/intermine-test.properties"
-    from "${System.env.HOME}/.intermine/intermine-test.properties"
-    into sourceSets.test.output.resourcesDir
 
-    rename { fileName -> fileName.replace('intermine-test.properties', 'intermine.properties') }
+class CreateInterMinePropertiesTask extends DefaultTask {
+    @OutputDirectory File outputDir = new File(project.buildDir, "resources")
 
-    inputs.sourceFiles.stopExecutionIfEmpty()
+    @InputFile File inputFile = new File("./testresources/src/test/resources/intermine-test.properties")
+
+    @TaskAction
+    public void generate() {
+        File outputFile = new File(outputDir, "intermine.properties")
+
+        String contents = inputFile.getText('UTF-8')
+
+        // use ENV VARs for default username and password for postgres
+        contents = contents.replaceAll( 'PSQL_USER', System.getenv('USER'))
+        contents = contents.replaceAll( 'PSQL_PWD', System.getenv('USER'))
+
+        outputFile.text = contents
+    }
 }
 
+task createInterMineProperties(type: CreateInterMinePropertiesTask) {
+    description "Creates properties file to use for unit tests"
+}
 task generateTestModel {
     doLast {
         generateModel('testmodel', 'src/test/java', 'java')
@@ -55,7 +68,7 @@ task buildTestModelJar(type: Jar) {
 }
 
 tasks.compileTestJava.dependsOn 'generateTestModel'
-tasks.buildTestModelJar.dependsOn 'copyTestProperties', 'testClasses'
+tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses'
 
 artifacts {
     testArtifacts buildTestModelJar
