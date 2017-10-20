@@ -19,5 +19,6 @@ sourceSets {
 
 dependencies {
   compile project(':intermine-webapp')
+  testCompile project(path: ':intermine-resources')
   testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
 }
