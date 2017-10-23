@@ -1,3 +1,7 @@
+ext {
+  imVersion = "2.0.0-SNAPSHOT"
+}
+
 subprojects {
   group = 'org.intermine'
   version = '2.0.0-SNAPSHOT'
@@ -18,13 +22,19 @@ subprojects {
   }
 
   dependencies {
-    compile project(':bio-core')
-    compile group: 'ant', name: 'ant', version: '1.6.5'
+    //compile group: 'ant', name: 'ant', version: '1.6.5'
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
-    compile project(path: ':bio-testall', configuration: 'testBioArtifacts')
+    compile group: 'org.intermine', name: 'bio-core', version: imVersion
+    compile group: 'org.intermine', name: 'intermine-model', version: imVersion
+    compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
+    compile group: 'org.intermine', name: 'bio-testall', version: imVersion
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     testCompile group: 'junit', name: 'junit', version: '4.8.2'
     testCompile group: "org.intermine", name: "intermine-integrate", version: imVersion, classifier: "testClasses"
+    testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
   }
 }
 
-jar.enabled = false
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.1'
+}
