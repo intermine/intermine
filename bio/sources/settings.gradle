@@ -1,0 +1,57 @@
+rootProject.name = 'bio-sources'
+
+include ':biogrid',
+':chado-db',
+':entrez-organism',
+':fasta',
+':go-annotation',
+':homologene',
+':interpro',
+':interpro-go',
+':kegg-orthologues',
+':kegg-pathway',
+':ncbi-gff',
+':orthodb',
+':panther',
+':pdb',
+':protein2ipr',
+':psi-complexes',
+':psi',
+':pubmed-gene',
+':reactome',
+':signor',
+':treefam',
+':uniprot',
+':uniprot-keywords',
+':update-data-sources',
+':update-publications',
+':vcf'
+
+project(':biogrid').projectDir = new File(settingsDir, './biogrid')
+project(':chado-db').projectDir = new File(settingsDir, './chado-db')
+project(':entrez-organism').projectDir = new File(settingsDir, './entrez-organism')
+project(':fasta').projectDir = new File(settingsDir, './fasta')
+project(':go-annotation').projectDir = new File(settingsDir, './go-annotation')
+project(':homologene').projectDir = new File(settingsDir, './homologene')
+project(':interpro').projectDir = new File(settingsDir, './interpro')
+project(':interpro-go').projectDir = new File(settingsDir, './interpro-go')
+project(':kegg-orthologues').projectDir = new File(settingsDir, './kegg-orthologues')
+project(':kegg-pathway').projectDir = new File(settingsDir, './kegg-pathway')
+project(':ncbi-gff').projectDir = new File(settingsDir, './ncbi-gff')
+project(':orthodb').projectDir = new File(settingsDir, './orthodb')
+project(':panther').projectDir = new File(settingsDir, './panther')
+project(':pdb').projectDir = new File(settingsDir, './pdb')
+project(':protein2ipr').projectDir = new File(settingsDir, './protein2ipr')
+project(':psi-complexes').projectDir = new File(settingsDir, './psi-complexes')
+project(':psi').projectDir = new File(settingsDir, './psi')
+project(':pubmed-gene').projectDir = new File(settingsDir, './pubmed-gene')
+project(':reactome').projectDir = new File(settingsDir, './reactome')
+project(':signor').projectDir = new File(settingsDir, './signor')
+project(':treefam').projectDir = new File(settingsDir, './treefam')
+project(':uniprot').projectDir = new File(settingsDir, './uniprot')
+project(':uniprot-keywords').projectDir = new File(settingsDir, './uniprot-keywords')
+project(':update-data-sources').projectDir = new File(settingsDir, './update-data-sources')
+project(':update-publications').projectDir = new File(settingsDir, './update-publications')
+project(':vcf').projectDir = new File(settingsDir, './vcf')
+
+
