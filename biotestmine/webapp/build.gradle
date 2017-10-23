@@ -1,0 +1,117 @@
+apply plugin: "war"
+apply from: "https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin"
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java"]
+        }
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
+}
+
+def mineRelease = hasProperty('release') ? "." + release : ''
+def explodedWebAppDir = "$buildDir/explodedWebApp"
+def mergePropsDir = "$buildDir/props"
+def minePropertyFile = "${System.env.HOME}/.intermine/biotestmine.properties$mineRelease"
+
+configurations {
+  bioWebApp
+}
+
+dependencies { 
+  compile project(":dbmodel")
+  compile group: "org.intermine", name: "bio-testall", version: imVersion
+  compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
+  compile group: "org.intermine", name: "intermine-integrate", version: imVersion
+  compile group: "org.intermine", name: "intermine-api", version: imVersion
+  compile group: "javax.servlet", name: "jstl", version: "1.2"
+  compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
+  bioWebApp group: "org.intermine", name: "bio-webapp", version: imVersion, ext: "war"
+}
+
+processResources {
+  dependsOn "copyDefaultProperties", "copyModelProperties"
+}
+
+task copyDefaultProperties(type: Copy) {
+    description "Copies intermine.default.properties file (from resources project) into resources output to be included in the war"
+    from "${rootDir}/default.intermine.webapp.properties"
+    into sourceSets.main.output.resourcesDir
+    rename { fileName -> fileName.replace("default.intermine.webapp.properties", "default.intermine.properties") }
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+task copyModelProperties(type: Copy) {
+    println "Using properties file: '$minePropertyFile'"
+    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
+    from minePropertyFile
+    into sourceSets.main.output.resourcesDir
+    rename { fileName -> fileName.replace("biotestmine.properties$mineRelease", "intermine.properties") }
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+war {
+  exclude "WEB-INF/web.properties"
+  webInf { from "${mergePropsDir}" }
+
+  doFirst {
+    tasks.mergeProperties.execute();
+    tasks.summariseObjectStore.execute()
+  }
+
+  doLast {
+    unwarBioWebApp.execute()
+    warWebApp.execute()	
+  }
+}
+
+task mergeProperties(type: Copy) {
+    group "${taskGroup}"
+    description "Appendes intermine.properties to web.properties file"
+    from "${webAppDirName}/WEB-INF/web.properties"
+    into "${mergePropsDir}"
+    doLast {
+      (new File("$mergePropsDir/web.properties")).append( (new File("$buildDir/resources/main/intermine.properties")).getText())
+    }   
+}
+
+task summariseObjectStore {
+    group "${taskGroup}"
+    description "Summarise ObjectStore into objectstoresummary.properties file"
+    doLast {
+      ant.taskdef(name: "summarizeObjectStoreTask", classname: "org.intermine.task.SummariseObjectStoreTask") {
+        classpath {
+          dirset(dir: 'build/resources/main/')
+          pathelement(path: configurations.compile.asPath)
+        }   
+      }    
+      ant.summarizeObjectStoreTask(alias: "os.production", configFileName: "objectstoresummary.config.properties", outputFile: "build/props/objectstoresummary.properties")
+    }
+}
+
+task unwarBioWebApp(type: Copy) {
+  group "${taskGroup}"
+  description "Unwar bio-webapp under the build/explodedWebAppDir directory"
+  from { zipTree(configurations.bioWebApp.singleFile) }
+  destinationDir = new File("$explodedWebAppDir")
+}
+
+task warWebApp(type: War) {
+  group "${taskGroup}"
+  description "Create the war from the build/explodedWebAppDir directory"
+  from "${explodedWebAppDir}"
+  //exclude "WEB-INF/web.properties"
+  webInf { from "${mergePropsDir}" }
+}
+
+// read in testmodel.properties to get the contextPath
+def props = new Properties()
+file(minePropertyFile).withInputStream { props.load(it) }
+
+gretty {
+    jvmArgs = ['-Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true']
+    contextPath = props.getProperty("webapp.path")
+}
+

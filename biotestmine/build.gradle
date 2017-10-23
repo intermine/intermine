@@ -1,0 +1,31 @@
+subprojects {
+  apply plugin: 'java'
+  apply plugin: 'maven'
+
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6
+  
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+
+  test {
+    ignoreFailures = true
+  }
+
+  dependencies {
+    compile group: 'ant', name: 'ant', version: '1.6.5'
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+  }
+}
+
+ext {
+  imVersion = "2.0.0-SNAPSHOT"
+  taskGroup = "InterMine"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1'
+}
