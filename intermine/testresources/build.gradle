@@ -49,9 +49,20 @@ class CreateInterMinePropertiesTask extends DefaultTask {
 
         String contents = inputFile.getText('UTF-8')
 
-        // use ENV VARs for default username and password for postgres
-        contents = contents.replaceAll( 'PSQL_USER', System.getenv('USER'))
-        contents = contents.replaceAll( 'PSQL_PWD', System.getenv('USER'))
+        // create databases using their UNIX name
+        def db_username = System.getenv('USER')
+        def db_pw = System.getenv('USER')
+
+        // use ENV VARs instead if they've set them. need for travis
+        if (System.getenv('PSQL_USER')) {
+            db_username = System.getenv('PSQL_USER')
+        }
+        if (System.getenv('PSQL_PWD')) {
+            db_username = System.getenv('PSQL_PWD')
+        }
+
+        contents = contents.replaceAll( 'PSQL_USER', db_username)
+        contents = contents.replaceAll( 'PSQL_PWD', db_pw)
 
         outputFile.text = contents
     }
@@ -70,7 +81,48 @@ task buildTestModelJar(type: Jar) {
     from(sourceSets.test.output)
 }
 
-tasks.compileTestJava.dependsOn 'generateTestModel'
+
+task createUnitTestDatabases {
+    description "create databases needed for unit tests"
+    doLast {
+        exec {
+            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
+            // create ones that aren't there
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database notxmltest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database truncunittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database flatmodetest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database fulldatatest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database userprofiletest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database unittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database biotest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database biofulldatatest;"
+        }
+    }
+}
+
+tasks.compileTestJava.dependsOn 'generateTestModel', 'createUnitTestDatabases'
 tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses'
 
 artifacts {
