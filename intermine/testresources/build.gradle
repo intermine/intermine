@@ -36,9 +36,12 @@ void generateModel(model, destination, type) {
 
 
 class CreateInterMinePropertiesTask extends DefaultTask {
-    @OutputDirectory File outputDir = new File(project.buildDir, "resources")
 
-    @InputFile File inputFile = new File("$project.rootDir/testresources/src/test/resources/intermine-test.properties")
+    def resourcesDir = "$project.rootDir/testresources/src/test/resources"
+
+    @OutputDirectory File outputDir = new File(resourcesDir, "")
+
+    @InputFile File inputFile = new File("$resourcesDir/intermine-test.properties")
 
     @TaskAction
     public void generate() {
