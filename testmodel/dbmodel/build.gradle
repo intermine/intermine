@@ -14,8 +14,6 @@ configurations {
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
-    compile group: "org.intermine", name: "intermine-testresources", version: imVersion
-    compile group: "org.intermine", name: "intermine-integrate", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
@@ -28,11 +26,10 @@ void buildDatabase() {
     ant.torque(osname: 'os.unittest', destFile:"$buildDir/os.unittest-schema.xml")
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
-          dirset(dir:"$buildDir")
           pathelement(path: configurations.compile.asPath)
         }
     }
-    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
+    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"$buildDir/os.unittest-schema.xml", tempDir: "$buildDir/tmp")
     // <create-indexes alias="${objectstore.name}" />
     // <analyse-db osName="${objectstore.name}"/>
 }
