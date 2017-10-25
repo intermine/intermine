@@ -29,8 +29,14 @@ cd $prj
     cd ../..   
   fi
 
-cp ../../skeleton-build.gradle build.gradle
-echo "Created a build.gradle skeleton"
+  cp ../skeleton-build.gradle build.gradle
+  echo "Created a build.gradle skeleton"
+
+  if [ -d resources ]
+    then
+      git mv resources/* src/main/resources/
+      rm -r resources/
+  fi
 cd ..
 
 done
