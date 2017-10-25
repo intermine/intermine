@@ -36,6 +36,7 @@ void generateModel(model, destination, type) {
 }
 
 task generateTestModel {
+    description "generate the testmodel Java files from the data model, eg. Employee.java"
     doLast {
         generateModel('testmodel', 'src/test/java', 'java')
     }
@@ -53,7 +54,7 @@ void insertDataModel(model, osname) {
     ant.insertModelTask(osname: osname, modelName: model)
 }
 
-task insertModel (dependsOn: 'generateTestModel') {
+task insertModel (dependsOn: 'buildDB') {
     description "put the generated model file into the intermine_metadata table"
     doLast {
         insertDataModel('testmodel', 'os.unittest')
@@ -141,11 +142,55 @@ task createUnitTestDatabases {
     }
 }
 
+// TODO make part of clean task?
+// this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to unittest
+// this is incorrect as the tests should drop the database connections themselves
+task dropDBs {
+    description "drop all the test databases. used for debugging only."
+    doLast {
+        exec {
+            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
+            // create ones that aren't there
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database notxmltest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database truncunittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database flatmodetest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database fulldatatest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database userprofiletest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database unittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database biotest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database biofulldatatest;"
+        }
+    }
+}
+
 void createTables() {
     ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
         classpath {
             pathelement(path: configurations.testCompile.asPath)
             dirset(dir: 'build/') // testmodel classes
+            dirset(dir: 'src/test/resources/') // intermine.properties
         }
     }
     ant.torque(osname: 'os.unittest', destFile:"os.unittest-schema.xml")
@@ -161,16 +206,18 @@ void createTables() {
     // <analyse-db osName="${objectstore.name}"/>
 }
 
-task buildDB(dependsOn: 'generateTestModel') {
+task buildDB (dependsOn: 'compileTestJava') {
+    dependsOn 'createUnitTestDatabases'
+    dependsOn 'generateTestModel'
     description "Create tables for database for intermine tests"
     doLast {
         createTables()
     }
 }
 
-tasks.compileTestJava.dependsOn 'generateTestModel', 'createUnitTestDatabases'
-tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses'
-tasks.test.dependsOn 'buildDB', 'insertModel' // tests require the tables are created. so build first
+// create unit databases, generate model > compile (need .class files) > build db > insert data model
+
+tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses', 'buildDB', 'insertModel'
 
 artifacts {
     testArtifacts buildTestModelJar
