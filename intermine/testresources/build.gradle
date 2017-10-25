@@ -16,6 +16,7 @@ sourceSets {
 dependencies {
     testCompile project(':intermine-objectstore')
     testCompile project(':intermine-resources')
+    testCompile project(':intermine-integrate') // needed to get the fulldata model (items, attributes etc)
     testCompile 'commons-lang:commons-lang:2.6'
 }
 
@@ -185,15 +186,7 @@ task dropDBs {
     }
 }
 
-void createTables() {
-    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
-        classpath {
-            pathelement(path: configurations.testCompile.asPath)
-            dirset(dir: 'build/') // testmodel classes
-            dirset(dir: 'src/test/resources/') // intermine.properties
-        }
-    }
-    ant.torque(osname: 'os.unittest', destFile:"os.unittest-schema.xml")
+void createTables(osname, model) {
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
             pathelement(path: configurations.testCompile.asPath)
@@ -201,9 +194,20 @@ void createTables() {
             dirset(dir: '.') // os.unittest-schema.xml
         }
     }
-    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
+    ant.buildDBUnittest(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
     // <create-indexes alias="${objectstore.name}" />
     // <analyse-db osName="${objectstore.name}"/>
+}
+
+void generateSchema(osname, model) {
+    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes
+            dirset(dir: 'src/test/resources/') // intermine.properties
+        }
+    }
+    ant.torque(osname: "os.$osname", destFile:"os.$osname-schema.xml")
 }
 
 task buildDB (dependsOn: 'compileTestJava') {
@@ -211,7 +215,20 @@ task buildDB (dependsOn: 'compileTestJava') {
     dependsOn 'generateTestModel'
     description "Create tables for database for intermine tests"
     doLast {
-        createTables()
+        generateSchema('unittest', 'testmodel')
+        createTables('unittest', 'testmodel')
+
+        generateSchema('truncunittest', 'testmodel')
+        createTables('truncunittest', 'testmodel')
+
+        generateSchema('notxmlunittest', 'testmodel')
+        createTables('notxmlunittest', 'testmodel')
+
+        generateSchema('flatmodeunittest', 'testmodel')
+        createTables('flatmodeunittest', 'testmodel')
+
+        // don't need to generate schema, never changes
+        createTables('fulldatatest', 'fulldata')
     }
 }
 

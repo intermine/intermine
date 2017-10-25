@@ -68,7 +68,7 @@ public final class ObjectStoreWriterFactory
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
-            throw new ObjectStoreException(e);
+            throw new ObjectStoreException("Error accessing " + osAlias, e);
         }
         ObjectStoreWriter osw = null;
         try {

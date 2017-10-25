@@ -369,7 +369,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 } catch (SQLException e) {
                     LOG.warn("Error retrieving database format version number", e);
                     throw new ObjectStoreException(
-                            "The table intermine_metadata doesn't exist. Please run build-db");
+                            "The table intermine_metadata for " + dbAlias
+                            + " doesn't exist. Please run build-db");
                 }
                 if (versionString == null) {
                     formatVersion = 0;

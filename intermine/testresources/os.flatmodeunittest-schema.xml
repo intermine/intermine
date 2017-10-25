@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE database SYSTEM "http://db.apache.org/torque/dtd/database_3_3.dtd">
+<database name="">
+    <table name="Broke">
+        <column name="interestRate" type="DOUBLE" required="true"/>
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="debt" type="INTEGER" required="true"/>
+        <column name="bankId" type="INTEGER"/>
+        <column name="owedById" type="INTEGER"/>
+        <unique name="Broke_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="Employee">
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="title" type="LONGVARCHAR"/>
+        <column name="seniority" type="INTEGER"/>
+        <column name="salary" type="INTEGER" required="true"/>
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="age" type="INTEGER" required="true"/>
+        <column name="intermine_end" type="LONGVARCHAR"/>
+        <column name="fullTime" type="BIT" required="true"/>
+        <column name="employmentPeriodId" type="INTEGER"/>
+        <column name="addressId" type="INTEGER"/>
+        <column name="departmentId" type="INTEGER"/>
+        <column name="companyId" type="INTEGER"/>
+        <column name="departmentThatRejectedMeId" type="INTEGER"/>
+        <column name="class" type="LONGVARCHAR"/>
+        <column name="tableclass" type="LONGVARCHAR"/>
+        <unique name="Employee_pkey">
+            <unique-column name="id"/>
+            <unique-column name="tableclass"/>
+        </unique>
+    </table>
+    <table name="Department">
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="managerId" type="INTEGER"/>
+        <column name="companyId" type="INTEGER"/>
+        <unique name="Department_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="Company">
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="vatNumber" type="INTEGER" required="true"/>
+        <column name="bankId" type="INTEGER"/>
+        <column name="addressId" type="INTEGER"/>
+        <column name="CEOId" type="INTEGER"/>
+        <unique name="Company_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="Address">
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="address" type="LONGVARCHAR"/>
+        <unique name="Address_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="ImportantPerson">
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="title" type="LONGVARCHAR"/>
+        <column name="seniority" type="INTEGER"/>
+        <column name="salary" type="INTEGER" required="true"/>
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="age" type="INTEGER" required="true"/>
+        <column name="intermine_end" type="LONGVARCHAR"/>
+        <column name="fullTime" type="BIT" required="true"/>
+        <column name="employmentPeriodId" type="INTEGER"/>
+        <column name="personalAddressId" type="INTEGER"/>
+        <column name="addressId" type="INTEGER"/>
+        <column name="departmentId" type="INTEGER"/>
+        <column name="companyId" type="INTEGER"/>
+        <column name="businessAddressId" type="INTEGER"/>
+        <column name="departmentThatRejectedMeId" type="INTEGER"/>
+        <column name="class" type="LONGVARCHAR"/>
+        <column name="tableclass" type="LONGVARCHAR"/>
+        <unique name="ImportantPerson_pkey">
+            <unique-column name="id"/>
+            <unique-column name="tableclass"/>
+        </unique>
+    </table>
+    <table name="Secretary">
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="name" type="LONGVARCHAR"/>
+        <unique name="Secretary_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="Types">
+        <column name="longObjType" type="BIGINT"/>
+        <column name="floatType" type="REAL" required="true"/>
+        <column name="shortObjType" type="SMALLINT"/>
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="shortType" type="SMALLINT" required="true"/>
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="intType" type="INTEGER" required="true"/>
+        <column name="longType" type="BIGINT" required="true"/>
+        <column name="clobObjType" type="LONGVARCHAR"/>
+        <column name="floatObjType" type="REAL"/>
+        <column name="booleanObjType" type="BIT"/>
+        <column name="dateObjType" type="BIGINT"/>
+        <column name="doubleObjType" type="DOUBLE"/>
+        <column name="stringObjType" type="LONGVARCHAR"/>
+        <column name="bigDecimalObjType" type="NUMERIC"/>
+        <column name="booleanType" type="BIT" required="true"/>
+        <column name="doubleType" type="DOUBLE" required="true"/>
+        <column name="intObjType" type="INTEGER"/>
+        <unique name="Types_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="Bank">
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="name" type="LONGVARCHAR"/>
+        <unique name="Bank_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="SimpleObject">
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="employeeId" type="INTEGER"/>
+    </table>
+    <table name="EmploymentPeriod">
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="startDate" type="BIGINT"/>
+        <column name="endDate" type="BIGINT"/>
+        <unique name="EmploymentPeriod_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="intermine_Range">
+        <column name="rangeEnd" type="INTEGER" required="true"/>
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="rangeStart" type="INTEGER" required="true"/>
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="parentId" type="INTEGER"/>
+        <unique name="intermine_Range_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="OldComsOldContracts">
+        <column name="OldContracts" type="INTEGER" required="true"/>
+        <column name="OldComs" type="INTEGER" required="true"/>
+    </table>
+    <table name="CompanysContractors">
+        <column name="Contractors" type="INTEGER" required="true"/>
+        <column name="Companys" type="INTEGER" required="true"/>
+    </table>
+    <table name="HasSecretarysSecretarys">
+        <column name="HasSecretarys" type="INTEGER" required="true"/>
+        <column name="Secretarys" type="INTEGER" required="true"/>
+    </table>
+    <table name="intermine_metadata">
+        <column name="key" type="LONGVARCHAR"/>
+        <column name="value" type="LONGVARCHAR"/>
+        <column name="blob_value" type="LONGVARBINARY"/>
+    <unique name="intermine_metadata_key">
+        <unique-column name="key"/>
+    </unique>
+    </table>
+    <table name="osbag_int">
+        <column name="bagid" type="INTEGER"/>
+        <column name="value" type="INTEGER"/>
+        <unique name="osbag_int_index1">
+            <unique-column name="bagid"/>
+            <unique-column name="value"/>
+        </unique>
+        <index name="osbag_int_index2">
+            <index-column name="value"/>
+            <index-column name="bagid"/>
+        </index>
+    </table>
+    <table name="clob">
+        <column name="clobid" type="INTEGER"/>
+        <column name="clobpage" type="INTEGER"/>
+        <column name="value" type="LONGVARCHAR"/>
+        <unique name="clob_index">
+            <unique-column name="clobid"/>
+            <unique-column name="clobpage"/>
+        </unique>
+    </table>
+</database>
