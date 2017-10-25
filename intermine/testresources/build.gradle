@@ -41,6 +41,25 @@ task generateTestModel {
     }
 }
 
+void insertDataModel(model, osname) {
+    ant.taskdef(name: 'insertModelTask', classname: 'org.intermine.task.StoreMetadataTask') {
+        classpath {
+            fileset(dir: '../model/build/libs/', includes: '*.jar')
+            dirset(dir: 'src/test/resources/')
+            pathelement(path: configurations.testCompile.asPath)
+        }
+    }
+
+    ant.insertModelTask(osname: osname, modelName: model)
+}
+
+task insertModel (dependsOn: 'generateTestModel') {
+    description "put the generated model file into the intermine_metadata table"
+    doLast {
+        insertDataModel('testmodel', 'os.unittest')
+    }
+}
+
 class CreateInterMinePropertiesTask extends DefaultTask {
 
     def resourcesDir = "$project.rootDir/testresources/src/test/resources"
@@ -142,7 +161,7 @@ void createTables() {
     // <analyse-db osName="${objectstore.name}"/>
 }
 
-task buildDB() {
+task buildDB(dependsOn: 'generateTestModel') {
     description "Create tables for database for intermine tests"
     doLast {
         createTables()
@@ -151,7 +170,7 @@ task buildDB() {
 
 tasks.compileTestJava.dependsOn 'generateTestModel', 'createUnitTestDatabases'
 tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses'
-tasks.test.dependsOn 'buildDB'
+tasks.test.dependsOn 'buildDB', 'insertModel' // tests require the tables are created. so build first
 
 artifacts {
     testArtifacts buildTestModelJar
