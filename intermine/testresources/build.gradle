@@ -15,6 +15,7 @@ sourceSets {
 
 dependencies {
     testCompile project(':intermine-objectstore')
+    testCompile project(':intermine-resources')
     testCompile 'commons-lang:commons-lang:2.6'
 }
 
@@ -34,28 +35,123 @@ void generateModel(model, destination, type) {
     ant.modelOutputTask(model: model, destDir: destination, type: type)
 }
 
-task copyTestProperties(type: Copy) {
-    //from "../../config/intermine-test.properties"
-    from "${System.env.HOME}/.intermine/intermine-test.properties"
-    into sourceSets.test.output.resourcesDir
-
-    rename { fileName -> fileName.replace('intermine-test.properties', 'intermine.properties') }
-
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
-
 task generateTestModel {
     doLast {
         generateModel('testmodel', 'src/test/java', 'java')
-    }   
+    }
+}
+
+class CreateInterMinePropertiesTask extends DefaultTask {
+
+    def resourcesDir = "$project.rootDir/testresources/src/test/resources"
+
+    @OutputDirectory File outputDir = new File(resourcesDir, "")
+
+    @InputFile File inputFile = new File("$resourcesDir/intermine-test.properties")
+
+    @TaskAction
+    public void generate() {
+        File outputFile = new File(outputDir, "intermine.properties")
+
+        String contents = inputFile.getText('UTF-8')
+
+        // create databases using their UNIX name
+        def db_username = System.getenv('USER')
+        def db_pw = System.getenv('USER')
+
+        // use ENV VARs instead if they've set them. need for travis
+        if (System.getenv('PSQL_USER')) {
+            db_username = System.getenv('PSQL_USER')
+        }
+        if (System.getenv('PSQL_PWD')) {
+            db_username = System.getenv('PSQL_PWD')
+        }
+
+        contents = contents.replaceAll( 'PSQL_USER', db_username)
+        contents = contents.replaceAll( 'PSQL_PWD', db_pw)
+
+        outputFile.text = contents
+    }
+}
+
+task createInterMineProperties(type: CreateInterMinePropertiesTask) {
+    description "Creates properties file to use for unit tests"
 }
 
 task buildTestModelJar(type: Jar) {
     from(sourceSets.test.output)
 }
 
-tasks.compileTestJava.dependsOn 'generateTestModel'
-tasks.buildTestModelJar.dependsOn 'copyTestProperties', 'testClasses'
+task createUnitTestDatabases {
+    description "create databases needed for unit tests"
+    doLast {
+        exec {
+            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
+            // create ones that aren't there
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database notxmltest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database truncunittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database flatmodetest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database fulldatatest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database userprofiletest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database unittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database biotest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database biofulldatatest;"
+        }
+    }
+}
+
+void createTables() {
+    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes
+        }
+    }
+    ant.torque(osname: 'os.unittest', destFile:"os.unittest-schema.xml")
+    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes
+            dirset(dir: '.') // os.unittest-schema.xml
+        }
+    }
+    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
+    // <create-indexes alias="${objectstore.name}" />
+    // <analyse-db osName="${objectstore.name}"/>
+}
+
+task buildDB() {
+    description "Create tables for database for intermine tests"
+    doLast {
+        createTables()
+    }
+}
+
+tasks.compileTestJava.dependsOn 'generateTestModel', 'createUnitTestDatabases'
+tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses'
+tasks.test.dependsOn 'buildDB'
 
 artifacts {
     testArtifacts buildTestModelJar

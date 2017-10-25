@@ -139,12 +139,9 @@ public class BuildDbTask extends Task
         sql.setSqlDbMap(tempDir + "/sqldb.map");
         sql.setOutputFile("report.sql.generation");
         sql.setTargetDatabase(database.getPlatform().toLowerCase()); // "postgresql"
-        File file = new File(schemaFile);
-        InputStream schemaFileInputStream = null;
-        try {
-            schemaFileInputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e1) {
-            throw new RuntimeException("cannot open schema file (" + schemaFile + ")");
+        InputStream schemaFileInputStream = getClass().getClassLoader().getResourceAsStream(schemaFile);
+        if (schemaFileInputStream == null) {
+            throw new BuildException("cannot open schema file (" + schemaFile + ")");
         }
 
         File tempFile;
