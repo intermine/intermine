@@ -15,6 +15,7 @@ sourceSets {
 
 dependencies {
     testCompile project(':intermine-objectstore')
+    testCompile project(':intermine-resources')
     testCompile 'commons-lang:commons-lang:2.6'
 }
 
@@ -34,6 +35,11 @@ void generateModel(model, destination, type) {
     ant.modelOutputTask(model: model, destDir: destination, type: type)
 }
 
+task generateTestModel {
+    doLast {
+        generateModel('testmodel', 'src/test/java', 'java')
+    }
+}
 
 class CreateInterMinePropertiesTask extends DefaultTask {
 
@@ -71,16 +77,10 @@ class CreateInterMinePropertiesTask extends DefaultTask {
 task createInterMineProperties(type: CreateInterMinePropertiesTask) {
     description "Creates properties file to use for unit tests"
 }
-task generateTestModel {
-    doLast {
-        generateModel('testmodel', 'src/test/java', 'java')
-    }   
-}
 
 task buildTestModelJar(type: Jar) {
     from(sourceSets.test.output)
 }
-
 
 task createUnitTestDatabases {
     description "create databases needed for unit tests"
@@ -122,8 +122,36 @@ task createUnitTestDatabases {
     }
 }
 
+void createTables() {
+    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes
+        }
+    }
+    ant.torque(osname: 'os.unittest', destFile:"os.unittest-schema.xml")
+    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes
+            dirset(dir: '.') // os.unittest-schema.xml
+        }
+    }
+    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
+    // <create-indexes alias="${objectstore.name}" />
+    // <analyse-db osName="${objectstore.name}"/>
+}
+
+task buildDB() {
+    description "Create tables for database for intermine tests"
+    doLast {
+        createTables()
+    }
+}
+
 tasks.compileTestJava.dependsOn 'generateTestModel', 'createUnitTestDatabases'
 tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses'
+tasks.test.dependsOn 'buildDB'
 
 artifacts {
     testArtifacts buildTestModelJar
