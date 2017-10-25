@@ -6,34 +6,55 @@ sourceSets {
     }
 }
 
-def core.model.path = "bio/core
-def extra.model.paths.start = biotestmine/dbmodel/build/model/so_additions.xml bio/core/genomic_additions.xml
+def coreModelPath = "core.xml"
+def extraModelPathsStart = "biotestmine/dbmodel/build/model/so_additions.xml bio/core/genomic_additions.xml"
 
 configurations {
-    compile
+  compile
+  so
 }
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
-    compile group: "org.intermine", name: "intermine-testresources", version: imVersion
     compile group: "org.intermine", name: "intermine-integrate", version: imVersion
-    compile fileTree(dir: 'libs', include: '*.jar')
+    //so group: "org.intermine", name: "bio-core", version: imVersion
+    so fileTree(dir: 'libs', include: '*.jar')
+    so group: "org.intermine", name: "so", version: imVersion
 }
 
+void createSoModel() {
+    ant.taskdef(name: 'createSoModel', classname: 'org.intermine.bio.task.SOToModelTask') {
+        classpath {
+          pathelement(path: configurations.so.asPath)
+        }
+    }   
+    ant.createSoModel(soTermListFile: "./resources/so_terms", outputFile: "build/so_additions.xml")
+}
 
+task createSoModelTask() {
+    group "${taskGroup}"
+    description "Read SO OBO files and write so_additions.xml"
+    doLast {
+      createSoModel()
+   }
+}
+
+/*
 void mergeSourceModels() {
     ant.taskdef(name: 'mergeSourceModels', classname: 'org.intermine.task.MergeSourceModelsTask') {
         classpath {
           pathelement(path: configurations.testCompile.asPath)
         }
     }   
-    ant.mergeSourceModels(projectXml: "${rootDir}/project.xml", basedir: "${rootDir}", modelFile: "", extraModelPathsStart: "" )
+    ant.mergeSourceModels(projectXml: "$rootDir/project.xml", basedir: "$rootDi}", modelFile: "$coreModelPath", extraModelPathsStart: "$extraModelPathsStart" )
 }
 
 task mergeModels() {
     group "${taskGroup}"
     description "Merge defferent source model files into an intermine XML model"
     doLast {
-        mergeSourceModels
+        mergeSourceModels()
    }
 }
+*/
+

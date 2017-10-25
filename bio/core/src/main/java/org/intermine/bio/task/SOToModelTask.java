@@ -66,10 +66,6 @@ public class SOToModelTask extends Task
             throw new BuildException("Could not find file containing SO terms to add to the model,"
                     + " check the project.properties file. Property was: " + soTermListFile);
         }
-        if (soFile == null || !soFile.exists()) {
-            throw new BuildException("Could not find Sequence Ontology .obo file, check the"
-                    + " project.properties file. Property was: " + soFile);
-        }
 
         try {
             SequenceOntology so = SequenceOntologyFactory.getSequenceOntology(soFile,
