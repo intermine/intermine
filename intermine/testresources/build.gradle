@@ -209,9 +209,10 @@ void generateSchema(osname, model) {
     ant.torque(osname: "os.$osname", destFile:"os.$osname-schema.xml")
 }
 
-task buildDB (dependsOn: 'compileTestJava') {
+task buildDB {
     dependsOn 'createUnitTestDatabases'
     dependsOn 'generateTestModel'
+    dependsOn 'compileTestJava'
     description "Create tables for database for intermine tests"
     doLast {
         generateSchema('unittest', 'testmodel')
