@@ -16,7 +16,6 @@ sourceSets {
 dependencies {
     testCompile project(':intermine-objectstore')
     testCompile project(':intermine-resources')
-    testCompile project(':intermine-integrate') // needed to get the fulldata model (items, attributes etc)
     testCompile 'commons-lang:commons-lang:2.6'
 }
 
