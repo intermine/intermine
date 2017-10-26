@@ -212,7 +212,7 @@ void generateSchema(osname, model) {
 task buildDB {
     dependsOn 'createUnitTestDatabases'
     dependsOn 'generateTestModel'
-    dependsOn 'compileTestJava'
+    dependsOn 'createInterMineProperties'
     description "Create tables for database for intermine tests"
     doLast {
         generateSchema('unittest', 'testmodel')
@@ -233,7 +233,8 @@ task buildDB {
 }
 
 // create unit databases, generate model > compile (need .class files) > build db > insert data model
-
+tasks.compileTestJava.dependsOn('generateTestModel')
+tasks.buildDB.shouldRunAfter('compileTestJava')
 tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses', 'buildDB', 'insertModel'
 
 artifacts {
