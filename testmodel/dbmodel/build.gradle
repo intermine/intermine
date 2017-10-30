@@ -27,9 +27,10 @@ void buildDatabase() {
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
           pathelement(path: configurations.compile.asPath)
+          dirset(dir: 'build/') // testmodel classes
         }
     }
-    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"$buildDir/os.unittest-schema.xml", tempDir: "$buildDir/tmp")
+    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
     // <create-indexes alias="${objectstore.name}" />
     // <analyse-db osName="${objectstore.name}"/>
 }
