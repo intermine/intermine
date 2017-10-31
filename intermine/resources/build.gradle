@@ -35,7 +35,7 @@ void updateTestmodelPropertyFile() {
     String contents = new File("$ext.minePropertyFile").getText( 'UTF-8' )
     contents = contents.replaceAll( 'PSQL_USER', "${db_username}")
     contents = contents.replaceAll( 'PSQL_PWD', "${db_pw}")
-    new File("$minePropertyFile").write( contents, 'UTF-8' )
+    new File("$buildDir/resources/main/testmodel.properties").write( contents, 'UTF-8' )
 }
 
 task updateTestmodelProps {
