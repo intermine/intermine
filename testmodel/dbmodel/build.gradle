@@ -15,6 +15,8 @@ configurations {
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
+    // needed for testmodel.properties file
+    testCompile group: "org.intermine", name: "intermine-test", version: imVersion
 }
 
 void buildDatabase() {
@@ -34,6 +36,7 @@ void buildDatabase() {
     // <create-indexes alias="${objectstore.name}" />
     // <analyse-db osName="${objectstore.name}"/>
 }
+
 
 void insertDataUnitTest() {
     // TODO this

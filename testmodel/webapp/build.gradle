@@ -20,10 +20,23 @@ sourceSets {
     }
 }
 
-def mineRelease = hasProperty('release') ? "." + release : ''
+
 def explodedWebAppDir = "$buildDir/explodedWebApp"
 def mergePropsDir = "$buildDir/props"
-def minePropertyFile = "${System.env.HOME}/.intermine/testmodel.properties$mineRelease"
+
+
+ext {
+    // suffix for property file. might be blank
+    mineRelease = hasProperty('release') ? "." + release : ''
+    // filename for property file
+    minePropertyFileName = "testmodel.properties$mineRelease"
+    // full path to file
+    minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
+    // people can have a testmodel.properties file in .intermine. if it aint there, just use the default one
+    if( !file(minePropertyFile).exists() ) {
+        minePropertyFile = "$project.rootDir/webapp/src/test/resources/testmodel.properties"
+    }
+}
 
 configurations {
   commonResources
@@ -43,7 +56,7 @@ dependencies {
 processResources {
   exclude "default-template-queries.xml"
   exclude "main/"
-  dependsOn "copyDefaultProperties", "copyTestModelProperties"
+  dependsOn "copyDefaultProperties", "createInterMineProperties"
 }
 
 task copyDefaultProperties(type: Copy) {
@@ -52,13 +65,54 @@ task copyDefaultProperties(type: Copy) {
     into sourceSets.main.output.resourcesDir
 }
 
-task copyTestModelProperties(type: Copy) {
-    println "Using properties file: '$minePropertyFile'"
-    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
-    from minePropertyFile
-    into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
-    inputs.sourceFiles.stopExecutionIfEmpty()
+//task copyTestModelProperties(type: Copy) {
+//    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war. If it's not there it uses the dummy properties"
+//    println "Using properties file: '$minePropertyFile'"
+//    from minePropertyFile
+//    into sourceSets.main.output.resourcesDirectory
+//    rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
+//    inputs.sourceFiles.stopExecutionIfEmpty()
+//}
+
+task createInterMineProperties(type: CreateInterMinePropertiesTask) {
+    description "Creates testmodel properties file to use for testmodel"
+}
+
+// ***********************************************************
+// this is a (almost) duplicate of a class in intermine-testresources
+// put in intermine plugin instead?
+// ***********************************************************
+class CreateInterMinePropertiesTask extends DefaultTask {
+
+    @OutputDirectory File outputDir = new File("$project.rootDir/webapp/src/main/resources", "")
+
+    @InputFile File inputFile = new File("" + project.minePropertyFile)
+
+    @TaskAction
+    public void generate() {
+
+        File outputFile = new File(outputDir, "intermine.properties")
+
+        String contents = inputFile.getText('UTF-8')
+
+        // this part is ignored if .intermine/testmodel.properties is used
+        // create databases using their UNIX name
+        def db_username = System.getenv('USER')
+        def db_pw = System.getenv('USER')
+
+        // use ENV VARs instead if they've set them. need for travis
+        if (System.getenv('PSQL_USER')) {
+            db_username = System.getenv('PSQL_USER')
+        }
+        if (System.getenv('PSQL_PWD')) {
+            db_username = System.getenv('PSQL_PWD')
+        }
+
+        contents = contents.replaceAll( 'PSQL_USER', db_username)
+        contents = contents.replaceAll( 'PSQL_PWD', db_pw)
+
+        outputFile.text = contents
+    }
 }
 
 war {
@@ -117,8 +171,9 @@ task warTestModelWebApp(type: War) {
 // read in testmodel.properties to get the contextPath
 // the properties files are read in much later but we need this variable set in props
 // to deploy webapp
+// TODO this need to happen AFTER the file is formatted
 def props = new Properties()
-file(minePropertyFile).withInputStream { props.load(it) }
+file(project.minePropertyFile).withInputStream { props.load(it) }
 
 gretty {
     // needed for Tomcat 8.0.x, Maybe remove for Tomcat 9? Still needed for Tomcat 8.5.x?
