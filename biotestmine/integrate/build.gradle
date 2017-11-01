@@ -1,0 +1,29 @@
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+}
+
+configurations {
+  integrate
+}
+
+dependencies {
+    integrate group : "org.intermine", name: "ant-tasks", version: antVersion
+}
+
+task integrate() {
+    group "${taskGroup}"
+    description "Integrates data source"
+    doLast {
+      ant.taskdef(name: 'integrateSource', classname: 'org.intermine.task.Integrate') {
+        classpath {
+          pathelement(path: configurations.integrate.asPath)
+          //dirset(dir: 'build/')
+        }
+      }   
+      ant.integrateSource(projectXml: "$rootDir/project.xml", source: "uniprot-malaria", action: "")
+   }
+}
