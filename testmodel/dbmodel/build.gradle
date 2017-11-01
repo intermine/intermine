@@ -14,7 +14,6 @@ configurations {
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
-//    compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 ext {
@@ -145,7 +144,7 @@ task insertData(dependsOn: 'build') {
 task buildDB(dependsOn: 'build') {
     group "${taskGroup}"
     description "Build database for intermine-test webapp"
-    doLast {
+    doFirst {
         exec {
             ignoreExitValue true
             commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"intermine-demo\";"
@@ -154,6 +153,25 @@ task buildDB(dependsOn: 'build') {
             ignoreExitValue true
             commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"userprofile-demo\";"
         }
+    }
+    doLast {
         buildDatabase()
-   }
+    }
+}
+
+// this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to dbs
+task dropDBs {
+    description "drop all the testmodel databases. used for debugging only. or not, do what you want I'm not the police."
+    doLast {
+        exec {
+            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
+            // create ones that aren't there
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"intermine-demo\";"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"userprofile-demo\";"
+        }
+    }
 }
