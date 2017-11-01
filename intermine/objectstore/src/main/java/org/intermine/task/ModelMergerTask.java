@@ -32,7 +32,7 @@ import org.intermine.modelproduction.ModelFileMerger;
 
 public class ModelMergerTask extends Task
 {
-    protected List<File> additionsFiles = new ArrayList<File>();
+    protected List<String> additionsFiles = new ArrayList<String>();
     protected File inputModelFile;
     protected File outputModelFile;
 
@@ -45,18 +45,10 @@ public class ModelMergerTask extends Task
     }
 
     /**
-     * The file containing model additions.
-     * @param file the additions file
-     */
-    public void setAdditionsFile(File file) {
-        additionsFiles.add(file);
-    }
-
-    /**
-     * The files containing model additions.
+     * The file names containing model additions.
      * @param files the additions files
      */
-    public void setAdditionsFiles(List<File> files) {
+    public void setAdditionsFiles(List<String> files) {
         additionsFiles = files;
     }
 
