@@ -12,7 +12,10 @@ repositories {
   mavenLocal()
 }
 
+def imVersion = '2.0.0-SNAPSHOT'
+
 dependencies {
+  compile group: 'org.intermine', name: 'intermine-objectstore', version: imVersion
   compile group: 'org.apache.tomcat', name: 'catalina-ant', version: '6.0.36'
   compile group: 'xalan', name: 'xalan', version: '2.7.2'
   compile group: 'ant', name: 'ant', version: '1.6.5'

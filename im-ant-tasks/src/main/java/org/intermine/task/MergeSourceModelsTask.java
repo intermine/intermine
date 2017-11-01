@@ -19,12 +19,10 @@ import org.intermine.task.project.ProjectXmlBinding;
 import org.intermine.task.project.Source;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.util.ClasspathUtils;
 
 /**
@@ -37,37 +35,17 @@ import org.apache.tools.ant.util.ClasspathUtils;
 public class MergeSourceModelsTask extends Task
 {
     private File modelFile;
-    private String extraModelPathsStart;
-    private String extraModelPathsEnd;
-    /** Base directory that all projects are relative to. */
-    private String workspaceBaseDir;
-    private Reference classPathRef;
+    private String extraModelsStart;
+    private String extraModelsEnd;
     private File projectXml;
 
     private static final String MODEL_MERGER_TASK = "org.intermine.task.ModelMergerTask";
 
     /**
-     * Set the classpath to use for post processing.
-     * @param ref the classpath reference
-     */
-    public void setClassPathRef(Reference ref) {
-        this.classPathRef = ref;
-    }
-
-    /**
-     * Base directory that all projects are assumed relative to.
-     *
-     * @param basedir base directory that all projects are assumed relative to
-     */
-    public void setBasedir(String basedir) {
-        workspaceBaseDir = basedir;
-    }
-
-    /**
      * Set the project.xml file to use when post-processing.
      * @param projectXml the project xml file
      */
-    public void setProjectXml(File projectXml) {
+    public void setProjectXmlPath(File projectXml) {
         this.projectXml = projectXml;
     }
 
@@ -75,24 +53,24 @@ public class MergeSourceModelsTask extends Task
      * Set the model to add additions to.
      * @param file path to model file
      */
-    public void setModelFile(File file) {
+    public void setModelFilePath(File file) {
         modelFile = file;
     }
 
     /**
      * The paths containing extra model additions that should be merged first.
-     * @param extraModelPathsStart a space separated list of model addition paths
+     * @param extraModelsStart a space separated list of model addition paths
      */
-    public void setExtraModelPathsStart(String extraModelPathsStart) {
-        this.extraModelPathsStart = extraModelPathsStart;
+    public void setExtraModelsStart(String extraModelsStart) {
+        this.extraModelsStart = extraModelsStart;
     }
 
     /**
      * The paths containing extra model additions that should be merged last.
-     * @param extraModelPathsEnd a space separated list of model addition paths
+     * @param extraModelsEnd a space separated list of model addition paths
      */
-    public void setExtraModelPathsEnd(String extraModelPathsEnd) {
-        this.extraModelPathsEnd = extraModelPathsEnd;
+    public void setExtraModelsEnd(String extraModelsEnd) {
+        this.extraModelsEnd = extraModelsEnd;
     }
 
     /**
@@ -103,23 +81,18 @@ public class MergeSourceModelsTask extends Task
         if (projectXml == null) {
             throw new BuildException("no projectXml specified");
         }
-        if (workspaceBaseDir == null) {
-            throw new BuildException("basedir not set");
-        }
-        if (classPathRef == null) {
-            throw new BuildException("classPathRef not set");
-        }
 
         Project imProject = ProjectXmlBinding.unmarshall(projectXml);
 
-        List<File> pathsToMerge = new ArrayList<File>();
+        List<String> pathsToMerge = new ArrayList<String>();
 
-        String[] bits = extraModelPathsStart.split("\\s+");
+        if (extraModelsStart != null) {
+            String[] bits = extraModelsStart.split("\\s+");
 
-        for (int i = 0; i < bits.length; i++) {
-            if (bits[i].length() > 0) {
-                addToAdditionsList(pathsToMerge,
-                                   new File(workspaceBaseDir + File.separator + bits[i]));
+            for (int i = 0; i < bits.length; i++) {
+                if (bits[i].length() > 0) {
+                    addToAdditionsList(pathsToMerge, bits[i]);
+                }
             }
         }
 
@@ -128,19 +101,18 @@ public class MergeSourceModelsTask extends Task
         for (Source source: sources) {
             String additionsFileName = source.getType() + "_additions.xml";
 
-            File additionsFile = new File(source.getLocation(), additionsFileName);
-            addToAdditionsList(pathsToMerge, additionsFile);
+            addToAdditionsList(pathsToMerge, additionsFileName);
         }
 
-        bits = extraModelPathsEnd.split("\\s+");
+        if (extraModelsEnd != null) {
+            String[] bits = extraModelsEnd.split("\\s+");
 
-        for (int i = 0; i < bits.length; i++) {
-            if (bits[i].length() > 0) {
-                File additionsFile = new File(workspaceBaseDir + File.separator + bits[i]);
-                addToAdditionsList(pathsToMerge, additionsFile);
+            for (int i = 0; i < bits.length; i++) {
+                if (bits[i].length() > 0) {
+                    addToAdditionsList(pathsToMerge, bits[i]);
+                }
             }
         }
-
         Task mergeTask = newModelMergerTask();
 
         setProperty(mergeTask, "inputModelFile", modelFile);
@@ -164,24 +136,17 @@ public class MergeSourceModelsTask extends Task
         }
     }
 
-    private void addToAdditionsList(List<File> pathsToMerge, File additionsFile)
+    private void addToAdditionsList(List<String> pathsToMerge, String additionsFile)
         throws BuildException {
-        try {
-            File canonFile = additionsFile.getCanonicalFile();
-            if (canonFile.exists()) {
-                if (!pathsToMerge.contains(canonFile)) {
-                    pathsToMerge.add(canonFile);
-                }
-            } else {
-                System.err .println("warning: " + canonFile + " not found");
-            }
-        } catch (IOException e) {
-            throw new BuildException("failed to find canonical file for: " + additionsFile, e);
+        if (MergeSourceModelsTask.class.getClassLoader().getResourceAsStream(additionsFile) != null) {
+            pathsToMerge.add(additionsFile);
+        } else {
+            throw new BuildException("failed to find in the classpath: " + additionsFile);
         }
     }
 
     private Task newModelMergerTask() {
-        ClassLoader cl = ClasspathUtils.getClassLoaderForPath(getProject(), classPathRef);
+        ClassLoader cl = MergeSourceModelsTask.class.getClassLoader();
 
         Task mergeTask = (Task) ClasspathUtils.newInstance(MODEL_MERGER_TASK, cl);
 
