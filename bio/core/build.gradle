@@ -17,6 +17,11 @@ sourceSets {
     }
 }
 
+processResources {
+   from('.') { include ("core.xml", "genomic_additions.xml")} 
+}
+
+
 dependencies {
   compile group: "org.intermine", name: "intermine-api", version: imVersion
   compile fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar not found in public repo, obo and bbop not available in the public maven repo
