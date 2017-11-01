@@ -22,7 +22,21 @@ subprojects {
 
 ext {
   imVersion = "2.0.0-SNAPSHOT"
+  bioVersion = "2.0.0-SNAPSHOT"
+  antVersion = "2.0.0-SNAPSHOT"
   taskGroup = "InterMine"
+
+  mineRelease = hasProperty('release') ? "." + release : ''
+  mineName = "biotestmine"
+  minePropertyFile = "${System.env.HOME}/.intermine/${mineName}.properties$mineRelease"
+
+  objectStoreName = "os.production"
+  modelName = "genomic"
+
+  soTermListFile = "resources/so_terms"
+  extraModelsStart = "so_additions.xml genomic_additions.xml"
+  extraModelsEnd = ""
+
 }
 
 task wrapper(type: Wrapper) {

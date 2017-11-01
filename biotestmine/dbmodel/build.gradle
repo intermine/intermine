@@ -1,60 +1,131 @@
 sourceSets {
     main {
+        java {
+            srcDirs = ['build/gen']
+        }
         resources {
             srcDirs = ['resources']
         }
     }
 }
 
-def coreModelPath = "core.xml"
-def extraModelPathsStart = "biotestmine/dbmodel/build/model/so_additions.xml bio/core/genomic_additions.xml"
-
 configurations {
   compile
   so
+  bioCore
+  mergeSource
 }
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
-    compile group: "org.intermine", name: "intermine-integrate", version: imVersion
-    //so group: "org.intermine", name: "bio-core", version: imVersion
-    so fileTree(dir: 'libs', include: '*.jar')
-    so group: "org.intermine", name: "so", version: imVersion
+    so group: "org.intermine", name: "so", version: bioVersion
+    so fileTree(dir: "libs", include: "*.jar")
+    mergeSource group : "org.intermine", name: "ant-tasks", version: antVersion
+    mergeSource group : "org.intermine", name: "uniprot", version: bioVersion
+    mergeSource group : "org.intermine", name: "fasta", version: bioVersion
+    mergeSource group : "org.intermine", name: "go-annotation", version: bioVersion
+    bioCore group : "org.intermine", name: "bio-core", version: bioVersion, transitive: false 
 }
 
-void createSoModel() {
-    ant.taskdef(name: 'createSoModel', classname: 'org.intermine.bio.task.SOToModelTask') {
+processResources {
+  dependsOn "copyDefaultProperties", "copyModelProperties"
+}
+
+compileJava {
+  dependsOn "generateModel"
+}
+
+task copyDefaultProperties(type: Copy) {
+    description "Copies default.intermine.properties file into resources"
+    from "../default.intermine.integrate.properties"
+    rename { fileName -> fileName.replace("default.intermine.integrate.properties", "default.intermine.properties") }
+    into sourceSets.main.output.resourcesDir
+}
+
+task copyModelProperties(type: Copy) {
+    println "Using properties file: '$minePropertyFile'"
+    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
+    from minePropertyFile
+    into sourceSets.main.output.resourcesDir
+    rename { fileName -> fileName.replace("${mineName}.properties$mineRelease", "intermine.properties") }
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+task createSoModel(dependsOn: "processResources") {
+    group "${taskGroup}"
+    description "Reads SO OBO files and writes so_additions.xml"
+    doLast {
+      ant.taskdef(name: "createSoModel", classname: "org.intermine.bio.task.SOToModelTask") {
         classpath {
           pathelement(path: configurations.so.asPath)
         }
-    }   
-    ant.createSoModel(soTermListFile: "./resources/so_terms", outputFile: "build/so_additions.xml")
-}
-
-task createSoModelTask() {
-    group "${taskGroup}"
-    description "Read SO OBO files and write so_additions.xml"
-    doLast {
-      createSoModel()
+      }   
+      ant.createSoModel(soTermListFile: "$soTermListFile", outputFile: "build/so_additions.xml")
    }
 }
 
-/*
-void mergeSourceModels() {
-    ant.taskdef(name: 'mergeSourceModels', classname: 'org.intermine.task.MergeSourceModelsTask') {
+task copyGenomicModel(type: Copy) {
+  from({ zipTree(configurations.bioCore.singleFile) }) {
+        include "core.xml"
+        rename "core.xml", "${modelName}_model.xml"
+  }
+  into sourceSets.main.output.resourcesDir
+}
+
+task mergeModels(dependsOn: ["copyGenomicModel", "createSoModel"]) {
+    group "${taskGroup}"
+    description "Merges defferent source model files into an intermine XML model"
+    doLast {
+      ant.taskdef(name: "mergeSourceModels", classname: "org.intermine.task.MergeSourceModelsTask") {
         classpath {
-          pathelement(path: configurations.testCompile.asPath)
+          pathelement(path: configurations.mergeSource.asPath)
+          dirset(dir: "build/")
+        }
+      }   
+      ant.mergeSourceModels(projectXmlPath: "$rootDir/project.xml", modelFilePath: "build/resources/main/${modelName}_model.xml", extraModelsStart: "$extraModelsStart",  extraModelsEnd: "$extraModelsEnd")
+   }
+}
+
+void generateModel(model, destination, type) {
+    ant.taskdef(name: "modelOutputTask", classname: "org.intermine.task.ModelOutputTask") {
+        classpath {
+            dirset(dir: "build")
+            pathelement(path: configurations.compile.asPath)
         }
     }   
-    ant.mergeSourceModels(projectXml: "$rootDir/project.xml", basedir: "$rootDi}", modelFile: "$coreModelPath", extraModelPathsStart: "$extraModelPathsStart" )
+    ant.modelOutputTask(model: model, destDir: destination, type: type)
 }
 
-task mergeModels() {
+task generateModel(dependsOn: "mergeModels") {
+  doLast{
+    generateModel("genomic", "build/gen", "java")  
+  }
+}
+
+void buildDatabase() {
+    ant.taskdef(name: "torque", classname: "org.intermine.objectstore.intermine.TorqueModelOutputTask") {
+        classpath {
+          fileset(dir: "build/libs/", includes: "*.jar")
+          pathelement(path: configurations.compile.asPath)
+        }
+    }
+    ant.torque(osname: "$objectStoreName", destFile:"$buildDir/${objectStoreName}-schema.xml")
+
+    ant.taskdef(name: "buildDB", classname: "org.intermine.task.BuildDbTask") {
+        classpath {
+          dirset(dir: "build")
+          fileset(dir: "build/libs/", includes: "*.jar")
+          pathelement(path: configurations.compile.asPath)
+        }
+    }
+    ant.buildDB(osname: "$objectStoreName", model: "$modelName", schemafile:"${objectStoreName}-schema.xml", tempDir: "$buildDir/tmp")
+}
+
+task buildDB(dependsOn: "jar") {
     group "${taskGroup}"
-    description "Merge defferent source model files into an intermine XML model"
+    description "Build database for $mineName webapp"
     doLast {
-        mergeSourceModels()
+      buildDatabase()    
    }
 }
-*/
 
