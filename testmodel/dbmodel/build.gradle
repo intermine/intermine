@@ -84,6 +84,7 @@ void insertDataUnitTest() {
     ant.taskdef(name: 'insertDataUnittest', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
           pathelement(path: configurations.testCompile.asPath)
+          dirset(dir: 'build/resources/main') // intermine.properties
         }
     }   
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_webapp_data.xml", sourceName: "testsource", sourceType: "testsource")
@@ -95,6 +96,7 @@ void loadsadataLoader() {
     ant.taskdef(name: 'loadsadata', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
             pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_extra_data.xml", sourceName: "testsource", sourceType: "testsource")
@@ -106,6 +108,7 @@ void enormocorpLoader() {
     ant.taskdef(name: 'enormocorp', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
             pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_enormo_data.xml", sourceName: "testsource", sourceType: "testsource")

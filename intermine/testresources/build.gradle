@@ -143,7 +143,6 @@ task createUnitTestDatabases {
     }
 }
 
-// TODO make part of clean task?
 // this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to unittest
 // this is incorrect as the tests should drop the database connections themselves
 task dropDBs {
