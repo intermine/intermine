@@ -14,22 +14,63 @@ configurations {
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
-    compile fileTree(dir: 'libs', include: '*.jar')
-    // needed for testmodel.properties file
-    testCompile group: "org.intermine", name: "intermine-test", version: imVersion
+//    compile fileTree(dir: 'libs', include: '*.jar')
+}
+
+ext {
+    // suffix for property file. might be blank
+    mineRelease = hasProperty('release') ? "." + release : ''
+    // filename for property file
+    minePropertyFileName = "testmodel.properties$mineRelease"
+    // full path to file
+    minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
+    // NO PROPERTY FILE -- use the default
+    if( !file(minePropertyFile).exists() ) {
+        minePropertyFile = "$project.rootDir/dbmodel/resources/testmodel.properties"
+    }
+}
+
+processResources {
+
+    def db_username = System.getenv('USER')
+    def db_pw = System.getenv('USER')
+
+    // use ENV VARs instead if they've set them. need for travis
+    if (System.getenv('PSQL_USER')) {
+        db_username = System.getenv('PSQL_USER')
+    }
+    if (System.getenv('PSQL_PWD')) {
+        db_pw = System.getenv('PSQL_PWD')
+    }
+
+    eachFile { copyDetails ->
+        if (copyDetails.path == 'testmodel.properties') {
+            filter { line ->
+                line.replace('PSQL_USER', "$db_username")
+            }
+        }
+        if (copyDetails.path == 'testmodel.properties') {
+            filter { line ->
+                line.replace('PSQL_PWD', "$db_pw")
+            }
+        }
+        rename { fileName -> fileName.replace("testmodel.properties", "intermine.properties") }
+    }
 }
 
 void buildDatabase() {
     ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
         classpath {
           pathelement(path: configurations.compile.asPath)
+          dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.torque(osname: 'os.unittest', destFile:"$buildDir/os.unittest-schema.xml")
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
           pathelement(path: configurations.compile.asPath)
-          dirset(dir: 'build/') // testmodel classes
+          dirset(dir: 'build/resources/main') // intermine.properties
+          dirset(dir: 'build/') // os.unittest-schema.xml
         }
     }
     ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
@@ -105,6 +146,14 @@ task buildDB(dependsOn: 'build') {
     group "${taskGroup}"
     description "Build database for intermine-test webapp"
     doLast {
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"intermine-demo\";"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"userprofile-demo\";"
+        }
         buildDatabase()
    }
 }
