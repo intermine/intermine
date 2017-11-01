@@ -99,8 +99,8 @@ task mergeProperties(type: Copy) {
     }   
 }
 
-
-
+// this task requires a database to exist and be populated. However this task is run at compile time, not runtime.
+// We have no guarantee there will be a database. Hence the try/catch
 task summariseTestObjectStore {
     group "${taskGroup}"
     description "Summarise Test model ObjectStore into objectstoresummary.properties file"

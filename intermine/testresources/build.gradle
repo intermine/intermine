@@ -190,7 +190,6 @@ void createTables(osname, model) {
         classpath {
             pathelement(path: configurations.testCompile.asPath)
             dirset(dir: 'build/') // testmodel classes
-            dirset(dir: '.') // os.unittest-schema.xml
         }
     }
     ant.buildDBUnittest(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
@@ -206,7 +205,7 @@ void generateSchema(osname, model) {
             dirset(dir: 'src/test/resources') // testmodel_model.xml
         }
     }
-    ant.torque(osname: "os.$osname", destFile:"os.$osname-schema.xml")
+    ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
 }
 
 task buildDB {
