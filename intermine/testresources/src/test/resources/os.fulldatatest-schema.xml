@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<database name="">
+    <table name="Item">
+        <column name="className" type="LONGVARCHAR"/>
+        <column name="identifier" type="LONGVARCHAR"/>
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="implementations" type="LONGVARCHAR"/>
+        <column name="class" type="LONGVARCHAR"/>
+        <unique name="Item_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="Attribute">
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="intermine_value" type="LONGVARCHAR"/>
+        <column name="itemId" type="INTEGER"/>
+    </table>
+    <table name="ReferenceList">
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="refIds" type="LONGVARCHAR"/>
+        <column name="itemId" type="INTEGER"/>
+    </table>
+    <table name="Reference">
+        <column name="refId" type="LONGVARCHAR"/>
+        <column name="name" type="LONGVARCHAR"/>
+        <column name="itemId" type="INTEGER"/>
+    </table>
+    <table name="InterMineObject">
+        <column name="OBJECT" type="LONGVARCHAR"/>
+        <column name="id" type="INTEGER" required="true"/>
+        <column name="class" type="LONGVARCHAR"/>
+        <unique name="InterMineObject_pkey">
+            <unique-column name="id"/>
+        </unique>
+    </table>
+    <table name="intermine_metadata">
+        <column name="key" type="LONGVARCHAR"/>
+        <column name="value" type="LONGVARCHAR"/>
+        <column name="blob_value" type="LONGVARBINARY"/>
+    <unique name="intermine_metadata_key">
+        <unique-column name="key"/>
+    </unique>
+    </table>
+    <table name="osbag_int">
+        <column name="bagid" type="INTEGER"/>
+        <column name="value" type="INTEGER"/>
+        <unique name="osbag_int_index1">
+            <unique-column name="bagid"/>
+            <unique-column name="value"/>
+        </unique>
+        <index name="osbag_int_index2">
+            <index-column name="value"/>
+            <index-column name="bagid"/>
+        </index>
+    </table>
+    <table name="clob">
+        <column name="clobid" type="INTEGER"/>
+        <column name="clobpage" type="INTEGER"/>
+        <column name="value" type="LONGVARCHAR"/>
+        <unique name="clob_index">
+            <unique-column name="clobid"/>
+            <unique-column name="clobpage"/>
+        </unique>
+    </table>
+</database>

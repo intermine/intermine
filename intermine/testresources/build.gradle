@@ -36,8 +36,29 @@ void generateModel(model, destination, type) {
 }
 
 task generateTestModel {
+    description "generate the testmodel Java files from the data model, eg. Employee.java"
     doLast {
         generateModel('testmodel', 'src/test/java', 'java')
+    }
+}
+
+void insertDataModel(model, osname) {
+    ant.taskdef(name: 'insertModelTask', classname: 'org.intermine.task.StoreMetadataTask') {
+        classpath {
+            fileset(dir: '../model/build/libs/', includes: '*.jar')
+            dirset(dir: 'src/test/resources/')
+            dirset(dir: 'build/') // intermine.properties
+            pathelement(path: configurations.testCompile.asPath)
+        }
+    }
+
+    ant.insertModelTask(osname: osname, modelName: model)
+}
+
+task insertModel (dependsOn: 'buildDB') {
+    description "put the generated model file into the intermine_metadata table"
+    doLast {
+        insertDataModel('testmodel', 'os.unittest')
     }
 }
 
@@ -45,7 +66,7 @@ class CreateInterMinePropertiesTask extends DefaultTask {
 
     def resourcesDir = "$project.rootDir/testresources/src/test/resources"
 
-    @OutputDirectory File outputDir = new File(resourcesDir, "")
+    @OutputDirectory File outputDir = new File("$project.rootDir/testresources/build", "")
 
     @InputFile File inputFile = new File("$resourcesDir/intermine-test.properties")
 
@@ -122,36 +143,98 @@ task createUnitTestDatabases {
     }
 }
 
-void createTables() {
-    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
-        classpath {
-            pathelement(path: configurations.testCompile.asPath)
-            dirset(dir: 'build/') // testmodel classes
+// this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to unittest
+// this is incorrect as the tests should drop the database connections themselves
+task dropDBs {
+    description "drop all the test databases. used for debugging only."
+    doLast {
+        exec {
+            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
+            // create ones that aren't there
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database notxmltest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database truncunittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database flatmodetest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database fulldatatest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database userprofiletest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database unittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database biotest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database biofulldatatest;"
         }
     }
-    ant.torque(osname: 'os.unittest', destFile:"os.unittest-schema.xml")
+}
+
+void createTables(osname, model) {
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
             pathelement(path: configurations.testCompile.asPath)
             dirset(dir: 'build/') // testmodel classes
-            dirset(dir: '.') // os.unittest-schema.xml
         }
     }
-    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
+    ant.buildDBUnittest(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
     // <create-indexes alias="${objectstore.name}" />
     // <analyse-db osName="${objectstore.name}"/>
 }
 
-task buildDB() {
+void generateSchema(osname, model) {
+    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes and intermine.properties
+            dirset(dir: 'src/test/resources') // testmodel_model.xml
+        }
+    }
+    ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
+}
+
+task buildDB {
+    dependsOn 'createUnitTestDatabases'
+    dependsOn 'generateTestModel'
+    dependsOn 'createInterMineProperties'
     description "Create tables for database for intermine tests"
     doLast {
-        createTables()
+        generateSchema('unittest', 'testmodel')
+        createTables('unittest', 'testmodel')
+
+        generateSchema('truncunittest', 'testmodel')
+        createTables('truncunittest', 'testmodel')
+
+        generateSchema('notxmlunittest', 'testmodel')
+        createTables('notxmlunittest', 'testmodel')
+
+        generateSchema('flatmodeunittest', 'testmodel')
+        createTables('flatmodeunittest', 'testmodel')
+
+        // don't need to generate schema, never changes
+        createTables('fulldatatest', 'fulldata')
     }
 }
 
-tasks.compileTestJava.dependsOn 'generateTestModel', 'createUnitTestDatabases'
-tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses'
-tasks.test.dependsOn 'buildDB'
+// create unit databases, generate model > compile (need .class files) > build db > insert data model
+tasks.compileTestJava.dependsOn('generateTestModel')
+tasks.buildDB.shouldRunAfter('compileTestJava')
+tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses', 'buildDB', 'insertModel'
 
 artifacts {
     testArtifacts buildTestModelJar

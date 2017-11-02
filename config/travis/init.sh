@@ -21,16 +21,6 @@ echo "#---> Running $TEST_SUITE tests"
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
 else
-    # Create all databases we might need.
-    psql -c 'create database notxmltest;' -U postgres
-    psql -c 'create database truncunittest;' -U postgres
-    psql -c 'create database flatmodetest;' -U postgres
-    psql -c 'create database fulldatatest;' -U postgres
-    psql -c 'create database userprofiletest;' -U postgres
-    psql -c 'create database unittest;' -U postgres
-    psql -c 'create database biotest;' -U postgres
-    psql -c 'create database biofulldatatest;' -U postgres
-
     # Set up properties
     source config/create-ci-properties-files.sh
 

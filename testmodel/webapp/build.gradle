@@ -20,10 +20,22 @@ sourceSets {
     }
 }
 
-def mineRelease = hasProperty('release') ? "." + release : ''
 def explodedWebAppDir = "$buildDir/explodedWebApp"
 def mergePropsDir = "$buildDir/props"
-def minePropertyFile = "${System.env.HOME}/.intermine/testmodel.properties$mineRelease"
+
+// duplicate of code from testmodel-db
+ext {
+    // suffix for property file. might be blank
+    mineRelease = hasProperty('release') ? "." + release : ''
+    // filename for property file
+    minePropertyFileName = "testmodel.properties$mineRelease"
+    // full path to file
+    minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
+    // NO PROPERTY FILE -- use the default
+    if( !file(minePropertyFile).exists() ) {
+        minePropertyFile = "$project.rootDir/dbmodel/resources/testmodel.properties"
+    }
+}
 
 configurations {
   commonResources
@@ -43,7 +55,7 @@ dependencies {
 processResources {
   exclude "default-template-queries.xml"
   exclude "main/"
-  dependsOn "copyDefaultProperties", "copyTestModelProperties"
+  dependsOn "copyDefaultProperties"
 }
 
 task copyDefaultProperties(type: Copy) {
@@ -52,18 +64,19 @@ task copyDefaultProperties(type: Copy) {
     into sourceSets.main.output.resourcesDir
 }
 
-task copyTestModelProperties(type: Copy) {
-    println "Using properties file: '$minePropertyFile'"
-    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
-    from minePropertyFile
-    into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
+//task copyTestModelProperties(type: Copy) {
+//    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war. If it's not there it uses the dummy properties"
+//    println "Using properties file: '$minePropertyFile'"
+//    from minePropertyFile
+//    into sourceSets.main.output.resourcesDirectory
+//    rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
+//    inputs.sourceFiles.stopExecutionIfEmpty()
+//}
 
 war {
   exclude "WEB-INF/web.properties"
   webInf { from "${mergePropsDir}" }
+
 
   doFirst {
     tasks.mergeProperties.execute();
@@ -82,20 +95,26 @@ task mergeProperties(type: Copy) {
     from "${webAppDirName}/WEB-INF/web.properties"
     into "${mergePropsDir}"
     doLast {
-      (new File("$mergePropsDir/web.properties")).append( (new File("$buildDir/resources/main/intermine.properties")).getText())
+      (new File("$mergePropsDir/web.properties")).append( (new File("$project.rootDir/dbmodel/build/resources/main/intermine.properties")).getText())
     }   
 }
 
+// this task requires a database to exist and be populated. However this task is run at compile time, not runtime.
+// We have no guarantee there will be a database. Hence the try/catch
 task summariseTestObjectStore {
     group "${taskGroup}"
     description "Summarise Test model ObjectStore into objectstoresummary.properties file"
     doLast {
-      ant.taskdef(name: "summarizeObjectStoreTask", classname: "org.intermine.task.SummariseObjectStoreTask") {
-        classpath {
-          pathelement(path: configurations.compile.asPath)
-        }   
-      }    
-      ant.summarizeObjectStoreTask(alias: "os.unittest", configFileName: "objectstoresummary.config.properties", outputFile: "build/props/objectstoresummary.properties")
+        try {
+            ant.taskdef(name: "summarizeObjectStoreTask", classname: "org.intermine.task.SummariseObjectStoreTask") {
+                classpath {
+                    pathelement(path: configurations.compile.asPath)
+                }
+            }
+            ant.summarizeObjectStoreTask(alias: "os.unittest", configFileName: "objectstoresummary.config.properties", outputFile: "build/props/objectstoresummary.properties")
+        } catch (Exception e) {
+            println "ERROR" + e
+        }
     }
 }
 
@@ -114,15 +133,16 @@ task warTestModelWebApp(type: War) {
   webInf { from "${mergePropsDir}" }
 }
 
-// read in testmodel.properties to get the contextPath
-// the properties files are read in much later but we need this variable set in props
-// to deploy webapp
-def props = new Properties()
-file(minePropertyFile).withInputStream { props.load(it) }
+
 
 gretty {
     // needed for Tomcat 8.0.x, Maybe remove for Tomcat 9? Still needed for Tomcat 8.5.x?
     jvmArgs = ['-Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true']
+
+    // read in testmodel.properties to get the contextPath
+    def props = new Properties()
+    file(minePropertyFile).withInputStream { props.load(it) }
+
     // needed to deploy the webapp
     contextPath = props.getProperty("webapp.path")
 }
