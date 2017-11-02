@@ -1,5 +1,5 @@
 <userprofiles>
-<userprofile username="sue" superUser="true" password="by the power of greyskull" apikey="greyskull">
+<userprofile username="superuser@intermine.org" superUser="true" password="intermine" apikey="intermine">
     <bags>
         <bag name="Everyones-Favourite-Employees" type="Employee">
             <bagValue value="Bernd Stromberg"/>

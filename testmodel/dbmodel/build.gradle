@@ -14,6 +14,7 @@ configurations {
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
+    compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
 }
 
 ext {
@@ -57,26 +58,25 @@ processResources {
     }
 }
 
-void buildDatabase() {
+void buildDatabase(osname, model) {
     ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
         classpath {
           pathelement(path: configurations.compile.asPath)
           dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
-    ant.torque(osname: 'os.unittest', destFile:"$buildDir/os.unittest-schema.xml")
-    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
+    ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
+    ant.taskdef(name: 'buildDB', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
           pathelement(path: configurations.compile.asPath)
           dirset(dir: 'build/resources/main') // intermine.properties
           dirset(dir: 'build/') // os.unittest-schema.xml
         }
     }
-    ant.buildDBUnittest(osname: 'os.unittest', model: 'testmodel', schemafile:"os.unittest-schema.xml", tempDir: "$buildDir/tmp")
+    ant.buildDB(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
     // <create-indexes alias="${objectstore.name}" />
     // <analyse-db osName="${objectstore.name}"/>
 }
-
 
 void insertDataUnitTest() {
     // TODO this
@@ -118,7 +118,7 @@ task enormocorp(dependsOn: 'build') {
     group "${taskGroup}"
     description "Build database and load extra data for intermine-test webapp"
     doLast {
-        buildDatabase()
+        buildDatabase('unittest', 'testmodel')
         insertDataUnitTest()
         loadsadataLoader()
         enormocorpLoader()
@@ -129,41 +129,36 @@ task loadsadata(dependsOn: 'build') {
     group "${taskGroup}"
     description "Build database and load extra data for intermine-test webapp"
     doLast {
-        buildDatabase()
+        buildDatabase('unittest', 'testmodel')
         insertDataUnitTest()
         loadsadataLoader()
     }
 }
 
-task insertData(dependsOn: 'build') {
-    group "${taskGroup}"
-    description "Build database and load data for intermine-test webapp"
-    doLast {
-        buildDatabase()
-        insertDataUnitTest()
-   }
-}
-
 task buildDB(dependsOn: 'build') {
     group "${taskGroup}"
-    description "Build database for intermine-test webapp"
+    description "Build database for testmodel webapp"
     doFirst {
         exec {
             ignoreExitValue true
             commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"intermine-demo\";"
         }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"userprofile-demo\";"
-        }
     }
     doLast {
-        buildDatabase()
+        buildDatabase('unittest', 'testmodel')
+    }
+}
+
+task insertData(dependsOn: 'buildDB') {
+    group "${taskGroup}"
+    description "Build database and load data for intermine-test webapp"
+    doLast {
+        insertDataUnitTest()
     }
 }
 
 // this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to dbs
-task dropDBs {
+task dropDB {
     description "drop all the testmodel databases. used for debugging only. or not, do what you want I'm not the police."
     doLast {
         exec {
@@ -172,6 +167,38 @@ task dropDBs {
             ignoreExitValue true
             commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"intermine-demo\";"
         }
+    }
+}
+
+void insertUserTestData() {
+    ant.taskdef(name: 'readUserprofileXML', classname: 'org.intermine.web.task.ProfileReadTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+    ant.readUserprofileXML(osalias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', filename:"$project.rootDir/webapp/src/main/resources/userprofile-withuser.xml")
+}
+
+task insertUserData(dependsOn: 'build') {
+    group "${taskGroup}"
+    description "Build userprofile database with test users for testmodel webapp"
+    doFirst {
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"userprofile-demo\";"
+        }
+        buildDatabase('userprofile-test', 'userprofile')
+    }
+    doLast {
+        insertUserTestData()
+    }
+}
+
+// this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to dbs
+task dropUserDB {
+    description "drop the userprofile testmodel database. used for debugging only. "
+    doLast {
         exec {
             ignoreExitValue true
             commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"userprofile-demo\";"
