@@ -204,7 +204,6 @@ apache-tomcat*
 prefixed
 failures.list
 *.jks
-biotestmine/project.xml
 *.iml
 out/
 .gradle/
