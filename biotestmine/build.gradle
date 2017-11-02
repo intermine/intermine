@@ -28,7 +28,11 @@ ext {
 
   mineRelease = hasProperty('release') ? "." + release : ''
   mineName = "biotestmine"
-  minePropertyFile = "${System.env.HOME}/.intermine/${mineName}.properties$mineRelease"
+  minePropertyFileName = "${mineName}.properties$mineRelease"
+  minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
+  if( !file(minePropertyFile).exists() ) {
+    minePropertyFile = "$project.rootDir/dbmodel/resources/biotestmine.properties"
+  }
 
   objectStoreName = "os.production"
   modelName = "genomic"

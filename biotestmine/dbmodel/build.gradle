@@ -45,9 +45,24 @@ task copyDefaultProperties(type: Copy) {
 task copyModelProperties(type: Copy) {
     println "Using properties file: '$minePropertyFile'"
     description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
-    from minePropertyFile
+
+    def db_username = System.getenv('USER')
+    def db_pw = System.getenv('USER')
+
+    // use ENV VARs instead if they've set them. need for travis
+    if (System.getenv('PSQL_USER')) {
+        db_username = System.getenv('PSQL_USER')
+    }
+    if (System.getenv('PSQL_PWD')) {
+        db_pw = System.getenv('PSQL_PWD')
+    }
+
+    from (minePropertyFile) {
+        filter{String line -> line.replaceAll('PSQL_USER', db_username)}
+        filter{String line -> line.replaceAll('PSQL_PWD', db_pw)}
+    }
     into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace("${mineName}.properties$mineRelease", "intermine.properties") }
+    rename { fileName -> fileName.replace("$minePropertyFileName", "intermine.properties") }
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 

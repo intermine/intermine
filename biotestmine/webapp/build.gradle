@@ -11,10 +11,8 @@ sourceSets {
     }
 }
 
-def mineRelease = hasProperty('release') ? "." + release : ''
 def explodedWebAppDir = "$buildDir/explodedWebApp"
 def mergePropsDir = "$buildDir/props"
-def minePropertyFile = "${System.env.HOME}/.intermine/biotestmine.properties$mineRelease"
 
 configurations {
   bioWebApp
@@ -34,7 +32,7 @@ dependencies {
 }
 
 processResources {
-  dependsOn "copyDefaultProperties", "copyModelProperties"
+  dependsOn "copyDefaultProperties", "copyMineProperties"
 }
 
 task copyDefaultProperties(type: Copy) {
@@ -43,14 +41,14 @@ task copyDefaultProperties(type: Copy) {
     into sourceSets.main.output.resourcesDir
 }
 
-task copyModelProperties(type: Copy) {
-    println "Using properties file: '$minePropertyFile'"
-    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
-    from minePropertyFile
-    into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace("biotestmine.properties$mineRelease", "intermine.properties") }
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
+// TODO if the intermine.properties file is in the JAR then do we really need to do this?
+//task copyMineProperties(type: Copy) {
+//    println "Using properties file: '$minePropertyFile'"
+//    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
+//    from "$project.rootDir/dbmodel/build/resources/main"
+//    into sourceSets.main.output.resourcesDir
+//    inputs.sourceFiles.stopExecutionIfEmpty()
+//}
 
 war {
   exclude "WEB-INF/web.properties"
