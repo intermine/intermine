@@ -74,6 +74,14 @@ void buildDatabase(osname, model) {
         }
     }
     ant.buildDB(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
+    ant.taskdef(name: 'insertModel', classname: 'org.intermine.task.StoreMetadataTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+    ant.insertModel(osname: "os.$osname", modelName: "$model")
+
     // <create-indexes alias="${objectstore.name}" />
     // <analyse-db osName="${objectstore.name}"/>
 }

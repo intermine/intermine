@@ -189,7 +189,8 @@ void createTables(osname, model) {
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
             pathelement(path: configurations.testCompile.asPath)
-            dirset(dir: 'build/') // testmodel classes
+            dirset(dir: 'build/') // testmodel classes and schemas
+            dirset(dir: 'src/test/resources/') // testmodel classes and schemas
         }
     }
     ant.buildDBUnittest(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")

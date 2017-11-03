@@ -11,13 +11,12 @@ sourceSets {
     }
 }
 
-def mineRelease = hasProperty('release') ? "." + release : ''
 def explodedWebAppDir = "$buildDir/explodedWebApp"
 def mergePropsDir = "$buildDir/props"
-def minePropertyFile = "${System.env.HOME}/.intermine/biotestmine.properties$mineRelease"
 
 configurations {
   bioWebApp
+  commonResources
 }
 
 dependencies { 
@@ -28,29 +27,28 @@ dependencies {
   compile group: "org.intermine", name: "intermine-api", version: imVersion
   compile group: "javax.servlet", name: "jstl", version: "1.2"
   compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
+  commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
   bioWebApp group: "org.intermine", name: "bio-webapp", version: imVersion, ext: "war"
 }
 
 processResources {
-  dependsOn "copyDefaultProperties", "copyModelProperties"
+  dependsOn "copyDefaultProperties", "copyMineProperties"
 }
 
 task copyDefaultProperties(type: Copy) {
-    description "Copies intermine.default.properties file (from resources project) into resources output to be included in the war"
-    from "${rootDir}/default.intermine.webapp.properties"
+    description "Copies intermine.default.webapp.properties file (from resources project) into resources output to be included in the war"
+    from({ zipTree(configurations.commonResources.singleFile) })
     into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace("default.intermine.webapp.properties", "default.intermine.properties") }
-    inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
-task copyModelProperties(type: Copy) {
-    println "Using properties file: '$minePropertyFile'"
-    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
-    from minePropertyFile
-    into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace("biotestmine.properties$mineRelease", "intermine.properties") }
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
+// TODO if the intermine.properties file is in the JAR then do we really need to do this?
+//task copyMineProperties(type: Copy) {
+//    println "Using properties file: '$minePropertyFile'"
+//    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
+//    from "$project.rootDir/dbmodel/build/resources/main"
+//    into sourceSets.main.output.resourcesDir
+//    inputs.sourceFiles.stopExecutionIfEmpty()
+//}
 
 war {
   exclude "WEB-INF/web.properties"
@@ -77,17 +75,22 @@ task mergeProperties(type: Copy) {
     }   
 }
 
+// this task requires a database to exist and be populated. However this task is run at compile time, not runtime.
+// We have no guarantee there will be a database. Hence the try/catch
 task summariseObjectStore {
     group "${taskGroup}"
     description "Summarise ObjectStore into objectstoresummary.properties file"
     doLast {
-      ant.taskdef(name: "summarizeObjectStoreTask", classname: "org.intermine.task.SummariseObjectStoreTask") {
-        classpath {
-          dirset(dir: 'build/resources/main/')
-          pathelement(path: configurations.compile.asPath)
-        }   
-      }    
-      ant.summarizeObjectStoreTask(alias: "os.production", configFileName: "objectstoresummary.config.properties", outputFile: "build/props/objectstoresummary.properties")
+        try {
+            ant.taskdef(name: "summarizeObjectStoreTask", classname: "org.intermine.task.SummariseObjectStoreTask") {
+                classpath {
+                    pathelement(path: configurations.compile.asPath)
+                }
+            }
+            ant.summarizeObjectStoreTask(alias: "os.production", configFileName: "objectstoresummary.config.properties", outputFile: "build/props/objectstoresummary.properties")
+        } catch (Exception e) {
+            println "ERROR" + e
+        }
     }
 }
 

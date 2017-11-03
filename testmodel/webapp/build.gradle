@@ -133,8 +133,6 @@ task warTestModelWebApp(type: War) {
   webInf { from "${mergePropsDir}" }
 }
 
-
-
 gretty {
     // needed for Tomcat 8.0.x, Maybe remove for Tomcat 9? Still needed for Tomcat 8.5.x?
     jvmArgs = ['-Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true']
