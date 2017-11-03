@@ -1,3 +1,5 @@
+apply plugin: 'database'
+
 sourceSets {
     main {
         java {
@@ -51,6 +53,7 @@ task copyModelProperties(type: Copy) {
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
+/*
 task createSoModel(dependsOn: "processResources") {
     group "${taskGroup}"
     description "Reads SO OBO files and writes so_additions.xml"
@@ -63,6 +66,7 @@ task createSoModel(dependsOn: "processResources") {
       ant.createSoModel(soTermListFile: "$soTermListFile", outputFile: "build/so_additions.xml")
    }
 }
+*/
 
 task copyGenomicModel(type: Copy) {
   from({ zipTree(configurations.bioCore.singleFile) }) {

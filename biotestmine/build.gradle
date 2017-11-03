@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath group: 'org.intermine', name: 'plugin', version: '1.0-SNAPSHOT'
+    }
+}
+
 subprojects {
   apply plugin: 'java'
 
@@ -33,7 +42,7 @@ ext {
   objectStoreName = "os.production"
   modelName = "genomic"
 
-  soTermListFile = "resources/so_terms"
+  soTermListFile = "dbmodel/resources/so_terms"
   extraModelsStart = "so_additions.xml genomic_additions.xml"
   extraModelsEnd = ""
 
