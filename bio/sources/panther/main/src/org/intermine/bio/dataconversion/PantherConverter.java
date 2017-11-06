@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -138,7 +138,7 @@ public class PantherConverter extends BioFileConverter
         String resolvedGenePid = parseIdentifier(geneId);
 
         // only resolve if fish - TODO put in config file
-        if ("7955".equals(taxonId) || "9606".equals(taxonId) || "10116".equals(taxonId)) {
+	if ("7955".equals(taxonId) || "9606".equals(taxonId) || "10116".equals(taxonId) || "6239".equals(taxonId)) {
             resolvedGenePid = resolveGene(taxonId, resolvedGenePid);
             if (resolvedGenePid == null) {
                 return null;

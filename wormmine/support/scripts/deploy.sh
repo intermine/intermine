@@ -209,7 +209,7 @@ mkdir -vp $datadir/wormbase-acedb/gene/mapping
 cp -v $sourcedir/Gene.xml $acexmldir/gene/Gene.xml
 cp -v $intermine'/wormmine/support/properties/wormbase-acedb-gene.properties' $datadir'/wormbase-acedb/gene/mapping/'
 perl $testlab'/perl/purify_xace/purify_xace.pl' $datadir'/wormbase-acedb/gene/Gene.xml' $datadir'/wormbase-acedb/gene/purified_gene.xml'
-perl $testlab'/perl/preprocess/wb-acedb/gene/prep_wb-acedb-gene.pl' $datadir'/wormbase-acedb/gene/purified_gene.xml' $datadir'/wormbase-acedb/gene/XML/prepped_gene.xml'
+#perl $testlab'/perl/preprocess/wb-acedb/gene/prep_wb-acedb-gene.pl' $datadir'/wormbase-acedb/gene/purified_gene.xml' $datadir'/wormbase-acedb/gene/XML/prepped_gene.xml'
 rm $datadir/wormbase-acedb/gene/purified_gene.xml
 echo
 #################### life stage #####################

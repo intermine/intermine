@@ -51,11 +51,11 @@
 
     </source>
 
-<!-- 	<source name="go" type="go" dump="true">
+ 	<source name="go" type="go" dump="true">
 		<property name="src.data.file" location="&datadir;/go/gene_ontology.1_2.obo"/>
 	</source> 
 
-        <source name="anatomy_ontology" type="go" dump="true">
+<!--        <source name="anatomy_ontology" type="go" dump="true">
 		<property name="src.data.file" location="&datadir;/ontology/anatomy_ontology.obo"/>
 	</source> -->
 	
