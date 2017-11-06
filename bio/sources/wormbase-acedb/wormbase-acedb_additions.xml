@@ -68,7 +68,8 @@
 	  <attribute name="productionMethod" type="java.lang.String" />
 	  <attribute name="sequenceDetails" type="java.lang.String" />
           <attribute name="status" type="java.lang.String" />
-	  <attribute name="NemaGENETAGConsortiumAllele" type="java.lang.String" />
+	  <attribute name="affects" type="java.lang.String" />
+          <attribute name="NemaGENETAGConsortiumAllele" type="java.lang.String" />
 	  <attribute name="missense" type="java.lang.String" />
 	  <attribute name="detectionMethod" type="java.lang.String" />
 	  <attribute name="positiveClone" type="java.lang.String" />
@@ -85,7 +86,7 @@
 	  <collection name="affectsGenes" referenced-type="Gene" reverse-reference="affectedByAlleles" />
 	  <collection name="affectsCDSs" referenced-type="CDS" reverse-reference="affectedByAlleles" />
 	  <collection name="affectsTranscripts" referenced-type="Transcript" reverse-reference="affectedByAlleles" />
-	  <collection name="strains" referenced-type="Strain" reverse-reference="variations" />
+	  <!--<collection name="strains" referenced-type="Strain" reverse-reference="variations" /> -->
 	  <collection name="fromLabs" referenced-type="Laboratory" reverse-reference="variations" />
 	  <collection name="geneClass" referenced-type="GeneClass" reverse-reference="variations" />
 	</class>
@@ -226,7 +227,7 @@
 		<attribute name="species" type="java.lang.String"/>
 		<attribute name="ncbiTaxonomyID" type="java.lang.String"/>
 		<collection name="genes" referenced-type="Gene" reverse-reference="strains"/>
-        <collection name="variations" referenced-type="Allele" reverse-reference="strains" />
+        	<!-- <collection name="variations" referenced-type="Allele" reverse-reference="strains" /> -->
     </class>
 
 
