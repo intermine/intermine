@@ -18,12 +18,5 @@ dependencies {
     //testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-task hello() {
-    description "Just a tes"
-    doLast {
-        println 'hello'
-    }
-}
-
 
 
