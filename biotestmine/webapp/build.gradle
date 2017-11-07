@@ -32,7 +32,7 @@ dependencies {
 }
 
 processResources {
-  dependsOn "copyDefaultProperties", "copyMineProperties"
+  dependsOn "copyDefaultProperties"
 }
 
 task copyDefaultProperties(type: Copy) {
