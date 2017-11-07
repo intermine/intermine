@@ -41,20 +41,11 @@ dbConfig {
 }
 
 processResources {
-  dependsOn "copyDefaultProperties", "copyModelProperties"
+  dependsOn "copyModelProperties"
 }
 
 compileJava {
   dependsOn "generateModel"
-}
-
-task copyDefaultProperties(type: Copy) {
-    description "Copies default.intermine.integrate.properties file into resources output"
-    from({ zipTree(configurations.commonResources.singleFile) }) {
-        include "default.intermine.integrate.properties"
-        rename "default.intermine.integrate.properties", "default.intermine.properties"
-    }
-    into sourceSets.main.output.resourcesDir
 }
 
 task copyModelProperties(type: Copy) {

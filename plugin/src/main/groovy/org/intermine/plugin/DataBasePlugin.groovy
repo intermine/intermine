@@ -15,6 +15,21 @@ class DataBasePlugin implements Plugin<Project> {
             dbConfig = config
         }
 
+        project.task('copyDefaultProperties') {
+            description "Copies default.intermine.integrate.properties file into resources output"
+            dependsOn 'initConfig', 'processResources'
+
+            doLast {
+                FileTree fileTree = project.zipTree(project.configurations.getByName("commonResources").singleFile)
+                PatternSet patternSet = new PatternSet();
+                patternSet.include("default.intermine.integrate.properties");
+                File file = fileTree.matching(patternSet).singleFile
+                String defaultIMProperties = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main" + File.separator + "default.intermine.properties"
+                file.renameTo(defaultIMProperties)
+                file.createNewFile()
+            }
+        }
+
         project.task('copyGenomicModel') {
             dependsOn 'initConfig', 'processResources'
 
@@ -89,7 +104,7 @@ class DataBasePlugin implements Plugin<Project> {
         project.task('buildDB') {
             group TASK_GROUP
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'jar'
+            dependsOn 'initConfig', 'copyDefaultProperties', 'jar'
 
             doLast {
                 def ant = new AntBuilder()
