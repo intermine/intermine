@@ -8,7 +8,7 @@ buildscript {
 }
 
 subprojects {
-  apply plugin: 'java'
+  apply plugin: 'java'  
 
   sourceCompatibility = 1.6
   targetCompatibility = 1.6
@@ -42,14 +42,6 @@ ext {
   if( !file(minePropertyFile).exists() ) {
     minePropertyFile = "$project.rootDir/dbmodel/resources/biotestmine.properties"
   }
-
-  objectStoreName = "os.production"
-  modelName = "genomic"
-
-  soTermListFile = "dbmodel/resources/so_terms"
-  extraModelsStart = "so_additions.xml genomic_additions.xml"
-  extraModelsEnd = ""
-
 }
 
 task wrapper(type: Wrapper) {
