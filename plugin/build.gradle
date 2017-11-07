@@ -1,0 +1,22 @@
+group 'org.intermine'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    //testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+

@@ -1,3 +1,5 @@
+apply plugin: 'integrate'
+
 sourceSets {
     main {
         resources {
@@ -12,9 +14,11 @@ configurations {
 
 dependencies {
     integrate group : "org.intermine", name: "ant-tasks", version: antVersion
+    integrate group : "org.intermine", name: "intermine-integrate", version: imVersion
 }
 
-task integrate() {
+/*
+task retrieve() {
     group "${taskGroup}"
     description "Integrates data source"
     doLast {
@@ -27,3 +31,18 @@ task integrate() {
       ant.integrateSource(projectXml: "$rootDir/project.xml", source: "uniprot-malaria", action: "")
    }
 }
+
+
+task load() {
+    group "${taskGroup}"
+    description "Load items into production database"
+    doLast {
+      ant.taskdef(name: 'objectStoreDataLoader', classname: 'org.intermine.dataloader.ObjectStoreDataLoaderTask') {
+        classpath {
+          pathelement(path: configurations.integrate.asPath)
+        }
+      }   
+      ant.objectStoreDataLoader(integrationWriter: "integration.production", source: "os.${common.os.prefix}-translated", sourceName: "", sourceType: "", ignoreDuplicates: "", allSources: "")
+   }
+}
+*/
