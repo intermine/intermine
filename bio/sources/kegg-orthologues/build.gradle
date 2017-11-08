@@ -17,9 +17,5 @@ sourceSets {
     }
 }
 
-processResources {
-   from('.') { include ("*_additions.xml")} 
-}
-
 dependencies {
 }
