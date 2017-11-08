@@ -4,7 +4,9 @@ do
 prj="${dir%%/}"
 
 cd $prj
+  echo "########################################################"
   echo "processing $prj"
+  echo "########################################################"
   if [ -d main ]
   then
     cd $prj
@@ -34,6 +36,12 @@ cd $prj
     rm -r resources/
     echo "Moved contents of resources to src/main/resources "
   fi
+
+  if [ -f src/main/resources/.gitignore ]
+  then
+    git rm src/main/resources/.gitignore
+    echo "Removed resources/.gitignore "
+  fi 
 
   # remove project properties files, they are pointless
   # keep main project properties file for now
