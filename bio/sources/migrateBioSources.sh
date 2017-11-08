@@ -59,8 +59,16 @@ cd $prj
   # move additions file 
   if [ -f *_additions.xml ]
   then
-    git mv *_additions.xml src/main/resources
-    echo "Moved additions file to src/main/resources"
+    if [ -d src/main/resources ]
+    then
+      git mv *_additions.xml src/main/resources
+      echo "Moved additions file to src/main/resources"
+    fi
+    if [ -d resources ]
+    then
+      git mv *_additions.xml resources
+      echo "Moved additions file to resources"
+    fi
   fi
 
 cd ..
