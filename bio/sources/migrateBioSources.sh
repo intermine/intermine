@@ -4,9 +4,11 @@ do
 prj="${dir%%/}"
 
 cd $prj
+  echo ""
   echo "########################################################"
   echo "processing $prj"
   echo "########################################################"
+  echo ""
   if [ -d main ]
   then
     cd $prj
@@ -41,6 +43,12 @@ cd $prj
   then
     git rm src/main/resources/.gitignore
     echo "Removed resources/.gitignore "
+  fi 
+
+  if [ -f build.xml ]
+  then
+    git rm build.xml
+    echo "Removed build.xml "
   fi 
 
   # remove project properties files, they are pointless
