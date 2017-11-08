@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 for dir in `ls -d */`
 do
 prj="${dir%%/}"
@@ -16,14 +16,6 @@ cd $prj
     git mv src java
     echo "Moved /main/src directory to /src/main/java "
     cd ../..
-
-    # if the resources directory is there 
-    # AND the main directory, move resources into main
-    if [ -d resources ]
-    then
-      git mv resources/* src/main/resources/
-      rm -r resources/
-    fi
   fi
   
   if [ -d test ]
@@ -34,6 +26,13 @@ cd $prj
     git mv src java
     echo "Moved /test/src directory to /src/test/java "
     cd ../..   
+  fi
+  
+  if [[ -d resources && -d src ]]
+  then
+    git mv resources/* src/main/resources/
+    rm -r resources/
+    echo "Moved contents of resources to src/main/resources "
   fi
 
   # remove project properties files, they are pointless
@@ -52,8 +51,17 @@ cd $prj
   # if the build gradle file is not there, create
   if [ ! -f build.gradle ]
   then
-    cp ../skeleton-build.gradle build.gradle
-    echo "Created a build.gradle skeleton"
+    # there are two different gradle files
+    # which one to use is
+    # determined by the presence of the /resources directory
+    if [ -d resources ]
+    then
+      cp ../skeleton-build.gradle.resourcesOnly build.gradle
+      echo "Created a build.gradle skeleton"
+    else
+      cp ../skeleton-build.gradle build.gradle
+      echo "Created a build.gradle skeleton"
+    fi
   fi
 
   # move additions files (there can be zero, one or many)
