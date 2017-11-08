@@ -56,14 +56,14 @@ cd $prj
     echo "Created a build.gradle skeleton"
   fi
 
-  # move additions file 
-  if [ -f *_additions.xml ]
+  # move additions files (there can be zero, one or many)
+  if ls *_additions.xml &> /dev/null
   then
     if [ -d src/main/resources ]
     then
       git mv *_additions.xml src/main/resources
       echo "Moved additions file to src/main/resources"
-    fi
+    fi    
     if [ -d resources ]
     then
       git mv *_additions.xml resources
