@@ -188,6 +188,16 @@ void insertUserTestData() {
     ant.readUserprofileXML(osalias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', filename:"$project.rootDir/webapp/src/main/resources/userprofile-withuser.xml")
 }
 
+void loadTemplates() {
+    ant.taskdef(name: 'loadDefaultTemplates', classname: 'org.intermine.web.task.LoadDefaultTemplatesTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+    ant.loadDefaultTemplates(osAlias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', templatesXml:"$project.rootDir/dbmodel/resources/default-template-queries.xml", username: 'intermine', superuserPassword: 'intermine')
+}
+
 task insertUserData(dependsOn: 'build') {
     group "${taskGroup}"
     description "Build userprofile database with test users for testmodel webapp"
@@ -199,6 +209,7 @@ task insertUserData(dependsOn: 'build') {
         buildDatabase('userprofile-test', 'userprofile')
     }
     doLast {
+        loadTemplates()
         insertUserTestData()
     }
 }

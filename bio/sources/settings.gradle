@@ -19,7 +19,6 @@ include ':biogrid',
 ':psi',
 ':pubmed-gene',
 ':reactome',
-':signor',
 ':so',
 ':treefam',
 ':uniprot',
@@ -47,7 +46,6 @@ project(':psi-complexes').projectDir = new File(settingsDir, './psi-complexes')
 project(':psi').projectDir = new File(settingsDir, './psi')
 project(':pubmed-gene').projectDir = new File(settingsDir, './pubmed-gene')
 project(':reactome').projectDir = new File(settingsDir, './reactome')
-project(':signor').projectDir = new File(settingsDir, './signor')
 project(':so').projectDir = new File(settingsDir, './so')
 project(':treefam').projectDir = new File(settingsDir, './treefam')
 project(':uniprot').projectDir = new File(settingsDir, './uniprot')

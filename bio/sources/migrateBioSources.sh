@@ -1,12 +1,16 @@
-#!/bin/sh
+#!/bin/bash
 for dir in `ls -d */`
 do
 prj="${dir%%/}"
 
 cd $prj
+  echo ""
+  echo "########################################################"
+  echo "processing $prj"
+  echo "########################################################"
+  echo ""
   if [ -d main ]
-    then
-    echo "Converting $prj project to gradle"
+  then
     cd $prj
     echo "Creating src dir"
     mkdir -p src
@@ -14,10 +18,9 @@ cd $prj
     git mv main/ src/
     cd src/main
     git mv src java
-    echo "Done!"
+    echo "Moved /main/src directory to /src/main/java "
     cd ../..
   fi
-
   
   if [ -d test ]
   then
@@ -25,18 +28,73 @@ cd $prj
     git mv test/ src/
     cd src/test
     git mv src java
-    echo "Done!"
+    echo "Moved /test/src directory to /src/test/java "
     cd ../..   
   fi
-
-  cp ../skeleton-build.gradle build.gradle
-  echo "Created a build.gradle skeleton"
-
-  if [ -d resources ]
-    then
-      git mv resources/* src/main/resources/
-      rm -r resources/
+  
+  if [[ -d resources && -d src ]]
+  then
+    git mv resources/* src/main/resources/
+    rm -r resources/
+    echo "Moved contents of resources to src/main/resources "
   fi
+
+  if [ -f src/main/resources/.gitignore ]
+  then
+    git rm src/main/resources/.gitignore
+    echo "Removed resources/.gitignore "
+  fi 
+
+  if [ -f build.xml ]
+  then
+    git rm build.xml
+    echo "Removed build.xml "
+  fi 
+
+  # remove project properties files, they are pointless
+  # keep main project properties file for now
+  if [ -f src/main/project.properties ]
+  then
+    git rm src/main/project.properties
+    echo "Removed main/project.properties "
+  fi 
+  if [ -f src/test/project.properties ]
+  then
+    git rm src/test/project.properties
+    echo "Removed test/project.properties "
+  fi 
+  
+  # if the build gradle file is not there, create
+  if [ ! -f build.gradle ]
+  then
+    # there are two different gradle files
+    # which one to use is
+    # determined by the presence of the /resources directory
+    if [ -d resources ]
+    then
+      cp ../skeleton-build.gradle.resourcesOnly build.gradle
+      echo "Created a build.gradle skeleton"
+    else
+      cp ../skeleton-build.gradle build.gradle
+      echo "Created a build.gradle skeleton"
+    fi
+  fi
+
+  # move additions files (there can be zero, one or many)
+  if ls *_additions.xml &> /dev/null
+  then
+    if [ -d src/main/resources ]
+    then
+      git mv *_additions.xml src/main/resources
+      echo "Moved additions file to src/main/resources"
+    fi    
+    if [ -d resources ]
+    then
+      git mv *_additions.xml resources
+      echo "Moved additions file to resources"
+    fi
+  fi
+
 cd ..
 
 done
