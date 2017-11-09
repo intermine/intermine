@@ -6,13 +6,14 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.util.PatternSet
 
 class DataBasePlugin implements Plugin<Project> {
-    DBConfig dbConfig;
+    DBConfig config;
+    String buildResourcesMainDir
     public final static String TASK_GROUP = "InterMine"
 
     void apply(Project project) {
         project.task('initConfig') {
-            def config = project.extensions.create('dbConfig', DBConfig)
-            dbConfig = config
+            config = project.extensions.create('dbConfig', DBConfig)
+            buildResourcesMainDir = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main"
         }
 
         project.task('copyDefaultProperties') {
@@ -24,7 +25,7 @@ class DataBasePlugin implements Plugin<Project> {
                 PatternSet patternSet = new PatternSet();
                 patternSet.include("default.intermine.integrate.properties");
                 File file = fileTree.matching(patternSet).singleFile
-                String defaultIMProperties = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main" + File.separator + "default.intermine.properties"
+                String defaultIMProperties = buildResourcesMainDir + File.separator + "default.intermine.properties"
                 file.renameTo(defaultIMProperties)
                 file.createNewFile()
             }
@@ -38,7 +39,7 @@ class DataBasePlugin implements Plugin<Project> {
                 PatternSet patternSet = new PatternSet();
                 patternSet.include("core.xml");
                 File file = fileTree.matching(patternSet).singleFile
-                String modelFilePath = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main" + File.separator + dbConfig.modelName + "_model.xml"
+                String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
                 file.renameTo(modelFilePath)
                 file.createNewFile()
             }
@@ -56,19 +57,19 @@ class DataBasePlugin implements Plugin<Project> {
                         pathelement(path: project.configurations.getByName("so").asPath)
                     }
                 }
-                ant.createSoModel(soTermListFile: dbConfig.soTermListFilePath, outputFile: dbConfig.soAdditionFilePath)
+                ant.createSoModel(soTermListFile: config.soTermListFilePath, outputFile: config.soAdditionFilePath)
             }
         }
 
         project.task('mergeModels') {
             group TASK_GROUP
             description "Merges defferent source model files into an intermine XML model"
-            dependsOn 'initConfig', 'copyGenomicModel', 'createSoModel'
+            dependsOn 'initConfig', 'copyGenomicModel', 'copyModelProperties', 'createSoModel'
 
             doLast {
                 def ant = new AntBuilder()
                 String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator +  "project.xml"
-                String modelFilePath = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main" + File.separator + dbConfig.modelName + "_model.xml"
+                String modelFilePath = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main" + File.separator + config.modelName + "_model.xml"
                 ant.taskdef(name: "mergeSourceModels", classname: "org.intermine.task.MergeSourceModelsTask") {
                     classpath {
                         pathelement(path: project.configurations.getByName("mergeSource").asPath)
@@ -77,8 +78,8 @@ class DataBasePlugin implements Plugin<Project> {
                 }
                 ant.mergeSourceModels(projectXmlPath: projectXmlFilePath,
                         modelFilePath: modelFilePath,
-                        extraModelsStart: dbConfig.extraModelsStart,
-                        extraModelsEnd: dbConfig.extraModelsEnd)
+                        extraModelsStart: config.extraModelsStart,
+                        extraModelsEnd: config.extraModelsEnd)
 
             }
         }
@@ -97,9 +98,11 @@ class DataBasePlugin implements Plugin<Project> {
                         dirset(dir: project.getBuildDir().getAbsolutePath())
                     }
                 }
-                ant.modelOutputTask(model: dbConfig.modelName, destDir: destination, type: "java")
+                ant.modelOutputTask(model: config.modelName, destDir: destination, type: "java")
             }
         }
+
+        project.getTasks().getByName("compileJava").dependsOn(project.getTasks().getByName("generateModel"))
 
         project.task('buildDB') {
             group TASK_GROUP
@@ -108,7 +111,9 @@ class DataBasePlugin implements Plugin<Project> {
 
             doLast {
                 def ant = new AntBuilder()
-                String schemaFile = dbConfig.objectStoreName + "-schema.xml"
+
+                //create schema file
+                String schemaFile = config.objectStoreName + "-schema.xml"
                 String destination = project.getBuildDir().getAbsolutePath() + File.separator + schemaFile
                 ant.taskdef(name: "torque", classname: "org.intermine.objectstore.intermine.TorqueModelOutputTask") {
                     classpath {
@@ -116,8 +121,9 @@ class DataBasePlugin implements Plugin<Project> {
                         pathelement(path: project.configurations.getByName("compile").asPath)
                     }
                 }
-                ant.torque(osname: dbConfig.objectStoreName, destFile:destination)
+                ant.torque(osname: config.objectStoreName, destFile:destination)
 
+                //create db tables
                 String tempDirectory = project.getBuildDir().getAbsolutePath() + File.separator + "tmp"
                 ant.taskdef(name: "buildDB", classname: "org.intermine.task.BuildDbTask") {
                     classpath {
@@ -126,8 +132,17 @@ class DataBasePlugin implements Plugin<Project> {
                         pathelement(path: project.configurations.getByName("compile").asPath)
                     }
                 }
-                ant.buildDB(osname: dbConfig.objectStoreName, model: dbConfig.modelName,
+                ant.buildDB(osname: config.objectStoreName, model: config.modelName,
                         schemafile: schemaFile, tempDir: tempDirectory)
+
+                //store metadata into db
+                ant.taskdef(name: 'insertModel', classname: 'org.intermine.task.StoreMetadataTask') {
+                    classpath {
+                        pathelement(path: project.configurations.getByName("compile").asPath)
+                        dirset(dir: buildResourcesMainDir) // intermine.properties
+                    }
+                }
+                ant.insertModel(osname: config.objectStoreName, modelName: config.modelName)
             }
         }
     }

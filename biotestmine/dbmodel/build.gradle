@@ -40,17 +40,10 @@ dbConfig {
   extraModelsEnd = ""
 }
 
-processResources {
-  dependsOn "copyModelProperties"
-}
-
-compileJava {
-  dependsOn "generateModel"
-}
-
 task copyModelProperties(type: Copy) {
     println "Using properties file: '$minePropertyFile'"
     description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
+    dependsOn 'processResources'
 
     def db_username = System.getenv('USER')
     def db_pw = System.getenv('USER')
