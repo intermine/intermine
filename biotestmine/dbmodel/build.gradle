@@ -12,7 +12,6 @@ sourceSets {
 configurations {
   compile
   so
-  bioCore
   mergeSource
   commonResources
 }
@@ -22,10 +21,6 @@ dependencies {
     so group: "org.intermine", name: "so", version: bioVersion
     so fileTree(dir: "libs", include: "*.jar")
     mergeSource group : "org.intermine", name: "ant-tasks", version: antVersion
-    mergeSource group : "org.intermine", name: "uniprot", version: bioVersion
-    mergeSource group : "org.intermine", name: "fasta", version: bioVersion
-    mergeSource group : "org.intermine", name: "go-annotation", version: bioVersion
-    bioCore group : "org.intermine", name: "bio-core", version: bioVersion, transitive: false
     commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
 }
 

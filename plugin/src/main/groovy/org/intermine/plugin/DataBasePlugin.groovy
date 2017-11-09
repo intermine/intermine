@@ -7,20 +7,30 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 
 class DataBasePlugin implements Plugin<Project> {
+    String bioVersion = "2.0.0-SNAPSHOT"
     DBConfig config;
     String buildResourcesMainDir
     SourceSetContainer sourceSets
     public final static String TASK_GROUP = "InterMine"
-
     void apply(Project project) {
 
+      project.task('initConfig') {
+        config = project.extensions.create('dbConfig', DBConfig)
+        sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
+        buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+        project.dependencies.add("mergeSource", [group: "org.intermine", name: "uniprot", version: bioVersion])
+        project.dependencies.add("mergeSource", [group: "org.intermine", name: "fasta", version: bioVersion])
+        project.dependencies.add("mergeSource", [group: "org.intermine", name: "go-annotation", version: bioVersion])
+      }
 
-        project.task('initConfig') {
-            config = project.extensions.create('dbConfig', DBConfig)
-            sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
-            buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+        project.configurations {
+            bioCore
+            mergeSource
         }
 
+        project.dependencies {
+            bioCore group : "org.intermine", name: "bio-core", version: bioVersion, transitive: false
+        }
 
       project.task('copyDefaultProperties') {
             description "Copies default.intermine.integrate.properties file into resources output"
@@ -86,7 +96,6 @@ class DataBasePlugin implements Plugin<Project> {
                         modelFilePath: modelFilePath,
                         extraModelsStart: config.extraModelsStart,
                         extraModelsEnd: config.extraModelsEnd)
-
             }
         }
 
