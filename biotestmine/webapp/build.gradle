@@ -31,24 +31,16 @@ dependencies {
   bioWebApp group: "org.intermine", name: "bio-webapp", version: imVersion, ext: "war"
 }
 
+apply plugin: 'webapp'
+
+webappConfig {
+  mineName = "biotestmine"
+  objectStoreName = "os.production"
+}
+
 processResources {
-  dependsOn "copyDefaultProperties"
+  //dependsOn "copyDefaultProperties", "copyMineProperties"
 }
-
-task copyDefaultProperties(type: Copy) {
-    description "Copies intermine.default.webapp.properties file (from resources project) into resources output to be included in the war"
-    from({ zipTree(configurations.commonResources.singleFile) })
-    into sourceSets.main.output.resourcesDir
-}
-
-// TODO if the intermine.properties file is in the JAR then do we really need to do this?
-//task copyMineProperties(type: Copy) {
-//    println "Using properties file: '$minePropertyFile'"
-//    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
-//    from "$project.rootDir/dbmodel/build/resources/main"
-//    into sourceSets.main.output.resourcesDir
-//    inputs.sourceFiles.stopExecutionIfEmpty()
-//}
 
 war {
   exclude "WEB-INF/web.properties"
@@ -63,42 +55,6 @@ war {
     unwarBioWebApp.execute()
     warWebApp.execute()	
   }
-}
-
-task mergeProperties(type: Copy) {
-    group "${taskGroup}"
-    description "Appendes intermine.properties to web.properties file"
-    from "${webAppDirName}/WEB-INF/web.properties"
-    into "${mergePropsDir}"
-    doLast {
-      (new File("$mergePropsDir/web.properties")).append( (new File("$buildDir/resources/main/intermine.properties")).getText())
-    }   
-}
-
-// this task requires a database to exist and be populated. However this task is run at compile time, not runtime.
-// We have no guarantee there will be a database. Hence the try/catch
-task summariseObjectStore {
-    group "${taskGroup}"
-    description "Summarise ObjectStore into objectstoresummary.properties file"
-    doLast {
-        try {
-            ant.taskdef(name: "summarizeObjectStoreTask", classname: "org.intermine.task.SummariseObjectStoreTask") {
-                classpath {
-                    pathelement(path: configurations.compile.asPath)
-                }
-            }
-            ant.summarizeObjectStoreTask(alias: "os.production", configFileName: "objectstoresummary.config.properties", outputFile: "build/props/objectstoresummary.properties")
-        } catch (Exception e) {
-            println "ERROR" + e
-        }
-    }
-}
-
-task unwarBioWebApp(type: Copy) {
-  group "${taskGroup}"
-  description "Unwar bio-webapp under the build/explodedWebAppDir directory"
-  from { zipTree(configurations.bioWebApp.singleFile) }
-  destinationDir = new File("$explodedWebAppDir")
 }
 
 task warWebApp(type: War) {
