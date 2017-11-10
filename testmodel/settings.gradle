@@ -1,5 +1,5 @@
-rootProject.name = 'testmodel'
+rootProject.name = 'testmine'
 
-include ':intermine-test', ':testmodel-db'
-project(':intermine-test').projectDir = new File(settingsDir, './webapp')
-project(':testmodel-db').projectDir = new File(settingsDir, './dbmodel')
+include ':dbmodel',':webapp'
+project(':dbmodel').projectDir = new File(settingsDir, './dbmodel')
+project(':webapp').projectDir = new File(settingsDir, './webapp')

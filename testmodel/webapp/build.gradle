@@ -38,24 +38,24 @@ ext {
 }
 
 configurations {
-  commonResources
-  imWebApp
+    commonResources
+    imWebApp
 }
 
 dependencies { 
-  compile project(":testmodel-db")
-  compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
-  compile group: "org.intermine", name: "intermine-api", version: imVersion
-  compile group: "javax.servlet", name: "jstl", version: "1.2"
-  compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
-  commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
-  imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, ext: "war"
+    compile project(":dbmodel")
+    compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
+    compile group: "org.intermine", name: "intermine-api", version: imVersion
+    compile group: "javax.servlet", name: "jstl", version: "1.2"
+    compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
+    commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
+    imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, ext: "war"
 }
 
 processResources {
-  exclude "default-template-queries.xml"
-  exclude "main/"
-  dependsOn "copyDefaultProperties", "copyModelProperties"
+    exclude "default-template-queries.xml"
+    exclude "main/"
+    dependsOn "copyDefaultProperties", "copyModelProperties"
 }
 
 task copyDefaultProperties(type: Copy) {
@@ -68,41 +68,39 @@ task copyDefaultProperties(type: Copy) {
 
 task copyModelProperties(type: Copy) {
     description "Copies mine specific intermine.properties file into resources output to be included in the war."
-    from project.parent.project(':testmodel-db').sourceSets.main.output.resourcesDir.absolutePath + "/intermine.properties"
+    from project.parent.project(':dbmodel').sourceSets.main.output.resourcesDir.absolutePath + "/intermine.properties"
     into sourceSets.main.output.resourcesDir
 }
 
 war {
-  exclude "WEB-INF/web.properties"
-  webInf { from "${mergePropsDir}" }
+    exclude "WEB-INF/web.properties"
+    webInf { from "${mergePropsDir}" }
 
 
-  doFirst {
-    tasks.mergeProperties.execute();
-    tasks.summariseTestObjectStore.execute()
-  }
+    doFirst {
+        tasks.mergeProperties.execute();
+        tasks.summariseTestObjectStore.execute()
+    }
 
-  doLast {
-    unwarIMWebApp.execute()
-    warTestModelWebApp.execute()	
-  }
+    doLast {
+        unwarIMWebApp.execute()
+        warTestModelWebApp.execute()
+    }
 }
 
 task mergeProperties(type: Copy) {
-    group "${taskGroup}"
     description "Appendes intermine.properties to web.properties file"
     from "${webAppDirName}/WEB-INF/web.properties"
     into "${mergePropsDir}"
     doLast {
-      def intermineProperties = project.parent.project(':testmodel-db').sourceSets.main.output.resourcesDir.absolutePath + "/intermine.properties"
-      (new File("$mergePropsDir/web.properties")).append( (new File("$intermineProperties")).getText())
+        def intermineProperties = project.parent.project(':dbmodel').sourceSets.main.output.resourcesDir.absolutePath + "/intermine.properties"
+        (new File("$mergePropsDir/web.properties")).append( (new File("$intermineProperties")).getText())
     }   
 }
 
 // this task requires a database to exist and be populated. However this task is run at compile time, not runtime.
 // We have no guarantee there will be a database. Hence the try/catch
 task summariseTestObjectStore {
-    group "${taskGroup}"
     description "Summarise Test model ObjectStore into objectstoresummary.properties file"
     doLast {
         try {
@@ -119,18 +117,16 @@ task summariseTestObjectStore {
 }
 
 task unwarIMWebApp(type: Copy) {
-  group "${taskGroup}"
-  description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
-  from { zipTree(configurations.imWebApp.singleFile) }
-  destinationDir = new File("$explodedWebAppDir")
+    description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
+    from { zipTree(configurations.imWebApp.singleFile) }
+    destinationDir = new File("$explodedWebAppDir")
 }
 
 task warTestModelWebApp(type: War) {
-  group "${taskGroup}"
-  description "Create the war from the build/explodedWebAppDir directory"
-  from "${explodedWebAppDir}"
-  exclude "WEB-INF/web.properties"
-  webInf { from "${mergePropsDir}" }
+    description "Create the war from the build/explodedWebAppDir directory"
+    from "${explodedWebAppDir}"
+    exclude "WEB-INF/web.properties"
+    webInf { from "${mergePropsDir}" }
 }
 
 gretty {

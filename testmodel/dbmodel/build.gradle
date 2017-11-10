@@ -67,16 +67,16 @@ processResources {
 void buildDatabase(osname, model) {
     ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
         classpath {
-          pathelement(path: configurations.compile.asPath)
-          dirset(dir: 'build/resources/main') // intermine.properties
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
     ant.taskdef(name: 'buildDB', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
-          pathelement(path: configurations.compile.asPath)
-          dirset(dir: 'build/resources/main') // intermine.properties
-          dirset(dir: 'build/') // os.unittest-schema.xml
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: 'build/resources/main') // intermine.properties
+            dirset(dir: 'build/') // os.unittest-schema.xml
         }
     }
     ant.buildDB(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
@@ -97,8 +97,8 @@ void insertDataUnitTest() {
     // <delete file="${objectstoresummary.properties}"/>
     ant.taskdef(name: 'insertDataUnittest', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
-          pathelement(path: configurations.testCompile.asPath)
-          dirset(dir: 'build/resources/main') // intermine.properties
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }   
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_webapp_data.xml", sourceName: "testsource", sourceType: "testsource")
@@ -128,13 +128,10 @@ void enormocorpLoader() {
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_enormo_data.xml", sourceName: "testsource", sourceType: "testsource")
 }
 
-task enormocorp(dependsOn: 'build') {
+task enormocorp(dependsOn: 'loadsadata') {
     group "${taskGroup}"
     description "Build database and load extra data for intermine-test webapp"
     doLast {
-        buildDatabase('unittest', 'testmodel')
-        insertDataUnitTest()
-        loadsadataLoader()
         enormocorpLoader()
     }
 }
