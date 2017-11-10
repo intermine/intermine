@@ -7,7 +7,9 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 
 class DataBasePlugin implements Plugin<Project> {
+    // TODO pass these into plugin
     String bioVersion = "2.0.0-SNAPSHOT"
+    String antVersion = "2.0.0-SNAPSHOT"
     DBConfig config;
     String buildResourcesMainDir
     SourceSetContainer sourceSets
@@ -18,18 +20,19 @@ class DataBasePlugin implements Plugin<Project> {
         config = project.extensions.create('dbConfig', DBConfig)
         sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
         buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
-        project.dependencies.add("mergeSource", [group: "org.intermine", name: "uniprot", version: bioVersion])
-        project.dependencies.add("mergeSource", [group: "org.intermine", name: "fasta", version: bioVersion])
-        project.dependencies.add("mergeSource", [group: "org.intermine", name: "go-annotation", version: bioVersion])
+
       }
 
         project.configurations {
             bioCore
             mergeSource
+            imtasks
         }
 
         project.dependencies {
             bioCore group : "org.intermine", name: "bio-core", version: bioVersion, transitive: false
+            mergeSource group : "org.intermine", name: "ant-tasks", version: antVersion
+            imtasks group: "org.intermine", name: "intermine-im-tasks", version: bioVersion
         }
 
       project.task('copyDefaultProperties') {
@@ -96,7 +99,28 @@ class DataBasePlugin implements Plugin<Project> {
                         modelFilePath: modelFilePath,
                         extraModelsStart: config.extraModelsStart,
                         extraModelsEnd: config.extraModelsEnd)
+
+                def obj = new org.intermine.task.project.ProjectXmlBinding()
+
+
             }
+
+
+
+            //obj.doSomething()
+
+            //def projectXmlBinding = new org.intermine.task.project.ProjectXmlBinding()
+//            Project imProject = ProjectXmlBinding().unmarshall(projectXmlFilePath);
+//
+//            Collection<Source> sources = imProject.getSources().values();
+
+//            for (Source source: sources) {
+//                  project.dependencies.add("mergeSource", [group: "org.intermine", name: source.getType(), version: bioVersion])
+//            }
+
+//            project.dependencies.add("mergeSource", [group: "org.intermine", name: "uniprot", version: bioVersion])
+//            project.dependencies.add("mergeSource", [group: "org.intermine", name: "fasta", version: bioVersion])
+//            project.dependencies.add("mergeSource", [group: "org.intermine", name: "go-annotation", version: bioVersion])
         }
 
         project.task('generateModel') {

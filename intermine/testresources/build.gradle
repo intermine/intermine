@@ -80,14 +80,6 @@ class CreateInterMinePropertiesTask extends DefaultTask {
         def db_username = System.getenv('USER')
         def db_pw = System.getenv('USER')
 
-        // use ENV VARs instead if they've set them. need for travis
-        if (System.getenv('PSQL_USER')) {
-            db_username = System.getenv('PSQL_USER')
-        }
-        if (System.getenv('PSQL_PWD')) {
-            db_username = System.getenv('PSQL_PWD')
-        }
-
         contents = contents.replaceAll( 'PSQL_USER', db_username)
         contents = contents.replaceAll( 'PSQL_PWD', db_pw)
 
@@ -209,7 +201,7 @@ void generateSchema(osname, model) {
     ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
 }
 
-task buildDB {
+task buildDB (dependsOn: 'build') {
     dependsOn 'createUnitTestDatabases'
     dependsOn 'generateTestModel'
     dependsOn 'createInterMineProperties'
@@ -235,7 +227,7 @@ task buildDB {
 // create unit databases, generate model > compile (need .class files) > build db > insert data model
 tasks.compileTestJava.dependsOn('generateTestModel')
 tasks.buildDB.shouldRunAfter('compileTestJava')
-tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses', 'buildDB', 'insertModel'
+tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses'
 
 artifacts {
     testArtifacts buildTestModelJar
