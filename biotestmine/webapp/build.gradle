@@ -15,27 +15,27 @@ def explodedWebAppDir = "$buildDir/explodedWebApp"
 def mergePropsDir = "$buildDir/props"
 
 configurations {
-  bioWebApp
-  commonResources
+    bioWebApp
+    commonResources
 }
 
 dependencies { 
-  compile project(":dbmodel")
-  compile group: "org.intermine", name: "bio-testall", version: imVersion
-  compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
-  compile group: "org.intermine", name: "intermine-integrate", version: imVersion
-  compile group: "org.intermine", name: "intermine-api", version: imVersion
-  compile group: "javax.servlet", name: "jstl", version: "1.2"
-  compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
-  commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
-  bioWebApp group: "org.intermine", name: "bio-webapp", version: imVersion, ext: "war"
+    compile project(":dbmodel")
+    compile group: "org.intermine", name: "bio-testall", version: imVersion
+    compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
+    compile group: "org.intermine", name: "intermine-integrate", version: imVersion
+    compile group: "org.intermine", name: "intermine-api", version: imVersion
+    compile group: "javax.servlet", name: "jstl", version: "1.2"
+    compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
+    commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
+    bioWebApp group: "org.intermine", name: "bio-webapp", version: imVersion, ext: "war"
 }
 
 apply plugin: 'webapp'
 
 webappConfig {
-  mineName = "biotestmine"
-  objectStoreName = "os.production"
+    mineName = "biotestmine"
+    objectStoreName = "os.production"
 }
 
 processResources {
@@ -43,26 +43,26 @@ processResources {
 }
 
 war {
-  exclude "WEB-INF/web.properties"
-  webInf { from "${mergePropsDir}" }
+    exclude "WEB-INF/web.properties"
+    webInf { from "${mergePropsDir}" }
 
-  doFirst {
-    tasks.mergeProperties.execute();
-    tasks.summariseObjectStore.execute()
-  }
+    doFirst {
+        tasks.mergeProperties.execute();
+        tasks.summariseObjectStore.execute()
+    }
 
-  doLast {
-    unwarBioWebApp.execute()
-    warWebApp.execute()	
-  }
+    doLast {
+        unwarBioWebApp.execute()
+        warWebApp.execute()
+    }
 }
 
 task warWebApp(type: War) {
-  group "${taskGroup}"
-  description "Create the war from the build/explodedWebAppDir directory"
-  from "${explodedWebAppDir}"
-  //exclude "WEB-INF/web.properties"
-  webInf { from "${mergePropsDir}" }
+    group "${taskGroup}"
+    description "Create the war from the build/explodedWebAppDir directory"
+    from "${explodedWebAppDir}"
+    //exclude "WEB-INF/web.properties"
+    webInf { from "${mergePropsDir}" }
 }
 
 // read in testmodel.properties to get the contextPath

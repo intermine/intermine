@@ -1,8 +1,6 @@
 rootProject.name = 'biotestmine'
 
-include ':dbmodel',':integrate',':postprocess',':webapp'
+include ':dbmodel',':webapp'
 
 project(':dbmodel').projectDir = new File(settingsDir, './dbmodel')
-project(':integrate').projectDir = new File(settingsDir, './integrate')
-project(':postprocess').projectDir = new File(settingsDir, './postprocess')
 project(':webapp').projectDir = new File(settingsDir, './webapp')

@@ -12,10 +12,10 @@ sourceSets {
 }
 
 configurations {
-  compile
-  so
-  mergeSource
-  commonResources
+    compile
+    so
+    mergeSource
+    commonResources
 }
 
 
@@ -31,12 +31,12 @@ dependencies {
 
 
 dbConfig {
-  objectStoreName = "os.production"
-  modelName = "genomic"
-  soTermListFilePath = "dbmodel/resources/so_terms"
-  soAdditionFilePath = "dbmodel/build/so_additions.xml"
-  extraModelsStart = "so_additions.xml genomic_additions.xml"
-  extraModelsEnd = ""
+    objectStoreName = "os.production"
+    modelName = "genomic"
+    soTermListFilePath = "dbmodel/resources/so_terms"
+    soAdditionFilePath = "dbmodel/build/so_additions.xml"
+    extraModelsStart = "so_additions.xml genomic_additions.xml"
+    extraModelsEnd = ""
 }
 
 task copyModelProperties(type: Copy) {
