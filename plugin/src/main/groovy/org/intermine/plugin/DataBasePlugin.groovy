@@ -3,20 +3,36 @@ package org.intermine.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 
 class DataBasePlugin implements Plugin<Project> {
+    String bioVersion = "2.0.0-SNAPSHOT"
     DBConfig config;
     String buildResourcesMainDir
+    SourceSetContainer sourceSets
     public final static String TASK_GROUP = "InterMine"
-
     void apply(Project project) {
-        project.task('initConfig') {
-            config = project.extensions.create('dbConfig', DBConfig)
-            buildResourcesMainDir = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main"
+
+      project.task('initConfig') {
+        config = project.extensions.create('dbConfig', DBConfig)
+        sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
+        buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+        project.dependencies.add("mergeSource", [group: "org.intermine", name: "uniprot", version: bioVersion])
+        project.dependencies.add("mergeSource", [group: "org.intermine", name: "fasta", version: bioVersion])
+        project.dependencies.add("mergeSource", [group: "org.intermine", name: "go-annotation", version: bioVersion])
+      }
+
+        project.configurations {
+            bioCore
+            mergeSource
         }
 
-        project.task('copyDefaultProperties') {
+        project.dependencies {
+            bioCore group : "org.intermine", name: "bio-core", version: bioVersion, transitive: false
+        }
+
+      project.task('copyDefaultProperties') {
             description "Copies default.intermine.integrate.properties file into resources output"
             dependsOn 'initConfig', 'processResources'
 
@@ -69,7 +85,7 @@ class DataBasePlugin implements Plugin<Project> {
             doLast {
                 def ant = new AntBuilder()
                 String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator +  "project.xml"
-                String modelFilePath = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main" + File.separator + config.modelName + "_model.xml"
+                String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
                 ant.taskdef(name: "mergeSourceModels", classname: "org.intermine.task.MergeSourceModelsTask") {
                     classpath {
                         pathelement(path: project.configurations.getByName("mergeSource").asPath)
@@ -80,7 +96,6 @@ class DataBasePlugin implements Plugin<Project> {
                         modelFilePath: modelFilePath,
                         extraModelsStart: config.extraModelsStart,
                         extraModelsEnd: config.extraModelsEnd)
-
             }
         }
 
@@ -91,7 +106,8 @@ class DataBasePlugin implements Plugin<Project> {
 
             doLast {
                 def ant = new AntBuilder()
-                String destination = project.getBuildDir().getAbsolutePath() + File.separator + "gen"
+
+                String destination = sourceSets.getByName("main").getJava().srcDirs
                 ant.taskdef(name: "modelOutputTask", classname: "org.intermine.task.ModelOutputTask") {
                     classpath {
                         pathelement(path: project.configurations.getByName("compile").asPath)
@@ -110,6 +126,7 @@ class DataBasePlugin implements Plugin<Project> {
             dependsOn 'initConfig', 'copyDefaultProperties', 'jar'
 
             doLast {
+
                 def ant = new AntBuilder()
 
                 //create schema file
