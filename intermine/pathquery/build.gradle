@@ -23,8 +23,8 @@ sourceSets {
 }
 
 dependencies {
-  compile project(':intermine-model')
-  compile group: 'antlr', name: 'antlr', version: '2.7.6'
-  compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
-  runtime group: 'stax', name: 'stax', version: '1.2.0'
+    compile project(':intermine-model')
+    compile group: 'antlr', name: 'antlr', version: '2.7.6'
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    runtime group: 'stax', name: 'stax', version: '1.2.0'
 }
