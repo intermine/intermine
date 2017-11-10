@@ -55,23 +55,22 @@ dependencies {
 processResources {
   exclude "default-template-queries.xml"
   exclude "main/"
-  dependsOn "copyDefaultProperties"
+  dependsOn "copyDefaultProperties", "copyModelProperties"
 }
 
 task copyDefaultProperties(type: Copy) {
-    description "Copies intermine.default.properties file (from resources project) into resources output to be included in the war"
-    from({ zipTree(configurations.commonResources.singleFile) })
+    description "Copies default.intermine.properties file (from resources project) into resources output to be included in the war"
+    from({ zipTree(configurations.commonResources.singleFile) }) {
+        include "default.intermine.properties"
+    }
     into sourceSets.main.output.resourcesDir
 }
 
-//task copyTestModelProperties(type: Copy) {
-//    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war. If it's not there it uses the dummy properties"
-//    println "Using properties file: '$minePropertyFile'"
-//    from minePropertyFile
-//    into sourceSets.main.output.resourcesDirectory
-//    rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
-//    inputs.sourceFiles.stopExecutionIfEmpty()
-//}
+task copyModelProperties(type: Copy) {
+    description "Copies mine specific intermine.properties file into resources output to be included in the war."
+    from project.parent.project(':testmodel-db').sourceSets.main.output.resourcesDir.absolutePath + "/intermine.properties"
+    into sourceSets.main.output.resourcesDir
+}
 
 war {
   exclude "WEB-INF/web.properties"
@@ -95,7 +94,8 @@ task mergeProperties(type: Copy) {
     from "${webAppDirName}/WEB-INF/web.properties"
     into "${mergePropsDir}"
     doLast {
-      (new File("$mergePropsDir/web.properties")).append( (new File("$project.rootDir/dbmodel/build/resources/main/intermine.properties")).getText())
+      def intermineProperties = project.parent.project(':testmodel-db').sourceSets.main.output.resourcesDir.absolutePath + "/intermine.properties"
+      (new File("$mergePropsDir/web.properties")).append( (new File("$intermineProperties")).getText())
     }   
 }
 
@@ -137,7 +137,7 @@ gretty {
     // needed for Tomcat 8.0.x, Maybe remove for Tomcat 9? Still needed for Tomcat 8.5.x?
     jvmArgs = ['-Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true']
 
-    // read in testmodel.properties to get the contextPath
+    // read in intermine.properties to get the contextPath
     def props = new Properties()
     file(minePropertyFile).withInputStream { props.load(it) }
 
