@@ -1,57 +1,57 @@
 rootProject.name = 'bio-sources'
 
-include ':biogrid',
-':chado-db',
-':entrez-organism',
-':fasta',
-':go-annotation',
-':homologene',
-':interpro',
-':interpro-go',
-':kegg-orthologues',
-':kegg-pathway',
-':ncbi-gff',
-':orthodb',
-':panther',
-':pdb',
-':protein2ipr',
-':psi-complexes',
-':psi',
-':pubmed-gene',
-':reactome',
-':so',
-':treefam',
-':uniprot',
-':uniprot-keywords',
-':update-data-sources',
-':update-publications',
-':vcf'
+include ':bio-source-biogrid',
+':bio-source-chado-db',
+':bio-source-entrez-organism',
+':bio-source-fasta',
+':bio-source-go-annotation',
+':bio-source-homologene',
+':bio-source-interpro',
+':bio-source-interpro-go',
+':bio-source-kegg-orthologues',
+':bio-source-kegg-pathway',
+':bio-source-ncbi-gff',
+':bio-source-orthodb',
+':bio-source-panther',
+':bio-source-pdb',
+':bio-source-protein2ipr',
+':bio-source-psi-complexes',
+':bio-source-psi',
+':bio-source-pubmed-gene',
+':bio-source-reactome',
+':bio-source-so',
+':bio-source-treefam',
+':bio-source-uniprot',
+':bio-source-uniprot-keywords',
+':bio-source-update-data-sources',
+':bio-source-update-publications',
+':bio-source-vcf'
 
-project(':biogrid').projectDir = new File(settingsDir, './biogrid')
-project(':chado-db').projectDir = new File(settingsDir, './chado-db')
-project(':entrez-organism').projectDir = new File(settingsDir, './entrez-organism')
-project(':fasta').projectDir = new File(settingsDir, './fasta')
-project(':go-annotation').projectDir = new File(settingsDir, './go-annotation')
-project(':homologene').projectDir = new File(settingsDir, './homologene')
-project(':interpro').projectDir = new File(settingsDir, './interpro')
-project(':interpro-go').projectDir = new File(settingsDir, './interpro-go')
-project(':kegg-orthologues').projectDir = new File(settingsDir, './kegg-orthologues')
-project(':kegg-pathway').projectDir = new File(settingsDir, './kegg-pathway')
-project(':ncbi-gff').projectDir = new File(settingsDir, './ncbi-gff')
-project(':orthodb').projectDir = new File(settingsDir, './orthodb')
-project(':panther').projectDir = new File(settingsDir, './panther')
-project(':pdb').projectDir = new File(settingsDir, './pdb')
-project(':protein2ipr').projectDir = new File(settingsDir, './protein2ipr')
-project(':psi-complexes').projectDir = new File(settingsDir, './psi-complexes')
-project(':psi').projectDir = new File(settingsDir, './psi')
-project(':pubmed-gene').projectDir = new File(settingsDir, './pubmed-gene')
-project(':reactome').projectDir = new File(settingsDir, './reactome')
-project(':so').projectDir = new File(settingsDir, './so')
-project(':treefam').projectDir = new File(settingsDir, './treefam')
-project(':uniprot').projectDir = new File(settingsDir, './uniprot')
-project(':uniprot-keywords').projectDir = new File(settingsDir, './uniprot-keywords')
-project(':update-data-sources').projectDir = new File(settingsDir, './update-data-sources')
-project(':update-publications').projectDir = new File(settingsDir, './update-publications')
-project(':vcf').projectDir = new File(settingsDir, './vcf')
+project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
+project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
+project(':bio-source-entrez-organism').projectDir = new File(settingsDir, './entrez-organism')
+project(':bio-source-fasta').projectDir = new File(settingsDir, './fasta')
+project(':bio-source-go-annotation').projectDir = new File(settingsDir, './go-annotation')
+project(':bio-source-homologene').projectDir = new File(settingsDir, './homologene')
+project(':bio-source-interpro').projectDir = new File(settingsDir, './interpro')
+project(':bio-source-interpro-go').projectDir = new File(settingsDir, './interpro-go')
+project(':bio-source-kegg-orthologues').projectDir = new File(settingsDir, './kegg-orthologues')
+project(':bio-source-kegg-pathway').projectDir = new File(settingsDir, './kegg-pathway')
+project(':bio-source-ncbi-gff').projectDir = new File(settingsDir, './ncbi-gff')
+project(':bio-source-orthodb').projectDir = new File(settingsDir, './orthodb')
+project(':bio-source-panther').projectDir = new File(settingsDir, './panther')
+project(':bio-source-pdb').projectDir = new File(settingsDir, './pdb')
+project(':bio-source-protein2ipr').projectDir = new File(settingsDir, './protein2ipr')
+project(':bio-source-psi-complexes').projectDir = new File(settingsDir, './psi-complexes')
+project(':bio-source-psi').projectDir = new File(settingsDir, './psi')
+project(':bio-source-pubmed-gene').projectDir = new File(settingsDir, './pubmed-gene')
+project(':bio-source-reactome').projectDir = new File(settingsDir, './reactome')
+project(':bio-source-so').projectDir = new File(settingsDir, './so')
+project(':bio-source-treefam').projectDir = new File(settingsDir, './treefam')
+project(':bio-source-uniprot').projectDir = new File(settingsDir, './uniprot')
+project(':bio-source-uniprot-keywords').projectDir = new File(settingsDir, './uniprot-keywords')
+project(':bio-source-update-data-sources').projectDir = new File(settingsDir, './update-data-sources')
+project(':bio-source-update-publications').projectDir = new File(settingsDir, './update-publications')
+project(':bio-source-vcf').projectDir = new File(settingsDir, './vcf')
 
 
