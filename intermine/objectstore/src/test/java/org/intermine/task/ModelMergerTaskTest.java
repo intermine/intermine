@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -95,7 +96,7 @@ public class ModelMergerTaskTest extends TestCase
 
     public void testExecute() throws Exception {
         ModelMergerTask task = new ModelMergerTask();
-        task.setAdditionsFile(addition);
+        task.setAdditionsFiles(Arrays.asList(additions));
         task.setInputModelFile(input);
         task.setOutputFile(output);
 

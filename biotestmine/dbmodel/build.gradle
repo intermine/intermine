@@ -1,3 +1,5 @@
+apply plugin: 'database'
+
 sourceSets {
     main {
         java {
@@ -16,15 +18,17 @@ configurations {
   commonResources
 }
 
+
+
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     so group: "org.intermine", name: "so", version: bioVersion
     so fileTree(dir: "libs", include: "*.jar")
-    mergeSource group : "org.intermine", name: "ant-tasks", version: antVersion
+
     commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
 }
 
-apply plugin: 'database'
+
 
 dbConfig {
   objectStoreName = "os.production"
