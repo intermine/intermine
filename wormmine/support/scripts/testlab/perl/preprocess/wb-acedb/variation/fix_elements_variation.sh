@@ -42,3 +42,14 @@ variation_dir=$acexmldir/variation/XML
 # sed -i -e 's/\/Author/\<\/Author/g' $variation_dir/prepped_variation.xml
 # echo 'Misc <>'
 # # sed -i -e 's/\<\</\</g' $variation_dir/prepped_variation.xml
+
+
+
+CRISPR_Cas9
+Homologous_recombination
+MosSci
+MosDEL
+NHEJ
+TALENs
+ZFNNHEJ_repair
+ZFNHR_repair
