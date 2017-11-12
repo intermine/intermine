@@ -83,6 +83,8 @@
 	  <attribute name="species" type="java.lang.String" />
           <attribute name="rearrangement" type="java.lang.String" />
 	  <attribute name="linkedTo" type="java.lang.String" />
+          <attribute name="phenotype" type="java.lang.String" />
+e          <attribute name="phenotypeNotObserved" type="java.lang.String" /> 
 	  <collection name="affectsGenes" referenced-type="Gene" reverse-reference="affectedByAlleles" />
 	  <collection name="affectsCDSs" referenced-type="CDS" reverse-reference="affectedByAlleles" />
 	  <collection name="affectsTranscripts" referenced-type="Transcript" reverse-reference="affectedByAlleles" />
