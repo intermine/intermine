@@ -19,5 +19,5 @@ sourceSets {
 
 dependencies {
     compile project(':bio-core')
-    compile project(path: ':bio-testall', configuration: 'testBioArtifacts')
+    compile project(path: ':bio-model', configuration: 'bioModelArtifact')
 }
