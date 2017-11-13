@@ -66,7 +66,7 @@ class CreateInterMinePropertiesTask extends DefaultTask {
 
     def resourcesDir = "$project.rootDir/testresources/src/test/resources"
 
-    @OutputDirectory File outputDir = new File("$project.rootDir/testresources/build", "")
+    @OutputDirectory File outputDir = new File("$project.rootDir/testresources/build/resources/test", "")
 
     @InputFile File inputFile = new File("$resourcesDir/intermine-test.properties")
 
