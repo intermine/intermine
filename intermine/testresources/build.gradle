@@ -23,6 +23,18 @@ configurations {
     testArtifacts
 }
 
+
+ext {
+    // full path to file
+    minePropertyFile = "${System.env.HOME}/.intermine/intermine-test.properties"
+    localMinePropertyFile = true
+    // NO PROPERTY FILE -- use the default
+    if( !file(minePropertyFile).exists() ) {
+        localMinePropertyFile = false
+        minePropertyFile = "$project.rootDir/testresources/src/test/resources/testmodel.properties"
+    }
+}
+
 void generateModel(model, destination, type) {
     ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
         classpath {
@@ -62,33 +74,36 @@ task insertModel (dependsOn: 'buildDB') {
     }
 }
 
-class CreateInterMinePropertiesTask extends DefaultTask {
+task copyMineProperties(type: Copy) {
+    println "Using properties file: '$minePropertyFile'"
+    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
+    from minePropertyFile
+    into sourceSets.main.output.resourcesDir
+    rename { fileName -> fileName.replace("intermine-test.properties", "intermine.properties") }
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
 
-    def resourcesDir = "$project.rootDir/testresources/src/test/resources"
-
-    @OutputDirectory File outputDir = new File("$project.rootDir/testresources/build/resources/test", "")
-
-    @InputFile File inputFile = new File("$resourcesDir/intermine-test.properties")
-
-    @TaskAction
-    public void generate() {
-        File outputFile = new File(outputDir, "intermine.properties")
-
-        String contents = inputFile.getText('UTF-8')
-
-        // create databases using their UNIX name
+processResources {
+    if( !localMinePropertyFile ) {
         def db_username = System.getenv('USER')
         def db_pw = System.getenv('USER')
 
-        contents = contents.replaceAll( 'PSQL_USER', db_username)
-        contents = contents.replaceAll( 'PSQL_PWD', db_pw)
-
-        outputFile.text = contents
+        eachFile { copyDetails ->
+            if (copyDetails.path == 'intermine-test.properties') {
+                filter { line ->
+                    line.replace('PSQL_USER', "$db_username")
+                }
+            }
+            if (copyDetails.path == 'intermine-test.properties') {
+                filter { line ->
+                    line.replace('PSQL_PWD', "$db_pw")
+                }
+            }
+            rename { fileName -> fileName.replace("intermine-test.properties", "intermine.properties") }
+        }
+    } else {
+        tasks.copyMineProperties.execute()
     }
-}
-
-task createInterMineProperties(type: CreateInterMinePropertiesTask) {
-    description "Creates properties file to use for unit tests"
 }
 
 task buildTestModelJar(type: Jar) {
@@ -212,7 +227,6 @@ void generateSchema(osname, model) {
 task buildDB {
     dependsOn 'createUnitTestDatabases'
     dependsOn 'generateTestModel'
-    dependsOn 'createInterMineProperties'
     description "Create tables for database for intermine tests"
     doLast {
         generateSchema('unittest', 'testmodel')
