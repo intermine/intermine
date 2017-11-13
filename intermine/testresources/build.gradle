@@ -186,8 +186,16 @@ void createTables(osname, model) {
         }
     }
     ant.buildDBUnittest(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
+    ant.taskdef(name: 'insertModel', classname: 'org.intermine.task.StoreMetadataTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes and schemas
+            dirset(dir: 'src/test/resources/') // testmodel classes and schemas
+        }
+    }
+    ant.insertModel(osname: "os.$osname", modelName: "$model")
     // <create-indexes alias="${objectstore.name}" />
-    // <analyse-db osName="${objectstore.name}"/>
+    // <analyse-db osName="${objectstore..name}"/>
 }
 
 void generateSchema(osname, model) {
@@ -201,7 +209,7 @@ void generateSchema(osname, model) {
     ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
 }
 
-task buildDB (dependsOn: 'build') {
+task buildDB {
     dependsOn 'createUnitTestDatabases'
     dependsOn 'generateTestModel'
     dependsOn 'createInterMineProperties'
@@ -226,7 +234,7 @@ task buildDB (dependsOn: 'build') {
 
 // create unit databases, generate model > compile (need .class files) > build db > insert data model
 tasks.compileTestJava.dependsOn('generateTestModel')
-tasks.buildDB.shouldRunAfter('compileTestJava')
+tasks.test.dependsOn('buildDB')
 tasks.buildTestModelJar.dependsOn 'createInterMineProperties', 'testClasses'
 
 artifacts {
