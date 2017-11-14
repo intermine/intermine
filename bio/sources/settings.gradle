@@ -2,6 +2,7 @@ rootProject.name = 'bio-sources'
 
 include ':bio-source-biogrid',
 ':bio-source-chado-db',
+':bio-source-ensembl-compara',
 ':bio-source-entrez-organism',
 ':bio-source-fasta',
 ':bio-source-go-annotation',
@@ -29,6 +30,7 @@ include ':bio-source-biogrid',
 
 project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
 project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
+project(':bio-source-ensembl-compara').projectDir = new File(settingsDir, './ensembl-compara')
 project(':bio-source-entrez-organism').projectDir = new File(settingsDir, './entrez-organism')
 project(':bio-source-fasta').projectDir = new File(settingsDir, './fasta')
 project(':bio-source-go-annotation').projectDir = new File(settingsDir, './go-annotation')
