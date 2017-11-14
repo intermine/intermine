@@ -62,7 +62,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         converter.setDataSourceName("FlyBase");
         converter.process();
         itemWriter.close();
-        //writeItemsFile(itemWriter.getItems(), "chado-db-test-items-" + orgId + ".xml");
+        writeItemsFile(itemWriter.getItems(), "chado-db-test-items-" + orgId + ".xml");
         assertEquals(readItemSet("ChadoDBConverterTest.xml"), itemWriter.getItems());
     }
 
@@ -95,7 +95,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         // If an underscore in name and not dmel or dpse, should be a GoldenPathFragment
         item = processor.makeFeature(null, "golden_path_region", "DummyType", "scaffold_10",
                                      "scaffold_10", 0, 7777);
-        assertTrue(item.getClassName().endsWith("GoldenPathFragment"));
+        assertEquals(item.getClassName(), "Chromosome");
     }
 
     private class TestChadoDBConverter extends GenomeDBConverter {
