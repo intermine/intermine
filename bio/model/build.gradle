@@ -1,69 +1,58 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath group: 'org.intermine', name: 'plugin', version: '1.0-SNAPSHOT'
+    }
+}
+apply plugin: 'database'
+apply plugin: 'biocoredb'
+
 jar.enabled = false
 
 sourceSets {
-    test {
+    main {
         java {
-            srcDirs = ['src/test/java']
+            srcDirs = ['build/gen']
         }
         resources {
-            srcDirs = ['src/test/resources']
+            srcDirs = ['src/main/resources']
         }
     }
-}
-
-dependencies {
-    testCompile group: "org.intermine", name: "intermine-objectstore", version: imVersion
-    testCompile 'commons-lang:commons-lang:2.6'
 }
 
 configurations {
-    bioModelArtifact
+    bioCoreModelArtifact
 }
 
-void generateModel(model, destination, type) {
-    //retrieve model form database
-    ant.taskdef(name: 'retrieveModelTask', classname: 'org.intermine.task.RetrieveMetadataTask') {
-        classpath {
-            dirset(dir: 'src/test/resources/') //to be able to load default.itermine.properties
-            dirset(dir: 'build/resources/test/')
-            pathelement(path: configurations.testCompile.asPath)
-        }
-    }
-    ant.retrieveModelTask(osName: 'os.bio-test', destDir: 'build/resources/test/')
-
-    //generate the java classes
-    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
-        classpath {
-            dirset(dir: 'src/test/resources/')
-            dirset(dir: 'build/resources/test/')
-            pathelement(path: configurations.testCompile.asPath)
-        }
-    }    
-    ant.modelOutputTask(model: model, destDir: destination, type: type)
+dependencies {
+    compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'commons-lang:commons-lang:2.6'
 }
 
-task generateBioModel {
-    doLast {
-        generateModel('genomic', 'src/test/java', 'java')
-    }   
+dbConfig {
+    objectStoreName = "os.bio-test"
+    modelName = "genomic"
+    soTermListFilePath = "model/src/main/resources/so_term_list.txt"
+    soAdditionFilePath = "model/build/so_additions.xml"
 }
 
-task copyBioTestProperties(type: Copy) {
+task copyModelProperties(type: Copy) {
     from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
-    into sourceSets.test.output.resourcesDir
+    into sourceSets.main.output.resourcesDir
 
     rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
 
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
-task buildBioModelJar(type: Jar) {
-    from(sourceSets.test.output)
+task buildBioCoreModelJar(type: Jar) {
+    from(sourceSets.main.output)
 }
-
-tasks.compileTestJava.dependsOn 'generateBioModel'
-tasks.buildBioModelJar.dependsOn 'copyBioTestProperties', 'testClasses'
+tasks.install.dependsOn 'buildBioCoreModelJar'
 
 artifacts {
-    bioModelArtifact buildBioModelJar
+    bioCoreModelArtifact buildBioCoreModelJar
 }

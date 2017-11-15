@@ -31,7 +31,7 @@ dependencies {
     compile project(':bio-tools')
     compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
     compile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: imVersion
-    compile project(path: ':bio-model', configuration: 'bioModelArtifacts')
+    //compile project(path: ':bio-model', configuration: 'bioModelArtifact')
     compile fileTree(dir: 'libs', include: '*.jar')
     imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, ext: "war"
 }
