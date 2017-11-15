@@ -163,7 +163,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             super.process();
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().beginTransaction();
-            getDirectDataLoader(true).close();
+            getDirectDataLoader().close();
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store object", e);
         }
@@ -171,6 +171,16 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         LOG.info("Finished dataloading " + storeCount + " objects at " + ((60000L * storeCount)
                     / (now - start)) + " objects per minute (" + (now - start)
                 + " ms total) for source " + sourceName);
+    }
+
+    /**
+     * Be sure to close the data loader so the last batch gets stored. only needed for tests
+     * since the data loading task usually does that for hte live builds.
+     * @throws ObjectStoreException if we can't store to db
+     */
+    public void close() throws ObjectStoreException {
+        // store any data left over
+        getDirectDataLoader().close();
     }
 
     /**
@@ -194,7 +204,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             super.execute();
         }
     }
-
 
     /**
      * Handles each fasta file. Factored out so we can supply files for testing.
@@ -247,9 +256,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     protected Organism getOrganism(Sequence bioJavaSequence) throws ObjectStoreException {
         if (org == null) {
-            org = getDirectDataLoader(true).createObject(Organism.class);
+            org = getDirectDataLoader().createObject(Organism.class);
             org.setTaxonId(new Integer(fastaTaxonId));
-            getDirectDataLoader(true).store(org);
+            getDirectDataLoader().store(org);
         }
         return org;
     }
@@ -267,7 +276,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         if (organism == null) {
             return;
         }
-        org.intermine.model.bio.Sequence flymineSequence = getDirectDataLoader(true).createObject(
+        org.intermine.model.bio.Sequence flymineSequence = getDirectDataLoader().createObject(
                 org.intermine.model.bio.Sequence.class);
 
         String sequence = bioJavaSequence.seqString();
@@ -289,7 +298,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new RuntimeException("unknown class: " + className
                                        + " while creating new Sequence object");
         }
-        BioEntity imo = (BioEntity) getDirectDataLoader(true).createObject(imClass);
+        BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
 
         String attributeValue = getIdentifier(bioJavaSequence);
 
@@ -330,8 +339,8 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         imo.addDataSets(dataSet);
 
         try {
-            getDirectDataLoader(true).store(flymineSequence);
-            getDirectDataLoader(true).store(imo);
+            getDirectDataLoader().store(flymineSequence);
+            getDirectDataLoader().store(imo);
             storeCount += 2;
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
@@ -347,12 +356,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         if (dataSets.containsKey(dataSetTitle)) {
             return dataSets.get(dataSetTitle);
         }
-        DataSet dataSet = getDirectDataLoader(true).createObject(DataSet.class);
+        DataSet dataSet = getDirectDataLoader().createObject(DataSet.class);
         dataSet.setName(dataSetTitle);
         if (dataSourceName != null) {
             dataSet.setDataSource(getDataSource());
         }
-        getDirectDataLoader(true).store(dataSet);
+        getDirectDataLoader().store(dataSet);
         dataSets.put(dataSetTitle, dataSet);
         return dataSet;
     }
@@ -399,9 +408,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new RuntimeException("dataSourceName not set");
         }
         if (dataSource == null) {
-            dataSource = getDirectDataLoader(true).createObject(DataSource.class);
+            dataSource = getDirectDataLoader().createObject(DataSource.class);
             dataSource.setName(dataSourceName);
-            getDirectDataLoader(true).store(dataSource);
+            getDirectDataLoader().store(dataSource);
             storeCount += 1;
         }
         return dataSource;

@@ -50,7 +50,6 @@ public class DirectDataLoader extends DataLoader
     private static final int LOG_FREQUENCY = 100000;
     private static final int COMMIT_FREQUENCY = 500000;
     private static final int BATCH_SIZE = 1000;
-    boolean skipBatching = false; // store directly to the database, no batching
 
     /**
      * Create a new DirectDataLoader using the given IntegrationWriter and source name.
@@ -67,13 +66,6 @@ public class DirectDataLoader extends DataLoader
     }
 
     /**
-     * Only used for the tests when we need batchsize to be zero
-     */
-    public void setSkipBatching(boolean skipBatching) {
-        this.skipBatching = skipBatching;
-    }
-
-    /**
      * Store an object using the IntegrationWriter, buffering writes so that integration queries
      * and database writes can be run in batches.
      * @param o the InterMineObject
@@ -83,7 +75,7 @@ public class DirectDataLoader extends DataLoader
 
         buffer.add(o);
 
-        if (buffer.size() == BATCH_SIZE || skipBatching) {
+        if (buffer.size() == BATCH_SIZE) {
             storeBatch();
         }
     }
