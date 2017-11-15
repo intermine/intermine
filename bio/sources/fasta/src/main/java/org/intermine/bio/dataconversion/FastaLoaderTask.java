@@ -163,7 +163,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             super.process();
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().beginTransaction();
-            getDirectDataLoader().close();
+            getDirectDataLoader(true).close();
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store object", e);
         }
@@ -247,9 +247,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     protected Organism getOrganism(Sequence bioJavaSequence) throws ObjectStoreException {
         if (org == null) {
-            org = getDirectDataLoader().createObject(Organism.class);
+            org = getDirectDataLoader(true).createObject(Organism.class);
             org.setTaxonId(new Integer(fastaTaxonId));
-            getDirectDataLoader().store(org);
+            getDirectDataLoader(true).store(org);
         }
         return org;
     }
@@ -267,7 +267,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         if (organism == null) {
             return;
         }
-        org.intermine.model.bio.Sequence flymineSequence = getDirectDataLoader().createObject(
+        org.intermine.model.bio.Sequence flymineSequence = getDirectDataLoader(true).createObject(
                 org.intermine.model.bio.Sequence.class);
 
         String sequence = bioJavaSequence.seqString();
@@ -289,7 +289,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new RuntimeException("unknown class: " + className
                                        + " while creating new Sequence object");
         }
-        BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
+        BioEntity imo = (BioEntity) getDirectDataLoader(true).createObject(imClass);
 
         String attributeValue = getIdentifier(bioJavaSequence);
 
@@ -330,8 +330,8 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         imo.addDataSets(dataSet);
 
         try {
-            getDirectDataLoader().store(flymineSequence);
-            getDirectDataLoader().store(imo);
+            getDirectDataLoader(true).store(flymineSequence);
+            getDirectDataLoader(true).store(imo);
             storeCount += 2;
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
@@ -347,12 +347,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         if (dataSets.containsKey(dataSetTitle)) {
             return dataSets.get(dataSetTitle);
         }
-        DataSet dataSet = getDirectDataLoader().createObject(DataSet.class);
+        DataSet dataSet = getDirectDataLoader(true).createObject(DataSet.class);
         dataSet.setName(dataSetTitle);
         if (dataSourceName != null) {
             dataSet.setDataSource(getDataSource());
         }
-        getDirectDataLoader().store(dataSet);
+        getDirectDataLoader(true).store(dataSet);
         dataSets.put(dataSetTitle, dataSet);
         return dataSet;
     }
@@ -399,9 +399,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new RuntimeException("dataSourceName not set");
         }
         if (dataSource == null) {
-            dataSource = getDirectDataLoader().createObject(DataSource.class);
+            dataSource = getDirectDataLoader(true).createObject(DataSource.class);
             dataSource.setName(dataSourceName);
-            getDirectDataLoader().store(dataSource);
+            getDirectDataLoader(true).store(dataSource);
             storeCount += 1;
         }
         return dataSource;

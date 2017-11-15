@@ -134,8 +134,24 @@ public abstract class DirectDataLoaderTask extends Task
      * DirectDataLoader
      */
     public DirectDataLoader getDirectDataLoader() throws ObjectStoreException {
+        return getDirectDataLoader(false);
+    }
+
+    /**
+     * Return the DirectDataLoader for this Task.  Must be called only after execute() has been
+     * called.
+     * @param forTesting true if we are testing
+     * @return the DirectDataLoader
+     * @throws ObjectStoreException if there is an ObjectStore problem when creating the
+     * DirectDataLoader
+     */
+    public DirectDataLoader getDirectDataLoader(boolean forTesting) throws ObjectStoreException {
         if (directDataLoader == null) {
             directDataLoader = new DirectDataLoader(getIntegrationWriter(), sourceName, sourceType);
+
+            // TRUE if we are testing, false otherwise
+            // if TRUE, we store the data directly to the database, and ignore the batching protocol
+            directDataLoader.setSkipBatching(forTesting);
         }
         return directDataLoader;
     }
