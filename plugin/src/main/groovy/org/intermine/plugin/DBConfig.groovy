@@ -5,6 +5,7 @@ class DBConfig {
     String modelName
     String soTermListFilePath
     String soAdditionFilePath
-    String extraModelsStart
-    String extraModelsEnd
+    //String extraModelsStart
+    //String extraModelsEnd
+    //String allModelNames
 }
