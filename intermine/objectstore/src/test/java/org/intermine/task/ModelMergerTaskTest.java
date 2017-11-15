@@ -10,12 +10,8 @@ package org.intermine.task;
  *
  */
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Arrays;
+import java.io.*;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
@@ -27,86 +23,22 @@ import org.intermine.metadata.Model;
  *
  * @author Thomas Riley
  */
-public class ModelMergerTaskTest extends TestCase
-{
-    String inputModel =
-        "<model name=\"testmodel\" package=\"\">"
-            + "<class name=\"A\" extends=\"C\" is-interface=\"false\">"
-                + "<reference name=\"ref1\" referenced-type=\"C\"/>"
-                + "<collection name=\"col1\" referenced-type=\"C\"/>"
-                + "<attribute name=\"attrib1\" type=\"java.lang.Integer\"/>"
-            + "</class>"
-            + "<class name=\"C\" is-interface=\"false\"></class>"
-            + "<class name=\"D\" is-interface=\"true\"></class>"
-        + "</model>";
-    String additions =
-        "<model name=\"testmodel\" package=\"\">"
-        + "<class name=\"A\" extends=\"B\" is-interface=\"false\">"
-            + "<reference name=\"ref1\" referenced-type=\"C\"/>"
-            + "<collection name=\"col2\" referenced-type=\"C\"/>"
-            + "<attribute name=\"attrib2\" type=\"java.lang.String\"/>"
-        + "</class>"
-        + "<class name=\"B\" is-interface=\"false\"></class>"
-    + "</model>";
-    String expected =
-        "<model name=\"testmodel\" package=\"\">"
-        + "<class name=\"A\" extends=\"B\" is-interface=\"false\">"
-            + "<reference name=\"ref1\" referenced-type=\"C\"/>"
-            + "<collection name=\"col1\" referenced-type=\"C\"/>"
-            + "<collection name=\"col2\" referenced-type=\"C\"/>"
-            + "<attribute name=\"attrib1\" type=\"java.lang.Integer\"/>"
-            + "<attribute name=\"attrib2\" type=\"java.lang.String\"/>"
-        + "</class>"
-        + "<class name=\"C\" is-interface=\"false\"></class>"
-        + "<class name=\"D\" is-interface=\"true\"></class>"
-        + "<class name=\"B\" is-interface=\"false\"></class>"
-    + "</model>";
-
-    File input, addition, output;
-
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-        // write to temp files
-        input = File.createTempFile("input", ".xml");
-        addition = File.createTempFile("additions", ".xml");
-        output = File.createTempFile("output", ".xml");
-
-        writeToFile(input, inputModel);
-        writeToFile(addition, additions);
-    }
-
-    private void writeToFile(File file, String data) throws IOException {
-        FileWriter writer = new FileWriter(file);
-        writer.write(data);
-        writer.close();
-    }
-
-    /*
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        input.delete();
-        addition.delete();
-        output.delete();
-        super.tearDown();
-    }
+public class ModelMergerTaskTest extends TestCase {
 
     public void testExecute() throws Exception {
+        ClassLoader cl = getClass().getClassLoader();
+        File output = File.createTempFile("output", ".xml");
+
         ModelMergerTask task = new ModelMergerTask();
-        task.setAdditionsFiles(Arrays.asList(additions));
-        task.setInputModelFile(input);
+        task.setAdditionsFiles(Collections.singletonList("xml/ModelMergerTaskTestAdditions.xml"));
+        task.setInputModelFile(new File(cl.getResource("xml/ModelMergerTaskTestInput.xml").getPath()));
         task.setOutputFile(output);
 
-        long startTime = System.currentTimeMillis();
         task.execute();
-        System.out.println("" + (System.currentTimeMillis() - startTime));
 
         InterMineModelParser parser = new InterMineModelParser();
         Model result = parser.process(new FileReader(output));
-        Model exp = parser.process(new StringReader(expected));
+        Model exp = parser.process(new InputStreamReader(cl.getResourceAsStream("xml/ModelMergerTaskTestExpected.xml")));
         assertEquals(exp, result);
     }
 }
