@@ -166,7 +166,6 @@ public abstract class DirectDataLoaderTask extends Task
         try {
             getIntegrationWriter().beginTransaction();
             getIntegrationWriter().setIgnoreDuplicates(ignoreDuplicates);
-
             process();
             directDataLoader.close();
 

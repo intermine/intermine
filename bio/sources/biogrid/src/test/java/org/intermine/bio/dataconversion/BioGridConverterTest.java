@@ -39,8 +39,8 @@ public class BioGridConverterTest extends ItemsTestCase
         converter = new BioGridConverter(itemWriter, model);
 
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
-        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn002"));
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG1234"));
     }
 
     public void testProcess() throws Exception {

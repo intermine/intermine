@@ -141,11 +141,11 @@ task createUnitTestDatabases {
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database biotest;"
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"bio-test\";"
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database biofulldatatest;"
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"bio-fulldata-test\";"
         }
     }
 }
@@ -183,11 +183,11 @@ task dropDBs {
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database biotest;"
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"bio-test\";"
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database biofulldatatest;"
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"bio-fulldata-test\";"
         }
     }
 }

@@ -174,6 +174,16 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
+     * Be sure to close the data loader so the last batch gets stored. only needed for tests
+     * since the data loading task usually does that for hte live builds.
+     * @throws ObjectStoreException if we can't store to db
+     */
+    public void close() throws ObjectStoreException {
+        // store any data left over
+        getDirectDataLoader().close();
+    }
+
+    /**
      * @throws BuildException if an ObjectStore method fails
      */
     @Override
@@ -194,7 +204,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             super.execute();
         }
     }
-
 
     /**
      * Handles each fasta file. Factored out so we can supply files for testing.
