@@ -45,6 +45,14 @@ public class ModelMergerTask extends Task
     }
 
     /**
+     * The file name containing model additions.
+     * @param fileName the additions file
+     */
+    public void setAdditionsFile(String fileName) {
+        additionsFiles.add(fileName);
+    }
+
+    /**
      * The file names containing model additions.
      * @param files the additions files
      */
