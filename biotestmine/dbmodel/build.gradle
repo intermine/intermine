@@ -1,4 +1,5 @@
 apply plugin: 'database'
+apply plugin: 'minedb'
 
 sourceSets {
     main {
@@ -13,28 +14,24 @@ sourceSets {
 
 configurations {
     compile
-    so
-    mergeSource
     commonResources
 }
 
-
-
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
-    so group: "org.intermine", name: "so", version: bioVersion
-    so fileTree(dir: "libs", include: "*.jar")
-
+    compile fileTree(dir: 'libs', include: '*.jar')
     commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
 }
-
-
 
 dbConfig {
     objectStoreName = "os.production"
     modelName = "genomic"
     soTermListFilePath = "dbmodel/resources/so_terms"
     soAdditionFilePath = "dbmodel/build/so_additions.xml"
+}
+
+mineDBConfig {
+    modelName = "genomic"
     extraModelsStart = "so_additions.xml genomic_additions.xml"
     extraModelsEnd = ""
 }
