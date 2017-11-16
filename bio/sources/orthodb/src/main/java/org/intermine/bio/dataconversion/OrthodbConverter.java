@@ -33,6 +33,10 @@ import org.intermine.util.FormattedTextParser;
 import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Orthodb data Converter
  *
@@ -61,9 +65,9 @@ public class OrthodbConverter extends BioFileConverter
     private Map<String, String> config = new HashMap<String, String>();
     private static String evidenceRefId = null;
 
-    private Map<GeneHolder, Set<GeneHolder>> geneToHomologues = new HashMap<GeneHolder,
-            Set<GeneHolder>>();
-    private Map<MultiKey, GeneHolder> identifierToGene = new HashMap<MultiKey, GeneHolder>();
+    private Map<GeneHolder, List<GeneHolder>> geneToHomologues = new LinkedHashMap<GeneHolder,
+            List<GeneHolder>>();
+    private Map<MultiKey, GeneHolder> identifierToGene = new LinkedHashMap<MultiKey, GeneHolder>();
     protected IdResolver rslv;
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
@@ -120,7 +124,7 @@ public class OrthodbConverter extends BioFileConverter
         */
         createIDResolver();
         String previousGroup = null;
-        Set<GeneHolder> homologues = new HashSet<GeneHolder>();
+        List<GeneHolder> homologues = new ArrayList<GeneHolder>();
 
         if (taxonIds.isEmpty()) {
             LOG.warn("orthodb.organisms property not set in project XML file, processing all data");
@@ -143,7 +147,7 @@ public class OrthodbConverter extends BioFileConverter
             // at a different groupId, process previous homologue group
             if (previousGroup != null && !groupId.equals(previousGroup)) {
                 processHomologueGroup(homologues);
-                homologues = new HashSet<GeneHolder>();
+                homologues = new ArrayList<GeneHolder>();
             }
 
             String taxonId = getTaxon(bits[4]); // bits[4] is the long string of taxon Ids
@@ -225,9 +229,9 @@ public class OrthodbConverter extends BioFileConverter
 
 
     private void processHomologues() throws ObjectStoreException {
-        for (Entry<GeneHolder, Set<GeneHolder>> entry : geneToHomologues.entrySet()) {
+        for (Entry<GeneHolder, List<GeneHolder>> entry : geneToHomologues.entrySet()) {
             GeneHolder gene = entry.getKey();
-            Set<GeneHolder> homologues = entry.getValue();
+            List<GeneHolder> homologues = entry.getValue();
             for (GeneHolder homologue : homologues) {
                 processHomologuePair(gene, homologue);
             }
@@ -236,10 +240,10 @@ public class OrthodbConverter extends BioFileConverter
 
     // create maps from all homologues to all other homologues. need to keep in maps to prevent
     // dupes
-    private void processHomologueGroup(Set<GeneHolder> homologueList) {
+    private void processHomologueGroup(List<GeneHolder> homologueList) {
         for (GeneHolder geneHolder : homologueList) {
-            Set<GeneHolder> homologues = new HashSet(homologueList);
-            Set<GeneHolder> previousHomologues = geneToHomologues.get(geneHolder);
+            List<GeneHolder> homologues = new ArrayList(homologueList);
+            List<GeneHolder> previousHomologues = geneToHomologues.get(geneHolder);
             if (previousHomologues != null && previousHomologues.size() > 0) {
                 homologues.addAll(previousHomologues);
             }
