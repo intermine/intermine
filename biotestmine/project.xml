@@ -34,11 +34,12 @@
       <property name="src.data.file" location="/home/FILESERVER5/micklem/db539/Projects/data_set/malaria/go/gene_ontology.obo"/>
       <property name="createrelations" value="false"/>
     </source>
--->
+
     <source name="go-annotation" type="go-annotation" dump="true">
       <property name="ontologyfile" location="/home/FILESERVER5/micklem/db539/Projects/data_set/malaria/go/gene_ontology.obo"/>
       <property name="src.data.dir" location="/home/FILESERVER5/micklem/db539/Projects/data_set/malaria/go-annotation/"/>
     </source>
+-->
 <!--
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>

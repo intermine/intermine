@@ -39,6 +39,8 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
+import org.junit.Ignore;
+
 /**
  * Tests for the CreateReferences class.
  */
@@ -138,7 +140,8 @@ public class CreateReferencesTest extends TestCase {
         assertEquals(expectedCollectionIds, actualCollectionIds);
     }
 
-
+    /*
+    // ignore this test to use only classes in the core model because we dont want additional dependencies
     public void testCreateUtrRefs() throws Exception {
         CreateReferences cr = new CreateReferences(osw);
         cr.createUtrRefs();
@@ -159,7 +162,7 @@ public class CreateReferencesTest extends TestCase {
 
         assertEquals(storedThreePrimeUTR.getId(), resMRNA.getThreePrimeUTR().getId());
         assertEquals(storedFivePrimeUTR.getId(), resMRNA.getFivePrimeUTR().getId());
-    }
+    }*/
 
 
     private void createData() throws Exception {
