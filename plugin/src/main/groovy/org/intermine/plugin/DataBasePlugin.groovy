@@ -40,7 +40,7 @@ class DataBasePlugin implements Plugin<Project> {
             doLast {
                 FileTree fileTree = project.zipTree(project.configurations.getByName("commonResources").singleFile)
                 PatternSet patternSet = new PatternSet();
-                patternSet.include("default.intermine.integrate.properties");
+                patternSet.include(config.defaultInterminePropertiesFile);
                 File file = fileTree.matching(patternSet).singleFile
                 String defaultIMProperties = buildResourcesMainDir + File.separator + "default.intermine.properties"
                 file.renameTo(defaultIMProperties)
@@ -154,7 +154,7 @@ class DataBasePlugin implements Plugin<Project> {
                 ant.taskdef(name: "buildDB", classname: "org.intermine.task.BuildDbTask") {
                     classpath {
                         pathelement(path: project.buildDir.getAbsolutePath())//to read the schema
-                        pathelement(path: project.getBuildDir().getAbsolutePath() + File.separator + "libs" + File.separator + "dbmodel.jar")
+                        dirset(dir: buildResourcesMainDir)//to read default.intermine.properties
                         pathelement(path: project.configurations.getByName("compile").asPath)
                     }
                 }

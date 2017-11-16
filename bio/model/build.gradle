@@ -24,17 +24,20 @@ sourceSets {
 
 configurations {
     bioCoreModelArtifact
+    commonResources
 }
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'commons-lang:commons-lang:2.6'
+    commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
 }
 
 dbConfig {
     objectStoreName = "os.bio-test"
     modelName = "genomic"
+    defaultInterminePropertiesFile = "default.intermine.test.properties"
     soTermListFilePath = "model/src/main/resources/so_term_list.txt"
     soAdditionFilePath = "model/build/so_additions.xml"
 }

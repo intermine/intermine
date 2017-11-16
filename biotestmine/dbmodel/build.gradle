@@ -26,6 +26,7 @@ dependencies {
 dbConfig {
     objectStoreName = "os.production"
     modelName = "genomic"
+    defaultInterminePropertiesFile = "default.intermine.integrate.properties"
     soTermListFilePath = "dbmodel/resources/so_terms"
     soAdditionFilePath = "dbmodel/build/so_additions.xml"
 }
