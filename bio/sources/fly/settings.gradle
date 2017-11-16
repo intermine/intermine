@@ -1,0 +1,42 @@
+rootProject.name = 'bio-sources'
+
+include ':bio-source-affy-probes',
+//':bio-source-arbeitman-items-xml',
+':bio-source-bdgp-clone',
+':bio-source-bdgp-insitu',
+':bio-source-drosdel-gff',
+':bio-source-drosophila-homology',
+':bio-source-fly-anatomy-ontology',
+//':bio-source-flyatlas',
+':bio-source-flybase-alleles',
+':bio-source-flybase-expression',
+':bio-source-fly-development-ontology',
+':bio-source-fly-fish',
+':bio-source-fly-misc-cvterms',
+':bio-source-flyreg',
+':bio-source-long-oligo',
+':bio-source-miranda',
+':bio-source-redfly',
+':bio-source-rnai'
+
+project(':bio-source-affy-probes').projectDir = new File(settingsDir, './affy-probes')
+//project(':bio-source-arbeitman-items-xml').projectDir = new File(settingsDir, './arbeitman-items-xml')
+project(':bio-source-bdgp-clone').projectDir = new File(settingsDir, './bdgp-clone')
+project(':bio-source-bdgp-insitu').projectDir = new File(settingsDir, './bdgp-insitu')
+project(':bio-source-drosdel-gff').projectDir = new File(settingsDir, './drosdel-gff')
+project(':bio-source-drosophila-homology').projectDir = new File(settingsDir, './drosophila-homology')
+project(':bio-source-fly-anatomy-ontology').projectDir = new File(settingsDir, './fly-anatomy-ontology')
+//project(':bio-source-flyatlas').projectDir = new File(settingsDir, './flyatlas')
+project(':bio-source-flybase-alleles').projectDir = new File(settingsDir, './flybase-alleles')
+project(':bio-source-flybase-expression').projectDir = new File(settingsDir, './flybase-expression')
+project(':bio-source-fly-development-ontology').projectDir = new File(settingsDir, './fly-development-ontology')
+project(':bio-source-fly-fish').projectDir = new File(settingsDir, './fly-fish')
+project(':bio-source-fly-misc-cvterms').projectDir = new File(settingsDir, './fly-misc-cvterms')
+project(':bio-source-flyreg').projectDir = new File(settingsDir, './flyreg')
+project(':bio-source-long-oligo').projectDir = new File(settingsDir, './long-oligo')
+project(':bio-source-miranda').projectDir = new File(settingsDir, './miranda')
+project(':bio-source-redfly').projectDir = new File(settingsDir, './redfly')
+project(':bio-source-rnai').projectDir = new File(settingsDir, './rnai')
+
+
+
