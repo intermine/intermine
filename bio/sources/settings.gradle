@@ -14,7 +14,6 @@ include ':bio-source-biogrid',
 ':bio-source-ncbi-gff',
 ':bio-source-orthodb',
 ':bio-source-panther',
-':bio-source-pdb',
 ':bio-source-protein2ipr',
 ':bio-source-psi-complexes',
 ':bio-source-psi',
@@ -42,7 +41,6 @@ project(':bio-source-kegg-pathway').projectDir = new File(settingsDir, './kegg-p
 project(':bio-source-ncbi-gff').projectDir = new File(settingsDir, './ncbi-gff')
 project(':bio-source-orthodb').projectDir = new File(settingsDir, './orthodb')
 project(':bio-source-panther').projectDir = new File(settingsDir, './panther')
-project(':bio-source-pdb').projectDir = new File(settingsDir, './pdb')
 project(':bio-source-protein2ipr').projectDir = new File(settingsDir, './protein2ipr')
 project(':bio-source-psi-complexes').projectDir = new File(settingsDir, './psi-complexes')
 project(':bio-source-psi').projectDir = new File(settingsDir, './psi')
