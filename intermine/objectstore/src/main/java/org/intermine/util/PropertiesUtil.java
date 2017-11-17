@@ -46,30 +46,11 @@ public final class PropertiesUtil
     private static void initGlobalProperties() {
         globalProperties = new Properties();
 
-        // Read Properties from the following files, if present on the classpath:
+        // Read Properties from the following files
         // default.intermine.properties: Common runtime Properties
         // intermine.properties: User runtime properties
-        try {
-            InputStream is = PropertiesUtil.class.getClassLoader()
-                .getResourceAsStream("default.intermine.properties");
-
-            if (is == null) {
-                throw new RuntimeException("default.intermine.properties is not in the classpath");
-            }
-
-            globalProperties.load(is);
-
-            is = PropertiesUtil.class.getClassLoader().getResourceAsStream("intermine.properties");
-
-            if (is == null) {
-                throw new RuntimeException("intermine.properties is not in the classpath");
-            }
-            globalProperties.load(is);
-
-            is.close();
-        } catch (IOException e) {
-            throw new RuntimeException("PropertiesUtil error ", e);
-        }
+        loadGlobalProperties("default.intermine.properties");
+        loadGlobalProperties("intermine.properties");
     }
 
     /**
@@ -153,6 +134,33 @@ public final class PropertiesUtil
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         props.store(baos, null);
         return baos.toString();
+    }
+
+    /**
+     * Load the given properties into the global properties.
+     *
+     * TODO: This should be merged with loadProperties() post-Gradle conversion.
+     *
+     * @param propertiesResourceName
+     */
+    private static void loadGlobalProperties(String propertiesResourceName) {
+        InputStream is = null;
+
+        try {
+            try {
+                is = PropertiesUtil.class.getClassLoader().getResourceAsStream(propertiesResourceName);
+
+                if (is == null) {
+                    throw new RuntimeException(propertiesResourceName + " is not in the classpath");
+                }
+
+                globalProperties.load(is);
+            } finally {
+                is.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading " + propertiesResourceName, e);
+        }
     }
 
     /**
