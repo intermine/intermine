@@ -76,9 +76,9 @@ task insertModel (dependsOn: 'buildDB') {
 
 task copyMineProperties(type: Copy) {
     println "Using properties file: '$minePropertyFile'"
-    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
+    description "Copy test specific ~/.intermine/intermine-test.properties to test resources as intermine.properties"
     from minePropertyFile
-    into sourceSets.main.output.resourcesDir
+    into sourceSets.test.output.resourcesDir
     rename { fileName -> fileName.replace("intermine-test.properties", "intermine.properties") }
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
