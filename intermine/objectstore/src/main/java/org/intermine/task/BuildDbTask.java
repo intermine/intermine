@@ -24,6 +24,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -96,6 +98,15 @@ public class BuildDbTask extends Task
      */
     @Override
     public void execute() {
+        try {
+            FileUtils.cleanDirectory(tempDir);
+        } catch (Exception e) {
+            throw new BuildException(
+                "Could not clean up directory "
+                    + tempDir
+                    + " before execution (this is required to stop Torque generation from picking up extraneous files)");
+        }
+
         if (tempDir == null) {
             throw new BuildException("tempDir attribute is not set");
         }

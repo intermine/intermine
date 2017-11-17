@@ -1,0 +1,38 @@
+rootProject.name = 'bio-sources'
+
+include ':bio-source-arrayexpress-atlas',
+':bio-source-atlas-express',
+':bio-source-clinvar',
+':bio-source-ensembl-hgnc',
+':bio-source-gtex',
+':bio-source-hgnc',
+':bio-source-hpo',
+':bio-source-hpo-annotation',
+':bio-source-huge-gwas',
+':bio-source-human-gene',
+':bio-source-mgi-alleles',
+':bio-source-ncbi-gene',
+':bio-source-ncbi-summaries',
+':bio-source-omim',
+':bio-source-orphanet',
+':bio-source-protein-atlas',
+':bio-source-signor'
+
+project(':bio-source-arrayexpress-atlas').projectDir = new File(settingsDir, './arrayexpress-atlas')
+project(':bio-source-atlas-express').projectDir = new File(settingsDir, './atlas-express')
+project(':bio-source-clinvar').projectDir = new File(settingsDir, './clinvar')
+project(':bio-source-ensembl-hgnc').projectDir = new File(settingsDir, './ensembl-hgnc')
+project(':bio-source-gtex').projectDir = new File(settingsDir, './gtex')
+project(':bio-source-hgnc').projectDir = new File(settingsDir, './hgnc')
+project(':bio-source-hpo').projectDir = new File(settingsDir, './hpo')
+project(':bio-source-hpo-annotation').projectDir = new File(settingsDir, './hpo-annotation')
+project(':bio-source-huge-gwas').projectDir = new File(settingsDir, './huge-gwas')
+project(':bio-source-human-gene').projectDir = new File(settingsDir, './human-gene')
+project(':bio-source-mgi-alleles').projectDir = new File(settingsDir, './mgi-alleles')
+project(':bio-source-ncbi-gene').projectDir = new File(settingsDir, './ncbi-gene')
+project(':bio-source-ncbi-summaries').projectDir = new File(settingsDir, './ncbi-summaries')
+project(':bio-source-omim').projectDir = new File(settingsDir, './omim')
+project(':bio-source-orphanet').projectDir = new File(settingsDir, './orphanet')
+project(':bio-source-protein-atlas').projectDir = new File(settingsDir, './protein-atlas')
+project(':bio-source-signor').projectDir = new File(settingsDir, './signor')
+

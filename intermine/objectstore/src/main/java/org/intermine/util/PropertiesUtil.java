@@ -28,38 +28,7 @@ public final class PropertiesUtil
 {
     private static final Logger LOG = Logger.getLogger(PropertiesUtil.class);
 
-    private PropertiesUtil() {
-        // nothing to do
-    }
-
-    private static Properties globalProperties = new Properties();
-
-    static {
-        // Read Properties from the following files, if present on the classpath:
-        // default.intermine.properties: Common runtime Properties
-        // intermine.properties: User runtime properties
-        try {
-            InputStream is = PropertiesUtil.class.getClassLoader()
-                .getResourceAsStream("default.intermine.properties");
-
-            if (is == null) {
-                throw new RuntimeException("default.intermine.properties is not in the classpath");
-            }
-
-            globalProperties.load(is);
-
-            is = PropertiesUtil.class.getClassLoader().getResourceAsStream("intermine.properties");
-
-            if (is == null) {
-                throw new RuntimeException("intermine.properties is not in the classpath");
-            }
-            globalProperties.load(is);
-
-            is.close();
-        } catch (IOException e) {
-            System.out.println("PropertiesUtil error " + e.toString());
-        }
-    }
+    private static Properties globalProperties;
 
     /**
      * Returns all InterMine properties
@@ -67,7 +36,21 @@ public final class PropertiesUtil
      * @return the global properties for InterMine
      */
     public static Properties getProperties() {
+        if (globalProperties == null) {
+            initGlobalProperties();
+        }
+
         return globalProperties;
+    }
+
+    private static void initGlobalProperties() {
+        globalProperties = new Properties();
+
+        // Read Properties from the following files
+        // default.intermine.properties: Common runtime Properties
+        // intermine.properties: User runtime properties
+        loadGlobalProperties("default.intermine.properties");
+        loadGlobalProperties("intermine.properties");
     }
 
     /**
@@ -93,6 +76,7 @@ public final class PropertiesUtil
                 subset.put(propertyName, props.get(propertyName));
             }
         }
+
         return subset;
     }
 
@@ -103,7 +87,7 @@ public final class PropertiesUtil
      * @return a Properties object containing the subset of the global properties
      */
     public static Properties getPropertiesStartingWith(String str) {
-        return getPropertiesStartingWith(str, globalProperties);
+        return getPropertiesStartingWith(str, getProperties());
     }
 
     /**
@@ -153,24 +137,64 @@ public final class PropertiesUtil
     }
 
     /**
+     * Load the given properties into the global properties.
+     *
+     * TODO: This should be merged with loadProperties() post-Gradle conversion.
+     *
+     * @param propertiesResourceName
+     */
+    private static void loadGlobalProperties(String propertiesResourceName) {
+        InputStream is = null;
+
+        try {
+            try {
+                is = PropertiesUtil.class.getClassLoader().getResourceAsStream(propertiesResourceName);
+
+                if (is == null) {
+                    throw new RuntimeException(propertiesResourceName + " is not in the classpath");
+                }
+
+                globalProperties.load(is);
+            } finally {
+                if (is != null) {
+                    is.close();
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading " + propertiesResourceName, e);
+        }
+    }
+
+    /**
      * Load a specified properties file
      * @param filename the filename of the properties file
      * @return the corresponding Properties object
      */
     public static Properties loadProperties(String filename) {
         Properties props = new NonOverrideableProperties();
+
         try {
-            ClassLoader loader = PropertiesUtil.class.getClassLoader();
-            InputStream is = loader.getResourceAsStream(filename);
-            if (is == null) {
-                LOG.error("Could not find file " + filename + " from " + loader);
-                return null;
+            InputStream is = null;
+
+            try {
+                ClassLoader loader = PropertiesUtil.class.getClassLoader();
+                is = loader.getResourceAsStream(filename);
+
+                if (is == null) {
+                    LOG.error("Could not find file " + filename + " from " + loader);
+                    return null;
+                }
+
+                props.load(is);
+            } finally {
+                if (is != null) {
+                    is.close();
+                }
             }
-            props.load(is);
-            is.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load :" + filename, e);
         }
+
         return props;
     }
 }

@@ -7,18 +7,25 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 
 class MineDataBasePlugin implements Plugin<Project> {
-    //TODO investigate where t put common config?
+    //TODO investigate where to put common config?
     String bioVersion = "2.0.0-SNAPSHOT"
 
     void apply(Project project) {
-        //temporary
-        project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-uniprot", version: bioVersion])
-        project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-fasta", version: bioVersion])
-        //project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-go-annotation", version: bioVersion])
+        String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
+
+        project.task('parseProjectXml') {
+            description "Parse the project XML file and add associated datasource dependencies"
+            doLast {
+                def projectXml = (new XmlParser()).parse(projectXmlFilePath)
+                projectXml.sources.source.each { source ->
+                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "${source.'@type'}", version: bioVersion])
+                }
+            }
+        }
 
         project.task('mergeModels') {
             description "Merges defferent source model files into an intermine XML model"
-            dependsOn 'initConfig', 'copyGenomicModel', 'copyModelProperties', 'createSoModel'
+            dependsOn 'initConfig', 'copyGenomicModel', 'copyModelProperties', 'createSoModel', 'parseProjectXml'
             MineDBConfig config = project.extensions.create('mineDBConfig', MineDBConfig)
 
             doLast {
@@ -26,7 +33,7 @@ class MineDataBasePlugin implements Plugin<Project> {
                 String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
                 def ant = new AntBuilder()
 
-                String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
+
                 String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
                 ant.taskdef(name: "mergeSourceModels", classname: "org.intermine.task.MergeSourceModelsTask") {
                     classpath {
@@ -39,25 +46,11 @@ class MineDataBasePlugin implements Plugin<Project> {
                         modelFilePath: modelFilePath,
                         extraModelsStart: config.extraModelsStart,
                         extraModelsEnd: config.extraModelsEnd)
-
-                //def obj = new org.intermine.task.project.ProjectXmlBinding()
             }
-
-            //obj.doSomething()
-
-            //def projectXmlBinding = new org.intermine.task.project.ProjectXmlBinding()
-//            Project imProject = ProjectXmlBinding().unmarshall(projectXmlFilePath);
-//
-//            Collection<Source> sources = imProject.getSources().values();
-
-//            for (Source source: sources) {
-//                  project.dependencies.add("mergeSource", [group: "org.intermine", name: source.getType(), version: bioVersion])
-//            }
-
-//            project.dependencies.add("mergeSource", [group: "org.intermine", name: "uniprot", version: bioVersion])
-//            project.dependencies.add("mergeSource", [group: "org.intermine", name: "fasta", version: bioVersion])
-//            project.dependencies.add("mergeSource", [group: "org.intermine", name: "go-annotation", version: bioVersion])
         }
+
     }
+
+
 }
 
