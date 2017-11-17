@@ -172,18 +172,29 @@ public final class PropertiesUtil
      */
     public static Properties loadProperties(String filename) {
         Properties props = new NonOverrideableProperties();
+
         try {
-            ClassLoader loader = PropertiesUtil.class.getClassLoader();
-            InputStream is = loader.getResourceAsStream(filename);
-            if (is == null) {
-                LOG.error("Could not find file " + filename + " from " + loader);
-                return null;
+            InputStream is = null;
+
+            try {
+                ClassLoader loader = PropertiesUtil.class.getClassLoader();
+                is = loader.getResourceAsStream(filename);
+
+                if (is == null) {
+                    LOG.error("Could not find file " + filename + " from " + loader);
+                    return null;
+                }
+
+                props.load(is);
+            } finally {
+                if (is != null) {
+                    is.close();
+                }
             }
-            props.load(is);
-            is.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load :" + filename, e);
         }
+
         return props;
     }
 }
