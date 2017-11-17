@@ -10,6 +10,7 @@ class DataBasePlugin implements Plugin<Project> {
     // TODO pass these into plugin
     String bioVersion = "2.0.0-SNAPSHOT"
     String antVersion = "2.0.0-SNAPSHOT"
+    String imVersion = "2.0.0-SNAPSHOT"
     DBConfig config;
     String buildResourcesMainDir
     SourceSetContainer sourceSets
@@ -20,11 +21,13 @@ class DataBasePlugin implements Plugin<Project> {
         project.configurations {
             bioCore
             mergeSource
+            commonResources
         }
 
         project.dependencies {
             bioCore group : "org.intermine", name: "bio-core", version: bioVersion, transitive: false
             mergeSource group : "org.intermine", name: "ant-tasks", version: antVersion
+            commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
         }
 
         project.task('initConfig') {
@@ -77,39 +80,7 @@ class DataBasePlugin implements Plugin<Project> {
                 ant.createSoModel(soTermListFile: config.soTermListFilePath, outputFile: config.soAdditionFilePath)
             }
         }
-/*
-        project.task('mergeTestModels') {
-            group TASK_GROUP
-            description "Merges defferent source model files into an intermine XML model"
-            dependsOn 'initConfig', 'copyGenomicModel', 'copyModelProperties', 'createSoModel'
 
-            doLast {
-                def ant = new AntBuilder()
-                String inputModelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
-
-                String[] modelNames = config.allModelNames.split(" ")
-                for (String modelName: modelNames) {
-                    if (!"genomic".equalsIgnoreCase(modelName)) {
-                        project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + modelName, version: bioVersion])
-                    }
-                }
-
-                ant.taskdef(name: "mergeAllSourceModels", classname: "org.intermine.task.ModelMergerTask") {
-                    classpath {
-                        pathelement(path: project.configurations.getByName("mergeSource").asPath)
-                        dirset(dir: project.getBuildDir().getAbsolutePath())
-                    }
-                }
-                for (String modelFileName: modelFileNames) {
-                    ant.mergeAllSourceModels(
-                            inputModelFile: inputModelFilePath,
-                            additionsFile: modelFileName + "_addition.xml",
-                            outputFile: inputModelFilePath)
-                }
-
-            }
-        }
-*/
         project.task('generateModel') {
             description "Merges defferent source model files into an intermine XML model"
             dependsOn 'initConfig', 'mergeModels'
@@ -121,8 +92,8 @@ class DataBasePlugin implements Plugin<Project> {
                 String destination = project.getBuildDir().getAbsolutePath() + File.separator + "gen"
                 ant.taskdef(name: "modelOutputTask", classname: "org.intermine.task.ModelOutputTask") {
                     classpath {
-                        pathelement(path: project.configurations.getByName("compile").asPath)
                         dirset(dir: project.getBuildDir().getAbsolutePath())
+                        pathelement(path: project.configurations.getByName("compile").asPath)
                     }
                 }
                 ant.modelOutputTask(model: config.modelName, destDir: destination, type: "java")
@@ -147,7 +118,7 @@ class DataBasePlugin implements Plugin<Project> {
                         pathelement(path: project.configurations.getByName("compile").asPath)
                     }
                 }
-                ant.torque(osname: config.objectStoreName, destFile:destination)
+                ant.torque(osname: config.objectStoreName, destFile: destination)
 
                 //create db tables
                 String tempDirectory = project.getBuildDir().getAbsolutePath() + File.separator + "tmp"

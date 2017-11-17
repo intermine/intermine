@@ -6,7 +6,4 @@ class DBConfig {
     String defaultInterminePropertiesFile
     String soTermListFilePath
     String soAdditionFilePath
-    //String extraModelsStart
-    //String extraModelsEnd
-    //String allModelNames
 }
