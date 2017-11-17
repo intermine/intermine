@@ -16,6 +16,7 @@ include ':bio-source-biogrid',
 ':bio-source-kegg-orthologues',
 ':bio-source-kegg-pathway',
 ':bio-source-mammalian-phenotype-ontology',
+':bio-source-mgi-identifiers',
 ':bio-source-ncbi-gff',
 ':bio-source-orthodb',
 ':bio-source-panther',
@@ -25,13 +26,15 @@ include ':bio-source-biogrid',
 ':bio-source-psi-mi-ontology',
 ':bio-source-pubmed-gene',
 ':bio-source-reactome',
+':bio-source-rgd-identifiers',
 ':bio-source-so',
 ':bio-source-treefam',
 ':bio-source-uniprot',
 ':bio-source-uniprot-keywords',
 ':bio-source-update-data-sources',
 ':bio-source-update-publications',
-':bio-source-vcf'
+':bio-source-vcf',
+':bio-source-wormbase-identifiers'
 
 project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
 project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
@@ -49,6 +52,7 @@ project(':bio-source-interpro-go').projectDir = new File(settingsDir, './interpr
 project(':bio-source-kegg-orthologues').projectDir = new File(settingsDir, './kegg-orthologues')
 project(':bio-source-kegg-pathway').projectDir = new File(settingsDir, './kegg-pathway')
 project(':bio-source-mammalian-phenotype-ontology').projectDir = new File(settingsDir, './mammalian-phenotype-ontology')
+project(':bio-source-mgi-identifiers').projectDir = new File(settingsDir, './mgi-identifiers')
 project(':bio-source-ncbi-gff').projectDir = new File(settingsDir, './ncbi-gff')
 project(':bio-source-orthodb').projectDir = new File(settingsDir, './orthodb')
 project(':bio-source-panther').projectDir = new File(settingsDir, './panther')
@@ -58,6 +62,7 @@ project(':bio-source-psi-complexes').projectDir = new File(settingsDir, './psi-c
 project(':bio-source-psi-mi-ontology').projectDir = new File(settingsDir, './psi-mi-ontology')
 project(':bio-source-pubmed-gene').projectDir = new File(settingsDir, './pubmed-gene')
 project(':bio-source-reactome').projectDir = new File(settingsDir, './reactome')
+project(':bio-source-rgd-identifiers').projectDir = new File(settingsDir, './rgd-identifiers')
 project(':bio-source-so').projectDir = new File(settingsDir, './so')
 project(':bio-source-treefam').projectDir = new File(settingsDir, './treefam')
 project(':bio-source-uniprot').projectDir = new File(settingsDir, './uniprot')
@@ -65,5 +70,6 @@ project(':bio-source-uniprot-keywords').projectDir = new File(settingsDir, './un
 project(':bio-source-update-data-sources').projectDir = new File(settingsDir, './update-data-sources')
 project(':bio-source-update-publications').projectDir = new File(settingsDir, './update-publications')
 project(':bio-source-vcf').projectDir = new File(settingsDir, './vcf')
+project(':bio-source-wormbase-identifiers').projectDir = new File(settingsDir, './wormbase-identifiers')
 
 
