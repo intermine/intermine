@@ -28,13 +28,24 @@ public final class PropertiesUtil
 {
     private static final Logger LOG = Logger.getLogger(PropertiesUtil.class);
 
-    private PropertiesUtil() {
-        // nothing to do
+    private static Properties globalProperties;
+
+    /**
+     * Returns all InterMine properties
+     *
+     * @return the global properties for InterMine
+     */
+    public static Properties getProperties() {
+        if (globalProperties == null) {
+            initGlobalProperties();
+        }
+
+        return globalProperties;
     }
 
-    private static Properties globalProperties = new Properties();
+    private static void initGlobalProperties() {
+        globalProperties = new Properties();
 
-    static {
         // Read Properties from the following files, if present on the classpath:
         // default.intermine.properties: Common runtime Properties
         // intermine.properties: User runtime properties
@@ -57,17 +68,8 @@ public final class PropertiesUtil
 
             is.close();
         } catch (IOException e) {
-            System.out.println("PropertiesUtil error " + e.toString());
+            throw new RuntimeException("PropertiesUtil error ", e);
         }
-    }
-
-    /**
-     * Returns all InterMine properties
-     *
-     * @return the global properties for InterMine
-     */
-    public static Properties getProperties() {
-        return globalProperties;
     }
 
     /**
@@ -93,6 +95,7 @@ public final class PropertiesUtil
                 subset.put(propertyName, props.get(propertyName));
             }
         }
+
         return subset;
     }
 
@@ -103,7 +106,7 @@ public final class PropertiesUtil
      * @return a Properties object containing the subset of the global properties
      */
     public static Properties getPropertiesStartingWith(String str) {
-        return getPropertiesStartingWith(str, globalProperties);
+        return getPropertiesStartingWith(str, getProperties());
     }
 
     /**
