@@ -156,7 +156,9 @@ public final class PropertiesUtil
 
                 globalProperties.load(is);
             } finally {
-                is.close();
+                if (is != null) {
+                    is.close();
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException("Error loading " + propertiesResourceName, e);
