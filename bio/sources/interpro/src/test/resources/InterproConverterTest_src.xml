@@ -3,15 +3,7 @@
 <interprodb>
   <interpro id="IPR000001" type="Domain" short_name="tubby" protein_count="329">
     <name>supertubby</name>
-    <abstract>
-Kringles are autonomous structural domains, found throughout the blood clotting and fibrinolytic proteins.
-Kringle domains are believed to play a role in binding mediators (e.g., membranes,
-other proteins or phospholipids), and in the regulation of proteolytic activity
-<cite idref="PUB00002414"/>, <cite idref="PUB00001541"/>, <cite idref="PUB00003257"/>.
-Kringle domains <cite idref="PUB00003400"/>, <cite idref="PUB00000803"/>, <cite idref="PUB00001620"/> are characterised by a triple loop, 3-disulphide bridge structu
-re, whose  conformation is defined by a number of hydrogen bonds and small pieces of  anti-parallel beta-sheet. They are found in a varying number  of  copies  in so
-me plasma proteins including prothrombin and urokinase-type plasminogen activator, which are serine proteases belonging to MEROPS peptidase family S1A.
-</abstract>
+    <abstract>Kringles are autonomous structural domains, found throughout the blood clotting and fibrinolytic proteins.  -- SNIPPED -- </abstract>
     <example_list />
     <pub_list>
       <publication id="PUB00000001">

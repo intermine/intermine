@@ -11,24 +11,14 @@
 <item id="3_2" class="Publication">
 <attribute name="pubMedId" value="1111111"/>
 </item>
-<item id="19_8" class="Synonym">
-<attribute name="value" value="alternativeName - full"/>
+<item id="19_6" class="Synonym">
+<attribute name="value" value="Somatic-2"/>
 <reference name="subject" ref_id="7_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="19_11" class="Synonym">
-<attribute name="value" value="Soluble"/>
-<reference name="subject" ref_id="7_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="19_3" class="Synonym">
 <attribute name="value" value="alternativeName - short"/>
 <reference name="subject" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="19_12" class="Synonym">
-<attribute name="value" value="EVE_DROME-2"/>
-<reference name="subject" ref_id="7_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="14_1" class="GOEvidenceCode">
@@ -39,6 +29,11 @@
 <reference name="source" ref_id="1_2"/>
 <reference name="subject" ref_id="7_2"/>
 </item>
+<item id="12_4" class="CrossReference">
+<attribute name="identifier" value="Soluble"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="7_2"/>
+</item>
 <item id="4_1" class="Comment">
 <attribute name="description" value="Nucleus."/>
 <attribute name="type" value="subcellular location"/>
@@ -46,11 +41,6 @@
 </item>
 <item id="0_2" class="Ontology">
 <attribute name="name" value="UniProtKeyword"/>
-</item>
-<item id="19_6" class="Synonym">
-<attribute name="value" value="EVE_DROME-4"/>
-<reference name="subject" ref_id="7_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
@@ -64,6 +54,11 @@
 <item id="19_17" class="Synonym">
 <attribute name="value" value="Testis-specific"/>
 <reference name="subject" ref_id="7_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="19_10" class="Synonym">
+<attribute name="value" value="alternativeName - full"/>
+<reference name="subject" ref_id="7_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="7_4" class="Protein">
@@ -82,6 +77,11 @@
 <collection name="genes"><reference ref_id="13_1"/><reference ref_id="13_2"/></collection>
 <collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+</item>
+<item id="12_3" class="CrossReference">
+<attribute name="identifier" value="Somatic-2"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="7_2"/>
 </item>
 <item id="17_3" class="GOTerm">
 <attribute name="identifier" value="GO:0000002"/>
@@ -115,10 +115,10 @@
 <reference name="subject" ref_id="7_4"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="12_5" class="CrossReference">
-<attribute name="identifier" value="Soluble"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="7_3"/>
+<item id="19_11" class="Synonym">
+<attribute name="value" value="alternativeName - short"/>
+<reference name="subject" ref_id="7_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_1" class="Publication">
 <attribute name="pubMedId" value="222222"/>
@@ -166,11 +166,6 @@
 <attribute name="description" value="MIM:137800; Glioma 1; GLM1; Gliomas are benign or malignant central nervous system neoplasms derived from glial cells. They comprise astrocytomas and glioblastoma multiforme that are derived from astrocytes, oligodendrogliomas derived from oligodendrocytes and ependymomas derived from ependymocytes. Disease susceptibility may be associated with variations affecting the gene represented in this entry. Polymorphic PPARG alleles have been found to be significantly over-represented among a cohort of American patients with sporadic glioblastoma multiforme suggesting a possible contribution to disease susceptibility."/>
 <attribute name="type" value="disease"/>
 </item>
-<item id="19_7" class="Synonym">
-<attribute name="value" value="shortname"/>
-<reference name="subject" ref_id="7_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="19_19" class="Synonym">
 <attribute name="value" value="EVE_DROME-3"/>
 <reference name="subject" ref_id="7_4"/>
@@ -193,13 +188,18 @@
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
 <item id="19_9" class="Synonym">
-<attribute name="value" value="alternativeName - short"/>
+<attribute name="value" value="shortname"/>
 <reference name="subject" ref_id="7_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="19_22" class="Synonym">
 <attribute name="value" value="alternativeName - short"/>
 <reference name="subject" ref_id="7_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="19_12" class="Synonym">
+<attribute name="value" value="EVE_DROME-4"/>
+<reference name="subject" ref_id="7_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="12_1" class="CrossReference">
@@ -249,13 +249,15 @@
 <attribute name="name" value="Swiss-Prot data set"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
+<item id="19_7" class="Synonym">
+<attribute name="value" value="Soluble"/>
+<reference name="subject" ref_id="7_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="10_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="15_2" class="GOEvidence">
-<reference name="code" ref_id="14_2"/>
-</item>
-<item id="7_2" class="Protein">
+<item id="7_3" class="Protein">
 <attribute name="isFragment" value="false"/>
 <attribute name="isUniprotCanonical" value="false"/>
 <attribute name="name" value="eve's name"/>
@@ -271,6 +273,14 @@
 <collection name="genes"><reference ref_id="13_1"/><reference ref_id="13_2"/></collection>
 <collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+</item>
+<item id="15_2" class="GOEvidence">
+<reference name="code" ref_id="14_2"/>
+</item>
+<item id="19_8" class="Synonym">
+<attribute name="value" value="EVE_DROME-2"/>
+<reference name="subject" ref_id="7_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="15_5" class="GOEvidence">
 <reference name="code" ref_id="14_2"/>
@@ -292,11 +302,6 @@
 </item>
 <item id="15_3" class="GOEvidence">
 <reference name="code" ref_id="14_1"/>
-</item>
-<item id="19_10" class="Synonym">
-<attribute name="value" value="Somatic-2"/>
-<reference name="subject" ref_id="7_3"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="12_8" class="CrossReference">
 <attribute name="identifier" value="Testis-specific"/>
@@ -371,28 +376,6 @@
 <attribute name="type" value="similarity"/>
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
-<item id="12_3" class="CrossReference">
-<attribute name="identifier" value="NP_523670.2"/>
-<reference name="source" ref_id="1_2"/>
-<reference name="subject" ref_id="7_3"/>
-</item>
-<item id="7_3" class="Protein">
-<attribute name="isFragment" value="false"/>
-<attribute name="isUniprotCanonical" value="false"/>
-<attribute name="name" value="eve's name"/>
-<attribute name="primaryAccession" value="P12821-2"/>
-<attribute name="primaryIdentifier" value="EVE_DROME-2"/>
-<attribute name="secondaryIdentifier" value="P12821-2"/>
-<attribute name="uniprotAccession" value="Q1234"/>
-<attribute name="uniprotName" value="EVE_DROME"/>
-<reference name="canonicalProtein" ref_id="7_1"/>
-<reference name="organism" ref_id="10_1"/>
-<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="13_1"/><reference ref_id="13_2"/></collection>
-<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
-<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
-</item>
 <item id="8_2" class="ECNumber">
 <attribute name="identifier" value="1.1.1.1"/>
 </item>
@@ -411,6 +394,23 @@
 <attribute name="description" value="MIM:601665; Obesity; OBESITY; A condition characterized by an increase of body weight beyond the limitation of skeletal and physical requirements, as the result of excessive accumulation of body fat. Disease susceptibility may be associated with variations affecting the gene represented in this entry."/>
 <attribute name="type" value="disease"/>
 </item>
+<item id="7_2" class="Protein">
+<attribute name="isFragment" value="false"/>
+<attribute name="isUniprotCanonical" value="false"/>
+<attribute name="name" value="eve's name"/>
+<attribute name="primaryAccession" value="P12821-2"/>
+<attribute name="primaryIdentifier" value="EVE_DROME-2"/>
+<attribute name="secondaryIdentifier" value="P12821-2"/>
+<attribute name="uniprotAccession" value="Q1234"/>
+<attribute name="uniprotName" value="EVE_DROME"/>
+<reference name="canonicalProtein" ref_id="7_1"/>
+<reference name="organism" ref_id="10_1"/>
+<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="13_1"/><reference ref_id="13_2"/></collection>
+<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+</item>
 <item id="19_21" class="Synonym">
 <attribute name="value" value="alternativeName - full"/>
 <reference name="subject" ref_id="7_4"/>
@@ -425,9 +425,9 @@
 <attribute name="name" value="full component name"/>
 <reference name="protein" ref_id="7_1"/>
 </item>
-<item id="12_4" class="CrossReference">
-<attribute name="identifier" value="Somatic-2"/>
-<reference name="source" ref_id="1_1"/>
+<item id="12_5" class="CrossReference">
+<attribute name="identifier" value="NP_523670.2"/>
+<reference name="source" ref_id="1_2"/>
 <reference name="subject" ref_id="7_3"/>
 </item>
 <item id="6_3" class="UniProtFeature">
