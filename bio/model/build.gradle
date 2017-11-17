@@ -9,8 +9,6 @@ buildscript {
 apply plugin: 'database'
 apply plugin: 'biocoredb'
 
-jar.enabled = false
-
 sourceSets {
     main {
         java {
@@ -24,14 +22,12 @@ sourceSets {
 
 configurations {
     bioCoreModelArtifact
-    commonResources
 }
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'commons-lang:commons-lang:2.6'
-    commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
 }
 
 dbConfig {
@@ -54,6 +50,7 @@ task copyModelProperties(type: Copy) {
 task buildBioCoreModelJar(type: Jar) {
     from(sourceSets.main.output)
 }
+
 tasks.install.dependsOn 'buildBioCoreModelJar'
 
 artifacts {

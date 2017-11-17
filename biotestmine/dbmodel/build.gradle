@@ -14,13 +14,11 @@ sourceSets {
 
 configurations {
     compile
-    commonResources
 }
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
-    commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
 }
 
 dbConfig {
