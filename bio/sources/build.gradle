@@ -16,7 +16,6 @@ subprojects {
     group = 'org.intermine'
     version = '2.0.0-SNAPSHOT'
 
-
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'database'
@@ -27,10 +26,6 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
-    }
-
-    test {
-        ignoreFailures = true
     }
 
     configurations {
@@ -79,24 +74,47 @@ subprojects {
         dependsOn 'copyBioGenomicModel', 'copyModelProperties'
 
         doLast {
-            ant.taskdef(name: "mergeBioSourceModel", classname: "org.intermine.task.ModelMergerTask") {
-                classpath {
+            def bioSourceAdditionsFile = project.name.minus("bio-source-") + "_additions.xml";
+            if ((new File("$sourceSets.main.output.resourcesDir/" + bioSourceAdditionsFile)).exists()) {
+                ant.taskdef(name: "mergeBioSourceModel", classname: "org.intermine.task.ModelMergerTask") {
+                    classpath {
                         pathelement(path: configurations.mergeModel.asPath)
                         dirset(dir: buildDir)
-                }
+                    }
+                }          
+                ant.mergeBioSourceModel(inputModelFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml", additionsFile: bioSourceAdditionsFile,
+                    outputFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml")
             }
-            def bioSourceAdditionsFile = project.name.minus("bio-source-") + "_additions.xml";
-            ant.mergeBioSourceModel(inputModelFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml", additionsFile: bioSourceAdditionsFile,
-                outputFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml")
         }
     }
+    
+    jar {exclude "intermine.properties"}
 
-    //only buildDB if there 
+    //test configuration
+
+    //only buildDB if there are tests to run
     def srcDir = "$project.projectDir" + "/src/test"
     if ((new File(srcDir)).exists()) {
         tasks.test.dependsOn 'buildDB'
     }
-    //jar {exclude "intermine.properties"} 
+
+    tasks.withType(Test) {
+        scanForTestClasses = false
+        include '**/*Test.class'
+        test.reports.html.enabled = false
+    }
+
+    // Disable the test report for the individual test task
+    test {
+        ignoreFailures = true
+        test.reports.html.enabled = false
+    }
+}
+
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects*.test
 }
 
 task wrapper(type: Wrapper) {
