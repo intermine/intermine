@@ -28,6 +28,10 @@ subprojects {
         mavenLocal()
     }
 
+    test {
+        ignoreFailures = true
+    }
+
     configurations {
         bioModel
         mergeModel
@@ -89,24 +93,10 @@ subprojects {
     
     jar {exclude "intermine.properties"}
 
-    //test configuration
-
     //only buildDB if there are tests to run
     def srcDir = "$project.projectDir" + "/src/test"
     if ((new File(srcDir)).exists()) {
         tasks.test.dependsOn 'buildDB'
-    }
-
-    tasks.withType(Test) {
-        scanForTestClasses = false
-        include '**/*Test.class'
-        test.reports.html.enabled = false
-    }
-
-    // Disable the test report for the individual test task
-    test {
-        ignoreFailures = true
-        test.reports.html.enabled = false
     }
 }
 
