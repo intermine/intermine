@@ -1,7 +1,7 @@
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java']
+            srcDirs = ['src/main/java', 'build/gen']
         }
         resources {
             srcDirs = ['src/main/resources']
@@ -17,10 +17,7 @@ sourceSets {
     }
 }
 
-processResources {
-   from('.') { include ("*_additions.xml")} 
-}
-
 dependencies {
+    compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
     compile group: 'org.intermine', name: 'bio-postprocess', version: imVersion
 }

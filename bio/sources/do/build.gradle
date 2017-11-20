@@ -1,10 +1,10 @@
 sourceSets {
     main {
+        java {
+            srcDirs = ['build/gen']
+        }
         resources {
             srcDirs = ['resources']
         }
     }
-}
-
-dependencies {
 }
