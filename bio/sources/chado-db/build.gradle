@@ -1,7 +1,7 @@
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java']
+            srcDirs = ['src/main/java', 'build/gen']
         }
         resources {
             srcDirs = ['src/main/resources']
@@ -18,5 +18,19 @@ sourceSets {
 }
 
 dependencies {
+    compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
     compile group: 'org.intermine', name: 'bio-postprocess', version: imVersion
+}
+
+mergeModels {   
+    doLast {
+        ant.taskdef(name: "mergeBioSourceModel", classname: "org.intermine.task.ModelMergerTask") {
+            classpath {
+                pathelement(path: configurations.mergeModel.asPath)
+                dirset(dir: buildDir)
+                }
+            }          
+        ant.mergeBioSourceModel(inputModelFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml", additionsFile: "flybase-chado-db_additions.xml",
+            outputFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml")
+    }
 }
