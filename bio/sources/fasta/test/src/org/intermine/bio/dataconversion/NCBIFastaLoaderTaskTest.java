@@ -10,12 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +23,6 @@ import org.apache.log4j.Logger;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -84,12 +79,13 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
 
         assertEquals(1, r.size());
         assertEquals(expMap, actMap);
+
     }
 
     /**
      * @throws IOException
      */
-    private void executeLoaderTask(String className, String fastaFile) throws IOException {
+    private void executeLoaderTask(String className, String fastaFile) throws Exception {
         FastaLoaderTask flt = new NCBIFastaLoaderTask();
         flt.setFastaTaxonId("9606");
         flt.setIgnoreDuplicates(true);
@@ -111,6 +107,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         files[0] = fasta;
         flt.setFileArray(files);
         flt.execute();
+        flt.close();
     }
 
     /**

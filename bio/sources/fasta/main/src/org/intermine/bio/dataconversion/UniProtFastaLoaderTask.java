@@ -14,8 +14,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Sequence;
+import org.biojava3.core.sequence.ProteinSequence;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -30,12 +29,10 @@ public class UniProtFastaLoaderTask extends FastaLoaderTask
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected Organism getOrganism(Sequence bioJavaSequence) throws ObjectStoreException {
-        Annotation anno = bioJavaSequence.getAnnotation();
+    protected Organism getOrganism(ProteinSequence bioJavaSequence) throws ObjectStoreException {
         //description_line=sp|Q9V8R9-2|41_DROME Isoform 2 of Protein 4.1 homolog OS=Drosophila
         // melanogaster GN=cora,
-        String header = anno.getProperty("description_line").toString();
+        String header = bioJavaSequence.getOriginalHeader();
         final String regexp = "OS\\=\\w+\\s\\w+";
         Pattern p = Pattern.compile(regexp);
         Matcher m = p.matcher(header);
