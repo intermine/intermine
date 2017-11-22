@@ -1,5 +1,7 @@
 apply plugin: "war"
 apply from: "https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin"
+apply plugin: "webapp"
+
 sourceSets {
     main {
         java {
@@ -11,46 +13,36 @@ sourceSets {
     }
 }
 
-def explodedWebAppDir = "$buildDir/explodedWebApp"
-def mergePropsDir = "$buildDir/props"
-
 configurations {
     bioWebApp
-    commonResources
 }
 
-dependencies { 
+dependencies {
     compile project(":dbmodel")
-    compile group: "org.intermine", name: "bio-testall", version: imVersion
+    compile group: "org.intermine", name: "bio-model", version: imVersion
     compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
     compile group: "org.intermine", name: "intermine-integrate", version: imVersion
     compile group: "org.intermine", name: "intermine-api", version: imVersion
+    compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
     compile group: "javax.servlet", name: "jstl", version: "1.2"
     compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
-    commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
     bioWebApp group: "org.intermine", name: "bio-webapp", version: imVersion, ext: "war"
 }
 
-apply plugin: 'webapp'
+def explodedWebAppDir = "$buildDir/explodedWebApp"
+def mergePropsDir = "$buildDir/props"
 
 webappConfig {
     mineName = "biotestmine"
     objectStoreName = "os.production"
-}
-
-processResources {
-  //dependsOn "copyDefaultProperties", "copyMineProperties"
+    userProfileObjectStoreName = "os.userprofile-production"
+    userProfileObjectStoreWriterName = "osw.userprofile-production"
+    defaultInterminePropertiesFile = "default.intermine.webapp.properties"
+    propsDir = "$mergePropsDir"
 }
 
 war {
-    exclude "WEB-INF/web.properties"
-    webInf { from "${mergePropsDir}" }
-
-    doFirst {
-        tasks.mergeProperties.execute();
-        tasks.summariseObjectStore.execute()
-    }
-
+    dependsOn 'mergeProperties', 'summariseObjectStore'
     doLast {
         unwarBioWebApp.execute()
         warWebApp.execute()
@@ -58,14 +50,13 @@ war {
 }
 
 task warWebApp(type: War) {
-    group "${taskGroup}"
     description "Create the war from the build/explodedWebAppDir directory"
     from "${explodedWebAppDir}"
-    //exclude "WEB-INF/web.properties"
+    exclude "WEB-INF/web.properties"
     webInf { from "${mergePropsDir}" }
 }
 
-// read in testmodel.properties to get the contextPath
+// read in biotestmine.properties to get the contextPath
 def props = new Properties()
 file(minePropertyFile).withInputStream { props.load(it) }
 
