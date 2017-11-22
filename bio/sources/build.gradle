@@ -100,13 +100,11 @@ subprojects {
     tasks.withType(Test) {
         scanForTestClasses = false
         include '**/*Test.class'
-        test.reports.html.enabled = false
     }
 
-    // Disable the test report for the individual test task
     test {
         ignoreFailures = true
-        test.reports.html.enabled = false
+        forkEvery = 1
     }
 }
 

@@ -6,7 +6,7 @@ include ':bio-source-biogrid',
 ':bio-source-eco',
 ':bio-source-ensembl-compara',
 ':bio-source-entrez-organism',
-//':bio-source-fasta',
+':bio-source-fasta',
 ':bio-source-go-annotation',
 ':bio-source-homologene',
 //':bio-source-intermine-items-large-xml-file',
@@ -42,7 +42,7 @@ project(':bio-source-do').projectDir = new File(settingsDir, './do')
 project(':bio-source-eco').projectDir = new File(settingsDir, './eco')
 project(':bio-source-ensembl-compara').projectDir = new File(settingsDir, './ensembl-compara')
 project(':bio-source-entrez-organism').projectDir = new File(settingsDir, './entrez-organism')
-//project(':bio-source-fasta').projectDir = new File(settingsDir, './fasta')
+project(':bio-source-fasta').projectDir = new File(settingsDir, './fasta')
 project(':bio-source-go-annotation').projectDir = new File(settingsDir, './go-annotation')
 project(':bio-source-homologene').projectDir = new File(settingsDir, './homologene')
 //project(':bio-source-intermine-items-large-xml-file').projectDir = new File(settingsDir, './intermine-items-large-xml-file')
