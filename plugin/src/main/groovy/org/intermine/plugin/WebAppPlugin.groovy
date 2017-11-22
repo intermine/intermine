@@ -13,9 +13,12 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class WebAppPlugin implements Plugin<Project> {
-    String imVersion = "2.0.0-SNAPSHOT"
-    WebAppConfig config;
+    public static final String imVersion = "2.0.0-SNAPSHOT"
     public final static String TASK_GROUP = "InterMine"
+
+    WebAppConfig config;
+    DBUtils dbUtils
+
 
     void apply(Project project) {
         project.configurations {
@@ -28,6 +31,7 @@ class WebAppPlugin implements Plugin<Project> {
 
         project.task('initConfig') {
             config = project.extensions.create('webappConfig', WebAppConfig)
+            dbUtils = new DBUtils(project)
         }
 
         project.task('copyDefaultProperties') {
@@ -35,13 +39,7 @@ class WebAppPlugin implements Plugin<Project> {
             dependsOn 'initConfig', 'processResources'
 
             doLast {
-                FileTree fileTree = project.zipTree(project.configurations.getByName("commonResources").singleFile)
-                PatternSet patternSet = new PatternSet();
-                patternSet.include(config.defaultInterminePropertiesFile);
-                File file = fileTree.matching(patternSet).singleFile
-                String defaultIMProperties = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main" + File.separator + "default.intermine.properties"
-                file.renameTo(defaultIMProperties)
-                file.createNewFile()
+                dbUtils.copyDefaultPropertiesFile(config.defaultInterminePropertiesFile)
             }
         }
 
@@ -100,11 +98,20 @@ class WebAppPlugin implements Plugin<Project> {
         project.task('loadDefaultTemplates') {
             group TASK_GROUP
             description "Loads default template queries from an XML file into a given user profile"
+            dependsOn 'copyMineProperties', 'copyDefaultProperties', 'jar'
+            //jar dependency has been added in order to generate the dbmodel.jar (in case a clean task has been called)
+            //to allow to read class_keys.properties file
 
             doLast {
                 def ant = new AntBuilder()
+
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
                 String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+                Properties intermineProperties = new Properties();
+                intermineProperties.load(new FileInputStream(buildResourcesMainDir + File.separator + "intermine.properties"));
+                String superUser = intermineProperties.getProperty("superuser.account")
+                String superUserPsw = intermineProperties.getProperty("superuser.initialPassword")
+
 
                 ant.taskdef(name: "loadTemplates", classname: "org.intermine.web.task.LoadDefaultTemplatesTask") {
                     classpath {
@@ -114,7 +121,8 @@ class WebAppPlugin implements Plugin<Project> {
                 }
                 ant.loadTemplates(osAlias: config.userProfileObjectStoreName, userProfileAlias: config.userProfileObjectStoreWriterName,
                         templatesXml:buildResourcesMainDir + File.separator + "default-template-queries.xml",
-                        username: "daniela@intermine.org", superuserPassword: "daniela")
+                        username: superUser,
+                        superuserPassword: superUserPsw)
             }
         }
     }
