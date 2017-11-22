@@ -15,17 +15,21 @@ class MineDataBasePlugin implements Plugin<Project> {
 
         project.task('parseProjectXml') {
             description "Parse the project XML file and add associated datasource dependencies"
+            onlyIf {!new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
+
             doLast {
                 def projectXml = (new XmlParser()).parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
-                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "${source.'@type'}", version: bioVersion])
+                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@type'}", version: bioVersion])
                 }
             }
         }
 
         project.task('mergeModels') {
             description "Merges defferent source model files into an intermine XML model"
-            dependsOn 'initConfig', 'copyGenomicModel', 'copyModelProperties', 'createSoModel', 'parseProjectXml'
+            dependsOn 'initConfig', 'copyGenomicModel', 'copyMineProperties', 'createSoModel', 'parseProjectXml'
+            onlyIf {!new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
+
             MineDBConfig config = project.extensions.create('mineDBConfig', MineDBConfig)
 
             doLast {
@@ -48,7 +52,6 @@ class MineDataBasePlugin implements Plugin<Project> {
                         extraModelsEnd: config.extraModelsEnd)
             }
         }
-
     }
 
 
