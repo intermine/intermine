@@ -98,6 +98,19 @@ subprojects {
     if ((new File(srcDir)).exists()) {
         tasks.test.dependsOn 'buildDB'
     }
+<<<<<<< HEAD
+=======
+
+    tasks.withType(Test) {
+        scanForTestClasses = false
+        include '**/*Test.class'
+    }
+
+    test {
+        ignoreFailures = true
+        forkEvery = 1
+    }
+>>>>>>> upstream/gradle
 }
 
 task testReport(type: TestReport) {
