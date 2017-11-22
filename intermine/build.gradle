@@ -5,16 +5,13 @@ subprojects {
     apply plugin: "java"
     apply plugin: "maven"
 
-    test {
-        ignoreFailures = true
-    }
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
   
     repositories {
         mavenCentral()
         mavenLocal()
-  }
+    }
 
     if (it.name != 'intermine-resources') {
         dependencies {
@@ -31,9 +28,8 @@ subprojects {
         test.reports.html.enabled = false
     }
 
-    // Disable the test report for the individual test task
     test {
-        test.reports.html.enabled = false
+        ignoreFailures = true
     }
 }
 
