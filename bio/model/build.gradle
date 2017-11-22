@@ -38,7 +38,7 @@ dbConfig {
     soAdditionFilePath = "model/build/so_additions.xml"
 }
 
-task copyModelProperties(type: Copy) {
+task copyMineProperties(type: Copy) {
     from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
     into sourceSets.main.output.resourcesDir
 
