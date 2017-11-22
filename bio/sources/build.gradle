@@ -56,7 +56,7 @@ subprojects {
         defaultInterminePropertiesFile = "default.intermine.test.properties"
     }
 
-    task copyModelProperties(type: Copy) {
+    task copyMineProperties(type: Copy) {
         from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
         into sourceSets.main.output.resourcesDir
         rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
@@ -74,7 +74,7 @@ subprojects {
     }
 
     task mergeModels {
-        dependsOn 'copyBioGenomicModel', 'copyModelProperties'
+        dependsOn 'copyBioGenomicModel', 'copyMineProperties'
 
         doLast {
             def bioSourceAdditionsFile = project.name.minus("bio-source-") + "_additions.xml";
