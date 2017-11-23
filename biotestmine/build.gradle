@@ -3,7 +3,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath group: 'org.intermine', name: 'plugin', version: '1.0-SNAPSHOT'
+        classpath group: 'org.intermine', name: 'plugin', version: '1.+'
     }
 }
 

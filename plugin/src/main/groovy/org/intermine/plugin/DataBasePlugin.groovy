@@ -8,9 +8,9 @@ import org.gradle.api.tasks.util.PatternSet
 
 class DataBasePlugin implements Plugin<Project> {
     // TODO pass these into plugin
-    public final static String bioVersion = "2.0.0-SNAPSHOT"
-    public final static String antVersion = "2.0.0-SNAPSHOT"
-    public final static String imVersion = "2.0.0-SNAPSHOT"
+    public final static String bioVersion = "2.+"
+    public final static String antVersion = "2.+"
+    public final static String imVersion = "2.+"
     public final static String TASK_GROUP = "InterMine"
 
     DBConfig config;

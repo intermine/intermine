@@ -1,7 +1,5 @@
 subprojects {
     group = 'org.intermine'
-    version = '2.0.0-SNAPSHOT'
-
     apply plugin: "java"
     apply plugin: "maven"
 
@@ -28,8 +26,8 @@ task testReport(type: TestReport) {
 }
 
 ext {
-    imVersion = "2.0.0-SNAPSHOT"
-    antVersion = "2.0.0-SNAPSHOT"
+    imVersion = "2.+"
+    antVersion = "2.+"
 }
 
 task wrapper(type: Wrapper) {
