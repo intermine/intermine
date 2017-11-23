@@ -13,7 +13,7 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class WebAppPlugin implements Plugin<Project> {
-    public static final String imVersion = "2.0.0-SNAPSHOT"
+    public static final String imVersion = "2.+"
     public final static String TASK_GROUP = "InterMine"
 
     WebAppConfig config;

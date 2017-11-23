@@ -1,6 +1,6 @@
 ext {
-    imVersion = "2.0.0-SNAPSHOT"
-    bioVersion = "2.0.0-SNAPSHOT"
+    imVersion = "2.+"
+    bioVersion = "2.+"
 }
 
 buildscript {
@@ -14,7 +14,6 @@ buildscript {
 
 subprojects {
     group = 'org.intermine'
-    version = '2.0.0-SNAPSHOT'
 
     apply plugin: 'java'
     apply plugin: 'maven'

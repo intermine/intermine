@@ -8,7 +8,7 @@ import org.gradle.api.tasks.util.PatternSet
 
 class MineDataBasePlugin implements Plugin<Project> {
     //TODO investigate where to put common config?
-    String bioVersion = "2.0.0-SNAPSHOT"
+    String bioVersion = "2.+"
 
     void apply(Project project) {
         String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"

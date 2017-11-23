@@ -73,5 +73,16 @@ class DBUtils {
             }
         }
         ant.insertModel(osname: objectStoreName, modelName: modelName)
+
+        // analyse database. makes postgres smarter and faster
+        // "Accurate statistics will help the planner to choose the most appropriate query plan,
+        // and thereby improve the speed of query processing."
+        ant.taskdef(name: 'analyse', classname: 'org.intermine.task.AnalyseDbTask') {
+            classpath {
+                pathelement(path: project.configurations.getByName("compile").asPath)
+                dirset(dir: buildResourcesMainDir) // intermine.properties
+            }
+        }
+        ant.analyse(osname: objectStoreName, model: modelName)
     }
 }

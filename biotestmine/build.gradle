@@ -3,14 +3,14 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath group: 'org.intermine', name: 'plugin', version: '1.0-SNAPSHOT'
+        classpath group: 'org.intermine', name: 'plugin', version: '1.+'
     }
 }
 
 ext {
-    imVersion = "2.0.0-SNAPSHOT"
-    bioVersion = "2.0.0-SNAPSHOT"
-    antVersion = "2.0.0-SNAPSHOT"
+    imVersion = "2.+"
+    bioVersion = "2.+"
+    antVersion = "2.+"
     taskGroup = "InterMine"
 
     mineRelease = hasProperty('release') ? "." + release : ''
