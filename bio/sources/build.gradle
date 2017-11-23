@@ -8,12 +8,13 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath group: 'org.intermine', name: 'plugin', version: '1.0-SNAPSHOT'
+        classpath group: 'org.intermine', name: 'plugin', version: '1.+'
     }
 }
 
 subprojects {
     group = 'org.intermine'
+    version = '2.0.0'
 
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -52,7 +53,7 @@ subprojects {
     dbConfig {
         objectStoreName = "os.bio-test"
         modelName = "genomic"
-        defaultIntermineIntegratePropertiesFile = "default.intermine.test.properties"
+        defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
     }
 
     task copyMineProperties(type: Copy) {

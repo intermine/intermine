@@ -34,7 +34,7 @@ class WebAppPlugin implements Plugin<Project> {
             dbUtils = new DBUtils(project)
         }
 
-        project.task('copyDefaultProperties') {
+        project.task('copyDefaultInterMineProperties') {
             description "Copies default.intermine.properties file into resources output"
             dependsOn 'initConfig', 'processResources'
 
@@ -65,13 +65,14 @@ class WebAppPlugin implements Plugin<Project> {
         // We have no guarantee there will be a database. Hence the try/catch
         project.task('summariseObjectStore') {
             description "Summarise ObjectStore into objectstoresummary.properties file"
-            dependsOn 'initConfig', 'copyDefaultProperties', 'copyMineProperties'
+            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyMineProperties'
 
             doLast {
                 try {
                     def ant = new AntBuilder()
                     ant.taskdef(name: "summarizeObjectStore", classname: "org.intermine.task.SummariseObjectStoreTask") {
                         classpath {
+                            dirset(dir: project.getBuildDir().getAbsolutePath())
                             pathelement(path: project.configurations.getByName("compile").asPath)
                         }
                     }
@@ -98,7 +99,7 @@ class WebAppPlugin implements Plugin<Project> {
         project.task('loadDefaultTemplates') {
             group TASK_GROUP
             description "Loads default template queries from an XML file into a given user profile"
-            dependsOn 'copyMineProperties', 'copyDefaultProperties', 'jar'
+            dependsOn 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
             //jar dependency has been added in order to generate the dbmodel.jar (in case a clean task has been called)
             //to allow to read class_keys.properties file
 

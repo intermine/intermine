@@ -33,7 +33,7 @@ dependencies {
 dbConfig {
     objectStoreName = "os.bio-test"
     modelName = "genomic"
-    defaultIntermineIntegratePropertiesFile = "default.intermine.test.properties"
+    defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
     soTermListFilePath = "model/src/main/resources/so_term_list.txt"
     soAdditionFilePath = "model/build/so_additions.xml"
 }

@@ -45,19 +45,11 @@ class DataBasePlugin implements Plugin<Project> {
             }
         }
 
-        project.task('copyDefaultIntegrateProperties') {
+        project.task('copyDefaultInterMineProperties') {
             description "Copies default.intermine.integrate.properties file into resources output"
             dependsOn 'initConfig', 'processResources'
             doLast {
-                dbUtils.copyDefaultPropertiesFile(config.defaultIntermineIntegratePropertiesFile)
-            }
-        }
-
-        project.task('copyDefaultWebAppProperties') {
-            description "Copies default.intermine.webapp.properties file into resources output"
-            dependsOn 'initConfig', 'processResources'
-            doLast {
-                dbUtils.copyDefaultPropertiesFile(config.defaultIntermineWebAppPropertiesFile)
+                dbUtils.copyDefaultPropertiesFile(config.defaultInterminePropertiesFile)
             }
         }
 
@@ -107,7 +99,7 @@ class DataBasePlugin implements Plugin<Project> {
         project.task('buildDB') {
             group TASK_GROUP
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'copyDefaultIntegrateProperties', 'jar'
+            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar'
 
             doLast {
                 dbUtils.buildDB(config.objectStoreName, config.modelName)
@@ -131,7 +123,7 @@ class DataBasePlugin implements Plugin<Project> {
         project.task('buildUserDB') {
             group TASK_GROUP
             description "Build the user database for the webapp"
-            dependsOn 'initConfig', 'copyDefaultWebAppProperties', 'copyUserProfileModel', 'copyMineProperties', 'jar'
+            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyUserProfileModel', 'jar'
 
             doLast {
                 dbUtils.buildDB(config.userProfileObjectStoreName, config.userProfileModelName)

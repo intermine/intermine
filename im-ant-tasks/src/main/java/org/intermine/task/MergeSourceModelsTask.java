@@ -141,7 +141,7 @@ public class MergeSourceModelsTask extends Task
         if (MergeSourceModelsTask.class.getClassLoader().getResourceAsStream(additionsFile) != null) {
             pathsToMerge.add(additionsFile);
         } else {
-            throw new BuildException("failed to find in the classpath: " + additionsFile);
+            System.err.println("warning: " + additionsFile + " not found");
         }
     }
 

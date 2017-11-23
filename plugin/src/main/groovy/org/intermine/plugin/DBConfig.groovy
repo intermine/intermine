@@ -3,8 +3,7 @@ package org.intermine.plugin
 class DBConfig {
     String objectStoreName
     String modelName
-    String defaultIntermineIntegratePropertiesFile
-    String defaultIntermineWebAppPropertiesFile
+    String defaultInterminePropertiesFile
     String userProfileObjectStoreName
     String userProfileModelName
     String soTermListFilePath
