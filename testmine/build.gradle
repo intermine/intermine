@@ -1,5 +1,5 @@
 ext {
-    imVersion = "2.x"
+    imVersion = "2.+"
     taskGroup = "InterMine"
 }
 
