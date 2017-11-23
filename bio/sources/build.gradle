@@ -53,7 +53,7 @@ subprojects {
     dbConfig {
         objectStoreName = "os.bio-test"
         modelName = "genomic"
-        defaultInterminePropertiesFile = "default.intermine.test.properties"
+        defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
     }
 
     task copyMineProperties(type: Copy) {
