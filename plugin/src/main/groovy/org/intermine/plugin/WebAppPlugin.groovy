@@ -65,7 +65,7 @@ class WebAppPlugin implements Plugin<Project> {
         // We have no guarantee there will be a database. Hence the try/catch
         project.task('summariseObjectStore') {
             description "Summarise ObjectStore into objectstoresummary.properties file"
-            dependsOn 'initConfig', 'copyDefaultProperties'
+            dependsOn 'initConfig', 'copyDefaultProperties', 'copyMineProperties'
 
             doLast {
                 try {
