@@ -123,7 +123,7 @@ class DataBasePlugin implements Plugin<Project> {
         project.task('buildUserDB') {
             group TASK_GROUP
             description "Build the user database for the webapp"
-            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyUserProfileModel', 'copyMineProperties', 'jar'
+            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyUserProfileModel', 'jar'
 
             doLast {
                 dbUtils.buildDB(config.userProfileObjectStoreName, config.userProfileModelName)

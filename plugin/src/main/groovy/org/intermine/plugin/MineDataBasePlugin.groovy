@@ -37,7 +37,6 @@ class MineDataBasePlugin implements Plugin<Project> {
                 String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
                 def ant = new AntBuilder()
 
-
                 String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
                 ant.taskdef(name: "mergeSourceModels", classname: "org.intermine.task.MergeSourceModelsTask") {
                     classpath {

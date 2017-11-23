@@ -72,6 +72,7 @@ class WebAppPlugin implements Plugin<Project> {
                     def ant = new AntBuilder()
                     ant.taskdef(name: "summarizeObjectStore", classname: "org.intermine.task.SummariseObjectStoreTask") {
                         classpath {
+                            dirset(dir: project.getBuildDir().getAbsolutePath())
                             pathelement(path: project.configurations.getByName("compile").asPath)
                         }
                     }
