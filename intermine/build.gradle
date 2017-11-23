@@ -1,17 +1,57 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "net.researchgate:gradle-release:2.6.0"
+    }
+}
+
 subprojects {
     group = 'org.intermine'
-    version = '2.0.0-SNAPSHOT'
-
+    apply plugin: 'net.researchgate.release'
     apply plugin: "java"
     apply plugin: "maven"
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
-  
+
     repositories {
         mavenCentral()
         mavenLocal()
     }
+
+    release {
+        failOnCommitNeeded = true
+        failOnPublishNeeded = true
+        failOnSnapshotDependencies = true
+        failOnUnversionedFiles = true
+        failOnUpdateNeeded = true
+        revertOnFail = true
+        preCommitText = ''
+        preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
+        tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
+        newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
+        version =  "${project.name}-2.0.0"
+        tagTemplate = '${version}'
+        versionPropertyFile = 'gradle.properties'
+        versionProperties = []
+        buildTasks = ['build']
+//    versionPatterns = [
+//            /(\d+)([^\d]*$)/: { Matcher m, Project p -> m.replaceAll("${(m[0][1] as int) + 1}${m[0][2]}") }
+//    ]
+
+        git {
+            requireBranch = 'gradle'
+            pushToRemote = 'origin'
+            pushToBranchPrefix = ''
+            commitVersionFileOnly = false
+            signTag = false
+        }
+    }
+
 
     if (it.name != 'intermine-resources') {
         dependencies {
@@ -46,6 +86,4 @@ ext {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.1'
 }
-
-
 
