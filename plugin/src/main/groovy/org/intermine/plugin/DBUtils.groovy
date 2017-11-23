@@ -85,13 +85,12 @@ class DBUtils {
         }
         ant.analyse(osname: objectStoreName, model: modelName)
 
-        // create indexes but only on primary keys
         ant.taskdef(name: 'createIndexes', classname: 'org.intermine.task.CreateIndexesTask') {
             classpath {
                 pathelement(path: project.configurations.getByName("compile").asPath)
                 dirset(dir: buildResourcesMainDir) // intermine.properties
             }
         }
-        ant.createIndexes(alias: objectStoreName)
+        ant.createIndexes(alias: objectStoreName, attributeIndexes: true)
     }
 }
