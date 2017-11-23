@@ -31,7 +31,7 @@ ext {
     // NO PROPERTY FILE -- use the default
     if( !file(minePropertyFile).exists() ) {
         localMinePropertyFile = false
-        minePropertyFile = "$project.rootDir/testresources/src/test/resources/testmodel.properties"
+        minePropertyFile = "$project.rootDir/testresources/src/test/resources/intermine-test.properties"
     }
 }
 

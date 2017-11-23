@@ -61,7 +61,7 @@ processResources {
 task copyDefaultProperties(type: Copy) {
     description "Copies default.intermine.properties file (from resources project) into resources output to be included in the war"
     from({ zipTree(configurations.commonResources.singleFile) }) {
-        include "default.intermine.properties"
+        include "default.intermine.test.properties"
     }
     into sourceSets.main.output.resourcesDir
 }
