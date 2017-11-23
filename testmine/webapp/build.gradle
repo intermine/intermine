@@ -64,6 +64,7 @@ task copyDefaultProperties(type: Copy) {
         include "default.intermine.test.properties"
     }
     into sourceSets.main.output.resourcesDir
+    rename { fileName -> fileName.replace("default.intermine.test.properties", "default.intermine.properties") }
 }
 
 task copyModelProperties(type: Copy) {
