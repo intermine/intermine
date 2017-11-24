@@ -7,14 +7,12 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 
 class DataBasePlugin implements Plugin<Project> {
-    // TODO pass these into plugin
-    public final static String bioVersion = "2.+"
-    public final static String antVersion = "2.+"
-    public final static String imVersion = "2.+"
+
     public final static String TASK_GROUP = "InterMine"
 
-    DBConfig config;
+    DBConfig config
     DBUtils dbUtils
+    VersionConfig versionConfig
     String buildResourcesMainDir
     boolean regenerateModel = true
 
@@ -27,17 +25,18 @@ class DataBasePlugin implements Plugin<Project> {
             api
         }
 
+        versionConfig = project.extensions.create('versionConfig', VersionConfig)
+
         project.dependencies {
-            bioCore group : "org.intermine", name: "bio-core", version: bioVersion, transitive: false
-            mergeSource group : "org.intermine", name: "ant-tasks", version: antVersion
-            commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
-            api group: "org.intermine", name: "intermine-api", version: imVersion, transitive: false
+            bioCore group : "org.intermine", name: "bio-core", version: versionConfig.bioVersion, transitive: false
+            mergeSource group : "org.intermine", name: "ant-tasks", version: versionConfig.antVersion
+            commonResources group: "org.intermine", name: "intermine-resources", version: versionConfig.imVersion
+            api group: "org.intermine", name: "intermine-api", version: versionConfig.imVersion, transitive: false
         }
 
         project.task('initConfig') {
             config = project.extensions.create('dbConfig', DBConfig)
             dbUtils = new DBUtils(project)
-
             SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
             buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
             if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {

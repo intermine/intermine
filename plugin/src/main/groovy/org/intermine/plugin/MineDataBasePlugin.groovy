@@ -7,11 +7,12 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 
 class MineDataBasePlugin implements Plugin<Project> {
-    //TODO investigate where to put common config?
-    String bioVersion = "2.+"
+
+    VersionConfig mineVersionConfig
 
     void apply(Project project) {
         String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
+        mineVersionConfig = project.extensions.create('mineVersionConfig', VersionConfig)
 
         project.task('parseProjectXml') {
             description "Parse the project XML file and add associated datasource dependencies"
@@ -20,7 +21,7 @@ class MineDataBasePlugin implements Plugin<Project> {
             doLast {
                 def projectXml = (new XmlParser()).parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
-                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@type'}", version: bioVersion])
+                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@type'}", version: mineVersionConfig.bioVersion])
                 }
             }
         }
