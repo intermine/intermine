@@ -60,7 +60,6 @@ subprojects {
         from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
         into sourceSets.main.output.resourcesDir
         rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
-
         inputs.sourceFiles.stopExecutionIfEmpty()
     }
 
@@ -73,9 +72,14 @@ subprojects {
         into sourceSets.main.output.resourcesDir
     }
 
+    task copySourceProperties(type: Copy) {
+        from  project.name.minus("bio-source-") + ".properties"
+        into sourceSets.main.output.resourcesDir
+        inputs.sourceFiles.stopExecutionIfEmpty()
+    }
+
     task mergeModels {
         dependsOn 'copyBioGenomicModel', 'copyMineProperties'
-
         doLast {
             def bioSourceAdditionsFile = project.name.minus("bio-source-") + "_additions.xml";
             if ((new File("$sourceSets.main.output.resourcesDir/" + bioSourceAdditionsFile)).exists()) {
@@ -91,7 +95,10 @@ subprojects {
         }
     }
     
-    jar {exclude "intermine.properties"}
+    jar {
+        exclude "intermine.properties"
+        dependsOn 'copySourceProperties'
+    }
 
     //only buildDB if there are tests to run
     def srcDir = "$project.projectDir" + "/src/test"
