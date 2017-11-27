@@ -10,8 +10,6 @@ package org.intermine.sql.writebatch;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
