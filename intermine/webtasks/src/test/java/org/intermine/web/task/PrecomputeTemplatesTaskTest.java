@@ -52,7 +52,7 @@ public class PrecomputeTemplatesTaskTest extends TestCase
     // test that correct query and list of indexes generate for pre-computing
     public void testPrecomputeTemplate() throws Exception {
         InputStream webProps = PrecomputeTemplatesTask.class
-            .getClassLoader().getResourceAsStream("WEB-INF/web.properties");
+            .getClassLoader().getResourceAsStream("web.properties");
         Properties properties = new Properties();
         properties.load(webProps);
         String user = properties.getProperty("superuser.account");

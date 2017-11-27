@@ -65,7 +65,7 @@ subprojects {
     tasks.withType(Test) {
         scanForTestClasses = false
         include '**/*Test.class'
-        test.reports.html.enabled = false
+        test.reports.html.enabled = true
     }
 
     test {
