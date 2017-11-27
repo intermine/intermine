@@ -43,7 +43,6 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.50'
     compile files('libs/stringtree-json-2.0.5.jar')
-    testCompile project(path: ':intermine-resources')
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
     testCompile project(':intermine-objectstore').sourceSets.test.output
     testCompile project(':intermine-api').sourceSets.test.output
