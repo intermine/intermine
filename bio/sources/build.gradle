@@ -103,7 +103,7 @@ subprojects {
     //only buildDB if there are tests to run
     def srcDir = "$project.projectDir" + "/src/test"
     if ((new File(srcDir)).exists()) {
-        tasks.test.dependsOn 'buildDB'
+        tasks.test.dependsOn 'buildUnitTestDB'
     }
 
     tasks.withType(Test) {
