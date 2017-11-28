@@ -37,10 +37,8 @@ class DBUtils {
         ant.modelOutputTask(model: modelName, destDir: destination, type: "java")
     }
 
-    protected buildDB = { objectStoreName, modelName ->
+    protected createSchema = { objectStoreName, modelName ->
         def ant = new AntBuilder()
-
-        //create schema file
         String schemaFile = objectStoreName + "-schema.xml"
         String destination = project.getBuildDir().getAbsolutePath() + File.separator + schemaFile
         ant.taskdef(name: "torque", classname: "org.intermine.objectstore.intermine.TorqueModelOutputTask") {
@@ -51,8 +49,11 @@ class DBUtils {
             }
         }
         ant.torque(osname: objectStoreName, destFile: destination)
+    }
 
-        //create db tables
+    protected createTables = { objectStoreName, modelName ->
+        def ant = new AntBuilder()
+        String schemaFile = objectStoreName + "-schema.xml"
         String tempDirectory = project.getBuildDir().getAbsolutePath() + File.separator + "tmp"
         ant.taskdef(name: "buildDB", classname: "org.intermine.task.BuildDbTask") {
             classpath {
@@ -61,10 +62,11 @@ class DBUtils {
                 pathelement(path: project.configurations.getByName("compile").asPath)
             }
         }
-        ant.buildDB(osname: objectStoreName, model: modelName,
-                schemafile: schemaFile, tempDir: tempDirectory)
+        ant.buildDB(osname: objectStoreName, model: modelName, schemafile: schemaFile, tempDir: tempDirectory)
+    }
 
-        //store metadata into db
+    protected storeMetadata = { objectStoreName, modelName ->
+        def ant = new AntBuilder()
         ant.taskdef(name: 'insertModel', classname: 'org.intermine.task.StoreMetadataTask') {
             classpath {
                 pathelement(path: project.configurations.getByName("compile").asPath)
@@ -73,7 +75,10 @@ class DBUtils {
             }
         }
         ant.insertModel(osname: objectStoreName, modelName: modelName)
+    }
 
+    protected analyse = { objectStoreName, modelName ->
+        def ant = new AntBuilder()
         // analyse database. makes postgres smarter and faster. autovacuum = FALSE
         // "Accurate statistics will help the planner to choose the most appropriate query plan,
         // and thereby improve the speed of query processing."
@@ -84,6 +89,10 @@ class DBUtils {
             }
         }
         ant.analyse(osname: objectStoreName, model: modelName)
+    }
+
+    protected createIndexes = { objectStoreName, modelName ->
+        def ant = new AntBuilder()
 
         ant.taskdef(name: 'createIndexes', classname: 'org.intermine.task.CreateIndexesTask') {
             classpath {
@@ -93,4 +102,5 @@ class DBUtils {
         }
         ant.createIndexes(alias: objectStoreName, attributeIndexes: true)
     }
+
 }

@@ -40,22 +40,29 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
-
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Test;
+import static org.junit.Assert.* ;
 /**
  * Tests for {@link FlyBaseUTRFastaLoaderTask}
  * @author Kim Rutherford
  */
-public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
+public class FlyBaseUTRFastaLoaderTaskTest {
 
-    private ObjectStoreWriter osw;
+    private static ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(FlyBaseUTRFastaLoaderTaskTest.class);
     private String dataSetTitle = "utr test title";
 
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
     }
 
+    @Test
     public void testFasta5PrimeLoad() throws Exception {
         executeLoaderTask("org.intermine.model.bio.FivePrimeUTR",
                           "dmel-all-five_prime_UTR.fasta");
@@ -106,6 +113,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         assertEquals(5, r.size());
     }
 
+    @Test
     public void testFasta3PrimeLoad() throws Exception {
         executeLoaderTask("org.intermine.model.bio.ThreePrimeUTR",
                           "dmel-all-three_prime_UTR.fasta");
@@ -154,9 +162,6 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         assertEquals(2, r.size());
     }
 
-    /**
-     * @throws IOException
-     */
     private void executeLoaderTask(String className, String utrFastaFile) throws Exception {
         FastaLoaderTask flt = new FlyBaseUTRFastaLoaderTask();
         flt.setFastaTaxonId("36329");
@@ -190,9 +195,6 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         flt.close();
     }
 
-    /**
-     * @return
-     */
     private Results getResults() {
         //Check the results to see if we have some data...
         ObjectStore os = osw.getObjectStore();
@@ -214,6 +216,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         return r;
     }
 
+    @After
     public void tearDown() throws Exception {
         LOG.info("in tear down");
         if (osw.isInTransaction()) {
@@ -234,6 +237,11 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         }
         osw.commitTransaction();
         LOG.info("committed transaction");
+    }
+
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
         osw.close();
         LOG.info("closed objectstore");
     }

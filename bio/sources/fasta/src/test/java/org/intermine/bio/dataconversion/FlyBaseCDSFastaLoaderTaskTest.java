@@ -42,22 +42,27 @@ import java.io.InputStreamReader;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+import static org.junit.Assert.* ;
 /**
  * Tests for {@link FlyBaseCDSFastaLoaderTask}
  * @author Kim Rutherford
  */
-public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
+public class FlyBaseCDSFastaLoaderTaskTest {
 
     private ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(FlyBaseCDSFastaLoaderTaskTest.class);
     private String dataSetTitle = "cds test title";
 
+    @Before
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
     }
 
+    @Test
     public void testFastaCDSLoad() throws Exception {
         executeLoaderTask("org.intermine.model.bio.CDS",
                           "dmel-all-CDS.fasta");
@@ -104,9 +109,6 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         assertEquals(3, r.size());
     }
 
-    /**
-     * @throws IOException
-     */
     private void executeLoaderTask(String className, String cdsFastaFile) throws Exception {
         FastaLoaderTask flt = new FlyBaseCDSFastaLoaderTask();
         flt.setFastaTaxonId("36329");
@@ -140,9 +142,6 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         flt.close();
     }
 
-    /**
-     * @return
-     */
     private Results getResults() {
         //Check the results to see if we have some data...
         ObjectStore os = osw.getObjectStore();
@@ -164,6 +163,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         return r;
     }
 
+    @After
     public void tearDown() throws Exception {
         LOG.info("in tear down");
         if (osw.isInTransaction()) {

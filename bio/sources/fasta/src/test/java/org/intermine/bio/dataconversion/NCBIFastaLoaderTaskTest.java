@@ -39,23 +39,28 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+import static org.junit.Assert.* ;
 
 /**
  * Tests for {@link NCBIFastaLoaderTask}
  * @author Kim Rutherford
  */
-public class NCBIFastaLoaderTaskTest extends TestCase {
+public class NCBIFastaLoaderTaskTest {
 
     private ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTaskTest.class);
     private String dataSetTitle = "ncbi test title";
 
-    @Override
+    @Before
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
     }
 
+    @Test
     public void testNcbiFasta() throws Exception {
         executeLoaderTask("org.intermine.model.bio.Chromosome", "test.fa");
 
@@ -86,9 +91,6 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         assertEquals(expMap, actMap);
     }
 
-    /**
-     * @throws IOException
-     */
     private void executeLoaderTask(String className, String fastaFile) throws Exception {
         FastaLoaderTask flt = new NCBIFastaLoaderTask();
         flt.setFastaTaxonId("9606");
@@ -114,9 +116,6 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         flt.close();
     }
 
-    /**
-     * @return
-     */
     private Results getResults() {
         //Check the results to see if we have some data...
         ObjectStore os = osw.getObjectStore();
@@ -138,7 +137,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         return r;
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
         LOG.info("in tear down");
         if (osw.isInTransaction()) {

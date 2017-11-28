@@ -101,7 +101,23 @@ class DataBasePlugin implements Plugin<Project> {
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar'
 
             doLast {
-                dbUtils.buildDB(config.objectStoreName, config.modelName)
+                dbUtils.createSchema(config.objectStoreName, config.modelName)
+                dbUtils.createTables(config.objectStoreName, config.modelName)
+                dbUtils.storeMetadata(config.objectStoreName, config.modelName)
+                dbUtils.createIndexes(config.objectStoreName, config.modelName)
+                dbUtils.analyse(config.objectStoreName, config.modelName)
+            }
+        }
+
+        project.task('buildUnitTestDB') {
+            group TASK_GROUP
+            description "Build the database for the webapp"
+            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar'
+
+            doLast {
+                dbUtils.createSchema(config.objectStoreName, config.modelName)
+                dbUtils.createTables(config.objectStoreName, config.modelName)
+                dbUtils.storeMetadata(config.objectStoreName, config.modelName)
             }
         }
 

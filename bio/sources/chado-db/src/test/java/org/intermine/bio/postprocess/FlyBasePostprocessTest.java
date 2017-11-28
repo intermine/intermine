@@ -31,23 +31,29 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Test;
+import static org.junit.Assert.* ;
 
 /**
  * @author Julie Sullivan
- *
  */
-public class FlyBasePostprocessTest extends XMLTestCase{
+public class FlyBasePostprocessTest {
 
-   private ObjectStoreWriter osw;
+   private static ObjectStoreWriter osw;
 
-   public void setUp() throws Exception {
-       super.setUp();
+   @BeforeClass
+   public static void setUp() throws Exception {
        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
        osw.getObjectStore().flushObjectById();
        setUpData();
    }
 
-   public void tearDown() throws Exception {
+   @AfterClass
+   public static void tearDown() throws Exception {
        Query q = new Query();
        QueryClass qc = new QueryClass(InterMineObject.class);
        q.addFrom(qc);
@@ -64,6 +70,7 @@ public class FlyBasePostprocessTest extends XMLTestCase{
        osw.close();
    }
 
+   @Test
    public void testPostProcess() throws Exception {
        FlyBasePostProcess fb = new FlyBasePostProcess(osw);
        fb.postProcess();
@@ -76,7 +83,7 @@ public class FlyBasePostprocessTest extends XMLTestCase{
 
 
    // Store a gene with two protein, each protein has a GO term
-   private void setUpData() throws Exception {
+   private static void setUpData() throws Exception {
        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
 
        Transcript transcript1 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));

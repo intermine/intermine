@@ -38,21 +38,27 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+import static org.junit.Assert.* ;
 
 import org.apache.log4j.Logger;
-public class UniProtFastaLoaderTaskTest extends TestCase
-{
+
+public class UniProtFastaLoaderTaskTest {
+
     private ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(UniProtFastaLoaderTaskTest.class);
     private String dataSetTitle = "uniprot fasta test title";
     private final String dataSourceName = "test-source";
 
+    @Before
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
     }
 
-
+    @Test
     public void testFastaLoad() throws Exception {
         UniProtFastaLoaderTask flt = new UniProtFastaLoaderTask();
         flt.setFastaTaxonId("7227");
@@ -132,6 +138,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
                      + "SPLFTTSATTGPHVESTRVVLGEDTPGFSGHGEIISTQTGGGGGGI", protein.getSequence().getResidues().toString());
     }
 
+    @After
     public void tearDown() throws Exception {
         LOG.info("in tear down");
         if (osw.isInTransaction()) {
@@ -155,6 +162,4 @@ public class UniProtFastaLoaderTaskTest extends TestCase
         osw.close();
         LOG.info("closed objectstore");
     }
-
-
 }
