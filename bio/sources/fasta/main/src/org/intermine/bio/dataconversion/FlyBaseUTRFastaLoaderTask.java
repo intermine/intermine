@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.biojava3.core.sequence.ProteinSequence;
 import org.intermine.metadata.Model;
@@ -52,7 +50,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         throws ObjectStoreException {
         String header = bioJavaSequence.getOriginalHeader();
         // I don't know why this isn't working - bioJavaSequence.getAccession().getID();
-        String mrnaIdentifier = header.substring(0, 11); 
+        String mrnaIdentifier = header.substring(0, 11);
         ObjectStore os = getIntegrationWriter().getObjectStore();
         Model model = os.getModel();
         if (model.hasClassDescriptor(model.getPackageName() + ".UTR")) {
@@ -68,7 +66,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                 Set<? extends InterMineObject> mrnas = new HashSet(Collections.singleton(mrna));
                 bioEntity.setFieldValue("transcripts", mrnas);
             }
-            
+
             Location loc = getLocationFromHeader(header, (SequenceFeature) bioEntity,
                     organism);
             getDirectDataLoader().store(loc);

@@ -209,7 +209,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     @Override
     public void processFile(File file) {
         try {
-           Map<String, ProteinSequence> a = FastaReaderHelper.readFastaProteinSequence(file);
+            Map<String, ProteinSequence> a = FastaReaderHelper.readFastaProteinSequence(file);
             //FastaReaderHelper.readFastaDNASequence for DNA sequences
 
             for (Map.Entry<String, ProteinSequence> entry : a.entrySet() ) {
@@ -231,7 +231,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     /**
      * Get and store() the Organism object to reference when creating new objects.
-     * @param bioJavaSequence the biojava sequence to be parsed
      * @throws ObjectStoreException if there is a problem
      * @return the new Organism
      */
@@ -244,6 +243,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         return org;
     }
 
+    /**
+    * Get and store() the Organism object to reference when creating new objects.
+    * @param bioJavaSequence the biojava sequence to be parsed
+    * @throws ObjectStoreException if there is a problem
+    * @return the new Organism
+    */
     protected Organism getOrganism(ProteinSequence bioJavaSequence) throws ObjectStoreException {
         if (org == null) {
             org = getDirectDataLoader().createObject(Organism.class);

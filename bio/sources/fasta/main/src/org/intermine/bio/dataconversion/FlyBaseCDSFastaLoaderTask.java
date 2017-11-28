@@ -71,7 +71,7 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      */
     @Override
     protected String getIdentifier(ProteinSequence bioJavaSequence) {
-        String header = bioJavaSequence.getOriginalHeader();        
+        String header = bioJavaSequence.getOriginalHeader();
         final String regexp = ".*FlyBase_Annotation_IDs:([^, =;]+).*";
         Pattern p = Pattern.compile(regexp);
         Matcher m = p.matcher(header);
