@@ -10,20 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
@@ -39,6 +25,20 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 /**
  * DataConverter to parse UniProt data into items.  Improved version of UniProtConverter.
  *
@@ -62,7 +62,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> goterms = new HashMap<String, String>();
     private Map<String, String> goEvidenceCodes = new HashMap<String, String>();
     private Map<String, String> ecNumbers = new HashMap<String, String>();
-    private Map<String, String> proteins = new HashMap<String, String>();
+    private Map<String, String> proteins = new LinkedHashMap<String, String>();
     private static final int POSTGRES_INDEX_SIZE = 2712;
 
     // don't allow duplicate identifiers
@@ -583,7 +583,7 @@ public class UniprotConverter extends BioDirectoryConverter
             } else if ("entry".equals(qName)) {
                 try {
                     processCommentEvidence(entry);
-                    Set<UniprotEntry> isoforms = processEntry(entry);
+                    List<UniprotEntry> isoforms = processEntry(entry);
                     if (isoforms != null) {
                         for (UniprotEntry isoform : isoforms) {
                             processEntry(isoform);
@@ -634,13 +634,13 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
 
-        private Set<UniprotEntry> processEntry(UniprotEntry uniprotEntry)
+        private List<UniprotEntry> processEntry(UniprotEntry uniprotEntry)
             throws SAXException, ObjectStoreException {
             entryCount++;
             if (entryCount % 10000 == 0) {
                 LOG.info("Processed " + entryCount + " entries.");
             }
-            Set<UniprotEntry> isoforms = new HashSet<UniprotEntry>();
+            List<UniprotEntry> isoforms = new ArrayList<UniprotEntry>();
             // have we already seen a protein for this organism with the same sequence?
             if (!uniprotEntry.isIsoform() && !allowduplicates
                     && seenSequence(uniprotEntry.getTaxonId(), uniprotEntry.getMd5checksum())) {
@@ -660,7 +660,7 @@ public class UniprotConverter extends BioDirectoryConverter
                     && !uniprotEntry.isDuplicate()) {
 
                 if (!loadfragments && "true".equalsIgnoreCase(uniprotEntry.isFragment())) {
-                    return Collections.emptySet();
+                    return Collections.emptyList();
                 }
 
                 setDataSet(uniprotEntry.getDatasetRefId());
