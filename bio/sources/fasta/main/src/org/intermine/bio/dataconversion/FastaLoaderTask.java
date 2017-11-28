@@ -244,16 +244,25 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         return org;
     }
 
+    protected Organism getOrganism(ProteinSequence bioJavaSequence) throws ObjectStoreException {
+        if (org == null) {
+            org = getDirectDataLoader().createObject(Organism.class);
+            org.setTaxonId(new Integer(fastaTaxonId));
+            getDirectDataLoader().store(org);
+        }
+        return org;
+    }
+
+
     /**
      * Create a FlyMine Sequence and an object of type className for the given BioJava Sequence.
      * @param organism the Organism to reference from new objects
      * @param bioJavaSequence the Sequence object
      * @throws ObjectStoreException if store() fails
      */
-    private void processSequence(ProteinSequence sequence)
+    private void processSequence(ProteinSequence bioJavaSequence)
         throws ObjectStoreException {
-
-        Organism organism = getOrganism();
+        Organism organism = getOrganism(bioJavaSequence);
         // some fasta files are not filtered - they contain sequences from organisms not
         // specified in project.xml
         if (organism == null) {
@@ -262,11 +271,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         org.intermine.model.bio.Sequence flymineSequence = getDirectDataLoader().createObject(
                 org.intermine.model.bio.Sequence.class);
 
-        String residues = sequence.getSequenceAsString();
+        String residues = bioJavaSequence.getSequenceAsString();
         String md5checksum = Util.getMd5checksum(residues);
         flymineSequence.setResidues(new PendingClob(residues));
         flymineSequence.setLength(residues.length());
         flymineSequence.setMd5checksum(md5checksum);
+
         Class<? extends InterMineObject> imClass;
         Class<?> c;
         try {
@@ -283,8 +293,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
 
-        String attributeValue = getIdentifier(sequence);
-
+        String attributeValue = getIdentifier(bioJavaSequence);
         try {
             imo.setFieldValue(classAttribute, attributeValue);
         } catch (Exception e) {
@@ -312,7 +321,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             // Ignore - we don't care if the field doesn't exist.
         }
 
-        extraProcessing(sequence, flymineSequence, imo, organism, getDataSet());
+        extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSet());
 
         if (StringUtils.isEmpty(dataSetTitle)) {
             throw new RuntimeException("DataSet title (fasta.dataSetTitle) not set");

@@ -81,6 +81,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
         files[0].deleteOnExit();
         flt.setFileArray(files);
         flt.execute();
+        flt.close();
 
         //Check the results to see if we have some data...
         ObjectStore os = osw.getObjectStore();
@@ -97,17 +98,13 @@ public class UniProtFastaLoaderTaskTest extends TestCase
         ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS, seqQueryClass);
 
         q.setConstraint(cc);
-
         Results r = os.execute(q);
-
         assertEquals(1, r.size());
 
         Protein protein = (Protein) ((List) r.get(0)).get(0);
-
         assertEquals("Q9V8R9-2", protein.getPrimaryAccession());
 
         "7227".equals(protein.getOrganism().getTaxonId());
-
         DataSet dataSet = protein.getDataSets().iterator().next();
         assertEquals(dataSetTitle, dataSet.getName());
         assertEquals(dataSourceName, dataSet.getDataSource().getName());
@@ -128,7 +125,8 @@ public class UniProtFastaLoaderTaskTest extends TestCase
                      + "PITRQQFFDGVKHISKGALRRDSEGSSDDDMTAQYGADQVNEILIGSPAGQAGGKLGKPV"
                      + "STPTVVKTTTKQVLTKNIDGVTHNVEEEVRNLGTGEVTYSTQEHKADATPTDLSGAYVTA"
                      + "TAVTTRTATTHEDLGKNAKTEQLEEKTVATTRTHDPNKQQQRVVTQEVKTTATVTSGDQK"
-                     + "SPLFTTSATTGPHVESTRVVLGEDTPGFSGHGEIISTQTGGGGGGI", protein.getSequence().getResidues().toString());
+                     + "SPLFTTSATTGPHVESTRVVLGEDTPGFSGHGEIISTQTGGGGGGI",
+                     protein.getSequence().getResidues().toString());
     }
 
     public void tearDown() throws Exception {
@@ -154,6 +152,5 @@ public class UniProtFastaLoaderTaskTest extends TestCase
         osw.close();
         LOG.info("closed objectstore");
     }
-
 
 }
