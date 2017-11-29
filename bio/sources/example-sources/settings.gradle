@@ -1,0 +1,12 @@
+rootProject.name = 'bio-example-sources'
+
+include ':bio-source-kegg',
+':bio-source-identifiers',
+':bio-source-malaria-gff'
+
+
+project(':bio-source-kegg').projectDir = new File(settingsDir, './kegg-example')
+project(':bio-source-identifiers').projectDir = new File(settingsDir, './kegg-identifiers')
+project(':bio-source-malaria-gff').projectDir = new File(settingsDir, './malaria-gff')
+
+

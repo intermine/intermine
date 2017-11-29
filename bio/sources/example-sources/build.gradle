@@ -1,0 +1,29 @@
+ext {
+    imVersion = "2.+"
+    bioVersion = "2.+"
+}
+
+subprojects {
+    group = 'org.intermine'
+    version = '2.0.0'
+
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    configurations {
+        bioModel
+        mergeModel
+    }
+    
+    dependencies {
+        compile group: 'org.intermine', name: 'bio-core', version: bioVersion
+    }
+}
