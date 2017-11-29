@@ -1,5 +1,6 @@
 apply plugin: 'database'
 apply plugin: 'minedb'
+apply plugin: 'integration'
 
 sourceSets {
     main {
@@ -18,6 +19,7 @@ configurations {
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
+    compile group: "org.intermine", name: "intermine-integrate", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
