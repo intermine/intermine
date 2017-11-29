@@ -1,4 +1,4 @@
-package org.intermine.plugin
+package org.intermine.plugin.dbmodel
 
 class DBConfig {
     String objectStoreName

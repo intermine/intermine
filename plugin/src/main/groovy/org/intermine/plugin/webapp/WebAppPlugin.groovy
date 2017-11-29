@@ -1,14 +1,10 @@
-package org.intermine.plugin
+package org.intermine.plugin.webapp
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.CopySpec
-import org.gradle.api.file.FileTree
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.api.tasks.util.PatternSet
+import org.intermine.plugin.dbmodel.DBUtils
 
-import java.nio.file.CopyOption
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 

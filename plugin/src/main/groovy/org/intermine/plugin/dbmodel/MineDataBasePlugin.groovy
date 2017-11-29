@@ -1,10 +1,8 @@
-package org.intermine.plugin
+package org.intermine.plugin.dbmodel
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.api.tasks.util.PatternSet
 
 class MineDataBasePlugin implements Plugin<Project> {
     //TODO investigate where to put common config?

@@ -1,4 +1,4 @@
-package org.intermine.plugin
+package org.intermine.plugin.dbmodel
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -46,7 +46,7 @@ class DataBasePlugin implements Plugin<Project> {
         }
 
         project.task('copyDefaultInterMineProperties') {
-            description "Copies default.intermine.integrate.properties file into resources output"
+            description "Copies default.intermine.integration.properties file into resources output"
             dependsOn 'initConfig', 'processResources'
             doLast {
                 dbUtils.copyDefaultPropertiesFile(config.defaultInterminePropertiesFile)

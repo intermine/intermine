@@ -1,4 +1,4 @@
-package org.intermine.plugin
+package org.intermine.plugin.dbmodel
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

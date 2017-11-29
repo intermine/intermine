@@ -1,4 +1,4 @@
-package org.intermine.plugin
+package org.intermine.plugin.webapp
 
 class WebAppConfig {
     String mineName
