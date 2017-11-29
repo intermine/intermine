@@ -35,7 +35,7 @@ subprojects {
         tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
         newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
         version =  "2.0.0"
-        tagTemplate = '${version}'
+        tagTemplate = '${project.name}-${version}'
         versionPropertyFile = 'gradle.properties'
         versionProperties = []
         buildTasks = ['build']
@@ -57,15 +57,15 @@ subprojects {
         dependencies {
             compile group: 'ant', name: 'ant', version: '1.6.5'
             compile group: 'log4j', name: 'log4j', version: '1.2.17'
-            compile group: 'antlr', name:'antlr', version: '2.7.7'
             testCompile group: 'junit', name: 'junit', version: '4.8.2'
+            compile fileTree(dir: 'libs', include: '*.jar') // we need to update antlr
         }
     }
 
     tasks.withType(Test) {
         scanForTestClasses = false
         include '**/*Test.class'
-        test.reports.html.enabled = false
+        test.reports.html.enabled = true
     }
 
     test {

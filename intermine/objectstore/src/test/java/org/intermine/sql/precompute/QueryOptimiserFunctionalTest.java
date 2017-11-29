@@ -28,6 +28,7 @@ import org.intermine.sql.query.*;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.metadata.StringUtil;
+import org.postgresql.util.PSQLException;
 
 import org.apache.log4j.Logger;
 
@@ -223,8 +224,9 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
                 stmt.execute("DROP TABLE IF EXISTS " + precompTableName);
                 System.out.println("Dropped table " + precompTableName);
             }
-
             con.commit();
+        } catch (PSQLException e) {
+            // ignore
         } finally {
             con.close();
         }

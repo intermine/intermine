@@ -9,20 +9,21 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class WebAppPlugin implements Plugin<Project> {
-    public static final String imVersion = "2.+"
     public final static String TASK_GROUP = "InterMine"
 
     WebAppConfig config;
     DBUtils dbUtils
-
+    VersionConfig webappVersionConfig
 
     void apply(Project project) {
         project.configurations {
             commonResources
         }
 
+        webappVersionConfig = project.extensions.create('webappVersionConfig', VersionConfig)
+
         project.dependencies {
-            commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
+            commonResources group: "org.intermine", name: "intermine-resources", version: webappVersionConfig.imVersion
         }
 
         project.task('initConfig') {

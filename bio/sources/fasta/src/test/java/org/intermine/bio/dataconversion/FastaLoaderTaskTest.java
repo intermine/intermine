@@ -41,18 +41,24 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 
-public class FastaLoaderTaskTest extends TestCase {
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+import static org.junit.Assert.* ;
+
+public class FastaLoaderTaskTest {
 
     private ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(FastaLoaderTaskTest.class);
     private String dataSetTitle = "fasta test title";
 
-    @Override
+    @Before
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
     }
 
+    @Test
     public void testFastaLoad() throws Exception {
         FastaLoaderTask flt = new FastaLoaderTask();
         flt.setFastaTaxonId("36329");
@@ -105,6 +111,7 @@ public class FastaLoaderTaskTest extends TestCase {
         assertEquals(2, r.size());
     }
 
+    @Test
     public void testProteinFastaLoad() throws Exception {
         FastaLoaderTask flt = new FastaLoaderTask();
         flt.setFastaTaxonId("36329");
@@ -166,7 +173,7 @@ public class FastaLoaderTaskTest extends TestCase {
         //        assertEquals(new Integer(146), protein.getLength());
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
         LOG.info("in tear down");
         if (osw.isInTransaction()) {

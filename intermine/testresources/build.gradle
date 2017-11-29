@@ -13,16 +13,16 @@ sourceSets {
     }
 }
 
-dependencies {
-    testCompile project(':intermine-objectstore')
-    testCompile project(':intermine-resources')
-    testCompile 'commons-lang:commons-lang:2.6'
-}
-
 configurations {
     testArtifacts
+    commonResources
 }
 
+dependencies {
+    commonResources project(':intermine-resources')
+    testCompile project(':intermine-objectstore')
+    testCompile 'commons-lang:commons-lang:2.6'
+}
 
 ext {
     // full path to file
@@ -74,9 +74,18 @@ task insertModel (dependsOn: 'buildDB') {
     }
 }
 
+task copyDefaultProperties(type: Copy) {
+    description "Copies default.intermine.test.properties file (from resources project) into resources output to be included in the war"
+    from({ zipTree(configurations.commonResources.singleFile) }) {
+        include "default.intermine.test.properties"
+    }
+    into sourceSets.test.output.resourcesDir
+    rename { fileName -> fileName.replace("default.intermine.test.properties", "default.intermine.properties") }
+}
+
 task copyMineProperties(type: Copy) {
     println "Using properties file: '$minePropertyFile'"
-    description "Copy test specific ~/.intermine/intermine-test.properties to test resources as intermine.properties"
+    description "Copy test specific intermine-test.properties to test resources as intermine.properties"
     from minePropertyFile
     into sourceSets.test.output.resourcesDir
     rename { fileName -> fileName.replace("intermine-test.properties", "intermine.properties") }
@@ -104,6 +113,7 @@ processResources {
     } else {
         tasks.copyMineProperties.execute()
     }
+    dependsOn "copyDefaultProperties"
 }
 
 task buildTestModelJar(type: Jar) {

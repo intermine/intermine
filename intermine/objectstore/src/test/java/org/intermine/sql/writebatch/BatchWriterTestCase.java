@@ -10,8 +10,6 @@ package org.intermine.sql.writebatch;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -41,15 +39,13 @@ public abstract class BatchWriterTestCase extends TestCase
 
     public void testOpsWithId() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        Connection con = db.getConnection();
-        con.setAutoCommit(false);
+        Connection con = null;
+
         try {
+            con = db.getConnection();
+            con.setAutoCommit(false);
             Statement s = con.createStatement();
-            try {
-                s.execute("DROP TABLE table1");
-            } catch (SQLException e) {
-                con.rollback();
-            }
+            s.execute("DROP TABLE IF EXISTS table1");
             s.addBatch("CREATE TABLE table1(col1 int, col2 int)");
             s.addBatch("INSERT INTO table1 VALUES (11, 101)");
             s.addBatch("INSERT INTO table1 VALUES (12, 102)");
@@ -60,7 +56,7 @@ public abstract class BatchWriterTestCase extends TestCase
             s.addBatch("INSERT INTO table1 VALUES (33, 303)");
             s.executeBatch();
             con.commit();
-            s = null;
+
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             String colNames[] = new String[] {"col1", "col2"};
@@ -83,9 +79,11 @@ public abstract class BatchWriterTestCase extends TestCase
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT col1, col2 FROM table1");
             Map got = new TreeMap();
+
             while (r.next()) {
                 got.put(r.getObject(1), r.getObject(2));
             }
+
             Map expected = new TreeMap();
             expected.put(new Integer(12), new Integer(112));
             expected.put(new Integer(22), new Integer(212));
@@ -118,9 +116,11 @@ public abstract class BatchWriterTestCase extends TestCase
             s = con.createStatement();
             r = s.executeQuery("SELECT col1, col2 FROM table1");
             got = new TreeMap();
+
             while (r.next()) {
                 got.put(r.getObject(1), r.getObject(2));
             }
+
             expected = new TreeMap();
             expected.put(new Integer(22), new Integer(222));
             expected.put(new Integer(23), new Integer(223));
@@ -135,50 +135,33 @@ public abstract class BatchWriterTestCase extends TestCase
             s = con.createStatement();
             r = s.executeQuery("SELECT col1, col2 FROM table1");
             got = new TreeMap();
+
             while (r.next()) {
                 got.put(r.getObject(1), r.getObject(2));
             }
+
             assertEquals(expected, got);
-        } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            while (e != null) {
-                e.printStackTrace(pw);
-                e = e.getNextException();
-            }
-            pw.flush();
-            throw new Exception(sw.toString());
         } finally {
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table1");
-                con.commit();
+            if (con != null) {
                 con.close();
-            } catch (Exception e) {
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
             }
         }
     }
 
     public void testInsertOnly() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        Connection con = db.getConnection();
-        con.setAutoCommit(false);
+        Connection con = null;
+
         try {
+            con = db.getConnection();
+            con.setAutoCommit(false);
             Statement s = con.createStatement();
-            try {
-                s.execute("DROP TABLE table1");
-            } catch (SQLException e) {
-                con.rollback();
-            }
+            s.execute("DROP TABLE IF EXISTS table1");
             s.addBatch("CREATE TABLE table1(col1 int, col2 int)");
             s.addBatch("INSERT INTO table1 VALUES (1, 201)");
             s.executeBatch();
             con.commit();
-            s = null;
+
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             String colNames[] = new String[] {"col1", "col2"};
@@ -190,50 +173,33 @@ public abstract class BatchWriterTestCase extends TestCase
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT col1, col2 FROM table1");
             Map got = new TreeMap();
+
             while (r.next()) {
                 got.put(r.getObject(1), r.getObject(2));
             }
+
             Map expected = new TreeMap();
             expected.put(new Integer(1), new Integer(201));
             expected.put(new Integer(2), new Integer(202));
             expected.put(new Integer(3), new Integer(203));
             expected.put(new Integer(4), new Integer(204));
             assertEquals(expected, got);
-        } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            while (e != null) {
-                e.printStackTrace(pw);
-                e = e.getNextException();
-            }
-            pw.flush();
-            throw new Exception(sw.toString());
         } finally {
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table1");
-                con.commit();
+            if (con != null) {
                 con.close();
-            } catch (Exception e) {
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
             }
         }
     }
 
     public void testDeleteOnly() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        Connection con = db.getConnection();
-        con.setAutoCommit(false);
+        Connection con = null;
+
         try {
+            con = db.getConnection();
+            con.setAutoCommit(false);
             Statement s = con.createStatement();
-            try {
-                s.execute("DROP TABLE table1");
-            } catch (SQLException e) {
-                con.rollback();
-            }
+            s.execute("DROP TABLE IF EXISTS table1");
             s.addBatch("CREATE TABLE table1(col1 int, col2 int)");
             s.addBatch("INSERT INTO table1 VALUES (1, 201)");
             s.addBatch("INSERT INTO table1 VALUES (2, 202)");
@@ -242,7 +208,7 @@ public abstract class BatchWriterTestCase extends TestCase
             s.addBatch("INSERT INTO table1 VALUES (5, 205)");
             s.executeBatch();
             con.commit();
-            s = null;
+
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             batch.deleteRow(con, "table1", "col1", new Integer(2));
@@ -260,45 +226,26 @@ public abstract class BatchWriterTestCase extends TestCase
             expected.put(new Integer(3), new Integer(203));
             expected.put(new Integer(5), new Integer(205));
             assertEquals(expected, got);
-        } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            while (e != null) {
-                e.printStackTrace(pw);
-                e = e.getNextException();
-            }
-            pw.flush();
-            throw new Exception(sw.toString());
         } finally {
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table1");
-                con.commit();
+            if (con != null) {
                 con.close();
-            } catch (Exception e) {
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
             }
         }
     }
 
     public void testTypes() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        Connection con = db.getConnection();
-        con.setAutoCommit(false);
+        Connection con = null;
+
         try {
+            con = db.getConnection();
+            con.setAutoCommit(false);
             Statement s = con.createStatement();
-            try {
-                s.execute("DROP TABLE table1");
-            } catch (SQLException e) {
-                con.rollback();
-            }
+            s.execute("DROP TABLE IF EXISTS table1");
             s.addBatch("CREATE TABLE table1(key int, int2 smallint, int4 int, int8 bigint, float real, double float, bool boolean, bigdecimal numeric, string text)");
             s.executeBatch();
             con.commit();
-            s = null;
+
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             String colNames[] = new String[] {"key", "int2", "int4", "int8", "float", "double", "bool", "bigdecimal", "string"};
@@ -344,10 +291,12 @@ public abstract class BatchWriterTestCase extends TestCase
                         "wmd"});
             batch.close(con);
             con.commit();
+
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT key, int2, int4, int8, float, double, bool, bigdecimal, string FROM table1");
             Map got = new TreeMap();
             StringBuilder message = new StringBuilder();
+
             while (r.next()) {
                 for (int i = 1; i <= 8; i++) {
                     Integer key = new Integer(r.getInt(1) * 10 + i);
@@ -356,6 +305,7 @@ public abstract class BatchWriterTestCase extends TestCase
                     message.append(key + "=(" + value.getClass().getName() + ", " + value + "), ");
                 }
             }
+
             Map expected = new TreeMap();
             expected.put(new Integer(11), new Integer((short) 45));
             expected.put(new Integer(12), new Integer(765234));
@@ -390,26 +340,9 @@ public abstract class BatchWriterTestCase extends TestCase
             expected.put(new Integer(47), new BigDecimal("0.000000"));
             expected.put(new Integer(48), "wmd");
             assertEquals(message.toString(), expected, got);
-        } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            while (e != null) {
-                e.printStackTrace(pw);
-                e = e.getNextException();
-            }
-            pw.flush();
-            throw new Exception(sw.toString());
         } finally {
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table1");
-                con.commit();
+            if (con != null) {
                 con.close();
-            } catch (Exception e) {
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
             }
         }
     }
@@ -496,68 +429,49 @@ public abstract class BatchWriterTestCase extends TestCase
 
     public void testUTF() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        Connection con = db.getConnection();
-        con.setAutoCommit(false);
+        Connection con = null;
+
         try {
+            con = db.getConnection();
+            con.setAutoCommit(false);
+
             Statement s = con.createStatement();
-            try {
-                s.execute("DROP TABLE table1");
-            } catch (SQLException e) {
-                con.rollback();
-            }
+            s.execute("DROP TABLE IF EXISTS table1");
             s.addBatch("CREATE TABLE table1(key text)");
             s.executeBatch();
             con.commit();
-            s = null;
+
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             batch.addRow(con, "table1", null, new String[] {"key"}, new Object[] {"Flibble\u00A0fds\u786f"});
             batch.close(con);
             con.commit();
+
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT key FROM table1");
             assertTrue(r.next());
             assertEquals("Flibble\u00A0fds\u786f", r.getString(1));
             assertFalse(r.next());
-        } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            while (e != null) {
-                e.printStackTrace(pw);
-                e = e.getNextException();
-            }
-            pw.flush();
-            throw new Exception(sw.toString());
         } finally {
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table1");
-                con.commit();
+            if (con != null) {
                 con.close();
-            } catch (Exception e) {
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
             }
         }
     }
 
     public void testIndirections() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        Connection con = db.getConnection();
-        con.setAutoCommit(false);
+        Connection con = null;
+
         try {
+            con = db.getConnection();
+            con.setAutoCommit(false);
             Statement s = con.createStatement();
-            try {
-                s.execute("DROP TABLE table1");
-            } catch (SQLException e) {
-                con.rollback();
-            }
+            s.execute("DROP TABLE IF EXISTS table1");
             s.addBatch("CREATE TABLE table1(a int, b int)");
             s.executeBatch();
             con.commit();
-            s = null;
+
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             batch.addRow(con, "table1", "a", "b", 1, 2);
@@ -602,51 +516,32 @@ public abstract class BatchWriterTestCase extends TestCase
             con.commit();
             expected.remove(new Row(1, 2));
             assertEquals(expected, getGot(con));
-        } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            while (e != null) {
-                e.printStackTrace(pw);
-                e = e.getNextException();
-            }
-            pw.flush();
-            throw new Exception(sw.toString());
         } finally {
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table1");
-                con.commit();
+            if (con != null) {
                 con.close();
-            } catch (Exception e) {
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
             }
         }
     }
 
     public void testManyDeletes() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        Connection con = db.getConnection();
-        con.setAutoCommit(false);
+
+        Connection con = null;
+
         try {
+            con = db.getConnection();
+            con.setAutoCommit(false);
             Statement s = con.createStatement();
-            try {
-                s.execute("DROP TABLE table1");
-            } catch (SQLException e) {
-                con.rollback();
-            }
+            s.execute("DROP TABLE IF EXISTS table1");
             s.addBatch("CREATE TABLE table1(a int, b int)");
             s.addBatch("CREATE INDEX table1_key on table1(a, b)");
             s.executeBatch();
             con.commit();
-            s = null;
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
-            String colNames[] = new String[] {"a", "b"};
+            String colNames[] = new String[]{"a", "b"};
             for (int i = 0; i < 10000; i++) {
-                batch.addRow(con, "table1", new Integer(i), colNames, new Object[] {new Integer(i), new Integer(i * 2876123)});
+                batch.addRow(con, "table1", new Integer(i), colNames, new Object[]{new Integer(i), new Integer(i * 2876123)});
             }
             batch.flush(con);
             con.commit();
@@ -658,46 +553,27 @@ public abstract class BatchWriterTestCase extends TestCase
             con.commit();
             Set expected = new HashSet();
             assertEquals(expected, getGot(con));
-        } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            while (e != null) {
-                e.printStackTrace(pw);
-                e = e.getNextException();
-            }
-            pw.flush();
-            throw new Exception(sw.toString());
         } finally {
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table1");
-                con.commit();
+            if (con != null) {
                 con.close();
-            } catch (Exception e) {
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
             }
         }
     }
 
     public void testManyIndirectionDeletes() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        Connection con = db.getConnection();
-        con.setAutoCommit(false);
+        Connection con = null;
+
         try {
+            con = db.getConnection();
+            con.setAutoCommit(false);
             Statement s = con.createStatement();
-            try {
-                s.execute("DROP TABLE table1");
-            } catch (SQLException e) {
-                con.rollback();
-            }
+            s.execute("DROP TABLE IF EXISTS table1");
             s.addBatch("CREATE TABLE table1(a int, b int)");
             s.addBatch("CREATE INDEX table1_key on table1(a, b)");
             s.executeBatch();
             con.commit();
-            s = null;
+
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             for (int i = 0; i < 10000; i++) {
@@ -705,6 +581,7 @@ public abstract class BatchWriterTestCase extends TestCase
             }
             batch.flush(con);
             con.commit();
+
             con.createStatement().execute("ANALYSE");
             for (int i = 0; i < 10000; i++) {
                 batch.deleteRow(con, "table1", "a", "b", i, i * 2876123);
@@ -713,53 +590,30 @@ public abstract class BatchWriterTestCase extends TestCase
             con.commit();
             Set expected = new HashSet();
             assertEquals(expected, getGot(con));
-        } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            while (e != null) {
-                e.printStackTrace(pw);
-                e = e.getNextException();
-            }
-            pw.flush();
-            throw new Exception(sw.toString());
         } finally {
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table1");
-                con.commit();
+            if (con != null) {
                 con.close();
-            } catch (Exception e) {
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
             }
         }
     }
 
     public void testPartialFlush() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
-        Connection con = db.getConnection();
-        con.setAutoCommit(false);
+        Connection con = null;
+
         try {
+            con = db.getConnection();
+            con.setAutoCommit(false);
             Statement s = con.createStatement();
-            try {
-                s.execute("DROP TABLE table1");
-            } catch (SQLException e) {
-                con.rollback();
-            }
-            try {
-                s.execute("DROP TABLE table2");
-            } catch (SQLException e) {
-                con.rollback();
-            }
+            s.execute("DROP TABLE IF EXISTS table1");
+            s.execute("DROP TABLE IF EXISTS table2");
             s.addBatch("CREATE TABLE table1(col1 int, col2 int)");
             s.addBatch("INSERT INTO table1 VALUES (1, 201)");
             s.addBatch("CREATE TABLE table2(col1 int, col2 int)");
             s.addBatch("INSERT INTO table2 VALUES (1, 201)");
             s.executeBatch();
             con.commit();
-            s = null;
+
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             String colNames[] = new String[] {"col1", "col2"};
@@ -771,20 +625,25 @@ public abstract class BatchWriterTestCase extends TestCase
             batch.addRow(con, "table2", null, colNames, new Object[] {new Integer(4), new Integer(204)});
             batch.flush(con, Collections.singleton("table1"));
             con.commit();
+
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT col1, col2 FROM table2");
             Map got = new TreeMap();
+
             while (r.next()) {
                 got.put(r.getObject(1), r.getObject(2));
             }
+
             Map expected = new TreeMap();
             expected.put(new Integer(1), new Integer(201));
             assertEquals(expected, got);
             r = s.executeQuery("SELECT col1, col2 FROM table1");
             got = new TreeMap();
+
             while (r.next()) {
                 got.put(r.getObject(1), r.getObject(2));
             }
+
             expected.put(new Integer(2), new Integer(202));
             expected.put(new Integer(3), new Integer(203));
             expected.put(new Integer(4), new Integer(204));
@@ -792,37 +651,15 @@ public abstract class BatchWriterTestCase extends TestCase
             batch.close(con);
             r = s.executeQuery("SELECT col1, col2 FROM table2");
             got = new TreeMap();
+
             while (r.next()) {
                 got.put(r.getObject(1), r.getObject(2));
             }
+
             assertEquals(expected, got);
-        } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            while (e != null) {
-                e.printStackTrace(pw);
-                e = e.getNextException();
-            }
-            pw.flush();
-            throw new Exception(sw.toString());
         } finally {
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table1");
-                con.commit();
+            if (con != null) {
                 con.close();
-            } catch (Exception e) {
-            }
-            try {
-                Statement s = con.createStatement();
-                s.execute("DROP TABLE table2");
-                con.commit();
-                con.close();
-            } catch (Exception e) {
-            }
-            try {
-                con.close();
-            } catch (Exception e) {
             }
         }
     }
