@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.util.PatternSet
+import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.dbmodel.DBUtils
 import org.intermine.project.ProjectXmlBinding
 import org.intermine.project.Source
@@ -21,7 +22,7 @@ class IntegrationPlugin implements Plugin<Project> {
         org.intermine.project.Project intermineProject
         DBUtils dbUtils
         Integration integration
-
+        VersionConfig versions = project.extensions.create('integrationVersionConfig', VersionConfig)
 
         project.configurations {
             integrateSource
@@ -70,7 +71,7 @@ class IntegrationPlugin implements Plugin<Project> {
         project.task('integrate') {
             group TASK_GROUP
             description "Integrates sources into production database. Optional input properties: source (source name) and action(possible values: retrieve or load). E.g. integrate -Psource=uniprot-malaria -Paction=load"
-            dependsOn 'integrateSingleSource', 'cleanSingleSource', 'integrateMultipleSources'
+            dependsOn 'integrateSingleSource', 'integrateMultipleSources'
         }
 
         project.task('integrateSingleSource') {
@@ -88,9 +89,15 @@ class IntegrationPlugin implements Plugin<Project> {
                 sourceNames.each { sourceName ->
                     Properties bioSourceProperties = integration.getBioSourceProperties(sourceName)
                     if (!bioSourceProperties.containsKey("have.file.custom.direct")) {
-                        dbUtils.buildDB("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                        println "Building tgt items database"
+                        dbUtils.createSchema("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                        dbUtils.createTables("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                        dbUtils.storeMetadata("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                        dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
                     }
+                    println "Retrieving " + sourceName + " in a tgt items database"
                     integration.retrieveSingleSource(sourceName)
+                    println "Loading " + sourceName + " tgt items into production database"
                     integration.loadSingleSource(intermineProject.sources.get(sourceName))
                 }
             }
@@ -106,7 +113,9 @@ class IntegrationPlugin implements Plugin<Project> {
 
             doLast {
                 Properties bioSourceProperties = integration.getBioSourceProperties(sourceNames.get(0))
-                integration.retrieveSingleSource(sourceNames.get(0))
+                String sourceName = sourceNames.get(0)
+                println "Retrieving " + sourceName + " in a tgt items database"
+                integration.retrieveSingleSource(sourceName)
 
             }
         }
@@ -119,19 +128,11 @@ class IntegrationPlugin implements Plugin<Project> {
             doLast {
                 Properties bioSourceProperties = integration.getBioSourceProperties(sourceNames.get(0))
                 if (!bioSourceProperties.containsKey("have.file.custom.direct")) {
-                    dbUtils.buildDB("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
-                }
-            }
-        }
-
-        project.task('indexAnalyseTgtItems') {
-            description "Loads a source into tgt items database"
-            onlyIf { sourceNames.size() == 1 }
-
-            doLast {
-                Properties bioSourceProperties = integration.getBioSourceProperties(sourceNames.get(0))
-                if (!bioSourceProperties.containsKey("have.file.custom.direct")) {
-                    //TODO
+                    println "Building tgt items database"
+                    dbUtils.createSchema("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                    dbUtils.createTables("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                    dbUtils.storeMetadata("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                    dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
                 }
             }
         }
@@ -146,6 +147,7 @@ class IntegrationPlugin implements Plugin<Project> {
 
             doLast {
                 String sourceName = sourceNames.get(0)
+                println "Loading " + sourceName + " tgt items into production DB"
                 integration.loadSingleSource(intermineProject.sources.get(sourceName))
             }
         }

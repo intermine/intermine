@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
+import org.intermine.plugin.VersionConfig
 
 class DataBasePlugin implements Plugin<Project> {
 
@@ -110,7 +111,6 @@ class DataBasePlugin implements Plugin<Project> {
         }
 
         project.task('buildUnitTestDB') {
-            group TASK_GROUP
             description "Build the database for the webapp"
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar'
 
@@ -141,7 +141,9 @@ class DataBasePlugin implements Plugin<Project> {
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyUserProfileModel', 'jar'
 
             doLast {
-                dbUtils.buildDB(config.userProfileObjectStoreName, config.userProfileModelName)
+                dbUtils.createSchema(config.userProfileObjectStoreName, config.userProfileModelName)
+                dbUtils.createTables(config.userProfileObjectStoreName, config.userProfileModelName)
+                dbUtils.storeMetadata(config.userProfileObjectStoreName, config.userProfileModelName)
             }
         }
     }

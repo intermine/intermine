@@ -3,6 +3,7 @@ package org.intermine.plugin.webapp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
+import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.dbmodel.DBUtils
 
 import java.nio.file.Files
