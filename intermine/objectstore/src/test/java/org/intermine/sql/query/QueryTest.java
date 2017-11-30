@@ -1147,6 +1147,7 @@ public class QueryTest extends TestCase
     protected void assertTiming(long start, long aimTime) {
         long elapsed = new Date().getTime() - start;
         assertTrue("Threshold was " + aimTime + " but actually elapsed was " + elapsed, elapsed <= aimTime);
+        System.out.println("Took " + elapsed + " ms (threshold " + aimTime + " ms)");
     }
 
     public void testToString() throws Exception {
