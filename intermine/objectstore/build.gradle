@@ -41,8 +41,6 @@ dependencies {
     compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
     provided fileTree(dir: 'libs', include: '*.jar') // eventually replace torque
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
-    testCompile project(':intermine-resources')
-    runtime group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.7'
 }
 
 jar {

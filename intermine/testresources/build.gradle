@@ -83,16 +83,6 @@ task copyDefaultProperties(type: Copy) {
     rename { fileName -> fileName.replace("default.intermine.test.properties", "default.intermine.properties") }
 }
 
-// resources can't be on classpath, we just want the file
-task copyLog4j(type: Copy) {
-    description "Copy log4j.properties onto classpath"
-    from({ zipTree(configurations.commonResources.singleFile) }) {
-        include "log4j.properties"
-    }
-    into sourceSets.test.output.resourcesDir
-}
-
-
 task copyMineProperties(type: Copy) {
     println "Using properties file: '$minePropertyFile'"
     description "Copy test specific intermine-test.properties to test resources as intermine.properties"
@@ -123,7 +113,7 @@ processResources {
     } else {
         tasks.copyMineProperties.execute()
     }
-    dependsOn "copyDefaultProperties", "copyLog4j"
+    dependsOn "copyDefaultProperties"
 }
 
 task buildTestModelJar(type: Jar) {
