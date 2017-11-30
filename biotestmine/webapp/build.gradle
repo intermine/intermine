@@ -42,11 +42,8 @@ webappConfig {
 }
 
 war {
-    dependsOn 'mergeProperties', 'summariseObjectStore'
-    doLast {
-        unwarBioWebApp.execute()
-        warWebApp.execute()
-    }
+    dependsOn 'mergeProperties', 'summariseObjectStore', 'unwarBioWebApp'
+    finalizedBy 'warWebApp'
 }
 
 task warWebApp(type: War) {
