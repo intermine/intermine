@@ -3,6 +3,7 @@ package org.intermine.plugin.webapp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
+import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.dbmodel.DBUtils
 
@@ -10,8 +11,6 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class WebAppPlugin implements Plugin<Project> {
-    public final static String TASK_GROUP = "InterMine"
-
     WebAppConfig config;
     DBUtils dbUtils
     VersionConfig webappVersionConfig
@@ -95,7 +94,7 @@ class WebAppPlugin implements Plugin<Project> {
         }
 
         project.task('loadDefaultTemplates') {
-            group TASK_GROUP
+            group TaskConstants.TASK_GROUP
             description "Loads default template queries from an XML file into a given user profile"
             dependsOn 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
             //jar dependency has been added in order to generate the dbmodel.jar (in case a clean task has been called)

@@ -1,6 +1,7 @@
 apply plugin: 'database'
 apply plugin: 'minedb'
-apply plugin: 'integration'
+apply plugin: 'integrate'
+apply plugin: 'postprocess'
 
 sourceSets {
     main {

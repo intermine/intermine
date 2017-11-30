@@ -1,13 +1,13 @@
-package org.intermine.plugin.integration
+package org.intermine.plugin.integrate
 
-enum IntegrationAction {
+enum IntegrateAction {
     RETRIEVE("retrieve"),
     LOAD("load"),
     RETRIEVE_AND_LOAD("")
 
     private String action;
 
-    IntegrationAction(String action) {
+    IntegrateAction(String action) {
         this.action = action
     }
 

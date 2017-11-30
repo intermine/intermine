@@ -5,11 +5,10 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
+import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 
 class DataBasePlugin implements Plugin<Project> {
-
-    public final static String TASK_GROUP = "InterMine"
 
     DBConfig config
     DBUtils dbUtils
@@ -46,7 +45,7 @@ class DataBasePlugin implements Plugin<Project> {
         }
 
         project.task('copyDefaultInterMineProperties') {
-            description "Copies default.intermine.integration.properties file into resources output"
+            description "Copies default.intermine.integrate.properties file into resources output"
             dependsOn 'initConfig', 'processResources'
             doLast {
                 dbUtils.copyDefaultPropertiesFile(config.defaultInterminePropertiesFile)
@@ -97,7 +96,7 @@ class DataBasePlugin implements Plugin<Project> {
         project.getTasks().getByName("compileJava").dependsOn(project.getTasks().getByName("generateModel"))
 
         project.task('buildDB') {
-            group TASK_GROUP
+            group TaskConstants.TASK_GROUP
             description "Build the database for the webapp"
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar'
 
@@ -136,7 +135,7 @@ class DataBasePlugin implements Plugin<Project> {
         }
 
         project.task('buildUserDB') {
-            group TASK_GROUP
+            group TaskConstants.TASK_GROUP
             description "Build the user database for the webapp"
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyUserProfileModel', 'jar'
 

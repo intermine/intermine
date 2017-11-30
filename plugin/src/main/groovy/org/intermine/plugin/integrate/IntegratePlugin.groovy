@@ -1,27 +1,25 @@
-package org.intermine.plugin.integration
+package org.intermine.plugin.integrate
 
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.FileTree
-import org.gradle.api.tasks.util.PatternSet
+import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.dbmodel.DBUtils
 import org.intermine.project.ProjectXmlBinding
 import org.intermine.project.Source
 
-class IntegrationPlugin implements Plugin<Project> {
+class IntegratePlugin implements Plugin<Project> {
     String COMMON_OS_PREFIX = "common"
-    public final static String TASK_GROUP = "InterMine"
     public final static String bioVersion = "2.+"
 
     void apply(Project project) {
         String projectXml = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
         List<String> sourceNames = new ArrayList<String>()
-        IntegrationAction action
+        IntegrateAction action
         org.intermine.project.Project intermineProject
         DBUtils dbUtils
-        Integration integration
+        IntegrateUtils integration
         VersionConfig versions = project.extensions.create('integrationVersionConfig', VersionConfig)
 
         project.configurations {
@@ -34,7 +32,7 @@ class IntegrationPlugin implements Plugin<Project> {
             doLast {
                 intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml));
                 dbUtils = new DBUtils(project)
-                integration = new Integration(project, intermineProject)
+                integration = new IntegrateUtils(project, intermineProject)
                 project.dependencies.add("compile", [group: "org.intermine", name: "bio-core", version: bioVersion, transitive: false])
 
                 String sourceInput = project.hasProperty('source') ? project.property('source') : ""
@@ -54,13 +52,13 @@ class IntegrationPlugin implements Plugin<Project> {
                     project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: bioVersion, transitive: false])
                 }
 
-                //when we have more than one source we can't split the integration in the 2 steps: retrieve and load
+                //when we have more than one source we can't split the integrate in the 2 steps: retrieve and load
                 if (sourceNames.size() > 1) {
-                    action = IntegrationAction.getAction(null)
+                    action = IntegrateAction.getAction(null)
                 } else {
                     String actionInput = project.hasProperty('action') ? project.property('action') : ""
                     try {
-                        action = IntegrationAction.getAction(actionInput)
+                        action = IntegrateAction.getAction(actionInput)
                     } catch (RuntimeException ex) {
                         throw new InvalidUserDataException("Unknown action: " + actionInput + ". Possible actions: load or retrieve")
                     }
@@ -69,7 +67,7 @@ class IntegrationPlugin implements Plugin<Project> {
         }
 
         project.task('integrate') {
-            group TASK_GROUP
+            group TaskConstants.TASK_GROUP
             description "Integrates sources into production database. Optional input properties: source (source name) and action(possible values: retrieve or load). E.g. integrate -Psource=uniprot-malaria -Paction=load"
             dependsOn 'integrateSingleSource', 'integrateMultipleSources'
         }
@@ -108,7 +106,7 @@ class IntegrationPlugin implements Plugin<Project> {
             description "Retrieves a single source into tgt items database"
             dependsOn 'initIntegration','buildTgtItems'
             onlyIf {
-                sourceNames.size() == 1 && (action.equals(IntegrationAction.RETRIEVE) || action.equals(IntegrationAction.RETRIEVE_AND_LOAD))
+                sourceNames.size() == 1 && (action.equals(IntegrateAction.RETRIEVE) || action.equals(IntegrateAction.RETRIEVE_AND_LOAD))
             }
 
             doLast {
@@ -123,7 +121,7 @@ class IntegrationPlugin implements Plugin<Project> {
         project.task('buildTgtItems') {
             description "Builds tgt items database"
             dependsOn 'initIntegration'
-            onlyIf { sourceNames.size() == 1 && !action.equals(IntegrationAction.LOAD)}
+            onlyIf { sourceNames.size() == 1 && !action.equals(IntegrateAction.LOAD)}
 
             doLast {
                 Properties bioSourceProperties = integration.getBioSourceProperties(sourceNames.get(0))
@@ -142,7 +140,7 @@ class IntegrationPlugin implements Plugin<Project> {
             dependsOn 'initIntegration'
             mustRunAfter 'retrieveSingleSource'
             onlyIf {
-                sourceNames.size() == 1 && (action.equals(IntegrationAction.LOAD) || action.equals(IntegrationAction.RETRIEVE_AND_LOAD))
+                sourceNames.size() == 1 && (action.equals(IntegrateAction.LOAD) || action.equals(IntegrateAction.RETRIEVE_AND_LOAD))
             }
 
             doLast {
