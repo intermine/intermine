@@ -37,7 +37,7 @@ webappConfig {
     objectStoreName = "os.production"
     userProfileObjectStoreName = "os.userprofile-production"
     userProfileObjectStoreWriterName = "osw.userprofile-production"
-    defaultInterminePropertiesFile = "default.intermine.properties"
+    defaultInterminePropertiesFile = "default.intermine.production.properties"
     propsDir = "$mergePropsDir"
 }
 

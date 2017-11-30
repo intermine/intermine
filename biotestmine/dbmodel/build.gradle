@@ -26,7 +26,7 @@ dependencies {
 dbConfig {
     objectStoreName = "os.production"
     modelName = "genomic"
-    defaultInterminePropertiesFile = "default.intermine.properties"
+    defaultInterminePropertiesFile = "default.intermine.production.properties"
     userProfileObjectStoreName = "os.userprofile-production"
     userProfileModelName = "userprofile"
     soTermListFilePath = "dbmodel/resources/so_terms"
