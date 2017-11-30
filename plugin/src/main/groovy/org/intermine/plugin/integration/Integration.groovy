@@ -40,27 +40,14 @@ class Integration {
         } else if (bioSourceProperties.containsKey("have.large.file.xml.tgt")) {
             retrieveTgtFromLargeXMLFile()
         } else if (bioSourceProperties.containsKey("have.file.gff3")) {
-            retrieveFromGFF3()
+            retrieveFromGFF3(source, bioSourceProperties)
         } else if (bioSourceProperties.containsKey("have.file.obo")) {
             retrieveFromOBO()
         }
 
     }
 
-    protected retrieveTgtFromCustomFile = {source, bioSourceProperties ->
-        String location, includes, excludes
-        source.userProperties.each { prop ->
-            if ("src.data.dir".equals(prop.name)) {
-                location = prop.location
-            }
-            if ("src.data.dir.includes".equals(prop.name)) {
-                includes = prop.value
-            }
-            if ("src.data.dir.excludes".equals(prop.name)) {
-                excludes = prop.value
-            }
-        }
-
+    protected retrieveTgtFromCustomFile = {Source source, Properties bioSourceProperties  ->
         def ant = new AntBuilder()
         ant.taskdef(name: "convertFile", classname: "org.intermine.task.FileConverterTask") {
             classpath {
@@ -71,23 +58,22 @@ class Integration {
         }
         ant.convertFile(clsName: bioSourceProperties.getProperty("converter.class"),
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic") {
-            fileset(dir: location, includes: includes, excludes: excludes)
+            fileset(dir: getUserProperty(source, "src.data.dir"),
+                    includes: getUserProperty(source, "src.data.dir.includes"),
+                    excludes: getUserProperty(source, "src.data.dir.excludes"))
         }
     }
     def retrieveTgtFromDB = {}
 
-    def retrieveTgtFromCustomDir = {source, bioSourceProperties ->
+    def retrieveTgtFromCustomDir = {Source source, Properties bioSourceProperties  ->
         def ant = new AntBuilder()
-        String location
+        //set dynamic properties
         source.userProperties.each { prop ->
-            if ("src.data.dir".equals(prop.name)) {
-                location = prop.location
-            } else {
+            if (!"src.data.dir".equals(prop.name)) {
                 ant.project.setProperty(prop.name, prop.value)
             }
 
         }
-        //ant.project.setProperty("uniprotOrganisms", "36329")
         ant.taskdef(name: "convertDir", classname: "org.intermine.task.DirectoryConverterTask") {
             classpath {
                 dirset(dir: project.getBuildDir().getAbsolutePath())
@@ -97,18 +83,44 @@ class Integration {
         }
         ant.convertDir(clsName: bioSourceProperties.getProperty("converter.class"),
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
-                dataDir: location)
+                dataDir: getUserProperty(source, "src.data.dir"))
     }
 
     def retrieveTgtFromXMLFile = {}
 
     def retrieveTgtFromLargeXMLFile = {}
 
-    def retrieveFromGFF3 = {}
+    def retrieveFromGFF3 = {Source source, Properties bioSourceProperties ->
+        def ant = new AntBuilder()
+        String gff3SeqHandlerClassName = (bioSourceProperties.containsKey("gff3.seqHandlerClassName")) ?
+                bioSourceProperties.getProperty("gff3.seqHandlerClassName") : ""
+        ant.taskdef(name: "convertGFF3File", classname: "org.intermine.bio.task.GFF3ConverterTask") {
+            classpath {
+                dirset(dir: project.getBuildDir().getAbsolutePath())
+                pathelement(path: project.configurations.getByName("compile").asPath)
+                pathelement(path: project.configurations.getByName("integrateSource").asPath)
+            }
+        }
+        ant.convertGFF3File(converter: "org.intermine.bio.dataconversion.GFF3Converter",
+                target: "osw." + COMMON_OS_PREFIX + "-tgt-items",
+                seqClsName: getUserProperty(source, "gff3.seqClsName"),
+                orgTaxonId: getUserProperty(source, "gff3.taxonId"),
+                dataSourceName: getUserProperty(source, "gff3.dataSourceName"),
+                seqDataSourceName: getUserProperty(source, "gff3.seqDataSourceName"),
+                dataSetTitle: getUserProperty(source, "gff3.dataSetTitle"),
+                dontCreateLocations: getUserProperty(source, "gff3.dontCreateLocations"),
+                model: "genomic",
+                handlerClassName: bioSourceProperties.getProperty("gff3.handlerClassName"),
+                seqHandlerClassName: gff3SeqHandlerClassName) {
+            fileset(dir: getUserProperty(source, "src.data.dir"),
+                    includes: "*.gff,*.gff3")
+        }
+    }
 
     def retrieveFromOBO = {}
 
     def loadSingleSource = { source ->
+        //TODO duplicate and AllSources
         //String allSources = String.join(" ", intermineProject.getSources().keySet())
         def ant = new AntBuilder()
         ant.taskdef(name: "dataLoad", classname: "org.intermine.dataloader.ObjectStoreDataLoaderTask") {
@@ -123,5 +135,18 @@ class Integration {
                 sourceName: source.name, sourceType: source.type,
                 ignoreDuplicates: false,
                 allSources: "")
+    }
+
+    String getUserProperty(Source source, String key) {
+        boolean found = false
+        for (prop in source.userProperties) {
+            if (key.equals(prop.name)) {
+                if ("src.data.dir".equals(prop.name)) {
+                    return prop.location
+                } else {
+                    return prop.value
+                }
+            }
+        }
     }
 }

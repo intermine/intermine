@@ -11,7 +11,7 @@
       <property name="creatego" value="true"/>
       <property name="src.data.dir" location="/home/FILESERVER5/micklem/db539/Projects/data_set/malaria/uniprot/"/>
     </source>
-<!--
+
     <source name="malaria-gff" type="malaria-gff">
       <property name="gff3.taxonId" value="36329"/>
       <property name="gff3.seqDataSourceName" value="PlasmoDB"/>
@@ -20,7 +20,7 @@
       <property name="gff3.dataSetTitle" value="PlasmoDB P. falciparum genome"/>
       <property name="src.data.dir" location="/home/FILESERVER5/micklem/db539/Projects/data_set/malaria/genome/gff"/>
     </source>
--->
+<!--
     <source name="malaria-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="PlasmoDB"/>
@@ -29,7 +29,7 @@
       <property name="fasta.includes" value="MAL*.fasta"/>
       <property name="src.data.dir" location="/home/FILESERVER5/micklem/db539/Projects/data_set/malaria/genome/fasta"/>
     </source>
-<!--
+
     <source name="go" type="go">
       <property name="src.data.file" location="/home/FILESERVER5/micklem/db539/Projects/data_set/malaria/go/gene_ontology.obo"/>
       <property name="createrelations" value="false"/>

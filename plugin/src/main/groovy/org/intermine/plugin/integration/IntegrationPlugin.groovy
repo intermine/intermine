@@ -123,7 +123,7 @@ class IntegrationPlugin implements Plugin<Project> {
         project.task('buildTgtItems') {
             description "Builds tgt items database"
             dependsOn 'initIntegration'
-            onlyIf { sourceNames.size() == 1 }
+            onlyIf { sourceNames.size() == 1 && !action.equals(IntegrationAction.LOAD)}
 
             doLast {
                 Properties bioSourceProperties = integration.getBioSourceProperties(sourceNames.get(0))

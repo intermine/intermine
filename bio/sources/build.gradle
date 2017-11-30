@@ -74,7 +74,8 @@ subprojects {
     }
 
     task copySourceProperties(type: Copy) {
-        from  project.name.minus("bio-source-") + ".properties"
+        //from  project.name.minus("bio-source-") + ".properties"
+        from('.') { include ("*.properties")}
         into sourceSets.main.output.resourcesDir
         inputs.sourceFiles.stopExecutionIfEmpty()
     }
