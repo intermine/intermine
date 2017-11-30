@@ -1121,7 +1121,7 @@ public class QueryTest extends TestCase
 
         long start = new Date().getTime();
         new Query(sql);
-        assertTiming(start, 4000);
+        assertTiming(start, 2000);
     }
 
     public void testLongParseTimeRegression2() throws Exception {
@@ -1141,7 +1141,7 @@ public class QueryTest extends TestCase
 
         long start = new Date().getTime();
         new Query(sql);
-        assertTiming(start, 32000);
+        assertTiming(start, 5000);
     }
 
     protected void assertTiming(long start, long aimTime) {
