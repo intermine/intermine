@@ -11,7 +11,6 @@ ext {
     imVersion = "2.+"
     bioVersion = "2.+"
     antVersion = "2.+"
-    taskGroup = "InterMine"
 
     mineRelease = hasProperty('release') ? "." + release : ''
     mineName = "biotestmine"
@@ -20,6 +19,7 @@ ext {
     if( !file(minePropertyFile).exists() ) {
         minePropertyFile = "$project.rootDir/dbmodel/resources/biotestmine.properties"
     }
+    println "Using properties file: '$minePropertyFile'"
 }
 
 subprojects {
@@ -33,10 +33,6 @@ subprojects {
         mavenLocal()
     }
 
-    test {
-        ignoreFailures = true
-    }
-
     dependencies {
         compile group: 'ant', name: 'ant', version: '1.6.5'
         compile group: 'log4j', name: 'log4j', version: '1.2.17'
@@ -44,7 +40,6 @@ subprojects {
     }
 
     task copyMineProperties(type: Copy) {
-        println "Using properties file: '$minePropertyFile'"
         description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
         dependsOn 'processResources'
 
@@ -67,8 +62,5 @@ subprojects {
         rename { fileName -> fileName.replace("$minePropertyFileName", "intermine.properties") }
         inputs.sourceFiles.stopExecutionIfEmpty()
     }
-}
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
 }

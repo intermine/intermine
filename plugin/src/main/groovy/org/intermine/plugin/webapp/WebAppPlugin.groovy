@@ -18,12 +18,14 @@ class WebAppPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.configurations {
             commonResources
+            bioWebApp
         }
 
         webappVersionConfig = project.extensions.create('webappVersionConfig', VersionConfig)
 
         project.dependencies {
             commonResources group: "org.intermine", name: "intermine-resources", version: webappVersionConfig.imVersion
+            bioWebApp group: "org.intermine", name: "bio-webapp", version: webappVersionConfig.bioVersion, ext: "war"
         }
 
         project.task('initConfig') {

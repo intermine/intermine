@@ -14,12 +14,7 @@ sourceSets {
     }
 }
 
-configurations {
-    compile
-}
-
 dependencies {
-    compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     compile group: "org.intermine", name: "intermine-integrate", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
 }
