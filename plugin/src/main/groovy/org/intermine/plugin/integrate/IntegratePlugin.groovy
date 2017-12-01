@@ -6,8 +6,8 @@ import org.gradle.api.Project
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.dbmodel.DBUtils
-import org.intermine.project.ProjectXmlBinding
-import org.intermine.project.Source
+import org.intermine.plugin.project.ProjectXmlBinding
+import org.intermine.plugin.project.Source
 
 class IntegratePlugin implements Plugin<Project> {
     String COMMON_OS_PREFIX = "common"
@@ -16,7 +16,7 @@ class IntegratePlugin implements Plugin<Project> {
         String projectXml = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
         List<String> sourceNames = new ArrayList<String>()
         IntegrateAction action
-        org.intermine.project.Project intermineProject
+        org.intermine.plugin.project.Project intermineProject
         DBUtils dbUtils
         IntegrateUtils integration
         VersionConfig versions = project.extensions.create('integrationVersionConfig', VersionConfig)

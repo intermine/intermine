@@ -4,9 +4,9 @@ import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.intermine.plugin.TaskConstants
-import org.intermine.project.PostProcess
-import org.intermine.project.ProjectXmlBinding
-import org.intermine.project.Source
+import org.intermine.plugin.project.PostProcess
+import org.intermine.plugin.project.ProjectXmlBinding
+import org.intermine.plugin.project.Source
 
 class PostProcessPlugin implements Plugin<Project> {
     /**
@@ -19,7 +19,7 @@ class PostProcessPlugin implements Plugin<Project> {
 
     void apply(Project project) {
         String projectXml = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
-        org.intermine.project.Project intermineProject
+        org.intermine.plugin.project.Project intermineProject
         List<String> processNames = new ArrayList<String>()
 
         project.task('initPostProcess') {

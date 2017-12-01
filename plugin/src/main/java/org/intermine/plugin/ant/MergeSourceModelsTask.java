@@ -1,4 +1,4 @@
-package org.intermine.task;
+package org.intermine.plugin.ant;
 
 /*
  * Copyright (C) 2002-2017 FlyMine
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.intermine.task.project.Project;
-import org.intermine.task.project.ProjectXmlBinding;
-import org.intermine.task.project.Source;
+import org.intermine.plugin.project.Project;
+import org.intermine.plugin.project.ProjectXmlBinding;
+import org.intermine.plugin.project.Source;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -28,7 +28,6 @@ import org.apache.tools.ant.util.ClasspathUtils;
 /**
  * Task to merge additions files from all sources in the project.xml into an intermine XML model.
  *
- * @see org.intermine.modelproduction.ModelMerger
  * @author Kim Rutherford
  */
 

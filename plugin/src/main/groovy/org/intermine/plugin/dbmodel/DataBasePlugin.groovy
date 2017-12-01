@@ -29,7 +29,6 @@ class DataBasePlugin implements Plugin<Project> {
 
         project.dependencies {
             bioCore group : "org.intermine", name: "bio-core", version: versionConfig.bioVersion, transitive: false
-            mergeSource group : "org.intermine", name: "ant-tasks", version: versionConfig.antVersion
             commonResources group: "org.intermine", name: "intermine-resources", version: versionConfig.imVersion
             api group: "org.intermine", name: "intermine-api", version: versionConfig.imVersion, transitive: false
         }

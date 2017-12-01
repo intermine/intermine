@@ -3,14 +3,14 @@ package org.intermine.plugin.integrate
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.util.PatternSet
-import org.intermine.project.Source
+import org.intermine.plugin.project.Source
 
 class IntegrateUtils {
     String COMMON_OS_PREFIX = "common"
     Project project
-    org.intermine.project.Project imProjet
+    org.intermine.plugin.project.Project imProjet
 
-    IntegrateUtils(Project project, org.intermine.project.Project imProject) {
+    IntegrateUtils(Project project, org.intermine.plugin.project.Project imProject) {
         this.project = project
         this.imProjet = imProject
     }

@@ -1,4 +1,4 @@
-package org.intermine.task.project;
+package org.intermine.plugin.project;
 
 /*
  * Copyright (C) 2002-2017 FlyMine

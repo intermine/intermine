@@ -13,6 +13,10 @@ class MineDataBasePlugin implements Plugin<Project> {
         String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
         mineVersionConfig = project.extensions.create('mineVersionConfig', VersionConfig)
 
+        project.configurations {
+            mergeSource
+        }
+
         project.task('parseProjectXml') {
             description "Parse the project XML file and add associated datasource dependencies"
             onlyIf {!new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
@@ -36,9 +40,10 @@ class MineDataBasePlugin implements Plugin<Project> {
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
                 String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
                 def ant = new AntBuilder()
-
+                //added this dependecy otherwise ant doesn't found MergeSourceModelsTask at runtime
+                project.dependencies.add("mergeSource", [group: "org.intermine", name: "plugin", version: "1.+"])
                 String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
-                ant.taskdef(name: "mergeSourceModels", classname: "org.intermine.task.MergeSourceModelsTask") {
+                ant.taskdef(name: "mergeSourceModels", classname: "org.intermine.plugin.ant.MergeSourceModelsTask") {
                     classpath {
                         pathelement(path: project.configurations.getByName("mergeSource").asPath)
                         pathelement(path: project.configurations.getByName("compile").asPath)

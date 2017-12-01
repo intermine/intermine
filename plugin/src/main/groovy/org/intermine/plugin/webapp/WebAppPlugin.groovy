@@ -60,7 +60,7 @@ class WebAppPlugin implements Plugin<Project> {
             }
         }
 
-        // this task requires a database to exist and be populated. However this task is run at compile time, not runtime.
+        // this plugin requires a database to exist and be populated. However this plugin is run at compile time, not runtime.
         // We have no guarantee there will be a database. Hence the try/catch
         project.task('summariseObjectStore') {
             description "Summarise ObjectStore into objectstoresummary.properties file"
@@ -99,7 +99,7 @@ class WebAppPlugin implements Plugin<Project> {
             group TaskConstants.TASK_GROUP
             description "Loads default template queries from an XML file into a given user profile"
             dependsOn 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
-            //jar dependency has been added in order to generate the dbmodel.jar (in case a clean task has been called)
+            //jar dependency has been added in order to generate the dbmodel.jar (in case a clean plugin has been called)
             //to allow to read class_keys.properties file
 
             doLast {

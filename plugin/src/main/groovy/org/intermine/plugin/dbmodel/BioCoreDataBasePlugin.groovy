@@ -9,7 +9,7 @@ class BioCoreDataBasePlugin implements Plugin<Project>{
     @Override
     void apply(Project project) {
         project.task('mergeModels') {
-            description "Merges defferent source model files into an intermine XML model"
+            description "Merges only genomic_additions.xml and so_additions.xml into an intermine XML model"
             dependsOn 'initConfig', 'copyGenomicModel', 'copyMineProperties', 'createSoModel'
 
             doLast {
