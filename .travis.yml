@@ -29,5 +29,5 @@ notifications:
     - chat.freenode.net#intermine-ci
     on_success: change
     on_error: change
-after_success:
-- test $TRAVIS_BRANCH == "master" && bash config/travis/deploydocs.sh
+# after_success:
+- # test $TRAVIS_BRANCH == "master" && bash config/travis/deploydocs.sh
