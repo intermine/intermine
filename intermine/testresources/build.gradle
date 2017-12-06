@@ -20,6 +20,9 @@ configurations {
 
 dependencies {
     commonResources project(':intermine-resources')
+
+     // We need this dependency because the pre-generated userprofile classes and model XML are here, which is necessary to build the userprofile-test db
+    testCompile project(':intermine-api')
     testCompile project(':intermine-objectstore')
     testCompile 'commons-lang:commons-lang:2.6'
 }
@@ -143,7 +146,7 @@ task createUnitTestDatabases {
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database userprofiletest;"
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"userprofile-test\";"
         }
         exec {
             ignoreExitValue true
@@ -185,7 +188,7 @@ task dropDBs {
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database userprofiletest;"
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"userprofile-test\";"
         }
         exec {
             ignoreExitValue true
@@ -235,6 +238,7 @@ void generateSchema(osname, model) {
 }
 
 task buildDB {
+    dependsOn 'compileTestJava'
     dependsOn 'createUnitTestDatabases'
     dependsOn 'generateTestModel'
     description "Create tables for database for intermine tests"
@@ -250,6 +254,9 @@ task buildDB {
 
         generateSchema('flatmodeunittest', 'testmodel')
         createTables('flatmodeunittest', 'testmodel')
+
+        generateSchema('userprofile-test', 'userprofile')
+        createTables('userprofile-test', 'userprofile')
 
         // don't need to generate schema, never changes
         createTables('fulldatatest', 'fulldata')
