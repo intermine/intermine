@@ -355,11 +355,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 try {
                     database = DatabaseFactory.getDatabase(dbAlias);
                 } catch (Exception e) {
-                    throw new ObjectStoreException("Unable to get database for InterMine"
-                            + " ObjectStore", e);
+                    throw new ObjectStoreException("Unable to get database " + dbAlias + " for ObjectStore", e);
                 }
-                String versionString = null;
-                int formatVersion = Integer.MAX_VALUE;
+
+                String versionString;
                 try {
                     versionString = MetadataManager.retrieve(database,
                             MetadataManager.OS_FORMAT_VERSION);
@@ -372,6 +371,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             "The table intermine_metadata for " + dbAlias
                             + " doesn't exist. Please run build-db");
                 }
+
+                int formatVersion;
+
                 if (versionString == null) {
                     formatVersion = 0;
                 } else {
@@ -384,6 +386,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         throw e2;
                     }
                 }
+
                 if (formatVersion > 1) {
                     throw new IllegalArgumentException("Database version is too new for this code. "
                             + "Please update to a newer version of InterMine. Database version: "
@@ -396,6 +399,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 } catch (MetaDataException e) {
                     throw new ObjectStoreException("Cannot load model", e);
                 }
+
                 if (formatVersion >= 1) {
                     // If it's version >=1 then ignore the properties, and use the embedded values.
                     try {
@@ -414,6 +418,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 + " " + osAlias);
                     }
                 }
+
                 List<ClassDescriptor> truncatedClasses = new ArrayList<ClassDescriptor>();
                 if (truncatedClassesString != null) {
                     String[] classes = truncatedClassesString.split(",");
@@ -427,6 +432,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         truncatedClasses.add(truncatedClassDescriptor);
                     }
                 }
+
                 boolean noNotXml = false;
                 if ("true".equals(noNotXmlString) || (noNotXmlString == null)) {
                     noNotXml = true;
@@ -436,6 +442,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     throw new ObjectStoreException("Invalid value for property noNotXml: "
                             + noNotXmlString);
                 }
+
                 HashSet<String> missingTables = new HashSet<String>();
                 if (missingTablesString != null) {
                     String[] tables = missingTablesString.split(",");
@@ -490,6 +497,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         LOG.warn("Error setting up execute log in file " + logfile + ": " + e);
                     }
                 }
+
                 if (logTable != null) {
                     try {
                         os.setLogTableName(logTable);
@@ -498,6 +506,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 + e);
                     }
                 }
+
                 if (minBagTableSizeString != null) {
                     try {
                         int minBagTableSizeInt = Integer.parseInt(minBagTableSizeString);
@@ -506,23 +515,30 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         LOG.warn("Error setting minBagTableSize: " + e);
                     }
                 }
+
                 if ("true".equals(logEverythingString)) {
                     os.setLogEverything(true);
                 }
+
                 if ("true".equals(verboseQueryLogString)) {
                     os.setVerboseQueryLog(true);
                 }
+
                 if ("true".equals(logExplainsString)) {
                     os.setLogExplains(true);
                 }
+
                 if ("true".equals(logBeforeExecuteString)) {
                     os.setLogBeforeExecute(true);
                 }
+
                 if ("true".equals(disableResultsCacheString)) {
                     os.setDisableResultsCache(true);
                 }
+
                 instances.put(osAlias, os);
             }
+
             return os;
         }
     }
