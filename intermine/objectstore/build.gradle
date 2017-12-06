@@ -28,6 +28,8 @@ configurations {
     compile.extendsFrom provided
 }
 
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
 dependencies {
     compile project(':intermine-model')
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'

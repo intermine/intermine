@@ -17,6 +17,8 @@ sourceSets {
     }
 }
 
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
 dependencies {
     compile project(':intermine-objectstore')
     compile group: 'stax', name: 'stax', version: '1.2.0' //stax-ri 1.0 not available on maven

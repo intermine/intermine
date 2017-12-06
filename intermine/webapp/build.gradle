@@ -20,6 +20,8 @@ sourceSets {
     }
 }
 
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
 dependencies {
     compile project(':intermine-pathquery')
     compile project(':intermine-api')

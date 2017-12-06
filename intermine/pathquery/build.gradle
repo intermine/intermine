@@ -22,6 +22,8 @@ sourceSets {
     }
 }
 
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
 dependencies {
     compile project(':intermine-model')
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'

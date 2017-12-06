@@ -256,9 +256,7 @@ task buildDB {
     }
 }
 
-// create unit databases, generate model > compile (need .class files) > build db > insert data model
 tasks.compileTestJava.dependsOn('generateTestModel')
-tasks.test.dependsOn('buildDB')
 tasks.buildTestModelJar.dependsOn 'testClasses'
 
 artifacts {
