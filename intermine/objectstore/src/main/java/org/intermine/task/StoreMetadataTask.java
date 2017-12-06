@@ -63,8 +63,11 @@ public class StoreMetadataTask extends Task
         if (database == null) {
             throw new BuildException("database attribute is not set");
         }
+
+        Database db = null;
+
         try {
-            Database db = DatabaseFactory.getDatabase(database);
+            db = DatabaseFactory.getDatabase(database);
 
             Model model = ModelFactory.loadModel(modelName);
             MetadataManager.store(db, MetadataManager.MODEL, model.toString());
@@ -121,6 +124,10 @@ public class StoreMetadataTask extends Task
                 throw (BuildException) e;
             } else {
                 throw new BuildException(e);
+            }
+        } finally {
+            if (db != null) {
+                db.shutdown();
             }
         }
     }

@@ -16,8 +16,6 @@ import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -99,188 +97,192 @@ public class BuildDbTask extends Task
     @Override
     public void execute() {
         try {
-            FileUtils.cleanDirectory(tempDir);
-        } catch (Exception e) {
-            throw new BuildException(
-                "Could not clean up directory "
-                    + tempDir
-                    + " before execution (this is required to stop Torque generation from picking up extraneous files)");
-        }
+            try {
+                FileUtils.cleanDirectory(tempDir);
+            } catch (Exception e) {
+                throw new BuildException(
+                    "Could not clean up directory "
+                        + tempDir
+                        + " before execution (this is required to stop Torque generation from picking up extraneous files)");
+            }
 
-        if (tempDir == null) {
-            throw new BuildException("tempDir attribute is not set");
-        }
-        if (databaseAlias == null) {
-            throw new BuildException("Could not find database attribute for: '" + os + ".db'");
-        }
-        if (database == null) {
-            throw new BuildException("Could not access database: " + databaseAlias);
-        }
-        if (schemaFile == null) {
-            throw new BuildException("schemaFile attribute is not set");
-        }
+            if (tempDir == null) {
+                throw new BuildException("tempDir attribute is not set");
+            }
+            if (databaseAlias == null) {
+                throw new BuildException("Could not find database attribute for: '" + os + ".db'");
+            }
+            if (database == null) {
+                throw new BuildException("Could not access database: " + databaseAlias);
+            }
+            if (schemaFile == null) {
+                throw new BuildException("schemaFile attribute is not set");
+            }
 
-        {
+            {
+                Connection c = null;
+                try {
+                    c = database.getConnection();
+                    c.setAutoCommit(true);
+                    DatabaseUtil.removeAllTables(c);
+                    DatabaseUtil.removeSequence(c, SERIAL_SEQUENCE_NAME);
+                    DatabaseUtil.removeSequence(
+                        c, ObjectStoreInterMineImpl.UNIQUE_INTEGER_SEQUENCE_NAME);
+                } catch (SQLException e) {
+                    LOG.warn("Failed to remove all tables from database: " + e);
+                } finally {
+                    if (c != null) {
+                        try {
+                            c.close();
+                        } catch (SQLException e) {
+                            LOG.error("Failed to close connection" ,e);
+                        }
+                    }
+                }
+            }
+
+            SQL sql = new SQL();
+            sql.setControlTemplate("sql/base/Control.vm");
+            sql.setOutputDirectory(tempDir);
+            sql.setUseClasspath(true);
+            //sql.setBasePathToDbProps("sql/base/");
+            sql.setSqlDbMap(tempDir + "/sqldb.map");
+            sql.setOutputFile("report.sql.generation");
+            sql.setTargetDatabase(database.getPlatform().toLowerCase()); // "postgresql"
+            InputStream schemaFileInputStream = getClass().getClassLoader().getResourceAsStream(schemaFile);
+            if (schemaFileInputStream == null) {
+                throw new BuildException("cannot open schema file (" + schemaFile + ")");
+            }
+
+            File tempFile;
+
+            try {
+                tempFile = File.createTempFile("schema", "xml", tempDir);
+
+                PrintWriter writer = new PrintWriter(new FileWriter(tempFile));
+                BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(schemaFileInputStream));
+
+                while (true) {
+                    String line = reader.readLine();
+                    if (line == null) {
+                        break;
+                    } else {
+                        writer.println(line);
+                    }
+                }
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                throw new BuildException("cannot create temporary file for BuildDbTask: "
+                    + e.getMessage());
+            }
+
+            sql.setXmlFile(tempFile.getPath());
+
+            sql.execute();
+
+            InsertSQL isql = new InsertSQL();
+            isql.setDriver(database.getDriver()); // "org.postgresql.Driver"
+            isql.setUrl(database.getURL()); // "jdbc:postgresql://localhost/test"
+            isql.setUserid(database.getUser()); // "mark"
+            isql.setPassword(database.getPassword()); // ""
+            isql.setAutocommit(true);
+            TorqueSQLExec.OnError ea = new TorqueSQLExec.OnError();
+            ea.setValue("continue"); // "abort", "continue" or "stop"
+            isql.setOnerror(ea);
+            isql.setSqlDbMap(tempDir + "/sqldb.map");
+            isql.setSrcDir(tempDir.toString());
+            try {
+                isql.execute();
+            } catch (BuildException e) {
+                throw new BuildException(e.getMessage() + " - for database: " + databaseAlias,
+                    e.getCause());
+            }
+
+            ea.setValue("abort"); // "abort", "continue" or "stop"
+            isql.execute();
+            // TODO: properly
+
             Connection c = null;
             try {
                 c = database.getConnection();
                 c.setAutoCommit(true);
-                DatabaseUtil.removeAllTables(c);
-                DatabaseUtil.removeSequence(c, SERIAL_SEQUENCE_NAME);
-                DatabaseUtil.removeSequence(
-                    c, ObjectStoreInterMineImpl.UNIQUE_INTEGER_SEQUENCE_NAME);
+                c.createStatement().execute("CREATE SEQUENCE " + SERIAL_SEQUENCE_NAME);
             } catch (SQLException e) {
-                LOG.warn("Failed to remove all tables from database: " + e);
+                // probably happens because the SEQUENCE already exists
+                LOG.info("Failed to create SEQUENCE: " + e);
             } finally {
                 if (c != null) {
                     try {
                         c.close();
                     } catch (SQLException e) {
-                        // ignore
+                        LOG.error("Failed to close connection" ,e);
                     }
                 }
             }
-        }
 
-        SQL sql = new SQL();
-        sql.setControlTemplate("sql/base/Control.vm");
-        sql.setOutputDirectory(tempDir);
-        sql.setUseClasspath(true);
-        //sql.setBasePathToDbProps("sql/base/");
-        sql.setSqlDbMap(tempDir + "/sqldb.map");
-        sql.setOutputFile("report.sql.generation");
-        sql.setTargetDatabase(database.getPlatform().toLowerCase()); // "postgresql"
-        InputStream schemaFileInputStream = getClass().getClassLoader().getResourceAsStream(schemaFile);
-        if (schemaFileInputStream == null) {
-            throw new BuildException("cannot open schema file (" + schemaFile + ")");
-        }
-
-        File tempFile;
-
-        try {
-            tempFile = File.createTempFile("schema", "xml", tempDir);
-
-            PrintWriter writer = new PrintWriter(new FileWriter(tempFile));
-            BufferedReader reader =
-                new BufferedReader(new InputStreamReader(schemaFileInputStream));
-
-            while (true) {
-                String line = reader.readLine();
-                if (line == null) {
-                    break;
-                } else {
-                    writer.println(line);
-                }
-            }
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            throw new BuildException("cannot create temporary file for BuildDbTask: "
-                                     + e.getMessage());
-        }
-
-        sql.setXmlFile(tempFile.getPath());
-
-        sql.execute();
-
-        InsertSQL isql = new InsertSQL();
-        isql.setDriver(database.getDriver()); // "org.postgresql.Driver"
-        isql.setUrl(database.getURL()); // "jdbc:postgresql://localhost/test"
-        isql.setUserid(database.getUser()); // "mark"
-        isql.setPassword(database.getPassword()); // ""
-        isql.setAutocommit(true);
-        TorqueSQLExec.OnError ea = new TorqueSQLExec.OnError();
-        ea.setValue("continue"); // "abort", "continue" or "stop"
-        isql.setOnerror(ea);
-        isql.setSqlDbMap(tempDir + "/sqldb.map");
-        isql.setSrcDir(tempDir.toString());
-        try {
-            isql.execute();
-        } catch (BuildException e) {
-            throw new BuildException(e.getMessage() + " - for database: " + databaseAlias,
-                                     e.getCause());
-        }
-
-        ea.setValue("abort"); // "abort", "continue" or "stop"
-        isql.execute();
-        // TODO: properly
-
-        Connection c = null;
-        try {
-            c = database.getConnection();
-            c.setAutoCommit(true);
-            c.createStatement().execute("CREATE SEQUENCE " + SERIAL_SEQUENCE_NAME);
-        } catch (SQLException e) {
-            // probably happens because the SEQUENCE already exists
-            LOG.info("Failed to create SEQUENCE: " + e);
-        } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    // ignore
-                }
-            }
-        }
-
-        c = null;
-        try {
-            c = database.getConnection();
-            c.setAutoCommit(true);
-            c.createStatement().execute("CREATE SEQUENCE "
-                                        + ObjectStoreInterMineImpl.UNIQUE_INTEGER_SEQUENCE_NAME);
-        } catch (SQLException e) {
-            // probably happens because the SEQUENCE already exists
-            LOG.info("Failed to create SEQUENCE: " + e);
-        } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    // ignore
-                }
-            }
-        }
-
-        c = null;
-        try {
-            c = database.getConnection();
-            c.setAutoCommit(true);
-            c.createStatement().execute("ALTER TABLE " + CLOB_TABLE_NAME + " ALTER COLUMN "
-                    + CLOBVAL_COLUMN + " SET STORAGE PLAIN");
-        } catch (SQLException e) {
-            // probably happens because the SEQUENCE already exists
-            LOG.info("Failed to create SEQUENCE: " + e);
-        } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    // ignore
-                }
-            }
-        }
-
-        tempFile.delete();
-
-        //create bagvalues table in userprofile
-        if (model.contains("userprofile")) {
             c = null;
             try {
                 c = database.getConnection();
                 c.setAutoCommit(true);
-                DatabaseUtil.createBagValuesTables(c);
+                c.createStatement().execute("CREATE SEQUENCE "
+                    + ObjectStoreInterMineImpl.UNIQUE_INTEGER_SEQUENCE_NAME);
             } catch (SQLException e) {
-                LOG.info("Failed to create bagvalues table: " + e);
+                // probably happens because the SEQUENCE already exists
+                LOG.info("Failed to create SEQUENCE: " + e);
             } finally {
                 if (c != null) {
                     try {
                         c.close();
                     } catch (SQLException e) {
-                        // ignore
+                        LOG.error("Failed to close connection" ,e);
                     }
                 }
             }
+
+            c = null;
+            try {
+                c = database.getConnection();
+                c.setAutoCommit(true);
+                c.createStatement().execute("ALTER TABLE " + CLOB_TABLE_NAME + " ALTER COLUMN "
+                    + CLOBVAL_COLUMN + " SET STORAGE PLAIN");
+            } catch (SQLException e) {
+                // probably happens because the SEQUENCE already exists
+                LOG.info("Failed to alter table " + CLOB_TABLE_NAME + ": " + e);
+            } finally {
+                if (c != null) {
+                    try {
+                        c.close();
+                    } catch (SQLException e) {
+                        LOG.error("Failed to close connection" ,e);
+                    }
+                }
+            }
+
+            tempFile.delete();
+
+            //create bagvalues table in userprofile
+            if (model.contains("userprofile")) {
+                c = null;
+                try {
+                    c = database.getConnection();
+                    c.setAutoCommit(true);
+                    DatabaseUtil.createBagValuesTables(c);
+                } catch (SQLException e) {
+                    LOG.info("Failed to create bagvalues table: " + e);
+                } finally {
+                    if (c != null) {
+                        try {
+                            c.close();
+                        } catch (SQLException e) {
+                            LOG.error("Failed to close connection" ,e);
+                        }
+                    }
+                }
+            }
+        } finally {
+            database.shutdown();
         }
     }
 }

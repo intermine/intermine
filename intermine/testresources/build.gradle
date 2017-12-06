@@ -20,6 +20,9 @@ configurations {
 
 dependencies {
     commonResources project(':intermine-resources')
+
+     // We need this dependency because the pre-generated userprofile classes and model XML are here, which is necessary to build the userprofile-test db
+    testCompile project(':intermine-api')
     testCompile project(':intermine-objectstore')
     testCompile 'commons-lang:commons-lang:2.6'
 }
@@ -120,43 +123,27 @@ task buildTestModelJar(type: Jar) {
     from(sourceSets.test.output)
 }
 
+void createDbInternal(dbName) {
+    println 'Creating database ' + dbName
+    exec {
+        ignoreExitValue true
+        commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"" + dbName + "\";"
+    }
+}
+
 task createUnitTestDatabases {
     description "create databases needed for unit tests"
     doLast {
-        exec {
-            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
-            // create ones that aren't there
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database notxmltest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database truncunittest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database flatmodetest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database fulldatatest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database userprofiletest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database unittest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"bio-test\";"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"bio-fulldata-test\";"
-        }
+        // just fail silently if DB is already there. Instead we could read in the list of DBs and only
+        // create ones that aren't there
+        createDbInternal('notxmltest')
+        createDbInternal('truncunittest')
+        createDbInternal('flatmodetest')
+        createDbInternal('fulldatatest')
+        createDbInternal('userprofile-test')
+        createDbInternal('unittest')
+        createDbInternal('bio-test')
+        createDbInternal('bio-fulldata-test')
     }
 }
 
@@ -185,7 +172,7 @@ task dropDBs {
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database userprofiletest;"
+            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"userprofile-test\";"
         }
         exec {
             ignoreExitValue true
@@ -203,6 +190,8 @@ task dropDBs {
 }
 
 void createTables(osname, model) {
+    println 'Setting up InterMine tables in ' + osname + ' and inserting XML for ' + model
+
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
             pathelement(path: configurations.testCompile.asPath)
@@ -235,6 +224,7 @@ void generateSchema(osname, model) {
 }
 
 task buildDB {
+    dependsOn 'compileTestJava'
     dependsOn 'createUnitTestDatabases'
     dependsOn 'generateTestModel'
     description "Create tables for database for intermine tests"
@@ -251,14 +241,15 @@ task buildDB {
         generateSchema('flatmodeunittest', 'testmodel')
         createTables('flatmodeunittest', 'testmodel')
 
+        generateSchema('userprofile-test', 'userprofile')
+        createTables('userprofile-test', 'userprofile')
+
         // don't need to generate schema, never changes
         createTables('fulldatatest', 'fulldata')
     }
 }
 
-// create unit databases, generate model > compile (need .class files) > build db > insert data model
 tasks.compileTestJava.dependsOn('generateTestModel')
-tasks.test.dependsOn('buildDB')
 tasks.buildTestModelJar.dependsOn 'testClasses'
 
 artifacts {

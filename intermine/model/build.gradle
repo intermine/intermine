@@ -30,6 +30,8 @@ sourceSets {
     }
 }
 
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
 dependencies {
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
