@@ -135,7 +135,7 @@ public class BuildDbTask extends Task
                         try {
                             c.close();
                         } catch (SQLException e) {
-                            // ignore
+                            LOG.error("Failed to close connection" ,e);
                         }
                     }
                 }
@@ -217,7 +217,7 @@ public class BuildDbTask extends Task
                     try {
                         c.close();
                     } catch (SQLException e) {
-                        // ignore
+                        LOG.error("Failed to close connection" ,e);
                     }
                 }
             }
@@ -236,7 +236,7 @@ public class BuildDbTask extends Task
                     try {
                         c.close();
                     } catch (SQLException e) {
-                        // ignore
+                        LOG.error("Failed to close connection" ,e);
                     }
                 }
             }
@@ -255,7 +255,7 @@ public class BuildDbTask extends Task
                     try {
                         c.close();
                     } catch (SQLException e) {
-                        // ignore
+                        LOG.error("Failed to close connection" ,e);
                     }
                 }
             }
@@ -276,7 +276,7 @@ public class BuildDbTask extends Task
                         try {
                             c.close();
                         } catch (SQLException e) {
-                            // ignore
+                            LOG.error("Failed to close connection" ,e);
                         }
                     }
                 }
