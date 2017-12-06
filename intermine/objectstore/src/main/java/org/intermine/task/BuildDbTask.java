@@ -249,7 +249,7 @@ public class BuildDbTask extends Task
                     + CLOBVAL_COLUMN + " SET STORAGE PLAIN");
             } catch (SQLException e) {
                 // probably happens because the SEQUENCE already exists
-                LOG.info("Failed to create SEQUENCE: " + e);
+                LOG.info("Failed to alter table " + CLOB_TABLE_NAME + ": " + e);
             } finally {
                 if (c != null) {
                     try {
