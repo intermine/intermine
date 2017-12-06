@@ -123,43 +123,26 @@ task buildTestModelJar(type: Jar) {
     from(sourceSets.test.output)
 }
 
+void createDbInternal(dbName) {
+    exec {
+        ignoreExitValue true
+        commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"" + dbName + "\";"
+    }
+}
+
 task createUnitTestDatabases {
     description "create databases needed for unit tests"
     doLast {
-        exec {
-            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
-            // create ones that aren't there
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database notxmltest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database truncunittest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database flatmodetest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database fulldatatest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"userprofile-test\";"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database unittest;"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"bio-test\";"
-        }
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"bio-fulldata-test\";"
-        }
+        // just fail silently if DB is already there. Instead we could read in the list of DBs and only
+        // create ones that aren't there
+        createDbInternal('notxmltest')
+        createDbInternal('truncunittest')
+        createDbInternal('flatmodetest')
+        createDbInternal('fulldatatest')
+        createDbInternal('userprofile-test')
+        createDbInternal('unittest')
+        createDbInternal('bio-test')
+        createDbInternal('bio-fulldata-test')
     }
 }
 
