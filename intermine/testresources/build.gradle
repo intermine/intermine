@@ -124,6 +124,7 @@ task buildTestModelJar(type: Jar) {
 }
 
 void createDbInternal(dbName) {
+    println 'Creating database ' + dbName
     exec {
         ignoreExitValue true
         commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"" + dbName + "\";"
@@ -189,6 +190,8 @@ task dropDBs {
 }
 
 void createTables(osname, model) {
+    println 'Setting up InterMine tables in ' + osname + ' and inserting XML for ' + model
+
     ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
             pathelement(path: configurations.testCompile.asPath)
