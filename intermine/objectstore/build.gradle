@@ -5,20 +5,8 @@ sourceSets {
         java {
             srcDirs = ['src/main/java', 'build/generated-src/antlr/main']
         }
-        resources {
-            srcDirs = ['src/main/resources']
-        }
         antlr {
             srcDirs = ['src/main/antlr']
-        }
-    }
-
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
         }
     }
 }
