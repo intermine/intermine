@@ -2,17 +2,6 @@
 // we only have testCompile classes and we want them to be in the jar instead via the buildTestModelJar target
 jar.enabled = false
 
-sourceSets {
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
-        }
-    }
-}
-
 configurations {
     testArtifacts
     commonResources
@@ -25,18 +14,6 @@ dependencies {
     testCompile project(':intermine-api')
     testCompile project(':intermine-objectstore')
     testCompile 'commons-lang:commons-lang:2.6'
-}
-
-ext {
-    // full path to file
-    intermineTestPropertiesPath = "${System.env.HOME}/.intermine/intermine-test.properties"
-    localMinePropertyFile = true
-
-    // NO PROPERTY FILE -- use the default
-    if (!file(intermineTestPropertiesPath).exists()) {
-        localMinePropertyFile = false
-        intermineTestPropertiesPath = "$project.rootDir/testresources/src/test/resources/intermine-test.properties"
-    }
 }
 
 void generateModel(model, destination, type) {
@@ -89,44 +66,21 @@ task copyDefaultProperties(type: Copy) {
     rename { fileName -> fileName.replace("default.intermine.test.properties", "default.intermine.properties") }
 }
 
-task copyMineProperties(type: Copy) {
-    description "Copy test specific intermine-test.properties to test resources as intermine.properties"
+processTestResources {
+    dependsOn "copyDefaultProperties"
 
-    from intermineTestPropertiesPath
-    into sourceSets.test.output.resourcesDir
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
+    def intermineTestPropertiesPath = "${System.env.HOME}/.intermine/intermine-test.properties"
 
-processResources {
-    println "Using InterMine test properties path: '$intermineTestPropertiesPath'"
-
-    if (!localMinePropertyFile) {
-        def db_username = System.getenv('USER')
-        def db_pw = System.getenv('USER')
-
-        eachFile { copyDetails ->
-            if (copyDetails.path == 'intermine-test.properties') {
-                println "Replacing PSQL_USER with '$db_username'"
-                filter { line ->
-                    line.replace('PSQL_USER', "$db_username")
-                }
-            }
-
-            if (copyDetails.path == 'intermine-test.properties') {
-                println "Replacing PSQL_PWD with '$db_username'"
-                filter { line ->
-                    line.replace('PSQL_PWD', "$db_pw")
-                }
-            }
-        }
-    } else {
-        tasks.copyMineProperties.execute()
+    doFirst {
+        println "Using InterMine test properties path: '$intermineTestPropertiesPath'"
     }
 
-    println "Renaming intermine-test.properties to intermine.properties"
-    rename { fileName -> fileName.replace("intermine-test.properties", "intermine.properties") }
+    from intermineTestPropertiesPath
+    rename { fileName ->
+        fileName.replace('intermine-test.properties', 'intermine.properties')
+    }
 
-    dependsOn "copyDefaultProperties"
+    inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
 task buildTestModelJar(type: Jar) {
