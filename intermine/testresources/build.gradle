@@ -29,12 +29,13 @@ dependencies {
 
 ext {
     // full path to file
-    minePropertyFile = "${System.env.HOME}/.intermine/intermine-test.properties"
+    intermineTestPropertiesPath = "${System.env.HOME}/.intermine/intermine-test.properties"
     localMinePropertyFile = true
+
     // NO PROPERTY FILE -- use the default
-    if( !file(minePropertyFile).exists() ) {
+    if (!file(intermineTestPropertiesPath).exists()) {
         localMinePropertyFile = false
-        minePropertyFile = "$project.rootDir/testresources/src/test/resources/intermine-test.properties"
+        intermineTestPropertiesPath = "$project.rootDir/testresources/src/test/resources/intermine-test.properties"
     }
 }
 
@@ -72,6 +73,7 @@ void insertDataModel(model, osname) {
 
 task insertModel (dependsOn: 'buildDB') {
     description "put the generated model file into the intermine_metadata table"
+
     doLast {
         insertDataModel('testmodel', 'os.unittest')
     }
@@ -79,6 +81,7 @@ task insertModel (dependsOn: 'buildDB') {
 
 task copyDefaultProperties(type: Copy) {
     description "Copies default.intermine.test.properties file (from resources project) into resources output to be included in the war"
+
     from({ zipTree(configurations.commonResources.singleFile) }) {
         include "default.intermine.test.properties"
     }
@@ -87,35 +90,42 @@ task copyDefaultProperties(type: Copy) {
 }
 
 task copyMineProperties(type: Copy) {
-    println "Using properties file: '$minePropertyFile'"
     description "Copy test specific intermine-test.properties to test resources as intermine.properties"
-    from minePropertyFile
+
+    from intermineTestPropertiesPath
     into sourceSets.test.output.resourcesDir
-    rename { fileName -> fileName.replace("intermine-test.properties", "intermine.properties") }
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
 processResources {
-    if( !localMinePropertyFile ) {
+    println "Using InterMine test properties path: '$intermineTestPropertiesPath'"
+
+    if (!localMinePropertyFile) {
         def db_username = System.getenv('USER')
         def db_pw = System.getenv('USER')
 
         eachFile { copyDetails ->
             if (copyDetails.path == 'intermine-test.properties') {
+                println "Replacing PSQL_USER with '$db_username'"
                 filter { line ->
                     line.replace('PSQL_USER', "$db_username")
                 }
             }
+
             if (copyDetails.path == 'intermine-test.properties') {
+                println "Replacing PSQL_PWD with '$db_username'"
                 filter { line ->
                     line.replace('PSQL_PWD', "$db_pw")
                 }
             }
-            rename { fileName -> fileName.replace("intermine-test.properties", "intermine.properties") }
         }
     } else {
         tasks.copyMineProperties.execute()
     }
+
+    println "Renaming intermine-test.properties to intermine.properties"
+    rename { fileName -> fileName.replace("intermine-test.properties", "intermine.properties") }
+
     dependsOn "copyDefaultProperties"
 }
 
