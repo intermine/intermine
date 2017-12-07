@@ -91,7 +91,7 @@ void createDbInternal(dbName) {
     println 'Creating database ' + dbName
     exec {
         ignoreExitValue true
-        commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"" + dbName + "\";"
+        commandLine 'psql', '-d', 'postgres', '-c', "create database \"" + dbName + "\";"
     }
 }
 
@@ -120,35 +120,35 @@ task dropDBs {
             // just fail silently if DB is already there. Instead we could read in the list of DBs and only
             // create ones that aren't there
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database notxmltest;"
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database notxmltest;"
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database truncunittest;"
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database truncunittest;"
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database flatmodetest;"
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database flatmodetest;"
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database fulldatatest;"
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database fulldatatest;"
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"userprofile-test\";"
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database \"userprofile-test\";"
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database unittest;"
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database unittest;"
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"bio-test\";"
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database \"bio-test\";"
         }
         exec {
             ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"bio-fulldata-test\";"
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database \"bio-fulldata-test\";"
         }
     }
 }
