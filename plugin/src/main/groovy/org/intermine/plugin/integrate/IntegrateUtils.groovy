@@ -8,15 +8,15 @@ import org.intermine.plugin.project.Source
 class IntegrateUtils {
     String COMMON_OS_PREFIX = "common"
     Project project
-    org.intermine.plugin.project.Project imProjet
+    org.intermine.plugin.project.Project imProject
 
     IntegrateUtils(Project project, org.intermine.plugin.project.Project imProject) {
         this.project = project
-        this.imProjet = imProject
+        this.imProject = imProject
     }
 
     Properties getBioSourceProperties(String sourceName) {
-        String sourceType = imProjet.sources.get(sourceName).type
+        String sourceType = imProject.sources.get(sourceName).type
         FileTree fileTree = project.zipTree(project.configurations.getByName("integrateSource").singleFile)
         PatternSet patternSet = new PatternSet();
         patternSet.include(sourceType + ".properties");
@@ -27,7 +27,7 @@ class IntegrateUtils {
     }
 
     protected retrieveSingleSource = {sourceName ->
-        Source source = imProjet.sources.get(sourceName)
+        Source source = imProject.sources.get(sourceName)
         Properties bioSourceProperties = getBioSourceProperties(sourceName)
         if (bioSourceProperties.containsKey("have.file.custom.tgt")) {
             retrieveTgtFromCustomFile(source, bioSourceProperties)
@@ -36,14 +36,15 @@ class IntegrateUtils {
         } else if (bioSourceProperties.containsKey("have.dir.custom.tgt")) {
             retrieveTgtFromCustomDir(source, bioSourceProperties)
         } else if (bioSourceProperties.containsKey("have.file.xml.tgt")) {
-            retrieveTgtFromXMLFile()
+            retrieveTgtFromXMLFile(source, bioSourceProperties)
         } else if (bioSourceProperties.containsKey("have.large.file.xml.tgt")) {
             retrieveTgtFromLargeXMLFile()
         } else if (bioSourceProperties.containsKey("have.file.gff3")) {
             retrieveFromGFF3(source, bioSourceProperties)
         } else if (bioSourceProperties.containsKey("have.file.obo")) {
-            retrieveFromOBO()
+            retrieveFromOBO(source, bioSourceProperties)
         }
+        // TODO throw exception here if we haven't found a valid type?
 
     }
 
@@ -86,7 +87,27 @@ class IntegrateUtils {
                 dataDir: getUserProperty(source, "src.data.dir"))
     }
 
-    def retrieveTgtFromXMLFile = {}
+    def retrieveTgtFromXMLFile = {Source source, Properties bioSourceProperties  ->
+        def ant = new AntBuilder()
+        ant.taskdef(name: "insertXMLData", classname: "org.intermine.dataloader.XmlDataLoaderTask") {
+            classpath {
+                dirset(dir: project.getBuildDir().getAbsolutePath())
+                pathelement(path: project.configurations.getByName("compile").asPath)
+                pathelement(path: project.configurations.getByName("integrateSource").asPath)
+            }
+        }
+        ant.insertXMLData(integrationWriter: "integration.production",
+                sourceName: source.name,
+                sourceType: source.type,
+                file: getUserProperty(source, "src.data.file"),
+                ignoreDuplicates: getUserProperty(source, "ignoreDuplicates"),
+
+        ) {
+            fileset(dir: getUserProperty(source, "src.data.dir"),
+                    includes: "*.xml",
+                    excludes: getUserProperty(source, "src.data.dir.excludes"))
+        }
+    }
 
     def retrieveTgtFromLargeXMLFile = {}
 
@@ -117,7 +138,21 @@ class IntegrateUtils {
         }
     }
 
-    def retrieveFromOBO = {}
+    def retrieveFromOBO = {Source source, Properties bioSourceProperties ->
+        def ant = new AntBuilder()
+        ant.taskdef(name: "convertOBO", classname: "org.intermine.bio.task.OboConverterTask") {
+            classpath {
+                dirset(dir: project.getBuildDir().getAbsolutePath())
+                pathelement(path: project.configurations.getByName("compile").asPath)
+                pathelement(path: project.configurations.getByName("integrateSource").asPath)
+            }
+        }
+        ant.convertOBO(file: getUserProperty(source, "src.data.file"),
+                osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
+                ontologyName: bioSourceProperties.getProperty("obo.ontology.name"),
+                url: bioSourceProperties.getProperty("obo.ontology.url"),
+                termClass: bioSourceProperties.getProperty("obo.term.class"))
+    }
 
     def loadSingleSource = { source ->
         //TODO manage duplicate and AllSources
@@ -141,7 +176,7 @@ class IntegrateUtils {
         boolean found = false
         for (prop in source.userProperties) {
             if (key.equals(prop.name)) {
-                if ("src.data.dir".equals(prop.name)) {
+                if ("src.data.dir".equals(prop.name) || "src.data.file".equals(prop.name)) {
                     return prop.location
                 } else {
                     return prop.value
