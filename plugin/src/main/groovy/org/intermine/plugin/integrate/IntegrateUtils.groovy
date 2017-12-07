@@ -50,6 +50,12 @@ class IntegrateUtils {
 
     protected retrieveTgtFromCustomFile = {Source source, Properties bioSourceProperties  ->
         def ant = new AntBuilder()
+        //set dynamic properties
+        source.userProperties.each { prop ->
+            if (!"src.data.dir".equals(prop.name)) {
+                ant.project.setProperty(prop.name, prop.value)
+            }
+        }
         ant.taskdef(name: "convertFile", classname: "org.intermine.task.FileConverterTask") {
             classpath {
                 dirset(dir: project.getBuildDir().getAbsolutePath())
@@ -57,10 +63,14 @@ class IntegrateUtils {
                 pathelement(path: project.configurations.getByName("integrateSource").asPath)
             }
         }
+        def includes = getUserProperty(source, "src.data.dir.includes")
+        if (includes == null || includes == "") {
+            includes = "*"
+        }
         ant.convertFile(clsName: bioSourceProperties.getProperty("converter.class"),
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic") {
             fileset(dir: getUserProperty(source, "src.data.dir"),
-                    includes: getUserProperty(source, "src.data.dir.includes"),
+                    includes: includes,
                     excludes: getUserProperty(source, "src.data.dir.excludes"))
         }
     }
@@ -73,7 +83,6 @@ class IntegrateUtils {
             if (!"src.data.dir".equals(prop.name)) {
                 ant.project.setProperty(prop.name, prop.value)
             }
-
         }
         ant.taskdef(name: "convertDir", classname: "org.intermine.task.DirectoryConverterTask") {
             classpath {
