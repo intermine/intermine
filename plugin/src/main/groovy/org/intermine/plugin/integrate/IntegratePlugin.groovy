@@ -98,7 +98,6 @@ class IntegratePlugin implements Plugin<Project> {
                     integration.loadSingleSource(intermineProject.sources.get(sourceName))
                 }
             }
-
         }
 
         project.task('retrieveSingleSource') {

@@ -43,7 +43,7 @@ class WebAppPlugin implements Plugin<Project> {
         }
 
         project.task('mergeProperties') {
-            description "Appendes intermine.properties to web.properties file"
+            description "Append intermine.properties to web.properties file"
             dependsOn 'initConfig', 'copyMineProperties'
 
             doLast {
