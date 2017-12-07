@@ -2,17 +2,6 @@
 // we only have testCompile classes and we want them to be in the jar instead via the buildTestModelJar target
 jar.enabled = false
 
-sourceSets {
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
-        }
-    }
-}
-
 configurations {
     testArtifacts
     commonResources
