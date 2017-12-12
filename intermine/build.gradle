@@ -75,6 +75,14 @@ subprojects {
 
     test {
         ignoreFailures = true
+
+        testLogging {
+            events "skipped", "failed"
+            exceptionFormat "full"
+            showExceptions true
+            showStackTraces true
+            showCauses true
+        }
     }
 }
 
