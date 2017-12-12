@@ -10,8 +10,8 @@ include ':bio-source-biogrid',
 ':bio-source-go',
 ':bio-source-go-annotation',
 ':bio-source-homologene',
-//':bio-source-intermine-items-large-xml-file',
-//':bio-source-intermine-items-xml-file',
+':bio-source-intermine-items-large-xml-file',
+':bio-source-intermine-items-xml-file',
 ':bio-source-interpro',
 ':bio-source-interpro-go',
 ':bio-source-kegg-orthologues',
@@ -51,8 +51,8 @@ project(':bio-source-fasta').projectDir = new File(settingsDir, './fasta')
 project(':bio-source-go').projectDir = new File(settingsDir, './go')
 project(':bio-source-go-annotation').projectDir = new File(settingsDir, './go-annotation')
 project(':bio-source-homologene').projectDir = new File(settingsDir, './homologene')
-//project(':bio-source-intermine-items-large-xml-file').projectDir = new File(settingsDir, './intermine-items-large-xml-file')
-//project(':bio-source-intermine-items-xml-file').projectDir = new File(settingsDir, './intermine-items-xml-file')
+project(':bio-source-intermine-items-large-xml-file').projectDir = new File(settingsDir, './intermine-items-large-xml-file')
+project(':bio-source-intermine-items-xml-file').projectDir = new File(settingsDir, './intermine-items-xml-file')
 project(':bio-source-interpro').projectDir = new File(settingsDir, './interpro')
 project(':bio-source-interpro-go').projectDir = new File(settingsDir, './interpro-go')
 project(':bio-source-kegg-orthologues').projectDir = new File(settingsDir, './kegg-orthologues')

@@ -14,6 +14,7 @@ include ':bio-source-affy-probes',
 ':bio-source-fly-fish',
 ':bio-source-fly-misc-cvterms',
 ':bio-source-flyreg',
+':bio-source-flymine-static',
 ':bio-source-long-oligo',
 ':bio-source-miranda',
 ':bio-source-redfly',
@@ -33,6 +34,7 @@ project(':bio-source-fly-development-ontology').projectDir = new File(settingsDi
 project(':bio-source-fly-fish').projectDir = new File(settingsDir, './fly-fish')
 project(':bio-source-fly-misc-cvterms').projectDir = new File(settingsDir, './fly-misc-cvterms')
 project(':bio-source-flyreg').projectDir = new File(settingsDir, './flyreg')
+project(':bio-source-flymine-static').projectDir = new File(settingsDir, './flymine-static')
 project(':bio-source-long-oligo').projectDir = new File(settingsDir, './long-oligo')
 project(':bio-source-miranda').projectDir = new File(settingsDir, './miranda')
 project(':bio-source-redfly').projectDir = new File(settingsDir, './redfly')

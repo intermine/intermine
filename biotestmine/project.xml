@@ -8,7 +8,7 @@
   <sources>
 <!-- please remove -->
     <source name="flymine-static" type="intermine-items-xml-file">
-      <property name="src.data.file" location="datasets.xml"/>
+      <property name="src.data.file" location="/tmp/datasets.xml"/>
     </source>
 
     <source name="chado-db-flybase-dmel" type="chado-db">
@@ -24,6 +24,7 @@
     <source name="arbeitman-items-xml" type="arbeitman-items-xml">
       <property name="src.data.file" location="/micklem/data/flymine/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
+
 <!-- remove the above please -->
 
     <source name="uniprot-malaria" type="uniprot">
