@@ -50,6 +50,7 @@ class IntegrateUtils {
             retrieveFromOBO(source, bioSourceProperties)
         }
         // TODO throw exception here if we haven't found a valid type?
+        // TODO analyse and index here
 
     }
 
@@ -143,7 +144,23 @@ class IntegrateUtils {
         }
     }
 
-    def retrieveTgtFromLargeXMLFile = {}
+    def retrieveTgtFromLargeXMLFile = {Source source, Properties bioSourceProperties  ->
+        def ant = new AntBuilder()
+        ant.taskdef(name: "convertFullXMLFile", classname: "org.intermine.task.FullXmlConverterTask") {
+            classpath {
+                dirset(dir: project.getBuildDir().getAbsolutePath())
+                pathelement(path: project.configurations.getByName("compile").asPath)
+                pathelement(path: project.configurations.getByName("integrateSource").asPath)
+            }
+        }
+        ant.convertFullXMLFile(osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", sourceName: source.name,
+                file: getUserProperty(source, "src.data.file"), modelName: "genomic")
+        {
+            fileset(dir: getUserProperty(source, "src.data.dir"),
+                    includes: getUserProperty(source, "src.data.dir.includes"),
+                    excludes: getUserProperty(source, "src.data.dir.excludes"))
+        }
+    }
 
     def retrieveFromGFF3 = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
