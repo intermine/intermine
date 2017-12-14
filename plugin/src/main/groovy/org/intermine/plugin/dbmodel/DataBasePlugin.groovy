@@ -1,5 +1,6 @@
 package org.intermine.plugin.dbmodel
 
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
@@ -7,6 +8,11 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
+import org.intermine.plugin.project.ProjectXmlBinding
+import org.intermine.plugin.project.Source
+
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 class DataBasePlugin implements Plugin<Project> {
 
@@ -66,6 +72,45 @@ class DataBasePlugin implements Plugin<Project> {
             }
         }
 
+        project.task('generateKeys') {
+            description "Append keys for each source in project.xml to generated genomic_keyDefs.properties file"
+            doLast {
+                // parse project XML for each data source
+                String projectXml = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
+                org.intermine.plugin.project.Project intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml));
+                List<String> sourceNames = new ArrayList<String>()
+                intermineProject.sources.keySet().each { sourceName ->
+                    sourceNames.add(sourceName)
+                }
+
+                // init keys file
+                String keysPath = buildResourcesMainDir + File.separator + "genomic_keyDefs.properties"
+                File keysFile = new File(keysPath)
+
+                // append each source keys file to make one big keys file
+                sourceNames.each { sourceName ->
+                    Source source = intermineProject.sources.get(sourceName)
+                    String sourceType = source.getType()
+                    String sourceLocation = source.getLocation()
+                    String sourceKeysPath = sourceLocation + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + sourceType + "_keys.properties"
+                    String firstKeysPath = sourceKeysPath
+
+                    // keys files can be in two places. try again
+                    if (!(new File(sourceKeysPath)).exists()) {
+                        sourceKeysPath = sourceLocation + File.separator + "resources" + File.separator + sourceName + "_keys.properties"
+                    }
+
+                    if (!(new File(sourceKeysPath)).exists()) {
+                        // throw exception
+                        println "Failed to find keys file. Looked in " + firstKeysPath + " and " + sourceKeysPath
+                    }
+
+                    File sourceKeysFile = new File( (new File(sourceKeysPath)).getText() )
+                    keysFile.append(sourceKeysFile)
+                }
+            }
+        }
+
         project.task('createSoModel') {
             description "Reads SO OBO files and writes so_additions.xml"
             dependsOn 'initConfig', 'processResources'
@@ -97,20 +142,20 @@ class DataBasePlugin implements Plugin<Project> {
         project.task('buildDB') {
             group TaskConstants.TASK_GROUP
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar'
+            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
 
             doLast {
                 dbUtils.createSchema(config.objectStoreName, config.modelName)
                 dbUtils.createTables(config.objectStoreName, config.modelName)
                 dbUtils.storeMetadata(config.objectStoreName, config.modelName)
-                dbUtils.createIndexes(config.objectStoreName, config.modelName)
+                dbUtils.createIndexes(config.objectStoreName, config.modelName, false)
                 dbUtils.analyse(config.objectStoreName, config.modelName)
             }
         }
 
         project.task('buildUnitTestDB') {
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar'
+            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
 
             doLast {
                 dbUtils.createSchema(config.objectStoreName, config.modelName)
