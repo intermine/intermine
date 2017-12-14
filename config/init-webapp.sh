@@ -37,6 +37,6 @@ echo 'security.privatekey.password = intermine' >> $TEST_PROPS
 echo 'security.privatekey.alias = SELF'         >> $TEST_PROPS
 echo 'jwt.verification.strategy = ANY'          >> $TEST_PROPS
 echo 'jwt.publicidentity = ci'                  >> $TEST_PROPS
-sh testmodel/setup.sh # requires PSQL_USER to be set correctly.
+sh testmine/setup.sh # requires PSQL_USER to be set correctly.
 sleep 10 # wait for the webapp to come on line
 
