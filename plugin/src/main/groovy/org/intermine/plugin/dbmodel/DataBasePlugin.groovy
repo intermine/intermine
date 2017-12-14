@@ -1,6 +1,5 @@
 package org.intermine.plugin.dbmodel
 
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
@@ -10,9 +9,6 @@ import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
-
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 
 class DataBasePlugin implements Plugin<Project> {
 
@@ -108,7 +104,7 @@ class DataBasePlugin implements Plugin<Project> {
                     sourceProperties.load(sourceKeysFile.newDataInputStream())
                     keysProperties.putAll(sourceProperties)
                 }
-                String keysPath = buildResourcesMainDir + File.separator + "genomic_keyDefs.properties"
+                String keysPath = buildResourcesMainDir + File.separator + config.modelName + "_keyDefs.properties"
                 keysProperties.store(new File(keysPath).newWriter(), null)
             }
         }
