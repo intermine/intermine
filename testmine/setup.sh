@@ -66,7 +66,7 @@ echo "------> Checking config..."
 if test ! -f $PROP_FILE; then
     echo "-- $PROP_FILE not found. Providing default properties file."
     cd $IMDIR
-    cp $DIR/testmodel.properties $PROP_FILE
+    cp $DIR/dbmodel/resources/testmodel.properties $PROP_FILE
     sed -i=bak -e "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
     sed -i=bak -e "s/PSQL_PWD/$PSQL_PWD/g" $PROP_FILE
     sed -i=bak -e "s/TOMCAT_USER/$TOMCAT_USER/g" $PROP_FILE
