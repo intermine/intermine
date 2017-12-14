@@ -25,6 +25,7 @@ class DataBasePlugin implements Plugin<Project> {
             mergeSource
             commonResources
             api
+            integrateSource
         }
 
         versionConfig = project.extensions.create('versionConfig', VersionConfig)
@@ -86,17 +87,30 @@ class DataBasePlugin implements Plugin<Project> {
                     Source source = intermineProject.sources.get(sourceName)
                     String sourceType = source.getType()
                     String sourceLocation = source.getLocation()
-                    String sourceKeysPath = sourceLocation + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + sourceType + "_keys.properties"
-                    String firstKeysPath = sourceKeysPath
+                    String sourceKeysDirectory = sourceLocation + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator
+                    //
+                    String alternateSourceKeysDirectory = sourceLocation + File.separator + "resources" + File.separator
+
+                    // try source name first
+                    String sourceKeysPath = sourceKeysDirectory + sourceName + "_keys.properties"
+
+                    // try source type now
+                    if (!(new File(sourceKeysPath).exists())) {
+                        sourceKeysPath = sourceKeysDirectory + sourceType + "_keys.properties"
+                    }
 
                     // keys files can be in two places. try again
                     if (!(new File(sourceKeysPath)).exists()) {
-                        sourceKeysPath = sourceLocation + File.separator + "resources" + File.separator + sourceName + "_keys.properties"
+                        sourceKeysPath = alternateSourceKeysDirectory + sourceName + "_keys.properties"
                     }
 
                     if (!(new File(sourceKeysPath)).exists()) {
-                        // TODO throw exception
-                        println "Failed to find keys file. Looked in " + firstKeysPath + " and " + sourceKeysPath
+                        sourceKeysPath = alternateSourceKeysDirectory + sourceType + "_keys.properties"
+                    }
+
+                    if (!(new File(sourceKeysPath)).exists()) {
+                        // TODO throw exception if we still don't have it
+                        println "Couldn't find keys file. Looked absolutely everywhere."
                     }
 
                     File sourceKeysFile = new File( sourceKeysPath )
