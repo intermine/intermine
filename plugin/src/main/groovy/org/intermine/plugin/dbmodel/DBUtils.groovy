@@ -95,6 +95,7 @@ class DBUtils {
         ant.taskdef(name: 'createIndexes', classname: 'org.intermine.task.CreateIndexesTask') {
             classpath {
                 dirset(dir: buildResourcesMainDir) // intermine.properties
+                dirset(dir: project.getBuildDir().getAbsolutePath())
                 pathelement(path: project.configurations.getByName("compile").asPath)
             }
         }
