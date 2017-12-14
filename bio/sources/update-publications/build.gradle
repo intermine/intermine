@@ -19,5 +19,5 @@ sourceSets {
 
 dependencies {
     compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
-    compile group: 'com.sleepycat', name: 'je', version: '4.0.92'
+    compile fileTree(dir: 'libs', include: '*.jar') // eventually replace with a most recente version of sleepycat
 }
