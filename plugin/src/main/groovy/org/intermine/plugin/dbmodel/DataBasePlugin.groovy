@@ -83,9 +83,7 @@ class DataBasePlugin implements Plugin<Project> {
                     sourceNames.add(sourceName)
                 }
 
-                // init keys file
-                String keysPath = buildResourcesMainDir + File.separator + "genomic_keyDefs.properties"
-                File keysFile = new File(keysPath)
+                Properties keysProperties = new Properties()
 
                 // append each source keys file to make one big keys file
                 sourceNames.each { sourceName ->
@@ -101,13 +99,17 @@ class DataBasePlugin implements Plugin<Project> {
                     }
 
                     if (!(new File(sourceKeysPath)).exists()) {
-                        // throw exception
+                        // TODO throw exception
                         println "Failed to find keys file. Looked in " + firstKeysPath + " and " + sourceKeysPath
                     }
 
-                    File sourceKeysFile = new File( (new File(sourceKeysPath)).getText() )
-                    keysFile.append(sourceKeysFile)
+                    File sourceKeysFile = new File( sourceKeysPath )
+                    Properties sourceProperties = new Properties()
+                    sourceProperties.load(sourceKeysFile.newDataInputStream())
+                    keysProperties.putAll(sourceProperties)
                 }
+                String keysPath = buildResourcesMainDir + File.separator + "genomic_keyDefs.properties"
+                keysProperties.store(new File(keysPath).newWriter(), null)
             }
         }
 
