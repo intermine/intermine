@@ -50,8 +50,6 @@ class IntegrateUtils {
             retrieveFromOBO(source, bioSourceProperties)
         }
         // TODO throw exception here if we haven't found a valid type?
-        // TODO analyse and index here
-
     }
 
     protected retrieveTgtFromCustomFile = {Source source, Properties bioSourceProperties  ->
@@ -83,7 +81,6 @@ class IntegrateUtils {
 
     def retrieveTgtFromDB = { Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
-        //set dynamic properties
         source.userProperties.each { prop ->
             if (!"src.data.dir".equals(prop.name)) {
                 ant.project.setProperty(prop.name, prop.value)
@@ -99,7 +96,7 @@ class IntegrateUtils {
         }
         ant.convertDB(clsName: bioSourceProperties.getProperty("converter.class"),
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
-                dbAlias: getUserProperty(source, "src.db.name"))
+                dbAlias: "db." + getUserProperty(source, "src.db.name"))
     }
 
     def retrieveTgtFromCustomDir = {Source source, Properties bioSourceProperties  ->
