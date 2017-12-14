@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_PROPS=testmodel/testmodel.properties
+TEST_PROPS=testmine/dbmodel/resources/testmodel.properties
 
 for dep in keytool; do
   if test -z $(which $dep); then
