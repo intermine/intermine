@@ -116,6 +116,10 @@ class IntegratePlugin implements Plugin<Project> {
                 String sourceName = sourceNames.get(0)
                 println "Retrieving " + sourceName + " in a tgt items database"
                 integration.retrieveSingleSource(sourceName)
+
+                // need to do this after data is in items DB or loading is too slow
+                dbUtils.createIndexes("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata", false)
+                dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
             }
         }
 
