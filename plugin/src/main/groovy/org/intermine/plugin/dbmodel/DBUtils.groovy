@@ -57,8 +57,8 @@ class DBUtils {
         String tempDirectory = project.getBuildDir().getAbsolutePath() + File.separator + "tmp"
         ant.taskdef(name: "buildDB", classname: "org.intermine.task.BuildDbTask") {
             classpath {
-                pathelement(path: project.buildDir.getAbsolutePath())//to read the schema
                 dirset(dir: buildResourcesMainDir)//to read default.intermine.properties
+                pathelement(path: project.buildDir.getAbsolutePath())//to read the schema
                 pathelement(path: project.configurations.getByName("compile").asPath)
             }
         }
@@ -69,9 +69,9 @@ class DBUtils {
         def ant = new AntBuilder()
         ant.taskdef(name: 'insertModel', classname: 'org.intermine.task.StoreMetadataTask') {
             classpath {
+                dirset(dir: buildResourcesMainDir) // intermine.properties
                 pathelement(path: project.configurations.getByName("compile").asPath)
                 pathelement(path: project.configurations.getByName("api").asPath) //userprofile_keyDefs.properties
-                dirset(dir: buildResourcesMainDir) // intermine.properties
             }
         }
         ant.insertModel(osname: objectStoreName, modelName: modelName)
@@ -79,28 +79,27 @@ class DBUtils {
 
     protected analyse = { objectStoreName, modelName ->
         def ant = new AntBuilder()
-        // analyse database. makes postgres smarter and faster. autovacuum = FALSE
-        // "Accurate statistics will help the planner to choose the most appropriate query plan,
-        // and thereby improve the speed of query processing."
+
         ant.taskdef(name: 'analyse', classname: 'org.intermine.task.AnalyseDbTask') {
             classpath {
-                pathelement(path: project.configurations.getByName("compile").asPath)
                 dirset(dir: buildResourcesMainDir) // intermine.properties
+                pathelement(path: project.configurations.getByName("compile").asPath)
             }
         }
         ant.analyse(osname: objectStoreName, model: modelName)
     }
 
-    protected createIndexes = { objectStoreName, modelName ->
+    protected createIndexes = { objectStoreName, modelName, attributeIndexes ->
         def ant = new AntBuilder()
 
         ant.taskdef(name: 'createIndexes', classname: 'org.intermine.task.CreateIndexesTask') {
             classpath {
-                pathelement(path: project.configurations.getByName("compile").asPath)
                 dirset(dir: buildResourcesMainDir) // intermine.properties
+                dirset(dir: project.getBuildDir().getAbsolutePath())
+                pathelement(path: project.configurations.getByName("compile").asPath)
             }
         }
-        ant.createIndexes(alias: objectStoreName, attributeIndexes: true)
+        ant.createIndexes(alias: objectStoreName, attributeIndexes: attributeIndexes)
     }
 
 }

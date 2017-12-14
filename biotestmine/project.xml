@@ -7,7 +7,7 @@
 
   <sources>
 <!-- please remove -->
-    <source name="flymine-static" type="intermine-items-xml-file">
+    <source name="flymine-static" type="flymine-static">
       <property name="src.data.file" location="/tmp/datasets.xml"/>
     </source>
 
@@ -20,10 +20,16 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
+    <source name="affy-probes" type="affy-probes">
+      <property name="src.data.dir" location="/micklem/data/flymine/affy-probes/current"/>
+      <property name="src.data.dir.includes" value="*.txt"/>
+    </source>
+
 
     <source name="arbeitman-items-xml" type="arbeitman-items-xml">
       <property name="src.data.file" location="/micklem/data/flymine/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
+
 
 <!-- remove the above please -->
 

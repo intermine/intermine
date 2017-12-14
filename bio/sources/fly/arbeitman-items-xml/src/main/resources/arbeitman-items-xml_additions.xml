@@ -37,6 +37,7 @@
   <attribute name="identifier" type="java.lang.String"/>
   <attribute name="description" type="java.lang.String"/>
   <attribute name="name" type="java.lang.String"/>
+  <reference name="publication" referenced-type="Publication"/>
   <collection name="assays" referenced-type="MicroArrayAssay" reverse-reference="experiment"/>
   <collection name="results" referenced-type="MicroArrayResult" reverse-reference="experiment"/>
 </class>
