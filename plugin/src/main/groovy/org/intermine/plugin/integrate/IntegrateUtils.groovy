@@ -96,7 +96,7 @@ class IntegrateUtils {
         }
         ant.convertDB(clsName: bioSourceProperties.getProperty("converter.class"),
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
-                dbAlias: "db." + getUserProperty(source, "src.db.name"))
+                dbAlias: "db." + getUserProperty(source, "source.db.name"))
     }
 
     def retrieveTgtFromCustomDir = {Source source, Properties bioSourceProperties  ->
