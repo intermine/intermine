@@ -1,6 +1,7 @@
 package org.intermine.plugin.integrate
 
 enum IntegrateAction {
+    PRE_RETRIEVE("pre-retrieve"),
     RETRIEVE("retrieve"),
     LOAD("load"),
     RETRIEVE_AND_LOAD("")
@@ -14,6 +15,8 @@ enum IntegrateAction {
     protected static getAction = { String action ->
         if (action == null || "".equals(action)) {
             return RETRIEVE_AND_LOAD
+        }  else if ("pre-retrieve".equals(action)) {
+            return PRE_RETRIEVE
         } else if ("retrieve".equals(action)) {
             return RETRIEVE
         } else if ("load".equals(action)) {

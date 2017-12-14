@@ -3,6 +3,7 @@ package org.intermine.plugin.integrate
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.dbmodel.DBUtils
@@ -48,7 +49,7 @@ class IntegratePlugin implements Plugin<Project> {
                         throw new InvalidUserDataException("Can't find source " + sourceName + " in project definition file")
                     }
                     String sourceType = source.type
-                    project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: versions.bioVersion, transitive: false])
+                    project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: versions.bioVersion])
                 }
 
                 //when we have more than one source we can't split the integrate in the 2 steps: retrieve and load
@@ -67,13 +68,13 @@ class IntegratePlugin implements Plugin<Project> {
 
         project.task('integrate') {
             group TaskConstants.TASK_GROUP
-            description "Integrates sources into production database. Optional input properties: source (source name) and action(possible values: retrieve or load). E.g. integrate -Psource=uniprot-malaria -Paction=load"
+            description "Integrates sources into production database. Optional input properties: source (source name) and action(possible values: pre-retrieve, retrieve or load). E.g. integrate -Psource=uniprot-malaria -Paction=load"
             dependsOn 'integrateSingleSource', 'integrateMultipleSources'
         }
 
         project.task('integrateSingleSource') {
             description "Integrates single source into production database."
-            dependsOn 'initIntegration','retrieveSingleSource','loadSingleSource'
+            dependsOn 'initIntegration','preRetrieveSingleSource','retrieveSingleSource','loadSingleSource'
             onlyIf { sourceNames.size() == 1 }
         }
 
@@ -92,6 +93,7 @@ class IntegratePlugin implements Plugin<Project> {
                         dbUtils.storeMetadata("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
                         dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
                     }
+                    integration.preRetrieveSingleSource(sourceName)
                     println "Retrieving " + sourceName + " in a tgt items database"
                     integration.retrieveSingleSource(sourceName)
                     println "Loading " + sourceName + " tgt items into production database"
@@ -99,20 +101,31 @@ class IntegratePlugin implements Plugin<Project> {
                 }
             }
         }
+        project.task('preRetrieveSingleSource') {
+            description "Pre-retrieves a single source"
+            dependsOn 'initIntegration','buildTgtItems'
+            onlyIf {
+                sourceNames.size() == 1 && (action.equals(IntegrateAction.PRE_RETRIEVE) || action.equals(IntegrateAction.RETRIEVE) || action.equals(IntegrateAction.RETRIEVE_AND_LOAD))
+            }
+
+            doLast {
+                String sourceName = sourceNames.get(0)
+                integration.preRetrieveSingleSource(sourceName)
+            }
+        }
+
 
         project.task('retrieveSingleSource') {
             description "Retrieves a single source into tgt items database"
-            dependsOn 'initIntegration','buildTgtItems'
+            dependsOn 'initIntegration','buildTgtItems', 'preRetrieveSingleSource'
             onlyIf {
                 sourceNames.size() == 1 && (action.equals(IntegrateAction.RETRIEVE) || action.equals(IntegrateAction.RETRIEVE_AND_LOAD))
             }
 
             doLast {
-                Properties bioSourceProperties = integration.getBioSourceProperties(sourceNames.get(0))
                 String sourceName = sourceNames.get(0)
                 println "Retrieving " + sourceName + " in a tgt items database"
                 integration.retrieveSingleSource(sourceName)
-
             }
         }
 

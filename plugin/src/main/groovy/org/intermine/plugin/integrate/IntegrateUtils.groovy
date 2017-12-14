@@ -1,10 +1,14 @@
 package org.intermine.plugin.integrate
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.util.PatternSet
 import org.intermine.plugin.project.Source
 import org.gradle.api.tasks.SourceSetContainer
+
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class IntegrateUtils {
     String COMMON_OS_PREFIX = "common"
@@ -16,19 +20,72 @@ class IntegrateUtils {
         this.project = project
         this.imProject = imProject
 
-        SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
-        buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+        SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
+        buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
     }
 
     Properties getBioSourceProperties(String sourceName) {
         String sourceType = imProject.sources.get(sourceName).type
-        FileTree fileTree = project.zipTree(project.configurations.getByName("integrateSource").singleFile)
-        PatternSet patternSet = new PatternSet();
-        patternSet.include(sourceType + ".properties");
-        File file = fileTree.matching(patternSet).singleFile
-        Properties bioSourceProperties = new Properties()
-        file.withInputStream { bioSourceProperties.load(it) }
-        return bioSourceProperties
+        String propsFileName = sourceType + ".properties"
+        return getProperties(sourceName, propsFileName)
+    }
+
+    Properties getBioSourcePreRetrieveProperties(String sourceName) {
+        String sourceType = imProject.sources.get(sourceName).type
+        String propsFileName = sourceType + "-pre-retrieve.properties"
+        return getProperties(sourceName, propsFileName)
+    }
+
+    Properties getProperties(String sourceName, String propsFileName) {
+        String sourceType = imProject.sources.get(sourceName).type
+        Properties properties = new Properties()
+        Configuration config = project.configurations.getByName("integrateSource")
+        config.files.each {file ->
+            if (file.name.contains(sourceType)) {
+                FileTree fileTree = project.zipTree(file)
+                PatternSet patternSet = new PatternSet();
+                patternSet.include(propsFileName);
+                if (fileTree.matching(patternSet).find()) {//-pre-retrieve.properties might not be exist
+                    File props = fileTree.matching(patternSet).singleFile
+                    props.withInputStream { properties.load(it) }
+                }
+                return properties
+            }
+        }
+        return properties
+    }
+
+    protected preRetrieveSingleSource = { sourceName ->
+        Properties preRetrieveProps = getBioSourcePreRetrieveProperties(sourceName)
+        if (preRetrieveProps != null && !preRetrieveProps.isEmpty()) {
+            println "Pre-retrieving " + sourceName
+            def ant = new AntBuilder()
+
+            ant.taskdef(name: 'preRetrieve', classname: preRetrieveProps.getProperty("classname")) {
+                classpath {
+                    dirset(dir: project.getBuildDir().getAbsolutePath())
+                    pathelement(path: project.configurations.getByName("compile").asPath)
+                    pathelement(path: project.configurations.getByName("integrateSource").asPath)
+                }
+            }
+            //prepare preRetrieve input parameters
+            Source source = imProject.sources.get(sourceName)
+            Properties antTaskProperties = new Properties()
+            preRetrieveProps.each {prop ->
+                if (prop.key != "classname") {
+                    String value = prop.value
+                    Pattern p = Pattern.compile("[\$\\{\\}]")
+                    Matcher m = p.matcher(value)
+                    if (m.find()) {
+                        value = getUserProperty(source, m.replaceAll(""))
+                    }
+                    if (value != null) {
+                        antTaskProperties[prop.key] = value
+                    }
+                }
+            }
+            ant.preRetrieve(antTaskProperties)
+        }
     }
 
     protected retrieveSingleSource = {sourceName ->
@@ -207,7 +264,6 @@ class IntegrateUtils {
     }
 
     String getUserProperty(Source source, String key) {
-        boolean found = false
         for (prop in source.userProperties) {
             if (key.equals(prop.name)) {
                 if ("src.data.dir".equals(prop.name) || "src.data.file".equals(prop.name)) {
@@ -218,4 +274,6 @@ class IntegrateUtils {
             }
         }
     }
+
+
 }
