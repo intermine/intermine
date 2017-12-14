@@ -26,12 +26,12 @@ import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Secretary;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreTestUtils;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.json.JSONArray;
@@ -53,17 +53,22 @@ public class RecordIteratorTest
     private static final Map<String, InterMineBag> NO_BAGS = Collections.emptyMap();
 
     @BeforeClass
-    public static void loadData() throws ObjectStoreException {
+    public static void loadData() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        ObjectStoreTestUtils.deleteAllObjectsInStore(osw);
+
         int made = 0;
+
         try {
             osw.beginTransaction();
+
             for (int k = 0; k < COMPANIES; k++) {
                 Company c = (Company) createObject(Collections.singleton(Company.class));
                 c.setName("temp-company" + k);
                 c.setVatNumber((k + 1) * (k + 1));
                 osw.store(c);
                 made++;
+
                 for (int i = 0; i < SECRETARIES; i++) {
                     Secretary s = new Secretary();
                     s.setName("temp-secretary" + i);
@@ -71,6 +76,7 @@ public class RecordIteratorTest
                     c.addSecretarys(s);
                     osw.store(c);
                 }
+
                 for (int i = 0; i < DEPARTMENTS; i++) {
                     Department d = new Department();
                     d.setName(String.format("temp-department-%d-%d", k, i));
@@ -104,6 +110,7 @@ public class RecordIteratorTest
                     }
                 }
             }
+
             osw.commitTransaction();
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -115,6 +122,7 @@ public class RecordIteratorTest
                 osw.close();
             }
         }
+
         System.out.printf("[START UP] Made %d employees\n", made);
     }
 
@@ -150,7 +158,7 @@ public class RecordIteratorTest
         
     };
 
-    private  EitherVisitor<ResultCell, SubTable, Void> printer = new IndentingPrinter(4);
+    private EitherVisitor<ResultCell, SubTable, Void> printer = new IndentingPrinter(4);
     
     @Before
     public void setup() throws ObjectStoreException {
@@ -163,66 +171,15 @@ public class RecordIteratorTest
             osw.close();
         }
     }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+
     @AfterClass
-    public static void shutdown() {
-        int deleted = 0;
+    public static void shutdown() throws Exception {
         try {
             osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        } catch (Exception e) {
-            System.err.println("Error connecting to DB");
-            System.err.println(e);
+            ObjectStoreTestUtils.deleteAllObjectsInStore(osw);
+        } finally {
+            osw.close();
         }
-        if (osw != null) {
-            try {
-                osw.beginTransaction();
-                PathQuery pq = new PathQuery(osw.getModel());
-                pq.addView("Company.id");
-                pq.addConstraint(Constraints.eq("Company.name", "temp*"));
-
-                Query q = MainHelper.makeQuery(
-                        pq, new HashMap(), new HashMap(), null, new HashMap());
-
-                Results res = osw.execute(q, 50000, true, false, true);
-                for (Object row: res) {
-                    Company c = (Company) ((List) row).get(0);
-                    for (Secretary s: c.getSecretarys()) {
-                        osw.delete(s);
-                        deleted++;
-                    }
-                    for (Department dep: c.getDepartments()) {
-                        if (dep.getManager() != null) {
-                            osw.delete(dep.getManager());
-                            deleted++;
-                        }
-                        for (Employee e: dep.getEmployees()) {
-                            if (e.getAddress() != null) {
-                                osw.delete(e.getAddress());
-                                deleted++;
-                            }
-                            osw.delete(e);
-                            deleted++;
-                        }
-                        osw.delete(dep);
-                        deleted++;
-                    }
-                    osw.delete(c);
-                    deleted++;
-                }
-                
-                osw.commitTransaction();
-            } catch (Exception e) {
-                e.printStackTrace(System.err);
-            }finally {
-                try {
-                    osw.close();
-                } catch (Exception e) {
-                    System.err.print(e);
-                }
-            }
-        }
-        System.out.printf("\n[CLEAN UP] Deleted %d things\n", deleted);
     }
 
     private PathQuery getPQ() {
@@ -241,9 +198,9 @@ public class RecordIteratorTest
     
     private static class IndentingPrinter extends EitherVisitor<ResultCell, SubTable, Void> {
         
-        int indent = 0;
+        int indent;
         int depth = 0;
-        String spacer = null;
+        String spacer;
         
         IndentingPrinter(int indent) {
             this.indent = indent;
@@ -277,7 +234,7 @@ public class RecordIteratorTest
             return null;
         }
         
-    };
+    }
 
     private Map<String, BagQueryResult> getBQRAccumulator() {
         return new HashMap<String, BagQueryResult>();
@@ -351,7 +308,7 @@ public class RecordIteratorTest
         assertEquals(c, 14);
     }
 
-    EitherVisitor<ResultCell, SubTable, Integer> deepCounter = new EitherVisitor<ResultCell, SubTable, Integer>() {
+    private EitherVisitor<ResultCell, SubTable, Integer> deepCounter = new EitherVisitor<ResultCell, SubTable, Integer>() {
 
         @Override public Integer visitLeft(ResultCell a) { return 1; }
 

@@ -7,12 +7,10 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.StringValueTransformer;
@@ -28,12 +26,12 @@ import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Secretary;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreTestUtils;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.json.JSONArray;
@@ -52,14 +50,15 @@ public class TableRowIteratorTest
     private static final int DEPARTMENTS = 2;
     private static final int EMPLOYEES = 3;
 
-    private static final Map<String, InterMineBag> NO_BAGS = Collections.emptyMap();
-
     @BeforeClass
-    public static void loadData() throws ObjectStoreException {
+    public static void loadData() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        ObjectStoreTestUtils.deleteAllObjectsInStore(osw);
+
         int made = 0;
         try {
             osw.beginTransaction();
+
             Bank[] banks = new Bank[COMPANIES / 2];
             for (int bi = 0; bi < COMPANIES / 2; bi++) {
                 Bank bank = new Bank();
@@ -115,6 +114,7 @@ public class TableRowIteratorTest
                     }
                 }
             }
+
             osw.commitTransaction();
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -161,7 +161,7 @@ public class TableRowIteratorTest
         
     };
 
-    private  EitherVisitor<ResultCell, SubTable, Void> printer = new IndentingPrinter(4);
+    private EitherVisitor<ResultCell, SubTable, Void> printer = new IndentingPrinter(4);
     
     @Before
     public void setup() throws ObjectStoreException {
@@ -176,81 +176,21 @@ public class TableRowIteratorTest
     }
     
     @AfterClass
-    public static void shutdown() {
-        int deleted = 0;
+    public static void shutdown() throws Exception {
         try {
             osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        } catch (Exception e) {
-            System.err.println("Error connecting to DB");
-            System.err.println(e);
+            ObjectStoreTestUtils.deleteAllObjectsInStore(osw);
+        } finally {
+            osw.close();
         }
-        if (osw != null) {
-            try {
-                osw.beginTransaction();
-                PathQuery pq = new PathQuery(osw.getModel());
-                pq.addView("Company.id");
-                pq.addConstraint(Constraints.eq("Company.name", "temp*"));
-
-                Query q = MainHelper.makeQuery(
-                        pq, NO_BAGS, new HashMap<String, QuerySelectable>(), null,
-                        new HashMap<String, BagQueryResult>());
-
-                Results res = osw.execute(q, 50000, true, false, true);
-                Set<Bank> banks = new HashSet<Bank>();
-                for (Object row: res) {
-                    @SuppressWarnings("rawtypes")
-                    Company c = (Company) ((List) row).get(0);
-                    for (Secretary s: c.getSecretarys()) {
-                        osw.delete(s);
-                        deleted++;
-                    }
-                    if (c.getBank() != null) {
-                        banks.add(c.getBank());
-                    }
-                    for (Department dep: c.getDepartments()) {
-                        if (dep.getManager() != null) {
-                            osw.delete(dep.getManager());
-                            deleted++;
-                        }
-                        for (Employee e: dep.getEmployees()) {
-                            if (e.getAddress() != null) {
-                                osw.delete(e.getAddress());
-                                deleted++;
-                            }
-                            osw.delete(e);
-                            deleted++;
-                        }
-                        osw.delete(dep);
-                        deleted++;
-                    }
-                    osw.delete(c);
-                    deleted++;
-                }
-                for (Bank b: banks) {
-                    osw.delete(b);
-                    deleted++;
-                }
-                
-                osw.commitTransaction();
-            } catch (Exception e) {
-                e.printStackTrace(System.err);
-            }finally {
-                try {
-                    osw.close();
-                } catch (Exception e) {
-                    System.err.print(e);
-                }
-            }
-        }
-        puts("\n[CLEAN UP] Deleted %d things", deleted);
     }
 
     /* VISITORS WE WILL BE USING... */
     private static class IndentingPrinter extends EitherVisitor<ResultCell, SubTable, Void> {
         
-        int indent = 0;
+        int indent;
         int depth = 0;
-        String spacer = null;
+        String spacer;
         
         IndentingPrinter(int indent) {
             this.indent = indent;
@@ -283,11 +223,11 @@ public class TableRowIteratorTest
             }
             return null;
         }
-    };
+    }
     
     private static final EitherVisitor<ResultCell, SubTable, Integer> deepCounter = new EitherVisitor<ResultCell, SubTable, Integer>() {
 
-        @Override public Integer visitLeft(ResultCell a) { return Integer.valueOf(1); }
+        @Override public Integer visitLeft(ResultCell a) { return 1; }
 
         @Override public Integer visitRight(SubTable b) {
             int c = 0;
@@ -307,7 +247,7 @@ public class TableRowIteratorTest
     };
 
     private static final EitherVisitor<ResultCell, SubTable, Integer> counterNoTables = new EitherVisitor<ResultCell, SubTable, Integer>() {
-        public Integer visitLeft(ResultCell a) { return Integer.valueOf(1);}
+        public Integer visitLeft(ResultCell a) { return 1; }
         public Integer visitRight(SubTable b) { fail("No subtables expected"); return null; }
     };
 
