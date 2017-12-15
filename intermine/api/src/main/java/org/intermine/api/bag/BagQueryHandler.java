@@ -203,7 +203,7 @@ public class BagQueryHandler extends DefaultHandler
             new Path(model, constraintPath);
         } catch (PathException e) {
             LOG.warn("Can't add converter to bag-queries.xml, constraint-path '" + constraintPath
-                    + "' isn't in model.");
+                    + "' isn't in " + model + " model.");
             return;
         }
 
