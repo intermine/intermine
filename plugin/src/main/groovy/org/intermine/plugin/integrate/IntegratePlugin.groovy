@@ -96,10 +96,11 @@ class IntegratePlugin implements Plugin<Project> {
                     println "Retrieving " + sourceName + " in a tgt items database"
                     integration.retrieveSingleSource(sourceName)
 
-                    // need to do this after data is in items DB or loading is too slow
-                    dbUtils.createIndexes("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata", false)
-                    dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
-
+                    if (!bioSourceProperties.containsKey("have.file.custom.direct")) {
+                        // need to do this after data is in items DB or loading is too slow
+                        dbUtils.createIndexes("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata", false)
+                        dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                    }
                     println "Loading " + sourceName + " tgt items into production database"
                     integration.loadSingleSource(intermineProject.sources.get(sourceName))
                 }
@@ -130,10 +131,12 @@ class IntegratePlugin implements Plugin<Project> {
                 String sourceName = sourceNames.get(0)
                 println "Retrieving " + sourceName + " in a tgt items database"
                 integration.retrieveSingleSource(sourceName)
-
-                // need to do this after data is in items DB or loading is too slow
-                dbUtils.createIndexes("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata", false)
-                dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                Properties bioSourceProperties = integration.getBioSourceProperties(sourceName)
+                if (!bioSourceProperties.containsKey("have.file.custom.direct")) {
+                    // need to do this after data is in items DB or loading is too slow
+                    dbUtils.createIndexes("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata", false)
+                    dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                }
             }
         }
 
