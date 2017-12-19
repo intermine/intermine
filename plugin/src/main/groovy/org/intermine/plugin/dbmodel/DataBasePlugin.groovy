@@ -17,6 +17,7 @@ class DataBasePlugin implements Plugin<Project> {
     VersionConfig versionConfig
     String buildResourcesMainDir
     boolean regenerateModel = true
+    boolean generateKeys = true
 
     void apply(Project project) {
 
@@ -43,6 +44,9 @@ class DataBasePlugin implements Plugin<Project> {
             buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
             if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {
                 regenerateModel = false
+            }
+            if (!(new File(project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml").exists())) {
+                generateKeys = false
             }
         }
 
@@ -71,6 +75,8 @@ class DataBasePlugin implements Plugin<Project> {
 
         project.task('generateKeys') {
             description "Append keys for each source in project.xml to generated genomic_keyDefs.properties file"
+            onlyIf {generateKeys}
+
             doLast {
                 // parse project XML for each data source
                 String projectXml = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
