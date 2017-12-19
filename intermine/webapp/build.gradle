@@ -23,27 +23,26 @@ sourceSets {
 tasks.test.dependsOn(':intermine-testresources:buildDB')
 
 dependencies {
-    compile project(':intermine-pathquery')
-    compile project(':intermine-api')
-    compile group: 'commons-io', name: 'commons-io', version: '2.0.1'
-    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
-    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
-    compile group: 'commons-httpclient', name: 'commons-httpclient', version: '3.0'
-    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.2.2'
-    compile group: 'org.directwebremoting', name: 'dwr', version: '2.0.1'
-    compile group: 'org.apache.lucene', name: 'lucene-core', version: '3.0.2'
-    compile group: 'javax.mail', name: 'mail', version: '1.4'
-    compile group: 'org.apache.struts', name: 'struts-core', version: '1.3.10'
-    compile group: 'org.apache.struts', name: 'struts-taglib', version: '1.3.10'
-    compile group: 'org.apache.struts', name: 'struts-extras', version: '1.3.10'
-    compile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'
-    compile group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.client', version: '1.0.0'
-    compile group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.common', version: '1.0.0'
-    compile group: 'strutstestcase', name: 'strutstestcase', version: '2.1.4-1.2-2.4'
-    compile group: 'javax.servlet.jsp', name: 'javax.servlet.jsp-api', version: '2.3.1'
-    compile group: 'org.expressme', name: 'JOpenId', version: '1.08'
-    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
-    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.50'
+    providedCompile project(':intermine-api')
+    providedCompile group: 'commons-io', name: 'commons-io', version: '2.0.1'
+    providedCompile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    providedCompile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    providedCompile group: 'commons-httpclient', name: 'commons-httpclient', version: '3.0'
+    providedCompile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.2.2'
+    providedCompile group: 'org.directwebremoting', name: 'dwr', version: '2.0.1'
+    providedCompile group: 'org.apache.lucene', name: 'lucene-core', version: '3.0.2'
+    providedCompile group: 'javax.mail', name: 'mail', version: '1.4'
+    providedCompile group: 'org.apache.struts', name: 'struts-core', version: '1.3.10'
+    providedCompile group: 'org.apache.struts', name: 'struts-taglib', version: '1.3.10'
+    providedCompile group: 'org.apache.struts', name: 'struts-extras', version: '1.3.10'
+    providedCompile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'
+    providedCompile group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.client', version: '1.0.0'
+    providedCompile group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.common', version: '1.0.0'
+    providedCompile group: 'strutstestcase', name: 'strutstestcase', version: '2.1.4-1.2-2.4'
+    providedCompile group: 'javax.servlet.jsp', name: 'javax.servlet.jsp-api', version: '2.3.1'
+    providedCompile group: 'org.expressme', name: 'JOpenId', version: '1.08'
+    providedCompile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
+    providedCompile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.50'
     compile files('libs/stringtree-json-2.0.5.jar')
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
     testCompile project(':intermine-objectstore').sourceSets.test.output
@@ -52,7 +51,6 @@ dependencies {
     testCompile group: 'org.easymock', name: 'easymock', version: '3.2'
     testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
     testCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
-    runtime group: 'taglibs', name: 'string', version: '1.1.0'
 }
 
 task classesJar(type: Jar) {
