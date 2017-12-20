@@ -27,9 +27,6 @@ keytool -genkey -noprompt \
 # Make it available to the web-app
 cp $KEYSTORE ${HOME}/.intermine/testmodel-keystore.jks.demo
 
-# We need a running webapp
-source config/download_and_configure_tomcat.sh
-sleep 10 # wait for tomcat to come on line
 # Add necessary keys to the test properties.
 echo 'i.am.a.dev = true'                        >> $TEST_PROPS # Show 500 error messages.
 echo 'security.keystore.password = intermine'   >> $TEST_PROPS
