@@ -25,7 +25,7 @@ class WebAppPlugin implements Plugin<Project> {
 
         project.dependencies {
             commonResources group: "org.intermine", name: "intermine-resources", version: webappVersionConfig.imVersion
-            bioWebApp group: "org.intermine", name: "bio-webapp", version: webappVersionConfig.bioVersion, ext: "war"
+            bioWebApp group: "org.intermine", name: "bio-webapp", version: webappVersionConfig.bioVersion, transitive: false
         }
 
         project.task('initConfig') {
