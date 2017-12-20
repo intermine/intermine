@@ -91,7 +91,7 @@ done
 cd $DIR/dbmodel
 
 echo "------> Loading demo data set..."
-ant -Drelease=demo loadsadata >> $LOG
+../gradlew loadsadata
 
 cd $DIR/webapp/main
 
