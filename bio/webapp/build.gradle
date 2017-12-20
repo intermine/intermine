@@ -33,8 +33,9 @@ dependencies {
     providedCompile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: imVersion    
     providedCompile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'
     compile fileTree(dir: 'libs', include: '*.jar')
-    imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, ext: "war"
+    imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, transitive: false//, ext: "war"
 }
+
 
 task unwarIMWebApp(type: Copy) {
     description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
@@ -48,10 +49,8 @@ task warBioWebApp(type: War) {
 }
 
 war {
-    doLast {
-        unwarIMWebApp.execute()
-        warBioWebApp.execute()
-    }
+    dependsOn 'unwarIMWebApp'
+    finalizedBy 'warBioWebApp'
 }
 
 task classesJar(type: Jar) {
