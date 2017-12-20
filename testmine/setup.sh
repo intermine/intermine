@@ -88,14 +88,18 @@ for db in $USERPROFILEDB $PRODDB; do
     fi
 done
 
-cd $DIR/dbmodel
+# This is the first point at which we need to refer to the InterMine jars previous built
+# So we need to install them to Maven so that the testmine Gradle can fetch them
+echo "-----> Installing InterMine Gradle project JARs to local Maven..."
+cd $DIR/../intermine
+./gradlew install
 
 echo "------> Loading demo data set..."
+cd $DIR/dbmodel
 ../gradlew loadsadata
 
-cd $DIR/webapp/main
-
 echo "------> Building and releasing web-app..."
+cd $DIR/webapp/main
 ant -Drelease=demo -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
