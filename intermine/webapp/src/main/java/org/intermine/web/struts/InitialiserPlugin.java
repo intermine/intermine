@@ -123,8 +123,6 @@ public class InitialiserPlugin implements PlugIn
         }
     };
 
-    private ObjectStoreWriter userprofileOSW;
-
     /**
      * Init method called at Servlet initialisation
      *
@@ -169,7 +167,7 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("webConfig is null");
         }
 
-        userprofileOSW = getUserprofileWriter(webProperties);
+        ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
         if (userprofileOSW == null) {
             throw new ServletException("userprofileOSW is null");
         }
@@ -177,10 +175,7 @@ public class InitialiserPlugin implements PlugIn
         verifyUserProfile(userprofileOSW);
 
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
-
-        if (oss != null) {
-            setupClassSummaryInformation(servletContext, oss, os.getModel());
-        }
+        setupClassSummaryInformation(servletContext, oss, os.getModel());
 
         trackerDelegate = initTrackers(webProperties, userprofileOSW);
 
@@ -277,7 +272,7 @@ public class InitialiserPlugin implements PlugIn
             final ObjectStoreWriter userprofileOSW,
             final ObjectStoreSummary oss) throws ServletException {
         final ClassKeys classKeys = loadClassKeys(os.getModel());
-        final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os, webProperties);
+        final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
         final LinkRedirectManager redirector = getLinkRedirector(webProperties);
 
         final InterMineAPI im;
@@ -320,7 +315,7 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private void createPermaTokenTable(ObjectStore os, Connection con)
-        throws SQLException, ObjectStoreException, ClassNotFoundException {
+        throws SQLException, ClassNotFoundException {
         ClassDescriptor cd = os.getModel().getClassDescriptorByName("PermanentToken");
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         if (cd == null) {
@@ -422,13 +417,10 @@ public class InitialiserPlugin implements PlugIn
             try {
                 InputStream is = MetadataManager.retrieveBLOBInputStream(db,
                         MetadataManager.AUTOCOMPLETE_INDEX);
-                AutoCompleter ac;
 
                 if (is != null) {
-                    ac = new AutoCompleter(is);
-                    SessionMethods.setAutoCompleter(servletContext, ac);
+                    SessionMethods.setAutoCompleter(servletContext, new AutoCompleter(is));
                 } else {
-                    ac = null;
                     LOG.warn("No AutoCompleter index found in database.");
                 }
             } catch (SQLException e) {
@@ -519,15 +511,14 @@ public class InitialiserPlugin implements PlugIn
             LOG.error("Error loading class descriptions", e);
             blockingErrorKeys.put("errors.init.classkeys", null);
         }
-        ClassKeys  classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
-        return classKeys;
+
+        return ClassKeyHelper.readKeys(model, classKeyProps);
     }
 
     /**
      * Load keys that describe how objects should be uniquely identified
      */
-    private BagQueryConfig loadBagQueries(ServletContext servletContext, ObjectStore os,
-        Properties webProperties) {
+    private BagQueryConfig loadBagQueries(ServletContext servletContext, ObjectStore os) {
         BagQueryConfig bagQueryConfig = null;
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
         if (is != null) {
@@ -537,9 +528,11 @@ public class InitialiserPlugin implements PlugIn
                 LOG.error("Error loading class bag queries. ", e);
                 blockingErrorKeys.put("errors.init.bagqueries", e.getMessage());
             }
+
             InputStream isBag = getClass().getClassLoader()
                 .getResourceAsStream("extraBag.properties");
             Properties bagProperties = new Properties();
+
             if (isBag != null) {
                 try {
                     bagProperties.load(isBag);
@@ -631,9 +624,7 @@ public class InitialiserPlugin implements PlugIn
         // Load these last, as they always take precedence.
         InputStream modelPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/web.properties");
-        if (modelPropertiesStream == null) {
-            // there are no model specific properties
-        } else {
+        if (modelPropertiesStream != null) {
             try {
                 webProperties.load(modelPropertiesStream);
             } catch (Exception e) {
@@ -643,11 +634,13 @@ public class InitialiserPlugin implements PlugIn
             }
             updateOrigins(lastState, origins, "/WEB-INF/web.properties", webProperties);
         }
+
         SessionMethods.setPropertiesOrigins(servletContext, origins);
         Properties trimProperties = trimProperties(webProperties);
         setComputedProperties(trimProperties);
         SessionMethods.setWebProperties(servletContext, trimProperties);
         MainHelper.loadHelpers(trimProperties);
+
         return trimProperties;
     }
 
@@ -731,13 +724,14 @@ public class InitialiserPlugin implements PlugIn
             return null;
         }
         Class<?> c = TypeUtil.instantiate(linkRedirector);
-        Constructor<?> constr = null;
+        Constructor<?> constr;
         try {
-            constr = c.getConstructor(new Class[] {Properties.class});
+            constr = c.getConstructor(Properties.class);
         } catch (NoSuchMethodException e) {
             LOG.error(err, e);
             return null;
         }
+
         LinkRedirectManager redirector = null;
         try {
             redirector = (LinkRedirectManager) constr.newInstance(
@@ -751,6 +745,7 @@ public class InitialiserPlugin implements PlugIn
         } catch (InvocationTargetException e) {
             LOG.error(err, e);
         }
+
         return redirector;
     }
 
@@ -781,7 +776,7 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
-            final Model model) throws ServletException {
+            final Model model) {
         String errorKey = "errors.init.objectstoresummary.classcount";
         Map<String, String> classes = new LinkedHashMap<String, String>();
         Map<String, Integer> classCounts = new LinkedHashMap<String, Integer>();
@@ -791,7 +786,7 @@ public class InitialiserPlugin implements PlugIn
                 classes.put(className, TypeUtil.unqualifiedName(className));
             }
             try {
-                classCounts.put(className, Integer.valueOf(oss.getClassCount(className)));
+                classCounts.put(className, oss.getClassCount(className));
             } catch (Exception e) {
                 LOG.error("Unable to get class count for " + className, e);
                 blockingErrorKeys.put(errorKey, e.getMessage());
@@ -810,7 +805,7 @@ public class InitialiserPlugin implements PlugIn
                     blockingErrorKeys.put(errorKey, thisClassName);
                     return;
                 }
-                if (classCount.intValue() > 0) {
+                if (classCount > 0) {
                     subclasses.add(TypeUtil.unqualifiedName(thisClassName));
                 }
             }
@@ -820,14 +815,14 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private ObjectStoreWriter getUserprofileWriter(Properties webProperties) {
-        ObjectStoreWriter osw = null;
+        ObjectStoreWriter osw;
         try {
             String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
         } catch (ObjectStoreException e) {
             LOG.error("Unable to create userprofile - " + e.getMessage(), e);
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
-            return osw;
+            return null;
         }
 
         applyUserProfileUpgrades(osw, blockingErrorKeys);
@@ -861,9 +856,6 @@ public class InitialiserPlugin implements PlugIn
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
             blockingErrorKeys.put("errors.init.userprofileconnection", sqle.getMessage());
-        } catch (ObjectStoreException e) {
-            LOG.error("Problem upgrading database", e);
-            blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
         } catch (ClassNotFoundException e) {
             LOG.error("Problem upgrading database", e);
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
@@ -875,9 +867,9 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Set the given account to be a superuser.
      *
-     * @param accountName
-     * @param uosw
-     * @return
+     * @param accountName Name of the account to set as superuser
+     * @param uosw userprofile objectstore
+     * @return true if the account exists and could be set to superuser, false otherwise
      */
     private boolean setSuperuser(String accountName, ObjectStoreWriter uosw) {
         UserProfile superuserProfile = getUserProfile(accountName, uosw);
@@ -988,17 +980,12 @@ public class InitialiserPlugin implements PlugIn
                 ResultSet res = con.getMetaData().getColumns(null, null,
                                 TrackerUtil.TEMPLATE_TRACKER_TABLE, "timestamp");
 
-                while (res.next()) {
-                    if (res.getString(3).equals(TrackerUtil.TEMPLATE_TRACKER_TABLE)
-                        && "timestamp".equals(res.getString(4))
-                        && res.getInt(5) == Types.TIMESTAMP) {
-                        return true;
-                    }
-                    return false;
-                }
+                return res.getString(3).equals(TrackerUtil.TEMPLATE_TRACKER_TABLE)
+                    && "timestamp".equals(res.getString(4))
+                    && res.getInt(5) == Types.TIMESTAMP;
             }
         } catch (SQLException sqle) {
-            LOG.error("Probelm retriving connection", sqle);
+            LOG.error("Problem retriving connection", sqle);
         } finally {
             ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
         }
@@ -1012,15 +999,14 @@ public class InitialiserPlugin implements PlugIn
      */
     private TrackerDelegate getTrackerDelegate(Properties webProperties,
             ObjectStoreWriter userprofileOSW) {
-        @SuppressWarnings("unused")
-        Map<String, Tracker> trackers = new HashMap<String, Tracker>();
         String trackerList = (String) webProperties.get("webapp.trackers");
         LOG.info("initializeTrackers: trackerList is" + trackerList);
+
         if (trackerList != null) {
             String[] trackerClassNames = trackerList.split(",");
-            TrackerDelegate td = new TrackerDelegate(trackerClassNames, userprofileOSW);
-            return td;
+            return new TrackerDelegate(trackerClassNames, userprofileOSW);
         }
+
         return null;
     }
 
