@@ -139,49 +139,44 @@ public final class PropertiesUtil
     /**
      * Load the given properties into the global properties.
      *
-     * TODO: This should be merged with loadProperties() post-Gradle conversion.
-     *
-     * @param propertiesResourceName
+     * @param resourceName the resource to load
      */
-    private static void loadGlobalProperties(String propertiesResourceName) {
-        InputStream is = null;
+    private static void loadGlobalProperties(String resourceName) {
+        LOG.info("Loading global properties from '" + resourceName + "'");
 
-        try {
-            try {
-                is = PropertiesUtil.class.getClassLoader().getResourceAsStream(propertiesResourceName);
-
-                if (is == null) {
-                    throw new RuntimeException(propertiesResourceName + " is not in the classpath");
-                }
-
-                globalProperties.load(is);
-            } finally {
-                if (is != null) {
-                    is.close();
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading " + propertiesResourceName, e);
+        if (loadProperties(globalProperties, resourceName) == null) {
+            throw new RuntimeException("Could not load required global properties resource '" + resourceName + "'");
         }
     }
 
     /**
-     * Load a specified properties file
-     * @param filename the filename of the properties file
+     * Load a specified properties resource
+     * @param resourceName the resourceName of the properties file
+     *
      * @return the corresponding Properties object
      */
-    public static Properties loadProperties(String filename) {
-        Properties props = new NonOverrideableProperties();
+    public static Properties loadProperties(String resourceName) {
+        LOG.info("Loading properties from '" + resourceName + "'");
+        return loadProperties(new NonOverrideableProperties(), resourceName);
+    }
 
+    /**
+     * Load a specified properties resource to a properties object
+     *
+     * @param props The object receiving the properties
+     * @param resourceName The name of the resource to load
+     * @return The combined properties.  Null if the resource to load couldn't be found by the classloader
+     */
+    private static Properties loadProperties(Properties props, String resourceName) {
         try {
             InputStream is = null;
 
             try {
                 ClassLoader loader = PropertiesUtil.class.getClassLoader();
-                is = loader.getResourceAsStream(filename);
+                is = loader.getResourceAsStream(resourceName);
 
                 if (is == null) {
-                    LOG.error("Could not find file " + filename + " from " + loader);
+                    LOG.error("Could not find resource '" + resourceName + "' from classloader  " + loader);
                     return null;
                 }
 
@@ -192,7 +187,7 @@ public final class PropertiesUtil
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load :" + filename, e);
+            throw new RuntimeException("Failed to load resource '" + resourceName + "'", e);
         }
 
         return props;
