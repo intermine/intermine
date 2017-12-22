@@ -114,7 +114,8 @@ void loadsadataLoader() {
             dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
-    ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_extra_data.xml", sourceName: "testsource", sourceType: "testsource")
+
+    ant.loadsadata(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_extra_data.xml", sourceName: "testsource", sourceType: "testsource")
 }
 
 void enormocorpLoader() {
