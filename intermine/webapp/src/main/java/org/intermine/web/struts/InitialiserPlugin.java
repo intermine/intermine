@@ -300,18 +300,22 @@ public class InitialiserPlugin implements PlugIn
         if (userprofileOSW != null) {
             //verify all table mapping classes exist in the userprofile db
             if (!verifyTablesExist(userprofileOSW)) {
-                throw new ServletException("Userprofile is missing required tables.");
+                throw new ServletException("Userprofile objectstore is missing required tables.");
             }
-            if (!verifySuperUserExist(userprofileOSW)) {
-                throw new ServletException("Userprofile does not have a super user.");
+
+            String superuserAccountName = PropertiesUtil.getProperties().getProperty("superuser.account");
+            if (!setSuperuser(superuserAccountName, userprofileOSW)) {
+                throw new ServletException(
+                    "Cannot set superuser.account '" + superuserAccountName + "' to be superuser. Does this profile exist?");
             }
+
             //verify if intermine_state exists in the savedbag table and if it has the right type
             if (!verifyListTables(userprofileOSW)) {
-                throw new ServletException("Userprofile is missing list tables.");
+                throw new ServletException("Userprofile objectstore is missing list tables.");
             }
+
             //verify if we the webapp needs to upgrade the lists
             checkSerialNumber(userprofileOSW);
-
         }
     }
 
@@ -868,8 +872,16 @@ public class InitialiserPlugin implements PlugIn
         }
     }
 
-    private boolean verifySuperUserExist(ObjectStoreWriter uosw) {
-        UserProfile superuserProfile = getSuperUser(uosw);
+    /**
+     * Set the given account to be a superuser.
+     *
+     * @param accountName
+     * @param uosw
+     * @return
+     */
+    private boolean setSuperuser(String accountName, ObjectStoreWriter uosw) {
+        UserProfile superuserProfile = getUserProfile(accountName, uosw);
+
         if (superuserProfile != null) {
             superuserProfile.setSuperuser(true);
             try {
@@ -879,21 +891,23 @@ public class InitialiserPlugin implements PlugIn
             }
             return true;
         }
+
         blockingErrorKeys.put("errors.init.superusernotexist", null);
         return false;
     }
 
-    private UserProfile getSuperUser(ObjectStoreWriter uosw) {
-        String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
+    private UserProfile getUserProfile(String profileName, ObjectStoreWriter uosw) {
         UserProfile superuserProfile = new UserProfile();
-        superuserProfile.setUsername(superuser);
+        superuserProfile.setUsername(profileName);
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("username");
+
         try {
-            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+            superuserProfile = uosw.getObjectByExample(superuserProfile, fieldNames);
         } catch (ObjectStoreException e) {
-            throw new RuntimeException("Unable to load user profile", e);
+            throw new RuntimeException("Unable to load user profile " + profileName, e);
         }
+
         return superuserProfile;
     }
 
