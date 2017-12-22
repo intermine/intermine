@@ -492,6 +492,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         FileWriter fw = new FileWriter(logfile, true);
                         BufferedWriter logWriter = new BufferedWriter(fw);
                         ShutdownHook.registerObject(logWriter);
+
+                        LOG.info("Logging execution performance to " + logfile);
                         os.setLog(logWriter);
                     } catch (IOException e) {
                         LOG.warn("Error setting up execute log in file " + logfile + ": " + e);
@@ -553,12 +555,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * Allows the log to be set in this objectstore.
+     * Set the log writer
      *
      * @param log the log
      */
     public synchronized void setLog(Writer log) {
-        LOG.info("Setting log to " + log);
         this.log = log;
     }
 
