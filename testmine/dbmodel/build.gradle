@@ -14,7 +14,9 @@ configurations {
 
 dependencies {
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
+    compile group: "org.intermine", name: "intermine-api", version: imVersion
     compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
+    compile group: 'antlr', name: 'antlr', version: '2.7.6'
 }
 
 ext {
@@ -68,22 +70,21 @@ void buildDatabase(osname, model) {
     ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
         classpath {
             pathelement(path: configurations.compile.asPath)
-            dirset(dir: 'build/resources/main') // intermine.properties
+            dirset(dir: "$buildDir") // intermine.properties
         }
     }
     ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
     ant.taskdef(name: 'buildDB', classname: 'org.intermine.task.BuildDbTask') {
         classpath {
             pathelement(path: configurations.compile.asPath)
-            dirset(dir: 'build/resources/main') // intermine.properties
-            dirset(dir: 'build/') // os.unittest-schema.xml
+            dirset(dir: "$buildDir") // intermine.properties, os.unittest-schema.xml
         }
     }
     ant.buildDB(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
     ant.taskdef(name: 'insertModel', classname: 'org.intermine.task.StoreMetadataTask') {
         classpath {
             pathelement(path: configurations.compile.asPath)
-            dirset(dir: 'build/resources/main') // intermine.properties
+            dirset(dir: "$buildDir") // intermine.properties
         }
     }
     ant.insertModel(osname: "os.$osname", modelName: "$model")
@@ -145,9 +146,11 @@ task loadsadata(dependsOn: 'insertData') {
     }
 }
 
-task buildDB(dependsOn: 'build') {
+task buildDB() {
     group "${taskGroup}"
     description "Build database for testmodel webapp"
+    dependsOn 'build','copyDefaultProperties'
+
     doFirst {
 
             // this is only a fatal error if the user did not supply their credentials
@@ -205,9 +208,11 @@ void loadTemplates() {
     ant.loadDefaultTemplates(osAlias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', templatesXml:"$project.rootDir/dbmodel/resources/default-template-queries.xml", username: 'intermine', superuserPassword: 'intermine')
 }
 
-task insertUserData(dependsOn: 'build') {
+task insertUserData() {
     group "${taskGroup}"
     description "Build userprofile database with test users for testmodel webapp"
+    dependsOn 'build','copyDefaultProperties'
+
     doFirst {
         exec {
             ignoreExitValue true
