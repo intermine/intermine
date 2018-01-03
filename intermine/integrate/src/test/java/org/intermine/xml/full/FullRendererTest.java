@@ -71,10 +71,7 @@ public class FullRendererTest extends XMLTestCase
 
         String got = FullRenderer.render(item1);
 
-        Diff diff = compareXML(expected, got);
-        if (!diff.similar()) {
-            failNotEquals("XML not equivalent", expected, got);
-        }
+        assertXMLEqual(expected, got);
     }
 
     public void testRenderItems() throws Exception {
