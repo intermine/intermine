@@ -14,17 +14,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.Company;
@@ -39,6 +35,8 @@ public class FullRendererTest extends XMLTestCase
     private final String ENDL = System.getProperty("line.separator");
 
     public void setUp() throws Exception {
+        super.setUp();
+
         model = Model.getInstanceByName("testmodel");
 
         XMLUnit.setIgnoreWhitespace(true);
@@ -86,12 +84,12 @@ public class FullRendererTest extends XMLTestCase
         assertXMLEqual(new InputStreamReader(expected), new StringReader(generated));
     }
 
-    public void testToItemMaterial() throws Exception {
+    public void testToItemMaterial() {
         Employee e = new Employee();
         Department d = new Department();
-        e.setId(new Integer(1234));
+        e.setId(1234);
         e.setName("Employee1");
-        d.setId(new Integer(5678));
+        d.setId(5678);
         e.setDepartment(d);
 
         Item exp1 = new Item();
@@ -118,17 +116,17 @@ public class FullRendererTest extends XMLTestCase
         assertEquals(exp1, new ItemFactory(model).makeItem(e));
     }
 
-    public void testToItemDynamic() throws Exception {
+    public void testToItemDynamic() {
         Department d1 = new Department();
-        d1.setId(new Integer(5678));
+        d1.setId(5678);
         Department d2 = new Department();
-        d2.setId(new Integer(6789));
+        d2.setId(6789);
 
-        Object o = DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class, Broke.class})));
+        Object o = DynamicUtil.createObject(new HashSet<Class<?>>(Arrays.asList(Company.class, Broke.class)));
         Company c = (Company) o;
-        c.setId(new Integer(1234));
+        c.setId(1234);
         c.setName("BrokeCompany1");
-        c.setDepartments(new LinkedHashSet(Arrays.asList(new Object[] {d1, d2})));
+        c.setDepartments(new LinkedHashSet<Department>(Arrays.asList(d1, d2)));
 
         Broke b = (Broke) o;
         b.setDebt(10);
@@ -141,38 +139,38 @@ public class FullRendererTest extends XMLTestCase
         exp1.setAttribute("debt", "10");
         exp1.setAttribute("vatNumber", "0");
         exp1.setAttribute("interestRate", "0.0");
-        List<String> refIds = new ArrayList<String>(Arrays.asList(new String[] {"5678", "6789"}));
+        List<String> refIds = new ArrayList<String>(Arrays.asList("5678", "6789"));
         exp1.setCollection("departments", refIds);
         assertEquals(exp1.toString(), (new ItemFactory(model).makeItem(b)).toString());
     }
 
-    public void testToItems() throws Exception {
+    public void testToItems() {
         Address a1 = new Address();
-        a1.setId(new Integer(2));
+        a1.setId(2);
         a1.setAddress("\"Company's\" street");
         Department d1 = new Department();
-        d1.setId(new Integer(3));
+        d1.setId(3);
         d1.setName("Department1");
         Department d2 = new Department();
-        d2.setId(new Integer(4));
+        d2.setId(4);
         d2.setName("Department2");
 
-        Object o1 = DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class})));
+        Object o1 = DynamicUtil.createObject(new HashSet<Class<?>>(Collections.singletonList(Company.class)));
         Company c1 = (Company) o1;
-        c1.setId(new Integer(1));
+        c1.setId(1);
         c1.setName("Company1");
         c1.setAddress(a1);
         c1.setVatNumber(10);
-        c1.setDepartments(new HashSet(Arrays.asList(new Object[] {d1, d2})));
+        c1.setDepartments(new HashSet<Department>(Arrays.asList(d1, d2)));
 
-        List objects = Arrays.asList(new Object[] {c1, a1, d1, d2});
+        List<FastPathObject> objects = Arrays.asList((FastPathObject)c1, a1, d1, d2);
 
         List rendered = FullRenderer.toItems(objects, model);
         assertTrue(rendered.toString(), rendered.equals(getExampleItems(true)) || rendered.equals(getExampleItems(false)));
 
     }
 
-    public void testRenderObjectNoId() throws Exception {
+    public void testRenderObjectNoId() {
         Employee e = new Employee();
         e.setName("Employee1");
 
@@ -187,9 +185,9 @@ public class FullRendererTest extends XMLTestCase
     public void testRenderObjectMaterial() throws Exception {
         Employee e = new Employee();
         Department d = new Department();
-        e.setId(new Integer(1234));
+        e.setId(1234);
         e.setName("Employee1");
-        d.setId(new Integer(5678));
+        d.setId(5678);
         e.setDepartment(d);
 
         String expected = "<item id=\"1234\" class=\"Employee\" implements=\"Employable HasAddress\">" + ENDL
@@ -205,15 +203,15 @@ public class FullRendererTest extends XMLTestCase
 
     public void testRenderObjectDynamic() throws Exception {
         Department d1 = new Department();
-        d1.setId(new Integer(5678));
+        d1.setId(5678);
         Department d2 = new Department();
-        d2.setId(new Integer(6789));
+        d2.setId(6789);
 
-        Object o = DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class, Broke.class})));
+        Object o = DynamicUtil.createObject(new HashSet<Class<?>>(Arrays.asList(Company.class, Broke.class)));
         Company c = (Company) o;
-        c.setId(new Integer(1234));
+        c.setId(1234);
         c.setName("BrokeCompany1");
-        c.setDepartments(new LinkedHashSet(Arrays.asList(new Object[] {d1, d2})));
+        c.setDepartments(new LinkedHashSet<Department>(Arrays.asList(d1, d2)));
 
         Broke b = (Broke) o;
         b.setDebt(10);
@@ -234,11 +232,11 @@ public class FullRendererTest extends XMLTestCase
 
     public void testRenderBusinessObjects() throws Exception {
         Department d1 = new Department();
-        d1.setId(new Integer(5678));
+        d1.setId(5678);
         Department d2 = new Department();
-        d2.setId(new Integer(6789));
+        d2.setId(6789);
 
-        List list = Arrays.asList(new Object[] {d1, d2});
+        List<FastPathObject> list = Arrays.asList((FastPathObject)d1, d2);
 
         String expected = "<items>" + ENDL
             + "<item id=\"5678\" class=\"Department\" implements=\"RandomInterface\">" + ENDL
@@ -252,22 +250,22 @@ public class FullRendererTest extends XMLTestCase
 
     public void testRenderTypes() throws Exception {
         Types t = new Types();
-        t.setId(new Integer(1234));
+        t.setId(1234);
         t.setName("Types1");
         t.setBooleanType(true);
         t.setFloatType(1.2f);
         t.setDoubleType(1.3d);
         t.setShortType((short) 231);
         t.setIntType(2);
-        t.setLongType(327641237623423l);
+        t.setLongType(327641237623423L);
         t.setBooleanObjType(Boolean.TRUE);
-        t.setFloatObjType(new Float(2.2f));
-        t.setDoubleObjType(new Double(2.3d));
-        t.setShortObjType(new Short((short) 786));
-        t.setIntObjType(new Integer(4));
-        t.setLongObjType(new Long(876328471234l));
+        t.setFloatObjType(2.2f);
+        t.setDoubleObjType(2.3);
+        t.setShortObjType((short)786);
+        t.setIntObjType(4);
+        t.setLongObjType(876328471234L);
         t.setBigDecimalObjType(new BigDecimal("9872876349183274123432.876128716235487621432"));
-        t.setDateObjType(new Date(7777777777l));
+        t.setDateObjType(new Date(7777777777L));
         t.setStringObjType("A String");
 
         String expected = "<item id=\"1234\" class=\"Types\">" + ENDL
@@ -292,11 +290,13 @@ public class FullRendererTest extends XMLTestCase
         assertXMLEqual(expected, FullRenderer.render(t, model));
     }
 
-    public List getExampleItems() {
+    private List<Item> getExampleItems() {
         return getExampleItems(true);
     }
 
-    public List getExampleItems(boolean reverseCollection) {
+    private List<Item> getExampleItems(boolean reverseCollection) {
+        List<Item> exampleItems = new ArrayList<Item>();
+
         String id1 = "1";
         String id2 = "2";
         String id3 = "3";
@@ -356,7 +356,11 @@ public class FullRendererTest extends XMLTestCase
         attr5.setValue("Department2");
         item4.addAttribute(attr5);
 
-        List exampleItems = Arrays.asList(new Object[] {item1, item2, item3, item4});
+        exampleItems.add(item1);
+        exampleItems.add(item2);
+        exampleItems.add(item3);
+        exampleItems.add(item4);
+
         return exampleItems;
     }
 }
