@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
@@ -65,12 +66,16 @@ public class FullRendererTest extends XMLTestCase
             + "<collection name=\"departments\">"
             + "<reference ref_id=\"3\"/>"
             + "<reference ref_id=\"4\"/>"
+            + "<reference ref_id=\"5\"/>"
             + "</collection>"
             + "</item>";
 
         String got = FullRenderer.render(item1);
 
-        assertXMLEqual(expected, got);
+        Diff diff = compareXML(expected, got);
+        if (!diff.similar()) {
+            failNotEquals("XML not equivalent", expected, got);
+        }
     }
 
     public void testRenderItems() throws Exception {
