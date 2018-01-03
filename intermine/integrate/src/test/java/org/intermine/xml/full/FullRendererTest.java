@@ -66,7 +66,6 @@ public class FullRendererTest extends XMLTestCase
             + "<collection name=\"departments\">"
             + "<reference ref_id=\"3\"/>"
             + "<reference ref_id=\"4\"/>"
-            + "<reference ref_id=\"5\"/>"
             + "</collection>"
             + "</item>";
 
