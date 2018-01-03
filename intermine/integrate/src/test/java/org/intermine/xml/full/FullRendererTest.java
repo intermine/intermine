@@ -40,6 +40,8 @@ public class FullRendererTest extends XMLTestCase
 
     public void setUp() throws Exception {
         model = Model.getInstanceByName("testmodel");
+
+        XMLUnit.setIgnoreWhitespace(true);
     }
 
     public void testRenderItem() throws Exception {
@@ -81,7 +83,6 @@ public class FullRendererTest extends XMLTestCase
         String generated = FullRenderer.render(getExampleItems());
         InputStream expected = getClass().getClassLoader().getResourceAsStream("FullParserTest.xml");
 
-        XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(new InputStreamReader(expected), new StringReader(generated));
     }
 
