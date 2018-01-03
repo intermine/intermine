@@ -69,6 +69,7 @@ public class FullRendererTest extends XMLTestCase
             + "</item>";
 
         String got = FullRenderer.render(item1);
+
         assertXMLEqual(expected, got);
     }
 
@@ -76,6 +77,7 @@ public class FullRendererTest extends XMLTestCase
         String generated = FullRenderer.render(getExampleItems());
         InputStream expected = getClass().getClassLoader().getResourceAsStream("FullParserTest.xml");
 
+        XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(new InputStreamReader(expected), new StringReader(generated));
     }
 
