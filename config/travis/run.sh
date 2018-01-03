@@ -18,7 +18,7 @@ ant_test () {
     echo RUNNING ant -f "$1/test/build.xml"
     ant -f "$1/test/build.xml" -Ddont.minify=true
     echo CHECKING results
-    ./config/lib/parse_test_report.py "$1/test/build/test/results"
+    ./config/lib/parse_test_report.py "$1"
     echo ALL TESTS PASSED
 }
 
@@ -40,13 +40,13 @@ elif [ "$TEST_SUITE" = "all" ]; then
     echo "RUNNING test-all"
     (cd intermine && ./gradlew build)
     echo CHECKING results
-    ./config/lib/parse_test_report.py "intermine/objectstore/build/test-results/test"
+    ./config/lib/parse_test_report.py 'intermine'
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "bio" ]; then
     echo "RUNNING bio tests"
     ant -f 'bio/test-all/build.xml' fulltest
     echo CHECKING results
-    ./config/lib/parse_test_report.py "bio/test-all/build/test/results"
+    ./config/lib/parse_test_report.py 'bio'
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "checkstyle" ]; then
     gradle checkstyle
