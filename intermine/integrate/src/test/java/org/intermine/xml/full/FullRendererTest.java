@@ -16,7 +16,6 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.*;
 
-import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
