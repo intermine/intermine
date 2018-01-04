@@ -19,5 +19,8 @@ sourceSets {
 
 dependencies {
     compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
-    compile fileTree(dir: 'libs', include: '*.jar') //jami libs
+}
+
+processResources {
+    from('.') { include ("*.properties")}
 }
