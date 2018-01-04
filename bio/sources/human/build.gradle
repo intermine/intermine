@@ -1,22 +1,81 @@
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java', 'build/gen']
-        }
-        resources {
-            srcDirs = ['src/main/resources']
-        }
+ext {
+    imVersion = "2.+"
+    bioVersion = "2.+"
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
     }
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
-        }
+    dependencies {
+        classpath group: 'org.intermine', name: 'plugin', version: '1.+'
     }
 }
 
-dependencies {
-    compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
+subprojects {
+    group = 'org.intermine'
+    version = '2.0.0'
+
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'database'
+    apply plugin: 'biosource'
+
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    configurations {
+        bioModel
+        mergeModel
+    }
+
+    dependencies {
+        compile group: 'log4j', name: 'log4j', version: '1.2.17'
+        compile group: 'org.intermine', name: 'bio-core', version: bioVersion
+        compile group : "org.intermine", name: "intermine-resources", version: imVersion // log4j
+        compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+        testCompile group: 'junit', name: 'junit', version: '4.8.2'
+        testCompile group: "org.intermine", name: "intermine-integrate", version: imVersion, classifier: "testClasses"
+        testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
+        bioModel group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
+        mergeModel group : "org.intermine", name: "intermine-objectstore", version: imVersion
+    }
+
+    dbConfig {
+        objectStoreName = "os.bio-test"
+        modelName = "genomic"
+        defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
+    }
+
+    task copyMineProperties(type: Copy) {
+        from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
+        into sourceSets.main.output.resourcesDir
+        rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
+        inputs.sourceFiles.stopExecutionIfEmpty()
+    }
+
+    jar {
+        exclude "intermine.properties"
+    }
+
+    tasks.withType(Test) {
+        scanForTestClasses = false
+        include '**/*Test.class'
+    }
+
+    test {
+        ignoreFailures = true
+        forkEvery = 1
+    }
+}
+
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects*.test
 }
