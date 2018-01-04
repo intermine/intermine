@@ -155,7 +155,8 @@ class DataBasePlugin implements Plugin<Project> {
                 dbUtils.generateModel(config.modelName)
             }
         }
-        project.getTasks().getByName("compileJava").dependsOn(project.getTasks().getByName("generateModel"))
+
+        project.tasks.compileJava.dependsOn project.tasks.generateModel
 
         project.task('buildDB') {
             group TaskConstants.TASK_GROUP
