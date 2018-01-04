@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_PROPS=testmodel/testmodel.properties
+TEST_PROPS=testmine/dbmodel/resources/testmodel.properties
 
 for dep in keytool; do
   if test -z $(which $dep); then
@@ -27,9 +27,6 @@ keytool -genkey -noprompt \
 # Make it available to the web-app
 cp $KEYSTORE ${HOME}/.intermine/testmodel-keystore.jks.demo
 
-# We need a running webapp
-source config/download_and_configure_tomcat.sh
-sleep 10 # wait for tomcat to come on line
 # Add necessary keys to the test properties.
 echo 'i.am.a.dev = true'                        >> $TEST_PROPS # Show 500 error messages.
 echo 'security.keystore.password = intermine'   >> $TEST_PROPS
@@ -37,6 +34,6 @@ echo 'security.privatekey.password = intermine' >> $TEST_PROPS
 echo 'security.privatekey.alias = SELF'         >> $TEST_PROPS
 echo 'jwt.verification.strategy = ANY'          >> $TEST_PROPS
 echo 'jwt.publicidentity = ci'                  >> $TEST_PROPS
-sh testmodel/setup.sh # requires PSQL_USER to be set correctly.
+sh testmine/setup.sh # requires PSQL_USER to be set correctly.
 sleep 10 # wait for the webapp to come on line
 

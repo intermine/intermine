@@ -204,7 +204,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         limitedContext.setTimeLimit(getMaxTime() / 10);
         maxQueryParseTime = getMaxQueryParseTime();
         if (maxQueryParseTime != null) {
-            limitedContext.setMaxQueryParseTime(maxQueryParseTime.longValue());
+            limitedContext.setMaxQueryParseTime(maxQueryParseTime);
         }
         description = "ObjectStoreInterMineImpl(" + db + ")";
     }
@@ -492,6 +492,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         FileWriter fw = new FileWriter(logfile, true);
                         BufferedWriter logWriter = new BufferedWriter(fw);
                         ShutdownHook.registerObject(logWriter);
+
+                        LOG.info("Logging execution performance to " + logfile);
                         os.setLog(logWriter);
                     } catch (IOException e) {
                         LOG.warn("Error setting up execute log in file " + logfile + ": " + e);
@@ -553,12 +555,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * Allows the log to be set in this objectstore.
+     * Set the log writer
      *
      * @param log the log
      */
     public synchronized void setLog(Writer log) {
-        LOG.info("Setting log to " + log);
         this.log = log;
     }
 
@@ -714,10 +715,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long convert, Query q, String sql) {
         if (logTableName != null) {
             try {
-                logTableBatch.addRow(logTableConnection, logTableName, null, LOG_TABLE_COLUMNS,
-                        new Object[] {new Long(System.currentTimeMillis()), new Long(optimise),
-                            new Long(estimated), new Long(execute),
-                            new Long(permitted), new Long(convert), q.toString(), sql});
+                logTableBatch.addRow(
+                    logTableConnection, logTableName, null, LOG_TABLE_COLUMNS,
+                    new Object[]
+                        {System.currentTimeMillis(), optimise, estimated, execute, permitted, convert, q.toString(), sql});
             } catch (SQLException e) {
                 LOG.warn("Failed to write to log table: " + e);
             }
@@ -839,7 +840,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         retval = new SingletonResults(batch, optimise, explain, prefetch);
                     } else {
                         retval = super.executeSingleton(q, batchSize, optimise, explain, prefetch);
-                        batches.put(new Integer(batchSize), retval.getResultsBatches());
+                        batches.put(batchSize, retval.getResultsBatches());
                     }
 
                     singletonResultsCache.put(cacheKey, retval);
@@ -854,7 +855,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     private ResultsBatches getResultsBatches(Map<Integer, ResultsBatches> batches, int batchSize) {
-        ResultsBatches batch = batches.get(new Integer(batchSize));
+        ResultsBatches batch = batches.get(batchSize);
         if (batch != null) {
             try {
                 checkSequence(batch.getSequence(), null, null);
@@ -890,7 +891,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             if (batch != null) {
                 batch = batch.makeWithDifferentBatchSize(batchSize);
-                batches.put(new Integer(batchSize), batch);
+                batches.put(batchSize, batch);
             }
         }
         return batch;
@@ -2178,9 +2179,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         synchronized (q) {
             synchronized (goFasterMap) {
                 if (goFasterMap.containsKey(q)) {
-                    int goFasterCount = goFasterCountMap.get(q).intValue();
+                    int goFasterCount = goFasterCountMap.get(q);
                     goFasterCount++;
-                    goFasterCountMap.put(q, new Integer(goFasterCount));
+                    goFasterCountMap.put(q, goFasterCount);
                     return;
                 }
             }
@@ -2253,7 +2254,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     synchronized (goFasterMap) {
                         goFasterMap.put(q, pts);
                         goFasterCacheMap.put(q, new OptimiserCache());
-                        goFasterCountMap.put(q, new Integer(1));
+                        goFasterCountMap.put(q, 1);
                     }
                 } catch (SQLException e) {
                     throw new ObjectStoreException(e);
@@ -2285,7 +2286,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         try {
             synchronized (goFasterMap) {
                 if (goFasterMap.containsKey(q)) {
-                    int goFasterCount = goFasterCountMap.get(q).intValue();
+                    int goFasterCount = goFasterCountMap.get(q);
                     goFasterCount--;
                     if (goFasterCount == 0) {
                         Set<PrecomputedTable> pts = goFasterMap.remove(q);
@@ -2304,7 +2305,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             }
                         }
                     } else {
-                        goFasterCountMap.put(q, new Integer(goFasterCount));
+                        goFasterCountMap.put(q, goFasterCount);
                     }
                 }
             }
@@ -2403,7 +2404,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             LOG.info("Got new set of serial numbers with base " + sequenceBase);
         }
 
-        return new Integer(sequenceBase + (sequenceOffset++));
+        return sequenceBase + ++sequenceOffset;
     }
 
     /**
@@ -2412,8 +2413,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     @Override
     public Set<Object> getComponentsForQuery(Query q) {
         try {
-            Set<Object> retval = SqlGenerator.findTableNames(q, getSchema(), true);
-            return retval;
+            return SqlGenerator.findTableNames(q, getSchema(), true);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }

@@ -20,6 +20,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 
@@ -30,7 +31,9 @@ import org.intermine.model.FastPathObject;
  */
 public final class FullRenderer
 {
-    protected static final String ENDL = System.getProperty("line.separator");
+    private static final Logger LOG = Logger.getLogger(FullRenderer.class);
+
+    private static final String ENDL = System.getProperty("line.separator");
 
     /**
      * Don't allow construction
@@ -81,7 +84,7 @@ public final class FullRenderer
      * @return the XML for the list of items
      */
     public static String render(Collection<Item> items) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(getHeader()).append(ENDL);
         for (Item item : items) {
             sb.append(render(item));
@@ -166,12 +169,20 @@ public final class FullRenderer
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
-        XMLStreamWriter writer;
+        XMLStreamWriter writer = null;
         try {
             writer = factory.createXMLStreamWriter(sw);
             renderImpl(writer, item);
         } catch (XMLStreamException e) {
             throw new RuntimeException("unexpected failure while creating Item XML", e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (XMLStreamException e) {
+                    LOG.error("Failed to render Item as Intermine Item XML", e);
+                }
+            }
         }
 
         return sw.toString();

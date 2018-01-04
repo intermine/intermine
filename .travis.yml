@@ -23,11 +23,5 @@ before_script:
 - "./config/travis/init.sh"
 script:
 - "./config/travis/run.sh"
-notifications:
-  irc:
-    channels:
-    - chat.freenode.net#intermine-ci
-    on_success: change
-    on_error: change
 # after_success:
 # test $TRAVIS_BRANCH == "master" && bash config/travis/deploydocs.sh
