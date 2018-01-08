@@ -143,10 +143,10 @@ public final class PropertiesUtil
      * @param resourceName the resource to load
      */
     private static void loadGlobalProperties(String resourceName) {
-        LOG.info("Loading global properties from '" + resourceName + "'");
+        LOG.info("Finding global properties file " + resourceName);
 
         if (loadProperties(globalProperties, resourceName) == null) {
-            throw new RuntimeException("Could not load required global properties resource '" + resourceName + "'");
+            throw new RuntimeException("Could not load required global properties resource " + resourceName);
         }
     }
 
@@ -157,7 +157,7 @@ public final class PropertiesUtil
      * @return the corresponding Properties object
      */
     public static Properties loadProperties(String resourceName) {
-        LOG.info("Loading properties from '" + resourceName + "'");
+        LOG.info("Finding properties file '" + resourceName + "'");
         return loadProperties(new NonOverrideableProperties(), resourceName);
     }
 
@@ -177,11 +177,11 @@ public final class PropertiesUtil
                 URL resourceUrl = loader.getResource(resourceName);
 
                 if (resourceUrl == null) {
-                    LOG.error("Could not find properties '" + resourceName + "' from classloader  " + loader);
+                    LOG.error("Could not find properties " + resourceName + " from classloader  " + loader);
                     return null;
                 }
 
-                LOG.info("Found properties at " + resourceUrl);
+                LOG.info("Loading properties from " + resourceUrl);
                 is = loader.getResourceAsStream(resourceName);
                 props.load(is);
             } finally {
@@ -190,7 +190,7 @@ public final class PropertiesUtil
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load resource '" + resourceName + "'", e);
+            throw new RuntimeException("Failed to load properties file " + resourceName, e);
         }
 
         return props;
