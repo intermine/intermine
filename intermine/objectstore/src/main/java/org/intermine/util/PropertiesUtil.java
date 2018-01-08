@@ -177,11 +177,11 @@ public final class PropertiesUtil
                 URL resourceUrl = loader.getResource(resourceName);
 
                 if (resourceUrl == null) {
-                    LOG.error("Could not find properties " + resourceName + " from classloader  " + loader);
+                    LOG.error("Could not find properties '" + resourceName + "' from classloader  " + loader);
                     return null;
                 }
 
-                LOG.info("Loading properties from " + resourceUrl);
+                LOG.info("Found properties at " + resourceUrl);
                 is = loader.getResourceAsStream(resourceName);
                 props.load(is);
             } finally {
