@@ -182,6 +182,7 @@ public final class PropertiesUtil
                 }
 
                 LOG.info("Loading properties from " + resourceUrl);
+
                 is = loader.getResourceAsStream(resourceName);
                 props.load(is);
             } finally {
