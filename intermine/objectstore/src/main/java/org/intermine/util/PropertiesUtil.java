@@ -13,6 +13,7 @@ package org.intermine.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -173,13 +174,15 @@ public final class PropertiesUtil
 
             try {
                 ClassLoader loader = PropertiesUtil.class.getClassLoader();
-                is = loader.getResourceAsStream(resourceName);
+                URL resourceUrl = loader.getResource(resourceName);
 
-                if (is == null) {
-                    LOG.error("Could not find resource '" + resourceName + "' from classloader  " + loader);
+                if (resourceUrl == null) {
+                    LOG.error("Could not find properties '" + resourceName + "' from classloader  " + loader);
                     return null;
                 }
 
+                LOG.info("Found properties at " + resourceUrl);
+                is = loader.getResourceAsStream(resourceName);
                 props.load(is);
             } finally {
                 if (is != null) {
