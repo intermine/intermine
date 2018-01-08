@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <model name="genomic" package="org.intermine.model.bio">
 
- <class name="Annotatable" is-interface="true"> 
-  <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/> 
- </class> 
+ <class name="Annotatable" is-interface="true">
+  <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
+  <collection name="publications" referenced-type="Publication" reverse-reference="bioEntities"/>
+ </class>
 
   <class name="Author" is-interface="true">
     <attribute name="firstName" type="java.lang.String"/>
@@ -24,7 +25,6 @@
     <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
     <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
     <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
-    <collection name="publications" referenced-type="Publication" reverse-reference="bioEntities"/>
     <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
   </class>
 
@@ -122,7 +122,7 @@
     <attribute name="qualifier" type="java.lang.String"/>
     <reference name="subject" referenced-type="Annotatable" reverse-reference="ontologyAnnotations"/>
     <reference name="ontologyTerm" referenced-type="OntologyTerm" reverse-reference="ontologyAnnotations"/>
-    <collection name="dataSets" referenced-type="DataSet" />    
+    <collection name="dataSets" referenced-type="DataSet" />
     <collection name="evidence" referenced-type="OntologyEvidence"/>
   </class>
 
@@ -196,7 +196,7 @@
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
-  <class name="SyntenyBlock" is-interface="true">    
+  <class name="SyntenyBlock" is-interface="true">
     <collection name="syntenicRegions" referenced-type="SyntenicRegion" reverse-reference="syntenyBlock" />
     <collection name="dataSets" referenced-type="DataSet" />
     <collection name="publications" referenced-type="Publication" />
