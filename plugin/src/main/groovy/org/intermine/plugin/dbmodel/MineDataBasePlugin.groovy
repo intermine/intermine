@@ -24,7 +24,7 @@ class MineDataBasePlugin implements Plugin<Project> {
             doLast {
                 def projectXml = (new XmlParser()).parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
-                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@type'}", version: mineVersionConfig.bioVersion])
+                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@type'}", version: mineVersionConfig.bioSourceVersion])
                 }
             }
         }

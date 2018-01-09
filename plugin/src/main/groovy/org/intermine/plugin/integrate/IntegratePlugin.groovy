@@ -33,7 +33,7 @@ class IntegratePlugin implements Plugin<Project> {
                 intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml));
                 dbUtils = new DBUtils(project)
                 integration = new IntegrateUtils(project, intermineProject)
-                project.dependencies.add("compile", [group: "org.intermine", name: "bio-core", version: versions.bioVersion, transitive: false])
+                project.dependencies.add("compile", [group: "org.intermine", name: "bio-core", version: versions.imVersion, transitive: false])
 
                 String sourceInput = project.hasProperty('source') ? project.property('source') : ""
                 if ("".equals(sourceInput) || "all".equals(sourceInput)) {
@@ -49,7 +49,7 @@ class IntegratePlugin implements Plugin<Project> {
                         throw new InvalidUserDataException("Can't find source " + sourceName + " in project definition file")
                     }
                     String sourceType = source.type
-                    project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: versions.bioVersion])
+                    project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: versions.bioSourceVersion])
                 }
 
                 //when we have more than one source we can't split the integrate in the 2 steps: retrieve and load
