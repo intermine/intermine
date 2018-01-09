@@ -31,23 +31,25 @@ class DataBasePlugin implements Plugin<Project> {
 
         versionConfig = project.extensions.create('versionConfig', VersionConfig)
 
-        project.dependencies {
-            bioCore group : "org.intermine", name: "bio-core", version: versionConfig.bioVersion, transitive: false
-            commonResources group: "org.intermine", name: "intermine-resources", version: versionConfig.imVersion
-            api group: "org.intermine", name: "intermine-api", version: versionConfig.imVersion, transitive: false
-        }
-
         project.task('initConfig') {
             config = project.extensions.create('dbConfig', DBConfig)
-            dbUtils = new DBUtils(project)
-            SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
-            buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
-            if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {
-                regenerateModel = false
+
+            doLast {
+                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: versionConfig.imVersion, transitive: false])
+                project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: versionConfig.imVersion])
+                project.dependencies.add("api", [group: "org.intermine", name: "intermine-api", version: versionConfig.imVersion, transitive: false])
+
+                dbUtils = new DBUtils(project)
+                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
+                buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+                if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {
+                    regenerateModel = false
+                }
+                if (!(new File(project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml").exists())) {
+                    generateKeys = false
+                }
             }
-            if (!(new File(project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml").exists())) {
-                generateKeys = false
-            }
+
         }
 
         project.task('copyDefaultInterMineProperties') {
