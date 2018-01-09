@@ -9,8 +9,6 @@ buildscript {
 
 ext {
     imVersion = "2.+"
-    bioVersion = "2.+"
-    antVersion = "2.+"
 
     mineRelease = hasProperty('release') ? "." + release : ''
     mineName = "biotestmine"
