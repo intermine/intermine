@@ -35,10 +35,4 @@ mineDBConfig {
     extraModelsEnd = ""
 }
 
-versionConfig {
-    bioVersion = "2.+"
-    antVersion = "2.+"
-    imVersion = "2.+"
-}
-
 
