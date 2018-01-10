@@ -13,7 +13,7 @@ import java.nio.file.StandardCopyOption
 class WebAppPlugin implements Plugin<Project> {
     WebAppConfig config;
     DBUtils dbUtils
-    VersionConfig webappVersionConfig
+    VersionConfig versionConfig
 
     void apply(Project project) {
         project.configurations {
@@ -21,16 +21,16 @@ class WebAppPlugin implements Plugin<Project> {
             bioWebApp
         }
 
-        webappVersionConfig = project.extensions.create('webappVersionConfig', VersionConfig)
-
-        project.dependencies {
-            commonResources group: "org.intermine", name: "intermine-resources", version: webappVersionConfig.imVersion
-            bioWebApp group: "org.intermine", name: "bio-webapp", version: webappVersionConfig.bioVersion, transitive: false
-        }
+        versionConfig = project.extensions.create('webappVersionConfig', VersionConfig)
 
         project.task('initConfig') {
             config = project.extensions.create('webappConfig', WebAppConfig)
             dbUtils = new DBUtils(project)
+
+            doLast {
+                project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: versionConfig.imVersion])
+                project.dependencies.add("bioWebApp", [group: "org.intermine", name: "bio-webapp", version: versionConfig.imVersion, transitive: false])
+            }
         }
 
         project.task('copyDefaultInterMineProperties') {
