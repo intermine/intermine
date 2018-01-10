@@ -64,7 +64,6 @@ import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.api.types.ClassKeys;
@@ -590,27 +589,29 @@ public class InitialiserPlugin implements PlugIn
         Map<String, String> lastState = new HashMap<String, String>();
         Map<String, List<String>> origins = new TreeMap<String, List<String>>();
         Properties webProperties = new Properties();
-        InputStream globalPropertiesStream =
-            servletContext.getResourceAsStream("/WEB-INF/global.web.properties");
+        String globalPropertiesStreamPath = "/WEB-INF/global.web.properties";
+
+        LOG.info("Loading global webapp properties from " + globalPropertiesStreamPath);
+        InputStream globalPropertiesStream = servletContext.getResourceAsStream(globalPropertiesStreamPath);
         try {
             webProperties.load(globalPropertiesStream);
         } catch (Exception e) {
-            LOG.error("Unable to find global.web.properties", e);
+            LOG.error("Unable to find " + globalPropertiesStreamPath, e);
             blockingErrorKeys.put("errors.init.globalweb", null);
             return webProperties;
         }
-        updateOrigins(lastState, origins, "/WEB-INF/global.web.properties", webProperties);
+        updateOrigins(lastState, origins, globalPropertiesStreamPath, webProperties);
 
-        LOG.info("Looking for extra property files");
-        Pattern pattern = Pattern.compile(
-            "/WEB-INF/(?!global)\\w+\\.web\\.properties$");
+        Pattern pattern = Pattern.compile("/WEB-INF/(?!global)\\w+\\.web\\.properties$");
+        LOG.info("Looking for extra webapp properties files matching " + pattern.pattern());
+
         ResourceFinder finder = new ResourceFinder(servletContext);
-
         Collection<String> otherResources = finder.findResourcesMatching(pattern);
+        LOG.info("Found " + otherResources.size() + " extra webapp properties files");
+
         for (String resource : otherResources) {
-            LOG.debug("Loading extra resources from " + resource);
-            InputStream otherResourceStream =
-                servletContext.getResourceAsStream(resource);
+            LOG.debug("Loading extra webapp properties from " + resource);
+            InputStream otherResourceStream = servletContext.getResourceAsStream(resource);
             try {
                 webProperties.load(otherResourceStream);
             } catch (Exception e) {
@@ -622,17 +623,18 @@ public class InitialiserPlugin implements PlugIn
         }
 
         // Load these last, as they always take precedence.
-        InputStream modelPropertiesStream =
-            servletContext.getResourceAsStream("/WEB-INF/web.properties");
+        String modelPropertiesStreamPath = "/WEB-INF/web.properties";
+        LOG.info("Loading model webapp properties from " + modelPropertiesStreamPath);
+        InputStream modelPropertiesStream = servletContext.getResourceAsStream(modelPropertiesStreamPath);
         if (modelPropertiesStream != null) {
             try {
                 webProperties.load(modelPropertiesStream);
             } catch (Exception e) {
-                LOG.error("Unable to load web.properties", e);
+                LOG.error("Unable to load " + modelPropertiesStreamPath, e);
                 blockingErrorKeys.put("errors.init.webproperties", null);
                 return webProperties;
             }
-            updateOrigins(lastState, origins, "/WEB-INF/web.properties", webProperties);
+            updateOrigins(lastState, origins, modelPropertiesStreamPath, webProperties);
         }
 
         SessionMethods.setPropertiesOrigins(servletContext, origins);
