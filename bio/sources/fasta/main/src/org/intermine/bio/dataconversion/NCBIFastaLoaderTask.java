@@ -10,9 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-//import org.apache.log4j.Logger;
-import org.biojava3.core.sequence.ProteinSequence;
-
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.Sequence;
 
 /**
  * A loader that works for FASTA files with an NCBI formatted header:
@@ -22,7 +21,7 @@ import org.biojava3.core.sequence.ProteinSequence;
  */
 public class NCBIFastaLoaderTask extends FastaLoaderTask
 {
-//    protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
+    //protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
     private static final String ORG_HEADER = " Homo sapiens ";
     private static final String CHROMOSOME_HEADER = "chromosome";
 
@@ -30,8 +29,9 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
      * {@inheritDoc}
      */
     @Override
-    protected String getIdentifier(ProteinSequence bioJavaSequence) {
-        String header = bioJavaSequence.getOriginalHeader();
+    protected String getIdentifier(Sequence bioJavaSequence) {
+        Annotation anno = bioJavaSequence.getAnnotation();
+        String header = anno.getProperty("description_line").toString();
         // >gi|568815597|ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p2 Primary Assembly
         // gi|251831106|ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
         for (String headerString : header.split("\\|")) {
@@ -46,6 +46,7 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
                 String identifier = headerSubStrings[0].substring(ORG_HEADER.length()
                         + CHROMOSOME_HEADER.length());
                 return identifier.trim();
+
             }
         }
         // nothing found
