@@ -1,4 +1,4 @@
-rootProject.name = 'bio-sources'
+rootProject.name = 'bio-sources-human'
 
 include ':bio-source-arrayexpress-atlas',
 ':bio-source-atlas-express',
