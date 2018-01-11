@@ -10,8 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Sequence;
+import org.biojava3.core.sequence.ProteinSequence;
 
 /**
  * A loader that works for FASTA files with an NCBI formatted header:
@@ -29,9 +28,8 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
      * {@inheritDoc}
      */
     @Override
-    protected String getIdentifier(Sequence bioJavaSequence) {
-        Annotation anno = bioJavaSequence.getAnnotation();
-        String header = anno.getProperty("description_line").toString();
+    protected String getIdentifier(ProteinSequence bioJavaSequence) {
+        String header = bioJavaSequence.getOriginalHeader();
         // >gi|568815597|ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p2 Primary Assembly
         // gi|251831106|ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
         for (String headerString : header.split("\\|")) {
