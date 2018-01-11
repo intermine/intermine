@@ -34,9 +34,9 @@ public class ProteinAtlasConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        String input = "\"Gene\",\"Tissue\",\"Cell type\",\"Level\",\"Expression type\",\"Reliability\"" + ENDL
-            + "\"ENSG00000000003\",\"adrenal gland\",\"glandular cells\",\"Negative\",\"Staining\",\"Supportive\"" + ENDL
-            + "\"ENSG00000000003\",\"appendix\",\"glandular cells\",\"Moderate\",\"Staining\",\"Supportive\"" + ENDL;
+        String input = "\"Gene\",\"Symbol\", \"Tissue\",\"Cell type\",\"Level\",\"Expression type\",\"Reliability\"" + ENDL
+            + "\"ENSG00000000003\",\"TSPAN6\", \"adrenal gland\",\"glandular cells\",\"Negative\",\"Staining\",\"Supportive\"" + ENDL
+            + "\"ENSG00000000003\",\"TSPAN6\", \"appendix\",\"glandular cells\",\"Moderate\",\"Staining\",\"Supportive\"" + ENDL;
 
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
