@@ -1,4 +1,4 @@
-rootProject.name = 'bio-sources'
+rootProject.name = 'bio-sources-fly'
 
 include ':bio-source-affy-probes',
 //':bio-source-arbeitman-items-xml',

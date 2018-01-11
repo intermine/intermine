@@ -47,7 +47,6 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
-        // Id resolver
         if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver(new HashSet<String>(
                     Arrays.asList(new String[] {"gene", "mRNA"})));
@@ -102,7 +101,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
                         .indexOf("-") + 1) : geneName;
         // in FlyBase symbols are e.g. mir-5 not miR-5
         String symbol = geneNameToUse.toLowerCase();
-        if (rslv.hasTaxon(TAXON_FLY)) {
+        if (rslv.hasTaxon(TAXON_FLY) && rslv.hasClassName("gene")) {
             int resCount = rslv.countResolutions(TAXON_FLY, "gene", symbol);
             if (resCount != 1) {
                 if (!problems.contains(symbol)) {
