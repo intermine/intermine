@@ -351,7 +351,7 @@ public class HpoConverter extends BioDirectoryConverter
                 continue;
             }
 
-            omimDiseaseMasterList.add(mimId);
+            omimDiseaseMasterList.add("OMIM:" + mimId);
         }
     }
 }
