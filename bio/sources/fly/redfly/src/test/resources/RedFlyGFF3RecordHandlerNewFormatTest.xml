@@ -140,7 +140,7 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="0_1" class="Organism">
-<attribute name="taxonId" value="DM"/>
+<attribute name="taxonId" value="7227"/>
 </item>
 <item id="5_1" class="SOTerm">
 <attribute name="name" value="chromosome"/>
