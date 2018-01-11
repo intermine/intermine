@@ -54,7 +54,7 @@ class IntegratePlugin implements Plugin<Project> {
 
                 //when we have more than one source we can't split the integrate in the 2 steps: retrieve and load
                 if (sourceNames.size() > 1) {
-                    action = IntegrateAction.getAction(null)
+                    action = IntegrateAction.RETRIEVE_AND_LOAD
                 } else {
                     String actionInput = project.hasProperty('action') ? project.property('action') : ""
                     try {

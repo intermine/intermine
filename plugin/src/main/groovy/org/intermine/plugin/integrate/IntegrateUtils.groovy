@@ -45,7 +45,7 @@ class IntegrateUtils {
                 FileTree fileTree = project.zipTree(file)
                 PatternSet patternSet = new PatternSet();
                 patternSet.include(propsFileName);
-                if (fileTree.matching(patternSet).find()) {//-pre-retrieve.properties might not be exist
+                if (fileTree.matching(patternSet).find()) {//-pre-retrieve.properties might not exist
                     File props = fileTree.matching(patternSet).singleFile
                     props.withInputStream { properties.load(it) }
                 }
