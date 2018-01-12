@@ -352,9 +352,10 @@ public class InitialiserPlugin implements PlugIn
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
-            LOG.error("Unable to create ObjectStore - " + osAlias + " " + e.getMessage() , e);
+            LOG.error("Unable to create ObjectStore '" + osAlias + "' specified in web property webapp.os.alias", e);
             blockingErrorKeys.put("errors.init.objectstoreconnection", e.getMessage());
         }
+
         return os;
     }
 
