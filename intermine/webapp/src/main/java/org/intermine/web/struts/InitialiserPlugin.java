@@ -827,7 +827,7 @@ public class InitialiserPlugin implements PlugIn
         } catch (ObjectStoreException e) {
             LOG.error(
                 "Unable to create userprofile objectstore '" + userProfileAlias
-                    + "'specified in web property webapp.userprofile.os.alias", e);
+                    + "' specified in web property webapp.userprofile.os.alias", e);
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
             return null;
         }
