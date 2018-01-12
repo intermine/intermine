@@ -32,10 +32,11 @@ ext {
         localMinePropertyFile = false
         minePropertyFile = "$project.rootDir/dbmodel/resources/testmodel.properties"
     }
+
+    println "Using InterMine properties file $minePropertyFile"
 }
 
 task copyMineProperties(type: Copy) {
-    println "Using properties file: '$minePropertyFile'"
     description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
     from minePropertyFile
     into sourceSets.main.output.resourcesDir
