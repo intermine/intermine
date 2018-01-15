@@ -47,6 +47,16 @@ transposable_element_insertion_site
 UTR
 mRNA_region
 
+piRNA
+pseudogenic_transcript
+nc_primary_transcript
+pseudogenic_tRNA
+antisense_RNA
+lincRNA
+miRNA_primary_transcript
+pseudogenic_rRNA
+scRNA
+
 # many-to-many part_of relationships (default is many-to-one)
 exon.transcript
 intron.transcript
