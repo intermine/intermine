@@ -1,0 +1,5 @@
+<project name="anatomy_ontology" default="default" basedir=".">
+  <description>build, test, package anatomy_ontology</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

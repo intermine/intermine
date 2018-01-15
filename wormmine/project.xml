@@ -55,9 +55,9 @@
 		<property name="src.data.file" location="&datadir;/go/gene_ontology.1_2.obo"/>
 	</source> 
 
-<!--        <source name="anatomy_ontology" type="go" dump="true">
+        <source name="anatomy_ontology" type="anatomy_ontology" dump="true">
 		<property name="src.data.file" location="&datadir;/ontology/anatomy_ontology.obo"/>
-	</source> -->
+	</source>
 	
 	<source name="go-annotation" type="go-annotation" dump="false">
 		<property name="ontologyfile" location="&datadir;/go/gene_ontology.1_2.obo"/>
