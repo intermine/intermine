@@ -1,0 +1,10 @@
+!gaf-version: 2.0
+UniProtKB	C0H3P8	ytrH		GO:0016020	GO_REF:0000037	IEA	UniProtKB-KW:KW-0472	C	Sporulation membrane protein YtrH	YTRH_BACSU|ytrH|spoVIGA|BSU29239	protein	taxon:224308	20130914	UniProt		
+UniProtKB	C0H3P8	ytrH		GO:0016021	GO_REF:0000037	IEA	UniProtKB-KW:KW-0812	C	Sporulation membrane protein YtrH	YTRH_BACSU|ytrH|spoVIGA|BSU29239	protein	taxon:224308	20130914	UniProt		
+UniProtKB	C0H3P8	ytrH		GO:0030435	GO_REF:0000037	IEA	UniProtKB-KW:KW-0749	P	Sporulation membrane protein YtrH	YTRH_BACSU|ytrH|spoVIGA|BSU29239	protein	taxon:224308	20130914	UniProt		
+UniProtKB	C0H3Q1	ytzI		GO:0005886	GO_REF:0000037	IEA	UniProtKB-KW:KW-1003	C	Uncharacterized membrane protein YtzI	YTZI_BACSU|ytzI|BSU30659	protein	taxon:224308	20130914	UniProt		
+UniProtKB	C0H3Q1	ytzI		GO:0005886	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0039	C	Uncharacterized membrane protein YtzI	YTZI_BACSU|ytzI|BSU30659	protein	taxon:224308	20130914	UniProt		
+UniProtKB	C0H3Q1	ytzI		GO:0016020	GO_REF:0000037	IEA	UniProtKB-KW:KW-0472	C	Uncharacterized membrane protein YtzI	YTZI_BACSU|ytzI|BSU30659	protein	taxon:224308	20130914	UniProt		
+UniProtKB	C0H3Q1	ytzI		GO:0016021	GO_REF:0000037	IEA	UniProtKB-KW:KW-0812	C	Uncharacterized membrane protein YtzI	YTZI_BACSU|ytzI|BSU30659	protein	taxon:224308	20130914	UniProt		
+UniProtKB	C0H3Q4	yuzI		GO:0005886	GO_REF:0000037	IEA	UniProtKB-KW:KW-1003	C	Uncharacterized membrane protein YuzI	YUZI_BACSU|yuzI|BSU31319	protein	taxon:224308	20130914	UniProt		
+UniProtKB	C0H3Q4	yuzI		GO:0005886	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0039	C	Uncharacterized membrane protein YuzI	YUZI_BACSU|yuzI|BSU31319	protein	taxon:224308	20130914	UniProt		

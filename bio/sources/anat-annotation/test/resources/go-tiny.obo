@@ -1,0 +1,103 @@
+[Term]
+id: GO:0000001
+name: root term 1
+namespace: root_term
+def: "A phase of elevated metabolic activity, during which oxygen consumption increases made as a defense reponse ; this leads to the production, by an NADH dependent system, of hydrogen peroxide (H2O2), superoxide anions and hydroxyl radicals." [GOC:add, ISBN:0781735149 "Fundamental Immunology", PMID:12789499]
+
+[Term]
+id: GO:0000002
+name: root term 2
+namespace: root_term
+alt_id: GO:9999999
+
+[Term]
+id: GO:0000003
+name: root term 3
+namespace: root_term
+
+[Term]
+id: GO:0000004
+name: child term a
+namespace: child_term
+is_a: GO:0000001 ! child of root 1
+
+[Term]
+id: GO:0000005
+name: child term b
+namespace: child_term
+relationship: regulates GO:0000001
+
+[Term]
+id: GO:0000006
+name: child term c
+namespace: child_term
+is_a: GO:0000002 ! child of root 2
+
+[Term]
+id: GO:0000007
+name: child term d
+namespace: child_term
+is_a: GO:0000002 ! child of root 2
+
+[Term]
+id: GO:0000008
+name: child term e
+namespace: child_term
+is_a: GO:0000003 ! child of root 3
+
+[Term]
+id: GO:0000009
+name: child term f
+namespace: child_term
+is_a: GO:0000003 ! child of root 3
+
+[Term]
+id: GO:0000010
+name: child term g
+namespace: child_term
+is_a: GO:0000004 ! child of term a
+
+[Term]
+id: GO:0000011
+name: child term h
+namespace: child_term
+is_a: GO:0000004 ! child of term a
+relationship: positively_regulates GO:0000005 ! child of term b
+
+[Term]
+id: GO:0000012
+name: child term i
+namespace: child_term
+is_a: GO:0000005 ! child of term b
+is_a: GO:0000006 ! child of term c
+
+[Term]
+id: GO:0000013
+name: child term j
+namespace: child_term
+is_a: GO:0000007 ! child of term d
+
+[Term]
+id: GO:0000014
+name: child term k
+namespace: child_term
+relationship: negatively_regulates GO:0000008 ! child of term e
+
+[Term]
+id: GO:0000015
+name: child term l
+namespace: child_term
+is_a: GO:0000009 ! child of term f
+
+[Term]
+id: GO:0000016
+name: child term m
+namespace: child_term
+is_a: GO:0000013 ! child of term j
+is_a: GO:0000014 ! child of term k
+
+[Term]
+id: GO:0000017
+name: child term n
+namespace: child_term
+relationship: regulates GO:0000014 ! child of term k

@@ -1,0 +1,11 @@
+! no pub
+FB	FBgn0004168	5-HT1A		GO:0005887	FB:FBrf0123896	NAS		C	Serotonin receptor 1A	5-HT-dro2A|5-HT1ADro|5-HT[1A]Dro|5-HT[[1ADro]]|5HT-R2A|5HT-dro2A|5HT-drp[[2A]]|5HT1A|5HT[[1ADro]]|5htdro2a|CG16720|DRO2A|Dm5HTdro2A|Serotonin receptor 2A|d5-HT1A|serotonin-receptor-2A	protein	taxon:7227	20060803	FlyBase
+! one pub
+FB	FBgn0004168	5-HT1A		GO:0001586	FB:FBrf0135704|PMID:11282322	TAS		F	Serotonin receptor 1A	5-HT-dro2A|5-HT1ADro|5-HT[1A]Dro|5-HT[[1ADro]]|5HT-R2A|5HT-dro2A|5HT-drp[[2A]]|5HT1A|5HT[[1ADro]]|5htdro2a|CG16720|DRO2A|Dm5HTdro2A|Serotonin receptor 2A|d5-HT1A|serotonin-receptor-2A	protein	taxon:7227	20060803	FlyBase
+! 2 pubs same code
+FB	FBgn0004168	5-HT1A		GO:0007210	FB:FBrf0129744|PMID:10908591	ISS		P	Serotonin receptor 1A	5-HT-dro2A|5-HT1ADro|5-HT[1A]Dro|5-HT[[1ADro]]|5HT-R2A|5HT-dro2A|5HT-drp[[2A]]|5HT1A|5HT[[1ADro]]|5htdro2a|CG16720|DRO2A|Dm5HTdro2A|Serotonin receptor 2A|d5-HT1A|serotonin-receptor-2A	protein	taxon:7227	20060803	FlyBase
+FB	FBgn0004168	5-HT1A		GO:0007210	FB:FBrf0152099|PMID:12163486	ISS		F	Serotonin receptor 1A	5-HT-dro2A|5-HT1ADro|5-HT[1A]Dro|5-HT[[1ADro]]|5HT-R2A|5HT-dro2A|5HT-drp[[2A]]|5HT1A|5HT[[1ADro]]|5htdro2a|CG16720|DRO2A|Dm5HTdro2A|Serotonin receptor 2A|d5-HT1A|serotonin-receptor-2A	protein	taxon:7227	20060803	FlyBase
+! 2 pubs different code
+FB	FBgn0004168	5-HT1A		GO:0007198	FB:FBrf0055969|PMID:1310937	IDA		P	Serotonin receptor 1A	5-HT-dro2A|5-HT1ADro|5-HT[1A]Dro|5-HT[[1ADro]]|5HT-R2A|5HT-dro2A|5HT-drp[[2A]]|5HT1A|5HT[[1ADro]]|5htdro2a|CG16720|DRO2A|Dm5HTdro2A|Serotonin receptor 2A|d5-HT1A|serotonin-receptor-2A	protein	taxon:7227	20060803	FlyBase
+FB	FBgn0004168	5-HT1A		GO:0007198	FB:FBrf0123896	NAS		P	Serotonin receptor 1A	5-HT-dro2A|5-HT1ADro|5-HT[1A]Dro|5-HT[[1ADro]]|5HT-R2A|5HT-dro2A|5HT-drp[[2A]]|5HT1A|5HT[[1ADro]]|5htdro2a|CG16720|DRO2A|Dm5HTdro2A|Serotonin receptor 2A|d5-HT1A|serotonin-receptor-2A	protein	taxon:7227	20060803	FlyBase
+FB	FBgn0004168	5-HT1A		GO:0007198	FB:FBrf0135704|PMID:11282322	TAS		P	Serotonin receptor 1A	5-HT-dro2A|5-HT1ADro|5-HT[1A]Dro|5-HT[[1ADro]]|5HT-R2A|5HT-dro2A|5HT-drp[[2A]]|5HT1A|5HT[[1ADro]]|5htdro2a|CG16720|DRO2A|Dm5HTdro2A|Serotonin receptor 2A|d5-HT1A|serotonin-receptor-2A	protein	taxon:7227	20060803	FlyBase
