@@ -10,10 +10,10 @@ import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
 
-class DataBasePlugin implements Plugin<Project> {
+class DBModelPlugin implements Plugin<Project> {
 
-    DBConfig config
-    DBUtils dbUtils
+    DBModelConfig config
+    DBModelUtils dbUtils
     VersionConfig versionConfig
     String buildResourcesMainDir
     boolean regenerateModel = true
@@ -32,14 +32,14 @@ class DataBasePlugin implements Plugin<Project> {
         versionConfig = project.extensions.create('versionConfig', VersionConfig)
 
         project.task('initConfig') {
-            config = project.extensions.create('dbConfig', DBConfig)
+            config = project.extensions.create('dbModelConfig', DBModelConfig)
 
             doLast {
                 project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: versionConfig.imVersion, transitive: false])
                 project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: versionConfig.imVersion])
                 project.dependencies.add("api", [group: "org.intermine", name: "intermine-api", version: versionConfig.imVersion, transitive: false])
 
-                dbUtils = new DBUtils(project)
+                dbUtils = new DBModelUtils(project)
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
                 buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
                 if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {

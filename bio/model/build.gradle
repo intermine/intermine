@@ -6,8 +6,8 @@ buildscript {
         classpath group: 'org.intermine', name: 'plugin', version: '1.+'
     }
 }
-apply plugin: 'database'
-apply plugin: 'biocoredb'
+apply plugin: 'dbmodel'
+apply plugin: 'biocore-dbmodel'
 
 sourceSets {
     main {
@@ -30,7 +30,7 @@ dependencies {
     compile 'commons-lang:commons-lang:2.6'
 }
 
-dbConfig {
+dbModelConfig {
     objectStoreName = "os.bio-test"
     modelName = "genomic"
     defaultInterminePropertiesFile = "default.intermine.bio-test.properties"

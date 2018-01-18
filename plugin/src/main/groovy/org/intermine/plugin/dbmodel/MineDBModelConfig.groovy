@@ -1,6 +1,6 @@
 package org.intermine.plugin.dbmodel
 
-class MineDBConfig {
+class MineDBModelConfig {
     String modelName
     String extraModelsStart
     String extraModelsEnd

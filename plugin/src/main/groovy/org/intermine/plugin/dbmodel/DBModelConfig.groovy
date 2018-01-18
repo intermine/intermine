@@ -1,6 +1,6 @@
 package org.intermine.plugin.dbmodel
 
-class DBConfig {
+class DBModelConfig {
     String objectStoreName
     String modelName
     String defaultInterminePropertiesFile

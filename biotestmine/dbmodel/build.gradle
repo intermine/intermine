@@ -1,5 +1,5 @@
-apply plugin: 'database'
-apply plugin: 'minedb'
+apply plugin: 'dbmodel'
+apply plugin: 'mine-dbmodel'
 apply plugin: 'integrate'
 apply plugin: 'postprocess'
 
@@ -20,7 +20,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
-dbConfig {
+dbModelConfig {
     objectStoreName = "os.production"
     modelName = "genomic"
     defaultInterminePropertiesFile = "default.intermine.production.properties"
@@ -30,7 +30,7 @@ dbConfig {
     soAdditionFilePath = "dbmodel/build/so_additions.xml"
 }
 
-mineDBConfig {
+mineDBModelConfig {
     modelName = "genomic"
     extraModelsStart = "so_additions.xml genomic_additions.xml"
     extraModelsEnd = ""

@@ -3,11 +3,10 @@ package org.intermine.plugin.integrate
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.intermine.plugin.BioSourceProperties
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
-import org.intermine.plugin.dbmodel.DBUtils
+import org.intermine.plugin.dbmodel.DBModelUtils
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
 
@@ -19,7 +18,7 @@ class IntegratePlugin implements Plugin<Project> {
         List<String> sourceNames = new ArrayList<String>()
         IntegrateAction action
         org.intermine.plugin.project.Project intermineProject
-        DBUtils dbUtils
+        DBModelUtils dbUtils
         IntegrateUtils integration
         BioSourceProperties bioSourceProperties
         VersionConfig versions = project.extensions.create('integrationVersionConfig', VersionConfig)
@@ -33,7 +32,7 @@ class IntegratePlugin implements Plugin<Project> {
 
             doLast {
                 intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml));
-                dbUtils = new DBUtils(project)
+                dbUtils = new DBModelUtils(project)
                 integration = new IntegrateUtils(project, intermineProject)
                 bioSourceProperties = new BioSourceProperties(intermineProject, project)
                 //project.dependencies.add("compile", [group: "org.intermine", name: "bio-core", version: versions.imVersion, transitive: false])

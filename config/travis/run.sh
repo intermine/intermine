@@ -2,6 +2,8 @@
 
 set -e
 
+echo "RUNNING test suite $TEST_SUITE"
+
 export ANT_OPTS='-server'
 
 FAILURES=$PWD/failures.list
@@ -22,31 +24,25 @@ ant_test () {
     echo ALL TESTS PASSED
 }
 
-if [ "$TEST_SUITE" = "model" ]; then
-    ant_test 'intermine/model'
-elif [ "$TEST_SUITE" = "objectstore" ]; then
-    ant_test 'intermine/objectstore'
-elif [ "$TEST_SUITE" = "integrate" ]; then
-    ant_test 'intermine/integrate'
-elif [ "$TEST_SUITE" = "pq" ]; then
-    ant_test 'intermine/pathquery'
-elif [ "$TEST_SUITE" = "api" ]; then
-    ant_test 'intermine/api'
-elif [ "$TEST_SUITE" = "web" ]; then
-    ant_test 'intermine/web'
-elif [ "$TEST_SUITE" = "webtasks" ]; then
+if [ "$TEST_SUITE" = "webtasks" ]; then
     ant_test 'intermine/webtasks'
-elif [ "$TEST_SUITE" = "all" ]; then
-    echo "RUNNING test-all"
+elif [ "$TEST_SUITE" = "intermine" ]; then
+    echo "RUNNING intermine unit tests"
     (cd intermine && ./gradlew build)
+
     echo CHECKING results
     ./config/lib/parse_test_report.py 'intermine'
+
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "bio" ]; then
-    echo "RUNNING bio tests"
-    ant -f 'bio/test-all/build.xml' fulltest
+    echo "RUNNING bio unit tests"
+    (cd intermine && ./gradlew install)
+    (cd plugin && ./gradlew install)
+    (cd bio && ./gradlew :bio-core:install && ./gradlew build)
+
     echo CHECKING results
     ./config/lib/parse_test_report.py 'bio'
+
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "checkstyle" ]; then
     gradle checkstyle
@@ -56,9 +52,6 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
 elif [ "$TEST_SUITE" = "webapp" ]; then
     echo 'Running selenium tests'
     . config/run-selenium-tests.sh
-# Disabled for now pending fix of testmine startup
-elif [ "$TEST_SUITE" = "# ws" ]; then
+elif [ "$TEST_SUITE" = "ws" ]; then
     . config/run-ws-tests.sh
-elif [ "$TEST_SUITE" = "bio-webapp" ]; then
-    . config/run-bio-webapp-tests.sh
 fi

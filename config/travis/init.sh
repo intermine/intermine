@@ -39,16 +39,6 @@ else
         echo '#---> Building and releasing web application to test against'
         source config/init-webapp.sh
         # source config/issue-token.sh
-    elif [ "$TEST_SUITE" = "bio" ]; then
-        # Bio requires the bio model
-        ant -f bio/test-all/dbmodel/build.xml build-db >> $BUILD_LOG
-        echo '#---> building bio tools'
-        ant -f bio/tools/main/build.xml clean default >> $BUILD_LOG
-        echo '#---> Building bio sources'
-        for biosrc in $(find bio/sources/ -path '*/main/build.xml' ! -path '*example*' ! -path '*retired*'); do
-            echo "#------> building $biosrc"
-            ant -f "$biosrc" clean default
-        done
     #elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" -o "$TEST_SUITE" = "webtasks" -o "$TEST_SUITE" = "all" ]; then
         # api, webtasks, web and all need the testmodel to be built
         # ant -f testmodel/dbmodel/build.xml build-db    
@@ -61,8 +51,7 @@ else
         ./biotestmine/setup.sh
     fi
 
-    # Disabled for now pending fixing of testmine startup
-    if [[ "$TEST_SUITE" = "# ws" ]]; then
+    if [[ "$TEST_SUITE" = "ws" ]]; then
 
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET "$TESTMODEL_URL/service/search" > /dev/null
