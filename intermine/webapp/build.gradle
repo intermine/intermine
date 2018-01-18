@@ -20,6 +20,10 @@ sourceSets {
     }
 }
 
+configurations {
+    scheduleRuntime
+}
+
 tasks.test.dependsOn(':intermine-testresources:buildDB')
 
 dependencies {
@@ -43,6 +47,7 @@ dependencies {
     providedCompile group: 'org.expressme', name: 'JOpenId', version: '1.08'
     providedCompile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
     providedCompile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.50'
+    scheduleRuntime group: 'intermine', name: 'bluegenes', version: '0.9.0'
     compile files('libs/stringtree-json-2.0.5.jar')
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
     testCompile project(':intermine-objectstore').sourceSets.test.output
@@ -56,6 +61,13 @@ dependencies {
 task classesJar(type: Jar) {
     classifier = 'classes'
     from sourceSets.main.output
+}
+
+// this needs to fail gracefully if we don't have a webapp
+task blueGenesStart(type: JavaExec) {
+    main = "bluegenes.server"
+    classpath = configurations.scheduleRuntime
+    args('config/prod/config.edn')
 }
 
 artifacts {

@@ -21,6 +21,7 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+        maven { url 'https://clojars.org/repo' }
         flatDir {
             dirs '../libs'
         }
