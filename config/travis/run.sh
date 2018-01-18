@@ -38,7 +38,7 @@ elif [ "$TEST_SUITE" = "web" ]; then
     ant_test 'intermine/web'
 elif [ "$TEST_SUITE" = "webtasks" ]; then
     ant_test 'intermine/webtasks'
-elif [ "$TEST_SUITE" = "all" ]; then
+elif [ "$TEST_SUITE" = "intermine" ]; then
     echo "RUNNING intermine unit tests"
     (cd intermine && ./gradlew build)
 
