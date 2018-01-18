@@ -54,6 +54,4 @@ elif [ "$TEST_SUITE" = "webapp" ]; then
     . config/run-selenium-tests.sh
 elif [ "$TEST_SUITE" = "ws" ]; then
     . config/run-ws-tests.sh
-elif [ "$TEST_SUITE" = "bio-webapp" ]; then
-    . config/run-bio-webapp-tests.sh
 fi
