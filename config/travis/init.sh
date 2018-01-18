@@ -38,7 +38,7 @@ else
         # We will need a fully operational web-application
         echo '#---> Building and releasing web application to test against'
         source config/init-webapp.sh
-        source config/issue-token.sh
+        # source config/issue-token.sh
     elif [ "$TEST_SUITE" = "bio" ]; then
         # Bio requires the bio model
         ant -f bio/test-all/dbmodel/build.xml build-db >> $BUILD_LOG
