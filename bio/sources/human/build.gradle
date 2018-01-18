@@ -18,8 +18,8 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'database'
-    apply plugin: 'biosource'
+    apply plugin: 'dbmodel'
+    apply plugin: 'biosource-dbmodel'
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
@@ -46,7 +46,7 @@ subprojects {
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: imVersion
     }
 
-    dbConfig {
+    dbModelConfig {
         objectStoreName = "os.bio-test"
         modelName = "genomic"
         defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
