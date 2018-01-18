@@ -24,19 +24,7 @@ ant_test () {
     echo ALL TESTS PASSED
 }
 
-if [ "$TEST_SUITE" = "model" ]; then
-    ant_test 'intermine/model'
-elif [ "$TEST_SUITE" = "objectstore" ]; then
-    ant_test 'intermine/objectstore'
-elif [ "$TEST_SUITE" = "integrate" ]; then
-    ant_test 'intermine/integrate'
-elif [ "$TEST_SUITE" = "pq" ]; then
-    ant_test 'intermine/pathquery'
-elif [ "$TEST_SUITE" = "api" ]; then
-    ant_test 'intermine/api'
-elif [ "$TEST_SUITE" = "web" ]; then
-    ant_test 'intermine/web'
-elif [ "$TEST_SUITE" = "webtasks" ]; then
+if [ "$TEST_SUITE" = "webtasks" ]; then
     ant_test 'intermine/webtasks'
 elif [ "$TEST_SUITE" = "intermine" ]; then
     echo "RUNNING intermine unit tests"
