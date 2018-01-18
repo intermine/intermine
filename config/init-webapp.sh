@@ -34,6 +34,9 @@ echo 'security.privatekey.password = intermine' >> $TEST_PROPS
 echo 'security.privatekey.alias = SELF'         >> $TEST_PROPS
 echo 'jwt.verification.strategy = ANY'          >> $TEST_PROPS
 echo 'jwt.publicidentity = ci'                  >> $TEST_PROPS
-sh testmine/setup.sh # requires PSQL_USER to be set correctly.
-sleep 10 # wait for the webapp to come on line
+sh testmine/setup.sh & # requires PSQL_USER to be set correctly.
+sleep 20 # wait for the webapp to come on line
 
+# For now, just shut it down again
+cd testmine
+./gradlew appStop
