@@ -106,8 +106,6 @@ task createUnitTestDatabases {
         createDbInternal('fulldatatest')
         createDbInternal('userprofile-test')
         createDbInternal('unittest')
-        createDbInternal('bio-test')
-        createDbInternal('bio-fulldata-test')
     }
 }
 
