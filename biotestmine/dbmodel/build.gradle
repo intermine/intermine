@@ -16,6 +16,7 @@ sourceSets {
 
 dependencies {
     compile group: "org.intermine", name: "intermine-integrate", version: imVersion
+    compile group: "org.intermine", name: "bio-postprocess", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
