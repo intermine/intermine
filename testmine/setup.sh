@@ -95,17 +95,11 @@ cd $DIR/../intermine
 ./gradlew install
 
 echo "------> Loading demo data set..."
-cd $DIR/dbmodel
-../gradlew loadsadata
+cd $DIR
+echo "-----> Running ./gradlew loadsadata"
+./gradlew loadsadata
 
-echo "------> Building and releasing web-app..."
-cd $DIR/webapp/main
-ant -Drelease=demo -Ddont.minify=true \
-    build-test-userprofile-withuser \
-    create-quicksearch-index \
-    retrieve-objectstore-summary \
-    default \
-    release-webapp | tee -a $LOG | grep tomcat-deploy
-
-echo "------> All done. Build log is available in $LOG"
-
+echo "------> Running webapp"
+echo "-----> Running ./gradlew tomcatstartwar"
+./gradlew tomcatstartwar
+echo "-----> Finished init-webapp.sh"
