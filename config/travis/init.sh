@@ -38,7 +38,7 @@ else
         # We will need a fully operational web-application
         echo '#---> Building and releasing web application to test against'
         source config/init-webapp.sh
-        source config/issue-token.sh
+        # source config/issue-token.sh
     elif [ "$TEST_SUITE" = "bio" ]; then
         # Bio requires the bio model
         ant -f bio/test-all/dbmodel/build.xml build-db >> $BUILD_LOG
@@ -61,7 +61,8 @@ else
         ./biotestmine/setup.sh
     fi
 
-    if [[ "$TEST_SUITE" = "ws" ]]; then
+    # Disabled for now pending fixing of testmine startup
+    if [[ "$TEST_SUITE" = "# ws" ]]; then
 
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET "$TESTMODEL_URL/service/search" > /dev/null
