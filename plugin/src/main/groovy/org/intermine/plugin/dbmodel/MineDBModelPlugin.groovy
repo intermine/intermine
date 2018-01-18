@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import org.intermine.plugin.VersionConfig
 
-class MineDataBasePlugin implements Plugin<Project> {
+class MineDBModelPlugin implements Plugin<Project> {
 
     VersionConfig mineVersionConfig
 
@@ -34,7 +34,7 @@ class MineDataBasePlugin implements Plugin<Project> {
             dependsOn 'initConfig', 'copyGenomicModel', 'copyMineProperties', 'createSoModel', 'parseProjectXml'
             onlyIf {!new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
 
-            MineDBConfig config = project.extensions.create('mineDBConfig', MineDBConfig)
+            MineDBModelConfig config = project.extensions.create('mineDBModelConfig', MineDBModelConfig)
 
             doLast {
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
