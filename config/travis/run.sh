@@ -2,6 +2,8 @@
 
 set -e
 
+echo "RUNNING test suite $TEST_SUITE"
+
 export ANT_OPTS='-server'
 
 FAILURES=$PWD/failures.list
