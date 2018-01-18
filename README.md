@@ -25,7 +25,7 @@ the life sciences, including:
 For details, please visit: [InterMine Documentation][readthedocs]
 
 If you run an InterMine, or use one in your research, in order to improve the chance of continued funding for the
-InterMine project it would be appreciated if groups that use InterMine or parts of InterMine would let us know.
+project it would be appreciated if groups that use InterMine or parts of InterMine would let us know.
 
 Getting Started With InterMine
 -------------------------------
