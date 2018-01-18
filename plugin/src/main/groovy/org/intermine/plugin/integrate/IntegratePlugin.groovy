@@ -4,6 +4,7 @@ import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.intermine.plugin.BioSourceProperties
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.dbmodel.DBUtils
@@ -20,6 +21,7 @@ class IntegratePlugin implements Plugin<Project> {
         org.intermine.plugin.project.Project intermineProject
         DBUtils dbUtils
         IntegrateUtils integration
+        BioSourceProperties bioSourceProperties
         VersionConfig versions = project.extensions.create('integrationVersionConfig', VersionConfig)
 
         project.configurations {
@@ -27,13 +29,14 @@ class IntegratePlugin implements Plugin<Project> {
         }
 
         project.task('initIntegration') {
-            dependsOn 'copyDefaultInterMineProperties','copyMineProperties'
+            dependsOn 'copyDefaultInterMineProperties','generateModel'
 
             doLast {
                 intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml));
                 dbUtils = new DBUtils(project)
                 integration = new IntegrateUtils(project, intermineProject)
-                project.dependencies.add("compile", [group: "org.intermine", name: "bio-core", version: versions.imVersion, transitive: false])
+                bioSourceProperties = new BioSourceProperties(intermineProject, project)
+                //project.dependencies.add("compile", [group: "org.intermine", name: "bio-core", version: versions.imVersion, transitive: false])
 
                 String sourceInput = project.hasProperty('source') ? project.property('source') : ""
                 if ("".equals(sourceInput) || "all".equals(sourceInput)) {
@@ -46,7 +49,7 @@ class IntegratePlugin implements Plugin<Project> {
                 sourceNames.each { sourceName ->
                     Source source = intermineProject.sources.get(sourceName)
                     if (source == null) {
-                        throw new InvalidUserDataException("Can't find source " + sourceName + " in project definition file")
+                        throw new InvalidUserDataException("Can't find source " + sourceName + " in gradleProject definition file")
                     }
                     String sourceType = source.type
                     project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: versions.bioSourceVersion])
@@ -85,8 +88,8 @@ class IntegratePlugin implements Plugin<Project> {
 
             doLast {
                 sourceNames.each { sourceName ->
-                    Properties bioSourceProperties = integration.getBioSourceProperties(sourceName)
-                    if (!bioSourceProperties.containsKey("have.file.custom.direct")) {
+                    Properties props = bioSourceProperties.getBioSourceProperties(sourceName)
+                    if (!props.containsKey("have.file.custom.direct")) {
                         println "Building tgt items database"
                         dbUtils.createSchema("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
                         dbUtils.createTables("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
@@ -96,7 +99,7 @@ class IntegratePlugin implements Plugin<Project> {
                     println "Retrieving " + sourceName + " in a tgt items database"
                     integration.retrieveSingleSource(sourceName)
 
-                    if (!bioSourceProperties.containsKey("have.file.custom.direct")) {
+                    if (!props.containsKey("have.file.custom.direct")) {
                         // need to do this after data is in items DB or loading is too slow
                         dbUtils.createIndexes("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata", false)
                         dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
@@ -131,8 +134,8 @@ class IntegratePlugin implements Plugin<Project> {
                 String sourceName = sourceNames.get(0)
                 println "Retrieving " + sourceName + " in a tgt items database"
                 integration.retrieveSingleSource(sourceName)
-                Properties bioSourceProperties = integration.getBioSourceProperties(sourceName)
-                if (!bioSourceProperties.containsKey("have.file.custom.direct")) {
+                Properties props = bioSourceProperties.getBioSourceProperties(sourceName)
+                if (!props.containsKey("have.file.custom.direct")) {
                     // need to do this after data is in items DB or loading is too slow
                     dbUtils.createIndexes("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata", false)
                     dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
@@ -146,8 +149,8 @@ class IntegratePlugin implements Plugin<Project> {
             onlyIf { sourceNames.size() == 1 && !action.equals(IntegrateAction.LOAD)}
 
             doLast {
-                Properties bioSourceProperties = integration.getBioSourceProperties(sourceNames.get(0))
-                if (!bioSourceProperties.containsKey("have.file.custom.direct")) {
+                Properties props = bioSourceProperties.getBioSourceProperties(sourceNames.get(0))
+                if (!props.containsKey("have.file.custom.direct")) {
                     println "Building tgt items database"
                     dbUtils.createSchema("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
                     dbUtils.createTables("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
