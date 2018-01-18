@@ -39,14 +39,20 @@ elif [ "$TEST_SUITE" = "webtasks" ]; then
 elif [ "$TEST_SUITE" = "all" ]; then
     echo "RUNNING intermine unit tests"
     (cd intermine && ./gradlew build)
+
     echo CHECKING results
     ./config/lib/parse_test_report.py 'intermine'
+
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "bio" ]; then
-    echo "RUNNING bio tests"
-    ant -f 'bio/test-all/build.xml' fulltest
+    echo "RUNNING bio unit tests"
+    (cd intermine && ./gradlew install)
+    (cd plugin && ./gradlew install)
+    (cd bio && ./gradlew build)
+
     echo CHECKING results
     ./config/lib/parse_test_report.py 'bio'
+
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "checkstyle" ]; then
     gradle checkstyle
