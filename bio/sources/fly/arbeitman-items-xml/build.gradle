@@ -19,6 +19,7 @@ sourceSets {
 
 dependencies {
     compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
+    compile group: 'org.intermine', name: 'bio-postprocess', version: bioVersion
 }
 
 processResources {

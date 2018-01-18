@@ -46,9 +46,9 @@ public class HugeGwasConverterTest extends ItemsTestCase
         converter.process(new FileReader(srcFile));
 
         // uncomment to write out a new target items file
-        // writeItemsFile(itemWriter.getItems(), "huge-gwas_tgt.xml");
+        //writeItemsFile(itemWriter.getItems(), "huge-gwas_tgt.xml");
 
-        assertEquals(readItemSet("HugeGwasConverterTest.xml"), itemWriter.getItems());
+        assertEquals(readItemSet("HugeGwasConverterTest_tgt.xml"), itemWriter.getItems());
     }
 
     public void testParseSnp() throws Exception {

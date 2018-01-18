@@ -28,6 +28,9 @@
         <collection name="publications" referenced-type="Publication" />
         <collection name="with" referenced-type="BioEntity" />
     </class>
+    <class name="GOEvidenceCode" is-interface="true">
+        <attribute name="code" type="java.lang.String" />
+    </class>
     <class name="Gene" is-interface="true">
         <collection name="diseases" referenced-type="Disease" reverse-reference="genes"/>
     </class>

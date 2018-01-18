@@ -349,12 +349,14 @@ public class InitialiserPlugin implements PlugIn
 
     private ObjectStore getProductionObjectStore(Properties webProperties) {
         String osAlias = (String) webProperties.get("webapp.os.alias");
+
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
-            LOG.error("Unable to create ObjectStore - " + osAlias + " " + e.getMessage() , e);
+            LOG.error("Unable to create objectstore '" + osAlias + "' specified in web property webapp.os.alias", e);
             blockingErrorKeys.put("errors.init.objectstoreconnection", e.getMessage());
         }
+
         return os;
     }
 
@@ -818,11 +820,14 @@ public class InitialiserPlugin implements PlugIn
 
     private ObjectStoreWriter getUserprofileWriter(Properties webProperties) {
         ObjectStoreWriter osw;
+        String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
+
         try {
-            String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
         } catch (ObjectStoreException e) {
-            LOG.error("Unable to create userprofile - " + e.getMessage(), e);
+            LOG.error(
+                "Unable to create userprofile objectstore '" + userProfileAlias
+                    + "' specified in web property webapp.userprofile.os.alias", e);
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
             return null;
         }

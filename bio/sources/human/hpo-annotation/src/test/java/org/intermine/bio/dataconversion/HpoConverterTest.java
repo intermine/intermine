@@ -40,11 +40,12 @@ public class HpoConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
         File tmp = new File(getClass().getClassLoader().getResource("hp.obo").toURI());
         File datadir = tmp.getParentFile();
+        converter.setHpoDiseaseFile(datadir + "/mimTitles.txt");
         converter.process(datadir);
         converter.close();
 
         // uncomment to write a new target items file
-        writeItemsFile(writer.getItems(), "hpo-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "hpo-tgt-items.xml");
 
         assertEquals(readItemSet("HpoConverterOboTest_tgt.xml"), writer.getItems());
     }
