@@ -21,7 +21,7 @@ sourceSets {
 }
 
 configurations {
-    scheduleRuntime
+    providedRuntime
 }
 
 tasks.test.dependsOn(':intermine-testresources:buildDB')
@@ -47,7 +47,7 @@ dependencies {
     providedCompile group: 'org.expressme', name: 'JOpenId', version: '1.08'
     providedCompile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
     providedCompile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.50'
-    scheduleRuntime group: 'intermine', name: 'bluegenes', version: '0.9.0'
+    providedRuntime group: 'intermine', name: 'bluegenes', version: '0.9.1-SNAPSHOT'
     compile files('libs/stringtree-json-2.0.5.jar')
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
     testCompile project(':intermine-objectstore').sourceSets.test.output
@@ -63,11 +63,13 @@ task classesJar(type: Jar) {
     from sourceSets.main.output
 }
 
-// this needs to fail gracefully if we don't have a webapp
 task blueGenesStart(type: JavaExec) {
+    classpath = configurations.providedRuntime
     main = "bluegenes.server"
-    classpath = configurations.scheduleRuntime
-    args('config/prod/config.edn')
+    if (!hasProperty('config')) {
+        throw new InvalidUserDataException("Please provide location of configuration file, e.g. -Pconfig=/path/to/config.edn")
+    }
+    environment("config", config)
 }
 
 artifacts {
