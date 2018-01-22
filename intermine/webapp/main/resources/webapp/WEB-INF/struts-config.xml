@@ -484,7 +484,6 @@
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
     <action path="/initTemplates" type="org.intermine.web.struts.TemplatesController"/>
     <action path="/initPasswordReset" type="org.intermine.web.struts.PasswordResetController"/>
-    <action path="/initHints" type="org.intermine.web.struts.HintsController"/>
     <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController"/>
     <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController"/>
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
