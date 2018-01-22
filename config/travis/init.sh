@@ -51,8 +51,7 @@ else
         ./biotestmine/setup.sh
     fi
 
-    # Disabled for now pending fixing of testmine startup
-    if [[ "$TEST_SUITE" = "# ws" ]]; then
+    if [[ "$TEST_SUITE" = "ws" ]]; then
 
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET "$TESTMODEL_URL/service/search" > /dev/null
