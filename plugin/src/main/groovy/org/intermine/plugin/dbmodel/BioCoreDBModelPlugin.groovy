@@ -20,7 +20,6 @@ class BioCoreDBModelPlugin implements Plugin<Project>{
 
                 ant.taskdef(name: "mergeBioCoreModels", classname: "org.intermine.task.ModelMergerTask") {
                     classpath {
-                        pathelement(path: project.configurations.getByName("bioCore").asPath)
                         pathelement(path: project.configurations.getByName("compile").asPath)
                         dirset(dir: project.getBuildDir().getAbsolutePath())
                     }
