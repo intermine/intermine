@@ -5,11 +5,11 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 
-class DBUtils {
+class DBModelUtils {
     Project project
     String buildResourcesMainDir
 
-    DBUtils(Project project) {
+    DBModelUtils(Project project) {
         this.project = project
         SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
         buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;

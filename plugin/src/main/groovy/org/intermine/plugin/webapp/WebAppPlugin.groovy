@@ -5,14 +5,14 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
-import org.intermine.plugin.dbmodel.DBUtils
+import org.intermine.plugin.dbmodel.DBModelUtils
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class WebAppPlugin implements Plugin<Project> {
     WebAppConfig config;
-    DBUtils dbUtils
+    DBModelUtils dbUtils
     VersionConfig versionConfig
 
     void apply(Project project) {
@@ -25,7 +25,7 @@ class WebAppPlugin implements Plugin<Project> {
 
         project.task('initConfig') {
             config = project.extensions.create('webappConfig', WebAppConfig)
-            dbUtils = new DBUtils(project)
+            dbUtils = new DBModelUtils(project)
 
             doLast {
                 project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: versionConfig.imVersion])

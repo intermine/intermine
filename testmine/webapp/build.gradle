@@ -16,6 +16,8 @@ ext {
     if( !file(minePropertyFile).exists() ) {
         minePropertyFile = "$project.rootDir/dbmodel/resources/testmodel.properties"
     }
+
+    println "Using InterMine properties file $minePropertyFile"
 }
 
 configurations {

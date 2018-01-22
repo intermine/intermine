@@ -10,10 +10,10 @@ env:
   matrix:
   # Disable Selenium tests    
   # - TEST_SUITE=webapp
-  #- TEST_SUITE=bio
+  - TEST_SUITE=bio
   #- TEST_SUITE=ws CLIENT=JS
   #- TEST_SUITE=ws CLIENT=PY
-  - TEST_SUITE=all
+  - TEST_SUITE=intermine
   #- TEST_SUITE=webtasks
   #- TEST_SUITE=checkstyle
 sudo: true

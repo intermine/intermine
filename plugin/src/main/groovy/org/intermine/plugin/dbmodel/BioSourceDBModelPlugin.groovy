@@ -7,7 +7,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 import org.intermine.plugin.VersionConfig
 
-class BioSourcePlugin implements Plugin<Project>{
+class BioSourceDBModelPlugin implements Plugin<Project>{
 
     @Override
     void apply(Project project) {

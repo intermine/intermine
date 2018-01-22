@@ -3,9 +3,11 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        jcenter()
     }
     dependencies {
         classpath "net.researchgate:gradle-release:2.6.0"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
     }
 }
 
@@ -14,6 +16,7 @@ subprojects {
     apply plugin: 'net.researchgate.release'
     apply plugin: "java"
     apply plugin: "maven"
+    apply plugin: "com.jfrog.bintray"
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
@@ -85,16 +88,26 @@ subprojects {
             showCauses true
         }
     }
+
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        pkg {
+            repo = 'maven-repo-test'
+            name = project.name
+            userOrg = user
+            licenses = ['LGPL-2.1']
+            vcsUrl = 'https://github.com/intermine/intermine.git'
+        }
+        configurations = ['archives']
+    }
+
 }
 
 task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/allTests")
     // Include the results from the `test` task in all subprojects
     reportOn subprojects*.test
-}
-
-ext {
-    packageLicenses = ['LGPL-2.1 ']
 }
 
 task wrapper(type: Wrapper) {
