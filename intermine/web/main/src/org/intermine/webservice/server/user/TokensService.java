@@ -46,14 +46,16 @@ public class TokensService extends ReadWriteJSONService
                 for (PermanentToken t: up.getPermanentTokens()) {
                     tokens.add(PermaTokens.format(t));
                 }
-            } else {
-                if ("api".equals(type)) {
-                    String apiKey = up.getApiKey();
-                    if (apiKey != null) {
-                        Map<String, Object> map = new HashMap<String, Object>();
-                        map.put("token", apiKey);
-                        tokens.add(map);
-                    }
+            } else if ("api".equals(type)) {
+                if (up.getApiKey() == null) {
+                    // generate key if it's not there
+                    im.getProfileManager().generateApiKey(profile);
+                }
+                String apiKey = up.getApiKey();
+                if (apiKey != null) {
+                    Map<String, Object> map = new HashMap<String, Object>();
+                    map.put("token", apiKey);
+                    tokens.add(map);
                 }
             }
         }
