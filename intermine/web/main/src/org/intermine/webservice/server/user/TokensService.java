@@ -10,9 +10,7 @@ package org.intermine.webservice.server.user;
  *
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
@@ -35,7 +33,7 @@ public class TokensService extends ReadWriteJSONService
     @Override
     protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
-        List<Map<String, Object>> tokens = new ArrayList<Map<String, Object>>();
+        Map<String, Object> tokens = new HashMap<String, Object>();
 
         if (profile.getUserId() != null) { // ie. is really in the DB.
             UserProfile up = (UserProfile) im.getProfileManager()
@@ -44,16 +42,16 @@ public class TokensService extends ReadWriteJSONService
             String type = getOptionalParameter("type");
             if (type == null || "perm".equals(type)) {
                 for (PermanentToken t: up.getPermanentTokens()) {
-                    tokens.add(PermaTokens.format(t));
+                    tokens = PermaTokens.format(t);
                 }
-            } else {
-                if ("api".equals(type)) {
-                    String apiKey = up.getApiKey();
-                    if (apiKey != null) {
-                        Map<String, Object> map = new HashMap<String, Object>();
-                        map.put("token", apiKey);
-                        tokens.add(map);
-                    }
+            } else if ("api".equals(type)) {
+                if (up.getApiKey() == null) {
+                    // generate key if it's not there
+                    im.getProfileManager().generateApiKey(profile);
+                }
+                String apiKey = up.getApiKey();
+                if (apiKey != null) {
+                    tokens.put("token", apiKey);
                 }
             }
         }
