@@ -55,6 +55,7 @@ public class QueryListAppendService extends QueryToListService
         try {
             list.addToBagFromQuery(q);
         } finally {
+            setHeaderAttributes(name, list.getSavedBagId());
             output.addResultItem(Arrays.asList("" + list.size()));
         }
     }
