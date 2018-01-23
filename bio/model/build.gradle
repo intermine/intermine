@@ -25,6 +25,7 @@ configurations {
 }
 
 dependencies {
+    compile project(':bio-core')
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'commons-lang:commons-lang:2.6'
@@ -43,6 +44,13 @@ task copyMineProperties(type: Copy) {
     into sourceSets.main.output.resourcesDir
     rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
     inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+task copyGenomicModel(type: Copy, overwrite: true) {
+    from "../core/core.xml"
+    into sourceSets.main.output.resourcesDir
+
+    rename { fileName -> fileName.replace('core.xml', 'genomic_model.xml') }
 }
 
 task buildBioCoreModelJar(type: Jar) {

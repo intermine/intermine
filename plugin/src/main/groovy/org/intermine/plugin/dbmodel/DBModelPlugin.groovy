@@ -5,10 +5,13 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
+import org.gradle.internal.classpath.ClassPath
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
+
+import java.nio.file.Files
 
 class DBModelPlugin implements Plugin<Project> {
 
@@ -68,10 +71,10 @@ class DBModelPlugin implements Plugin<Project> {
                 FileTree fileTree = project.zipTree(project.configurations.getByName("bioCore").singleFile)
                 PatternSet patternSet = new PatternSet();
                 patternSet.include("core.xml");
-                File file = fileTree.matching(patternSet).singleFile
+                File coreXml = fileTree.matching(patternSet).singleFile
                 String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
-                file.renameTo(modelFilePath)
-                file.createNewFile()
+                coreXml.renameTo(modelFilePath)
+                coreXml.createNewFile()
             }
         }
 
@@ -138,10 +141,20 @@ class DBModelPlugin implements Plugin<Project> {
 
             doLast {
                 def ant = new AntBuilder()
-                ant.taskdef(name: "createSoModel", classname: "org.intermine.bio.task.SOToModelTask") {
-                    classpath {
-                        pathelement(path: project.configurations.getByName("bioCore").asPath)
-                        pathelement(path: project.configurations.getByName("compile").asPath)
+                //when we execute bio-model build, bio-core might be not installed yet
+                if (project.name.equals("bio-model")) {
+                    ant.taskdef(name: "createSoModel", classname: "org.intermine.bio.task.SOToModelTask") {
+                        classpath {
+                            dirset(dir: project.buildDir.absolutePath)
+                            pathelement(path: project.configurations.getByName("compile").asPath)
+                        }
+                    }
+                } else {
+                    ant.taskdef(name: "createSoModel", classname: "org.intermine.bio.task.SOToModelTask") {
+                        classpath {
+                            pathelement(path: project.configurations.getByName("bioCore").asPath)
+                            pathelement(path: project.configurations.getByName("compile").asPath)
+                        }
                     }
                 }
                 ant.createSoModel(soTermListFile: config.soTermListFilePath, outputFile: config.soAdditionFilePath)
