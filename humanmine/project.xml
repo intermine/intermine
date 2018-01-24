@@ -125,7 +125,7 @@
     </source>
 
     <source name="ncbi-fasta" type="fasta">
-      <property name="fasta.loaderClassName" 
+      <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>
       <property name="fasta.taxonId" value="9606"/>
       <property name="fasta.dataSetTitle" value="NCBI fasta data set for Homo sapiens"/>
@@ -188,7 +188,6 @@
     <post-process name="transfer-sequences"/>
     <post-process name="do-sources" />
     <post-process name="create-gene-flanking-features" />
-    <post-process name="create-bioseg-location-index" />
     <post-process name="create-overlap-view" />
 <!--    <post-process name="populate-child-features"/>    -->
     <post-process name="create-attribute-indexes" />
