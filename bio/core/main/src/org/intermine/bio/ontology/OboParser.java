@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
 import org.obo.dataadapter.OBOAdapter;
 import org.obo.dataadapter.OBOFileAdapter;
 import org.obo.dataadapter.OBOSerializationEngine;
@@ -248,12 +247,10 @@ public class OboParser
             List<?> names = (List<?>) tvs.get("name");
             if (names != null && !names.isEmpty()) {
                 name = (String) names.get(0);
-            } else {
-                //throw new BuildException("Ontology term did not have a name:" + id);
+                boolean isTransitive = isTrue(tvs, "is_transitive");
+                oboType = new OboTypeDefinition(id, name, isTransitive);
+                types.put(oboType.getId() , oboType);
             }
-            boolean isTransitive = isTrue(tvs, "is_transitive");
-            oboType = new OboTypeDefinition(id, name, isTransitive);
-            types.put(oboType.getId() , oboType);
         }
 
         // Just build all the OboTerms disconnected
@@ -264,12 +261,10 @@ public class OboParser
             List<?> names = (List<?>) tvs.get("name");
             if (names != null && !names.isEmpty()) {
                 name = (String) names.get(0);
-            } else {
-                throw new BuildException("Ontology term did not have a name:" + id);
+                OboTerm term = new OboTerm(id, name);
+                term.setObsolete(isTrue(tvs, "is_obsolete"));
+                terms.put(term.getId(), term);
             }
-            OboTerm term = new OboTerm(id, name);
-            term.setObsolete(isTrue(tvs, "is_obsolete"));
-            terms.put(term.getId(), term);
         }
 
         // Now connect them all together
@@ -512,3 +507,4 @@ public class OboParser
         return out.toString();
     }
 }
+
