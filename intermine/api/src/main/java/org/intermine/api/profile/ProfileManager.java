@@ -1446,7 +1446,7 @@ public class ProfileManager
         }
         if (hasProfile(username)) {
             if (!validPassword(username, password)) {
-                throw new AuthenticationException("Invalid password supplied: " + password);
+                throw new AuthenticationException("Invalid password supplied");
             } else {
                 Profile p = getProfile(username, classKeys);
                 ApiPermission permission = new ApiPermission(p, ApiPermission.Level.RW);
