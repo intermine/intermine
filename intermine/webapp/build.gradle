@@ -64,12 +64,14 @@ task classesJar(type: Jar) {
 }
 
 task blueGenesStart(type: JavaExec) {
-    classpath = configurations.providedRuntime
-    main = "bluegenes.core"
+    doLast {
+        classpath = configurations.providedRuntime
+        main = "bluegenes.core"
 //    if (!hasProperty('config')) {
 //        throw new InvalidUserDataException("Please provide location of configuration file, e.g. -Pconfig=/path/to/config.edn")
 //    }
-    environment("config", config)
+        environment("config", config)
+    }
 }
 
 artifacts {
