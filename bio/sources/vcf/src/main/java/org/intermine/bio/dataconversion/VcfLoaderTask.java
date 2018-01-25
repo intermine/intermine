@@ -98,6 +98,7 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
 
     @Override
     public void execute() {
+        configureDynamicAttributes(this);
         if (files != null) {
             // setFiles() is used only for testing
             for (int i = 0; i < files.length; i++) {

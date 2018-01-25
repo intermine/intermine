@@ -72,7 +72,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * Set the Taxon Id of the Organism we are loading.  Can be space delimited list of taxonIds
      * @param fastaTaxonId the taxon id to set.
      */
-    public void setFastaTaxonId(String fastaTaxonId) {
+    public void setTaxonId(String fastaTaxonId) {
         this.fastaTaxonId = fastaTaxonId;
         parseTaxonIds();
     }
@@ -184,6 +184,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     @Override
     public void execute() {
+        configureDynamicAttributes(this);
         if (fastaTaxonId == null) {
             throw new RuntimeException("fastaTaxonId needs to be set");
         }
