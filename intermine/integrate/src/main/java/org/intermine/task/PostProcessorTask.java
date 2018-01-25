@@ -87,6 +87,7 @@ public class PostProcessorTask extends DynamicAttributeTask
                     if (ObjectStoreWriterInterMineImpl.class.isAssignableFrom(osw.getClass())) {
                         ((ObjectStoreWriterInterMineImpl) osw).getDatabase().shutdown();
                     }
+                    osw.close();
                 }
             } catch (Exception e) {
                 throw new BuildException(e);
