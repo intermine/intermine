@@ -33,7 +33,7 @@ import org.intermine.util.PropertiesUtil;
  * @author Kim Rutherford
  */
 
-public abstract class DirectDataLoaderTask extends Task
+public abstract class DirectDataLoaderTask extends DynamicAttributeTask
 {
     private String integrationWriterAlias;
     protected String sourceName;

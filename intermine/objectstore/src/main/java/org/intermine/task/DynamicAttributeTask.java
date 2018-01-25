@@ -43,7 +43,7 @@ public class DynamicAttributeTask extends Task
      * will be thrown.
      * @param bean an object to search for setter methods
      */
-    protected void configureDynamicAttributes(Object bean) {
+    public void configureDynamicAttributes(Object bean) {
         Project antProject = getProject();
         Hashtable<?, ?> projectProps = antProject.getProperties();
         PropertyDescriptor[] props =  PropertyUtils.getPropertyDescriptors(bean);
