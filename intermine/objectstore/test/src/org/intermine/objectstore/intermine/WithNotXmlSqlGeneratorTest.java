@@ -273,7 +273,6 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
 
     protected DatabaseSchema getSchema() throws Exception {
         DatabaseSchema schema = ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.notxmlunittest")).getSchema();
-        schema.hasBioSeg = true;
         return schema;
     }
     public String getRegisterOffset1() {

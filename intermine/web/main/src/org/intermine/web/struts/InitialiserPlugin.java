@@ -212,6 +212,8 @@ public class InitialiserPlugin implements PlugIn
 
         initKeylessClasses(servletContext, webConfig);
 
+        doRegistration(webProperties);
+
         LOG.debug("Application initialised in " + (System.currentTimeMillis() - start) + "ms");
     }
 
@@ -341,6 +343,11 @@ public class InitialiserPlugin implements PlugIn
     private void initBlockingErrors(ServletContext servletContext) {
         blockingErrorKeys = new HashMap<String, String>();
         SessionMethods.setErrorOnInitialiser(servletContext, blockingErrorKeys);
+    }
+
+    private void doRegistration(Properties webProperties) {
+        Registrar reg = new Registrar(webProperties);
+        reg.start();
     }
 
     private ObjectStore getProductionObjectStore(Properties webProperties) {
