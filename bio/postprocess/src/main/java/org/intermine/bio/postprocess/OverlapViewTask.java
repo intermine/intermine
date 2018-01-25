@@ -21,7 +21,7 @@ import java.sql.Statement;
 
 /**
  * A task the replace the sequencefeatureoverlappingfeatures table with a view that uses the
- * bioseg type to calculate the overlaps.
+ * int4range type to calculate the overlaps.
  * @author Kim Rutherford
  */
 public class OverlapViewTask
@@ -44,7 +44,7 @@ public class OverlapViewTask
 
     /**
      * Drop the sequencefeatureoverlappingfeatures table and replace it with a view that
-     * uses the bioseg type to calculate the overlaps.
+     * uses the int4range type to calculate the overlaps.
      * @throws SQLException if there is a problem dropping the table or creating the view
      */
     public void createView() throws SQLException {
@@ -54,32 +54,15 @@ public class OverlapViewTask
         // autocommit as we may fail DROP TABLE and use same connection for DROP VIEW
         con.setAutoCommit(true);
 
-        String viewSql;
-        if (osw.getSchema().useRangeTypes()) {
-            viewSql =
-                    "CREATE VIEW overlappingfeaturessequencefeature "
-                            + " AS SELECT l1.featureid AS overlappingfeatures, "
-                            + "           l2.featureid AS sequencefeature "
-                            + "      FROM location l1, location l2 "
-                            + "     WHERE l1.locatedonid = l2.locatedonid "
-                            + "       AND l1.featureid != l2.featureid"
-                            + "       AND int4range(l1.intermine_start, l1.intermine_end + 1) "
-                            + "           && int4range(l2.intermine_start, l2.intermine_end + 1)";
-        } else if (osw.getSchema().hasBioSeg()) {
-            viewSql =
-                    "CREATE VIEW overlappingfeaturessequencefeature "
-                            + " AS SELECT l1.featureid AS overlappingfeatures, "
-                            + "           l2.featureid AS sequencefeature "
-                            + "      FROM location l1, location l2 "
-                            + "     WHERE l1.locatedonid = l2.locatedonid "
-                            + "       AND l1.featureid != l2.featureid"
-                            + "       AND bioseg_create(l1.intermine_start, l1.intermine_end) "
-                            + "            && bioseg_create(l2.intermine_start, l2.intermine_end)";
-        } else {
-            throw new IllegalArgumentException("Attempt to create overlappingfeatures view but"
-                    + " database doesn't support Postgres built in ranges (has to be > 9.2"
-                    + " and doesn't have bioseg installed. Aborting.");
-        }
+        String viewSql =
+                "CREATE VIEW overlappingfeaturessequencefeature "
+                        + " AS SELECT l1.featureid AS overlappingfeatures, "
+                        + "           l2.featureid AS sequencefeature "
+                        + "      FROM location l1, location l2 "
+                        + "     WHERE l1.locatedonid = l2.locatedonid "
+                        + "       AND l1.featureid != l2.featureid"
+                        + "       AND int4range(l1.intermine_start, l1.intermine_end + 1) "
+                        + "           && int4range(l2.intermine_start, l2.intermine_end + 1)";
 
         LOG.info("Creating overlap view with SQL: " + viewSql);
 
