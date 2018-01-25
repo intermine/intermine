@@ -316,6 +316,7 @@ public class OboParser
             List<?> altIds = (List<?>) tagValues.get("alt_id");
             if (altIds != null) {
                 addSynonyms(term, altIds, "alt_id");
+                addXrefs(term, altIds);
             }
 
             List<?> xrefs = (List<?>) tagValues.get("xref");
