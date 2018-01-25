@@ -162,7 +162,7 @@
     <attribute name="firstAuthor" type="java.lang.String"/>
     <attribute name="abstractText" type="java.lang.String"/>
     <collection name="authors" referenced-type="Author" reverse-reference="publications" />
-    <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="publications" />
+    <collection name="bioEntities" referenced-type="Annotatable" reverse-reference="publications" />
     <collection name="meshTerms" referenced-type="MeshTerm" reverse-reference="publications" />
   </class>
 
