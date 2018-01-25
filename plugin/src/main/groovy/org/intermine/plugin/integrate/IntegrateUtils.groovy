@@ -1,5 +1,6 @@
 package org.intermine.plugin.integrate
 
+import org.apache.tools.ant.util.StringUtils
 import org.gradle.api.Project
 import org.intermine.plugin.BioSourceProperties
 import org.intermine.plugin.project.Source
@@ -212,19 +213,41 @@ class IntegrateUtils {
 
     def loadSingleSource = { source ->
         //TODO manage duplicate
+        Properties props = bioSourceProperties.getBioSourceProperties(source.name)
+        String classname;
         def ant = new AntBuilder()
-        ant.taskdef(name: "dataLoad", classname: "org.intermine.dataloader.ObjectStoreDataLoaderTask") {
+        if (props.containsKey("have.file.custom.direct")) {
+            //set property change property name, fasta.idSuffix -> idSuffix)
+            source.userProperties.each { prop ->
+                if (!"src.data.dir".equals(prop.name)) {
+                    String propName = StringUtils.removePrefix(prop.name, source.type + ".")
+                    ant.project.setProperty(propName, prop.value)
+                }
+            }
+            classname = props.getProperty("loader.class")
+        } else {
+            classname = "org.intermine.dataloader.ObjectStoreDataLoaderTask"
+        }
+        ant.taskdef(name: "dataLoad", classname: classname) {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
                 pathelement(path: gradleProject.configurations.getByName("compile").asPath)
                 pathelement(path: gradleProject.configurations.getByName("integrateSource").asPath)
             }
         }
-        ant.dataLoad(integrationWriter: "integration.production",
-                source: "os." + COMMON_OS_PREFIX + "-translated",
-                sourceName: source.name, sourceType: source.type,
-                ignoreDuplicates: false,
-                allSources: "")
+        if (props.containsKey("have.file.custom.direct")) {
+            ant.dataLoad(integrationWriterAlias: "integration.production",
+                    sourceName: source.name, sourceType: source.type){
+                fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
+                        includes: BioSourceProperties.getUserProperty(source, source.type + ".includes"))
+            }
+        } else {
+            ant.dataLoad(integrationWriter: "integration.production",
+                    source: "os." + COMMON_OS_PREFIX + "-translated",
+                    sourceName: source.name, sourceType: source.type,
+                    ignoreDuplicates: false,
+                    allSources: "")
+        }
     }
 
 }
