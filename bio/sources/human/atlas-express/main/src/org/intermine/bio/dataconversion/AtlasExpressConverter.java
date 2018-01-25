@@ -86,6 +86,11 @@ public class AtlasExpressConverter extends BioFileConverter
                 String tissue = header[i];
                 String expression = line[i];
 
+                if (StringUtils.isEmpty(expression)) {
+                    // sometimes there is not an expression value for a specific gene+tissue
+                    continue;
+                }
+
                 Item item = createItem("AtlasExpression");
                 item.setAttribute("type", EXPRESSION_TYPE);
                 item.setAttribute("condition", tissue);
