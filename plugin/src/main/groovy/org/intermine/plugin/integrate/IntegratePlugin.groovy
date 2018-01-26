@@ -39,6 +39,7 @@ class IntegratePlugin implements Plugin<Project> {
 
                 String sourceInput = project.hasProperty('source') ? project.property('source') : ""
                 if ("".equals(sourceInput) || "all".equals(sourceInput)) {
+                    println "Integrating ALL sources set project.xml"
                     intermineProject.sources.keySet().each { sourceName ->
                         sourceNames.add(sourceName)
                     }
