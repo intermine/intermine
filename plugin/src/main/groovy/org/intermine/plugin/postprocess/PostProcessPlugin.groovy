@@ -33,6 +33,7 @@ class PostProcessPlugin implements Plugin<Project> {
 
                 String processInput = project.hasProperty('process') ? project.property('process') : ""
                 if ("".equals(processInput) || "all".equals(processInput)) {
+                    println "Performing ALL " + intermineProject.postProcesses.size() + " post-processes"
                     intermineProject.postProcesses.keySet().each { processName ->
                         processNames.add(processName)
                     }
@@ -55,7 +56,7 @@ class PostProcessPlugin implements Plugin<Project> {
 
             doLast{
                 processNames.each { processName ->
-                    println "Performing postprocess " + processName
+                    println "Performing postprocess " + processName + "."
                     if(DO_SOURCES.equals(processName)) {
                         //read source input property
                         List<String> sourceNames = new ArrayList<String>()
@@ -106,7 +107,6 @@ class PostProcessPlugin implements Plugin<Project> {
                             classpath {
                                 dirset(dir: project.getBuildDir().getAbsolutePath())
                                 pathelement(path: project.configurations.getByName("compile").asPath)
-                                pathelement(path: project.configurations.getByName("integrateSource").asPath)
                             }
                         }
                         ant.corePostProcess(operation: processName, objectStoreWriter: "osw.production")
