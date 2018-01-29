@@ -980,9 +980,11 @@ public class InitialiserPlugin implements PlugIn
                 ResultSet res = con.getMetaData().getColumns(null, null,
                                 TrackerUtil.TEMPLATE_TRACKER_TABLE, "timestamp");
 
-                return res.getString(3).equals(TrackerUtil.TEMPLATE_TRACKER_TABLE)
-                    && "timestamp".equals(res.getString(4))
-                    && res.getInt(5) == Types.TIMESTAMP;
+                if (res.next()) {
+                    return res.getString(3).equals(TrackerUtil.TEMPLATE_TRACKER_TABLE)
+                            && "timestamp".equals(res.getString(4))
+                            && res.getInt(5) == Types.TIMESTAMP;
+                }
             }
         } catch (SQLException sqle) {
             LOG.error("Problem retriving connection", sqle);
