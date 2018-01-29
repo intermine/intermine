@@ -31,7 +31,6 @@ dependencies {
     runtime group: 'taglibs', name: 'string', version: '1.1.0'
     runtime group: 'commons-httpclient', name: 'commons-httpclient', version: '3.0'
     runtime group: 'commons-fileupload', name: 'commons-fileupload', version: '1.2.2'
-    runtime group: 'org.biojava', name: 'core', version: '1.9.1'
 }
 
 def explodedWebAppDir = "$buildDir/explodedWebApp"

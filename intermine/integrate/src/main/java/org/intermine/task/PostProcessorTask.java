@@ -73,25 +73,6 @@ public class PostProcessorTask extends DynamicAttributeTask
 
         } catch (Exception e) {
             throw new BuildException(e);
-        } finally {
-            try {
-                if (osw != null) {
-                    // NOTE this is a hack to work around running out of database connections when
-                    // running the do-sources postprocess step.  Each source that has a postprocess
-                    // step is run in a separate ClassLoader which means they are unable to share
-                    // the Database instance held in DatabaseFactory.  Database connections aren't
-                    // closed automatically until the JVM exits and ShutdownHook is called.
-                    // Here we're closing the database explicitly, a better fix would be to make
-                    // sure each do-sources step used the same ClassLoader in im-ant-tasks
-                    // PostProcessTask.
-                    if (ObjectStoreWriterInterMineImpl.class.isAssignableFrom(osw.getClass())) {
-                        ((ObjectStoreWriterInterMineImpl) osw).getDatabase().shutdown();
-                    }
-                    osw.close();
-                }
-            } catch (Exception e) {
-                throw new BuildException(e);
-            }
         }
     }
 
