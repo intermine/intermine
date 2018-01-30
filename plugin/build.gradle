@@ -1,9 +1,19 @@
 group 'org.intermine'
-version '1.0'
+version '1.0-RC-SNAPSHOT'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
+    }
+}
 
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
 
 sourceCompatibility = 1.7
 
@@ -16,4 +26,17 @@ dependencies {
     compile('log4j:log4j:1.2.17')
     compile gradleApi()
     compile localGroovy()
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'intermine'
+        name = project.name
+        userOrg = user
+        licenses = ['LGPL-2.1']
+        vcsUrl = 'https://github.com/intermine/intermine.git'
+    }
+    configurations = ['archives']
 }

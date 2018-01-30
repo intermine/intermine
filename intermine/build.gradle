@@ -41,7 +41,7 @@ subprojects {
         preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
         tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
         newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
-        version =  "2.0.0"
+        version = "2.0.0-RC-SNAPSHOT"
         tagTemplate = '${project.name}-${version}'
         versionPropertyFile = 'gradle.properties'
         versionProperties = []
@@ -93,7 +93,7 @@ subprojects {
         user = System.getenv('BINTRAY_USER')
         key = System.getenv('BINTRAY_KEY')
         pkg {
-            repo = 'maven-repo-test'
+            repo = 'intermine'
             name = project.name
             userOrg = user
             licenses = ['LGPL-2.1']
@@ -108,9 +108,5 @@ task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/allTests")
     // Include the results from the `test` task in all subprojects
     reportOn subprojects*.test
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
 }
 

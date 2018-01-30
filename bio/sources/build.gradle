@@ -7,18 +7,21 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath group: 'org.intermine', name: 'plugin', version: '1.+'
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
     }
 }
 
 subprojects {
     group = 'org.intermine'
-    version = '2.0.0'
+    version = '2.0.0-RC-SNAPSHOT'
 
     apply plugin: 'java'
     apply plugin: 'maven'
+    apply plugin: 'com.jfrog.bintray'
     apply plugin: 'dbmodel'
     apply plugin: 'biosource-dbmodel'
 
@@ -72,6 +75,19 @@ subprojects {
     test {
         ignoreFailures = true
         forkEvery = 1
+    }
+
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        pkg {
+            repo = 'bio'
+            name = project.name
+            userOrg = user
+            licenses = ['LGPL-2.1']
+            vcsUrl = 'https://github.com/intermine/intermine.git'
+        }
+        configurations = ['archives']
     }
 }
 
