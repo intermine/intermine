@@ -1,2 +1,0 @@
-<query name="" model="genomic" view="Organism.name Organism.taxonId" sortOrder="Organism.name asc">
-</query>

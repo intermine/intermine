@@ -1,3 +1,0 @@
-<query model="testmodel" view="Employee.name Employee.department.name">
-    <constraint path="Employee.age" op="lt" value="20"/>
-</query>
