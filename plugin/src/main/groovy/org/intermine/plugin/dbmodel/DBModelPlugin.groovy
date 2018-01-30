@@ -26,10 +26,9 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.configurations {
             bioCore
-            mergeSource
             commonResources
             api
-            integrateSource
+            mergeSource
         }
 
         versionConfig = project.extensions.create('versionConfig', VersionConfig)
@@ -52,7 +51,19 @@ class DBModelPlugin implements Plugin<Project> {
                     generateKeys = false
                 }
             }
+        }
 
+        project.task('addSourceDependencies') {
+            description "Add associated datasource dependencies"
+            onlyIf {generateKeys && !new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
+
+            doLast {
+                String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
+                def projectXml = (new XmlParser()).parse(projectXmlFilePath)
+                projectXml.sources.source.each { source ->
+                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@type'}", version: versionConfig.bioSourceVersion])
+                }
+            }
         }
 
         project.task('copyDefaultInterMineProperties') {
@@ -80,6 +91,7 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('generateKeys') {
             description "Append keys for each source in project.xml to generated genomic_keyDefs.properties file"
+            dependsOn 'addSourceDependencies'
             onlyIf {generateKeys}
 
             doLast {

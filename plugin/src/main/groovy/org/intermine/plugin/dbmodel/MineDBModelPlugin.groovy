@@ -7,31 +7,12 @@ import org.intermine.plugin.VersionConfig
 
 class MineDBModelPlugin implements Plugin<Project> {
 
-    VersionConfig mineVersionConfig
-
     void apply(Project project) {
         String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
-        mineVersionConfig = project.extensions.create('mineVersionConfig', VersionConfig)
-
-        project.configurations {
-            mergeSource
-        }
-
-        project.task('parseProjectXml') {
-            description "Parse the project XML file and add associated datasource dependencies"
-            onlyIf {!new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
-
-            doLast {
-                def projectXml = (new XmlParser()).parse(projectXmlFilePath)
-                projectXml.sources.source.each { source ->
-                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@type'}", version: mineVersionConfig.bioSourceVersion])
-                }
-            }
-        }
 
         project.task('mergeModels') {
             description "Merges defferent source model files into an intermine XML model"
-            dependsOn 'initConfig', 'copyGenomicModel', 'copyMineProperties', 'createSoModel', 'parseProjectXml'
+            dependsOn 'initConfig', 'copyGenomicModel', 'copyMineProperties', 'createSoModel', 'addSourceDependencies'
             onlyIf {!new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
 
             MineDBModelConfig config = project.extensions.create('mineDBModelConfig', MineDBModelConfig)
