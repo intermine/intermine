@@ -1,1 +1,0 @@
-plackup -a bin/load_all_apps.pl -p 4000 -s Starman

@@ -1,5 +1,0 @@
-<template name="Probe_Gene">
-  <query name="Probe_Gene">
-    <unknown_tag>This should make it die</unknown_tag>
-  </query>
-</template>
