@@ -5,13 +5,13 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
-import org.gradle.internal.classpath.ClassPath
+import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
 
-import java.nio.file.Files
+
 
 class DBModelPlugin implements Plugin<Project> {
 
@@ -29,6 +29,7 @@ class DBModelPlugin implements Plugin<Project> {
             commonResources
             api
             mergeSource
+            plugin
         }
 
         versionConfig = project.extensions.create('versionConfig', VersionConfig)
@@ -91,10 +92,11 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('generateKeys') {
             description "Append keys for each source in project.xml to generated genomic_keyDefs.properties file"
-            dependsOn 'addSourceDependencies'
+            dependsOn 'initConfig', 'addSourceDependencies', 'processResources'
             onlyIf {generateKeys}
 
             doLast {
+
                 // parse project XML for each data source
                 String projectXml = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
                 org.intermine.plugin.project.Project intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml));
@@ -107,36 +109,38 @@ class DBModelPlugin implements Plugin<Project> {
 
                 // append each source keys file to make one big keys file
                 sourceNames.each { sourceName ->
+
                     Source source = intermineProject.sources.get(sourceName)
                     String sourceType = source.getType()
-                    String sourceLocation = source.getLocation()
-                    String sourceKeysDirectory = sourceLocation + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator
-                    //
-                    String alternateSourceKeysDirectory = sourceLocation + File.separator + "resources" + File.separator
+                    FileTree dataSourceJar = null
+                    File sourceKeysFile = null
 
-                    // try source name first
-                    String sourceKeysPath = sourceKeysDirectory + sourceName + "_keys.properties"
+                    // Prefix because actual value of the version string is 2.+ while the real version is 2.0.0
+                    // Also versions might be strings, so can't use regular expressions (eg. RC or SNAPSHOT)
+                    // have to include the version number at all because go-annotation will match go
+                    String bioVersionPrefix = versionConfig.bioSourceVersion.substring(0, 1)
 
-                    // try source type now
-                    if (!(new File(sourceKeysPath).exists())) {
-                        sourceKeysPath = sourceKeysDirectory + sourceType + "_keys.properties"
+                    project.configurations.getByName("mergeSource").asFileTree.each {
+                        if (it.name.startsWith("bio-source-$sourceType-$bioVersionPrefix")) {
+                             dataSourceJar = project.zipTree(it)
+                        }
                     }
 
-                    // keys files can be in two places. try again
-                    if (!(new File(sourceKeysPath)).exists()) {
-                        sourceKeysPath = alternateSourceKeysDirectory + sourceName + "_keys.properties"
+                    System.out.println("Looking for ${sourceName}_keys.properties ")
+
+                    PatternSet patternSet = new PatternSet();
+                    patternSet.include("${sourceName}_keys.properties")
+                    if (!dataSourceJar.matching(patternSet).empty) {
+                        sourceKeysFile = dataSourceJar.matching(patternSet).singleFile
+                    }
+                    if (sourceKeysFile == null) {
+                        def msg = "Looking for ${sourceType}_keys.properties now, " +
+                                  "as didn't find ${sourceName}_keys.properties"
+                        System.out.println(msg)
+                        patternSet.include("${sourceType}_keys.properties")
+                        sourceKeysFile = dataSourceJar.matching(patternSet).singleFile
                     }
 
-                    if (!(new File(sourceKeysPath)).exists()) {
-                        sourceKeysPath = alternateSourceKeysDirectory + sourceType + "_keys.properties"
-                    }
-
-                    if (!(new File(sourceKeysPath)).exists()) {
-                        // TODO throw exception if we still don't have it
-                        println "Couldn't find keys file. Looked absolutely everywhere."
-                    }
-
-                    File sourceKeysFile = new File( sourceKeysPath )
                     Properties sourceProperties = new Properties()
                     sourceProperties.load(sourceKeysFile.newDataInputStream())
                     keysProperties.putAll(sourceProperties)
