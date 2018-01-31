@@ -399,7 +399,7 @@ public class ItemToObjectTranslator extends Translator
                     refsName = StringUtil.decapitalise(refsName);
                 }
                 if (TypeUtil.getFieldInfo(obj.getClass(), refsName) != null) {
-                    obj.setFieldValue(refsName, os.executeSingleton(q));
+                    obj.setFieldValue(refsName, new HashSet(os.executeSingleton(q)));
                 } else {
                     String message = "Collection not found in class: "
                         + Util.getFriendlyName(obj.getClass()) + "." + refsName
