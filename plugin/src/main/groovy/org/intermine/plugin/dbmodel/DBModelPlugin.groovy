@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
-import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.project.ProjectXmlBinding
@@ -126,7 +125,12 @@ class DBModelPlugin implements Plugin<Project> {
                         }
                     }
 
-                    System.out.println("Looking for ${sourceName}_keys.properties ")
+                    if (dataSourceJar == null) {
+                        def msg = "Failed to find JAR: 'bio-source-$sourceType-$bioVersionPrefix*.jar'"
+                        throw new RuntimeException(msg)
+                    }
+
+                    System.out.println("Looking for ${sourceName}_keys.properties")
 
                     PatternSet patternSet = new PatternSet();
                     patternSet.include("${sourceName}_keys.properties")
