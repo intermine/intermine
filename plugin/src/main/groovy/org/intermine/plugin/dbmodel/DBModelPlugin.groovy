@@ -29,6 +29,7 @@ class DBModelPlugin implements Plugin<Project> {
             commonResources
             api
             mergeSource
+            plugin
         }
 
         versionConfig = project.extensions.create('versionConfig', VersionConfig)
