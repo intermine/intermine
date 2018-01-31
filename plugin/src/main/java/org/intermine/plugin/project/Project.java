@@ -107,8 +107,10 @@ public class Project
 
     /**
      * Validate contents of a project.xml file once it has been unmarshalled.  This will check
-     *     a) that 'source.location' properties point to valid locations
+     *     a) that 'source.location' properties point to valid locations (IF SET)
      *     b) that all sources lists can be found in 'source.location' directories
+     * If source.location is NOT set, no validation done.
+     *
      * @param projectXml project.xml file, location used to resolve relative source.location paths
      */
     public void validate(File projectXml) {
@@ -117,9 +119,8 @@ public class Project
         String endl = System.getProperty("line.separator");
 
         if (!sources.isEmpty() &&  getSourceLocations().isEmpty()) {
-            throw new BuildException("Error in project.xml: no source locations found.  You need to"
-                    + " set at least one 'source.location' property in project.xml to specify where"
-                    + " source directories can be found.");
+            // no local sources, no validation to do
+            return;
         }
 
         // check that directories specified by 'source.location' properties exist
