@@ -112,6 +112,7 @@ class DBModelPlugin implements Plugin<Project> {
                     Source source = intermineProject.sources.get(sourceName)
                     String sourceType = source.getType()
                     FileTree dataSourceJar = null
+                    File sourceKeysFile = null
 
                     // Prefix because actual value of the version string is 2.+ while the real version is 2.0.0
                     // Also versions might be strings, so can't use regular expressions (eg. RC or SNAPSHOT)
@@ -124,19 +125,23 @@ class DBModelPlugin implements Plugin<Project> {
                         }
                     }
 
-                    PatternSet patternSet = new PatternSet();
-                    System.out.println("Looking for ${sourceType}_keys.properties ")
-                    patternSet.include("${sourceType}_keys.properties")
-                    File file = dataSourceJar.matching(patternSet).singleFile
+                    System.out.println("Looking for ${sourceName}_keys.properties ")
 
-                    if (file == null) {
-                        System.out.println("Looking for ${sourceType}_keys.properties A")
+                    PatternSet patternSet = new PatternSet();
+                    patternSet.include("${sourceName}_keys.properties")
+                    if (!dataSourceJar.matching(patternSet).empty) {
+                        sourceKeysFile = dataSourceJar.matching(patternSet).singleFile
+                    }
+                    if (sourceKeysFile == null) {
+                        def msg = "Looking for ${sourceType}_keys.properties now, " +
+                                  "as didn't find ${sourceName}_keys.properties"
+                        System.out.println(msg)
                         patternSet.include("${sourceType}_keys.properties")
-                        file = dataSourceJar.matching(patternSet).singleFile
+                        sourceKeysFile = dataSourceJar.matching(patternSet).singleFile
                     }
 
                     Properties sourceProperties = new Properties()
-                    sourceProperties.load(file.newDataInputStream())
+                    sourceProperties.load(sourceKeysFile.newDataInputStream())
                     keysProperties.putAll(sourceProperties)
                 }
                 String keysPath = buildResourcesMainDir + File.separator + config.modelName + "_keyDefs.properties"
