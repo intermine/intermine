@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
-import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils
+import org.gradle.tooling.BuildException
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.project.ProjectXmlBinding
@@ -61,7 +61,11 @@ class DBModelPlugin implements Plugin<Project> {
             doLast {
                 String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
                 def projectXml = (new XmlParser()).parse(projectXmlFilePath)
+                def addSource = "intermine-items-xml-file"
                 projectXml.sources.source.each { source ->
+                    if (source.@type == "intermine-items-xml-file") {
+                        project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@name'}", version: versionConfig.bioSourceVersion])
+                    }
                     project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@type'}", version: versionConfig.bioSourceVersion])
                 }
             }
@@ -121,12 +125,26 @@ class DBModelPlugin implements Plugin<Project> {
                     String bioVersionPrefix = versionConfig.bioSourceVersion.substring(0, 1)
 
                     project.configurations.getByName("mergeSource").asFileTree.each {
-                        if (it.name.startsWith("bio-source-$sourceType-$bioVersionPrefix")) {
+                        if (it.name.startsWith("bio-source-$sourceName-$bioVersionPrefix")) {
                              dataSourceJar = project.zipTree(it)
                         }
                     }
 
-                    System.out.println("Looking for ${sourceName}_keys.properties ")
+                    if (dataSourceJar == null) {
+                        project.configurations.getByName("mergeSource").asFileTree.each {
+                            if (it.name.startsWith("bio-source-$sourceType-$bioVersionPrefix")) {
+                                dataSourceJar = project.zipTree(it)
+                            }
+                        }
+                    }
+
+                    if (dataSourceJar == null) {
+                        throw new RuntimeException("Failed to find JAR: 'bio-source-" + sourceType + "-"
+                                + bioVersionPrefix + "*.jar' OR 'bio-source-" + sourceName + "-"
+                                + bioVersionPrefix + "*.jar'")
+                    }
+
+                    System.out.println("Processing ${sourceName}_keys.properties")
 
                     PatternSet patternSet = new PatternSet();
                     patternSet.include("${sourceName}_keys.properties")
@@ -134,10 +152,15 @@ class DBModelPlugin implements Plugin<Project> {
                         sourceKeysFile = dataSourceJar.matching(patternSet).singleFile
                     }
                     if (sourceKeysFile == null) {
-                        def msg = "Looking for ${sourceType}_keys.properties now, " +
-                                  "as didn't find ${sourceName}_keys.properties"
-                        System.out.println(msg)
+                        System.out.println("Processing ${sourceType}_keys.properties now, " +
+                                "as didn't find ${sourceName}_keys.properties in 'bio-source-" + sourceType
+                                + "-" + bioVersionPrefix + "*.jar'")
                         patternSet.include("${sourceType}_keys.properties")
+                        if (dataSourceJar.matching(patternSet).empty) {
+                            throw new RuntimeException("No keys file found for " + sourceName + " (or "
+                                    + sourceType + ") in 'bio-source-" + sourceType + "-" + bioVersionPrefix
+                                    + "*.jar'. Please add this file and try your build again.")
+                        }
                         sourceKeysFile = dataSourceJar.matching(patternSet).singleFile
                     }
 

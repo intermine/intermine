@@ -109,6 +109,7 @@ class IntegratePlugin implements Plugin<Project> {
                 }
             }
         }
+
         project.task('preRetrieveSingleSource') {
             description "Pre-retrieves a single source"
             dependsOn 'initIntegration','buildTgtItems'
