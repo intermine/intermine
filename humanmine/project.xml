@@ -188,6 +188,7 @@
     <post-process name="transfer-sequences"/>
     <post-process name="do-sources" />
     <post-process name="create-gene-flanking-features" />
+    <post-process name="create-location-overlap-index" />
     <post-process name="create-overlap-view" />
 <!--    <post-process name="populate-child-features"/>    -->
     <post-process name="create-attribute-indexes" />
