@@ -12,6 +12,7 @@ buildscript {
     dependencies {
         classpath group: 'org.intermine', name: 'plugin', version: '1.+'
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.6.2"
     }
 }
 
@@ -22,6 +23,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'dbmodel'
     apply plugin: 'biosource-dbmodel'
 
@@ -75,6 +77,29 @@ subprojects {
     test {
         ignoreFailures = true
         forkEvery = 1
+    }
+
+    artifactory {
+        contextUrl = 'https://oss.jfrog.org/artifactory/'
+        resolve {
+            repository {
+                repoKey = 'libs-release'
+            }
+        }
+        publish {
+            repository {
+                if (project.version.endsWith("-SNAPSHOT")) {
+                    repoKey = 'oss-snapshot-local'
+                } else {
+                    repoKey = 'oss-release-local'
+                }
+            username = System.getenv('BINTRAY_USER')
+            password = System.getenv('BINTRAY_KEY')
+            }
+            defaults {
+	        publishConfigs('archives')
+            }
+        }
     }
 
     bintray {
