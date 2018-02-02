@@ -3,7 +3,7 @@
 
  <class name="Annotatable" is-interface="true">
   <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
-  <collection name="publications" referenced-type="Publication" reverse-reference="bioEntities"/>
+  <collection name="publications" referenced-type="Publication" reverse-reference="entities"/>
  </class>
 
   <class name="Author" is-interface="true">
@@ -162,7 +162,7 @@
     <attribute name="firstAuthor" type="java.lang.String"/>
     <attribute name="abstractText" type="java.lang.String"/>
     <collection name="authors" referenced-type="Author" reverse-reference="publications" />
-    <collection name="bioEntities" referenced-type="Annotatable" reverse-reference="publications" />
+    <collection name="entities" referenced-type="Annotatable" reverse-reference="publications" />
     <collection name="meshTerms" referenced-type="MeshTerm" reverse-reference="publications" />
   </class>
 
