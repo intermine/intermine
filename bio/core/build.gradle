@@ -21,10 +21,14 @@ processResources {
     from('.') { include ("core.xml", "genomic_additions.xml")}
 }
 
+configurations {
+    provided
+    compile.extendsFrom provided
+}
 
 dependencies {
     compile group: "org.intermine", name: "intermine-api", version: imVersion
-    compile fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar not found in public repo, obo and bbop not available in the public maven repo
+    provided fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar not found in public repo, obo and bbop not available in the public maven repo
     testCompile group: "org.intermine", name: "intermine-integrate", version: imVersion, classifier: "testClasses"
     testCompile project(path: ':bio-model', configuration: 'bioCoreModelArtifact')
     runtime fileTree(dir: 'libs', include: '*.jar') //antlr-2.7.6-caching.jar
@@ -32,3 +36,12 @@ dependencies {
 
 tasks.test.dependsOn ':bio-model:buildDB'
 
+jar {
+    dependsOn configurations.runtime
+    // put all the JARs included in `provided` config and include them in the JAR
+    from {
+        (configurations.provided).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
