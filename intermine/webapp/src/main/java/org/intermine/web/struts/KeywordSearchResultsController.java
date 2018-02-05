@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.apache.log4j.RollingFileAppender;
+//import org.apache.log4j.RollingFileAppender;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -85,11 +85,11 @@ public class KeywordSearchResultsController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ServletContext servletContext = request.getSession().getServletContext();
         String contextPath = servletContext.getRealPath("/");
-        synchronized (this) {
-            // if this decreases performance too much we might have to change it
-            intialiseLogging(SessionMethods.getWebProperties(servletContext).getProperty(
-                    "project.title", "unknown").toLowerCase());
-        }
+//        synchronized (this) {
+//            // if this decreases performance too much we might have to change it
+//            intialiseLogging(SessionMethods.getWebProperties(servletContext).getProperty(
+//                    "project.title", "unknown").toLowerCase());
+//        }
         KeywordSearch.initKeywordSearch(im, contextPath);
         Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
         int totalHits = 0;
@@ -250,24 +250,24 @@ public class KeywordSearchResultsController extends TilesAction
         searchLog.debug(searchLogLine);
     }
 
-    private void intialiseLogging(String projectName) throws IOException {
-        if (searchLog == null) {
-            searchLog = Logger.getLogger(KeywordSearchResultsController.class.getName()
-                        + ".searches");
-            String logFileName = projectName + "_searches.log";
-            Layout layout = new PatternLayout("%d{ISO8601}\t%m%n");
-            try {
-                RollingFileAppender appender = new RollingFileAppender(layout, logFileName, true);
-                appender.setMaximumFileSize(102400); // 100kb
-                appender.setMaxBackupIndex(10);
-                searchLog.addAppender(appender);
-            } catch (FileNotFoundException e) {
-                LOG.error("Could not open searches log", e);
-                return;
-            }
-            LOG.info("Logging searches to: " + logFileName);
-        }
-    }
+//    private void intialiseLogging(String projectName) throws IOException {
+//        if (searchLog == null) {
+//            searchLog = Logger.getLogger(KeywordSearchResultsController.class.getName()
+//                        + ".searches");
+//            String logFileName = projectName + "_searches.log";
+//            Layout layout = new PatternLayout("%d{ISO8601}\t%m%n");
+//            try {
+//                RollingFileAppender appender = new RollingFileAppender(layout, logFileName, true);
+//                appender.setMaximumFileSize(102400); // 100kb
+//                appender.setMaxBackupIndex(10);
+//                searchLog.addAppender(appender);
+//            } catch (FileNotFoundException e) {
+//                LOG.error("Could not open searches log", e);
+//                return;
+//            }
+//            LOG.info("Logging searches to: " + logFileName);
+//        }
+//    }
 
     private JSONObject javaMapToJSON(Map<String, String> facets) throws JSONException {
         JSONObject jo = new JSONObject();
