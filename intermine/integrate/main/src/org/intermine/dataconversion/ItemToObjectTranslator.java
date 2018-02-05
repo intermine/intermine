@@ -55,7 +55,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.translating.Translator;
 import org.intermine.util.DynamicUtil;
 import org.intermine.xml.full.ItemHelper;
