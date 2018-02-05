@@ -58,6 +58,7 @@ task buildBioCoreModelJar(type: Jar) {
     from(sourceSets.main.output)
 }
 
+tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
 tasks.install.dependsOn 'buildBioCoreModelJar'
 
 artifacts {
