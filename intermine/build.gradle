@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath "net.researchgate:gradle-release:2.6.0"
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.6.2"
     }
 }
 
@@ -17,6 +18,7 @@ subprojects {
     apply plugin: "java"
     apply plugin: "maven"
     apply plugin: "com.jfrog.bintray"
+    apply plugin: "com.jfrog.artifactory"
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
@@ -41,7 +43,7 @@ subprojects {
         preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
         tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
         newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
-        version =  "2.0.0"
+        version = "2.0.0-RC-SNAPSHOT"
         tagTemplate = '${project.name}-${version}'
         versionPropertyFile = 'gradle.properties'
         versionProperties = []
@@ -89,11 +91,34 @@ subprojects {
         }
     }
 
+    artifactory {
+        contextUrl = 'https://oss.jfrog.org/artifactory/'
+        resolve {
+            repository {
+                repoKey = 'libs-release'
+            }
+        }
+        publish {
+            repository {
+                if (project.version.endsWith("-SNAPSHOT")) {
+                    repoKey = 'oss-snapshot-local'
+                } else {
+                    repoKey = 'oss-release-local'
+                }
+            username = System.getenv('BINTRAY_USER')
+            password = System.getenv('BINTRAY_KEY')
+            }
+            defaults {
+	        publishConfigs('archives')
+            }
+        }
+    }
+
     bintray {
         user = System.getenv('BINTRAY_USER')
         key = System.getenv('BINTRAY_KEY')
         pkg {
-            repo = 'maven-repo-test'
+            repo = 'intermine'
             name = project.name
             userOrg = user
             licenses = ['LGPL-2.1']
@@ -108,9 +133,5 @@ task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/allTests")
     // Include the results from the `test` task in all subprojects
     reportOn subprojects*.test
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
 }
 

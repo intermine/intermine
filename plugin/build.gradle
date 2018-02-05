@@ -1,9 +1,21 @@
 group 'org.intermine'
-version '1.0'
+version '1.0-RC-SNAPSHOT'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.6.2"
+    }
+}
 
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: "com.jfrog.artifactory"
 
 sourceCompatibility = 1.7
 
@@ -16,4 +28,40 @@ dependencies {
     compile('log4j:log4j:1.2.17')
     compile gradleApi()
     compile localGroovy()
+}
+
+artifactory {
+    contextUrl = 'https://oss.jfrog.org/artifactory/'
+    resolve {
+        repository {
+            repoKey = 'libs-release'
+        }
+    }
+    publish {
+        repository {
+            if (project.version.endsWith("-SNAPSHOT")) {
+                repoKey = 'oss-snapshot-local'
+            } else {
+                repoKey = 'oss-release-local'
+            }
+        username = System.getenv('BINTRAY_USER')
+        password = System.getenv('BINTRAY_KEY')
+        }
+        defaults {
+            publishConfigs('archives')
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'intermine'
+        name = project.name
+        userOrg = user
+        licenses = ['LGPL-2.1']
+        vcsUrl = 'https://github.com/intermine/intermine.git'
+    }
+    configurations = ['archives']
 }
