@@ -22,7 +22,7 @@ dependencies {
     compile project(':intermine-model')
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
     compile group: 'commons-io', name: 'commons-io', version: '1.2'
-    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.6.1'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
     compile group: 'com.zaxxer', name: 'HikariCP-java6', version: '2.3.8'
     compile group: 'net.iharder', name: 'base64', version: '2.3.8' //not clear wich version is currently used
     compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven

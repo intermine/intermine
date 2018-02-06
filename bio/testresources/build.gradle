@@ -15,7 +15,3 @@ task createUnitTestDatabases {
         createDbInternal('bio-fulldata-test')
     }   
 }
-
-processTestResources {
-    dependsOn 'createUnitTestDatabases'
-}
