@@ -26,8 +26,8 @@ subprojects {
     targetCompatibility = 1.6
 
     repositories {
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
     }
 
     dependencies {

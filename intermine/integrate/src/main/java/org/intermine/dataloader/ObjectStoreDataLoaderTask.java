@@ -110,7 +110,6 @@ public class ObjectStoreDataLoaderTask extends Task
 
         try {
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriter);
-            PriorityConfig.verify(iw.getModel(), allSources);
             iw.setIgnoreDuplicates(ignoreDuplicates);
             if (queryClass != null) {
                 Class<?> tmpQueryClass = Class.forName(queryClass);
