@@ -60,6 +60,49 @@ class WebAppPlugin implements Plugin<Project> {
             }
         }
 
+        project.task('addStrutsConfig') {
+            description "Append the struts config modifications to the webapp"
+            dependsOn 'processResources','unwarBioWebApp'
+
+            doLast {
+                String buildResDir = project.buildDir.absolutePath + File.separator + "resources" + File.separator + "main" + File.separator
+                File strutsConfigModelPath = new File(buildResDir + "struts-config-model.xml")
+                File strutsConfigFormPath = new File(buildResDir + "struts-config-form-model.xml")
+                File strutsConfigPath = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/struts-config.xml")
+
+                //struts-config.xml
+                String content = strutsConfigPath.text
+                strutsConfigPath.withWriter { w ->
+                    w << content.replace("<!--@MODEL_INCLUDE@-->", strutsConfigModelPath.text)
+                }
+                content = strutsConfigPath.text
+                strutsConfigPath.withWriter { w ->
+                    w << content.replace("<!--@MODEL_FORM_INCLUDE@-->", strutsConfigFormPath.text)
+                }
+
+                //tiles-defs.xml
+                File tilesDefsModel = new File(buildResDir + "tiles-defs-model.xml")
+                File tilesDefs = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/tiles-defs.xml")
+                content = tilesDefs.text
+                tilesDefs.withWriter { w ->
+                    w << content.replace("<!--@MODEL_INCLUDE@-->", tilesDefsModel.text)
+                }
+
+                //web.xml
+                File webModel = new File(buildResDir + "web-model.xml")
+                File web = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/web.xml")
+                content = web.text
+                web.withWriter { w ->
+                    w << content.replace("<!--@MODEL_INCLUDE@-->", webModel.text)
+                }
+
+                //internationalisation
+                File modelProperties = new File(buildResDir + "model.properties")
+                File intermineWebAppProperties = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/classes/InterMineWebApp.properties")
+                intermineWebAppProperties.append(modelProperties.text)
+            }
+        }
+
         // this plugin requires a database to exist and be populated. However this plugin is run at compile time, not runtime.
         // We have no guarantee there will be a database. Hence the try/catch
         project.task('summariseObjectStore') {
