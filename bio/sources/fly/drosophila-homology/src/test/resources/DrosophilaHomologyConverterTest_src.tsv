@@ -1,6 +1,0 @@
-## FlyBase melanogaster gene ortholog report
-## Generated: Fri May 15 12:53:32 2009
-## Using datasource: dbi:Pg:dbname=fb_2009_05_reporting;host=flysql;port=5432...
-
-## FBgn#	gene_symbol	arm	location	strand	ortholog_fbgn	ortholog_gene-symbol	ortholog_arm	ortholog_location	ortholog_strand
-FBgn0000008	a	2R	18024494..18060346	1	FBgn0079820	Dpse\GA19824	3	19288717..19298416	-1

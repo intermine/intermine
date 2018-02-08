@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<classes>
-  <class name="CVTerm" extends="OntologyTerm" is-interface="true"/>
-</classes>
