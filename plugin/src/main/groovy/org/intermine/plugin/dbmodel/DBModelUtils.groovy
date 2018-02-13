@@ -108,7 +108,7 @@ class DBModelUtils {
     }
 
     protected createIndexes = { objectStoreName, attributeIndexes ->
-        System.out.println("Creating search indexes for objectstore ${objectstoreName}")
+        System.out.println("Creating search indexes for objectstore ${objectStoreName}")
 
         def ant = new AntBuilder()
         ant.taskdef(name: 'createIndexes', classname: 'org.intermine.task.CreateIndexesTask') {
