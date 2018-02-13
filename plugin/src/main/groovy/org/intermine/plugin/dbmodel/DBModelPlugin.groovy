@@ -218,10 +218,10 @@ class DBModelPlugin implements Plugin<Project> {
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
 
             doLast {
-                dbUtils.createSchema(config.objectStoreName, config.modelName)
+                dbUtils.createSchema(config.objectStoreName)
                 dbUtils.createTables(config.objectStoreName, config.modelName)
                 dbUtils.storeMetadata(config.objectStoreName, config.modelName)
-                dbUtils.createIndexes(config.objectStoreName, config.modelName, false)
+                dbUtils.createIndexes(config.objectStoreName, false)
                 dbUtils.analyse(config.objectStoreName, config.modelName)
             }
         }
@@ -231,7 +231,7 @@ class DBModelPlugin implements Plugin<Project> {
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
 
             doLast {
-                dbUtils.createSchema(config.objectStoreName, config.modelName)
+                dbUtils.createSchema(config.objectStoreName)
                 dbUtils.createTables(config.objectStoreName, config.modelName)
                 dbUtils.storeMetadata(config.objectStoreName, config.modelName)
             }
@@ -257,7 +257,7 @@ class DBModelPlugin implements Plugin<Project> {
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyUserProfileModel', 'jar'
 
             doLast {
-                dbUtils.createSchema(config.userProfileObjectStoreName, config.userProfileModelName)
+                dbUtils.createSchema(config.userProfileObjectStoreName)
                 dbUtils.createTables(config.userProfileObjectStoreName, config.userProfileModelName)
                 dbUtils.storeMetadata(config.userProfileObjectStoreName, config.userProfileModelName)
             }

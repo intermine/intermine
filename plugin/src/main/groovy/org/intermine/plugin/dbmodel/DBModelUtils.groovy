@@ -48,7 +48,7 @@ class DBModelUtils {
         ant.modelOutputTask(model: modelName, destDir: destination, type: "java")
     }
 
-    protected createSchema = { objectStoreName, modelName ->
+    protected createSchema = { objectStoreName ->
         def ant = new AntBuilder()
         String schemaFile = objectStoreName + "-schema.xml"
         String destination = project.getBuildDir().getAbsolutePath() + File.separator + schemaFile
@@ -100,7 +100,7 @@ class DBModelUtils {
         ant.analyse(osname: objectStoreName, model: modelName)
     }
 
-    protected createIndexes = { objectStoreName, modelName, attributeIndexes ->
+    protected createIndexes = { objectStoreName, attributeIndexes ->
         def ant = new AntBuilder()
 
         ant.taskdef(name: 'createIndexes', classname: 'org.intermine.task.CreateIndexesTask') {
