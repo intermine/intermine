@@ -1,6 +1,8 @@
 package org.intermine.plugin.dbmodel
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
@@ -23,6 +25,15 @@ class DBModelUtils {
         String defaultIMProperties = buildResourcesMainDir + File.separator + "default.intermine.properties"
         file.renameTo(defaultIMProperties)
         file.createNewFile()
+    }
+
+    protected addBioSourceDependency = { sourcePostfix, versionConfig ->
+        DependencyHandler dh = project.getDependencies()
+        Dependency dep = dh.create(
+                [group: "org.intermine", name: "bio-source-${sourcePostfix}", version: versionConfig.bioSourceVersion])
+
+        System.out.println("Adding mergeSource configuration dependency ${dep}")
+        dh.add("mergeSource", dep)
     }
 
     protected generateModel = { modelName ->

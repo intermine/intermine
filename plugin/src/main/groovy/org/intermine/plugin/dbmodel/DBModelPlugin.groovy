@@ -65,9 +65,10 @@ class DBModelPlugin implements Plugin<Project> {
                 def addSource = "intermine-items-xml-file"
                 projectXml.sources.source.each { source ->
                     if (source.@type == "intermine-items-xml-file") {
-                        project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@name'}", version: versionConfig.bioSourceVersion])
+                        dbUtils.addBioSourceDependency(source.'@name', versionConfig)
                     }
-                    project.dependencies.add("mergeSource", [group: "org.intermine", name: "bio-source-" + "${source.'@type'}", version: versionConfig.bioSourceVersion])
+
+                    dbUtils.addBioSourceDependency(source.'@type', versionConfig)
                 }
             }
         }
