@@ -49,9 +49,11 @@ class DBModelUtils {
     }
 
     protected createSchema = { objectStoreName ->
-        def ant = new AntBuilder()
         String schemaFile = objectStoreName + "-schema.xml"
         String destination = project.getBuildDir().getAbsolutePath() + File.separator + schemaFile
+        System.out.println("Creating schema in objectstore ${objectStoreName} from ${destination}")
+
+        def ant = new AntBuilder()
         ant.taskdef(name: "torque", classname: "org.intermine.objectstore.intermine.TorqueModelOutputTask") {
             classpath {
                 dirset(dir: project.getBuildDir().getAbsolutePath())
@@ -63,9 +65,11 @@ class DBModelUtils {
     }
 
     protected createTables = { objectStoreName, modelName ->
-        def ant = new AntBuilder()
         String schemaFile = objectStoreName + "-schema.xml"
         String tempDirectory = project.getBuildDir().getAbsolutePath() + File.separator + "tmp"
+        System.out.println("Creating tables in objectstore ${objectStoreName} with schema ${schemaFile}")
+
+        def ant = new AntBuilder()
         ant.taskdef(name: "buildDB", classname: "org.intermine.task.BuildDbTask") {
             classpath {
                 dirset(dir: buildResourcesMainDir)//to read default.intermine.properties
@@ -77,6 +81,8 @@ class DBModelUtils {
     }
 
     protected storeMetadata = { objectStoreName, modelName ->
+        System.out.println("Storing metadata in objectstore ${objectStoreName} for model ${modelName}")
+
         def ant = new AntBuilder()
         ant.taskdef(name: 'insertModel', classname: 'org.intermine.task.StoreMetadataTask') {
             classpath {
@@ -89,8 +95,9 @@ class DBModelUtils {
     }
 
     protected analyse = { objectStoreName, modelName ->
-        def ant = new AntBuilder()
+        System.out.println("Postgres analyzing objectstore ${objectStoreName} for ${modelName} to optimize performance")
 
+        def ant = new AntBuilder()
         ant.taskdef(name: 'analyse', classname: 'org.intermine.task.AnalyseDbTask') {
             classpath {
                 dirset(dir: buildResourcesMainDir) // intermine.properties
@@ -101,8 +108,9 @@ class DBModelUtils {
     }
 
     protected createIndexes = { objectStoreName, attributeIndexes ->
-        def ant = new AntBuilder()
+        System.out.println("Creating search indexes for objectstore ${objectstoreName}")
 
+        def ant = new AntBuilder()
         ant.taskdef(name: 'createIndexes', classname: 'org.intermine.task.CreateIndexesTask') {
             classpath {
                 dirset(dir: buildResourcesMainDir) // intermine.properties
