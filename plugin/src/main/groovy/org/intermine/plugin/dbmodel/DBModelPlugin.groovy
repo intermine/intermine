@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
-import org.gradle.tooling.BuildException
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.project.ProjectXmlBinding
@@ -43,8 +42,8 @@ class DBModelPlugin implements Plugin<Project> {
                 project.dependencies.add("api", [group: "org.intermine", name: "intermine-api", version: versionConfig.imVersion, transitive: false])
 
                 dbUtils = new DBModelUtils(project)
-                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
-                buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
+                buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
                 if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {
                     regenerateModel = false
                 }
@@ -86,8 +85,8 @@ class DBModelPlugin implements Plugin<Project> {
 
             doLast {
                 FileTree fileTree = project.zipTree(project.configurations.getByName("bioCore").singleFile)
-                PatternSet patternSet = new PatternSet();
-                patternSet.include("core.xml");
+                PatternSet patternSet = new PatternSet()
+                patternSet.include("core.xml")
                 File coreXml = fileTree.matching(patternSet).singleFile
                 String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
                 coreXml.renameTo(modelFilePath)
@@ -104,7 +103,7 @@ class DBModelPlugin implements Plugin<Project> {
 
                 // parse project XML for each data source
                 String projectXml = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
-                org.intermine.plugin.project.Project intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml));
+                org.intermine.plugin.project.Project intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml))
                 List<String> sourceNames = new ArrayList<String>()
                 intermineProject.sources.keySet().each { sourceName ->
                     sourceNames.add(sourceName)
@@ -147,7 +146,7 @@ class DBModelPlugin implements Plugin<Project> {
 
                     System.out.println("Processing ${sourceName}_keys.properties")
 
-                    PatternSet patternSet = new PatternSet();
+                    PatternSet patternSet = new PatternSet()
                     patternSet.include("${sourceName}_keys.properties")
                     if (!dataSourceJar.matching(patternSet).empty) {
                         sourceKeysFile = dataSourceJar.matching(patternSet).singleFile
@@ -243,8 +242,8 @@ class DBModelPlugin implements Plugin<Project> {
 
             doLast {
                 FileTree fileTree = project.zipTree(project.configurations.getByName("api").singleFile)
-                PatternSet patternSet = new PatternSet();
-                patternSet.include("userprofile_model.xml");
+                PatternSet patternSet = new PatternSet()
+                patternSet.include("userprofile_model.xml")
                 File file = fileTree.matching(patternSet).singleFile
                 String modelFilePath = buildResourcesMainDir + File.separator + config.userProfileModelName + "_model.xml"
                 file.renameTo(modelFilePath)
