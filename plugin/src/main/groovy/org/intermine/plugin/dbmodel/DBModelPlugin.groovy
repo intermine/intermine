@@ -57,7 +57,7 @@ class DBModelPlugin implements Plugin<Project> {
         project.task('addSourceDependencies') {
             description "Add associated datasource dependencies"
             //FIXME: I'm sure this bit is important, but it currently blocks getting my (justincc) biotestmine working
-            //onlyIf {generateKeys && !new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
+            onlyIf {generateKeys} // && !new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
 
             doLast {
                 String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
