@@ -13,14 +13,14 @@ class DBModelUtils {
 
     DBModelUtils(Project project) {
         this.project = project
-        SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
-        buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+        SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
+        buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
     }
 
-    protected copyDefaultPropertiesFile = { defaultPropertiesFile ->
+    protected copyDefaultPropertiesFile = { String defaultPropertiesFile ->
         FileTree fileTree = project.zipTree(project.configurations.getByName("commonResources").singleFile)
-        PatternSet patternSet = new PatternSet();
-        patternSet.include(defaultPropertiesFile);
+        PatternSet patternSet = new PatternSet()
+        patternSet.include(defaultPropertiesFile)
         File file = fileTree.matching(patternSet).singleFile
         String defaultIMProperties = buildResourcesMainDir + File.separator + "default.intermine.properties"
         file.renameTo(defaultIMProperties)
