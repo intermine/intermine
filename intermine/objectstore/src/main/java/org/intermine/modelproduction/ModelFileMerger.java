@@ -14,11 +14,8 @@ import java.io.*;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.MetaDataException;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ModelParser;
-import org.intermine.metadata.ModelParserException;
+//import org.apache.log4j.Logger;
+import org.intermine.metadata.*;
 
 /**
  * Methods for merging a model from a list of files.
@@ -27,6 +24,7 @@ import org.intermine.metadata.ModelParserException;
  */
 public final class ModelFileMerger
 {
+    //private static final Logger LOG = Logger.getLogger(ModelFileMerger.class);
 
     private ModelFileMerger() {
         // Hidden
@@ -46,7 +44,7 @@ public final class ModelFileMerger
             List<String> additionsFiles,
             ModelParser parser)
         throws MetaDataException {
-        Model mergedModel = null;
+        Model mergedModel;
         try {
             FileReader reader = new FileReader(inputModelFile);
             mergedModel = parser.process(reader);
@@ -54,6 +52,7 @@ public final class ModelFileMerger
         } catch (Exception e) {
             throw new MetaDataException("failed to read model file: " + inputModelFile, e);
         }
+
         if (additionsFiles.size() == 0) {
             throw new MetaDataException("no addition files set");
         } else {
@@ -66,6 +65,7 @@ public final class ModelFileMerger
                 }
             }
         }
+
         return mergedModel;
     }
 
@@ -74,18 +74,25 @@ public final class ModelFileMerger
      * @param mergedModel The existing model.
      * @param newAdditionsFile a file name containing genomic additions.
      * @return The existing model with the additions merged in.
-     * @throws ModelParserException
-     * @throws ModelMergerException
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException when the newAdditionsFile can't be found in the classpath
+     * @throws ModelParserException if there was a problem generating required additional class descriptors for the
+     * classes in the additions file
+     * @throws ModelMergerException if there was a problem merging the existing model and the new additions
      */
     private static Model processFile(Model mergedModel, String newAdditionsFile, ModelParser parser)
-        throws ModelParserException, ModelMergerException, FileNotFoundException {
+        throws FileNotFoundException, ModelParserException, ModelMergerException {
+
         InputStream is = ModelFileMerger.class.getClassLoader().getResourceAsStream(newAdditionsFile);
+        if (is == null) {
+            throw new FileNotFoundException("Could not find additions file " + newAdditionsFile + " in the classpath");
+        }
+
         Set<ClassDescriptor> additionClds =
             parser.generateClassDescriptors(new InputStreamReader(is),
                     mergedModel.getPackageName());
-        System.err .println("merging model additions from: " + newAdditionsFile);
-        Model newMergedModel = ModelMerger.mergeModel(mergedModel, additionClds);
-        return newMergedModel;
+
+        System.err.println("merging model additions from: " + newAdditionsFile);
+
+        return ModelMerger.mergeModel(mergedModel, additionClds);
     }
 }
