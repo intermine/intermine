@@ -62,7 +62,6 @@ class DBModelPlugin implements Plugin<Project> {
             doLast {
                 String projectXmlFilePath = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
                 def projectXml = (new XmlParser()).parse(projectXmlFilePath)
-                def addSource = "intermine-items-xml-file"
                 projectXml.sources.source.each { source ->
                     if (source.@type == "intermine-items-xml-file") {
                         dbUtils.addBioSourceDependency(source.'@name', versionConfig)
