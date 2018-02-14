@@ -182,7 +182,7 @@
                    <html:hidden property="multiValueAttribute(${index})" styleId="multiValueAttribute(${index})"/>
                    <html:select property="multiValues(${index})" styleId="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});" style="height:auto">
                    <c:forEach items="${dec.possibleValues}" var="multiValue">
-                   <html:option value="${multiValue}"><c:out value="${multiValue}"/></html:option>
+                     <html:option value="${multiValue}"><c:out value="${multiValue}"/></html:option>
                    </c:forEach>
                    </html:select>
                 </c:if>
