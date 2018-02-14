@@ -52,17 +52,24 @@
     </source>
 
  	<source name="go" type="go" dump="true">
-		<property name="src.data.file" location="&datadir;/go/gene_ontology.1_2.obo"/>
+<!--		<property name="src.data.file" location="&datadir;/go/gene_ontology.1_2.obo"/> -->
+		<property name="src.data.file" location="&datadir;/go/go-test.obo"/> 
 	</source> 
 
-        <source name="anatomy_ontology" type="anatomy_ontology" dump="true">
-		<property name="src.data.file" location="&datadir;/ontology/anatomy_ontology.obo"/>
-	</source>
-	
+<!--	 <source name="anatomy_ontology" type="anatomy_ontology">
+            <property name="src.data.file" location="&datadir;/ontology/anatomy_ontology.obo"/>
+        </source> --> 
+
 	<source name="go-annotation" type="go-annotation" dump="false">
 		<property name="ontologyfile" location="&datadir;/go/gene_ontology.1_2.obo"/>
 		<property name="src.data.dir" location="&datadir;/go-annotation/final"/>
-	</source>
+	</source> 
+
+<!--	<source name="anat-annotation" type="anat-annotation" dump="false">
+                <property name="ontologyfile" location="&datadir;/ontology/anatomy_ontology.obo"/>
+                <property name="src.data.dir" location="&datadir;/anatomy_annotation"/>
+        </source> -->
+
 
 	<!-- FASTA DNA sequences -->
 	<source name="celegans-genome-fasta" type="fasta">
@@ -87,59 +94,27 @@
 		<property name="fasta.sequenceType"    	value="protein"/>
 		<property name="src.data.dir"          	location="&datadir;/fasta/c_elegans/proteins/prepped" />
 		<property name="fasta.includes"        	value="*.fa*"/> 
-		<property name="fasta.loaderClassName"
+	<!--	<property name="fasta.loaderClassName"
 			value="org.intermine.bio.dataconversion.WormBaseProteinFastaLoaderTask"/>
-		<property name="fasta.PIDPrefix"		value="WP:"/>
+		<property name="fasta.PIDPrefix"		value="WP:"/> -->
 	</source>
 
 
 	<!-- CORE GENOMIC ANNOTATION IN GFF3 -->
-	<source name="celegans-gff3-cds" type="gff" dump="false">
-		<property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
-		<property name="gff3.seqDataSourceName" value="WormBase"/>
-		<property name="gff3.dataSourceName"    value="WormBase"/>
-		<property name="gff3.seqClsName"        value="Chromosome"/>
-		<property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
-		<property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/cds"/> 
-		<property name="gff3.allowedClasses" 	 value="cds"/>
-		<property name="gff3.IDMappingFile"	 value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/> 
-	</source>
-
-    <source name="celegans-gff3-mrna" type="gff" dump="false">
+    <source name="celegans-gff3" type="malaria-gff" dump="false">
         <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
         <property name="gff3.seqDataSourceName" value="WormBase"/>
         <property name="gff3.dataSourceName"    value="WormBase"/>
 	<property name="gff3.seqClsName"        value="Chromosome"/>
         <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
-        <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/mrna"/>
-        <property name="gff3.allowedClasses"     value="mrna"/>
+        <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final"/>
+        <property name="gff3.allowedClasses"     value="gene,mrna,exon,cds"/>
         <property name="gff3.IDMappingFile"      value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/>
     </source>
 
-    <source name="celegans-gff3-gene" type="gff" dump="false">
-        <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
-        <property name="gff3.seqDataSourceName" value="WormBase"/>
-        <property name="gff3.dataSourceName"    value="WormBase"/>
-	<property name="gff3.seqClsName"        value="Chromosome"/>
-        <property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
-        <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/gene"/>
-        <property name="gff3.allowedClasses"     value="gene"/>
-        <property name="gff3.IDMappingFile"      value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/>
-    </source>
-
-    <source name="celegans-gff3-exon" type="gff" dump="false">
-        <property name="gff3.taxonId"           value="&c_elegans_taxon_id;"/>
-        <property name="gff3.seqDataSourceName" value="WormBase"/>
-        <property name="gff3.dataSourceName"    value="WormBase"/>
-        <property name="gff3.seqClsName"        value="Chromosome"/>
-	<property name="gff3.dataSetTitle"      value="C. elegans genomic annotations (GFF3 Gene)"/>
-        <property name="src.data.dir"           location="&datadir;/wormbase-gff3/final/exon"/>
-        <property name="gff3.allowedClasses"     value="exon"/>
-        <property name="gff3.IDMappingFile"      value="&datadir;/wormbase-gff3/mapping/id_mapping.tab"/>
-    </source>
 
 	<!-- WormBase aceDB data loader.  Base dir is wormmine/integrate -->
-	<source name="wb-acedb-gene" type="wormbase-acedb" dump="false">
+	<source name="wb-acedb-gene" type="wormbase-acedb" dump="true">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/gene/XML" />
 		<!--
 			This file maps intermine data classes to an XPath query.
@@ -191,7 +166,7 @@
 	</source>
 
 
-	<source name="wb-acedb-cds" type="wormbase-acedb" dump="false">
+	<source name="wb-acedb-cds" type="wormbase-acedb" dump="true">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/cds/XML" />
 
 		<property name="mapping.file"
@@ -221,7 +196,7 @@
 		<property name="debug" value="false"/>
 	</source>
 
-	<source name="wb-acedb-expr_pattern" type="wormbase-acedb" dump="false">
+	<source name="wb-acedb-expr_pattern" type="wormbase-acedb" dump="true">
 		<property name="src.data.dir" location="&datadir;/wormbase-acedb/expr_pattern/XML" />
 		<property name="mapping.file"
 				value = "&datadir;/wormbase-acedb/expr_pattern/mapping/expr_pattern_mapping.properties" />
@@ -395,6 +370,9 @@
 	<post-process name="create-chromosome-locations-and-lengths"/>
 	<post-process name="transfer-sequences"/>
 	<post-process name="do-sources"/>
+	<post-process name="make-spanning-locations"/>
+	<post-process name="create-intergenic-region-features"/>
+	
 
 	<!-- Webapp post-processes -->
 	<post-process name="create-search-index"/>

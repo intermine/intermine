@@ -1,45 +1,45 @@
 #!/bin/bash
 
 # set -x
-#Paulo Nuin Jan 2015, modified Feb 15 - Aug 2016
+#Paulo Nuin Jan 2015, modified Feb 15 - Aug 2016, Feb 2018
 
 # TODO: set release version as a script argument
 # TODO: not process XML files already processed
 
 #set the version to be accessed
-wbrel="WS262"
+wbrel="WS263"
 echo 'Release version' $wbrel
 
 
 #################### Species ####################
 #                                               #
-#  species to be transferred                    # 
+#  species to be transferred                    #
 #  key:value structure with species             #
 #  "name" and BioProject number                 #
-#  required in order to get the right           #  
+#  required in order to get the right           #
 #  directory and file                           #
 #                                               #
-#################### Species #################### 
-#declare -A species=(["c_elegans"]="PRJNA13758" 
-#                    ["b_malayi"]="PRJNA10729" 
-#                    ["c_angaria"]="PRJNA51225" 
+#################### Species ####################
+#declare -A species=(["c_elegans"]="PRJNA13758"
+#                    ["b_malayi"]="PRJNA10729"
+#                    ["c_angaria"]="PRJNA51225"
 #                    ["c_brenneri"]="PRJNA20035"
-#                    ["c_briggsae"]="PRJNA10731" 
-#                    ["c_japonica"]="PRJNA12591" 
-#                    ["c_remanei"]="PRJNA53967" 
+#                    ["c_briggsae"]="PRJNA10731"
+#                    ["c_japonica"]="PRJNA12591"
+#                    ["c_remanei"]="PRJNA53967"
 #                    ["c_tropicalis"]="PRJNA53597"
-#                    ["o_volvulus"]="PRJEB513" 
-#                    ["p_pacificus"]="PRJNA12644" 
-#                    ["p_redivivus"]="PRJNA186477" 
+#                    ["o_volvulus"]="PRJEB513"
+#                    ["p_pacificus"]="PRJNA12644"
+#                    ["p_redivivus"]="PRJNA186477"
 #                    ["s_ratti"]="PRJEB125"
 #                    ["c_sinica"]="PRJNA194557")
 
 declare -A species=(["c_elegans"]="PRJNA13758")
 echo 'Deploying ' $species
 echo
-sourcedir='/mnt/data2/acedb_dumps/WS262/WS262-test-data'
-#sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
-# /mnt/data2/acedb_dumps/WS261/WS261-test-data
+#sourcedir='/mnt/data2/acedb_dumps/WS263/WS263-test-data'
+sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
+# example test data /mnt/data2/acedb_dumps/WS261/WS261-test-data
 echo 'Source directory is at' $sourcedir
 echo
 #################### Main dirs ##################
@@ -49,9 +49,10 @@ echo
 #  pp - pre-processing dir with perl and bash   #
 #                                               #
 #################### Species ####################
-intermine='/mnt/data2/intermine'
+intermine='/mnt/data2/wormmine'
 #intermine='/Users/nuin/AeroFS/intermine_new/' #local test
-datadir=$intermine'/datadir_small'   # for now the datadir is inside the intermine directory
+#datadir=$intermine'/datadir_small'   # for now the datadir is inside the intermine directory
+datadir=$intermine'/datadir263'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/testlab'
 compara=$intermine'/wormmine/support/compara'
@@ -101,8 +102,9 @@ do
   ##################### get gff annotations ####################
   echo 'Getting gff data'
   mkdir -vp $datadir'/wormbase-gff3/raw'
+  mkdir -vp $datadir'/wormbase-gff3/final'
   cd $datadir'/wormbase-gff3'
-  if [ ! -f raw/"$spe"."${species["$spe"]}"."$wbrel".gff ]; then
+  if [ ! -f final/"$spe"."${species["$spe"]}"."$wbrel".gff ]; then
     echo 'transferring' "$spe"."${species["$spe"]}"."$wbrel".gff
     wget -q --show-progress -O raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz  "ftp://ftp.wormbase.org/pub/wormbase/releases/"$wbrel"/species/"$spe"/"${species["$spe"]}"/"$spe"."${species["$spe"]}"."$wbrel".annotations.gff3.gz"
     gunzip -v raw/"$spe"."${species["$spe"]}"."$wbrel".gff.gz
@@ -111,7 +113,7 @@ do
     bash "$intermine"/wormmine/support/scripts/gff3/scrape_gff3.sh $datadir/wormbase-gff3/raw/"$spe"."${species["$spe"]}"."$wbrel".gff $datadir/wormbase-gff3/final/"$spe"."${species["$spe"]}"."$wbrel".gff
 
     cd $datadir"/wormbase-gff3/final"
-    python $intermine"/wormmine/support/scripts/gff3/index.py"
+    python $intermine"/wormmine/support/scripts/gff3/index.py" "$spe"."${species["$spe"]}"."$wbrel".gff
     rm "$spe"."${species["$spe"]}"."$wbrel".gff
 
     echo 'Done #########################'
