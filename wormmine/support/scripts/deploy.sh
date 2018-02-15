@@ -234,7 +234,7 @@ mkdir -vp $datadir/wormbase-acedb/protein/mapping
 cp -v $sourcedir/Protein.xml $acexmldir/protein/Protein.xml
 cp -v $intermine'/wormmine/support/properties/protein_mapping.properties' $datadir'/wormbase-acedb/protein/mapping'
 perl $testlab'/wb-acedb/prep_wb-acedb-protein.pl' $datadir'/wormbase-acedb/protein/Protein.xml' $datadir'/wormbase-acedb/protein/prepped_protein.xml'
-perl $testlab'/wb-acedb/purge_protein.pl' $datadir'/wormbase-acedb/protein/prepped_protein.xml' $datadir/'wormbase-acedb/protein/XML/purged_prepped_protein.xml' $testlab'/species_whitelist.txt' $datadir'/wormbase-acedb/protein/rejected_by_purge.xml'
+perl $testlab'/wb-acedb/purge_protein.pl' $datadir'/wormbase-acedb/protein/prepped_protein.xml' $datadir/'wormbase-acedb/protein/XML/purged_prepped_protein.xml' $testlab'/wb-acedb/species_whitelist.txt' $datadir'/wormbase-acedb/protein/rejected_by_purge.xml'
 rm $datadir/wormbase-acedb/protein/prepped_protein.xml
 echo
 
