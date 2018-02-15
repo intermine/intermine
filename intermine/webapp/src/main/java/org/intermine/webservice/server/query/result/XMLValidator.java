@@ -102,13 +102,9 @@ public class XMLValidator
      * @return errors and warning
      */
     public List<String> getErrorsAndWarnings() {
-        List<String> ret = new ArrayList<String>();
-        for (String s : getErrors()) {
-            ret.add(s);
-        }
-        for (String s : getWarnings()) {
-            ret.add(s);
-        }
+        List<String> ret = new ArrayList<String>(getErrors());
+        ret.addAll(getWarnings());
+
         return ret;
     }
 }
