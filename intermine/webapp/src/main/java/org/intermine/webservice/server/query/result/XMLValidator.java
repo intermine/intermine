@@ -34,12 +34,12 @@ import org.xml.sax.SAXParseException;
  **/
 public class XMLValidator
 {
-
     private static final String QUERY_XMLNS
         = "<xsq:query xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
           + "xmlns:xsq=\"http://intermine.org/query/1.0\" "
           + "xsi:schemaLocation=\"http://intermine.org/query/1.0 query.xsd\"";
     private XMLValidatorErrorHandler errorHandler = null;
+
     private static final Logger LOG = Logger.getLogger(XMLValidator.class);
 
     /**
@@ -64,7 +64,7 @@ public class XMLValidator
 
             // changed to use baseURL instead of current URL because tomcat uses a different
             // URL when in docker. There is no way this could not work.
-            LOG.info("Using the xmlSchemaUrl " + xmlSchemaUrl);
+            //LOG.debug("Using the xmlSchemaUrl " + xmlSchemaUrl);
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             URL schemaLocation = new URL(xmlSchemaUrl);
             Reader schemaReader = new InputStreamReader(schemaLocation.openStream());
