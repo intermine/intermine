@@ -38,9 +38,9 @@ declare -A species=(["c_elegans"]="PRJNA13758")
 echo 'Deploying ' $species
 echo
 #sourcedir='/mnt/data2/acedb_dumps/WS263/WS263-test-data'
-# sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
+sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
 # example test data /mnt/data2/acedb_dumps/WS261/WS261-test-data
-sourcedir='/Users/nuin/Dropbox/intermine/WS262-test-data/'
+# sourcedir='/Users/nuin/Dropbox/intermine/WS262-test-data/'
 
 echo 'Source directory is at' $sourcedir
 echo
@@ -51,9 +51,8 @@ echo
 #  pp - pre-processing dir with perl and bash   #
 #                                               #
 #################### Species ####################
-# intermine='/mnt/data2/wormmine'
-intermine='/Users/nuin/Dropbox/intermine/intermine'
-#intermine='/Users/nuin/AeroFS/intermine_new/' #local test
+intermine='/mnt/data2/wormmine'
+# intermine='/Users/nuin/Dropbox/intermine/intermine'#local test
 #datadir=$intermine'/datadir_small'   # for now the datadir is inside the intermine directory
 datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
