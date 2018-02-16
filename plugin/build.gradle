@@ -5,6 +5,7 @@ buildscript {
     repositories {
         jcenter()
     }
+
     dependencies {
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.6.2"
@@ -36,6 +37,7 @@ artifactory {
             repoKey = 'libs-release'
         }
     }
+
     publish {
         repository {
             if (project.version.endsWith("-SNAPSHOT")) {
@@ -43,9 +45,10 @@ artifactory {
             } else {
                 repoKey = 'oss-release-local'
             }
-        username = System.getenv('BINTRAY_USER')
-        password = System.getenv('BINTRAY_KEY')
+            username = System.getenv('BINTRAY_USER')
+            password = System.getenv('BINTRAY_KEY')
         }
+
         defaults {
             publishConfigs('archives')
         }
@@ -55,6 +58,7 @@ artifactory {
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
+
     pkg {
         repo = 'intermine'
         name = project.name
@@ -62,5 +66,6 @@ bintray {
         licenses = ['LGPL-2.1']
         vcsUrl = 'https://github.com/intermine/intermine.git'
     }
+
     configurations = ['archives']
 }
