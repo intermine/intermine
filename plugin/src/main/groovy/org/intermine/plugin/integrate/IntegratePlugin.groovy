@@ -143,8 +143,11 @@ class IntegratePlugin implements Plugin<Project> {
                 Properties props = bioSourceProperties.getBioSourceProperties(sourceName)
                 if (!props.containsKey("have.file.custom.direct")) {
                     // need to do this after data is in items DB or loading is too slow
-                    dbUtils.createIndexes("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata", false)
-                    dbUtils.analyse("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                    def osName = "os.$COMMON_OS_PREFIX-tgt-items-std"
+                    def modelName = 'fulldata'
+
+                    dbUtils.createIndexes(osName, false)
+                    dbUtils.analyse(osName, modelName)
                 }
             }
         }
@@ -158,9 +161,12 @@ class IntegratePlugin implements Plugin<Project> {
                 Properties props = bioSourceProperties.getBioSourceProperties(sourceNames.get(0))
                 if (!props.containsKey("have.file.custom.direct")) {
                     println "Building tgt items database"
-                    dbUtils.createSchema("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
-                    dbUtils.createTables("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
-                    dbUtils.storeMetadata("os." + COMMON_OS_PREFIX + "-tgt-items-std", "fulldata")
+                    def osName = "os.$COMMON_OS_PREFIX-tgt-items-std"
+                    def modelName = 'fulldata'
+
+                    dbUtils.createSchema(osName)
+                    dbUtils.createTables(osName, modelName)
+                    dbUtils.storeMetadata(osName, modelName)
                 }
             }
         }
