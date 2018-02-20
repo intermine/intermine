@@ -122,7 +122,7 @@ public class KeywordSearchResultsController extends TilesAction
         Collection<KeywordSearchFacet> searchResultsFacets = results.getFacets();
         totalHits = results.getTotalHits();
 
-        logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
+        //logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
         LOG.debug("SEARCH RESULTS FOR " + searchTerm  + ": " + totalHits);
 
         // don't display *:* in search box
@@ -230,25 +230,25 @@ public class KeywordSearchResultsController extends TilesAction
         return facetValues;
     }
 
-    private void logSearch(String searchTerm, int totalHits, long time, int offset,
-            long timeSearch, Map<String, String> facetValues, String searchBag) {
-        // log this search to search log
-        StringBuilder searchLogLine = new StringBuilder();
-        searchLogLine.append("query=").append(searchTerm).append("; ");
-        searchLogLine.append("hits=").append(totalHits).append("; ");
-        searchLogLine.append("timeTotal=").append(System.currentTimeMillis() - time).append(
-                "; ");
-        searchLogLine.append("timeSearch=").append(timeSearch).append("; ");
-        searchLogLine.append("offset=").append(offset).append("; ");
-        searchLogLine.append("restrictions=");
-        for (Entry<String, String> facetValue : facetValues.entrySet()) {
-            searchLogLine.append(facetValue.getKey()).append(":'")
-                    .append(facetValue.getValue()).append("', ");
-        }
-        searchLogLine.append("; ");
-        searchLogLine.append("bag=").append(searchBag).append(";");
-        searchLog.debug(searchLogLine);
-    }
+//    private void logSearch(String searchTerm, int totalHits, long time, int offset,
+//            long timeSearch, Map<String, String> facetValues, String searchBag) {
+//        // log this search to search log
+//        StringBuilder searchLogLine = new StringBuilder();
+//        searchLogLine.append("query=").append(searchTerm).append("; ");
+//        searchLogLine.append("hits=").append(totalHits).append("; ");
+//        searchLogLine.append("timeTotal=").append(System.currentTimeMillis() - time).append(
+//                "; ");
+//        searchLogLine.append("timeSearch=").append(timeSearch).append("; ");
+//        searchLogLine.append("offset=").append(offset).append("; ");
+//        searchLogLine.append("restrictions=");
+//        for (Entry<String, String> facetValue : facetValues.entrySet()) {
+//            searchLogLine.append(facetValue.getKey()).append(":'")
+//                    .append(facetValue.getValue()).append("', ");
+//        }
+//        searchLogLine.append("; ");
+//        searchLogLine.append("bag=").append(searchBag).append(";");
+//        searchLog.debug(searchLogLine);
+//    }
 
 //    private void intialiseLogging(String projectName) throws IOException {
 //        if (searchLog == null) {
