@@ -18,28 +18,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-
-//import org.biojava.bio.Annotation;
-//import org.biojava.bio.seq.io.FastaFormat;
-//import org.biojava.bio.seq.io.SeqIOTools;
-//import org.biojava.bio.symbol.IllegalSymbolException;
-//import org.biojava.utils.ChangeVetoException;
-
-//import org.biojava.nbio.ontology.utils.AbstractAnnotation;
-import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
-import org.biojava.nbio.core.sequence.io.*;
-import org.biojava.nbio.ontology.utils.AbstractAnnotation;
+import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
-
-import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.SequenceFeature;
-import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.Sequence;
 import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.SequenceFeature;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -52,6 +41,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.FieldExporter;
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 
 /**
  * ResidueFieldExporter class
@@ -78,7 +68,7 @@ public class ResidueFieldExporter implements FieldExporter
             HttpServletResponse response) {
         if (!(object instanceof Sequence)) {
             throw new IllegalArgumentException("ResidueFieldExporter can only export "
-                                               + "Sequence.residues fields");
+                    + "Sequence.residues fields");
         }
 
         Sequence sequence = (Sequence) object;
@@ -88,7 +78,7 @@ public class ResidueFieldExporter implements FieldExporter
 
         try {
             SequenceFeature lsf =
-                getSequenceFeatureForSequence(os, (Sequence) object);
+                    getSequenceFeatureForSequence(os, (Sequence) object);
             BioEntity bioEntity = lsf;
 
             Protein protein = null;
@@ -100,7 +90,7 @@ public class ResidueFieldExporter implements FieldExporter
 
             if (bioEntity == null) {
                 LOG.error("No SequenceFeature or Protein has a Sequence with id "
-                          + sequence.getId());
+                        + sequence.getId());
                 OutputStream outputStream = response.getOutputStream();
                 PrintStream printStream = new PrintStream(outputStream);
                 sequence.getResidues().drainToPrintStream(printStream);
@@ -123,14 +113,10 @@ public class ResidueFieldExporter implements FieldExporter
             // write the error)
             OutputStream outputStream = response.getOutputStream();
 
-            //was Annotation annotation = bioSequence.getAnnotation();
-
             SmallAnnotation annotation = bioSequence.getAnnotation();
 
-            //was annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-
-             annotation.setProperty(PROPERTY_DESCRIPTIONLINE,
-                                   bioEntity.getPrimaryIdentifier());
+            annotation.setProperty(PROPERTY_DESCRIPTIONLINE,
+                    bioEntity.getPrimaryIdentifier());
 
             FastaWriterHelper.writeSequence(outputStream, bioSequence);
 
@@ -139,8 +125,6 @@ public class ResidueFieldExporter implements FieldExporter
             throw new ExportException("unexpected error while exporting", e);
         } catch (IllegalArgumentException e) {
             throw new ExportException("unexpected error while exporting", e);
-//        } catch (ChangeVetoException e) {
-//            throw new ExportException("unexpected error while exporting", e);
         } catch (IOException e) {
             throw new ExportException("unexpected IO error while exporting", e);
         } catch (Exception e) {
@@ -157,7 +141,7 @@ public class ResidueFieldExporter implements FieldExporter
      * @return the SequenceFeature
      */
     public static SequenceFeature getSequenceFeatureForSequence(ObjectStore os,
-                                                                              Sequence sequence) {
+            Sequence sequence) {
         Query q = new Query();
 
         QueryClass lsfQc = new QueryClass(SequenceFeature.class);
@@ -226,7 +210,7 @@ public class ResidueFieldExporter implements FieldExporter
      * @return the IntermineObject
      */
     public static InterMineObject getIMObjectForSequence(ObjectStore os, Class clazz,
-                                                Sequence sequence) {
+            Sequence sequence) {
         Query q = new Query();
 
         QueryClass queryClass = new QueryClass(clazz);

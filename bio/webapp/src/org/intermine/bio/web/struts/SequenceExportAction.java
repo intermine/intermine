@@ -25,11 +25,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-//import org.biojava.bio.Annotation;
-//import org.biojava.bio.seq.io.FastaFormat;
-//import org.biojava.bio.seq.io.SeqIOTools;
-//import org.biojava.bio.symbol.IllegalSymbolException;
-//import org.biojava.utils.ChangeVetoException;
 
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
@@ -59,7 +54,6 @@ import org.intermine.web.struts.InterMineAction;
  */
 public class SequenceExportAction extends InterMineAction
 {
-    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(SequenceExportAction.class);
     private static final String PROPERTY_DESCRIPTIONLINE = "description_line";
 
@@ -85,7 +79,7 @@ public class SequenceExportAction extends InterMineAction
         //SequenceHttpExporter.setSequenceExportHeader(response);
 
         Properties webProps = (Properties) session.getServletContext().
-            getAttribute(Constants.WEB_PROPERTIES);
+                getAttribute(Constants.WEB_PROPERTIES);
         Integer objectId = new Integer(request.getParameter("object"));
         InterMineObject obj = getObject(os, webProps, objectId);
 
@@ -100,19 +94,11 @@ public class SequenceExportAction extends InterMineAction
                 OutputStream out = response.getOutputStream();
 
                 LOG.info("FFF action2 " + obj.getFieldValue("primaryIdentifier"));
-bioSequence.setAccession(new AccessionID((String) obj.getFieldValue("primaryIdentifier")));
-
-                LOG.info("FFF action2 " + bioSequence.getAccession());
-                LOG.info("FFF action3 " + bioSequence.getOriginalHeader());
-
-                LOG.info("FFF action6 " + bioSequence.getLength());
+                bioSequence.setAccession(new AccessionID((String)
+                        obj.getFieldValue("primaryIdentifier")));
 
                 LOG.info("FFF action4 " + bioSequence.getSequenceAsString());
 
-//                LOG.info("FFF actionX " + bioSequence.getProxySequenceReader().getSequenceAsString());
-
-
-                // SeqIOTools.writeFasta(out, bioSequence);
                 FastaWriterHelper.writeSequence(out, bioSequence);
             } else {
                 PrintWriter out = response.getWriter();
@@ -125,7 +111,7 @@ bioSequence.setAccession(new AccessionID((String) obj.getFieldValue("primaryIden
     }
 
     private BioSequence createBioSequence(InterMineObject obj)
-        throws IllegalAccessException, CompoundNotFoundException {
+            throws IllegalAccessException, CompoundNotFoundException {
         BioSequence bioSequence;
         BioEntity bioEntity = (BioEntity) obj;
         bioSequence = BioSequenceFactory.make(bioEntity, SequenceType.DNA);
@@ -152,7 +138,6 @@ bioSequence.setAccession(new AccessionID((String) obj.getFieldValue("primaryIden
                 }
             }
         }
-        // annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, identifier);
         annotation.setProperty(PROPERTY_DESCRIPTIONLINE, identifier);
 
         return bioSequence;
@@ -166,12 +151,12 @@ bioSequence.setAccession(new AccessionID((String) obj.getFieldValue("primaryIden
             String [] classArray = classNames.split(",");
             for (int i = 0; i < classArray.length; i++) {
                 classList.add(TypeUtil.instantiate(os.getModel().getPackageName() + "."
-                                                   + classArray[i]));
+                        + classArray[i]));
             }
         } else {
             classList.addAll(Arrays.asList(new Class<?>[] {
-                Protein.class,
-                SequenceFeature.class
+                    Protein.class,
+                    SequenceFeature.class
             }));
         }
 
@@ -180,7 +165,7 @@ bioSequence.setAccession(new AccessionID((String) obj.getFieldValue("primaryIden
             Sequence sequence = (Sequence) obj;
             for (Class<?> clazz : classList) {
                 obj = ResidueFieldExporter.getIMObjectForSequence(os, clazz,
-                                                                  sequence);
+                        sequence);
                 if (obj != null) {
                     break;
                 }

@@ -15,11 +15,6 @@ import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.RNASequence;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 
-//import org.biojava.bio.seq.DNATools;
-//import org.biojava.bio.seq.ProteinTools;
-//import org.biojava.bio.seq.RNATools;
-//import org.biojava.bio.symbol.IllegalSymbolException;
-
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
@@ -65,14 +60,11 @@ public abstract class BioSequenceFactory
      * turned into DNA symbols.
      */
     public static BioSequence make(SequenceFeature feature)
-//        throws IllegalSymbolException {
         throws CompoundNotFoundException {
         if (feature.getSequence() == null) {
             return null;
         } else {
             String residues = feature.getSequence().getResidues().toString();
-            //return new BioSequence(DNATools.createDNA(residues), feature);
-//            return new BioSequence(new DNASequence(residues).toString(), feature);
             return new BioSequence(new DNASequence(residues), feature);
         }
     }
@@ -91,8 +83,7 @@ public abstract class BioSequenceFactory
         } else {
             String residues = protein.getSequence().getResidues().toString();
             return new BioSequence(new ProteinSequence(residues), protein);
-//            return new BioSequence(new ProteinSequence(residues).toString(), protein);
-               }
+        }
     }
     /**
      * Create a new BioSequence from a BioEntity, given its SequenceType
@@ -118,7 +109,6 @@ public abstract class BioSequenceFactory
                 return null;
             } else {
                 String residues = protein.getSequence().getResidues().toString();
-//                 return new BioSequence(new ProteinSequence(residues).toString(), protein);
                 return new BioSequence(new ProteinSequence(residues) , protein);
             }
         } else if (type.equals(SequenceType.PROTEIN)) {
@@ -128,7 +118,6 @@ public abstract class BioSequenceFactory
                 return null;
             } else {
                 String residues = feature.getSequence().getResidues().toString();
-//                return new BioSequence(new ProteinSequence(residues).toString(), feature);
                 return new BioSequence(new ProteinSequence(residues), feature);
             }
         } else if (type.equals(SequenceType.DNA)) {
@@ -138,8 +127,6 @@ public abstract class BioSequenceFactory
                 return null;
             } else {
                 String residues = feature.getSequence().getResidues().toString();
-                // TEST
-//               return new BioSequence(new DNASequence(residues).toString(), feature);
                 return new BioSequence(new DNASequence(residues), feature);
             }
         } else if (type.equals(SequenceType.RNA)) {
@@ -149,7 +136,6 @@ public abstract class BioSequenceFactory
                 return null;
             } else {
                 String residues = feature.getSequence().getResidues().toString();
-//                return new BioSequence(new RNASequence(residues).toString(), feature);
                 return new BioSequence(new RNASequence(residues), feature);
             }
         } else {

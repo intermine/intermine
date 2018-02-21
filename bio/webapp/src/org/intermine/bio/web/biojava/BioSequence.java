@@ -13,15 +13,10 @@ package org.intermine.bio.web.biojava;
 
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
-import org.biojava.nbio.core.sequence.BasicSequence;
-import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.core.sequence.template.Compound;
-import org.biojava.nbio.core.sequence.template.CompoundSet;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.SequenceFeature;
 
 /**
  * An implementation of the BioJava Sequence interface that uses InterMine objects underneath.
@@ -40,26 +35,22 @@ public class BioSequence extends AbstractSequence<Compound> {
     @SuppressWarnings("unused")
     private BioEntity bioEntity = null;
     private SmallAnnotation annotation;
+
     /**
      * Create a new BioSequence from a BioEntity
      * @param symbols a DNA SymbolList created from the BioEntity
      * @param bioEntity the BioEntity
      * @throws CompoundNotFoundException
      */
-//     BioSequence (SymbolList symbols, BioEntity bioEntity) {
-//    BioSequence (String seq, BioEntity bioEntity) throws CompoundNotFoundException {
-        BioSequence (AbstractSequence seq, BioEntity bioEntity) throws CompoundNotFoundException {
-        //BioSequence (CompoundSet symbols, BioEntity bioEntity)
-        //        throws CompoundNotFoundException {
-//        super(symbols, null, bioEntity.getPrimaryIdentifier(), null);
-         super(seq.getSequenceAsString(), seq.getCompoundSet());
+    BioSequence (AbstractSequence seq, BioEntity bioEntity) throws CompoundNotFoundException {
+
+        super(seq.getSequenceAsString(), seq.getCompoundSet());
 
         AccessionID seqAccession = new AccessionID(bioEntity.getPrimaryIdentifier());
         seq.setAccession(seqAccession);
         annotation = new SmallAnnotation();
         this.bioEntity = bioEntity;
     }
-
 
     public SmallAnnotation getAnnotation() {
         // TODO Auto-generated method stub

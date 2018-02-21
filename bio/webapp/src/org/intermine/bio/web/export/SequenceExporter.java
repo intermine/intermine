@@ -19,26 +19,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
-//import org.biojava.bio.Annotation;
-//import org.biojava.bio.seq.DNATools;
-//import org.biojava.bio.seq.Sequence;
-//import org.biojava.bio.seq.io.FastaFormat;
-//import org.biojava.bio.seq.io.SeqIOTools;
-//import org.biojava.bio.symbol.IllegalAlphabetException;
-//import org.biojava.bio.symbol.IllegalSymbolException;
-//import org.biojava.bio.symbol.SymbolList;
-
-
-
-
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
 import org.biojava.nbio.core.sequence.DNASequence;
-import org.biojava.nbio.core.sequence.compound.DNACompoundSet;
-import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
 import org.biojava.nbio.core.sequence.template.*;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
@@ -205,8 +190,6 @@ public class SequenceExporter implements Exporter
 
                 SmallAnnotation annotation = bioSequence.getAnnotation();
                 String headerString = header.toString();
-                LOG.info("FFFFFFFFF header? " + headerString);
-                LOG.info("FFFFFFFFF header??? " );
                 bioSequence.setAccession(new AccessionID(header.toString()));
 
                 if (headerString.length() > 0) {
@@ -221,25 +204,6 @@ public class SequenceExporter implements Exporter
                                 "sequence_" + exportedIDs.size());
                     }
                 }
-
-
-//                ArrayList<String> annotation = bioSequence.getNotesList();
-//                annotation.add(PROPERTY_DESCRIPTIONLINE);
-//
-//                String headerString = header.toString();
-//
-//                if (headerString.length() > 0) {
-//                    annotation.add(headerString);
-//                } else {
-//                    if (object instanceof BioEntity) {
-//                        annotation.add(((BioEntity) object).getPrimaryIdentifier());
-//                    } else {
-//                        // last resort
-//                        annotation.add("sequence_" + exportedIDs.size());
-//                    }
-//                }
-
-                //SeqIOTools.writeFasta(out, bioSequence);
 
                 FastaWriterHelper.writeSequence(out, bioSequence);
                 writtenResultsCount++;
@@ -318,12 +282,12 @@ public class SequenceExporter implements Exporter
         end = Math.min(end, chrLength);
         start = Math.max(start, 1);
 
-        String seqName = "genomic_region_" + chrName + "_"
-                + start + "_" + end + "_"
-                + org.replace("\\. ", "_");
-
+//        String seqName = "genomic_region_" + chrName + "_"
+//                + start + "_" + end + "_"
+//                + org.replace("\\. ", "_");
 //        Sequence seq = DNATools.createDNASequence(chrResidueString.substring(start - 1, end),
 //                        seqName);
+
         Sequence seq = null;
         try {
             seq = new DNASequence(chrResidueString.substring(start - 1, end));
@@ -331,17 +295,6 @@ public class SequenceExporter implements Exporter
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-// NB loosing the name!!
-
-//        if (NEGATIVE_STRAND.equals(strand)) {
-//            try {
-//                SymbolList flippedSeq = DNATools.reverseComplement(seq);
-//                seq = DNATools.createDNASequence(flippedSeq.seqString(), seqName);
-//            } catch (IllegalAlphabetException e) {
-//                LOG.error("Export failed, Invalid sequence", e);
-//                return null;
-//            }
-//        }
 
       if (NEGATIVE_STRAND.equals(strand)) {
           try {
