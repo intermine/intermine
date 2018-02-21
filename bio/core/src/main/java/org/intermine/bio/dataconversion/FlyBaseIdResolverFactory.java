@@ -104,9 +104,9 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     protected boolean restoreFromFile(Set<String> clsCol) {
         try {
             URL url = this.getClass().getClassLoader().getResource(idResolverCachedFileName);
-            File f = new File(url.getFile());
+            if (url != null) {
+                File f = new File(url.getFile());
 
-            if (f.exists()) {
                 LOG.info("Restoring id resolver from cache file: " + idResolverCachedFileName);
                 resolver.populateFromFile(f);
 
