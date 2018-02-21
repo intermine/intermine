@@ -108,7 +108,7 @@ public final class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getFlyIdResolver(String clsName) {
-        return new FlyBaseIdResolverFactory(clsName).getIdResolver(false);
+        return new FlyBaseIdResolverFactory(clsName).getIdResolver(true);
     }
 
     /**
@@ -117,7 +117,7 @@ public final class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getFlyIdResolver(Set<String> clsCol) {
-        return new FlyBaseIdResolverFactory(clsCol).getIdResolver(false);
+        return new FlyBaseIdResolverFactory(clsCol).getIdResolver(true);
     }
 
     /**

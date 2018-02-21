@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +37,7 @@ public abstract class IdResolverFactory
             Arrays.asList(new String[] {"gene"}));
     protected Set<String> clsCol = new HashSet<String>();
 
-    protected static String idResolverCachedFileName = "build/idresolver.cache";
+    protected static String idResolverCachedFileName = "idresolver.cache";
 
     /**
      * Return an IdResolver, if not already built then create it.
@@ -91,8 +92,9 @@ public abstract class IdResolverFactory
      */
     protected boolean restoreFromFile()
         throws IOException {
-        File f = new File(idResolverCachedFileName);
-        if (f.exists()) {
+        URL url = this.getClass().getClassLoader().getResource(idResolverCachedFileName);
+        if (url != null) {
+            File f = new File(url.getFile());
             resolver.populateFromFile(f);
             return true;
         }

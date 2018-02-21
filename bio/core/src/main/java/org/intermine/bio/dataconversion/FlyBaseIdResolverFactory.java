@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.File;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -67,13 +68,16 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     @Override
     protected void createIdResolver() {
         if (resolver != null && resolver.hasTaxonAndClassNames(taxonId, this.clsCol)) {
+            LOG.debug("resolver already exists, not recreating");
             return;
         }
         if (resolver == null) {
             if (clsCol.size() > 1) {
                 resolver = new IdResolver();
+                LOG.debug("creating resolver with a single class");
             } else {
                 resolver = new IdResolver(clsCol.iterator().next());
+                LOG.debug("creating resolver with a multiple classes");
             }
         }
 
@@ -99,8 +103,10 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      */
     protected boolean restoreFromFile(Set<String> clsCol) {
         try {
-            File f = new File(idResolverCachedFileName);
-            if (f.exists()) {
+            URL url = this.getClass().getClassLoader().getResource(idResolverCachedFileName);
+            if (url != null) {
+                File f = new File(url.getFile());
+
                 LOG.info("Restoring id resolver from cache file: " + idResolverCachedFileName);
                 resolver.populateFromFile(f);
 
