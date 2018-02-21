@@ -21,8 +21,8 @@ apply plugin: "com.jfrog.artifactory"
 sourceCompatibility = 1.7
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
