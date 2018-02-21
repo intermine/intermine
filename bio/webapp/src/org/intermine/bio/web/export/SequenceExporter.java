@@ -22,14 +22,26 @@ import java.util.Map;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.DNATools;
-import org.biojava.bio.seq.Sequence;
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.bio.symbol.SymbolList;
+//import org.biojava.bio.Annotation;
+//import org.biojava.bio.seq.DNATools;
+//import org.biojava.bio.seq.Sequence;
+//import org.biojava.bio.seq.io.FastaFormat;
+//import org.biojava.bio.seq.io.SeqIOTools;
+//import org.biojava.bio.symbol.IllegalAlphabetException;
+//import org.biojava.bio.symbol.IllegalSymbolException;
+//import org.biojava.bio.symbol.SymbolList;
+
+
+
+
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
+import org.biojava.nbio.core.sequence.AccessionID;
+import org.biojava.nbio.core.sequence.DNASequence;
+import org.biojava.nbio.core.sequence.compound.DNACompoundSet;
+import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
+import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
+import org.biojava.nbio.core.sequence.template.*;
+import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.biojava.BioSequence;
@@ -71,6 +83,7 @@ public class SequenceExporter implements Exporter
     private static Map<MultiKey, String> chromosomeSequenceMap = new HashMap<MultiKey, String>();
     private List<Path> paths = Collections.emptyList();
     private static final Logger LOG = Logger.getLogger(SequenceExporter.class);
+    private static final String PROPERTY_DESCRIPTIONLINE = "description_line";
 
     /**
      * Constructor.
@@ -149,7 +162,7 @@ public class SequenceExporter implements Exporter
 
                 ResultElement resultElement = row.get(featureIndex);
 
-                Sequence bioSequence;
+                BioSequence bioSequence;
                 Object object = os.getObjectById(resultElement.getId());
                 if (!(object instanceof InterMineObject)) {
                     continue;
@@ -163,16 +176,22 @@ public class SequenceExporter implements Exporter
 
                 if (object instanceof SequenceFeature) {
                     if (extension > 0) {
-                        bioSequence = createSequenceFeatureWithExtension(header, object,
+                        LOG.info("FFF1 ex " + header.toString());
+                        bioSequence = (BioSequence) createSequenceFeatureWithExtension(
+                                header, object,
                                 row, unionPathCollection, newPathCollection);
                     } else {
+                        LOG.info("FFF2  " + header.toString());
                         bioSequence = createSequenceFeature(header, object,
                                 row, unionPathCollection, newPathCollection);
                     }
                 } else if (object instanceof Protein) {
+                    LOG.info("FFF3 prot  " + header.toString());
                     bioSequence = createProtein(header, object, row,
                             unionPathCollection, newPathCollection);
                 } else {
+                    LOG.info("FFF4 ELSE! " + header.toString());
+
                     // ignore other objects
                     continue;
                 }
@@ -180,25 +199,49 @@ public class SequenceExporter implements Exporter
                 if (bioSequence == null) {
                     // the object doesn't have a sequence
                     header.append("no sequence attached.");
+                    LOG.info("FFF5 ! " + header);
                     continue;
                 }
 
-                Annotation annotation = bioSequence.getAnnotation();
+                SmallAnnotation annotation = bioSequence.getAnnotation();
                 String headerString = header.toString();
+                LOG.info("FFFFFFFFF header? " + headerString);
+                LOG.info("FFFFFFFFF header??? " );
+                bioSequence.setAccession(new AccessionID(header.toString()));
 
                 if (headerString.length() > 0) {
-                    annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, headerString);
+                    annotation.setProperty(PROPERTY_DESCRIPTIONLINE, headerString);
                 } else {
                     if (object instanceof BioEntity) {
-                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                        annotation.setProperty(PROPERTY_DESCRIPTIONLINE,
                                 ((BioEntity) object).getPrimaryIdentifier());
                     } else {
                         // last resort
-                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                        annotation.setProperty(PROPERTY_DESCRIPTIONLINE,
                                 "sequence_" + exportedIDs.size());
                     }
                 }
-                SeqIOTools.writeFasta(out, bioSequence);
+
+
+//                ArrayList<String> annotation = bioSequence.getNotesList();
+//                annotation.add(PROPERTY_DESCRIPTIONLINE);
+//
+//                String headerString = header.toString();
+//
+//                if (headerString.length() > 0) {
+//                    annotation.add(headerString);
+//                } else {
+//                    if (object instanceof BioEntity) {
+//                        annotation.add(((BioEntity) object).getPrimaryIdentifier());
+//                    } else {
+//                        // last resort
+//                        annotation.add("sequence_" + exportedIDs.size());
+//                    }
+//                }
+
+                //SeqIOTools.writeFasta(out, bioSequence);
+
+                FastaWriterHelper.writeSequence(out, bioSequence);
                 writtenResultsCount++;
                 exportedIDs.add(objectId);
             }
@@ -216,7 +259,7 @@ public class SequenceExporter implements Exporter
     private BioSequence createProtein(StringBuffer header, Object object,
             List<ResultElement> row, Collection<Path> unionPathCollection,
             Collection<Path> newPathCollection)
-        throws IllegalSymbolException {
+            throws CompoundNotFoundException {
         BioSequence bioSequence;
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
@@ -226,11 +269,12 @@ public class SequenceExporter implements Exporter
         return bioSequence;
     }
 
-    private BioSequence createSequenceFeature(StringBuffer header,
+    private BioSequence createSequenceFeature(
+            StringBuffer header,
             Object object, List<ResultElement> row,
             Collection<Path> unionPathCollection,
             Collection<Path> newPathCollection)
-        throws IllegalSymbolException {
+                    throws CompoundNotFoundException {
         BioSequence bioSequence;
         SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
@@ -239,11 +283,12 @@ public class SequenceExporter implements Exporter
         return bioSequence;
     }
 
+
     private Sequence createSequenceFeatureWithExtension(StringBuffer header,
             Object object, List<ResultElement> row,
             Collection<Path> unionPathCollection,
             Collection<Path> newPathCollection)
-        throws IllegalSymbolException {
+         {
 
         SequenceFeature feature = (SequenceFeature) object;
 
@@ -277,18 +322,36 @@ public class SequenceExporter implements Exporter
                 + start + "_" + end + "_"
                 + org.replace("\\. ", "_");
 
-        Sequence seq = DNATools.createDNASequence(chrResidueString.substring(start - 1, end),
-                        seqName);
-
-        if (NEGATIVE_STRAND.equals(strand)) {
-            try {
-                SymbolList flippedSeq = DNATools.reverseComplement(seq);
-                seq = DNATools.createDNASequence(flippedSeq.seqString(), seqName);
-            } catch (IllegalAlphabetException e) {
-                LOG.error("Export failed, Invalid sequence", e);
-                return null;
-            }
+//        Sequence seq = DNATools.createDNASequence(chrResidueString.substring(start - 1, end),
+//                        seqName);
+        Sequence seq = null;
+        try {
+            seq = new DNASequence(chrResidueString.substring(start - 1, end));
+        } catch (CompoundNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+// NB loosing the name!!
+
+//        if (NEGATIVE_STRAND.equals(strand)) {
+//            try {
+//                SymbolList flippedSeq = DNATools.reverseComplement(seq);
+//                seq = DNATools.createDNASequence(flippedSeq.seqString(), seqName);
+//            } catch (IllegalAlphabetException e) {
+//                LOG.error("Export failed, Invalid sequence", e);
+//                return null;
+//            }
+//        }
+
+      if (NEGATIVE_STRAND.equals(strand)) {
+          try {
+            seq = new DNASequence(
+                    chrResidueString.substring(start - 1, end)).getReverseComplement();
+        } catch (CompoundNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+  }
 
         makeHeader(header, object, row, unionPathCollection, newPathCollection);
         return seq;

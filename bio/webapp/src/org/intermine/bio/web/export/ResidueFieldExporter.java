@@ -18,11 +18,19 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.utils.ChangeVetoException;
+
+//import org.biojava.bio.Annotation;
+//import org.biojava.bio.seq.io.FastaFormat;
+//import org.biojava.bio.seq.io.SeqIOTools;
+//import org.biojava.bio.symbol.IllegalSymbolException;
+//import org.biojava.utils.ChangeVetoException;
+
+//import org.biojava.nbio.ontology.utils.AbstractAnnotation;
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
+import org.biojava.nbio.core.sequence.io.*;
+import org.biojava.nbio.ontology.utils.AbstractAnnotation;
+import org.biojava.nbio.ontology.utils.SmallAnnotation;
+
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
@@ -54,6 +62,7 @@ import org.intermine.web.logic.export.FieldExporter;
 public class ResidueFieldExporter implements FieldExporter
 {
     protected static final Logger LOG = Logger.getLogger(ResidueFieldExporter.class);
+    protected static final String PROPERTY_DESCRIPTIONLINE = "description_line";
 
     /**
      * Export a field containing residues in FASTA format.
@@ -114,22 +123,30 @@ public class ResidueFieldExporter implements FieldExporter
             // write the error)
             OutputStream outputStream = response.getOutputStream();
 
-            Annotation annotation = bioSequence.getAnnotation();
+            //was Annotation annotation = bioSequence.getAnnotation();
 
-            annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+            SmallAnnotation annotation = bioSequence.getAnnotation();
+
+            //was annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+
+             annotation.setProperty(PROPERTY_DESCRIPTIONLINE,
                                    bioEntity.getPrimaryIdentifier());
 
-            SeqIOTools.writeFasta(outputStream, bioSequence);
+            FastaWriterHelper.writeSequence(outputStream, bioSequence);
 
             outputStream.close();
-        } catch (IllegalSymbolException e) {
+        } catch (CompoundNotFoundException e) {
             throw new ExportException("unexpected error while exporting", e);
         } catch (IllegalArgumentException e) {
             throw new ExportException("unexpected error while exporting", e);
-        } catch (ChangeVetoException e) {
-            throw new ExportException("unexpected error while exporting", e);
+//        } catch (ChangeVetoException e) {
+//            throw new ExportException("unexpected error while exporting", e);
         } catch (IOException e) {
             throw new ExportException("unexpected IO error while exporting", e);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw new ExportException("unexpected error while exporting", e);
         }
     }
 
