@@ -61,6 +61,16 @@ public class ModelMergerTask extends Task
     }
 
     /**
+     * The file names containing model additions.
+     * @param files the additions files
+     */
+    public void setAdditionsFiles(String files) {
+        for (String s : files.split(",")) {
+            additionsFiles.add(s);
+        }
+    }
+
+    /**
      * Path of file to write resulting model to. May be the same as <code>inputModelFile</code>.
      * @param file path to write resulting model to
      */
