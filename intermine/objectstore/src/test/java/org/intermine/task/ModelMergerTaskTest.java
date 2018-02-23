@@ -30,7 +30,7 @@ public class ModelMergerTaskTest extends TestCase {
         File output = File.createTempFile("output", ".xml");
 
         ModelMergerTask task = new ModelMergerTask();
-        task.setAdditionsFile("xml/ModelMergerTaskTestAdditions.xml");
+        task.setAdditionsFiles(Collections.singletonList("xml/ModelMergerTaskTestAdditions.xml"));
         task.setInputModelFile(new File(cl.getResource("xml/ModelMergerTaskTestInput.xml").getPath()));
         task.setOutputFile(output);
 
