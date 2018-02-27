@@ -69,6 +69,11 @@ class IntegrateUtils {
                 ant.project.setProperty(prop.name, prop.value)
             }
         }
+        //protein2ipr source needs it
+        if (bioSourceProperties.containsKey("osAlias")) {
+            ant.project.setProperty("osAlias", bioSourceProperties.getProperty("osAlias"))
+        }
+
         ant.taskdef(name: "convertFile", classname: "org.intermine.task.FileConverterTask") {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
