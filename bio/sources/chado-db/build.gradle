@@ -35,8 +35,8 @@ mergeModels {
                 dirset(dir: buildDir)
             }
         }
-
-        ant.mergeBioSourceModel(inputModelFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml", additionsFile: "chado-db_additions.xml",
-            outputFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml")
+        ant.mergeBioSourceModel(inputModelFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml",
+                additionsFile: "flybase-chado-db_additions.xml",
+                outputFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml")
     }
 }

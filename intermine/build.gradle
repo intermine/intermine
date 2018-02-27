@@ -24,8 +24,8 @@ subprojects {
     targetCompatibility = 1.6
 
     repositories {
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
         maven { url 'https://clojars.org/repo' }
         flatDir {
             dirs '../libs'

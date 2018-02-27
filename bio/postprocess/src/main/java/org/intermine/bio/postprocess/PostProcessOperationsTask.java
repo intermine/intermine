@@ -222,6 +222,12 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             try {
                 if (osw != null) {
                     osw.close();
+
+                    // FIXME: We have to do this to get Gradle working properly.  InterMine is only closing pools on
+                    // JVM exit but in Gradle everything is run in the same JVM, resulting in connection exhaustion.
+                    // InterMine should NEVER have relied on JVM exit, this whole thing needs to be fixed more
+                    // fundamentally
+                    ((ObjectStoreInterMineImpl)osw.getObjectStore()).getDatabase().shutdown();
                 }
             } catch (Exception e) {
                 throw new BuildException(e);
