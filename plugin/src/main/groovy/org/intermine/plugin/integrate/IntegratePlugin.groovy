@@ -3,6 +3,9 @@ package org.intermine.plugin.integrate
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.FileTree
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.util.PatternSet
 import org.intermine.plugin.BioSourceProperties
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.VersionConfig
@@ -53,6 +56,21 @@ class IntegratePlugin implements Plugin<Project> {
                     }
                     String sourceType = source.type
                     project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: versions.bioSourceVersion])
+
+                    if ("so".equals(sourceType)) {
+                        // extract SO.obo file and put on classpath for use by this data source
+
+                        SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
+                        String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+
+                        FileTree fileTree = project.zipTree(project.configurations.getByName("bioCore").singleFile)
+                        PatternSet patternSet = new PatternSet()
+                        patternSet.include("so.obo")
+                        File file = fileTree.matching(patternSet).singleFile
+                        String oboFilePath = buildResourcesMainDir + File.separator + "so.obo"
+                        file.renameTo(oboFilePath)
+                        file.createNewFile()
+                    }
                 }
 
                 //when we have more than one source we can't split the integrate in the 2 steps: retrieve and load

@@ -76,11 +76,13 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
             throw new IllegalArgumentException("No 'os' property specified for Translating"
                     + " ObjectStore (check properties file)");
         }
+
         String translatorClass = props.getProperty("translatorClass");
         if (translatorClass == null) {
             throw new IllegalArgumentException("No 'translatorClass' property specified for"
                     + " Translating ObjectStore (check properties file)");
         }
+
         ObjectStore sub;
         try {
             sub = ObjectStoreFactory.getObjectStore(subAlias);
@@ -94,15 +96,17 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
                 throw (ObjectStoreException) t;
             } else {
                 throw new IllegalArgumentException("Unable to get sub-ObjectStore for Translating"
-                    + " ObjectStore (check properties file)");
+                    + " ObjectStore (check properties file)", e);
             }
         }
+
         Model classpathModel;
         try {
             classpathModel = getModelFromClasspath(osAlias, props);
         } catch (MetaDataException metaDataException) {
             throw new ObjectStoreException("Cannot load model", metaDataException);
         }
+
         Translator t;
         try {
             Class<?> c = Class.forName(translatorClass);
