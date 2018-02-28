@@ -82,7 +82,7 @@ public class OboConverterTask extends ConverterTask
     @Override
     public void execute() {
         if (file == null) {
-            throw new BuildException("database attribute is not set");
+            throw new BuildException("'src.data.file' attribute is not set");
         }
         if (ontologyName == null) {
             throw new BuildException("ontologyName attribute is not set");
