@@ -1,0 +1,6 @@
+perl ../../../purify_xace/purify_xace.pl $DATADIR/wormbase-acedb/cds/CDS.xml $DATADIR/wormbase-acedb/cds/purified_CDS.xml
+
+perl prep_wb-acedb-cds.pl $DATADIR/wormbase-acedb/cds/purified_CDS.xml $DATADIR/wormbase-acedb/cds/XML/prepped_CDS.xml
+
+rm $DATADIR/wormbase-acedb/cds/purified_CDS.xml
+

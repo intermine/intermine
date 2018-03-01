@@ -1,0 +1,6 @@
+perl prep_wb-acedb-protein.pl $DATADIR/wormbase-acedb/protein/Protein.xml $DATADIR/wormbase-acedb/protein/prepped_protein.xml
+
+perl purge_protein.pl $DATADIR/wormbase-acedb/protein/prepped_protein.xml $DATADIR/wormbase-acedb/protein/XML/purged_prepped_protein.xml whitelist/species_whitelist.txt $DATADIR/wormbase-acedb/protein/rejected_by_purge.xml
+
+rm $DATADIR/wormbase-acedb/protein/prepped_protein.xml
+

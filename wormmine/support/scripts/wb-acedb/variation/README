@@ -1,0 +1,3 @@
+How to preprocess variation:
+run purify script in this directory.
+it handles the appearance of "<large>" at the end of character strings. 

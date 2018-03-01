@@ -1,0 +1,2 @@
+perl purge_protein.pl /home/jdmswong/intermine-dev/datadir/wormbase-acedb/protein/prepped_protein.xml /home/jdmswong/intermine-dev/datadir/wormbase-acedb/protein/XML/purged_prepped_protein.xml whitelist/species_whitelist.txt /home/jdmswong/intermine-dev/datadir/wormbase-acedb/protein/XML/rejected_by_purge.xml
+

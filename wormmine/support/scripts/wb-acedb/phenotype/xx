@@ -1,0 +1,1 @@
+perl ../../../purify_xace/purify_xace.pl $DATADIR/wormbase-acedb/phenotype/Phenotype.xml $DATADIR/wormbase-acedb/phenotype/XML/purified_phenotype.xml

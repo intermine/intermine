@@ -1,0 +1,1 @@
+perl ../../../purify_xace/purify_xace.pl $DATADIR/wormbase-acedb/life_stage/Life_stage.xml $DATADIR/wormbase-acedb/life_stage/XML/purified_life_stage.xml
