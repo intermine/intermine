@@ -12,6 +12,8 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -110,8 +112,18 @@ public class OboConverter extends DataConverter
         nameToTerm = new HashMap<String, Item>();
         synToItem = new HashMap<OboTermSynonym, Item>();
         OboParser parser = new OboParser();
-        parser.processOntology(new FileReader(new File(dagFilename)));
-        parser.processRelations(dagFilename);
+        File oboFile = null;
+        String fullPathToFile = null;
+        if ((new File(dagFilename)).exists()) {
+            oboFile = new File(dagFilename);
+            fullPathToFile = dagFilename;
+        } else {
+            ClassLoader classLoader = getClass().getClassLoader();
+            oboFile = new File(classLoader.getResource(dagFilename).getFile());
+            fullPathToFile = oboFile.getAbsolutePath();
+        }
+        parser.processOntology(new FileReader(oboFile));
+        parser.processRelations(fullPathToFile);
         oboTerms = parser.getOboTerms();
         oboRelations = parser.getOboRelations();
         storeItems();
