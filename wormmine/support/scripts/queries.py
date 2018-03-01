@@ -49,10 +49,8 @@ query.set_logic("A or B")
 # 7
 
 query = service.new_query("Allele")
-query.add_view(
-    "primaryIdentifier", "symbol", "gene.primaryIdentifier",
-    "gene.secondaryIdentifier", "gene.symbol"
-)
+query.add_view("primaryIdentifier", "symbol", "gene.primaryIdentifier",
+                "gene.secondaryIdentifier", "gene.symbol")
 query.add_constraint("symbol", "=", "gk962622", code = "A")
 
 
