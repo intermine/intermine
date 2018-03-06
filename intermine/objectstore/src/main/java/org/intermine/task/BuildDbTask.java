@@ -103,7 +103,9 @@ public class BuildDbTask extends Task
                 throw new BuildException(
                     "Could not clean up directory "
                         + tempDir
-                        + " before execution (this is required to stop Torque generation from picking up extraneous files)");
+                        + " before execution (this is required to stop Torque generation from picking up extraneous"
+                        + " files)",
+                    e);
             }
 
             if (tempDir == null) {
