@@ -189,12 +189,10 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         if (files != null) {
             // setFiles() is used only for testing
             for (int i = 0; i < files.length; i++) {
-                LOG.warn("TTT " + i + ": " + files[i].getName());
                 processFile(files[i]);
             }
         } else {
             // this will call processFile() for each file
-            LOG.warn("TTT ???");
             super.execute();
         }
     }
@@ -209,9 +207,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     @Override
     public void processFile(File file) {
         try {
-            //FileReader fileReader = new FileReader(file);
-            //BufferedReader reader = new BufferedReader(fileReader);
-LOG.warn("FTL " + file);
             System.err .println("reading " + sequenceType + " sequence from: " + file);
 
             if (sequenceType.equalsIgnoreCase("dna")) {
@@ -219,43 +214,19 @@ LOG.warn("FTL " + file);
                         FastaReaderHelper.readFastaDNASequence(file);
                 for (Entry<String, DNASequence> entry : b.entrySet()) {
                     Sequence bioJavaSequence = entry.getValue();
-                    processSequence(getOrganism(bioJavaSequence),
-                             bioJavaSequence);
+                    processSequence(getOrganism(bioJavaSequence), bioJavaSequence);
                 }
             } else {
                 LinkedHashMap<String, ProteinSequence> b =
                         FastaReaderHelper.readFastaProteinSequence(file);
                 for (Entry<String, ProteinSequence> entry : b.entrySet()) {
                     Sequence bioJavaSequence = entry.getValue();
-                    LOG.warn("XXX " + entry.getValue().getOriginalHeader() +
+                    LOG.debug("XXX " + entry.getValue().getOriginalHeader() +
                             "=" + entry.getValue().getSequenceAsString() );
-
-                    //LOG.warn("FF seq?? " + bioJavaSequence.getSequenceAsString());
-//                    LOG.warn("FF headerID " + bioJavaSequence.getAccession().getID());
-
-//                    processSequence(getOrganism(bioJavaSequence),
                     processSequence(getOrganism((ProteinSequence)bioJavaSequence),
                              bioJavaSequence);
                 }
             }
-
-            //          SequenceIterator iter =
-            //          (SequenceIterator) SeqIOTools.fileToBiojava("fasta", sequenceType, reader);
-
-
-            //            if (!iter.hasNext()) {
-            //                System.err .println("no fasta sequences found - exiting");
-            //                return;
-            //            }
-            //
-            //            while (iter.hasNext()) {
-            //                Sequence bioJavaSequence = iter.nextSequence();
-            //                processSequence(getOrganism(bioJavaSequence), bioJavaSequence);
-            //            }
-
-            //            reader.close();
-            //            fileReader.close();
-            //        } catch (BioException e) {
         } catch (ParserException e) {
             throw new BuildException("sequence not in fasta format or wrong alphabet for: "
                     + file, e);
@@ -279,7 +250,6 @@ LOG.warn("FTL " + file);
     protected Organism getOrganism(Sequence bioJavaSequence) throws ObjectStoreException {
         if (org == null) {
             org = getDirectDataLoader().createObject(Organism.class);
-            LOG.warn("FF " + fastaTaxonId);
             org.setTaxonId(new Integer(fastaTaxonId));
             getDirectDataLoader().store(org);
         }
@@ -300,23 +270,16 @@ LOG.warn("FTL " + file);
             return;
         }
 
-        LOG.warn("FFtax " + organism.getTaxonId());
         org.intermine.model.bio.Sequence flymineSequence = getDirectDataLoader().createObject(
                 org.intermine.model.bio.Sequence.class);
 
-        //        String sequence = bioJavaSequence.seqString();
         String sequence = bioJavaSequence.getSequenceAsString();
-        //LOG.warn("SSSS1 " + sequence);
         String md5checksum = Util.getMd5checksum(sequence);
-        LOG.warn("FFseq " + md5checksum);
 
         flymineSequence.setResidues(new PendingClob(sequence));
-        //        flymineSequence.setLength(bioJavaSequence.length());
-        //LOG.warn("SSSS3 " + bioJavaSequence.getLength());
-
         flymineSequence.setLength(bioJavaSequence.getLength());
-
         flymineSequence.setMd5checksum(md5checksum);
+
         Class<? extends InterMineObject> imClass;
         Class<?> c;
         try {
@@ -334,7 +297,6 @@ LOG.warn("FTL " + file);
         BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
 
         String attributeValue = getIdentifier(bioJavaSequence);
-LOG.info("FLT " + attributeValue + "|" + classAttribute);
         try {
             imo.setFieldValue(classAttribute, attributeValue);
         } catch (Exception e) {
@@ -373,12 +335,7 @@ LOG.info("FLT " + attributeValue + "|" + classAttribute);
 
         try {
             getDirectDataLoader().store(flymineSequence);
-
-            LOG.info("FTL " + flymineSequence.getMd5checksum());
             getDirectDataLoader().store(imo);
-            LOG.info("FTL " + imo.getPrimaryIdentifier());
-            LOG.info("FTL " + imo.getId());
-
             storeCount += 2;
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
@@ -429,14 +386,8 @@ LOG.info("FLT " + attributeValue + "|" + classAttribute);
      * @return an identifier
      */
     protected String getIdentifier(Sequence bioJavaSequence) {
-        //        String name = bioJavaSequence.getName() + idSuffix;
-        //String name = ((BioSequence)bioJavaSequence).getAccession().getIdentifier() + idSuffix;
         String name = bioJavaSequence.getAccession().getID() + idSuffix;
-        LOG.warn("FFheader " + name);
-
-//        String[] tokens = header.trim().split("\\s+");
-//        String name = tokens[0];
-
+        LOG.debug("FFheader " + name);
 
         // description_line=sp|Q9V8R9-2|41_DROME
         if (name.contains("|")) {
@@ -446,7 +397,6 @@ LOG.info("FLT " + attributeValue + "|" + classAttribute);
             }
             name = bits[1];
         }
-        LOG.warn("FFrealname " + name);
         return name;
     }
 
@@ -492,34 +442,15 @@ LOG.info("FLT " + attributeValue + "|" + classAttribute);
         }
     }
 
-//    protected Organism getOrganism(BioSequence bioJavaSequence)
-//            throws ObjectStoreException {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
-//
     protected Organism getOrganism(ProteinSequence bioJavaSequence)
             throws ObjectStoreException {
         if (org == null) {
             org = getDirectDataLoader().createObject(Organism.class);
-            LOG.warn("FF " + fastaTaxonId);
             org.setTaxonId(new Integer(fastaTaxonId));
             getDirectDataLoader().store(org);
         }
         return org;
     }
-
-//    protected String getIdentifier(BioSequence bioJavaSequence) {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
-//
-//    protected Organism getOrganism(BioSequence bioJavaSequence)
-//            throws ObjectStoreException {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
-
 
 }
 

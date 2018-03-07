@@ -46,10 +46,7 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         throws ObjectStoreException {
 
         String header = bioJavaSequence.getAccession().getID();
-
         String mrnaIdentifier = getMRNAIdentifier(header);
-
-        LOG.warn("FFcdsId " + mrnaIdentifier);
 
         ObjectStore os = getIntegrationWriter().getObjectStore();
         Model model = os.getModel();
@@ -79,7 +76,6 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      */
     @Override
     protected String getIdentifier(Sequence bioJavaSequence) {
-        LOG.warn("FFcdsheader " + bioJavaSequence.getAccession().getID());
         String header = bioJavaSequence.getAccession().getID();
 
         final String regexp = ".*FlyBase_Annotation_IDs:([^, =;]+).*";
@@ -90,7 +86,6 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
             return m.group(1) + "_CDS";
         }
         // it doesn't matter too much what the CDS identifier is
-        LOG.info("FFcdsMRNA " + getMRNAIdentifier(header));
         return getMRNAIdentifier(header) + "_CDS";
     }
 

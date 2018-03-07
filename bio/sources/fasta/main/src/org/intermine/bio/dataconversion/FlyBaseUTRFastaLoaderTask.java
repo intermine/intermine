@@ -46,9 +46,9 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      */
     @Override
     protected void extraProcessing(Sequence bioJavaSequence,
-            @SuppressWarnings("unused") org.intermine.model.bio.Sequence flymineSequence,
+            org.intermine.model.bio.Sequence flymineSequence,
             BioEntity bioEntity, Organism organism,
-            @SuppressWarnings("unused") DataSet dataSet)
+            DataSet dataSet)
         throws ObjectStoreException {
         String header = bioJavaSequence.getAccession().getID();
         String mrnaIdentifier = getIdentifier(header);
@@ -84,7 +84,6 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
     }
 
 
-
     /**
      * {@inheritDoc}
      */
@@ -94,7 +93,6 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         String header = bioJavaSequence.getAccession().getID();
         String[] tokens = header.trim().split("\\s+");
         String id = tokens[0];
-        LOG.info("FFutrId " + id);
         if (getClassName().endsWith(".FivePrimeUTR")) {
             return id + "-5-prime-utr";
         }
