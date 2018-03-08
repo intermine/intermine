@@ -19,6 +19,7 @@ sourceSets {
 
 dependencies {
     compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
+    compile group: 'uk.ac.ebi.chebi.webapps.chebiWS.client', name: 'chebiWS-client', version: '2.3.2'
     compile fileTree(dir: 'libs', include: '*.jar') //jami libs
 }
 
