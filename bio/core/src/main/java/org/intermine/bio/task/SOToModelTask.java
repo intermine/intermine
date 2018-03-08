@@ -64,7 +64,7 @@ public class SOToModelTask extends Task
     public void execute() {
         if (soTermListFile == null || !soTermListFile.exists()) {
             throw new BuildException("Could not find file containing SO terms to add to the model,"
-                    + " check the project.properties file. Property was: " + soTermListFile);
+                    + " check the dbmodel/build.gradle file. Property was: " + soTermListFile);
         }
 
         try {
