@@ -54,7 +54,7 @@ public class BioSequence extends AbstractSequence<Compound>
     }
 
     /**
-     * returns annotation
+     * @return the annotation
      */
 
     public SmallAnnotation getAnnotation() {

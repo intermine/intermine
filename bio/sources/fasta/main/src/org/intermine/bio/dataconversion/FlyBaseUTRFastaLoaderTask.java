@@ -79,6 +79,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 
     /**
      * @param header the header
+     * @return the identifier
      *
      */
     protected String getIdentifier(String header) {
