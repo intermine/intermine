@@ -19,13 +19,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
-import org.biojava.nbio.core.sequence.template.*;
+import org.biojava.nbio.core.sequence.template.Sequence;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
@@ -161,22 +162,17 @@ public class SequenceExporter implements Exporter
 
                 if (object instanceof SequenceFeature) {
                     if (extension > 0) {
-                        LOG.info("FFF1 ex " + header.toString());
                         bioSequence = (BioSequence) createSequenceFeatureWithExtension(
                                 header, object,
                                 row, unionPathCollection, newPathCollection);
                     } else {
-                        LOG.info("FFF2  " + header.toString());
                         bioSequence = createSequenceFeature(header, object,
                                 row, unionPathCollection, newPathCollection);
                     }
                 } else if (object instanceof Protein) {
-                    LOG.info("FFF3 prot  " + header.toString());
                     bioSequence = createProtein(header, object, row,
                             unionPathCollection, newPathCollection);
                 } else {
-                    LOG.info("FFF4 ELSE! " + header.toString());
-
                     // ignore other objects
                     continue;
                 }
@@ -223,7 +219,7 @@ public class SequenceExporter implements Exporter
     private BioSequence createProtein(StringBuffer header, Object object,
             List<ResultElement> row, Collection<Path> unionPathCollection,
             Collection<Path> newPathCollection)
-            throws CompoundNotFoundException {
+        throws CompoundNotFoundException {
         BioSequence bioSequence;
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
@@ -238,7 +234,7 @@ public class SequenceExporter implements Exporter
             Object object, List<ResultElement> row,
             Collection<Path> unionPathCollection,
             Collection<Path> newPathCollection)
-                    throws CompoundNotFoundException {
+        throws CompoundNotFoundException {
         BioSequence bioSequence;
         SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
@@ -251,8 +247,7 @@ public class SequenceExporter implements Exporter
     private Sequence createSequenceFeatureWithExtension(StringBuffer header,
             Object object, List<ResultElement> row,
             Collection<Path> unionPathCollection,
-            Collection<Path> newPathCollection)
-         {
+            Collection<Path> newPathCollection) {
 
         SequenceFeature feature = (SequenceFeature) object;
 
@@ -296,15 +291,15 @@ public class SequenceExporter implements Exporter
             e.printStackTrace();
         }
 
-      if (NEGATIVE_STRAND.equals(strand)) {
-          try {
-            seq = new DNASequence(
-                    chrResidueString.substring(start - 1, end)).getReverseComplement();
-        } catch (CompoundNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (NEGATIVE_STRAND.equals(strand)) {
+            try {
+                seq = new DNASequence(
+                        chrResidueString.substring(start - 1, end)).getReverseComplement();
+            } catch (CompoundNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
-  }
 
         makeHeader(header, object, row, unionPathCollection, newPathCollection);
         return seq;

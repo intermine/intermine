@@ -23,7 +23,8 @@ import org.intermine.model.bio.BioEntity;
  *
  * @author Kim Rutherford
  */
-public class BioSequence extends AbstractSequence<Compound> {
+public class BioSequence extends AbstractSequence<Compound>
+{
 //    public class BioSequence extends BasicSequence {
     /**
      *
@@ -38,9 +39,9 @@ public class BioSequence extends AbstractSequence<Compound> {
 
     /**
      * Create a new BioSequence from a BioEntity
-     * @param symbols a DNA SymbolList created from the BioEntity
+     * @param seq a biojava sequence
      * @param bioEntity the BioEntity
-     * @throws CompoundNotFoundException
+     * @throws CompoundNotFoundException exception
      */
     BioSequence (AbstractSequence seq, BioEntity bioEntity) throws CompoundNotFoundException {
 
@@ -51,6 +52,10 @@ public class BioSequence extends AbstractSequence<Compound> {
         annotation = new SmallAnnotation();
         this.bioEntity = bioEntity;
     }
+
+    /**
+     * returns annotation
+     */
 
     public SmallAnnotation getAnnotation() {
         // TODO Auto-generated method stub

@@ -25,10 +25,9 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
-import org.biojava.nbio.core.sequence.io.*;
+import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.biojava.BioSequence;
@@ -111,7 +110,7 @@ public class SequenceExportAction extends InterMineAction
     }
 
     private BioSequence createBioSequence(InterMineObject obj)
-            throws IllegalAccessException, CompoundNotFoundException {
+        throws IllegalAccessException, CompoundNotFoundException {
         BioSequence bioSequence;
         BioEntity bioEntity = (BioEntity) obj;
         bioSequence = BioSequenceFactory.make(bioEntity, SequenceType.DNA);
@@ -155,8 +154,8 @@ public class SequenceExportAction extends InterMineAction
             }
         } else {
             classList.addAll(Arrays.asList(new Class<?>[] {
-                    Protein.class,
-                    SequenceFeature.class
+                Protein.class,
+                SequenceFeature.class
             }));
         }
 

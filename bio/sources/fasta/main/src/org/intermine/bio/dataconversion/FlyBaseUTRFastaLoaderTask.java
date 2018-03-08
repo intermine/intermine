@@ -77,6 +77,10 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         }
     }
 
+    /**
+     * @param header the header
+     *
+     */
     protected String getIdentifier(String header) {
         String[] tokens = header.trim().split("\\s+");
         String id = tokens[0];

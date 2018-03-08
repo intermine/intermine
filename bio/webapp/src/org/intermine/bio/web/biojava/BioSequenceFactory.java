@@ -56,7 +56,7 @@ public abstract class BioSequenceFactory
      * @param feature the SequenceFeature
      * @return a new BioSequence object or null if the SequenceFeature doesn't have a
      * Sequence
-     * @throws IllegalSymbolException if any of the residues of the SequenceFeature can't be
+     * @throws CompoundNotFoundException if any of the residues of the SequenceFeature can't be
      * turned into DNA symbols.
      */
     public static BioSequence make(SequenceFeature feature)
@@ -73,7 +73,7 @@ public abstract class BioSequenceFactory
      * Create a new BioSequence from a Protein
      * @param protein the Protein
      * @return a new BioSequence object or null if the Protein doesn't have a Sequence
-     * @throws IllegalSymbolException if any of the residues of the Protein can't be
+     * @throws CompoundNotFoundException if any of the residues of the Protein can't be
      * turned into amino acid symbols.
      */
     public static BioSequence make(Protein protein)
@@ -90,7 +90,7 @@ public abstract class BioSequenceFactory
      * @param bioEnt the bio entity
      * @param type the SequenceType
      * @return a new BioSequence object or null if the BioEntity doesn't have a Sequence
-     * @throws IllegalSymbolException if any of the residues of the BioEntity can't be
+     * @throws CompoundNotFoundException if any of the residues of the BioEntity can't be
      * turned into symbols of the given SequenceType.
      * @author Sam Hokin
      *
