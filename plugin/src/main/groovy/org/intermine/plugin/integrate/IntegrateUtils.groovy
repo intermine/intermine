@@ -197,6 +197,14 @@ class IntegrateUtils {
 
     def retrieveFromOBO = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
+
+        //set dynamic properties
+        source.userProperties.each { prop ->
+            if (!"src.data.dir".equals(prop.name)) {
+                ant.project.setProperty(prop.name, prop.value)
+            }
+        }
+
         ant.taskdef(name: "convertOBO", classname: "org.intermine.bio.task.OboConverterTask") {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
