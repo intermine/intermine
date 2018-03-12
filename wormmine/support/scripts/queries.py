@@ -263,10 +263,8 @@ query.add_constraint("primaryAccession", "=", "WP:CE46852", code = "A")
 # 34
 
 query = service.new_query("CDS")
-query.add_view(
-    "primaryIdentifier", "symbol", "protein.primaryAccession",
-    "protein.primaryIdentifier"
-)
+query.add_view("primaryIdentifier", "symbol", "protein.primaryAccession",
+    "protein.primaryIdentifier")
 query.add_constraint("protein.primaryAccession", "=", "WP:CE46852", code = "A")
 
 
