@@ -1,0 +1,306 @@
+<template-queries>
+<template name="All_Proteins_In_Organism_To_Publications" title="All proteins in organism --&gt; Publications." comment="">
+  <query name="All_Proteins_In_Organism_To_Publications" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.organism.name Protein.publications.firstAuthor Protein.publications.title Protein.publications.year Protein.publications.journal Protein.publications.volume Protein.publications.pages Protein.publications.pubMedId" longDescription="" sortOrder="Protein.primaryIdentifier asc">
+    <constraint path="Protein.organism.name" editable="true" description="Organism.name" op="=" value="Plasmodium falciparum 3D7"/>
+  </query>
+</template>
+<template name="CG Genes_within_chromosomal_interval" title="Chromosome Interval --&gt; Genes" comment="">
+  <query name="CG Genes_within_chromosomal_interval" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.locations.locatedOn.primaryIdentifier Gene.locations.start Gene.locations.end Gene.organism.name" longDescription="Returns all genes within a specified chromosomal interval in a given species" sortOrder="Gene.locations.end asc" constraintLogic="A and B and C and D">
+    <constraint path="Gene.locations.locatedOn.primaryIdentifier" code="A" editable="true" op="=" value="X"/>
+    <constraint path="Gene.locations.start" code="B" editable="true" op="&gt;" value="1000000"/>
+    <constraint path="Gene.locations.end" code="C" editable="true" op="&lt;" value="1500000"/>
+    <constraint path="Gene.organism.name" code="D" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="CG Trascript_Type_and_Species_to_Genes" title="Transcript Type, Species --&gt; Genes" comment="">
+  <query name="CG Trascript_Type_and_Species_to_Genes" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.secondaryIdentifier Gene.transcripts.symbol Gene.transcripts.method Gene.organism.name" longDescription="Returns all genes of a particular transcript type from a given species" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <constraint path="Gene.organism.name" code="A" editable="true" op="=" value="Caenorhabditis elegans"/>
+    <constraint path="Gene.transcripts.method" code="B" editable="true" op="=" value="miRNA"/>
+  </query>
+</template>
+<template name="GWW Details of a CDS" title="CDS --&gt; Gene and Protein" comment="">
+  <query name="GWW Details of a CDS" model="genomic" view="CDS.symbol CDS.chromosome.primaryIdentifier CDS.chromosomeLocation.start CDS.chromosomeLocation.end CDS.chromosomeLocation.strand CDS.gene.primaryIdentifier CDS.gene.secondaryIdentifier CDS.gene.symbol CDS.protein.primaryIdentifier CDS.protein.sequence.length" longDescription="Shows the Chromosomal location, the Gene that the CDS belongs to and the Protein that it makes and the length of the protein in amino-acids." sortOrder="CDS.symbol asc" constraintLogic="A and B">
+    <constraint path="CDS.symbol" code="A" editable="true" op="=" value="AC3.3"/>
+    <constraint path="CDS.organism" code="B" editable="true" op="LOOKUP" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="Gene_Protein" title="Gene --&gt; Proteins" comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_Protein" model="genomic" view="Gene.symbol Gene.transcripts.symbol Gene.transcripts.CDSs.symbol Gene.transcripts.CDSs.protein.symbol Gene.transcripts.CDSs.protein.primaryAccession" longDescription="Show the proteins for a particular gene.">
+    <constraint path="Gene" editable="true" description="" op="LOOKUP" value="unc-27"/>
+  </query>
+</template>
+<template name="Genes contained in operons WBP" title="Gene --&gt; Operon" comment="">
+  <query name="Genes contained in operons WBP" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.operon Gene.organism.name" longDescription="Create a list of genes that have been flagged as belonging to an operon. (Currently only available for C. elegans and Brugia malayi)." sortOrder="Gene.operon asc" constraintLogic="A and B">
+    <constraint path="Gene.organism.name" code="A" editable="true" op="=" value="Caenorhabditis elegans"/>
+    <constraint path="Gene.operon" code="B" editable="true" description="" switchable="off" op="=" value="*OP*"/>
+  </query>
+</template>
+<template name="Organism_Protein" title="Organism --&gt; All proteins." comment="">
+  <query name="Organism_Protein" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession" longDescription="Show all the proteins from a particular organism." sortOrder="Protein.primaryIdentifier asc">
+    <constraint path="Protein.organism.name" editable="true" description="Show all the proteins from the organism:" op="=" value="Plasmodium falciparum 3D7"/>
+  </query>
+</template>
+<template name="Specified Chromosome Transcript location WBP" title="Transcript --&gt; Position of transcripts on specified Chromosome" comment="">
+  <query name="Specified Chromosome Transcript location WBP" model="genomic" view="Transcript.primaryIdentifier Transcript.chromosome.primaryIdentifier Transcript.chromosomeLocation.start Transcript.chromosomeLocation.end Transcript.chromosomeLocation.strand Transcript.chromosomeLocation.locatedOn.primaryIdentifier" longDescription="What is the Chromosomal position of Transcripts on Chromosome &lt;query&gt;" sortOrder="Transcript.primaryIdentifier asc">
+    <constraint path="Transcript.chromosome.primaryIdentifier" editable="true" op="=" value="I"/>
+  </query>
+</template>
+<template name="Specified Transcript location PD" title="Transcript --&gt; Position single query" comment="">
+  <query name="Specified Transcript location PD" model="genomic" view="Transcript.primaryIdentifier Transcript.chromosome.primaryIdentifier Transcript.chromosomeLocation.start Transcript.chromosomeLocation.end Transcript.chromosomeLocation.strand Transcript.chromosomeLocation.locatedOn.primaryIdentifier" longDescription="What is the Chromosomal position of Transcript X" sortOrder="Transcript.primaryIdentifier asc">
+    <constraint path="Transcript.primaryIdentifier" editable="true" op="CONTAINS" value="AH6.4"/>
+  </query>
+</template>
+<template name="Transcript to CDS PD" title="Transcript --&gt; CDS" comment="">
+  <query name="Transcript to CDS PD" model="genomic" view="Gene.transcripts.primaryIdentifier Gene.CDSs.primaryIdentifier" longDescription="Create a table of CDSs from my favorite Transcript" sortOrder="Gene.transcripts.primaryIdentifier asc" constraintLogic="A and B">
+    <constraint path="Gene.transcripts.primaryIdentifier" code="A" editable="true" op="CONTAINS" value="AH6.4"/>
+    <constraint path="Gene.organism.name" code="B" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="Transcripts in size range WBP" title="Specified size range --&gt; Transcript" comment="">
+  <query name="Transcripts in size range WBP" model="genomic" view="Transcript.symbol Transcript.length" longDescription="Return a list of Transcripts in a defined size range." sortOrder="Transcript.symbol asc" constraintLogic="A and B and C">
+    <constraint path="Transcript.organism.name" code="B" editable="true" op="=" value="Caenorhabditis elegans"/>
+    <constraint path="Transcript.length" code="A" editable="true" op="&lt;" value="1000"/>
+    <constraint path="Transcript.length" code="C" editable="true" op="&gt;" value="500"/>
+  </query>
+</template>
+<template name="WBP species Transcript" title="Species--&gt; Transcript" comment="">
+  <query name="WBP species Transcript" model="genomic" view="Transcript.primaryIdentifier Transcript.chromosomeLocation.start Transcript.chromosomeLocation.end Transcript.chromosomeLocation.strand Transcript.chromosomeLocation.locatedOn.primaryIdentifier" longDescription="Give me all Transcripts from my favorite species (also returns the position)." sortOrder="Transcript.primaryIdentifier asc">
+    <constraint path="Transcript.organism.name" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="all_strains_for_a_given_lab" title="Lab Prefix --&gt; Strains" comment="by Mary Ann Tuli">
+  <query name="all_strains_for_a_given_lab" model="genomic" view="Strain.primaryIdentifier" longDescription="Keyset of Strain objects with a specific laboratory prefix." sortOrder="Strain.primaryIdentifier asc">
+    <constraint path="Strain.primaryIdentifier" editable="true" op="CONTAINS" value="VC"/>
+  </query>
+</template>
+<template name="all_transcripts_for_a_given_cds" title="Transcript --&gt; CDS" comment="">
+  <query name="all_transcripts_for_a_given_cds" model="genomic" view="Gene.transcripts.primaryIdentifier Gene.CDSs.primaryIdentifier" longDescription="Create a table of CDSs from my favorite Transcript" sortOrder="Gene.transcripts.primaryIdentifier asc" constraintLogic="A and B">
+    <constraint path="Gene.transcripts.primaryIdentifier" code="A" editable="true" op="CONTAINS" value="AH6.4"/>
+    <constraint path="Gene.organism.name" code="B" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="all_transcripts_for_a_given_species" title="Species--&gt; Transcript" comment="">
+  <query name="all_transcripts_for_a_given_species" model="genomic" view="Transcript.primaryIdentifier Transcript.chromosomeLocation.start Transcript.chromosomeLocation.end Transcript.chromosomeLocation.strand Transcript.chromosomeLocation.locatedOn.primaryIdentifier" longDescription="Give me all Transcripts from my favorite species (also returns the position)." sortOrder="Transcript.primaryIdentifier asc">
+    <constraint path="Transcript.organism.name" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="cell_tissue_expression" title="Cell/Tissue --&gt; Expression" comment="">
+  <query name="cell_tissue_expression" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.expressionPatterns.lifeStages.anatomyTerms.primaryIdentifier Gene.expressionPatterns.lifeStages.anatomyTerms.name Gene.expressionPatterns.lifeStages.anatomyTerms.synonym" longDescription="Show all genes that are expressed in anchor cell, as an example - XW" sortOrder="Gene.primaryIdentifier asc">
+    <constraint path="Gene.expressionPatterns.lifeStages.anatomyTerms.name" editable="true" op="=" value="anchor cell"/>
+  </query>
+</template>
+<template name="details_of_a_cds" title="CDS --&gt; Gene and Protein" comment="">
+  <query name="details_of_a_cds" model="genomic" view="CDS.symbol CDS.chromosome.primaryIdentifier CDS.chromosomeLocation.start CDS.chromosomeLocation.end CDS.chromosomeLocation.strand CDS.gene.primaryIdentifier CDS.gene.secondaryIdentifier CDS.gene.symbol CDS.protein.primaryIdentifier CDS.protein.sequence.length" longDescription="Shows the Chromosomal location, the Gene that the CDS belongs to and the Protein that it makes and the length of the protein in amino-acids." sortOrder="CDS.symbol asc" constraintLogic="A and B">
+    <constraint path="CDS.symbol" code="A" editable="true" op="=" value="AC3.3"/>
+    <constraint path="CDS.organism" code="B" editable="true" op="LOOKUP" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="find_go_annotation_for_a_given_gene" title="Gene --&gt; GO Term, Evidence Code, Reference" comment="">
+  <query name="find_go_annotation_for_a_given_gene" model="genomic" view="Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.evidence.code.code Gene.symbol Gene.goAnnotation.evidence.publications.pubMedId" longDescription="This query shows how to retrieve all GO annotations for a given gene, the evidence code for the annotation, and the PMID for the associated reference.  kmva 2013-05-22" sortOrder="Gene.goAnnotation.ontologyTerm.name asc">
+    <constraint path="Gene.symbol" editable="true" op="=" value="bec-1"/>
+  </query>
+</template>
+<template name="gene_classes" title="Gene Classes" comment="">
+  <query name="gene_classes" model="genomic" view="GeneClass.otherName GeneClass.primaryIdentifier GeneClass.mainName GeneClass.remark GeneClass.description GeneClass.designatingLaboratory.primaryIdentifier" longDescription="All C. elegans gene classes and their designating laboratory" sortOrder="GeneClass.otherName asc">
+    <constraint path="GeneClass.primaryIdentifier" editable="true" op="=" value="*"/>
+  </query>
+</template>
+<template name="gene_to_alleles" title="Gene --&gt; Alleles" comment="">
+  <query name="gene_to_alleles" model="genomic" view="Gene.alleles.method Gene.alleles.symbol Gene.alleles.primaryIdentifier" longDescription="List *all* experimentally obtained alleles for a given gene omitting polymorphisms and high-throughput alleles -- TWH" sortOrder="Gene.alleles.method asc" constraintLogic="A and B">
+    <constraint path="Gene.symbol" code="A" editable="true" op="=" value="unc-26"/>
+    <constraint path="Gene.alleles.method" code="B" editable="true" op="ONE OF">
+      <value>Allele
+      </value>
+      <value>Deletion_allele
+      </value>
+      <value>Deletion_an_insertion_allele
+      </value>
+      <value>Deletion_and_insertion_allele
+      </value>
+      <value>Deletion_with_insertion
+      </value>
+      <value>Deltion_allele
+      </value>
+      <value>Insertion_allele
+      </value>
+      <value>Substitution_allele
+      </value>
+      <value>Transposon_insertion
+      </value>
+    </constraint>
+  </query>
+</template>
+<template name="gene_to_protein_ids" title="Gene --&gt; Proteins" comment="06.06.07 updated to work from gene class - Philip">
+  <query name="gene_to_protein_ids" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.proteins.primaryIdentifier Gene.proteins.primaryAccession" longDescription="Show the proteins for a particular gene." sortOrder="Gene.primaryIdentifier asc">
+    <pathDescription pathString="Gene.proteins" description="Protein"/>
+    <constraint path="Gene" editable="true" op="LOOKUP" value="ABRA"/>
+  </query>
+</template>
+<template name="genes_contained_in_operons" title="Gene --&gt; Operon" comment="">
+  <query name="genes_contained_in_operons" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.operon Gene.organism.name" longDescription="Create a list of genes that have been flagged as belonging to an operon. (Currently only available for C. elegans and Brugia malayi)." sortOrder="Gene.operon asc" constraintLogic="A and B">
+    <constraint path="Gene.organism.name" code="A" editable="true" op="=" value="Caenorhabditis elegans"/>
+    <constraint path="Gene.operon" code="B" editable="true" description="" switchable="off" op="=" value="*OP*"/>
+  </query>
+</template>
+<template name="genes_expressed_in_subcellular_location" title="Subcellular compartment --&gt; Genes" comment="">
+  <query name="genes_expressed_in_subcellular_location" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.expressionPatterns.primaryIdentifier Gene.expressionPatterns.reporterGene Gene.expressionPatterns.subcellularLocalization" longDescription="Returns a list of all genes whose products are localized to a specified subcellular compartment" sortOrder="Gene.primaryIdentifier asc">
+    <constraint path="Gene.expressionPatterns.subcellularLocalization" editable="true" op="CONTAINS" value="nucleus"/>
+  </query>
+</template>
+<template name="genes_for_a_given_transcript_type" title="Transcript Type, Species --&gt; Genes" comment="">
+  <query name="genes_for_a_given_transcript_type" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.secondaryIdentifier Gene.transcripts.symbol Gene.transcripts.method Gene.organism.name" longDescription="Returns all genes of a particular transcript type from a given species" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <constraint path="Gene.organism.name" code="A" editable="true" op="=" value="Caenorhabditis elegans"/>
+    <constraint path="Gene.transcripts.method" code="B" editable="true" op="=" value="miRNA"/>
+  </query>
+</template>
+<template name="genes_in_expression_cluster" title="Expression_cluster --&gt; Genes" comment="">
+  <query name="genes_in_expression_cluster" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.expressionClusters.primaryIdentifier Gene.expressionClusters.description" longDescription="This query returns a list of all genes of an expression cluster. The default expression cluster is WBPaper00032062:age_regulated_genes" sortOrder="Gene.primaryIdentifier asc">
+    <constraint path="Gene.expressionClusters.primaryIdentifier" editable="true" op="=" value="WBPaper00032062:age_regulated_genes"/>
+  </query>
+</template>
+<template name="genes_phenotypes_new" title="Phenotype -&gt; Genes (new)" comment="">
+  <query name="genes_phenotypes_new" model="genomic" view="Gene.primaryIdentifier Gene.symbol" longDescription="Return all genes annotated with a particular phenotype. Select either observed or not observed." sortOrder="Gene.symbol asc" constraintLogic="A and B">
+    <constraint path="Gene.alleles.phenotype.name" code="A" editable="true" description="" switchable="on" op="=" value="transgene expression variant"/>
+    <constraint path="Gene.alleles.phenotypeNotObserved.name" code="B" editable="true" description="" switchable="off" op="=" value="transgene expression variant"/>
+  </query>
+</template>
+<template name="genes_to_phenotypes" title="Genes --&gt; Phenotypes" comment="Choose a single gene or a list of genes">
+  <query name="genes_to_phenotypes" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.alleles.primaryIdentifier Gene.alleles.symbol Gene.alleles.phenotypesObserved.identifier Gene.alleles.phenotypesObserved.name" longDescription="Returns a list of all phenotypes attributed to a gene or a list of genes" sortOrder="Gene.primaryIdentifier asc">
+    <constraint path="Gene.symbol" editable="true" op="=" value="unc-26"/>
+  </query>
+</template>
+<template name="genes_within_a_chromosomal_interval" title="Chromosome Interval --&gt; Genes" comment="">
+  <query name="genes_within_a_chromosomal_interval" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.locations.locatedOn.primaryIdentifier Gene.locations.start Gene.locations.end Gene.organism.name" longDescription="Returns all genes within a specified chromosomal interval in a given species" sortOrder="Gene.locations.end asc" constraintLogic="A and B and C and D">
+    <constraint path="Gene.locations.locatedOn.primaryIdentifier" code="A" editable="true" op="=" value="X"/>
+    <constraint path="Gene.locations.start" code="B" editable="true" op="&gt;" value="1000000"/>
+    <constraint path="Gene.locations.end" code="C" editable="true" op="&lt;" value="1500000"/>
+    <constraint path="Gene.organism.name" code="D" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="genes_within_chromosomal_interval" title="Chromosome Interval --&gt; Genes" comment="">
+  <query name="genes_within_chromosomal_interval" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.locations.locatedOn.primaryIdentifier Gene.locations.start Gene.locations.end Gene.organism.name" longDescription="Returns all genes within a specified chromosomal interval in a given species" sortOrder="Gene.locations.end asc" constraintLogic="A and B and C and D">
+    <constraint path="Gene.locations.locatedOn.primaryIdentifier" code="A" editable="true" op="=" value="CHROMOSOME_X"/>
+    <constraint path="Gene.locations.start" code="B" editable="true" op="&gt;" value="1000000"/>
+    <constraint path="Gene.locations.end" code="C" editable="true" op="&lt;" value="1500000"/>
+    <constraint path="Gene.organism.name" code="D" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="go_term_children" title="GO Term --&gt; is_a Descendants" comment="">
+  <query name="go_term_children" model="genomic" view="GOTerm.name GOTerm.id GOTerm.relations.childTerm.name GOTerm.relations.childTerm.id" longDescription="This query shows how to find all is_a descendants of a GO term.  kmva 2013-05-22" sortOrder="GOTerm.name asc" constraintLogic="B and A">
+    <constraint path="GOTerm.relations.relationship" code="B" editable="true" op="=" value="is_a"/>
+    <constraint path="GOTerm.name" code="A" editable="true" op="=" value="protein glycosylation"/>
+  </query>
+</template>
+<template name="location_of_transcripts_on_chromosome" title="Transcript --&gt; Position of transcripts on specified Chromosome" comment="">
+  <query name="location_of_transcripts_on_chromosome" model="genomic" view="Transcript.primaryIdentifier Transcript.chromosome.primaryIdentifier Transcript.chromosomeLocation.start Transcript.chromosomeLocation.end Transcript.chromosomeLocation.strand Transcript.chromosomeLocation.locatedOn.primaryIdentifier" longDescription="What is the Chromosomal position of Transcripts on Chromosome &lt;query&gt;" sortOrder="Transcript.primaryIdentifier asc">
+    <constraint path="Transcript.chromosome.primaryIdentifier" editable="true" op="=" value="I"/>
+  </query>
+</template>
+<template name="ncRNAS_in_a_provided_species" title="Gene --&gt; ncRNA Transcripts" comment="">
+  <query name="ncRNAS_in_a_provided_species" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.transcripts.method Gene.transcripts.symbol Gene.organism.name" longDescription="Return all of the non-Coding genes for my specified Species." sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and A">
+    <constraint path="Gene.transcripts.method" code="A" editable="false" description="" op="ONE OF">
+      <value>miRNA
+      </value>
+      <value>miRNA_primary_transcript
+      </value>
+      <value>ncRNA
+      </value>
+      <value>rRNA
+      </value>
+      <value>scRNA
+      </value>
+      <value>snRNA
+      </value>
+      <value>snlRNA
+      </value>
+      <value>snoRNA
+      </value>
+      <value>tRNA
+      </value>
+      <value>tRNAscan-SE-1.23
+      </value>
+      <value>tRNAscan-SE-1.3
+      </value>
+    </constraint>
+    <constraint path="Gene.organism.name" code="B" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="ncRNAs in a given species WBP" title="Gene --&gt; ncRNA Transcripts" comment="">
+  <query name="ncRNAs in a given species WBP" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.transcripts.method Gene.transcripts.symbol Gene.organism.name" longDescription="Return all of the non-Coding genes for my specified Species." sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and A">
+    <constraint path="Gene.transcripts.method" code="A" editable="false" description="" op="ONE OF">
+      <value>miRNA
+      </value>
+      <value>miRNA_primary_transcript
+      </value>
+      <value>ncRNA
+      </value>
+      <value>rRNA
+      </value>
+      <value>scRNA
+      </value>
+      <value>snRNA
+      </value>
+      <value>snlRNA
+      </value>
+      <value>snoRNA
+      </value>
+      <value>tRNA
+      </value>
+      <value>tRNAscan-SE-1.23
+      </value>
+      <value>tRNAscan-SE-1.3
+      </value>
+    </constraint>
+    <constraint path="Gene.organism.name" code="B" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="phenotype_to_gene" title="Phenotype --&gt; Genes" comment="">
+  <query name="phenotype_to_gene" model="genomic" view="Gene.primaryIdentifier Gene.symbol" longDescription="Return all genes annotated with a particular phenotype.  Select either observed or not observed." sortOrder="Gene.symbol asc" constraintLogic="B and A">
+    <constraint path="Gene.alleles.phenotypesObserved.name" code="A" editable="true" description="Phenotype name observed" switchable="on" op="=" value="transgene expression variant"/>
+    <constraint path="Gene.alleles.phenotypesNotObserved.name" code="B" editable="true" description="Phenotype name NOT observed" switchable="off" op="=" value="transgene expression variant"/>
+  </query>
+</template>
+<template name="protein_to_cds" title="Protein --&gt; CDS" comment="">
+  <query name="protein_to_cds" model="genomic" view="Protein.CDSs.primaryIdentifier Protein.organism.name Protein.primaryAccession" longDescription="shows a mapping of protein identifiers to CDS, restricted to one species.">
+    <constraint path="Protein.organism.name" editable="true" op="=" value="Caenorhabditis elegans"/>
+  </query>
+</template>
+<template name="proteins_with_specific_motif" title="Protein --&gt; Motif" comment="">
+  <query name="proteins_with_specific_motif" model="genomic" view="Protein.primaryIdentifier Protein.motifs.primaryIdentifier Protein.organism.name" longDescription="shows all proteins with PFAM id PF13508. It is possible to restrict the species from the organism summary in the results." sortOrder="Protein.primaryIdentifier asc">
+    <constraint path="Protein.motifs.primaryIdentifier" editable="true" op="=" value="PFAM:PF13508"/>
+  </query>
+</template>
+<template name="protens_with_motif" title="Protein --&gt; Motif" comment="">
+  <query name="protens_with_motif" model="genomic" view="Protein.primaryIdentifier Protein.motifs.primaryIdentifier Protein.organism.name" longDescription="shows all proteins with PFAM id PF13508. It is possible to restrict the species from the organism summary in the results." sortOrder="Protein.primaryIdentifier asc">
+    <constraint path="Protein.motifs.primaryIdentifier" editable="true" op="=" value="PFAM:PF13508"/>
+  </query>
+</template>
+<template name="show_expression_of_a_given_gene" title="Gene --&gt; Expression Pattern" comment="">
+  <query name="show_expression_of_a_given_gene" model="genomic" view="Gene.symbol Gene.secondaryIdentifier Gene.expressionPatterns.primaryIdentifier Gene.expressionPatterns.lifeStages.anatomyTerms.name Gene.expressionPatterns.lifeStages.anatomyTerms.synonym" longDescription="Returns a list of cells/tissues where a specific gene is expressed." sortOrder="Gene.expressionPatterns.primaryIdentifier asc">
+    <constraint path="Gene" editable="true" op="LOOKUP" value="lin-3"/>
+  </query>
+</template>
+<template name="species_proteins" title="Species --&gt; Protein Sequences" comment="">
+  <query name="species_proteins" model="genomic" view="Protein.primaryAccession Protein.sequence.residues Protein.organism.name Protein.length" longDescription="returns all the known protein sequences of a species" sortOrder="Protein.primaryAccession asc" constraintLogic="B and A">
+    <constraint path="Protein.organism.name" code="B" editable="true" op="=" value="Caenorhabditis elegans"/>
+    <constraint path="Protein.CDSs.primaryIdentifier" code="A" editable="true" op="IS NOT NULL"/>
+  </query>
+</template>
+<template name="specified_transcript_location" title="Transcript --&gt; Position single query" comment="">
+  <query name="specified_transcript_location" model="genomic" view="Transcript.primaryIdentifier Transcript.chromosome.primaryIdentifier Transcript.chromosomeLocation.start Transcript.chromosomeLocation.end Transcript.chromosomeLocation.strand Transcript.chromosomeLocation.locatedOn.primaryIdentifier" longDescription="What is the Chromosomal position of Transcript X" sortOrder="Transcript.primaryIdentifier asc">
+    <constraint path="Transcript.primaryIdentifier" editable="true" op="CONTAINS" value="AH6.4"/>
+  </query>
+</template>
+<template name="transcripts_of_a_given_size" title="Specified size range --&gt; Transcript" comment="">
+  <query name="transcripts_of_a_given_size" model="genomic" view="Transcript.symbol Transcript.length" longDescription="Return a list of Transcripts in a defined size range." sortOrder="Transcript.symbol asc" constraintLogic="A and B and C">
+    <constraint path="Transcript.organism.name" code="B" editable="true" op="=" value="Caenorhabditis elegans"/>
+    <constraint path="Transcript.length" code="A" editable="true" op="&lt;" value="1000"/>
+    <constraint path="Transcript.length" code="C" editable="true" op="&gt;" value="500"/>
+  </query>
+</template>
+<template name="variation_by_method" title="Variation --&gt;Method" comment="by Mary Ann Tuli">
+  <query name="variation_by_method" model="genomic" view="Allele.primaryIdentifier Allele.symbol" longDescription="Keyset of variation objects by Method type" sortOrder="Allele.primaryIdentifier asc">
+    <constraint path="Allele.method" editable="true" op="=" value="Million_mutation"/>
+  </query>
+</template>
+</template-queries>
