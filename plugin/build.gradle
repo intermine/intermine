@@ -22,7 +22,7 @@ sourceCompatibility = 1.7
 
 repositories {
     mavenLocal()
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
