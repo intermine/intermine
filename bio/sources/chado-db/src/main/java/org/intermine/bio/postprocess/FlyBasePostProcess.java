@@ -142,5 +142,6 @@ public class FlyBasePostProcess extends PostProcessor
         }
 //        LOG.info("Created " + count + " Gene.introns collections");
         osw.commitTransaction();
+        osw.close();
     }
 }
