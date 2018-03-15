@@ -25,7 +25,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-        mavenCentral()
+        jcenter()
 
         flatDir {
             dirs '../libs'
