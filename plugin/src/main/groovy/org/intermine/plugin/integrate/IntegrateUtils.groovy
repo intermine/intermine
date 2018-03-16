@@ -232,7 +232,12 @@ class IntegrateUtils {
                     ant.project.setProperty(propName, prop.value)
                 }
             }
-            classname = props.getProperty("loader.class")
+            def fastaClassLoader = BioSourceProperties.getUserProperty(source, "fasta.loaderClassName")
+            if (fastaClassLoader != null) {
+                classname = fastaClassLoader
+            } else {
+                classname = props.getProperty("loader.class")
+            }
         } else {
             classname = "org.intermine.dataloader.ObjectStoreDataLoaderTask"
         }
