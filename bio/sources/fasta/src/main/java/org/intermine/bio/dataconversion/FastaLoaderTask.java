@@ -390,10 +390,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @return an identifier
      */
     protected String getIdentifier(ProteinSequence bioJavaSequence) {
-        String header = bioJavaSequence.getOriginalHeader() + idSuffix;
-        String[] tokens = header.trim().split("\\s+");
-        String name = tokens[0];
-
+        String name = bioJavaSequence.getOriginalHeader() + idSuffix;   
         // description_line=sp|Q9V8R9-2|41_DROME
         if (name.contains("|")) {
             String[] bits = name.split("\\|");
