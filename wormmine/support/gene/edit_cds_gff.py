@@ -3,7 +3,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-db_string = "postgres://postgres:interwormmine@localhost/intermine_prod_263_185_1"
+db_string = "postgres://postgres:interwormmine@localhost/intermine_prod_263_185_4"
 db = create_engine(db_string)
 connection = db.connect()
 
@@ -38,8 +38,6 @@ if __name__ == '__main__':
         print(k)
         cds_length[k.split('=')[-1]] = get_cds_length(g)
 
-
-    
 
     for i in cds_length:
         print(i)
