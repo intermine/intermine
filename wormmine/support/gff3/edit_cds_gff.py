@@ -42,5 +42,3 @@ if __name__ == '__main__':
     for i in cds_length:
         print(i)
         connection.execute("UPDATE cds SET length = %d WHERE primaryidentifier = '%s'" % (cds_length[i], i))
-
-
