@@ -15,4 +15,4 @@ if __name__ == '__main__':
 
     for i in gene_ids:
         print(i)
-        connection.execute("DELETE from GENE where  length = %d WHERE primaryidentifier = '%s'" % (i))
+        connection.execute("DELETE from GENE where WHERE primaryidentifier = '%s'" % (i))
