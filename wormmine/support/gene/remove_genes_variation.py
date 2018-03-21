@@ -3,9 +3,9 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-# db_string = "postgres://postgres:interwormmine@localhost/intermine_prod_263_185_4"
-# db = create_engine(db_string)
-# connection = db.connect()
+db_string = "postgres://postgres:interwormmine@localhost/intermine_prod_263_185_4"
+db = create_engine(db_string)
+connection = db.connect()
 
 
 if __name__ == '__main__':
@@ -15,4 +15,4 @@ if __name__ == '__main__':
 
     for i in gene_ids:
         print(i)
-        connection.execute("DELETE from GENE where WHERE primaryidentifier = '%s'" % (i))
+        connection.execute("DELETE from GENE WHERE primaryidentifier = '%s'" % (i))
