@@ -19,7 +19,7 @@ sourceSets {
 
 dependencies {
     compile project(':bio-core')
-    compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
-    compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
+    compile group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), classifier: "classes"
+    compile group: "org.intermine", name: "intermine-webtasks", version: System.getProperty("imVersion")
     compile project(':bio-model')
 }

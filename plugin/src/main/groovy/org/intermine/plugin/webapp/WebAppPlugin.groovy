@@ -21,15 +21,15 @@ class WebAppPlugin implements Plugin<Project> {
             bioWebApp
         }
 
-        versionConfig = project.extensions.create('webappVersionConfig', VersionConfig)
+        //versionConfig = project.extensions.create('webappVersionConfig', VersionConfig)
 
         project.task('initConfig') {
             config = project.extensions.create('webappConfig', WebAppConfig)
             dbUtils = new DBModelUtils(project)
 
             doLast {
-                project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: versionConfig.imVersion])
-                project.dependencies.add("bioWebApp", [group: "org.intermine", name: "bio-webapp", version: versionConfig.imVersion, transitive: false])
+                project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")])
+                project.dependencies.add("bioWebApp", [group: "org.intermine", name: "bio-webapp", version: System.getProperty("bioVersion"), transitive: false])
             }
         }
 

@@ -393,7 +393,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         String header = bioJavaSequence.getOriginalHeader() + idSuffix;
         String[] tokens = header.trim().split("\\s+");
         String name = tokens[0];
-        
+
         // description_line=sp|Q9V8R9-2|41_DROME
         if (name.contains("|")) {
             String[] bits = name.split("\\|");

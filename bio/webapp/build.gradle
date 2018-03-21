@@ -29,11 +29,11 @@ configurations {
 dependencies {
     providedCompile project(':bio-core')
     providedCompile project(':bio-tools')
-    providedCompile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
-    providedCompile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: imVersion    
+    providedCompile group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), classifier: "classes"
+    providedCompile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: System.getProperty("imVersion")
     providedCompile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'
     compile fileTree(dir: 'libs', include: '*.jar')
-    imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, transitive: false
+    imWebApp group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), transitive: false
     runtime group: 'org.biojava', name: 'core', version: '1.9.1'
 }
 

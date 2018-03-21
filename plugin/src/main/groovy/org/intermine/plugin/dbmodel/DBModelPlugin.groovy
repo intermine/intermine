@@ -6,7 +6,6 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 import org.intermine.plugin.TaskConstants
-import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
 
@@ -16,7 +15,6 @@ class DBModelPlugin implements Plugin<Project> {
 
     DBModelConfig config
     DBModelUtils dbUtils
-    VersionConfig versionConfig
     String buildResourcesMainDir
     boolean regenerateModel = true
     boolean generateKeys = true
@@ -31,15 +29,15 @@ class DBModelPlugin implements Plugin<Project> {
             plugin
         }
 
-        versionConfig = project.extensions.create('versionConfig', VersionConfig)
+        //versionConfig = project.extensions.create('versionConfig', VersionConfig)
 
         project.task('initConfig') {
             config = project.extensions.create('dbModelConfig', DBModelConfig)
 
             doLast {
-                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: versionConfig.imVersion, transitive: false])
-                project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: versionConfig.imVersion])
-                project.dependencies.add("api", [group: "org.intermine", name: "intermine-api", version: versionConfig.imVersion, transitive: false])
+                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("bioVersion"), transitive: false])
+                project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")])
+                project.dependencies.add("api", [group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion"), transitive: false])
 
                 dbUtils = new DBModelUtils(project)
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
@@ -63,10 +61,10 @@ class DBModelPlugin implements Plugin<Project> {
                 def projectXml = (new XmlParser()).parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
                     if (source.@type == "intermine-items-xml-file") {
-                        dbUtils.addBioSourceDependency(source.'@name', versionConfig)
+                        dbUtils.addBioSourceDependency(source.'@name')
                     }
 
-                    dbUtils.addBioSourceDependency(source.'@type', versionConfig)
+                    dbUtils.addBioSourceDependency(source.'@type')
                 }
             }
         }
@@ -122,7 +120,7 @@ class DBModelPlugin implements Plugin<Project> {
                     // Prefix because actual value of the version string is 2.+ while the real version is 2.0.0
                     // Also versions might be strings, so can't use regular expressions (eg. RC or SNAPSHOT)
                     // have to include the version number at all because go-annotation will match go
-                    String bioVersionPrefix = versionConfig.bioSourceVersion.substring(0, 1)
+                    String bioVersionPrefix = System.getProperty("bioSourceVersion").substring(0, 1)
 
                     project.configurations.getByName("mergeSource").asFileTree.each {
                         if (it.name.startsWith("bio-source-$sourceName-$bioVersionPrefix")) {
