@@ -22,7 +22,7 @@ class MineDBModelPlugin implements Plugin<Project> {
                 String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
                 def ant = new AntBuilder()
                 //added this dependecy otherwise ant doesn't find MergeSourceModelsTask at runtime
-                project.dependencies.add("plugin", [group: "org.intermine", name: "plugin", version: "1.+"])
+                project.dependencies.add("plugin", [group: "org.intermine", name: "plugin", version: System.getProperty("imVersion")])
                 String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
                 ant.taskdef(name: "mergeSourceModels", classname: "org.intermine.plugin.ant.MergeSourceModelsTask") {
                     classpath {
