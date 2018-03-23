@@ -4,7 +4,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import org.intermine.plugin.TaskConstants
-import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.dbmodel.DBModelUtils
 
 import java.nio.file.Files
@@ -13,7 +12,6 @@ import java.nio.file.StandardCopyOption
 class WebAppPlugin implements Plugin<Project> {
     WebAppConfig config;
     DBModelUtils dbUtils
-    VersionConfig versionConfig
 
     void apply(Project project) {
         project.configurations {

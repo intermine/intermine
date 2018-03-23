@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
-import org.intermine.plugin.VersionConfig
 
 class BioSourceDBModelPlugin implements Plugin<Project>{
 

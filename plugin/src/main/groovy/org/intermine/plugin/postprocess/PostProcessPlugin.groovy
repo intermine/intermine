@@ -5,7 +5,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.intermine.plugin.BioSourceProperties
 import org.intermine.plugin.TaskConstants
-import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.project.PostProcess
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
@@ -23,7 +22,6 @@ class PostProcessPlugin implements Plugin<Project> {
         org.intermine.plugin.project.Project intermineProject
         List<String> processNames = new ArrayList<String>()
         BioSourceProperties bioSourceProperties
-        VersionConfig versions = project.extensions.create('postprocessVersionConfig', VersionConfig)
 
         project.task('initPostProcess') {
             doLast {

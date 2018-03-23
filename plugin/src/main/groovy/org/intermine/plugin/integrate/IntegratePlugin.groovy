@@ -8,7 +8,6 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
 import org.intermine.plugin.BioSourceProperties
 import org.intermine.plugin.TaskConstants
-import org.intermine.plugin.VersionConfig
 import org.intermine.plugin.dbmodel.DBModelUtils
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
@@ -24,7 +23,6 @@ class IntegratePlugin implements Plugin<Project> {
         DBModelUtils dbUtils
         IntegrateUtils integration
         BioSourceProperties bioSourceProperties
-        VersionConfig versions = project.extensions.create('integrationVersionConfig', VersionConfig)
 
         project.configurations {
             integrateSource

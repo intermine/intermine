@@ -3,7 +3,6 @@ package org.intermine.plugin.dbmodel
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
-import org.intermine.plugin.VersionConfig
 
 class MineDBModelPlugin implements Plugin<Project> {
 
