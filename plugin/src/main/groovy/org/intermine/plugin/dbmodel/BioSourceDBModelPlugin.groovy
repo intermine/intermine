@@ -49,7 +49,7 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
 
         project.task('mergeModels') {
             description "Merges the bio-source specific additions.xml into an intermine XML model"
-            dependsOn 'copyBioGenomicModel', 'copyMineProperties'
+            dependsOn 'copyBioGenomicModel'
 
             doLast {
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")

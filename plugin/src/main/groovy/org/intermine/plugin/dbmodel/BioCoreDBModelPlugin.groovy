@@ -10,7 +10,7 @@ class BioCoreDBModelPlugin implements Plugin<Project>{
     void apply(Project project) {
         project.task('mergeModels') {
             description "Merges only genomic_additions.xml and so_additions.xml into an intermine XML model"
-            dependsOn 'initConfig', 'copyGenomicModel', 'copyMineProperties', 'createSoModel'
+            dependsOn 'initConfig', 'copyGenomicModel', 'createSoModel'
 
             doLast {
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
