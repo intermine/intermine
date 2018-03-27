@@ -72,7 +72,7 @@ class PostProcessPlugin implements Plugin<Project> {
                             if (source == null) {
                                 throw new InvalidUserDataException("Can't find source " + sourceName + " in project definition file")
                             }
-                            project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + source.type, version: System.getProperty("bioSourceVersion")]])
+                            project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + source.type, version: System.getProperty("bioSourceVersion")])
                         }
 
                         sourceNames.each { sourceName ->
