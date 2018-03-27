@@ -61,7 +61,7 @@ public class UniProtFastaLoaderTaskTest {
     @Test
     public void testFastaLoad() throws Exception {
         UniProtFastaLoaderTask flt = new UniProtFastaLoaderTask();
-        flt.setFastaTaxonId("7227");
+        flt.setTaxonId("7227");
         flt.setIgnoreDuplicates(true);
         flt.setSequenceType("protein");
         flt.setClassName("org.intermine.model.bio.Protein");
