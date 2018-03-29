@@ -111,7 +111,7 @@ public class FlyBaseCDSFastaLoaderTaskTest {
 
     private void executeLoaderTask(String className, String cdsFastaFile) throws Exception {
         FastaLoaderTask flt = new FlyBaseCDSFastaLoaderTask();
-        flt.setFastaTaxonId("36329");
+        flt.setTaxonId("36329");
         flt.setIgnoreDuplicates(true);
         flt.setClassName(className);
         flt.setClassAttribute("primaryIdentifier");

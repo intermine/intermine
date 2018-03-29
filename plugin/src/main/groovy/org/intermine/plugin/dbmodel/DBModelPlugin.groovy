@@ -29,8 +29,6 @@ class DBModelPlugin implements Plugin<Project> {
             plugin
         }
 
-        //versionConfig = project.extensions.create('versionConfig', VersionConfig)
-
         project.task('initConfig') {
             config = project.extensions.create('dbModelConfig', DBModelConfig)
 
@@ -214,7 +212,7 @@ class DBModelPlugin implements Plugin<Project> {
         project.task('buildDB') {
             group TaskConstants.TASK_GROUP
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
 
             doLast {
                 dbUtils.createSchema(config.objectStoreName)
@@ -227,7 +225,7 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('buildUnitTestDB') {
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
 
             doLast {
                 dbUtils.createSchema(config.objectStoreName)

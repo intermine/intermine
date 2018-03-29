@@ -11,7 +11,7 @@ class MineDBModelPlugin implements Plugin<Project> {
 
         project.task('mergeModels') {
             description "Merges defferent source model files into an intermine XML model"
-            dependsOn 'initConfig', 'copyGenomicModel', 'copyMineProperties', 'createSoModel', 'addSourceDependencies'
+            dependsOn 'initConfig', 'copyGenomicModel', 'createSoModel', 'addSourceDependencies'
             onlyIf {!new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()}
 
             MineDBModelConfig config = project.extensions.create('mineDBModelConfig', MineDBModelConfig)

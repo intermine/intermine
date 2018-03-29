@@ -8,12 +8,16 @@ import org.gradle.api.tasks.util.PatternSet
 
 class BioSourceDBModelPlugin implements Plugin<Project>{
 
+    BioSourceDBModelConfig config
+
     @Override
     void apply(Project project) {
         //only buildDB if there are tests to run
         if ((new File(project.projectDir.absolutePath + "/src/test")).exists()) {
             project.tasks.test.dependsOn 'buildUnitTestDB'
         }
+
+        config = project.extensions.create('bioSourceDBModelConfig', BioSourceDBModelConfig)
 
         project.task('createTestPrioritiesFile') {
             description "Creates a blank genomic_priorities file for unit tests. When building, the mine's priority file will be used."
@@ -47,10 +51,26 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
             }
         }
 
+        project.task('copyExtraAdditionsFile') {
+            description "Copies the extra additions file (if specified) onto the classpath"
+            doLast {
+                String extraAdditionsFilePath = config.extraAdditionsFilePath
+                if (extraAdditionsFilePath != null) {
+                    SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
+                    String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
+                    project.copy {
+                        from extraAdditionsFilePath
+                        into buildResourcesMainDir
+                        rename { 'extraAdditions_model.xml' }
+                    }
+
+                }
+            }
+        }
+
         project.task('mergeModels') {
             description "Merges the bio-source specific additions.xml into an intermine XML model"
-            dependsOn 'copyBioGenomicModel', 'copyMineProperties'
-
+            dependsOn 'copyBioGenomicModel', 'copyExtraAdditionsFile'
             doLast {
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
                 String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
@@ -64,6 +84,11 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
                             pathelement(path: project.configurations.mergeModel.asPath)
                             dirset(dir: project.buildDir.absolutePath)
                         }
+                    }
+                    String extraAdditionsFilePath = config.extraAdditionsFilePath
+                    if (extraAdditionsFilePath != null) {
+                        ant.mergeBioSourceModel(inputModelFile: inputModelFilePath, additionsFile: "extraAdditions_model.xml",
+                                outputFile: inputModelFilePath)
                     }
                     ant.mergeBioSourceModel(inputModelFile: inputModelFilePath, additionsFile: bioSourceAdditionsFile,
                             outputFile: inputModelFilePath)

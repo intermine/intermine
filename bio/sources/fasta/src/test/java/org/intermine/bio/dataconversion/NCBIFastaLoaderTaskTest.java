@@ -93,7 +93,7 @@ public class NCBIFastaLoaderTaskTest {
 
     private void executeLoaderTask(String className, String fastaFile) throws Exception {
         FastaLoaderTask flt = new NCBIFastaLoaderTask();
-        flt.setFastaTaxonId("9606");
+        flt.setTaxonId("9606");
         flt.setIgnoreDuplicates(true);
         flt.setClassName(className);
         flt.setClassAttribute("primaryIdentifier");

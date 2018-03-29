@@ -42,7 +42,6 @@ subprojects {
         maven {
             url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
         }
-
     }
 
     configurations {
@@ -69,10 +68,12 @@ subprojects {
     }
 
     task copyMineProperties(type: Copy) {
-        from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
-        into sourceSets.main.output.resourcesDir
-        rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
-        inputs.sourceFiles.stopExecutionIfEmpty()
+        doLast {
+            from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
+            into sourceSets.main.output.resourcesDir
+            rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
+            inputs.sourceFiles.stopExecutionIfEmpty()
+        }
     }
  
     jar {

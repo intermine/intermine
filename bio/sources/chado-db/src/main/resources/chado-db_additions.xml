@@ -58,7 +58,9 @@
     <class name="BioEntity" is-interface="true">
         <collection name="interactions" referenced-type="Interaction" reverse-reference="participant1"/>
     </class>
-
+    <class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true"/>
+    <class name="ThreePrimeUTR" extends="SequenceFeature" is-interface="true"/>
+    <class name="FivePrimeUTR" extends="SequenceFeature" is-interface="true"/>
     <class name="InteractionDetail" is-interface="true">
         <attribute name="role1" type="java.lang.String"/>
         <attribute name="role2" type="java.lang.String"/>

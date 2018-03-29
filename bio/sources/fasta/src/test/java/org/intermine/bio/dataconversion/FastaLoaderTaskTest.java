@@ -61,7 +61,7 @@ public class FastaLoaderTaskTest {
     @Test
     public void testFastaLoad() throws Exception {
         FastaLoaderTask flt = new FastaLoaderTask();
-        flt.setFastaTaxonId("36329");
+        flt.setTaxonId("36329");
         flt.setIgnoreDuplicates(true);
         flt.setClassName("org.intermine.model.bio.Gene");
         flt.setClassAttribute("primaryIdentifier");
@@ -114,7 +114,7 @@ public class FastaLoaderTaskTest {
     @Test
     public void testProteinFastaLoad() throws Exception {
         FastaLoaderTask flt = new FastaLoaderTask();
-        flt.setFastaTaxonId("36329");
+        flt.setTaxonId("36329");
         flt.setIgnoreDuplicates(true);
         flt.setSequenceType("protein");
         flt.setClassName("org.intermine.model.bio.Protein");

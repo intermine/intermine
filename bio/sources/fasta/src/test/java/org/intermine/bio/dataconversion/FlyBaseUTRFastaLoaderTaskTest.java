@@ -164,7 +164,7 @@ public class FlyBaseUTRFastaLoaderTaskTest {
 
     private void executeLoaderTask(String className, String utrFastaFile) throws Exception {
         FastaLoaderTask flt = new FlyBaseUTRFastaLoaderTask();
-        flt.setFastaTaxonId("36329");
+        flt.setTaxonId("36329");
         flt.setIgnoreDuplicates(true);
         flt.setClassName(className);
         flt.setClassAttribute("primaryIdentifier");

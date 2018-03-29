@@ -36,15 +36,15 @@ dbModelConfig {
     objectStoreName = "os.bio-test"
     modelName = "genomic"
     defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
-    soTermListFilePath = "model/src/main/resources/so_terms"
-    soAdditionFilePath = "model/build/so_additions.xml"
 }
 
 task copyMineProperties(type: Copy) {
-    from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
-    into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
-    inputs.sourceFiles.stopExecutionIfEmpty()
+    doLast {
+        from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
+        into sourceSets.main.output.resourcesDir
+        rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
+        inputs.sourceFiles.stopExecutionIfEmpty()
+    }
 }
 
 task copyGenomicModel(type: Copy, overwrite: true) {

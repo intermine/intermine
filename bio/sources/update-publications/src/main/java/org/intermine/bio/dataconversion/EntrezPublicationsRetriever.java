@@ -75,7 +75,7 @@ public class EntrezPublicationsRetriever
     // full record (new)
     // rettype=abstract or just leave it out
     protected static final String EFETCH_URL =
-        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?tool=flymine&db=pubmed"
+        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed"
         + "&rettype=abstract&retmode=xml&id=";
     // summary
     protected static final String ESUMMARY_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/"
