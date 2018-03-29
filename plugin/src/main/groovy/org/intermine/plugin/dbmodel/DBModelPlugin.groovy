@@ -29,8 +29,6 @@ class DBModelPlugin implements Plugin<Project> {
             plugin
         }
 
-        //versionConfig = project.extensions.create('versionConfig', VersionConfig)
-
         project.task('initConfig') {
             config = project.extensions.create('dbModelConfig', DBModelConfig)
 

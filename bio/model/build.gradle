@@ -36,8 +36,6 @@ dbModelConfig {
     objectStoreName = "os.bio-test"
     modelName = "genomic"
     defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
-    soTermListFilePath = "model/src/main/resources/so_terms"
-    soAdditionFilePath = "model/build/so_additions.xml"
 }
 
 task copyMineProperties(type: Copy) {

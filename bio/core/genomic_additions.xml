@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <classes>
 
-    <class name="CDS" is-interface="true">
+    <class name="CDS" extends="SequenceFeature" is-interface="true">
       <reference name="gene" referenced-type="Gene" reverse-reference="CDSs"/>
       <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
     </class>
 
-    <class name="Exon" is-interface="true">
+    <class name="Exon" extends="SequenceFeature" is-interface="true">
       <reference name="gene" referenced-type="Gene" reverse-reference="exons"/>
     </class>
 
-    <class name="Gene" is-interface="true">
+    <class name="Gene" extends="SequenceFeature" is-interface="true">
       <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
       <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
       <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
@@ -31,7 +31,7 @@
       <collection name="adjacentGenes" referenced-type="Gene"/>
 	 </class>
 
-    <class name="Intron" is-interface="true">
+    <class name="Intron" extends="SequenceFeature" is-interface="true">
       <collection name="genes" referenced-type="Gene" reverse-reference="introns"/>
     </class>
 
@@ -44,11 +44,11 @@
       <collection name="genes" referenced-type="Gene"/>
     </class>
         
-    <class name="Transcript" is-interface="true">
+    <class name="Transcript" extends="SequenceFeature" is-interface="true">
       <reference name="protein" referenced-type="Protein" reverse-reference="transcripts"/>
     </class>
     
-    <class name="UTR" is-interface="true">
+    <class name="UTR" extends="SequenceFeature" is-interface="true">
       <reference name="gene" referenced-type="Gene" reverse-reference="UTRs"/>
     </class>
 </classes>

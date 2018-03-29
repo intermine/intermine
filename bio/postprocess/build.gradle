@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")
+    }
+}
+apply plugin: 'dbmodel'
+apply plugin: 'biocore-dbmodel'
+
 sourceSets {
     main {
         java {
@@ -17,9 +29,46 @@ sourceSets {
     }
 }
 
+configurations {
+    bioCoreModelArtifact
+}
+
 dependencies {
     compile project(':bio-core')
     compile group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), classifier: "classes"
     compile group: "org.intermine", name: "intermine-webtasks", version: System.getProperty("imVersion")
     compile project(':bio-model')
+}
+
+dbModelConfig {
+    objectStoreName = "os.bio-test"
+    modelName = "genomic"
+    defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
+}
+
+task copyMineProperties(type: Copy) {
+    doLast {
+        from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
+        into sourceSets.main.output.resourcesDir
+        rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
+        inputs.sourceFiles.stopExecutionIfEmpty()
+    }
+}
+
+task copyGenomicModel(type: Copy, overwrite: true) {
+    from "../core/core.xml"
+    into sourceSets.main.output.resourcesDir
+
+    rename { fileName -> fileName.replace('core.xml', 'genomic_model.xml') }
+}
+
+task buildBioCoreModelJar(type: Jar) {
+    from(sourceSets.main.output)
+}
+
+tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
+tasks.install.dependsOn 'buildBioCoreModelJar'
+
+artifacts {
+    bioCoreModelArtifact buildBioCoreModelJar
 }
