@@ -1,5 +1,0 @@
-<project name="${source-name}" default="default" basedir=".">
-  <description>build, test, package ${source-name}</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>
