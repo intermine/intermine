@@ -7,7 +7,7 @@
 # TODO: not process XML files already processed
 
 #set the version to be accessed
-wbrel="WS263"
+wbrel="WS264"
 echo 'Release version' $wbrel
 
 
@@ -54,7 +54,7 @@ echo
 intermine='/mnt/data2/wormmine'
 # intermine='/Users/nuin/Dropbox/intermine/intermine'#local test
 #datadir=$intermine'/datadir_small'   # for now the datadir is inside the intermine directory
-datadir=$intermine'/datadir'   # for now the datadir is inside the intermine directory
+datadir=$intermine'/datadir264'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/'
 compara=$intermine'/wormmine/support/compara'
@@ -68,7 +68,6 @@ echo
 #################### Species #################### 
 for spe in "${!species[@]}"
 do
-  
   echo species: $spe ${species["$spe"]}
 
   #################### get the genomic data ####################

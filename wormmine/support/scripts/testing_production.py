@@ -356,4 +356,15 @@ query.add_constraint("protein.primaryAccession", "=", "WP:CE46852", code = "A")
 assert (len(query.rows()) == 1), 'Returned %i' % (len(query.rows()))
 
 
+# # ############################################### #
+print('Query #35')
+
+query = service.new_query("Organism")
+query.add_view("name", "taxonId")
+query.add_constraint("name", "IS NULL", code = "A")
+
+assert (len(query.rows()) == 0), 'Returned %i' % (len(query.rows()))
+
+
+
 

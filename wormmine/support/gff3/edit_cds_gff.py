@@ -3,7 +3,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-db_string = "postgres://postgres:interwormmine@localhost/intermine_prod_263_185_4"
+db_string = "postgres://postgres:interwormmine@localhost/intermine_prod_263_185_3"
 db = create_engine(db_string)
 connection = db.connect()
 
@@ -26,7 +26,7 @@ def check_cds_table():
 if __name__ == '__main__':
 
     col_names = ['seqid', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes']
-    gff = pd.read_csv('../../../../datadir263/wormbase-gff3/final/c_elegans.PRJNA13758.WS263_index.removed.gff', sep='\t', names = col_names)
+    gff = pd.read_csv('/mnt/data2/wormmine/datadir263/wormbase-gff3/final/c_elegans.PRJNA13758.WS263_index.removed.gff', sep='\t', names = col_names)
 
     cds = gff.loc[gff['type'] == 'CDS']
 
