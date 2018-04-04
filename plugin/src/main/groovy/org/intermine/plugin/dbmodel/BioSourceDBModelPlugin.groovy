@@ -54,16 +54,14 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
         project.task('copyExtraAdditionsFile') {
             description "Copies the extra additions file (if specified) onto the classpath"
             doLast {
-                String extraAdditionsFilePath = config.extraAdditionsFilePath
-                if (extraAdditionsFilePath != null) {
+                 if ((new File(project.rootDir.absolutePath + "/" + config.extraAdditionsFile)).exists()) {
                     SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
                     String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
                     project.copy {
-                        from extraAdditionsFilePath
+                        from project.rootDir.absolutePath + "/" + config.extraAdditionsFile
                         into buildResourcesMainDir
                         rename { 'extraAdditions_model.xml' }
                     }
-
                 }
             }
         }
@@ -85,8 +83,8 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
                             dirset(dir: project.buildDir.absolutePath)
                         }
                     }
-                    String extraAdditionsFilePath = config.extraAdditionsFilePath
-                    if (extraAdditionsFilePath != null) {
+                    String extraAdditionsFile = config.extraAdditionsFile
+                    if (extraAdditionsFile != null) {
                         ant.mergeBioSourceModel(inputModelFile: inputModelFilePath, additionsFile: "extraAdditions_model.xml",
                                 outputFile: inputModelFilePath)
                     }
