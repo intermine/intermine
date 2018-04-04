@@ -29,7 +29,7 @@ class IntegratePlugin implements Plugin<Project> {
         }
 
         project.task('initIntegration') {
-            dependsOn 'copyDefaultInterMineProperties','generateModel'
+            dependsOn 'copyDefaultInterMineProperties', 'copyMineProperties', 'generateModel'
 
             doLast {
                 intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml));

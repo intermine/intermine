@@ -60,9 +60,10 @@ public final class IdResolverService
     public static IdResolver getIdResolverByOrganism(Set<String> taxonIds) {
         // HACK - for worm in ncbi
         IdResolverService.getWormIdResolver();
-
+        IdResolverService.getFlyIdResolver();
         Set<String> validTaxonIds = new HashSet<String>(taxonIds);
         validTaxonIds.remove("6239");
+        validTaxonIds.remove("7227");
         return new EntrezGeneIdResolverFactory().getIdResolver(validTaxonIds);
     }
 
@@ -70,7 +71,7 @@ public final class IdResolverService
      * @return array of taxon IDs for MODs
      */
     public static IdResolver getIdResolverForMOD() {
-        return new EntrezGeneIdResolverFactory().getIdResolver(new HashSet<String>(
+        return getIdResolverByOrganism(new HashSet<String>(
                 Arrays.asList("7227", "7955", "10090", "10116", "4932", "6239", "9606")));
     }
 
