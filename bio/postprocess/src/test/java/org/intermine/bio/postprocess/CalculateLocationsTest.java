@@ -27,7 +27,6 @@ import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
-import org.intermine.model.bio.ReversePrimer;
 import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -129,17 +128,17 @@ public class CalculateLocationsTest extends TestCase
             exonLocs[i].setId(new Integer(1000 + exonId));
         }
 
-        ReversePrimer rp =
-            (ReversePrimer) DynamicUtil.createObject(Collections.singleton(ReversePrimer.class));
-        rp.setId(new Integer(3000));
-        rp.setLength(new Integer(100));
-        rp.setChromosome(chr);
-
-        Location rpLoc = createLocation(chr, rp, "1", 1, 100, Location.class);
-        rpLoc.setId(new Integer(3001));
-
-        toStore.add(rp);
-        toStore.add(rpLoc);
+//        ReversePrimer rp =
+//            (ReversePrimer) DynamicUtil.createObject(Collections.singleton(ReversePrimer.class));
+//        rp.setId(new Integer(3000));
+//        rp.setLength(new Integer(100));
+//        rp.setChromosome(chr);
+//
+//        Location rpLoc = createLocation(chr, rp, "1", 1, 100, Location.class);
+//        rpLoc.setId(new Integer(3001));
+//
+//        toStore.add(rp);
+//        toStore.add(rpLoc);
         toStore.addAll(Arrays.asList(exons));
         toStore.addAll(Arrays.asList(exonLocs));
 

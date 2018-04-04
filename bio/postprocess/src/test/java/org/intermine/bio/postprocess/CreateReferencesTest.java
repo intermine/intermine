@@ -21,11 +21,12 @@ import junit.framework.TestCase;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Exon;
-import org.intermine.model.bio.FivePrimeUTR;
+//import org.intermine.model.bio.FivePrimeUTR;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
-import org.intermine.model.bio.MRNA;
-import org.intermine.model.bio.ThreePrimeUTR;
+//import org.intermine.model.bio.MRNA;
+import org.intermine.model.bio.Transcript;
+//import org.intermine.model.bio.ThreePrimeUTR;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -50,15 +51,15 @@ public class CreateReferencesTest extends TestCase {
     private Chromosome storedChromosome = null;
     private Gene storedGene1 = null;
     private Gene storedGene2 = null;
-    private MRNA storedTranscript1 = null;
-    private MRNA storedTranscript2 = null;
+    private Transcript storedTranscript1 = null;
+    private Transcript storedTranscript2 = null;
     private Exon storedExon1 = null;
     private Exon storedExon2 = null;
     private Exon storedExon3 = null;
     private Location storedGeneLocation1 = null;
     private Location storedGeneLocation2 = null;
-    private ThreePrimeUTR storedThreePrimeUTR = null;
-    private FivePrimeUTR storedFivePrimeUTR = null;
+//    private ThreePrimeUTR storedThreePrimeUTR = null;
+//    private FivePrimeUTR storedFivePrimeUTR = null;
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
@@ -188,12 +189,12 @@ public class CreateReferencesTest extends TestCase {
         storedGeneLocation2.setFeature(storedGene2);
 
         storedTranscript1 =
-            (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         storedTranscript1.setPrimaryIdentifier("transcript1");
         storedTranscript1.setGene(storedGene1);
 
         storedTranscript2 =
-            (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         storedTranscript2.setPrimaryIdentifier("transcript2");
         storedTranscript2.setGene(storedGene1);
 
@@ -210,15 +211,15 @@ public class CreateReferencesTest extends TestCase {
         storedTranscript1.addExons(storedExon2);
         storedTranscript2.addExons(storedExon3);
 
-        storedThreePrimeUTR =
-            (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
-        storedThreePrimeUTR.setPrimaryIdentifier("utr1-threePrimeUTR");
-        storedThreePrimeUTR.addTranscripts(storedTranscript1);
-
-        storedFivePrimeUTR =
-            (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
-        storedFivePrimeUTR.setPrimaryIdentifier("utr2-fivePrimeUTR");
-        storedFivePrimeUTR.addTranscripts(storedTranscript1);
+//        storedThreePrimeUTR =
+//            (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
+//        storedThreePrimeUTR.setPrimaryIdentifier("utr1-threePrimeUTR");
+//        storedThreePrimeUTR.addTranscripts(storedTranscript1);
+//
+//        storedFivePrimeUTR =
+//            (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
+//        storedFivePrimeUTR.setPrimaryIdentifier("utr2-fivePrimeUTR");
+//        storedFivePrimeUTR.addTranscripts(storedTranscript1);
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                 storedChromosome,
