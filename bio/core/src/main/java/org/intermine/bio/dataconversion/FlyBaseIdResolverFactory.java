@@ -135,9 +135,9 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         try {
-            conn = db.getConnection();
             LOG.info("Querying FlyBase DB: " + db.getName());
             for (String clsName : clsCol) {
+                conn = db.getConnection();
                 String query = "select c.cvterm_id"
                     + " from cvterm c, cv"
                     + " where c.cv_id = cv.cv_id"
