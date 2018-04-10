@@ -1,7 +1,10 @@
 buildscript {
     repositories {
         mavenLocal()
-        mavenCentral()
+        jcenter()
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+        }
     }
     dependencies {
         classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")
