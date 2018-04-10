@@ -51,16 +51,16 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
             }
         }
 
-        project.task('copyExtraAdditionsFile') {
-            description "Copies the extra additions file (if specified) onto the classpath"
+        project.task('copyGlobalAdditionsFile') {
+            description "Copies the extra global additions file (if specified) onto the classpath"
             doLast {
-                 if ((new File(project.rootDir.absolutePath + "/" + config.extraAdditionsFile)).exists()) {
+                 if ((new File(project.rootDir.absolutePath + "/" + config.globalAdditionsFile)).exists()) {
                     SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
                     String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
                     project.copy {
-                        from project.rootDir.absolutePath + "/" + config.extraAdditionsFile
+                        from project.rootDir.absolutePath + "/" + config.globalAdditionsFile
                         into buildResourcesMainDir
-                        rename { 'extraAdditions_model.xml' }
+                        rename { 'global_additions.xml' }
                     }
                 }
             }
@@ -68,7 +68,7 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
 
         project.task('mergeModels') {
             description "Merges the bio-source specific additions.xml into an intermine XML model"
-            dependsOn 'copyBioGenomicModel', 'copyExtraAdditionsFile'
+            dependsOn 'copyBioGenomicModel', 'copyGlobalAdditionsFile'
             doLast {
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
                 String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
@@ -83,9 +83,9 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
                             dirset(dir: project.buildDir.absolutePath)
                         }
                     }
-                    String extraAdditionsFile = config.extraAdditionsFile
+                    String extraAdditionsFile = config.globalAdditionsFile
                     if (extraAdditionsFile != null) {
-                        ant.mergeBioSourceModel(inputModelFile: inputModelFilePath, additionsFile: "extraAdditions_model.xml",
+                        ant.mergeBioSourceModel(inputModelFile: inputModelFilePath, additionsFile: "global_additions.xml",
                                 outputFile: inputModelFilePath)
                     }
                     ant.mergeBioSourceModel(inputModelFile: inputModelFilePath, additionsFile: bioSourceAdditionsFile,
