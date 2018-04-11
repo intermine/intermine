@@ -119,7 +119,7 @@ class DBModelPlugin implements Plugin<Project> {
                     // Prefix because actual value of the version string is 2.+ while the real version is 2.0.0
                     // Also versions might be strings, so can't use regular expressions (eg. RC or SNAPSHOT)
                     // have to include the version number at all because go-annotation will match go
-                    String bioVersionPrefix = System.getProperty("bioSourceVersion").substring(0, 1)
+                    String bioVersionPrefix = System.getProperty("bioVersion").substring(0, 1)
 
                     project.configurations.getByName("mergeSource").asFileTree.each {
                         if (it.name.startsWith("bio-source-$sourceName-$bioVersionPrefix")) {

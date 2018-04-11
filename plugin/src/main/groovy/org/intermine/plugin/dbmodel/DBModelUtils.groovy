@@ -30,7 +30,7 @@ class DBModelUtils {
     protected addBioSourceDependency = { sourcePostfix ->
         DependencyHandler dh = project.getDependencies()
         Dependency dep = dh.create(
-                [group: "org.intermine", name: "bio-source-${sourcePostfix}", version: System.getProperty("bioSourceVersion")])
+                [group: "org.intermine", name: "bio-source-${sourcePostfix}", version: System.getProperty("bioVersion")])
 
         // This can prove useful for debugging but may be a bit too noisy in practice
         // System.out.println("Adding mergeSource configuration dependency ${dep}")

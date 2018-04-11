@@ -53,7 +53,7 @@ class IntegratePlugin implements Plugin<Project> {
                         throw new InvalidUserDataException("Can't find source " + sourceName + " in gradleProject definition file")
                     }
                     String sourceType = source.type
-                    project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: System.getProperty("bioSourceVersion")])
+                    project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: System.getProperty("bioVersion")])
 
                     if ("so".equals(sourceType)) {
                         // extract SO.obo file and put on classpath for use by this data source
