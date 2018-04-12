@@ -159,12 +159,15 @@ class IntegrateUtils {
                 pathelement(path: gradleProject.configurations.getByName("integrateSource").asPath)
             }
         }
+        // if we don't set the value as actual NULL, Gradle passes the value as "null" -- a string.
+        def largeXMLFileName = ""
+        if (BioSourceProperties.hasProperty("src.data.file")) {
+            largeXMLFileName = BioSourceProperties.getUserProperty(source, "src.data.file")
+        }
         ant.convertFullXMLFile(osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", sourceName: source.name,
-                file: BioSourceProperties.getUserProperty(source, "src.data.file"), modelName: "genomic")
+                file: largeXMLFileName, modelName: "genomic")
         {
-            fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
-                    includes: BioSourceProperties.getUserProperty(source, "src.data.dir.includes"),
-                    excludes: BioSourceProperties.getUserProperty(source, "src.data.dir.excludes"))
+            fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"))
         }
     }
 
