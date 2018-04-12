@@ -97,6 +97,15 @@ class BioSourceProperties {
         return getBioSourceProperties(sourceName).getProperty(POSTPROCESSOR_CLASS)
     }
 
+    static boolean hasUserProperty(Source source, String key) {
+        for (prop in source.userProperties) {
+            if (key.equals(prop.name)) {
+                return true
+            }
+        }
+        return false
+    }
+
     static String getUserProperty(Source source, String key) {
         for (prop in source.userProperties) {
             if (key.equals(prop.name)) {
