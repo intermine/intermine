@@ -1,5 +1,7 @@
 rootProject.name = 'bio-postprocess'
 
-include ':bio-postprocess-create-chromosome-locations'
+include ':bio-postprocess-create-chromosome-locations',
+        ':bio-postprocess-create-search-index'
 
 project(':bio-postprocess-create-chromosome-locations').projectDir = new File(settingsDir, './create-chromosome-locations')
+project(':bio-postprocess-create-search-index').projectDir = new File(settingsDir, './create-search-index')
