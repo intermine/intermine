@@ -26,6 +26,7 @@ class IntegratePlugin implements Plugin<Project> {
 
         project.configurations {
             integrateSource
+            postProcesses
         }
 
         project.task('initIntegration') {

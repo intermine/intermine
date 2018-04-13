@@ -27,6 +27,11 @@ class BioSourceProperties {
         return getProperties(sourceType, propsFileName)
     }
 
+    String getPostProcesserClassName(String processName) {
+        String propsFileName = processName + ".properties"
+        return getPostProcessProperties(processName, propsFileName).getProperty(POSTPROCESSOR_CLASS)
+    }
+
     Properties getBioSourcePreRetrieveProperties(String sourceName) {
         String sourceType = imProject.sources.get(sourceName).type
         String propsFileName = sourceType + "-pre-retrieve.properties"
@@ -36,6 +41,24 @@ class BioSourceProperties {
     private Properties getProperties(String sourceType, String propsFileName) {
         Properties properties = new Properties()
         Configuration config = gradleProject.configurations.getByName("integrateSource")
+        config.files.each {file ->
+            if (file.name.contains(sourceType)) {
+                FileTree fileTree = gradleProject.zipTree(file)
+                PatternSet patternSet = new PatternSet();
+                patternSet.include(propsFileName);
+                if (fileTree.matching(patternSet).find()) {//-pre-retrieve.properties might not exist
+                    File props = fileTree.matching(patternSet).singleFile
+                    props.withInputStream { properties.load(it) }
+                }
+                return properties
+            }
+        }
+        return properties
+    }
+
+    private Properties getPostProcessProperties(String sourceType, String propsFileName) {
+        Properties properties = new Properties()
+        Configuration config = gradleProject.configurations.getByName("postProcesses")
         config.files.each {file ->
             if (file.name.contains(sourceType)) {
                 FileTree fileTree = gradleProject.zipTree(file)
