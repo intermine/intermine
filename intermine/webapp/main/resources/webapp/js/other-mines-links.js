@@ -79,11 +79,11 @@ var OtherMines = (function ($, _, AjaxServices) {
       {name: 'class', value: obj.type},
       {name: 'origin', value: request.origin}
     ];
-    if (group.domain === request.domain) {
-      params.push({
-        name: OtherMines.DOMAIN_PARAMETER_NAME, value: request.domain
-      });
-    }
+    // if (group.domain === request.domain) {
+    //   params.push({
+    //     name: OtherMines.DOMAIN_PARAMETER_NAME, value: request.domain
+    //   });
+    // }
     var data = {
       name: (obj.name || obj.identifier),
       mineLink: mine.url + '/portal.do?' + queryString(params)
