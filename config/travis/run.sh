@@ -38,7 +38,7 @@ elif [ "$TEST_SUITE" = "bio" ]; then
     echo "RUNNING bio unit tests"
     (cd intermine && ./gradlew install)
     (cd plugin && ./gradlew install)
-    (cd bio && ./gradlew :bio-core:install && ./gradlew build)
+    (cd bio && ./gradlew install && ./gradlew build)
 
     echo CHECKING results
     ./config/lib/parse_test_report.py 'bio'

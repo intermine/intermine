@@ -31,11 +31,14 @@ dependencies {
     compile group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion")
     provided fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar not found in public repo, obo and bbop not available in the public maven repo
     testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
-    testCompile project(path: ':bio-model', configuration: 'bioCoreModelArtifact')
+
+    testCompile group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("bioVersion") // idresolver needs db
+
     runtime fileTree(dir: 'libs', include: '*.jar') //antlr-2.7.6-caching.jar
 }
 
 tasks.test.dependsOn ':bio-model:buildDB'
+tasks.compileTestJava.dependsOn ':bio-model:copyMineProperties'
 
 jar {
     dependsOn configurations.runtime
