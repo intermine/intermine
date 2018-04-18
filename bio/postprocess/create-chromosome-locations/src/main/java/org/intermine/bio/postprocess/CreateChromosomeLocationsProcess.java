@@ -58,7 +58,7 @@ import org.intermine.postprocess.PostProcessor;
 public class CreateChromosomeLocationsProcess extends PostProcessor
 {
     /**
-     * Create a new instance of FlyBasePostProcess
+     * Create a new instance
      *
      * @param osw object store writer
      */
@@ -69,8 +69,7 @@ public class CreateChromosomeLocationsProcess extends PostProcessor
     /**
      * {@inheritDoc}
      * <br/>
-     * Main post-processing routine. Fill in the Gene.introns collection
-     * from Gene.introns
+     * Main post-processing routine.
      * @throws ObjectStoreException if the objectstore throws an exception
      */
     public void postProcess()

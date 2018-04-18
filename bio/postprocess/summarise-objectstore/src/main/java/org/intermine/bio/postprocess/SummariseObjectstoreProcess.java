@@ -35,13 +35,15 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * Create a the Lucene keyword search index for a mine.
- * @author Alex Kalderimis
+ * Summarise an ObjectStore into a particular properties file.  The summary contains:
+ * <p> counts of the number of objects of each class
+ * <p> for class fields that have a small number of value, a list of those values.
+ * @author Kim Rutherford
  */
 public class SummariseObjectstoreProcess extends PostProcessor
 {
     /**
-     * Create a new instance of CreateSearchIdexProcess
+     * Create a new instance
      *
      * @param osw object store writer
      */

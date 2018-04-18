@@ -67,8 +67,7 @@ public class CreateUTRReferencesProcess extends PostProcessor
     /**
      * {@inheritDoc}
      * <br/>
-     * Main post-processing routine. Fill in the Gene.introns collection
-     * from Gene.introns
+     * Main post-processing routine.
      * @throws ObjectStoreException if the objectstore throws an exception
      */
     public void postProcess()
