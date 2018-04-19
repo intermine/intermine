@@ -92,7 +92,7 @@ public class MakeSpanningLocationsProcess extends PostProcessor
      * @param refField the linking field eg. "exons"
      * @throws ObjectStoreException if the is a problem with the ObjectStore
      */
-    private void createSpanningLocations(String parentClsName, String childClsName, String refField)
+    protected void createSpanningLocations(String parentClsName, String childClsName, String refField)
             throws ObjectStoreException {
 
         try {
