@@ -114,7 +114,7 @@ public class TransferSequencesProcess extends PostProcessor
      *
      * @throws Exception if there are problems with the transfer
      */
-    private void transferToLocatedSequenceFeatures()
+    protected void transferToLocatedSequenceFeatures()
             throws Exception {
         long startTime = System.currentTimeMillis();
 
@@ -150,8 +150,7 @@ public class TransferSequencesProcess extends PostProcessor
         }
     }
 
-
-    private void transferForChromosome(Chromosome chr) throws Exception {
+    protected void transferForChromosome(Chromosome chr) throws Exception {
 
         long startTime = System.currentTimeMillis();
 
@@ -339,7 +338,7 @@ public class TransferSequencesProcess extends PostProcessor
      * object for the Transcript.  Uses the ObjectStoreWriter that was passed to the constructor
      * @throws Exception if there are problems with the transfer
      */
-    private void transferToTranscripts()
+    protected void transferToTranscripts()
             throws Exception {
 
         try {

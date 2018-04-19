@@ -87,13 +87,12 @@ public class CreateIntergenicRegionFeaturesProcessTest extends TestCase
     }
 
     public void testCreateIntergenicRegionFeatures() throws Exception {
-        IntergenicRegionUtil iru = new IntergenicRegionUtil(osw);
+        CreateIntergenicRegionFeaturesProcess iru = new CreateIntergenicRegionFeaturesProcess(osw);
 
         List chrXgeneLocList =  new ArrayList();
         Map chrXlocMap = new HashMap();
         Integer chrXId = createChrX(chrXgeneLocList, chrXlocMap, 1000);
-        Iterator irIter = iru.createIntergenicRegionFeatures(new HashSet(chrXgeneLocList),
-                chrXlocMap, chrXId);
+        Iterator irIter = iru.createFeatures(new HashSet(chrXgeneLocList), chrXlocMap, chrXId);
 
         {
             Set intergenicRegions = new HashSet(IteratorUtils.toList(irIter));
@@ -104,7 +103,7 @@ public class CreateIntergenicRegionFeaturesProcessTest extends TestCase
         List chr1geneLocList =  new ArrayList();
         Map chr1locMap = new HashMap();
         Integer chr1Id = createChr1(chr1geneLocList, chr1locMap, 2000);
-        irIter = iru.createIntergenicRegionFeatures(new HashSet(chr1geneLocList), chr1locMap,
+        irIter = iru.createFeatures(new HashSet(chr1geneLocList), chr1locMap,
                 chr1Id);
 
         {
@@ -115,7 +114,7 @@ public class CreateIntergenicRegionFeaturesProcessTest extends TestCase
     }
 
     public void testCreateIntergenicRegionFeaturesRefs() throws Exception {
-        IntergenicRegionUtil iru = new IntergenicRegionUtil(osw);
+        CreateIntergenicRegionFeaturesProcess iru = new CreateIntergenicRegionFeaturesProcess(osw);
 
         List chrXgeneLocList =  new ArrayList();
         Map chrXlocMap = new HashMap();
@@ -124,7 +123,7 @@ public class CreateIntergenicRegionFeaturesProcessTest extends TestCase
         Map chr1locMap = new HashMap();
         Integer chr1Id = createChr1(chr1geneLocList, chr1locMap, 4000);
 
-        iru.createIntergenicRegionFeatures();
+        iru.postProcess();
 
         ObjectStore os = osw.getObjectStore();
         os.flushObjectById();

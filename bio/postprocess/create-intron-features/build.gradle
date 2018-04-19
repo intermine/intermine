@@ -18,8 +18,8 @@ sourceSets {
 }
 
 dependencies {
-    compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
     compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
+    compile group: 'org.intermine', name: 'bio-source-flymine-static', version: "2.0.0"
 }
 
 processResources {

@@ -18,7 +18,7 @@ sourceSets {
 }
 
 dependencies {
-    compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
+    compile group: 'org.intermine', name: 'bio-source-chado-db', version: bioVersion
     compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
 }
 
