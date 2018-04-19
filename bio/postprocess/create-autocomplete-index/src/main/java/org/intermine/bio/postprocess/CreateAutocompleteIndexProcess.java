@@ -19,6 +19,7 @@ import java.util.Properties;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.sql.Database;
+import java.sql.SQLException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -57,18 +58,22 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
         Properties props = new Properties();
         try {
             props.load(getClass().getClassLoader().getResourceAsStream("objectstoresummary.config.properties"));
+
+            ObjectStore os = osw.getObjectStore();
+            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+
+            AutoCompleter ac = new AutoCompleter(os, props);
+            if (ac.getBinaryIndexMap() != null) {
+                MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
+                        ac.getBinaryIndexMap());
+            }
+
         } catch (IOException e) {
             throw new BuildException("Could not open the class keys");
         } catch (NullPointerException e) {
             throw new BuildException("Could not find the class keys");
-        }
-        ObjectStore os = osw.getObjectStore();
-        Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-
-        AutoCompleter ac = new AutoCompleter(os, props);
-        if (ac.getBinaryIndexMap() != null) {
-            MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
-                    ac.getBinaryIndexMap());
+        } catch (SQLException e) {
+            throw new BuildException("Could not store autocomplete index");
         }
     }
 }

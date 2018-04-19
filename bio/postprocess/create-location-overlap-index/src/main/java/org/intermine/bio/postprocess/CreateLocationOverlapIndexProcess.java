@@ -27,9 +27,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 
 
 /**
- * Create an index on the location table to be used for range queries. If Postgres is version 9.2 or
- * later this will use the built-in int4range type, otherwise it will use BioSeg if installed. If
- * neither of these conditions are met an exception will be thrown.
+ * Create an index on the location table to be used for range queries. Uses the built-in int4range type.
  * @author Richard Smith
  */
 public class CreateLocationOverlapIndexProcess extends PostProcessor {
