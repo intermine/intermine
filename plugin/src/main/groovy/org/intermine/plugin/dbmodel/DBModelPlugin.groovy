@@ -251,7 +251,7 @@ class DBModelPlugin implements Plugin<Project> {
         project.task('buildUserDB') {
             group TaskConstants.TASK_GROUP
             description "Build the user database for the webapp"
-            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyUserProfileModel', 'jar'
+            dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyMineProperties', 'copyUserProfileModel', 'jar'
 
             doLast {
                 dbUtils.createSchema(config.userProfileObjectStoreName)

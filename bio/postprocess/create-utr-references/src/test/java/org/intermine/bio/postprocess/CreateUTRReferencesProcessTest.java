@@ -19,10 +19,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.FivePrimeUTR;
-import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.ThreePrimeUTR;
@@ -39,20 +36,15 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
+
 /**
  * Tests for the CreateUTReferencesProcess class.
  */
 public class CreateUTRReferencesProcessTest extends TestCase {
 
     private ObjectStoreWriter osw;
-    private Chromosome storedChromosome = null;
-    private Gene storedGene1 = null;
-    private Gene storedGene2 = null;
     private MRNA storedTranscript1 = null;
     private MRNA storedTranscript2 = null;
-    private Exon storedExon1 = null;
-    private Exon storedExon2 = null;
-    private Exon storedExon3 = null;
     private Location storedGeneLocation1 = null;
     private Location storedGeneLocation2 = null;
     private ThreePrimeUTR storedThreePrimeUTR = null;
@@ -105,51 +97,16 @@ public class CreateUTRReferencesProcessTest extends TestCase {
         assertEquals(storedFivePrimeUTR.getId(), resMRNA.getFivePrimeUTR().getId());
     }
 
-
     private void createData() throws Exception {
         osw.flushObjectById();
-
-        storedChromosome = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        storedChromosome.setPrimaryIdentifier("chr1");
-
-        storedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        storedGene1.setPrimaryIdentifier("gene1");
-
-        storedGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        storedGene2.setPrimaryIdentifier("gene2");
-
-        storedGeneLocation1 =
-                (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        storedGeneLocation1.setLocatedOn(storedChromosome);
-        storedGeneLocation1.setFeature(storedGene1);
-
-        storedGeneLocation2 =
-                (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        storedGeneLocation2.setLocatedOn(storedChromosome);
-        storedGeneLocation2.setFeature(storedGene2);
 
         storedTranscript1 =
                 (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedTranscript1.setPrimaryIdentifier("transcript1");
-        storedTranscript1.setGene(storedGene1);
 
         storedTranscript2 =
                 (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedTranscript2.setPrimaryIdentifier("transcript2");
-        storedTranscript2.setGene(storedGene1);
-
-        storedExon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        storedExon1.setPrimaryIdentifier("exon1");
-
-        storedExon2 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        storedExon2.setPrimaryIdentifier("exon2");
-
-        storedExon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        storedExon3.setPrimaryIdentifier("exon3");
-
-        storedTranscript1.addExons(storedExon1);
-        storedTranscript1.addExons(storedExon2);
-        storedTranscript2.addExons(storedExon3);
 
         storedThreePrimeUTR =
                 (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
@@ -162,11 +119,7 @@ public class CreateUTRReferencesProcessTest extends TestCase {
         storedFivePrimeUTR.addTranscripts(storedTranscript1);
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
-                storedChromosome,
-                storedGene1, storedGene2,
-                storedGeneLocation1, storedGeneLocation2,
                 storedTranscript1, storedTranscript2,
-                storedExon1, storedExon2, storedExon3,
                 storedThreePrimeUTR, storedFivePrimeUTR
         }));
 
