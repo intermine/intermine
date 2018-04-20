@@ -26,9 +26,3 @@ dependencies {
 processResources {
     from('.') { include ("*.properties")}
 }
-
-task showDeps {
-    doLast {
-        println configurations.compile.files
-    }
-}
