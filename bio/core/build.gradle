@@ -38,7 +38,6 @@ dependencies {
 }
 
 tasks.test.dependsOn ':bio-model:buildDB'
-tasks.compileTestJava.dependsOn ':bio-model:copyMineProperties', ':bio-model:copyDefaultInterMineProperties'
 
 jar {
     dependsOn configurations.runtime
