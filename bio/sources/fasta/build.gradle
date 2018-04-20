@@ -18,10 +18,17 @@ sourceSets {
 }
 
 dependencies {
-    compile group: 'org.intermine', name: 'bio-source-chado-db', version: bioVersion //to read genomic_keyDefs.properties
+    compile group: 'org.intermine', name: 'bio-source-chado-db', version: bioVersion
+    bioModel group: 'org.intermine', name: 'bio-source-chado-db', version: bioVersion, transitive: false
     compile fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar
 }
 
 processResources {
     from('.') { include ("*.properties")}
+}
+
+task showDeps {
+    doLast {
+        println configurations.compile.files
+    }
 }

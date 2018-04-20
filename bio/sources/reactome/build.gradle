@@ -21,6 +21,7 @@ dependencies {
     compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
     compile group: 'org.intermine', name: 'bio-postprocess', version: bioVersion
     runtime fileTree(dir: 'libs', include: '*.jar') //antlr-2.7.6-caching.jar
+    bioModel group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
 }
 
 processResources {

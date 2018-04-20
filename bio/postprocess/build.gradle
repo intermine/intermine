@@ -119,7 +119,7 @@ subprojects {
         configurations = ['archives']
     }
 
-    tasks.compileTestJava.dependsOn 'copyMineProperties'
+    tasks.processResources.dependsOn('copyMineProperties')
 }
 
 task testReport(type: TestReport) {

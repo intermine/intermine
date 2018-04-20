@@ -51,13 +51,11 @@ subprojects {
     
     dependencies {
         compile group: 'log4j', name: 'log4j', version: '1.2.17'
-        compile group: 'org.intermine', name: 'bio-core', version: System.getProperty("bioVersion")
         compile group : "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion") // log4j
         compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
         testCompile group: 'junit', name: 'junit', version: '4.8.2'
         testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
-        bioModel group: 'org.intermine', name: 'bio-model', version: System.getProperty("bioVersion"), transitive: false
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
     }
 
