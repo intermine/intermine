@@ -33,7 +33,15 @@
     <reference name="tissueSource" referenced-type="AnatomyTerm" />
   </class>
   <!-- postprocess needs this -->
-  <class name="Transcript" extends="SequenceFeature" is-interface="true"/>
+  <class name="Intron" extends="SequenceFeature" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript"/>
+  </class>
+  <class name="CDS" extends="SequenceFeature" is-interface="true">
+    <reference name="transcript" referenced-type="Transcript"/>
+  </class>
+  <class name="Transcript" extends="SequenceFeature" is-interface="true">
+    <reference name="gene" referenced-type="Gene"/>
+  </class>
   <class name="MRNA" extends="Transcript" is-interface="true">
         <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
         <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>

@@ -78,7 +78,7 @@ public class PopulateChildFeaturesProcess extends PostProcessor
 
         model = Model.getInstanceByName("genomic");
 
-        Map<String, SOTerm> soTerms = populateSOTermMap(osw);
+        Map<String, SOTerm> soTerms = populateSOTermMap(osw.getObjectStore());
         Query q = getAllParents();
         Results res = osw.getObjectStore().execute(q);
         Iterator<Object> resIter = res.iterator();
