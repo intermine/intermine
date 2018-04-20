@@ -124,6 +124,8 @@ subprojects {
         }
         configurations = ['archives']
     }
+
+    tasks.compileTestJava.dependsOn ':bio-model:copyMineProperties'
 }
 
 task testReport(type: TestReport) {

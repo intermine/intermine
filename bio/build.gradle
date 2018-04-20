@@ -74,8 +74,6 @@ subprojects {
         }
         configurations = ['archives']
     }
-
-    tasks.test.dependsOn('copyMineProperties')
 }
 
 task testReport(type: TestReport) {
