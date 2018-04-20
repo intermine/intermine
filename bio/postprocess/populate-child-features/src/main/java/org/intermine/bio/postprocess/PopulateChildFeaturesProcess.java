@@ -50,7 +50,6 @@ public class PopulateChildFeaturesProcess extends PostProcessor
 {
 
     private static final Logger LOG = Logger.getLogger(PopulateChildFeaturesProcess.class);
-    protected ObjectStoreWriter osw;
     private Model model;
     private static final String TARGET_COLLECTION = "childFeatures";
     private Map<String, Set<CollectionHolder>> parentToChildren
