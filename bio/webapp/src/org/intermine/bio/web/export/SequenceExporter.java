@@ -179,8 +179,8 @@ public class SequenceExporter implements Exporter
 
                 if (bioSequence == null) {
                     // the object doesn't have a sequence
-                    header.append("no sequence attached.");
-                    LOG.info("FFF5 ! " + header);
+                    header.append(" no sequence attached.");
+                    LOG.debug(header);
                     continue;
                 }
 

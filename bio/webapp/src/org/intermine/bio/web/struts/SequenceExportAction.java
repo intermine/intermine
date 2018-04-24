@@ -53,7 +53,7 @@ import org.intermine.web.struts.InterMineAction;
  */
 public class SequenceExportAction extends InterMineAction
 {
-    private static final Logger LOG = Logger.getLogger(SequenceExportAction.class);
+    // private static final Logger LOG = Logger.getLogger(SequenceExportAction.class);
     private static final String PROPERTY_DESCRIPTIONLINE = "description_line";
 
     /**
@@ -87,17 +87,9 @@ public class SequenceExportAction extends InterMineAction
 
             response.setContentType("text/plain");
             if (bioSequence != null) {
-                LOG.info("FFF action " + bioSequence.getAnnotation().keys());
-                LOG.info("FFF action " + bioSequence.getAnnotation().
-                        getProperty("description_line"));
                 OutputStream out = response.getOutputStream();
-
-                LOG.info("FFF action2 " + obj.getFieldValue("primaryIdentifier"));
                 bioSequence.setAccession(new AccessionID((String)
                         obj.getFieldValue("primaryIdentifier")));
-
-                LOG.info("FFF action4 " + bioSequence.getSequenceAsString());
-
                 FastaWriterHelper.writeSequence(out, bioSequence);
             } else {
                 PrintWriter out = response.getWriter();

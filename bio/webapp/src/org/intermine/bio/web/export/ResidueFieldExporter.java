@@ -18,6 +18,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.bio.web.biojava.BioSequence;
@@ -41,7 +42,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.FieldExporter;
-import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 
 /**
  * ResidueFieldExporter class
