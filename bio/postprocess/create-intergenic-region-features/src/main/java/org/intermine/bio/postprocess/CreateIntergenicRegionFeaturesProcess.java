@@ -77,7 +77,7 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor {
         this.os = osw.getObjectStore();
         this.model = os.getModel();
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
-        dataSource.setName("InterMine");
+        dataSource.setName("FlyMine");
         try {
             dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
         } catch (ObjectStoreException e) {
@@ -96,10 +96,10 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor {
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class, Gene.class, false,
                 false, false, 1000);
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        dataSet.setName("InterMine intergenic regions");
-        dataSet.setDescription("Intergenic regions created by InterMine");
+        dataSet.setName("FlyMine intergenic regions");
+        dataSet.setDescription("Intergenic regions created by FlyMine");
         dataSet.setVersion("" + new Date()); // current time and date
-        dataSet.setUrl("http://www.intermine.org");
+        dataSet.setUrl("http://www.flymine.org");
         dataSet.setDataSource(dataSource);
 
         Iterator<?> resIter = results.iterator();
