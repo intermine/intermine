@@ -10,14 +10,13 @@ package org.intermine.bio.web.biojava;
  *
  */
 
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.RNASequence;
-import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
-
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.SequenceFeature;
 
 /**
  * A factory for creating BioSequence objects.
@@ -64,7 +63,7 @@ public abstract class BioSequenceFactory
         if (feature.getSequence() == null) {
             return null;
         } else {
-            String residues = feature.getSequence().getResidues().toString();
+            String residues = feature.getSequence().getResidues().toString().toLowerCase();
             return new BioSequence(new DNASequence(residues), feature);
         }
     }
@@ -126,16 +125,16 @@ public abstract class BioSequenceFactory
             if (feature.getSequence() == null || feature.getSequence().getResidues() == null) {
                 return null;
             } else {
-                String residues = feature.getSequence().getResidues().toString();
+                String residues = feature.getSequence().getResidues().toString().toLowerCase();
                 return new BioSequence(new DNASequence(residues), feature);
             }
         } else if (type.equals(SequenceType.RNA)) {
-            // we want an RNA sequence
+            // we want an RNA sequence, which appears to be a nucleotide one -> lowercase
             SequenceFeature feature = (SequenceFeature) bioEnt;
             if (feature.getSequence() == null || feature.getSequence().getResidues() == null) {
                 return null;
             } else {
-                String residues = feature.getSequence().getResidues().toString();
+                String residues = feature.getSequence().getResidues().toString().toLowerCase();
                 return new BioSequence(new RNASequence(residues), feature);
             }
         } else {
