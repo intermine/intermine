@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <model name="genomic" package="org.intermine.model.bio">
-
-
   <class name="Author" is-interface="true">
     <attribute name="firstName" type="java.lang.String"/>
     <attribute name="lastName" type="java.lang.String"/>

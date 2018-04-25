@@ -40,7 +40,6 @@ processResources {
 configurations {
     provided
     compile.extendsFrom provided
-    bioModel
 }
 
 dependencies {
@@ -78,7 +77,7 @@ task buildBioCoreModelJar(type: Jar) {
     from(sourceSets.main.output)
 }
 
-tasks.test.dependsOn 'copyMineProperties'
+tasks.test.dependsOn 'copyMineProperties', 'buildDB'
 tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
 tasks.install.dependsOn 'buildBioCoreModelJar'
 tasks.mergeModels.dependsOn 'processResources'
