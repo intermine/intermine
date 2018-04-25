@@ -40,6 +40,7 @@ processResources {
 configurations {
     provided
     compile.extendsFrom provided
+    bioModel
 }
 
 dependencies {
@@ -48,7 +49,8 @@ dependencies {
     compile group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion")
     provided fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar not found in public repo, obo and bbop not available in the public maven repo
     testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
-    testCompile project(':bio-model')
+    testCompile group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("imVersion")
+    bioModel group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("imVersion"), transitive: false
     runtime fileTree(dir: 'libs', include: '*.jar') //antlr-2.7.6-caching.jar
 }
 
@@ -66,21 +68,13 @@ task copyMineProperties(type: Copy) {
 }
 
 task copyGenomicModel(type: Copy, overwrite: true) {
-    // don't use core.xml here, we need some extra classes to test GFF
-    from "core-biotest.xml"
+    from zipTree(configurations.bioModel.singleFile)
     into sourceSets.main.output.resourcesDir
-
-    rename { fileName -> fileName.replace('core-biotest.xml', 'genomic_model.xml') }
 }
 
-task buildBioCoreModelJar(type: Jar) {
-    from(sourceSets.main.output)
-}
-
-tasks.test.dependsOn 'copyMineProperties', 'buildDB'
+tasks.test.dependsOn 'buildDB'
 tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
-tasks.install.dependsOn 'buildBioCoreModelJar'
-tasks.mergeModels.dependsOn 'processResources'
+tasks.mergeModels.dependsOn 'processResources', 'copyGenomicModel', 'copyMineProperties', 'copyDefaultInterMineProperties'
 
 jar {
     dependsOn configurations.runtime
