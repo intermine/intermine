@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <model name="genomic" package="org.intermine.model.bio">
 
+  <class name="MRNA" extends="SequenceFeature" is-interface="true"/>
+  <class name="FivePrimeUTR" extends="SequenceFeature" is-interface="true"/>
+  <class name="ThreePrimeUTR" extends="SequenceFeature" is-interface="true"/>
+  <class name="BindingSite" extends="SequenceFeature" is-interface="true"/>
 
   <class name="Author" is-interface="true">
     <attribute name="firstName" type="java.lang.String"/>
