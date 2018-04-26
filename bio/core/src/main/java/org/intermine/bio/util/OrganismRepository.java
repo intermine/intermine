@@ -36,7 +36,8 @@ public final class OrganismRepository
     private Map<String, String> organismsWithStrains = new HashMap<String, String>();
     private static Map<String, OrganismData> uniprotToTaxon = new HashMap<String, OrganismData>();
 
-    private static final String PROP_FILE = "organism_config.properties";
+    private static final String DEFAULT_PROP_FILE = "default_organism_config.properties";
+    private static final String MINE_PROP_FILE = "organism_config.properties";
     private static final String PREFIX = "taxon";
 
     private static final String ABBREVIATION = "abbreviation";
@@ -62,16 +63,22 @@ public final class OrganismRepository
     public static OrganismRepository getOrganismRepository() {
         if (or == null) {
             Properties props = new Properties();
+            String whichPropFile = MINE_PROP_FILE;
             try {
                 InputStream propsResource =
-                    OrganismRepository.class.getClassLoader().getResourceAsStream(PROP_FILE);
+                    OrganismRepository.class.getClassLoader().getResourceAsStream(MINE_PROP_FILE);
                 if (propsResource == null) {
-                    throw new RuntimeException("can't find " + PROP_FILE + " in class path");
+                    propsResource =
+                            OrganismRepository.class.getClassLoader().getResourceAsStream(DEFAULT_PROP_FILE);
+                    whichPropFile = DEFAULT_PROP_FILE;
+                    if (propsResource == null) {
+                        throw new RuntimeException("can't find " + whichPropFile + " in class path");
+                    }
                 }
                 props.load(propsResource);
 
             } catch (IOException e) {
-                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+                throw new RuntimeException("Problem loading properties '" + whichPropFile + "'", e);
             }
 
             or = new OrganismRepository();
@@ -125,7 +132,7 @@ public final class OrganismRepository
                                                    + name);
                     }
                 } else {
-                    throw new RuntimeException("properties in " + PROP_FILE + " must start with "
+                    throw new RuntimeException("properties in " + whichPropFile + " must start with "
                                                + PREFIX + ".");
                 }
             }
