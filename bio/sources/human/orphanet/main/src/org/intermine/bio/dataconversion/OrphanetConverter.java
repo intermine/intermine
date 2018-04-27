@@ -77,7 +77,7 @@ public class OrphanetConverter extends BioFileConverter
             String orphaNumber = entry.getElementsByTagName("OrphaNumber").item(0).getTextContent();
             String diseaseName = entry.getElementsByTagName("Name").item(0).getTextContent();
             Item item = createItem("Disease");
-            item.setAttribute("identifier", PREFIX + orphaNumber);
+            item.setAttribute("primaryIdentifier", PREFIX + orphaNumber);
             item.setAttribute("name", diseaseName);
             store(item);
         }
