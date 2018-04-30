@@ -20,8 +20,8 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.bio.GOAnnotation;
-import org.intermine.model.bio.GOEvidence;
-import org.intermine.model.bio.GOEvidenceCode;
+import org.intermine.model.bio.OntologyEvidence;
+import org.intermine.model.bio.OntologyAnnotationEvidenceCode;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Protein;
@@ -100,7 +100,7 @@ public class GoPostprocess extends PostProcessor
             }
 
             OntologyTerm term = thisAnnotation.getOntologyTerm();
-            Set<GOEvidence> evidence = thisAnnotation.getEvidence();
+            Set<OntologyEvidence> evidence = thisAnnotation.getEvidence();
 
             GOAnnotation tempAnnotation;
             try {
@@ -135,7 +135,7 @@ public class GoPostprocess extends PostProcessor
     }
 
     private boolean hasDupes(Map<OntologyTerm, GOAnnotation> annotations, OntologyTerm term,
-            Set<GOEvidence> evidence, GOAnnotation newAnnotation) {
+            Set<OntologyEvidence> evidence, GOAnnotation newAnnotation) {
         boolean isDupe = false;
         GOAnnotation alreadySeenAnnotation = annotations.get(term);
         if (alreadySeenAnnotation != null) {
@@ -148,13 +148,13 @@ public class GoPostprocess extends PostProcessor
     }
 
     // we've seen this term, merge instead of storing new object
-    private void mergeEvidence(Set<GOEvidence> evidence, GOAnnotation alreadySeenAnnotation) {
-        for (GOEvidence g : evidence) {
-            GOEvidenceCode c = g.getCode();
+    private void mergeEvidence(Set<OntologyEvidence> evidence, GOAnnotation alreadySeenAnnotation) {
+        for (OntologyEvidence g : evidence) {
+            OntologyAnnotationEvidenceCode c = g.getCode();
             Set<Publication> pubs = g.getPublications();
             boolean foundMatch = false;
-            for (GOEvidence alreadySeenEvidence : alreadySeenAnnotation.getEvidence()) {
-                GOEvidenceCode alreadySeenCode = alreadySeenEvidence.getCode();
+            for (OntologyEvidence alreadySeenEvidence : alreadySeenAnnotation.getEvidence()) {
+                OntologyAnnotationEvidenceCode alreadySeenCode = alreadySeenEvidence.getCode();
                 Set<Publication> alreadySeenPubs = alreadySeenEvidence.getPublications();
                 // we've already seen this evidence code, just merge pubs
                 if (c.equals(alreadySeenCode)) {
