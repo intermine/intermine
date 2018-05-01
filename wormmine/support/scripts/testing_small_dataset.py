@@ -1,6 +1,6 @@
 from intermine.webservice import Service
 
-service = Service("http://intermine.wormbase.org/tools/wormmine/service")
+service = Service("http://im-dev1.wormbase.org/tools/wormmine/service")
 
 
 query = service.new_query("Gene")
@@ -168,6 +168,7 @@ query.add_constraint("symbol", "=", "ZC416.4", code = "A")
 for row in query.rows():
     print(row['length'])
     try:
+        assert (row['length'] >= 999)
         print('Query #13 Returned correct length - PASSED')
     except:
         print('Query #13 Returned wrong length - FAILED')
