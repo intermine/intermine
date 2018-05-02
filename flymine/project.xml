@@ -151,6 +151,10 @@
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
       <property name="ontologyPrefix" value="GO"/>
     </source>
+
+<source name="uberfly" type="uberfly">
+      <property name="src.data.dir" location="/micklem/data/flymine/uberfly/current"/>
+</source>
     
     <source name="flybase-expression" type="flybase-expression">
       <property name="src.data.dir" location="/micklem/data/modMine_flyRNAseq/current"/>

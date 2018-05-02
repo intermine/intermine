@@ -39,7 +39,9 @@ public class HpoConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
         File tmp = new File(getClass().getClassLoader().getResource("hp.obo").toURI());
+        File omim = new File(getClass().getClassLoader().getResource("mimTitles.txt").toURI());
         File datadir = tmp.getParentFile();
+        converter.setHpoDiseaseFile(omim.getAbsolutePath());
         converter.process(datadir);
         converter.close();
 

@@ -39,7 +39,6 @@ import org.intermine.xml.full.Item;
  */
 public class HpoConverter extends BioDirectoryConverter
 {
-
     private static final String DATASET_TITLE = "HPO Annotation";
     private static final String DATA_SOURCE_NAME = "HPO";
 
@@ -350,8 +349,7 @@ public class HpoConverter extends BioDirectoryConverter
                     || OBSOLETE.equals(prefix)) {
                 continue;
             }
-
-            omimDiseaseMasterList.add(mimId);
+            omimDiseaseMasterList.add("OMIM:" + mimId);
         }
     }
 }
