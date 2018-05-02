@@ -40,12 +40,13 @@ public class UberflyConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        File srcFile = new File(getClass().getClassLoader().getResource("HTD_modENCODE_BinData_2010-10-05.txt").toURI());
-        File stages = new File(getClass().getClassLoader().getResource("stages.txt").toURI());
+        File metadata = new File(getClass().getClassLoader().getResource("metadata.tsv").toURI());
+        File geneFile = new File(getClass().getClassLoader().getResource("gene_level_cnts.tsv").toURI());
 
+        converter.setUberflyMetadataFile(metadata);
 
-        converter.setCurrentFile(srcFile);
-        converter.process(new FileReader(srcFile));
+        converter.setCurrentFile(geneFile);
+        converter.process(new FileReader(geneFile));
         converter.close();
 
         // uncomment to write out a new target items file

@@ -7,7 +7,10 @@
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="sample" type="java.lang.String"/>
     <attribute name="age" type="java.lang.String"/>
+    <attribute name="sex" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
+    <reference name="stage" referenced-type="OntologyTerm" />
+    <reference name="tissue" referenced-type="OntologyTerm" />
      <collection name="uberFlyRNASeqResults" referenced-type="UberFlyRNASeqResult" reverse-reference="library"/>
   </class>
   <class name="UberFlyRNASeqResult" is-interface="true">

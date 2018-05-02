@@ -37,11 +37,14 @@ public class UberflyConverter extends BioFileConverter
     private static final Logger LOG = Logger.getLogger(UberflyConverter.class);
     private static final String DATASET_TITLE = "Uberfly expression data";
     private static final String DATA_SOURCE_NAME = "Uberfly";
-    private Item organism;
+    private Item organism, flyDevelopmentOntology, flyAnatomyOntology;
     private static final String TAXON_FLY = "7227";
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, Item> libraries = new HashMap<String, Item>();
+    private Map<String, String> stages = new HashMap<String, String>();
+    private Map<String, String> tissues = new HashMap<String, String>();
     protected IdResolver rslv;
+    private File metadataFile;
 
     /**
      * Constructor
@@ -51,13 +54,27 @@ public class UberflyConverter extends BioFileConverter
     public UberflyConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
 
+        flyDevelopmentOntology = createItem("Ontology");
+        flyDevelopmentOntology.setAttribute("name", "Fly Development");
+
+        flyAnatomyOntology = createItem("Ontology");
+        flyAnatomyOntology.setAttribute("name", "Fly Anatomy");
+
         organism = createItem("Organism");
         organism.setAttribute("taxonId", TAXON_FLY);
+
         try {
             store(organism);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * @param metadataFile data file with all the experiment info
+     */
+    public void setUberflyMetadataFile(File metadataFile) {
+        this.metadataFile = metadataFile;
     }
 
     /**
@@ -68,18 +85,8 @@ public class UberflyConverter extends BioFileConverter
         if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver();
         }
-
-        File currentFile = getCurrentFile();
-
-        if (currentFile.getName().endsWith("agg_gene_level_cnts.tsv")) {
-            processGeneFile(reader);
-        } else if (currentFile.getName().endsWith("metadata.tsv")) {
-            processMetadataFile(reader);
-        } else {
-            throw new IllegalArgumentException("Unexpected file: "
-                    + currentFile.getName());
-        }
-
+        processMetadataFile(new FileReader(metadataFile));
+        processGeneFile(reader);
         for (Item item : libraries.values()) {
             store(item);
         }
@@ -94,9 +101,6 @@ public class UberflyConverter extends BioFileConverter
         }
 
         String[] header = (String[]) tsvIter.next();
-
-        // store each library found in the header
-        processHeader(header);
 
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
@@ -148,14 +152,55 @@ public class UberflyConverter extends BioFileConverter
             String tissue = line[6].trim();
 
             Item library = getLibrary(libraryIdentifier);
-            library.setAttribute("identifier", libraryIdentifier);
-            library.setAttribute("sample", sample);
-            library.setAttribute("age", age);
-            library.setAttribute("name", name);
 
+            if (StringUtils.isNotEmpty(sample)) {
+                library.setAttribute("sample", sample);
+            }
+            if (StringUtils.isNotEmpty(age)) {
+                library.setAttribute("age", age);
+            }
+            if (StringUtils.isNotEmpty(stage)) {
+                library.setReference("stage", getStage(stage));
+            }
+            if (StringUtils.isNotEmpty(name)) {
+                library.setAttribute("name", name);
+            }
+            if (StringUtils.isNotEmpty(sex)) {
+                library.setAttribute("sex", sex);
+            }
+            if (StringUtils.isNotEmpty(tissue)) {
+                library.setReference("tissue", getTissue(tissue));
+            }
 
             store(library);
         }
+    }
+
+    private String getTissue(String name) throws ObjectStoreException {
+        if (tissues.containsKey(name)) {
+            return tissues.get(name);
+        }
+        Item item = createItem("OntologyTerm");
+        item.setAttribute("name", name);
+        item.setReference("ontology", flyAnatomyOntology);
+        String refId = item.getIdentifier();
+        tissues.put(name, refId);
+        store(item);
+        return refId;
+    }
+
+
+    private String getStage(String name) throws ObjectStoreException {
+        if (stages.containsKey(name)) {
+            return stages.get(name);
+        }
+        Item item = createItem("OntologyTerm");
+        item.setAttribute("name", name);
+        item.setReference("ontology", flyDevelopmentOntology);
+        String refId = item.getIdentifier();
+        stages.put(name, refId);
+        store(item);
+        return refId;
     }
 
     private String getGene(String fbgn) throws ObjectStoreException {
