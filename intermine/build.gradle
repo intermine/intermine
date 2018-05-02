@@ -82,10 +82,8 @@ subprojects {
         ignoreFailures = true
         //reportsDir = file("$project.rootDir/reports/checkstyle/$project.name")
         configProperties = [
-                'checkstyle.header.file': "../config/checkstyle/copyright_header.txt",
-                'checkstyle.suppressions.file': "../config/checkstyle/suppressions.xml"
+                'checkstyle.header.file': "../config/checkstyle/copyright_header.txt"
         ]
-
     }
 
     checkstyleTest {
@@ -93,13 +91,12 @@ subprojects {
     }
 
     tasks.withType(Checkstyle) {
-        exclude '**/build**'
         exclude '**/build/generated-src**'
         exclude '**/userprofile/**'
         reports {
-            html.destination rootProject.file("build/reports/$project.name/checkstyle.html")
-            xml.enabled false
-            html.enabled true
+            //html.destination rootProject.file("build/reports/$project.name/checkstyle.html")
+            xml.enabled true
+            html.enabled false
         }
     }
 
