@@ -36,12 +36,12 @@ public class UberflyConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new UberflyConverter(itemWriter, model);
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("7227", "FBgn0000003", Collections.singleton("FBgn0000003"));
+        converter.rslv.addResolverEntry("7227", "FBgn0024733", Collections.singleton("FBgn0024733"));
     }
 
     public void testProcess() throws Exception {
         File metadata = new File(getClass().getClassLoader().getResource("metadata.tsv").toURI());
-        File geneFile = new File(getClass().getClassLoader().getResource("gene_level_cnts.tsv").toURI());
+        File geneFile = new File(getClass().getClassLoader().getResource("SRX193500.tsv").toURI());
 
         converter.setUberflyMetadataFile(metadata);
 

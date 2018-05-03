@@ -64,6 +64,8 @@ public class UberflyConverter extends BioFileConverter
         organism.setAttribute("taxonId", TAXON_FLY);
 
         try {
+            store(flyDevelopmentOntology);
+            store(flyAnatomyOntology);
             store(organism);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
@@ -100,35 +102,28 @@ public class UberflyConverter extends BioFileConverter
             throw new BuildException("cannot parse file: " + getCurrentFile(), e);
         }
 
-        String[] header = (String[]) tsvIter.next();
+        // skip header
+        tsvIter.next();
 
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
 
-            if (line.length < 4000) {
-                LOG.error("Couldn't process line.  Expected 4000+ cols, but was " + line.length);
-                continue;
+            if (line.length < 3) {
+                throw new RuntimeException("Expected 3 columns but was " + line.length);
             }
 
-            // FBgn0000003
-            final String fbgn = line[0];
+            String fbgn = line[0];
+            String count = line[1];
+            String library = line[2];
 
-            for (int i = 1; i < line.length; i++) {
-                Item result = createItem("UberFlyRNASeqResult");
-                result.setAttribute("count", line[i]);
-                result.setReference("library", getLibrary(header[i]));
-                String gene = getGene(fbgn);
-                if (StringUtils.isNotEmpty(gene)) {
-                    result.setReference("gene", gene);
-                    store(result);
-                }
+            Item result = createItem("UberFlyRNASeqResult");
+            result.setAttribute("count", count);
+            result.setReference("library", getLibrary(library));
+            String gene = getGene(fbgn);
+            if (StringUtils.isNotEmpty(gene)) {
+                result.setReference("gene", gene);
+                store(result);
             }
-        }
-    }
-
-    private void processHeader(String[] header) throws ObjectStoreException {
-        for (int i = 1; i < header.length; i++) {
-            getLibrary(header[i]);
         }
     }
 
@@ -139,6 +134,9 @@ public class UberflyConverter extends BioFileConverter
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + getCurrentFile(), e);
         }
+
+        // skip header
+        tsvIter.next();
 
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
@@ -153,26 +151,203 @@ public class UberflyConverter extends BioFileConverter
 
             Item library = getLibrary(libraryIdentifier);
 
-            if (StringUtils.isNotEmpty(sample)) {
-                library.setAttribute("sample", sample);
-            }
-            if (StringUtils.isNotEmpty(age)) {
-                library.setAttribute("age", age);
-            }
+            library.setAttributeIfNotNull("sample", sample);
+            library.setAttributeIfNotNull("age", age);
             if (StringUtils.isNotEmpty(stage)) {
                 library.setReference("stage", getStage(stage));
             }
-            if (StringUtils.isNotEmpty(name)) {
-                library.setAttribute("name", name);
-            }
-            if (StringUtils.isNotEmpty(sex)) {
-                library.setAttribute("sex", sex);
-            }
+            library.setAttributeIfNotNull("name", name);
+            library.setAttributeIfNotNull("sex", sex);
             if (StringUtils.isNotEmpty(tissue)) {
                 library.setReference("tissue", getTissue(tissue));
             }
 
+            library.setAttributeIfNotNull("adapterBarcode", line[7]);
+            // skip age
+            library.setAttributeIfNotNull("agePostEclosion", line[9]);
+            library.setAttributeIfNotNull("agent", line[10]);
+            library.setAttributeIfNotNull("antibody", line[11]);
+            library.setAttributeIfNotNull("backgroundStrain", line[12]);
+            library.setAttributeIfNotNull("barcode", line[13]);
+            library.setAttributeIfNotNull("barcodeKit", line[14]);
+
+            if (StringUtils.isNotEmpty(line[15]) || StringUtils.isNotEmpty(line[16])
+                || StringUtils.isNotEmpty(line[17])) {
+                library.setAttributeIfNotNull("biologicalReplicate", line[15] + " " + line[16] + " "
+                        + line[17]);
+            }
+
+            library.setAttributeIfNotNull("biomarker", line[18]);
+            library.setAttributeIfNotNull("biomaterialProvider", line[19]);
+            library.setAttributeIfNotNull("bioSampleModel", line[20]);
+            library.setAttributeIfNotNull("birthDate", line[21]);
+            library.setAttributeIfNotNull("birthLocation", line[22]);
+            library.setAttributeIfNotNull("bloomingtonStockId", line[23]);
+            library.setAttributeIfNotNull("breed", line[24]);
+            library.setAttributeIfNotNull("breedingHistory", line[25]);
+            library.setAttributeIfNotNull("breedingMethod", line[26]);
+
+            if (StringUtils.isNotEmpty(line[27]) || StringUtils.isNotEmpty(line[28])
+                    || StringUtils.isNotEmpty(line[29])) {
+                Item item = createItem("UberFlyCellLine");
+                item.setAttributeIfNotNull("line", line[27]);
+                item.setAttributeIfNotNull("subtype", line[28]);
+                item.setAttributeIfNotNull("type", line[29]);
+                store(item);
+            }
+
+            // ignore [30] checksum
+            library.setAttributeIfNotNull("chipOrIpAntibody", line[31]);
+            // ignore [32] collectedby
+            library.setAttributeIfNotNull("collectionDate", line[33]);
+            library.setAttributeIfNotNull("compound", line[34]);
+            library.setAttributeIfNotNull("condition", line[35]);
+            library.setAttributeIfNotNull("crosses", line[36]);
+            library.setAttributeIfNotNull("cultivar", line[37]);
+            library.setAttributeIfNotNull("cultureCollection", line[38]);
+            library.setAttributeIfNotNull("daysAt29c", line[39]);
+            library.setAttributeIfNotNull("daysPostInfection", line[40]);
+
+            library.setAttributeIfNotNull("deathDate", line[41]);
+            // ignore [42-48] dev stages
+            library.setAttributeIfNotNull("DgrpLine", line[49]);
+            library.setAttributeIfNotNull("diet", line[50]);
+            library.setAttributeIfNotNull("disease", line[51]);
+            library.setAttributeIfNotNull("diseaseStage", line[52]);
+            library.setAttributeIfNotNull("dissection", line[53]);
+            library.setAttributeIfNotNull("drosdelDeficiency", line[54]);
+            library.setAttributeIfNotNull("drosdelId", line[55]);
+            library.setAttributeIfNotNull("ecotype", line[56]);
+
+            library.setAttributeIfNotNull("embryonicStage", line[57]);
+            library.setAttributeIfNotNull("enaFirstPublic", line[58]);
+            library.setAttributeIfNotNull("enaLastUpdate", line[59]);
+            library.setAttributeIfNotNull("erccInformation", line[60]);
+            library.setAttributeIfNotNull("erccPool", line[61]);
+            library.setAttributeIfNotNull("evolutionaryRegime", line[62]);
+            library.setAttributeIfNotNull("experiment", line[63]);
+            library.setAttributeIfNotNull("experimentPopulation", line[64]);
+            library.setAttributeIfNotNull("expression", line[65]);
+            library.setAttributeIfNotNull("extractionProtocol", line[66]);
+
+            library.setAttributeIfNotNull("fixation", line[67]);
+            library.setAttributeIfNotNull("flag", line[68]);
+            library.setAttributeIfNotNull("flowCell", line[69]);
+            library.setAttributeIfNotNull("flyLine", line[70]);
+            // ignore flybase id 71
+            library.setAttributeIfNotNull("fraction", line[72]);
+            // ignore [73] gender
+
+            storeStrain(line);
+
+            library.setAttributeIfNotNull("geoLocName", line[78]);
+            library.setAttributeIfNotNull("germLineKnockDown", line[79]);
+            library.setAttributeIfNotNull("germLineKnockDownAndOtherTransgenes", line[80]);
+
+            if (StringUtils.isNotEmpty(line[81]) || StringUtils.isNotEmpty(line[82])) {
+                library.setAttributeIfNotNull("growthConditions", line[81] + " " + line[82]);
+            }
+
+            library.setAttributeIfNotNull("growthProtocol", line[83]);
+            library.setAttributeIfNotNull("healthState", line[84]);
+
+            library.setAttributeIfNotNull("iclipBarcode", line[85]);
+            library.setAttributeIfNotNull("illuminaBarcode", line[86]);
+            library.setAttributeIfNotNull("index", line[87]);
+            library.setAttributeIfNotNull("infection", line[88]);
+            library.setAttributeIfNotNull("intialTimePoint", line[89]);
+
+            library.setAttributeIfNotNull("isolate", line[90]);
+            library.setAttributeIfNotNull("isolationSource", line[91]);
+            library.setAttributeIfNotNull("label", line[92]);
+            library.setAttributeIfNotNull("lane", line[93]);
+            library.setAttributeIfNotNull("latLon", line[94]);
+
+            // author library
+
+            library.setAttributeIfNotNull("lineSource", line[99]);
+            library.setAttributeIfNotNull("marker", line[100]);
+            library.setAttributeIfNotNull("matingStatus", line[101]);
+            library.setAttributeIfNotNull("muscleType", line[102]);
+            library.setAttributeIfNotNull("notes", line[103]);
+            // skip organism and organism part
+
+            library.setAttributeIfNotNull("peReadLengthBp", line[106]);
+            library.setAttributeIfNotNull("phenotype", line[107]);
+            library.setAttributeIfNotNull("plateAndWellId", line[108]);
+            library.setAttributeIfNotNull("quantity", line[109]);
+
+            if (StringUtils.isNotEmpty(line[110]) || StringUtils.isNotEmpty(line[111])) {
+                library.setAttributeIfNotNull("replicates", line[110] + " " + line[111]);
+            }
+
+            library.setAttributeIfNotNull("resistance", line[112]);
+            library.setAttributeIfNotNull("sampleExtractionMethod", line[113]);
+            // skip name and title
+            library.setAttributeIfNotNull("type", line[116]);
+            library.setAttributeIfNotNull("sequencer", line[117]);
+            // skip sex
+            library.setAttributeIfNotNull("sourceName", line[119]);
+            // skip species
+
+            library.setAttributeIfNotNull("specimenVoucher", line[121]);
+            library.setAttributeIfNotNull("specimenWithKnownStorageState", line[122]);
+            library.setAttributeIfNotNull("starvationStatus", line[123]);
+            library.setAttributeIfNotNull("stock", line[124]);
+            library.setAttributeIfNotNull("storeCond", line[125]);
+
+            // --- strain is processed above -- 126 to 130
+
+            library.setAttributeIfNotNull("studBookNumber", line[131]);
+            library.setAttributeIfNotNull("subregion", line[132]);
+            library.setAttributeIfNotNull("tag", line[133]);
+            library.setAttributeIfNotNull("targetMolecule", line[134]);
+            library.setAttributeIfNotNull("technicalReplicate", line[135]);
+
+            library.setAttributeIfNotNull("technicalReplicatesPooled", line[136]);
+            // skip temp
+            library.setAttributeIfNotNull("temperature", line[138]);
+            library.setAttributeIfNotNull("time", line[139]);
+            library.setAttributeIfNotNull("timePoint", line[140]);
+
+            if (StringUtils.isNotEmpty(line[141]) || StringUtils.isNotEmpty(line[142])
+                    || StringUtils.isNotEmpty(line[143])) {
+                Item item = createItem("UberFlyTissue");
+                item.setAttributeIfNotNull("tissue", line[141]);
+                item.setAttributeIfNotNull("library", line[142]);
+                item.setAttributeIfNotNull("type", line[143]);
+                store(item);
+            }
+
+            library.setAttributeIfNotNull("treatment", line[144]);
+
+            library.setAttributeIfNotNull("xChromosomeDose", line[145]);
+            library.setAttributeIfNotNull("description", line[146]);
+            library.setAttributeIfNotNull("sampleTitle", line[147]);
+            library.setAttributeIfNotNull("studyAbstract", line[148]);
+
             store(library);
+        }
+    }
+
+    private void storeStrain(String[] line) throws ObjectStoreException {
+        if (StringUtils.isNotEmpty(line[74]) || StringUtils.isNotEmpty(line[75])
+                || StringUtils.isNotEmpty(line[76]) || StringUtils.isNotEmpty(line[77])
+                || StringUtils.isNotEmpty(line[126]) || StringUtils.isNotEmpty(line[127])
+                || StringUtils.isNotEmpty(line[128]) || StringUtils.isNotEmpty(line[129])
+                || StringUtils.isNotEmpty(line[130])) {
+            Item item = createItem("UberFlyStrain");
+            item.setAttributeIfNotNull("geneticBackground", line[74]);
+            item.setAttributeIfNotNull("geneticModification", line[75]);
+            item.setAttributeIfNotNull("genotype", line[76]);
+            item.setAttributeIfNotNull("genotypeVariation", line[77]);
+
+            item.setAttributeIfNotNull("strain", line[126]);
+            item.setAttributeIfNotNull("strainGenotype", line[127]);
+            item.setAttributeIfNotNull("strainBackground", line[128]);
+            item.setAttributeIfNotNull("strainOrigin", line[129]);
+            item.setAttributeIfNotNull("strainOrLine", line[130]);
+            store(item);
         }
     }
 

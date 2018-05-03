@@ -153,8 +153,8 @@
     </source>
 
     <source name="uberfly" type="uberfly">
-      <property name="src.data.dir" location="/micklem/data/flymine/uberfly/current"/>
-      <property name="uberflyMetadataFile" location="/micklem/data/flymine/uberfly/current/20180501_metadata.tsv"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/uberfly/current/gene_level_counts"/>
+      <property name="uberflyMetadataFile" location="/micklem/data/flymine/uberfly/metadata/20180501_metadata.tsv"/>
     </source>
     
     <source name="flybase-expression" type="flybase-expression">
