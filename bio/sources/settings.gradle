@@ -38,11 +38,11 @@ include ':bio-source-biogrid',
 ':bio-source-update-data-sources',
 ':bio-source-update-publications',
 ':bio-source-vcf',
-':bio-source-wormbase-identifiers',
+':bio-source-wormbase-identifiers'
 //bio-examples-sources
-':bio-source-kegg',
-':bio-source-identifiers',
-':bio-source-malaria-gff'
+//':bio-source-kegg',
+//':bio-source-kegg-identifiers',
+//':bio-source-malaria-gff'
 
 project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
 project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
@@ -83,8 +83,8 @@ project(':bio-source-update-data-sources').projectDir = new File(settingsDir, '.
 project(':bio-source-update-publications').projectDir = new File(settingsDir, './update-publications')
 project(':bio-source-vcf').projectDir = new File(settingsDir, './vcf')
 project(':bio-source-wormbase-identifiers').projectDir = new File(settingsDir, './wormbase-identifiers')
-project(':bio-source-kegg').projectDir = new File(settingsDir, './example-sources/kegg-example')
-project(':bio-source-identifiers').projectDir = new File(settingsDir, './example-sources/kegg-identifiers')
-project(':bio-source-malaria-gff').projectDir = new File(settingsDir, './example-sources/malaria-gff')
+//project(':bio-source-kegg').projectDir = new File(settingsDir, './example-sources/kegg-example')
+//project(':bio-source-kegg-identifiers').projectDir = new File(settingsDir, './example-sources/kegg-identifiers')
+//project(':bio-source-malaria-gff').projectDir = new File(settingsDir, './example-sources/malaria-gff')
 
 

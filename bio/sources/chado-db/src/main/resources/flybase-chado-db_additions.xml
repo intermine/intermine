@@ -33,8 +33,32 @@
     <reference name="tissueSource" referenced-type="AnatomyTerm" />
   </class>
   <!-- postprocess needs this -->
-      <class name="MRNA" is-interface="true">
+  <class name="Intron" extends="SequenceFeature" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="introns"/>
+  </class>
+  <class name="CDS" extends="SequenceFeature" is-interface="true">
+    <reference name="transcript" referenced-type="Transcript" reverse-reference="CDSs"/>
+  </class>
+  <class name="Transcript" extends="SequenceFeature" is-interface="true">
+    <reference name="gene" referenced-type="Gene" reverse-reference="transcripts"/>
+    <collection name="introns" referenced-type="Intron" reverse-reference="transcripts"/>
+    <collection name="CDSs" referenced-type="CDS" reverse-reference="transcript"/>
+    <collection name="UTRs" referenced-type="UTR" reverse-reference="transcripts"/>
+  </class>
+  <class name="MRNA" extends="Transcript" is-interface="true">
         <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
         <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
-      </class>
+  </class>
+  <class name="FivePrimeUTR" extends="UTR" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="UTRs"/>
+  </class>
+  <class name="ThreePrimeUTR" extends="UTR" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="UTRs"/>
+  </class>
+  <class name="Gene" extends="SequenceFeature" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="gene"/>
+  </class>
+  <class name="UTR" extends="SequenceFeature" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="UTRs"/>
+  </class>
 </classes>

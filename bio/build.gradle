@@ -74,6 +74,7 @@ subprojects {
         }
         configurations = ['archives']
     }
+
 }
 
 task testReport(type: TestReport) {

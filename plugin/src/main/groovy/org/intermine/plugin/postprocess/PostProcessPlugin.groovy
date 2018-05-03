@@ -43,6 +43,7 @@ class PostProcessPlugin implements Plugin<Project> {
                     if (postProcess == null) {
                         throw new InvalidUserDataException("Can't find postProcess " + processName + " in project definition file")
                     }
+                    project.dependencies.add("postProcesses", [group: "org.intermine", name: "bio-postprocess-" + processName, version: System.getProperty("bioVersion")])
                 }
             }
         }
@@ -101,13 +102,15 @@ class PostProcessPlugin implements Plugin<Project> {
                         }
                     } else {
                         def ant = new AntBuilder()
-                        ant.taskdef(name: "corePostProcess", classname: "org.intermine.bio.postprocess.PostProcessOperationsTask") {
+                        String postprocessorClassName = bioSourceProperties.getPostProcesserClassName(processName)
+                        ant.taskdef(name: "corePostProcess", classname: "org.intermine.task.PostProcessorTask") {
                             classpath {
                                 dirset(dir: project.getBuildDir().getAbsolutePath())
                                 pathelement(path: project.configurations.getByName("compile").asPath)
+                                pathelement(path: project.configurations.getByName("postProcesses").asPath)
                             }
                         }
-                        ant.corePostProcess(operation: processName, objectStoreWriter: "osw.production")
+                        ant.corePostProcess(clsName: postprocessorClassName, osName: "osw.production")
                     }
                 }
             }

@@ -28,6 +28,13 @@ else
     # Install lib requirements
     pip install -r config/lib/requirements.txt
 
+
+    if [[ "$TEST_SUITE" = "bio" ]]; then
+        # we depend on a flymine data source
+        $GIT_GET https://github.com/intermine/flymine-bio-sources.git flymine-bio-sources
+        (cd flymine-bio-sources && ./gradlew install)
+    fi
+
     # Build resources we might require
     if [ "$TEST_SUITE" = "webapp" ]; then
         # We will need python requirements for selenium tests

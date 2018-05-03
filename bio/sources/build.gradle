@@ -57,7 +57,6 @@ subprojects {
         testCompile group: 'junit', name: 'junit', version: '4.8.2'
         testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
-        bioModel group: 'org.intermine', name: 'bio-model', version: System.getProperty("bioVersion"), transitive: false
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
     }
 
@@ -125,6 +124,8 @@ subprojects {
         }
         configurations = ['archives']
     }
+
+    tasks.compileTestJava.dependsOn ':bio-model:copyMineProperties'
 }
 
 task testReport(type: TestReport) {

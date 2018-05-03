@@ -1,0 +1,33 @@
+rootProject.name = 'bio-postprocess'
+
+include ':bio-postprocess-create-chromosome-locations-and-lengths',
+        ':bio-postprocess-create-search-index',
+        ':bio-postprocess-create-autocomplete-index',
+        ':bio-postprocess-summarise-objectstore',
+        ':bio-postprocess-create-utr-references',
+        ':bio-postprocess-create-references',
+        ':bio-postprocess-populate-child-features',
+        ':bio-postprocess-make-spanning-locations',
+        ':bio-postprocess-create-intergenic-region-features',
+        ':bio-postprocess-transfer-sequences',
+        ':bio-postprocess-create-location-overlap-index',
+        ':bio-postprocess-create-overlap-view',
+        ':bio-postprocess-create-attribute-indexes',
+        ':bio-postprocess-create-gene-flanking-features',
+        ':bio-postprocess-create-intron-features'
+
+project(':bio-postprocess-create-chromosome-locations-and-lengths').projectDir = new File(settingsDir, './create-chromosome-locations')
+project(':bio-postprocess-create-search-index').projectDir = new File(settingsDir, './create-search-index')
+project(':bio-postprocess-create-autocomplete-index').projectDir = new File(settingsDir, './create-autocomplete-index')
+project(':bio-postprocess-summarise-objectstore').projectDir = new File(settingsDir, './summarise-objectstore')
+project(':bio-postprocess-create-utr-references').projectDir = new File(settingsDir, './create-utr-references')
+project(':bio-postprocess-create-references').projectDir = new File(settingsDir, './create-references')
+project(':bio-postprocess-populate-child-features').projectDir = new File(settingsDir, './populate-child-features')
+project(':bio-postprocess-make-spanning-locations').projectDir = new File(settingsDir, './make-spanning-locations')
+project(':bio-postprocess-create-intergenic-region-features').projectDir = new File(settingsDir, './create-intergenic-region-features')
+project(':bio-postprocess-transfer-sequences').projectDir = new File(settingsDir, './transfer-sequences')
+project(':bio-postprocess-create-location-overlap-index').projectDir = new File(settingsDir, './create-location-overlap-index')
+project(':bio-postprocess-create-overlap-view').projectDir = new File(settingsDir, './create-overlap-view')
+project(':bio-postprocess-create-attribute-indexes').projectDir = new File(settingsDir, './create-attribute-indexes')
+project(':bio-postprocess-create-gene-flanking-features').projectDir = new File(settingsDir, './create-gene-flanking-features')
+project(':bio-postprocess-create-intron-features').projectDir = new File(settingsDir, './create-intron-features')

@@ -8,70 +8,122 @@ buildscript {
     }
     dependencies {
         classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")
-    }
-}
-apply plugin: 'dbmodel'
-apply plugin: 'biocore-dbmodel'
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java']
-        }
-        resources {
-            srcDirs = ['src/main/resources']
-        }
-    }
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
-        }
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.6.2"        
     }
 }
 
-configurations {
-    bioCoreModelArtifact
+ext {
+    // set here to make available to individual bio-postprocesses
+    bioVersion = System.getProperty("bioVersion")
+    imVersion = System.getProperty("imVersion")
 }
 
-dependencies {
-    compile project(':bio-core')
-    compile group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), classifier: "classes"
-    compile group: "org.intermine", name: "intermine-webtasks", version: System.getProperty("imVersion")
-    compile project(':bio-model')
-}
+subprojects {
+    group = 'org.intermine'
+    version = '2.0.0-RC-SNAPSHOT'
 
-dbModelConfig {
-    objectStoreName = "os.bio-test"
-    modelName = "genomic"
-    defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
-}
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'dbmodel'
+    apply plugin: 'biocore-dbmodel'
 
-task copyMineProperties(type: Copy) {
-    doLast {
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+        }
+    }
+
+    configurations {
+        bioModel
+        mergeModel
+    }
+    
+    dependencies {
+        compile group: 'org.intermine', name: 'bio-core', version: System.getProperty("bioVersion")
+        compile group : "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion") // log4j
+        compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+        testCompile group: 'junit', name: 'junit', version: '4.8.2'
+        testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion")
+        testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
+        mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
+    }
+
+    dbModelConfig {
+        objectStoreName = "os.bio-test"
+        modelName = "genomic"
+        defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
+    }
+
+    task copyMineProperties(type: Copy) {
         from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
         into sourceSets.main.output.resourcesDir
         rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
         inputs.sourceFiles.stopExecutionIfEmpty()
     }
+ 
+    jar {
+        exclude "intermine.properties"
+    }
+
+    tasks.withType(Test) {
+        scanForTestClasses = false
+        include '**/*Test.class'
+    }
+
+    test {
+        ignoreFailures = true
+        forkEvery = 1
+    }
+
+    artifactory {
+        contextUrl = 'https://oss.jfrog.org/artifactory/'
+        resolve {
+            repository {
+                repoKey = 'libs-release'
+            }
+        }
+        publish {
+            repository {
+                if (project.version.endsWith("-SNAPSHOT")) {
+                    repoKey = 'oss-snapshot-local'
+                } else {
+                    repoKey = 'oss-release-local'
+                }
+            username = System.getenv('BINTRAY_USER')
+            password = System.getenv('BINTRAY_KEY')
+            }
+            defaults {
+            publishConfigs('archives')
+            }
+        }
+    }
+
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        pkg {
+            repo = 'bio'
+            name = project.name
+            userOrg = user
+            licenses = ['LGPL-2.1']
+            vcsUrl = 'https://github.com/intermine/intermine.git'
+        }
+        configurations = ['archives']
+    }
+
+    tasks.compileTestJava.dependsOn ':bio-model:copyMineProperties'
 }
 
-task copyGenomicModel(type: Copy, overwrite: true) {
-    from "../core/core.xml"
-    into sourceSets.main.output.resourcesDir
-
-    rename { fileName -> fileName.replace('core.xml', 'genomic_model.xml') }
-}
-
-task buildBioCoreModelJar(type: Jar) {
-    from(sourceSets.main.output)
-}
-
-tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
-tasks.install.dependsOn 'buildBioCoreModelJar'
-
-artifacts {
-    bioCoreModelArtifact buildBioCoreModelJar
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects*.test
 }
