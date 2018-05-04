@@ -205,6 +205,12 @@ public class RemoteMine implements ConfigurableMine
     }
 
     @Override
+    public boolean equals(Object object) {
+        return (object instanceof RemoteMine
+                && ((RemoteMine) object).id.equals(id)
+                && ((RemoteMine) object).name.equals(name));
+    }
+    @Override
     public List<List<Object>> getRows(PathQuery query) {
         String xml = query.toXml();
         return getRows(xml);
