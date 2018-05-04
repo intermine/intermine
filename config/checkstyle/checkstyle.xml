@@ -231,7 +231,7 @@
     <!--<module name="ModifiedControlVariable"/>-->
     <module name="SuperClone"/>
     <module name="ArrayTypeStyle"/>
-    <module name="RedundantModifier"/>
+    <!--<module name="RedundantModifier"/>-->
     <module name="EqualsAvoidNull"/>
     <module name="GenericWhitespace"/>
   </module>

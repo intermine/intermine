@@ -77,7 +77,7 @@ subprojects {
     checkstyle {
         toolVersion '7.8.1'
         configFile file("../../config/checkstyle/checkstyle.xml")
-        sourceSets = [sourceSets.main]
+        //sourceSets = [sourceSets.main]
         showViolations = true
         ignoreFailures = true
         //reportsDir = file("$project.rootDir/reports/checkstyle/$project.name")
@@ -86,18 +86,13 @@ subprojects {
         ]
     }
 
-    checkstyleTest {
-        enabled = false
+    checkstyleMain {
+        exclude '**/build/generated-src/antlr/main**'
+        exclude '**/userprofile/**'
     }
 
-    tasks.withType(Checkstyle) {
-        exclude '**/build/generated-src**'
-        exclude '**/userprofile/**'
-        reports {
-            //html.destination rootProject.file("build/reports/$project.name/checkstyle.html")
-            xml.enabled true
-            html.enabled false
-        }
+    checkstyleTest {
+        enabled = false
     }
 
     tasks.withType(Test) {
