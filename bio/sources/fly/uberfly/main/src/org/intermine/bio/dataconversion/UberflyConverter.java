@@ -74,14 +74,6 @@ public class UberflyConverter extends BioFileConverter
         if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver();
         }
-
-        try {
-            processMetadataFile(new FileReader(metadataFile));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Failed to find metadata file", e);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("Failed to store metadata", e);
-        }
     }
 
     /**
@@ -96,6 +88,9 @@ public class UberflyConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
+        if (libraries.isEmpty()) {
+            processMetadataFile(new FileReader(metadataFile));
+        }
         processGeneFiles(reader);
     }
 
