@@ -42,7 +42,7 @@
 
     <attribute name="daysPostInfection" type="java.lang.String"/>
     <attribute name="deathDate" type="java.lang.String"/>
-    <attribute name="DgrpLine" type="java.lang.String"/>
+    <attribute name="dgrpLine" type="java.lang.String"/>
     <attribute name="diet" type="java.lang.String"/>
     <attribute name="disease" type="java.lang.String"/>
 

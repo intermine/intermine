@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.HashMap;
@@ -18,7 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -34,7 +34,7 @@ import org.intermine.xml.full.Item;
  */
 public class UberflyConverter extends BioFileConverter
 {
-    private static final Logger LOG = Logger.getLogger(UberflyConverter.class);
+    //private static final Logger LOG = Logger.getLogger(UberflyConverter.class);
     private static final String DATASET_TITLE = "Uberfly expression data";
     private static final String DATA_SOURCE_NAME = "Uberfly";
     private Item organism, flyDevelopmentOntology, flyAnatomyOntology;
@@ -70,6 +70,18 @@ public class UberflyConverter extends BioFileConverter
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
+
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+        }
+
+        try {
+            processMetadataFile(new FileReader(metadataFile));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Failed to find metadata file", e);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Failed to store metadata", e);
+        }
     }
 
     /**
@@ -84,17 +96,21 @@ public class UberflyConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
-        if (rslv == null) {
-            rslv = IdResolverService.getFlyIdResolver();
-        }
-        processMetadataFile(new FileReader(metadataFile));
-        processGeneFile(reader);
+        processGeneFiles(reader);
+    }
+
+    @Override
+    public void close() {
         for (Item item : libraries.values()) {
-            store(item);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Failed to store library", e);
+            }
         }
     }
 
-    private void processGeneFile(Reader reader) throws ObjectStoreException {
+    private void processGeneFiles(Reader reader) throws ObjectStoreException {
         Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -210,7 +226,7 @@ public class UberflyConverter extends BioFileConverter
 
             library.setAttributeIfNotNull("deathDate", line[41]);
             // ignore [42-48] dev stages
-            library.setAttributeIfNotNull("DgrpLine", line[49]);
+            library.setAttributeIfNotNull("dgrpLine", line[49]);
             library.setAttributeIfNotNull("diet", line[50]);
             library.setAttributeIfNotNull("disease", line[51]);
             library.setAttributeIfNotNull("diseaseStage", line[52]);
