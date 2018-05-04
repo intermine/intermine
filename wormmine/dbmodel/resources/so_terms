@@ -56,6 +56,7 @@ lincRNA
 miRNA_primary_transcript
 pseudogenic_rRNA
 scRNA
+pre_miRNA
 
 # many-to-many part_of relationships (default is many-to-one)
 exon.transcript

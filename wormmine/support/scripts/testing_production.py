@@ -1,6 +1,6 @@
 from intermine.webservice import Service
 
-service = Service("http://intermine.wormbase.org/tools/wormmine/service")
+service = Service("http://im-dev1.wormbase.org/tools/wormmine/service")
 
 
 query = service.new_query("Gene")

@@ -28,7 +28,7 @@ echo 'Release version' $wbrel
 #                    ["c_japonica"]="PRJNA12591"
 #                    ["c_remanei"]="PRJNA53967"
 #                    ["c_tropicalis"]="PRJNA53597"
-#                    ["o_volvulus"]="PRJEB513"
+                     ["o_volvulus"]="PRJEB513"
 #                    ["p_pacificus"]="PRJNA12644"
 #                    ["p_redivivus"]="PRJNA186477"
 #                    ["s_ratti"]="PRJEB125"
@@ -37,8 +37,8 @@ echo 'Release version' $wbrel
 declare -A species=(["c_elegans"]="PRJNA13758")
 echo 'Deploying ' $species
 echo
-#sourcedir='/mnt/data2/acedb_dumps/WS263/WS263-test-data'
-sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
+sourcedir='/mnt/data2/acedb_dumps/WS264/WS264-test-data'
+#sourcedir='/mnt/data2/acedb_dumps/'$wbrel'' # <---- XML dump location
 # example test data /mnt/data2/acedb_dumps/WS261/WS261-test-data
 # sourcedir='/Users/nuin/Dropbox/intermine/WS262-test-data/'
 
@@ -54,7 +54,7 @@ echo
 intermine='/mnt/data2/wormmine'
 # intermine='/Users/nuin/Dropbox/intermine/intermine'#local test
 #datadir=$intermine'/datadir_small'   # for now the datadir is inside the intermine directory
-datadir=$intermine'/datadir264'   # for now the datadir is inside the intermine directory
+datadir=$intermine'/datadir_small'   # for now the datadir is inside the intermine directory
 acexmldir=$datadir'/wormbase-acedb'
 testlab=$intermine'/wormmine/support/scripts/'
 compara=$intermine'/wormmine/support/compara'
@@ -213,7 +213,7 @@ echo 'life stage'
 mkdir -vp $datadir/wormbase-acedb/life_stage/XML
 mkdir -vp $datadir/wormbase-acedb/life_stage/mapping
 cp $sourcedir/Life_stage.xml $acexmldir/life_stage/Life_stage.xml
-cp $intermine'/wb-acedb/wormmine/support/properties/life_stage_mapping.properties' $datadir'/wormbase-acedb/life_stage/mapping/'
+cp $intermine'/wormmine/support/properties/life_stage_mapping.properties' $datadir'/wormbase-acedb/life_stage/mapping/'
 perl $testlab'/wb-acedb/purify_xace.pl' $datadir'/wormbase-acedb/life_stage/Life_stage.xml' $datadir'/wormbase-acedb/life_stage/XML/purified_life_stage.xml'
 echo
 
@@ -331,27 +331,27 @@ echo
 
 ################### compara #####################
 echo 'compara - Human'
-mkdir -p $datadir'/ensemble/compara'
+mkdir -p $datadir'/ensembl/compara'
 perl $compara'/compara.pl' $compara'/human.xml' > $datadir'/ensemble/compara/6239_9606'
 
 echo 'compara - Zebra'
-mkdir -p $datadir'/ensemble/compara'
+mkdir -p $datadir'/ensembl/compara'
 perl $compara'/compara.pl' $compara'/zebra.xml' > $datadir'/ensemble/compara/6239_7955'
 
 echo 'compara - Mouse'
-mkdir -p $datadir'/ensemble/compara'
+mkdir -p $datadir'/ensembl/compara'
 perl $compara'/compara.pl' $compara'/mus.xml' > $datadir'/ensemble/compara/6239_10090'
 
 echo 'compara - Drosophila'
-mkdir -p $datadir'/ensemble/compara'
+mkdir -p $datadir'/ensembl/compara'
 perl $compara'/compara.pl' $compara'/drosophila.xml' > $datadir'/ensemble/compara/6239_7227'
 
 echo 'compara - Rat'
-mkdir -p $datadir'/ensemble/compara'
+mkdir -p $datadir'/ensembl/compara'
 perl $compara'/compara.pl' $compara'/rat.xml' > $datadir'/ensemble/compara/6239_10116'
 
 echo 'compara - Yeast'
-mkdir -p $datadir'/ensemble/compara'
+mkdir -p $datadir'/ensembl/compara'
 perl $compara'/compara.pl' $compara'/yeast.xml' > $datadir'/ensemble/compara/6239_4932'
 
 

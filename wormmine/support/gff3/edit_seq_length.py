@@ -3,7 +3,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-db_string = "postgres://postgres:interwormmine@localhost/intermine_prod_263_185_3"
+db_string = "postgres://postgres:interwormmine@localhost/intermine_prod_264_185_3"
 db = create_engine(db_string)
 connection = db.connect()
 
@@ -32,6 +32,7 @@ if __name__ == '__main__':
 
 
     for i in check_cds_table():
+        print(i)
         if i[-1] == 'org.intermine.model.bio.Sequence' and i[2] != None:
             sequenceid = i[-3]
             residue = i[-2]
