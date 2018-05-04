@@ -63,7 +63,7 @@ public final class TypeConverter
      * @throws InterMineException if an error occurs
      */
     public static Map<InterMineObject, List<InterMineObject>>
-        getConvertedObjectMap(List<ApiTemplate> conversionTemplates,
+    getConvertedObjectMap(List<ApiTemplate> conversionTemplates,
             Class<? extends InterMineObject> typeA,
             Class<? extends InterMineObject> typeB,
             Object bagOrIds, ObjectStore os) throws InterMineException {
