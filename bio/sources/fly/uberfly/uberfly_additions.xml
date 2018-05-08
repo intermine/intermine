@@ -130,9 +130,11 @@
     <attribute name="sampleTitle" type="java.lang.String"/>
     <attribute name="studyAbstract" type="java.lang.String"/>
 
-    <!--  <reference name="stock" referenced-type="Stock" />  -->
     <reference name="stage" referenced-type="OntologyTerm" />
     <reference name="tissue" referenced-type="OntologyTerm" />
+    <reference name="cellLine" referenced-type="UberFlyCellLine" />
+    <reference name="strain" referenced-type="UberFlyStrain" />
+    <reference name="uberFlyTissue" referenced-type="UberFlyTissue" />
     <collection name="publications" referenced-type="Publication"/>
     <collection name="uberFlyRNASeqResults" referenced-type="UberFlyRNASeqResult" reverse-reference="library"/>
   </class>

@@ -13,14 +13,6 @@
 <attribute name="name" value="Uberfly expression data"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
-<item id="4_1" class="UberFlyLibrary">
-<attribute name="identifier" value="SRX193500"/>
-<attribute name="sample" value="SAMN01760914"/>
-<attribute name="sourceName" value="Fat body"/>
-<attribute name="studyAbstract" value="Analysis of the humoral immune response against aberrant self by RNA sequencing of the fat body in Drosophila melanogaster"/>
-<reference name="stage" ref_id="5_1"/>
-<reference name="tissue" ref_id="5_2"/>
-</item>
 <item id="0_3" class="Ontology">
 <attribute name="name" value="Fly Anatomy"/>
 </item>
@@ -34,6 +26,16 @@
 <reference name="gene" ref_id="9_1"/>
 <reference name="library" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="UberFlyLibrary">
+<attribute name="identifier" value="SRX193500"/>
+<attribute name="sample" value="SAMN01760914"/>
+<attribute name="sourceName" value="Fat body"/>
+<attribute name="studyAbstract" value="Analysis of the humoral immune response against aberrant self by RNA sequencing of the fat body in Drosophila melanogaster"/>
+<reference name="stage" ref_id="5_1"/>
+<reference name="strain" ref_id="6_1"/>
+<reference name="tissue" ref_id="5_2"/>
+<reference name="uberFlyTissue" ref_id="7_1"/>
 </item>
 <item id="1_1" class="DataSource">
 <attribute name="name" value="Uberfly"/>

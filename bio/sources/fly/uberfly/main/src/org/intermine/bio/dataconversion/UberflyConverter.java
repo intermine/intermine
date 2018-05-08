@@ -89,7 +89,7 @@ public class UberflyConverter extends BioDirectoryConverter
     public void process(File dataDir) throws Exception {
         processMetadataFile(new FileReader(metadataFile));
         for (File file : dataDir.listFiles()) {
-            processGeneFiles(new FileReader(file));
+            processGeneFile(new FileReader(file));
         }
     }
 
@@ -104,7 +104,7 @@ public class UberflyConverter extends BioDirectoryConverter
         }
     }
 
-    private void processGeneFiles(Reader reader) throws ObjectStoreException {
+    private void processGeneFile(Reader reader) throws ObjectStoreException {
         Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -204,6 +204,7 @@ public class UberflyConverter extends BioDirectoryConverter
                 item.setAttributeIfNotNull("subtype", line[28]);
                 item.setAttributeIfNotNull("type", line[29]);
                 store(item);
+                library.setReference("cellLine", item);
             }
 
             // ignore [30] checksum
@@ -248,7 +249,7 @@ public class UberflyConverter extends BioDirectoryConverter
             library.setAttributeIfNotNull("fraction", line[72]);
             // ignore [73] gender
 
-            storeStrain(line);
+            storeStrain(library, line);
 
             library.setAttributeIfNotNull("geoLocName", line[78]);
             library.setAttributeIfNotNull("germLineKnockDown", line[79]);
@@ -327,6 +328,7 @@ public class UberflyConverter extends BioDirectoryConverter
                 item.setAttributeIfNotNull("library", line[142]);
                 item.setAttributeIfNotNull("type", line[143]);
                 store(item);
+                library.setReference("uberFlyTissue", item);
             }
 
             library.setAttributeIfNotNull("treatment", line[144]);
@@ -340,7 +342,7 @@ public class UberflyConverter extends BioDirectoryConverter
         }
     }
 
-    private void storeStrain(String[] line) throws ObjectStoreException {
+    private void storeStrain(Item library, String[] line) throws ObjectStoreException {
         if (StringUtils.isNotEmpty(line[74]) || StringUtils.isNotEmpty(line[75])
                 || StringUtils.isNotEmpty(line[76]) || StringUtils.isNotEmpty(line[77])
                 || StringUtils.isNotEmpty(line[126]) || StringUtils.isNotEmpty(line[127])
@@ -358,6 +360,8 @@ public class UberflyConverter extends BioDirectoryConverter
             item.setAttributeIfNotNull("strainOrigin", line[129]);
             item.setAttributeIfNotNull("strainOrLine", line[130]);
             store(item);
+
+            library.setReference("strain", item);
         }
     }
 
