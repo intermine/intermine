@@ -31,7 +31,7 @@ import org.intermine.xml.full.Item;
  *
  * @author Julie Sullivan
  */
-public class UberflyConverter extends BioFileConverter
+public class UberflyConverter extends BioDirectoryConverter
 {
     //private static final Logger LOG = Logger.getLogger(UberflyConverter.class);
     private static final String DATASET_TITLE = "Uberfly expression data";
@@ -86,11 +86,11 @@ public class UberflyConverter extends BioFileConverter
      * {@inheritDoc}
      */
     @Override
-    public void process(Reader reader) throws Exception {
-        if (libraries.isEmpty()) {
-            processMetadataFile(new FileReader(metadataFile));
+    public void process(File dataDir) throws Exception {
+        processMetadataFile(new FileReader(metadataFile));
+        for (File file : dataDir.listFiles()) {
+            processGeneFiles(new FileReader(file));
         }
-        processGeneFiles(reader);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class UberflyConverter extends BioFileConverter
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
         } catch (Exception e) {
-            throw new BuildException("cannot parse file: " + getCurrentFile(), e);
+            throw new BuildException("cannot parse gene file ", e);
         }
 
         // skip header
@@ -142,7 +142,7 @@ public class UberflyConverter extends BioFileConverter
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
         } catch (Exception e) {
-            throw new BuildException("cannot parse file: " + getCurrentFile(), e);
+            throw new BuildException("cannot parse metadata file", e);
         }
 
         // skip header
@@ -426,4 +426,6 @@ public class UberflyConverter extends BioFileConverter
         }
         return null;
     }
+
+
 }

@@ -41,12 +41,15 @@ public class UberflyConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
         File metadata = new File(getClass().getClassLoader().getResource("metadata.tsv").toURI());
-        File geneFile = new File(getClass().getClassLoader().getResource("SRX193500.tsv").toURI());
+        File geneFile = new File(getClass().getClassLoader().getResource("data/SRX193500.tsv").toURI());
 
         converter.setUberflyMetadataFile(metadata);
 
-        converter.setCurrentFile(geneFile);
-        converter.process(new FileReader(geneFile));
+        File tmp = new File(getClass().getClassLoader()
+                .getResource("data/SRX193500.tsv").toURI());
+
+        File datadir = tmp.getParentFile();
+        converter.process(datadir);
         converter.close();
 
         // uncomment to write out a new target items file
