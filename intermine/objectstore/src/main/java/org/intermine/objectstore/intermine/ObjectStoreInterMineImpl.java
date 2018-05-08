@@ -355,7 +355,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 try {
                     database = DatabaseFactory.getDatabase(dbAlias);
                 } catch (Exception e) {
-                    throw new ObjectStoreException("Unable to get database " + dbAlias + " for ObjectStore", e);
+                    throw new ObjectStoreException("Unable to get database " + dbAlias
+                        + " for ObjectStore", e);
                 }
 
                 String versionString;
@@ -686,8 +687,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             try {
                 logTableBatch.addRow(
                     logTableConnection, logTableName, null, LOG_TABLE_COLUMNS,
-                    new Object[]
-                        {System.currentTimeMillis(), optimise, estimated, execute, permitted, convert, q.toString(), sql});
+                    new Object[] {System.currentTimeMillis(), optimise, estimated, execute,
+                        permitted, convert, q.toString(), sql});
             } catch (SQLException e) {
                 LOG.warn("Failed to write to log table: " + e);
             }

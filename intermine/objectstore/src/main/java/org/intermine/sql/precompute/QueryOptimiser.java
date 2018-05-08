@@ -155,9 +155,8 @@ public final class QueryOptimiser
 
         if (ptm.getPrecomputedTables().isEmpty()) {
             if (context.isVerbose()) {
-                System.out.println("QueryOptimiser: no Precomputed Tables");
+                LOG.info("QueryOptimiser: no Precomputed Tables");
             }
-
             return new BestQueryFallback(null, query);
         }
 
@@ -205,7 +204,6 @@ public final class QueryOptimiser
         if (cachedQuery != null) {
             LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                     + " ms - cache hit: " + query);
-//            System.out.println("Returning cached query for " + query);
             return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
         }
 
@@ -281,9 +279,6 @@ public final class QueryOptimiser
                     + "query took " + ((new Date()).getTime() - start)
                     + (parseTime == 0 ? " ms without parsing " : " ms including "
                         + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
-
-//            System.out.println("Returning optimised query for " + query);
-
             return bestQuery;
         } catch (RuntimeException e) {
             if (context.isVerbose()) {
@@ -297,11 +292,6 @@ public final class QueryOptimiser
 
         LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
-
-        if (context.isVerbose()) {
-            System.out.println("QueryOptimiser: unparsable query for " + query);
-        }
-
         return new BestQueryFallback(originalQuery, query);
     }
 

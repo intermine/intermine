@@ -31,6 +31,10 @@ public final class PropertiesUtil
 
     private static Properties globalProperties;
 
+    private PropertiesUtil() {
+        // don't instantiate
+    }
+
     /**
      * Returns all InterMine properties
      *
@@ -146,7 +150,8 @@ public final class PropertiesUtil
         LOG.info("Finding global properties file " + resourceName);
 
         if (loadProperties(globalProperties, resourceName) == null) {
-            throw new RuntimeException("Could not load required global properties resource " + resourceName);
+            throw new RuntimeException("Could not load required global properties resource "
+                + resourceName);
         }
     }
 
@@ -166,7 +171,8 @@ public final class PropertiesUtil
      *
      * @param props The object receiving the properties
      * @param resourceName The name of the resource to load
-     * @return The combined properties.  Null if the resource to load couldn't be found by the classloader
+     * @return The combined properties.  Null if the resource to load couldn't be found
+     * by the classloader
      */
     private static Properties loadProperties(Properties props, String resourceName) {
         try {
@@ -177,7 +183,8 @@ public final class PropertiesUtil
                 URL resourceUrl = loader.getResource(resourceName);
 
                 if (resourceUrl == null) {
-                    LOG.error("Could not find properties " + resourceName + " from classloader  " + loader);
+                    LOG.error("Could not find properties " + resourceName
+                        + " from classloader " + loader);
                     return null;
                 }
 
