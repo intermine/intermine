@@ -47,6 +47,12 @@ public class OptimiserCache
         return caches.get(db);
     }
 
+    /**
+     * used only for testing
+     */
+    protected static synchronized void clear() {
+        caches.clear();
+    }
 
     /**
      * A Map that holds a mapping from unoptimised query string (with LIMIT and OFFSET stripped off)

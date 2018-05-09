@@ -182,8 +182,8 @@
 
 
     <!-- misc -->
-
     <module name="EqualsHashCode"/>
+    
 
     <!-- Do not allow System.out.println -->
     <module name="RegexpSinglelineJava">
@@ -265,6 +265,10 @@
     <property name="message" value="Spaces at the end of the line"/>
   </module>
   <module name="NewlineAtEndOfFile">
+  </module>
+
+  <module name="SuppressionFilter">
+    <property name="file" value="${suppressionFile}"/>
   </module>
 
 </module>

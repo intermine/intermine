@@ -74,7 +74,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 
         // We are clearing these instances and caches to make sure that tests cannot interfere with each other
         PrecomputedTableManager.instances.clear();
-        OptimiserCache.caches.clear();
+        //OptimiserCache.caches.clear();
 
         tearDownData();
         tearDownPrecomputedTables();
