@@ -58,8 +58,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected static final int FROM_DB = 1;
     protected static final int SOURCE = 2;
 
-    // Maps the IDs of loaded Items onto the final canonical InterMineObject, which may be the result of merging many
-    // loaded items
+    // Maps the IDs of loaded Items onto the final canonical InterMineObject,
+    // which may be the result of merging many loaded items
     protected IntToIntMap idMap = new IntToIntMap();
 
     protected IntPresentSet dbIdsStored = new IntPresentSet();
@@ -734,9 +734,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     @Override
-    public <T extends InterMineObject>
-    Collection<T> getObjectsByExample(T o, Set<String> fieldNames)
-        throws ObjectStoreException {
+    public <T extends InterMineObject> Collection<T> getObjectsByExample(T o,
+        Set<String> fieldNames) throws ObjectStoreException {
         return osw.getObjectsByExample(o, fieldNames);
     }
 
