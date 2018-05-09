@@ -352,8 +352,8 @@ public final class SearchResults implements Iterable<SearchResult>
      * @param userRepo The current user's search repository.
      * @return A set of search results.
      */
-    private static SearchResults doUnfilteredSearch(SearchTarget target, SearchRepository userRepo)
-    {
+    private static SearchResults doUnfilteredSearch(SearchTarget target,
+        SearchRepository userRepo) {
         LOG.info("unfiltered search");
         Map<String, WebSearchable> wsMap = new HashMap<String, WebSearchable>();
         Map<WebSearchable, Float> hitMap = new HashMap<WebSearchable, Float>();

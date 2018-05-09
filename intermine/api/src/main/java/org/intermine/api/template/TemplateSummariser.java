@@ -135,7 +135,8 @@ public class TemplateSummariser
             if (osw.isInTransaction()) {
                 osw.abortTransaction();
             }
-            LOG.error("IOException in encoding object while storing summary for " + templateQuery.getName());
+            LOG.error("IOException in encoding object while storing summary for "
+                + templateQuery.getName());
             throw new RuntimeException("IOException in encoding object while storing summary");
         } catch (RuntimeException e) {
             if (osw.isInTransaction()) {
