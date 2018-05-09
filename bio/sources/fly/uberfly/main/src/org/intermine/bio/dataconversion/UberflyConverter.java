@@ -337,8 +337,6 @@ public class UberflyConverter extends BioDirectoryConverter
             library.setAttributeIfNotNull("description", line[146]);
             library.setAttributeIfNotNull("sampleTitle", line[147]);
             library.setAttributeIfNotNull("studyAbstract", line[148]);
-
-            store(library);
         }
     }
 
