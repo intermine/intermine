@@ -30,7 +30,7 @@ else
 
     # install the JARs
     (cd plugin && ./gradlew install)
-    (cd intermine && ./gradlew install)
+    # (cd intermine && ./gradlew install)
     
     if [[ "$TEST_SUITE" = "bio" ]]; then
         # we depend on a flymine data source
@@ -38,9 +38,9 @@ else
         (cd flymine-bio-sources && ./gradlew install)
 
         # install bio
-        (cd bio && ./gradlew install)
-        (cd bio/sources && ./gradlew install)
-        (cd bio/postprocess && ./gradlew install)
+        # (cd bio && ./gradlew install)
+        # (cd bio/sources && ./gradlew install)
+        # (cd bio/postprocess && ./gradlew install)
     fi
 
     # Build resources we might require
