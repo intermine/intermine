@@ -15,7 +15,7 @@ env:
   #- TEST_SUITE=ws CLIENT=PY
   - TEST_SUITE=intermine
   #- TEST_SUITE=webtasks
-  #- TEST_SUITE=checkstyle
+  - TEST_SUITE=checkstyle
 sudo: true
 jdk:
 - openjdk8

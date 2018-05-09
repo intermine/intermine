@@ -28,11 +28,19 @@ else
     # Install lib requirements
     pip install -r config/lib/requirements.txt
 
-
+    # install the JARs
+    (cd plugin && ./gradlew install)
+    (cd intermine && ./gradlew install)
+    
     if [[ "$TEST_SUITE" = "bio" ]]; then
         # we depend on a flymine data source
         $GIT_GET https://github.com/intermine/flymine-bio-sources.git flymine-bio-sources
         (cd flymine-bio-sources && ./gradlew install)
+
+        # install bio
+        (cd bio && ./gradlew install)
+        (cd bio/sources && ./gradlew install)
+        (cd bio/postprocess && ./gradlew install)
     fi
 
     # Build resources we might require
