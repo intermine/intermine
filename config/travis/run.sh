@@ -63,9 +63,12 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
 
     #ant -f 'bio/test-all/build.xml' checkstyle
     (cd bio && ./gradlew checkstyleMain)
-    (cd bio/postproces && ./gradlew checkstyleMain)
-    ./config/lib/parse_checkstyle_report.py 'bio/build/checkstyle/checkstyle_report.xml'
-    ./config/lib/parse_checkstyle_report.py 'bio/postprocess/build/checkstyle/checkstyle_report.xml'
+    (cd bio/sources && ./gradlew checkstyleMain)
+    (cd bio/postprocess && ./gradlew checkstyleMain)
+
+    ./config/lib/parse_checkstyle_report.py 'bio/build/reports/checkstyle/checkstyle_report.xml'
+    ./config/lib/parse_checkstyle_report.py 'bio/postprocess/build/reports/checkstyle/checkstyle_report.xml'
+    ./config/lib/parse_checkstyle_report.py 'bio/sources/build/reports/checkstyle/checkstyle_report.xml'
 elif [ "$TEST_SUITE" = "webapp" ]; then
     echo 'Running selenium tests'
     . config/run-selenium-tests.sh

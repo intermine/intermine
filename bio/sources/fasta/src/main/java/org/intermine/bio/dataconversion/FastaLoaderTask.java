@@ -231,7 +231,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     /**
      * Get and store() the Organism object to reference when creating new objects.
-     * @param bioJavaSequence the biojava sequence to be parsed
      * @throws ObjectStoreException if there is a problem
      * @return the new Organism
      */
@@ -376,9 +375,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param dataSet the DataSet object
      * @throws ObjectStoreException if a store() fails during processing
      */
-    protected void  extraProcessing(ProteinSequence bioJavaSequence, org.intermine.model.bio.Sequence flymineSequence,
-        BioEntity bioEntity, Organism organism, DataSet dataSet)
-        throws ObjectStoreException {
+    protected void  extraProcessing(ProteinSequence bioJavaSequence,
+        org.intermine.model.bio.Sequence flymineSequence, BioEntity bioEntity, Organism organism,
+        DataSet dataSet) throws ObjectStoreException {
         // default - no extra processing
     }
 
