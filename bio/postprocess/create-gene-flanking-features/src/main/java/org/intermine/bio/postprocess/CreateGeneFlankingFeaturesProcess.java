@@ -40,7 +40,8 @@ import org.intermine.postprocess.PostProcessor;
  * features.  These will be used in overlap queries.
  * @author rns
  */
-public class CreateGeneFlankingFeaturesProcess extends PostProcessor {
+public class CreateGeneFlankingFeaturesProcess extends PostProcessor
+{
 
     private ObjectStore os;
     private DataSet dataSet;

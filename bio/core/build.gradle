@@ -72,6 +72,7 @@ task copyGenomicModel(type: Copy, overwrite: true) {
     into sourceSets.main.output.resourcesDir
 }
 
+
 tasks.test.dependsOn 'buildDB'
 tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
 tasks.mergeModels.dependsOn 'processResources', 'copyGenomicModel', 'copyMineProperties', 'copyDefaultInterMineProperties'

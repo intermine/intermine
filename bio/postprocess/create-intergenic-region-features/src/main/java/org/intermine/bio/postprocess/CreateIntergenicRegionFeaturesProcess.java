@@ -39,8 +39,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.metadata.Util;
 
 import org.intermine.postprocess.PostProcessor;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
 
 
 /**
@@ -48,7 +46,8 @@ import org.intermine.objectstore.ObjectStoreWriter;
  *
  * @author Kim Rutherford
  */
-public class CreateIntergenicRegionFeaturesProcess extends PostProcessor {
+public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
+{
 
     private ObjectStore os;
     private Model model;
@@ -158,7 +157,7 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor {
      * Store the objects returned by createIntergenicRegionFeatures().
      */
     private static void storeIntergenicRegions(ObjectStoreWriter objectStoreWriter,
-                                              Iterator<SequenceFeature> irIter) throws ObjectStoreException, IllegalAccessException {
+        Iterator<SequenceFeature> irIter) throws ObjectStoreException, IllegalAccessException {
         while (irIter.hasNext()) {
             SequenceFeature ir = irIter.next();
             if (ir == null) {

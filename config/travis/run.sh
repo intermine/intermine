@@ -42,13 +42,17 @@ elif [ "$TEST_SUITE" = "bio" ]; then
     (cd bio/sources && ./gradlew install)
     (cd bio/postprocess && ./gradlew install)
     (cd bio && ./gradlew build)
+    (cd bio/sources && ./gradlew build)
+    (cd bio/postprocess && ./gradlew build)
 
     echo CHECKING results
     ./config/lib/parse_test_report.py 'bio'
+    # ./config/lib/parse_test_report.py 'bio/sources'
+    # ./config/lib/parse_test_report.py 'bio/postprocess'
 
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "checkstyle" ]; then
-    ./gradlew checkstyleMain
+    (cd intermine && ./gradlew checkstyleMain)
     ./config/lib/parse_checkstyle_report.py 'intermine/model/build/reports/checkstyle/main.xml'
     ./config/lib/parse_checkstyle_report.py 'intermine/objectstore/build/reports/checkstyle/main.xml'
     ./config/lib/parse_checkstyle_report.py 'intermine/pathquery/build/reports/checkstyle/main.xml'
@@ -58,7 +62,10 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ./config/lib/parse_checkstyle_report.py 'intermine/webtasks/build/reports/checkstyle/main.xml'
 
     #ant -f 'bio/test-all/build.xml' checkstyle
-    #./config/lib/parse_checkstyle_report.py 'bio/test-all/build/checkstyle/checkstyle_report.xml'
+    (cd bio && ./gradlew checkstyleMain)
+    (cd bio/postproces && ./gradlew checkstyleMain)
+    ./config/lib/parse_checkstyle_report.py 'bio/build/checkstyle/checkstyle_report.xml'
+    ./config/lib/parse_checkstyle_report.py 'bio/postprocess/build/checkstyle/checkstyle_report.xml'
 elif [ "$TEST_SUITE" = "webapp" ]; then
     echo 'Running selenium tests'
     . config/run-selenium-tests.sh

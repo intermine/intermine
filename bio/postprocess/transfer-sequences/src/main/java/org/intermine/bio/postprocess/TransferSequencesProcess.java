@@ -47,12 +47,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-
 import org.intermine.postprocess.PostProcessor;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-
-import java.sql.SQLException;
 
 /**
  * Transfer sequences from the Assembly objects to the other objects that are located on the
@@ -150,6 +145,12 @@ public class TransferSequencesProcess extends PostProcessor
         }
     }
 
+    /**
+     * Transfer sequences one chromosome at a time, commit after each one.
+     *
+     * @param chr chromosome
+     * @throws Exception if something goes wrong
+     */
     protected void transferForChromosome(Chromosome chr) throws Exception {
 
         long startTime = System.currentTimeMillis();

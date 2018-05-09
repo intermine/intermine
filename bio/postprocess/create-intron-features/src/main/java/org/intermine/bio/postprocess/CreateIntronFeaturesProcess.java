@@ -56,7 +56,8 @@ import org.intermine.postprocess.PostProcessor;
  * Methods for creating feature for introns.
  * @author Wenyan Ji
  */
-public class CreateIntronFeaturesProcess extends PostProcessor {
+public class CreateIntronFeaturesProcess extends PostProcessor
+{
 
     private ObjectStore os;
     private DataSet dataSet;
