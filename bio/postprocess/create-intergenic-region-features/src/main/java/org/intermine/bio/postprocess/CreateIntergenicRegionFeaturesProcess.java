@@ -21,6 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.intermine.bio.util.BioQueries;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;

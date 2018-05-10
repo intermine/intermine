@@ -37,13 +37,13 @@ elif [ "$TEST_SUITE" = "intermine" ]; then
 elif [ "$TEST_SUITE" = "bio" ]; then
     echo "RUNNING bio unit tests"
     (cd bio && ./gradlew build)
-    # (cd bio/sources && ./gradlew build)
-    # (cd bio/postprocess && ./gradlew build)
+    (cd bio/sources && ./gradlew build)
+    (cd bio/postprocess && ./gradlew build)
 
     echo CHECKING results
     ./config/lib/parse_test_report.py 'bio'
-    # ./config/lib/parse_test_report.py 'bio/sources'
-    # ./config/lib/parse_test_report.py 'bio/postprocess'
+    ./config/lib/parse_test_report.py 'bio/sources'
+    ./config/lib/parse_test_report.py 'bio/postprocess'
 
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "checkstyle" ]; then

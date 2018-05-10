@@ -24,6 +24,7 @@ import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.SOTerm;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;

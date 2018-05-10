@@ -14,18 +14,19 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.apache.log4j.Logger;
+import java.sql.SQLException;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.sql.DatabaseUtil;
-import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
-import java.sql.SQLException;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.postprocess.PostProcessor;
 
 /**
  * Calculate additional mappings between annotation after loading into genomic ObjectStore.

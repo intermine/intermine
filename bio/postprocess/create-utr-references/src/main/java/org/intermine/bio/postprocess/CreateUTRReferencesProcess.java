@@ -16,9 +16,8 @@ import java.util.Iterator;
 
 
 import org.intermine.bio.util.Constants;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.ClassDescriptor;
-
-
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;

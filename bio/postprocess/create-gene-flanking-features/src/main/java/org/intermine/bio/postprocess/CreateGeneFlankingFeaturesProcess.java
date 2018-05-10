@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioQueries;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.model.bio.Chromosome;
