@@ -184,7 +184,10 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     @Override
     public void execute() {
-        configureDynamicAttributes(this);
+        // don't configure dynamic attributes if this is a unit test!
+        if (getProject() != null) {
+            configureDynamicAttributes(this);
+        }
         if (fastaTaxonId == null) {
             throw new RuntimeException("fastaTaxonId needs to be set");
         }
