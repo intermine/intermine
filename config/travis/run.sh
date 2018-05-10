@@ -36,6 +36,9 @@ elif [ "$TEST_SUITE" = "intermine" ]; then
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "bio" ]; then
     echo "RUNNING bio unit tests"
+    (cd plugin && ./gradlew install)
+    (cd intermine && ./gradlew install)    
+    (cd bio && ./gradlew install)
     (cd bio && ./gradlew build)
     (cd bio/sources && ./gradlew build)
     (cd bio/postprocess && ./gradlew build)
