@@ -25,6 +25,7 @@ import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Publication;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;

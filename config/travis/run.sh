@@ -39,6 +39,9 @@ elif [ "$TEST_SUITE" = "bio" ]; then
     (cd plugin && ./gradlew install)
     (cd intermine && ./gradlew install)    
     (cd bio && ./gradlew install)
+    (cd bio/sources && ./gradlew install)
+    (cd bio/postprocess && ./gradlew install)
+
     (cd bio && ./gradlew build)
     (cd bio/sources && ./gradlew build)
     (cd bio/postprocess && ./gradlew build)
