@@ -61,4 +61,5 @@
   <class name="UTR" extends="SequenceFeature" is-interface="true">
     <collection name="transcripts" referenced-type="Transcript" reverse-reference="UTRs"/>
   </class>
+  <class name="PointMutation" extends="SequenceFeature" is-interface="true"/>
 </classes>
