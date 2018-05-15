@@ -14,7 +14,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 import org.intermine.dataloader.BatchingFetcher;
 import org.intermine.dataloader.DirectDataLoader;
 import org.intermine.dataloader.IntegrationWriter;

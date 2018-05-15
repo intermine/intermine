@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioQueries;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.model.bio.Chromosome;
@@ -40,7 +41,8 @@ import org.intermine.postprocess.PostProcessor;
  * features.  These will be used in overlap queries.
  * @author rns
  */
-public class CreateGeneFlankingFeaturesProcess extends PostProcessor {
+public class CreateGeneFlankingFeaturesProcess extends PostProcessor
+{
 
     private ObjectStore os;
     private DataSet dataSet;

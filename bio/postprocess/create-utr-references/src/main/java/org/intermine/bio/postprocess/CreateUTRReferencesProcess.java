@@ -10,15 +10,14 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
-import org.apache.log4j.Logger;
+import java.util.Iterator;
+
+
+
 import org.intermine.bio.util.Constants;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -40,7 +39,7 @@ import org.intermine.util.DynamicUtil;
 
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
+
 
 import java.sql.SQLException;
 
@@ -141,7 +140,7 @@ public class CreateUTRReferencesProcess extends PostProcessor
                         threePrimeUTR = null;
                     }
                     osw.store(tempMRNA);
-                } catch (IllegalAccessException e){
+                } catch (IllegalAccessException e) {
                     throw new RuntimeException("Failed to clone mRNA object:" + e);
                 }
             }
@@ -162,7 +161,7 @@ public class CreateUTRReferencesProcess extends PostProcessor
                 tempMRNA.setFieldValue("fivePrimeUTR", fivePrimeUTR);
                 tempMRNA.setFieldValue("threePrimeUTR", threePrimeUTR);
                 osw.store(tempMRNA);
-            } catch (IllegalAccessException e){
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException("Failed to clone mRNA object: " + e);
             }
         }
@@ -174,8 +173,9 @@ public class CreateUTRReferencesProcess extends PostProcessor
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
             ClassDescriptor cld = model.getClassDescriptorByName("MRNA");
             try {
-                DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
-            } catch (SQLException e){
+                DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld,
+                    false);
+            } catch (SQLException e) {
                 throw new RuntimeException("Failed to analyse database: " + e);
             }
         }

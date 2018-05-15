@@ -1,8 +1,5 @@
 package org.intermine.sql;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-
 /*
  * Copyright (C) 2002-2017 FlyMine
  *
@@ -13,8 +10,6 @@ import java.net.URLClassLoader;
  *
  */
 
-//import java.lang.reflect.InvocationTargetException;
-//import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
@@ -55,8 +50,6 @@ public final class DatabaseFactory
                 database = databases.get(instance);
             } else {
                 Properties props = PropertiesUtil.getPropertiesStartingWith(instance);
-//                System.out.println("Getting properties starting with [" + instance + "]");
-
                 try {
                     database = new Database(PropertiesUtil.stripStart(instance, props));
                 } catch (Exception e) {

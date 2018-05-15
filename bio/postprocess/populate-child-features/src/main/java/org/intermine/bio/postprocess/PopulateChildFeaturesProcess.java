@@ -24,9 +24,8 @@ import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.SOTerm;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -98,7 +97,7 @@ public class PopulateChildFeaturesProcess extends PostProcessor
                     parentCount++;
                     childCount += newCollection.size();
                 }
-            } catch (IllegalAccessException e){
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException("Failed to clone object:" + e);
             }
         }

@@ -94,7 +94,7 @@ public class Database implements Shutdownable
             if (props.containsKey("datasource.schema")) {
                 // used (if not null) when setting the connection
                 this.schema = props.getProperty("datasource.schema");
-                LOG.warn("adding schema! " + schema );
+                LOG.warn("adding schema! " + schema);
             }
 
             // HikariCP has different configuration than default postgres, need to adjust properties

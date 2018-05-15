@@ -28,7 +28,8 @@ import org.intermine.objectstore.ObjectStoreException;
  * int4range type to calculate the overlaps.
  * @author Kim Rutherford
  */
-public class CreateOverlapViewProcess extends PostProcessor {
+public class CreateOverlapViewProcess extends PostProcessor
+{
 
     private static final Logger LOG = Logger.getLogger(CreateOverlapViewProcess.class);
 

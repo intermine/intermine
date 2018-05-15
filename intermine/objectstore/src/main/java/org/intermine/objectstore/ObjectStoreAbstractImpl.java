@@ -10,8 +10,6 @@ package org.intermine.objectstore;
  *
  */
 
-//import java.io.PrintWriter;
-//import java.io.StringWriter;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,9 +49,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected static Random rand = new Random();
 
     protected Model model;
-    public int maxOffset = Integer.MAX_VALUE;
-    public int maxLimit = Integer.MAX_VALUE;
-    public long maxTime = Long.MAX_VALUE;
+    protected int maxOffset = Integer.MAX_VALUE;
+    protected int maxLimit = Integer.MAX_VALUE;
+    protected long maxTime = Long.MAX_VALUE;
     // Optimiser will use a default query parse time if none is provided from properties
     protected Long maxQueryParseTime = null;
     protected CacheMap<Integer, InterMineObject> cache;
@@ -271,8 +269,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         throws MetaDataException {
         String modelName = properties.getProperty("model");
         if (modelName == null) {
-            throw new MetaDataException(osAlias + " does not have a model specified ("
-                    + modelName + ") - check properties");
+            throw new MetaDataException(osAlias + " does not have a model specified "
+                    + " - check properties");
         }
         Model classpathModel = Model.getInstanceByName(modelName);
         if (classpathModel == null) {

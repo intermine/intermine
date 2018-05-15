@@ -295,10 +295,12 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Userprofile objectstore is missing required tables.");
             }
 
-            String superuserAccountName = PropertiesUtil.getProperties().getProperty("superuser.account");
+            String superuserAccountName = PropertiesUtil.getProperties()
+                .getProperty("superuser.account");
             if (!setSuperuser(superuserAccountName, userprofileOSW)) {
                 throw new ServletException(
-                    "Cannot set superuser.account '" + superuserAccountName + "' to be superuser. Does this profile exist?");
+                    "Cannot set superuser.account '" + superuserAccountName
+                        + "' to be superuser. Does this profile exist?");
             }
 
             //verify if intermine_state exists in the savedbag table and if it has the right type
@@ -346,7 +348,8 @@ public class InitialiserPlugin implements PlugIn
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
-            LOG.error("Unable to create objectstore '" + osAlias + "' specified in web property webapp.os.alias", e);
+            LOG.error("Unable to create objectstore '" + osAlias
+                + "' specified in web property webapp.os.alias", e);
             blockingErrorKeys.put("errors.init.objectstoreconnection", e.getMessage());
         }
 
@@ -587,7 +590,8 @@ public class InitialiserPlugin implements PlugIn
         String globalPropertiesStreamPath = "/WEB-INF/global.web.properties";
 
         LOG.info("Loading global webapp properties from " + globalPropertiesStreamPath);
-        InputStream globalPropertiesStream = servletContext.getResourceAsStream(globalPropertiesStreamPath);
+        InputStream globalPropertiesStream = servletContext.getResourceAsStream(
+            globalPropertiesStreamPath);
         try {
             webProperties.load(globalPropertiesStream);
         } catch (Exception e) {
@@ -620,7 +624,8 @@ public class InitialiserPlugin implements PlugIn
         // Load these last, as they always take precedence.
         String modelPropertiesStreamPath = "/WEB-INF/web.properties";
         LOG.info("Loading model webapp properties from " + modelPropertiesStreamPath);
-        InputStream modelPropertiesStream = servletContext.getResourceAsStream(modelPropertiesStreamPath);
+        InputStream modelPropertiesStream = servletContext.getResourceAsStream(
+            modelPropertiesStreamPath);
         if (modelPropertiesStream != null) {
             try {
                 webProperties.load(modelPropertiesStream);

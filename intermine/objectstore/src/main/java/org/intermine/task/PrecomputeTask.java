@@ -52,10 +52,16 @@ public class PrecomputeTask extends Task
     protected int minRows = -1;
     // set by readProperties()
 
+    /**
+     * @param objectStoreAlias name of objectstore to use
+     */
     public void setObjectStoreAlias(String objectStoreAlias) {
         this.objectStoreAlias = objectStoreAlias;
     }
 
+    /**
+     * @param precomputePropertiesPath location of config file for precomputing
+     */
     public void setPrecomputePropertiesPath(String precomputePropertiesPath) {
         this.precomputePropertiesPath = precomputePropertiesPath;
     }
@@ -272,14 +278,14 @@ public class PrecomputeTask extends Task
         try {
             return iqlQuery.toQuery();
         } catch (IllegalArgumentException e) {
-            throw new BuildException("Exception while parsing query: " + key
-                                     + " = " + iqlQueryString, e);
+            throw new BuildException("Exception while parsing query: " + key + " = "
+                + iqlQueryString, e);
         }
     }
 
     /**
      * Set precomputeProperties by reading from propertiesFileName.
-     * 
+     *
      * @param propertiesPath the path to the properties
      * @return the Properties
      * @throws BuildException if the file cannot be read.

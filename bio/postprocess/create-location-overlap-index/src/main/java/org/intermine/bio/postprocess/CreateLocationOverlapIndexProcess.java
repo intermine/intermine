@@ -23,14 +23,16 @@ import org.intermine.sql.DatabaseConnectionException;
 
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
+
 
 
 /**
- * Create an index on the location table to be used for range queries. Uses the built-in int4range type.
+ * Create an index on the location table to be used for range queries.
+ * Uses the built-in int4range type.
  * @author Richard Smith
  */
-public class CreateLocationOverlapIndexProcess extends PostProcessor {
+public class CreateLocationOverlapIndexProcess extends PostProcessor
+{
 
     private static final String RANGE_TYPE = "int4range";
     private static final Logger LOG = Logger.getLogger(CreateLocationOverlapIndexProcess.class);
@@ -61,7 +63,7 @@ public class CreateLocationOverlapIndexProcess extends PostProcessor {
                     + "ObjectStoreWriterInterMineImpl");
         }
 
-        Database db = ((ObjectStoreWriterInterMineImpl)osw).getDatabase();
+        Database db = ((ObjectStoreWriterInterMineImpl) osw).getDatabase();
         Connection con = null;
 
         try {

@@ -36,22 +36,40 @@ elif [ "$TEST_SUITE" = "intermine" ]; then
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "bio" ]; then
     echo "RUNNING bio unit tests"
-    (cd intermine && ./gradlew install)
     (cd plugin && ./gradlew install)
+    (cd intermine && ./gradlew install)    
     (cd bio && ./gradlew install)
     (cd bio/sources && ./gradlew install)
     (cd bio/postprocess && ./gradlew install)
+
     (cd bio && ./gradlew build)
+    (cd bio/sources && ./gradlew build)
+    #(cd bio/postprocess && ./gradlew build)
 
     echo CHECKING results
     ./config/lib/parse_test_report.py 'bio'
+    ./config/lib/parse_test_report.py 'bio/sources'
+    #./config/lib/parse_test_report.py 'bio/postprocess'
 
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "checkstyle" ]; then
-    gradle checkstyle
-    ./config/lib/parse_checkstyle_report.py 'intermine/all/build/checkstyle/checkstyle_report.xml'
+    (cd intermine && ./gradlew checkstyleMain)
+    ./config/lib/parse_checkstyle_report.py 'intermine/model/build/reports/checkstyle/main.xml'
+    ./config/lib/parse_checkstyle_report.py 'intermine/objectstore/build/reports/checkstyle/main.xml'
+    ./config/lib/parse_checkstyle_report.py 'intermine/pathquery/build/reports/checkstyle/main.xml'
+    ./config/lib/parse_checkstyle_report.py 'intermine/integrate/build/reports/checkstyle/main.xml'
+    ./config/lib/parse_checkstyle_report.py 'intermine/api/build/reports/checkstyle/main.xml'
+    ./config/lib/parse_checkstyle_report.py 'intermine/webapp/build/reports/checkstyle/main.xml'    
+    ./config/lib/parse_checkstyle_report.py 'intermine/webtasks/build/reports/checkstyle/main.xml'
+
     #ant -f 'bio/test-all/build.xml' checkstyle
-    #./config/lib/parse_checkstyle_report.py 'bio/test-all/build/checkstyle/checkstyle_report.xml'
+    (cd bio && ./gradlew checkstyleMain)
+    (cd bio/sources && ./gradlew checkstyleMain)
+    (cd bio/postprocess && ./gradlew checkstyleMain)
+
+    ./config/lib/parse_checkstyle_report.py 'bio/build/reports/checkstyle/checkstyle_report.xml'
+    ./config/lib/parse_checkstyle_report.py 'bio/postprocess/build/reports/checkstyle/checkstyle_report.xml'
+    ./config/lib/parse_checkstyle_report.py 'bio/sources/build/reports/checkstyle/checkstyle_report.xml'
 elif [ "$TEST_SUITE" = "webapp" ]; then
     echo 'Running selenium tests'
     . config/run-selenium-tests.sh

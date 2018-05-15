@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.ClobAccessReverseComplement;
 import org.intermine.bio.util.Constants;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
@@ -47,12 +48,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-
 import org.intermine.postprocess.PostProcessor;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-
-import java.sql.SQLException;
 
 /**
  * Transfer sequences from the Assembly objects to the other objects that are located on the
@@ -150,6 +146,12 @@ public class TransferSequencesProcess extends PostProcessor
         }
     }
 
+    /**
+     * Transfer sequences one chromosome at a time, commit after each one.
+     *
+     * @param chr chromosome
+     * @throws Exception if something goes wrong
+     */
     protected void transferForChromosome(Chromosome chr) throws Exception {
 
         long startTime = System.currentTimeMillis();

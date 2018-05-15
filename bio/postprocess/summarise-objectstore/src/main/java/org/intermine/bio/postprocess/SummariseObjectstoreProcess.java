@@ -11,23 +11,13 @@ package org.intermine.bio.postprocess;
  */
 
 import java.util.Properties;
-
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.filters.StringInputStream;
-
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -60,7 +50,8 @@ public class SummariseObjectstoreProcess extends PostProcessor
         ObjectStore os = osw.getObjectStore();
         Properties props = new Properties();
         try {
-            props.load(getClass().getClassLoader().getResourceAsStream("objectstoresummary.config.properties"));
+            props.load(getClass().getClassLoader().getResourceAsStream(
+                "objectstoresummary.config.properties"));
         } catch (IOException e) {
             throw new BuildException("Could not open the class keys");
         } catch (NullPointerException e) {

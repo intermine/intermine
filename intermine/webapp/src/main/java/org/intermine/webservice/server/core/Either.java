@@ -111,7 +111,10 @@ public abstract class Either<A, B>
         }
     }
 
-    /** @author Alex Kalderimis **/
+    /**
+     * @param <A> The type of Lefts.
+     * @param <B> The type of Rights.
+     * **/
     public static final class Left<A, B> extends Either<A, B>
     {
 
@@ -144,7 +147,10 @@ public abstract class Either<A, B>
         }
     }
 
-    /** @author Alex Kalderimis **/
+    /**
+     * @param <A> The type of Lefts.
+     * @param <B> The type of Rights.
+     * **/
     public static final class Right<A, B> extends Either<A, B>
     {
         private final B b;

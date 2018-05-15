@@ -14,8 +14,6 @@ import org.apache.tools.ant.BuildException;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-
 import java.lang.reflect.Constructor;
 
 /**

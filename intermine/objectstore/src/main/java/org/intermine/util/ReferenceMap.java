@@ -251,6 +251,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
 
     /**
      * Interface for entries in the map.
+     * @param <K> the key
      */
     protected interface ReferenceWithKey<K>
     {

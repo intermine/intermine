@@ -2028,7 +2028,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // get DCC id
     // add antibody to types
     private void processSubmissionProperties(Connection connection) throws SQLException,
-    IOException, ObjectStoreException {
+        IOException, ObjectStoreException {
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
 
         ResultSet res = getAppliedDataAll(connection);
@@ -2120,8 +2120,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @param subToTypes
      * @throws ObjectStoreException
      */
-    private void storeSubProperties(
-            Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes)
+    private void storeSubProperties(Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes)
         throws ObjectStoreException {
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;

@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
@@ -56,7 +57,8 @@ import org.intermine.postprocess.PostProcessor;
  * Methods for creating feature for introns.
  * @author Wenyan Ji
  */
-public class CreateIntronFeaturesProcess extends PostProcessor {
+public class CreateIntronFeaturesProcess extends PostProcessor
+{
 
     private ObjectStore os;
     private DataSet dataSet;
