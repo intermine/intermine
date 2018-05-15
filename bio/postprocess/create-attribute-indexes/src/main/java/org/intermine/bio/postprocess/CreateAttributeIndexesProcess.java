@@ -30,7 +30,8 @@ import org.intermine.objectstore.ObjectStoreWriter;
  * @author Mark Woodbridge
  * @author Kim Rutherford
  */
-public class CreateAttributeIndexesProcess extends PostProcessor {
+public class CreateAttributeIndexesProcess extends PostProcessor
+{
 
     /**
      * Create a new instance

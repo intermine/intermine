@@ -11,28 +11,22 @@ package org.intermine.bio.postprocess;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+
+
+
 import java.util.Properties;
 
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.sql.Database;
 import java.sql.SQLException;
-
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.lucene.KeywordSearch;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.util.PropertiesUtil;
+
 
 /**
  * Create a the autocomplete
@@ -57,7 +51,8 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
         System.out .println("create lucene index ...");
         Properties props = new Properties();
         try {
-            props.load(getClass().getClassLoader().getResourceAsStream("objectstoresummary.config.properties"));
+            props.load(getClass().getClassLoader().getResourceAsStream(
+                "objectstoresummary.config.properties"));
 
             ObjectStore os = osw.getObjectStore();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();

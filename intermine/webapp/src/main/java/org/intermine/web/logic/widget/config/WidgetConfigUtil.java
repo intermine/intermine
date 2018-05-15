@@ -72,7 +72,7 @@ public final class WidgetConfigUtil
     public static boolean isFilterConstraint(final WidgetConfig config, PathConstraint pc) {
         String value = PathConstraint.getValue(pc);
         value = value.replace(" ", "");
-        if (value.equalsIgnoreCase("[" + config.getFilterLabel() + "]")) {
+        if (("[" + config.getFilterLabel() + "]").equalsIgnoreCase(value)) {
             return true;
         }
         return false;

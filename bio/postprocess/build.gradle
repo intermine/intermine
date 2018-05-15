@@ -29,6 +29,7 @@ subprojects {
     apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'dbmodel'
     apply plugin: 'biocore-dbmodel'
+    apply plugin: "checkstyle"
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
@@ -71,6 +72,31 @@ subprojects {
  
     jar {
         exclude "intermine.properties"
+    }
+
+    checkstyle {
+        toolVersion '7.8.1'
+        configFile file("../../../config/checkstyle/checkstyle.xml")
+        sourceSets = [sourceSets.main]
+        showViolations = true
+        ignoreFailures = false
+        maxWarnings = 0
+        //reportsDir = file("$project.rootDir/reports/checkstyle/$project.name")
+        configProperties = [
+                'checkstyle.header.file': "../../config/checkstyle/copyright_header.txt",
+                'suppressionFile': "../../config/checkstyle/suppressions.xml"
+        ]
+    }
+
+    checkstyleMain {
+        source = fileTree('src/main') {
+            includes = ['**/*.java']
+            excludes = ['build/**']
+        }
+    }
+
+    checkstyleTest {
+        enabled = false
     }
 
     tasks.withType(Test) {
@@ -119,7 +145,7 @@ subprojects {
         configurations = ['archives']
     }
 
-    tasks.compileTestJava.dependsOn ':bio-model:copyMineProperties'
+    tasks.compileTestJava.dependsOn 'copyMineProperties'
 }
 
 task testReport(type: TestReport) {

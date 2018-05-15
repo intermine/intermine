@@ -52,8 +52,8 @@ public class PrecomputedTableManager
         = new HashMap<String, Map<String, PrecomputedTable>>();
     protected Database database;
     protected Connection conn;
-    public static final String TABLE_INDEX = "precompute_index";
-    public static Map<Object, PrecomputedTableManager> instances
+    protected static final String TABLE_INDEX = "precompute_index";
+    protected static Map<Object, PrecomputedTableManager> instances
         = new HashMap<Object, PrecomputedTableManager>();
 
     /**
@@ -170,7 +170,8 @@ public class PrecomputedTableManager
         }
 
         if (queryStrings.containsKey(queryString)) {
-            throw new IllegalArgumentException("Precomputed table " + pt.getName() + " already exists");
+            throw new IllegalArgumentException("Precomputed table " + pt.getName()
+                + " already exists");
         } else {
             addTableToDatabase(pt, indexes, true);
             precomputedTables.add(pt);

@@ -258,8 +258,8 @@ public class GraphWidget extends Widget
          * @return the format
          */
         @Override
-        public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition)
-        {
+        public StringBuffer format(double number, StringBuffer result, FieldPosition
+            fieldPosition) {
             return super.format(number * magnitude, result, fieldPosition);
         }
 

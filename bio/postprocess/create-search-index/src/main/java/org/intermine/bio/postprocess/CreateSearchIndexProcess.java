@@ -11,23 +11,17 @@ package org.intermine.bio.postprocess;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.util.PropertiesUtil;
+
 
 /**
  * Create a the Lucene keyword search index for a mine.
@@ -54,7 +48,8 @@ public class CreateSearchIndexProcess extends PostProcessor
         //read class keys to figure out what are keyFields during indexing
         Properties classKeyProperties = new Properties();
         try {
-            classKeyProperties.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
+            classKeyProperties.load(getClass().getClassLoader().getResourceAsStream(
+                "class_keys.properties"));
         } catch (IOException e) {
             throw new BuildException("Could not open the class keys");
         } catch (NullPointerException e) {

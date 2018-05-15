@@ -1,4 +1,4 @@
-package org.intermine.bio.postprocess;
+package org.intermine.bio.util;
 
 /*
  * Copyright (C) 2002-2017 FlyMine
@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.Constants;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;

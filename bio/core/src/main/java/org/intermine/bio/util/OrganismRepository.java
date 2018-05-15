@@ -68,11 +68,12 @@ public final class OrganismRepository
                 InputStream propsResource =
                     OrganismRepository.class.getClassLoader().getResourceAsStream(MINE_PROP_FILE);
                 if (propsResource == null) {
-                    propsResource =
-                            OrganismRepository.class.getClassLoader().getResourceAsStream(DEFAULT_PROP_FILE);
+                    propsResource = OrganismRepository.class.getClassLoader().getResourceAsStream(
+                        DEFAULT_PROP_FILE);
                     whichPropFile = DEFAULT_PROP_FILE;
                     if (propsResource == null) {
-                        throw new RuntimeException("can't find " + whichPropFile + " in class path");
+                        throw new RuntimeException("can't find " + whichPropFile
+                            + " in class path");
                     }
                 }
                 props.load(propsResource);
@@ -132,8 +133,8 @@ public final class OrganismRepository
                                                    + name);
                     }
                 } else {
-                    throw new RuntimeException("properties in " + whichPropFile + " must start with "
-                                               + PREFIX + ".");
+                    throw new RuntimeException("properties in " + whichPropFile
+                        + " must start with " + PREFIX + ".");
                 }
             }
 

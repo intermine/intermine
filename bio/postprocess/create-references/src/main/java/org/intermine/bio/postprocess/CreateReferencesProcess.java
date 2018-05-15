@@ -13,36 +13,20 @@ package org.intermine.bio.postprocess;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.Constants;
+import java.sql.SQLException;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
-import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.metadata.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.sql.DatabaseUtil;
-import org.intermine.util.DynamicUtil;
-
-import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-
-import java.sql.SQLException;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.postprocess.PostProcessor;
 
 /**
  * Calculate additional mappings between annotation after loading into genomic ObjectStore.
@@ -72,166 +56,171 @@ public class CreateReferencesProcess extends PostProcessor
      * Main post-processing routine.
      * @throws ObjectStoreException if the objectstore throws an exception
      */
-    public void postProcess()
-            throws ObjectStoreException {
+    public void postProcess() throws ObjectStoreException {
 
         model = Model.getInstanceByName("genomic");
 
         LOG.info("insertReferences stage 1");
         // fill in collections on Chromosome
-        insertCollectionField("ChromosomeBand", "locations", "Location", "locatedOn",
-                "Chromosome", "chromosomeBands", false);
+        insertCollectionField("ChromosomeBand", "locations",
+            "Location", "locatedOn",
+            "Chromosome", "chromosomeBands",
+            false);
 
         LOG.info("insertReferences stage 2");
         // Exon.gene / Gene.exons
-        insertReferenceField("Gene", "transcripts", "Transcript", "exons", "Exon", "gene");
+        insertReferenceField("Gene", "transcripts",
+            "Transcript", "exons",
+            "Exon", "gene");
         LOG.info("insertReferences stage 3");
         // UTR.gene / Gene.UTRs
-        insertReferenceField("Gene", "transcripts", "Transcript", "UTRs", "UTR", "gene");
+        insertReferenceField("Gene", "transcripts",
+            "Transcript", "UTRs",
+            "UTR", "gene");
 
         LOG.info("insertReferences stage 4");
         // CDS.gene / Gene.CDSs
-        insertReferenceField("Gene", "transcripts", "Transcript", "CDSs", "CDS", "gene");
+        insertReferenceField("Gene", "transcripts",
+            "Transcript", "CDSs",
+            "CDS", "gene");
     }
 
-        /**
-         * Add a reference to and object of type X in objects of type Y by using a connecting class.
-         * Eg. Add a reference to Gene objects in Exon by examining the Transcript objects in the
-         * transcripts collection of the Gene, which would use a query like:
-         *   SELECT DISTINCT gene FROM Gene AS gene, Transcript AS transcript, Exon AS exon WHERE
-         *   (gene.transcripts CONTAINS transcript AND transcript.exons CONTAINS exon) ORDER BY gene
-         * and then set exon.gene
-         *
-         * in overview we are doing:
-         * BioEntity1 -&gt; BioEntity2 -&gt; BioEntity3   ==&gt;   BioEntitiy1 -&gt; BioEntity3
-         * @param sourceClsName the first class in the query
-         * @param sourceClassFieldName the field in the sourceClass which should contain the
-         * connectingClass
-         * @param connectingClsName the class referred to by sourceClass.sourceFieldName
-         * @param connectingClassFieldName the field in connectingClass which should contain
-         * destinationClass
-         * @param destinationClsName the class referred to by
-         * connectingClass.connectingClassFieldName
-         * @param createFieldName the reference field in the destinationClass - the
-         * collection to create/set
-         * @throws Exception if anything goes wrong
-         */
-        protected void insertReferenceField(String sourceClsName,
-                String sourceClassFieldName, String connectingClsName,
-                String connectingClassFieldName, String destinationClsName,
-                String createFieldName) throws ObjectStoreException {
+    /**
+     * Add a reference to and object of type X in objects of type Y by using a connecting class.
+     * Eg. Add a reference to Gene objects in Exon by examining the Transcript objects in the
+     * transcripts collection of the Gene, which would use a query like:
+     *   SELECT DISTINCT gene FROM Gene AS gene, Transcript AS transcript, Exon AS exon WHERE
+     *   (gene.transcripts CONTAINS transcript AND transcript.exons CONTAINS exon) ORDER BY gene
+     * and then set exon.gene
+     *
+     * in overview we are doing:
+     * BioEntity1 -&gt; BioEntity2 -&gt; BioEntity3   ==&gt;   BioEntitiy1 -&gt; BioEntity3
+     * @param sourceClsName the first class in the query
+     * @param sourceClassFieldName the field in the sourceClass which should contain the
+     * connectingClass
+     * @param connectingClsName the class referred to by sourceClass.sourceFieldName
+     * @param connectingClassFieldName the field in connectingClass which should contain
+     * destinationClass
+     * @param destinationClsName the class referred to by
+     * connectingClass.connectingClassFieldName
+     * @param createFieldName the reference field in the destinationClass - the
+     * collection to create/set
+     * @throws ObjectStoreException if anything goes wrong
+     */
+    protected void insertReferenceField(String sourceClsName, String sourceClassFieldName,
+        String connectingClsName, String connectingClassFieldName, String destinationClsName,
+        String createFieldName) throws ObjectStoreException {
 
-            String insertMessage = "insertReferences("
-                    + sourceClsName + ", "
-                    + sourceClassFieldName + ", "
-                    + connectingClsName + ", "
-                    + connectingClassFieldName + ","
-                    + destinationClsName + ", "
-                    + createFieldName + ")";
+        String insertMessage = "insertReferences("
+                + sourceClsName + ", "
+                + sourceClassFieldName + ", "
+                + connectingClsName + ", "
+                + connectingClassFieldName + ","
+                + destinationClsName + ", "
+                + createFieldName + ")";
 
-            // Check that classes and fields specified exist in model
+        // Check that classes and fields specified exist in model
+        try {
+            String errorMessage = "Not performing " + insertMessage;
+            PostProcessUtil.checkFieldExists(model, sourceClsName, sourceClassFieldName,
+                    errorMessage);
+            PostProcessUtil.checkFieldExists(model, connectingClsName, connectingClassFieldName,
+                    errorMessage);
+            PostProcessUtil.checkFieldExists(model, destinationClsName, createFieldName,
+                    errorMessage);
+        } catch (MetaDataException e) {
+            return;
+        }
+
+        LOG.info("Beginning " + insertMessage);
+        long startTime = System.currentTimeMillis();
+
+        Iterator<ResultsRow<InterMineObject>> resIter = null;
+
+        try {
+            resIter = PostProcessUtil.findConnectingClasses(
+                    osw.getObjectStore(),
+                    model.getClassDescriptorByName(sourceClsName).getType(),
+                    sourceClassFieldName,
+                    model.getClassDescriptorByName(connectingClsName).getType(),
+                    connectingClassFieldName,
+                    model.getClassDescriptorByName(destinationClsName).getType(), true);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("couldn't find connecting classes " + e);
+        }
+
+
+        // results will be sourceClass ; destClass (ordered by sourceClass)
+        osw.beginTransaction();
+
+        int count = 0;
+
+        while (resIter.hasNext()) {
+            ResultsRow<InterMineObject> rr = resIter.next();
+            InterMineObject thisSourceObject = rr.get(0);
+            InterMineObject thisDestObject = rr.get(1);
+
             try {
-                String errorMessage = "Not performing " + insertMessage;
-                PostProcessUtil.checkFieldExists(model, sourceClsName, sourceClassFieldName,
-                        errorMessage);
-                PostProcessUtil.checkFieldExists(model, connectingClsName, connectingClassFieldName,
-                        errorMessage);
-                PostProcessUtil.checkFieldExists(model, destinationClsName, createFieldName,
-                        errorMessage);
-            } catch (MetaDataException e) {
-                return;
-            }
-
-            LOG.info("Beginning " + insertMessage);
-            long startTime = System.currentTimeMillis();
-
-            Iterator<ResultsRow<InterMineObject>> resIter = null;
-
-            try {
-                resIter = PostProcessUtil.findConnectingClasses(
-                        osw.getObjectStore(),
-                        model.getClassDescriptorByName(sourceClsName).getType(),
-                        sourceClassFieldName,
-                        model.getClassDescriptorByName(connectingClsName).getType(),
-                        connectingClassFieldName,
-                        model.getClassDescriptorByName(destinationClsName).getType(), true);
+                // clone so we don't change the ObjectStore cache
+                InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(thisDestObject);
+                tempObject.setFieldValue(createFieldName, thisSourceObject);
+                count++;
+                if (count % 10000 == 0) {
+                    LOG.info("Created " + count + " references in " + destinationClsName
+                            + " to " + sourceClsName
+                            + " via " + connectingClsName);
+                }
+                osw.store(tempObject);
             } catch (IllegalAccessException e) {
-                throw new RuntimeException("couldn't find connecting classes " + e);
-            }
-
-
-            // results will be sourceClass ; destClass (ordered by sourceClass)
-            osw.beginTransaction();
-
-            int count = 0;
-
-            while (resIter.hasNext()) {
-                ResultsRow<InterMineObject> rr = resIter.next();
-                InterMineObject thisSourceObject = rr.get(0);
-                InterMineObject thisDestObject = rr.get(1);
-
-                try {
-                    // clone so we don't change the ObjectStore cache
-                    InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(thisDestObject);
-                    tempObject.setFieldValue(createFieldName, thisSourceObject);
-                    count++;
-                    if (count % 10000 == 0) {
-                        LOG.info("Created " + count + " references in " + destinationClsName
-                                + " to " + sourceClsName
-                                + " via " + connectingClsName);
-                    }
-                    osw.store(tempObject);
-                } catch (IllegalAccessException e) {
-                    LOG.error("Object with ID: " + thisDestObject.getId()
-                            + " has no " + createFieldName + " field");
-                }
-            }
-
-            LOG.info("Finished: created " + count + " references in " + destinationClsName
-                    + " to " + sourceClsName + " via " + connectingClsName
-                    + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
-            osw.commitTransaction();
-
-            // now ANALYSE tables relation to class that has been altered - may be rows added
-            // to indirection tables
-            if (osw instanceof ObjectStoreWriterInterMineImpl) {
-                ClassDescriptor cld = model.getClassDescriptorByName(destinationClsName);
-                try {
-                    DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
-                } catch (SQLException e) {
-                    throw new RuntimeException("Couldn't analyse database " + e);
-                }
+                LOG.error("Object with ID: " + thisDestObject.getId()
+                        + " has no " + createFieldName + " field");
             }
         }
 
-        /**
-         * Add a collection of objects of type X to objects of type Y by using a connecting class.
-         * Eg. Add a collection of Protein objects to Gene by examining the Transcript objects in the
-         * transcripts collection of the Gene, which would use a query like:
-         *   SELECT DISTINCT gene FROM Gene AS gene, Transcript AS transcript, Protein AS protein WHERE
-         *   (gene.transcripts CONTAINS transcript AND transcript.protein CONTAINS protein)
-         *   ORDER BY gene
-         * and then set protected gene.protein (if created
-         * BioEntity1 -&gt; BioEntity2 -&gt; BioEntity3   ==&gt;   BioEntity1 -&gt; BioEntity3
-         * @param firstClsName the first class in the query
-         * @param firstClassFieldName the field in the firstClass which should contain the
-         * connectingClass
-         * @param connectingClsName the class referred to by firstClass.sourceFieldName
-         * @param connectingClassFieldName the field in connectingClass which should contain
-         * secondClass
-         * @param secondClsName the class referred to by
-         * connectingClass.connectingClassFieldName
-         * @param createFieldName the collection field in the secondClass - the
-         * collection to create/set
-         * @param createInFirstClass if true create the new collection field in firstClass, otherwise
-         * create in secondClass
-         * @throws Exception if anything goes wrong
-         */
-    protected void insertCollectionField(String firstClsName,
-                                         String firstClassFieldName, String connectingClsName,
-                                         String connectingClassFieldName, String secondClsName,
-                                         String createFieldName, boolean createInFirstClass)
-        throws ObjectStoreException {
+        LOG.info("Finished: created " + count + " references in " + destinationClsName
+                + " to " + sourceClsName + " via " + connectingClsName
+                + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
+        osw.commitTransaction();
+
+        // now ANALYSE tables relation to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(destinationClsName);
+            try {
+                DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld,
+                        false);
+            } catch (SQLException e) {
+                throw new RuntimeException("Couldn't analyse database " + e);
+            }
+        }
+    }
+
+    /**
+     * Add a collection of objects of type X to objects of type Y by using a connecting class.
+     * Eg. Add a collection of Protein objects to Gene by examining the Transcript objects in
+     * the transcripts collection of the Gene, which would use a query like:
+     *   SELECT DISTINCT gene FROM Gene AS gene, Transcript AS transcript, Protein AS protein
+     *   WHERE (gene.transcripts CONTAINS transcript AND transcript.protein CONTAINS protein)
+     *   ORDER BY gene
+     * and then set protected gene.protein (if created
+     * BioEntity1 -&gt; BioEntity2 -&gt; BioEntity3   ==&gt;   BioEntity1 -&gt; BioEntity3
+     * @param firstClsName the first class in the query
+     * @param firstClassFieldName the field in the firstClass which should contain the
+     * connectingClass
+     * @param connectingClsName the class referred to by firstClass.sourceFieldName
+     * @param connectingClassFieldName the field in connectingClass which should contain
+     * secondClass
+     * @param secondClsName the class referred to by
+     * connectingClass.connectingClassFieldName
+     * @param createFieldName the collection field in the secondClass - the
+     * collection to create/set
+     * @param createInFirstClass if true create the new collection field in firstClass,
+     * otherwise create in secondClass
+     * @throws ObjectStoreException if anything goes wrong
+     */
+    protected void insertCollectionField(String firstClsName, String firstClassFieldName,
+        String connectingClsName, String connectingClassFieldName, String secondClsName,
+        String createFieldName, boolean createInFirstClass) throws ObjectStoreException {
         InterMineObject lastDestObject = null;
         Set<InterMineObject> newCollection = new HashSet<InterMineObject>();
 
@@ -270,8 +259,8 @@ public class CreateReferencesProcess extends PostProcessor
         }
         CollectionDescriptor col = destCld.getCollectionDescriptorByName(createFieldName);
         if (col == null) {
-            String msg = "Error running post-process `create-references` for `" + createFieldName
-                    + "` since this collection doesn't exist in the model.";
+            String msg = "Error running post-process `create-references` for `"
+                    + createFieldName + "` since this collection doesn't exist in the model.";
             LOG.error(msg);
             return;
         }
@@ -364,7 +353,8 @@ public class CreateReferencesProcess extends PostProcessor
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
             ClassDescriptor cld = model.getClassDescriptorByName(secondClsName);
             try {
-                DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+                DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld,
+                        false);
             } catch (SQLException e) {
                 throw new RuntimeException("Couldn't analyse database " + e);
             }

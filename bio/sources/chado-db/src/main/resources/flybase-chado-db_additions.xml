@@ -61,4 +61,8 @@
   <class name="UTR" extends="SequenceFeature" is-interface="true">
     <collection name="transcripts" referenced-type="Transcript" reverse-reference="UTRs"/>
   </class>
+  <class name="PointMutation" extends="SequenceFeature" is-interface="true"/>
+  <class name="TransposableElementInsertionSite" extends="SequenceFeature" is-interface="true"/>
+  <class name="CDNAClone" extends="SequenceFeature" is-interface="true"/>
+
 </classes>

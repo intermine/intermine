@@ -18,6 +18,7 @@ import org.intermine.bio.util.Constants;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Intron;
 import org.intermine.model.bio.Transcript;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -142,6 +143,5 @@ public class FlyBasePostProcess extends PostProcessor
         }
 //        LOG.info("Created " + count + " Gene.introns collections");
         osw.commitTransaction();
-        osw.close();
     }
 }

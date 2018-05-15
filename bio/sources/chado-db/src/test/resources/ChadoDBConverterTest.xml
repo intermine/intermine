@@ -56,19 +56,6 @@
 <reference name="subject" ref_id="1_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="10_1" class="Exon">
-<attribute name="length" value="148"/>
-<attribute name="primaryIdentifier" value="CG10000:1"/>
-<attribute name="symbol" value="CG10000:1"/>
-<reference name="chromosome" ref_id="9_2"/>
-<reference name="chromosomeLocation" ref_id="18_5"/>
-<reference name="organism" ref_id="2_1"/>
-<reference name="sequence" ref_id="6_8"/>
-<reference name="sequenceOntologyTerm" ref_id="3_4"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-<collection name="publications"><reference ref_id="17_1"/><reference ref_id="17_4"/><reference ref_id="17_5"/></collection>
-<collection name="transcripts"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
-</item>
 <item id="17_5" class="Publication">
 <attribute name="pubMedId" value="7720555"/>
 </item>
@@ -347,30 +334,12 @@
 <collection name="cvTerms"><reference ref_id="21_5"/></collection>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="12_2" class="Allele">
-<attribute name="primaryIdentifier" value="FBal0060667"/>
-<attribute name="symbol" value="Scer\GAL4[sd-SG29.1]"/>
-<reference name="organism" ref_id="2_1"/>
-<reference name="sequenceOntologyTerm" ref_id="3_1"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-<collection name="mutagens"><reference ref_id="23_1"/></collection>
-<collection name="publications"><reference ref_id="17_6"/></collection>
-</item>
 <item id="21_5" class="CVTerm">
 <attribute name="identifier" value="FBcv:0000354"/>
 </item>
 <item id="26_2" class="InteractionExperiment">
 <attribute name="name" value="Another paper about interactions"/>
 <reference name="publication" ref_id="17_9"/>
-</item>
-<item id="12_1" class="Allele">
-<attribute name="alleleClass" value="hypomorph"/>
-<attribute name="primaryIdentifier" value="FBal0198867"/>
-<attribute name="symbol" value="CG10006[GD2461]"/>
-<reference name="gene" ref_id="1_2"/>
-<reference name="organism" ref_id="2_1"/>
-<reference name="sequenceOntologyTerm" ref_id="3_1"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="18_9" class="Location">
 <attribute name="end" value="7576638"/>
@@ -399,6 +368,14 @@
 <reference name="sequence" ref_id="6_3"/>
 <reference name="sequenceOntologyTerm" ref_id="3_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="12_2" class="Allele">
+<attribute name="primaryIdentifier" value="FBal0060667"/>
+<attribute name="symbol" value="Scer\GAL4[sd-SG29.1]"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="mutagens"><reference ref_id="23_1"/></collection>
+<collection name="publications"><reference ref_id="17_6"/></collection>
 </item>
 <item id="2_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
@@ -430,6 +407,14 @@
 <item id="3_3" class="SOTerm">
 <attribute name="name" value="chromosome_arm"/>
 <reference name="ontology" ref_id="0_1"/>
+</item>
+<item id="12_1" class="Allele">
+<attribute name="alleleClass" value="hypomorph"/>
+<attribute name="primaryIdentifier" value="FBal0198867"/>
+<attribute name="symbol" value="CG10006[GD2461]"/>
+<reference name="gene" ref_id="1_2"/>
+<reference name="organism" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="6_10" class="Sequence">
 <attribute name="length" value="41"/>
@@ -509,6 +494,10 @@
 <item id="17_2" class="Publication">
 <attribute name="pubMedId" value="8543160"/>
 </item>
+<item id="24_2" class="Interaction">
+<reference name="participant1" ref_id="1_2"/>
+<reference name="participant2" ref_id="1_1"/>
+</item>
 <item id="10_2" class="Exon">
 <attribute name="length" value="161"/>
 <attribute name="primaryIdentifier" value="CG10000:2"/>
@@ -519,11 +508,6 @@
 <reference name="sequence" ref_id="6_9"/>
 <reference name="sequenceOntologyTerm" ref_id="3_4"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
-<collection name="transcripts"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
-</item>
-<item id="24_2" class="Interaction">
-<reference name="participant1" ref_id="1_2"/>
-<reference name="participant2" ref_id="1_1"/>
 </item>
 <item id="20_1" class="AnatomyTerm">
 <attribute name="identifier" value="FBbt:00004729"/>
@@ -591,6 +575,18 @@
 <reference name="experiment" ref_id="26_1"/>
 <reference name="interaction" ref_id="24_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="10_1" class="Exon">
+<attribute name="length" value="148"/>
+<attribute name="primaryIdentifier" value="CG10000:1"/>
+<attribute name="symbol" value="CG10000:1"/>
+<reference name="chromosome" ref_id="9_2"/>
+<reference name="chromosomeLocation" ref_id="18_5"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_8"/>
+<reference name="sequenceOntologyTerm" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="publications"><reference ref_id="17_1"/><reference ref_id="17_4"/><reference ref_id="17_5"/></collection>
 </item>
 <item id="8_10" class="Synonym">
 <attribute name="value" value="FBgn0000001_dbxref3"/>

@@ -79,8 +79,8 @@ public class FriendlyMineManager
      * @param properties the web properties
      * @return an instance of FriendlyMineManager
      */
-    public static synchronized
-    FriendlyMineManager getInstance(InterMineAPI api, Properties properties) {
+    public static synchronized FriendlyMineManager getInstance(InterMineAPI api,
+        Properties properties) {
         if (!INSTANCE_MAP.containsKey(api)) {
             MineRequester r = TypeUtil.createNew(
                     properties.getProperty(REQUESTER_IMPL, DEFAULT_REQR));

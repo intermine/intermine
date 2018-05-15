@@ -600,8 +600,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
         return identifier;
     }
-    private void processPeaksSources(Connection connection) throws SQLException,
-    ObjectStoreException {
+    private void processPeaksSources(Connection connection)
+        throws SQLException, ObjectStoreException {
         ResultSet res = getPeaksSources(connection);
         while (res.next()) {
             Integer featureId = res.getInt("feature_id");
@@ -651,7 +651,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
     private void processFeatureScores(Connection connection) throws SQLException,
-    ObjectStoreException {
+        ObjectStoreException {
         long bT = System.currentTimeMillis();
         ResultSet res = getFeatureScores(connection);
         while (res.next()) {
@@ -700,7 +700,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
     private void processExpressionLevels(Connection connection) throws SQLException,
-    ObjectStoreException {
+        ObjectStoreException {
         ResultSet res = getExpressionLevels(connection);
         Integer previousId = -1;
         Item level = null;

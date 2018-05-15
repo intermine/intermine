@@ -10,40 +10,17 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.intermine.bio.util.BioQueries;
-import org.intermine.bio.util.Constants;
-import org.intermine.metadata.MetaDataException;
-import org.intermine.metadata.Model;
-import org.intermine.model.bio.BioEntity;
+import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.metadata.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.util.DynamicUtil;
 import org.intermine.postprocess.PostProcessor;
 
 /**
@@ -127,7 +104,7 @@ public class CreateChromosomeLocationsProcess extends PostProcessor
     }
 
     private void setChromosomeReferencesAndStore(SequenceFeature lsf, Location loc,
-                                                 Integer chrId) throws ObjectStoreException, IllegalAccessException  {
+            Integer chrId) throws ObjectStoreException, IllegalAccessException  {
         SequenceFeature lsfClone = PostProcessUtil.cloneInterMineObject(lsf);
 
         lsfClone.setChromosomeLocation(loc);

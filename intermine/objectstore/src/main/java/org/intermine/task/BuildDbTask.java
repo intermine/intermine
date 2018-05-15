@@ -45,11 +45,11 @@ import org.intermine.util.PropertiesUtil;
 public class BuildDbTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(BuildDbTask.class);
-    protected static final String SERIAL_SEQUENCE_NAME = "serial";
-    protected File tempDir;
+    private static final String SERIAL_SEQUENCE_NAME = "serial";
+    private File tempDir;
     protected Database database;
-    protected String databaseAlias;
-    protected String schemaFile;
+    private String databaseAlias;
+    private String schemaFile;
     private String os;
     private String model;
 
@@ -100,12 +100,9 @@ public class BuildDbTask extends Task
             try {
                 FileUtils.cleanDirectory(tempDir);
             } catch (Exception e) {
-                throw new BuildException(
-                    "Could not clean up directory "
-                        + tempDir
-                        + " before execution (this is required to stop Torque generation from picking up extraneous"
-                        + " files)",
-                    e);
+                throw new BuildException("Could not clean up directory " + tempDir
+                    + " before execution (this is required to stop Torque generation from "
+                    + " picking up extraneous files)", e);
             }
 
             if (tempDir == null) {
@@ -137,7 +134,7 @@ public class BuildDbTask extends Task
                         try {
                             c.close();
                         } catch (SQLException e) {
-                            LOG.error("Failed to close connection" ,e);
+                            LOG.error("Failed to close connection", e);
                         }
                     }
                 }
@@ -151,7 +148,8 @@ public class BuildDbTask extends Task
             sql.setSqlDbMap(tempDir + "/sqldb.map");
             sql.setOutputFile("report.sql.generation");
             sql.setTargetDatabase(database.getPlatform().toLowerCase()); // "postgresql"
-            InputStream schemaFileInputStream = getClass().getClassLoader().getResourceAsStream(schemaFile);
+            InputStream schemaFileInputStream = getClass().getClassLoader()
+                .getResourceAsStream(schemaFile);
             if (schemaFileInputStream == null) {
                 throw new BuildException("cannot open schema file (" + schemaFile + ")");
             }
@@ -204,7 +202,6 @@ public class BuildDbTask extends Task
 
             ea.setValue("abort"); // "abort", "continue" or "stop"
             isql.execute();
-            // TODO: properly
 
             Connection c = null;
             try {
@@ -219,7 +216,7 @@ public class BuildDbTask extends Task
                     try {
                         c.close();
                     } catch (SQLException e) {
-                        LOG.error("Failed to close connection" ,e);
+                        LOG.error("Failed to close connection", e);
                     }
                 }
             }
@@ -238,7 +235,7 @@ public class BuildDbTask extends Task
                     try {
                         c.close();
                     } catch (SQLException e) {
-                        LOG.error("Failed to close connection" ,e);
+                        LOG.error("Failed to close connection", e);
                     }
                 }
             }
@@ -257,7 +254,7 @@ public class BuildDbTask extends Task
                     try {
                         c.close();
                     } catch (SQLException e) {
-                        LOG.error("Failed to close connection" ,e);
+                        LOG.error("Failed to close connection", e);
                     }
                 }
             }
@@ -278,7 +275,7 @@ public class BuildDbTask extends Task
                         try {
                             c.close();
                         } catch (SQLException e) {
-                            LOG.error("Failed to close connection" ,e);
+                            LOG.error("Failed to close connection", e);
                         }
                     }
                 }

@@ -280,7 +280,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 if (obj instanceof ProxyReference) {
                     obj = ((ProxyReference) obj).getObject();
                 }
-                
+
                 try {
                     classes.addAll(Util.decomposeClass(obj.getClass()));
                 } catch (Exception e) {

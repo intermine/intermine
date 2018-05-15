@@ -826,6 +826,17 @@ public class BioGridConverter extends BioFileConverter
                 return (relationshipType.hashCode() + 3 * eh.hashCode()
                         + 5 * identifiers.hashCode());
             }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (obj == null || !getClass().equals(obj.getClass())) {
+                    return false;
+                }
+                InteractionHolder ih = (InteractionHolder) obj;
+                return (ih.relationshipType.equals(relationshipType)
+                        && ih.eh.equals(eh)
+                        && ih.identifiers.equals(identifiers));
+            }
         }
 
         /**
@@ -957,6 +968,21 @@ public class BioGridConverter extends BioFileConverter
         @Override
         public String toString() {
             return name + role1 + role2 + type + relationshipType + experiment + interaction;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null || !getClass().equals(obj.getClass())) {
+                return false;
+            }
+            DetailHolder dh = (DetailHolder) obj;
+            return (dh.name.equals(name)
+                    && dh.role1.equals(role1)
+                    && dh.role2.equals(role2)
+                    && dh.type.equals(type)
+                    && dh.relationshipType.equals(relationshipType)
+                    && dh.experiment.equals(experiment)
+                    && dh.interaction.equals(interaction));
         }
 
         @Override
