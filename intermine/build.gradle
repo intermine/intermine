@@ -20,6 +20,8 @@ subprojects {
     apply plugin: "com.jfrog.bintray"
     apply plugin: "com.jfrog.artifactory"
     apply plugin: "checkstyle"
+    apply plugin: "eclipse"
+    apply plugin: "idea"
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
