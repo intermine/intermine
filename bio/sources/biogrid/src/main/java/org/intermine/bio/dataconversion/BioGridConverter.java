@@ -64,8 +64,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Julie Sullivan
  */
-public class BioGridConverter extends BioFileConverter
-{
+public class BioGridConverter extends BioFileConverter {
     private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
     private static final String PROP_FILE = "biogrid_config.properties";
     private Map<String, String> terms = new HashMap<String, String>();

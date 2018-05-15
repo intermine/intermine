@@ -16,8 +16,7 @@ package org.intermine;
  *
  * @author Richard Smith
  */
-public class InterMineException extends Exception
-{
+public class InterMineException extends Exception {
     /**
      * Constructs an InterMineException
      */
