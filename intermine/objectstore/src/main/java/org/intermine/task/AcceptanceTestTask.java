@@ -112,6 +112,8 @@ public class AcceptanceTestTask extends Task
 
             processResults(testResults, pw);
 
+            System.err .println("Printing results file: " + outputFile.getCanonicalPath());
+
             try {
                 fw.close();
             } catch (IOException e) {

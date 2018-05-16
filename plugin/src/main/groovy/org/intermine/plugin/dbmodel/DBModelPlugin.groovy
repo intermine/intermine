@@ -9,8 +9,6 @@ import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
 
-
-
 class DBModelPlugin implements Plugin<Project> {
 
     DBModelConfig config
@@ -259,6 +257,32 @@ class DBModelPlugin implements Plugin<Project> {
                 dbUtils.storeMetadata(config.userProfileObjectStoreName, config.userProfileModelName)
             }
         }
+
+        project.task('runAcceptanceTests') {
+            group TaskConstants.TASK_GROUP
+            description "Runs the acceptance tests against the prodcution database"
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
+
+            doLast {
+                def ant = new AntBuilder()
+
+                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
+                String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
+                String outputFilePath = buildResourcesMainDir + File.separator + "acceptance_test.html"
+                String acceptanceTestFilePath = buildResourcesMainDir + File.separator + config.mineName + "_acceptance_test.conf"
+
+                ant.taskdef(name: "acceptanceTest", classname: "org.intermine.task.AcceptanceTestTask") {
+                    classpath {
+                        dirset(dir: project.getBuildDir().getAbsolutePath())
+                        pathelement(path: project.configurations.getByName("compile").asPath)
+                    }
+                }
+                ant.acceptanceTest(database: "db.production", configFile: acceptanceTestFilePath,
+                    outputFile: outputFilePath)
+            }
+        }
+
+
     }
 }
 

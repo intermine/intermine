@@ -19,8 +19,6 @@ class WebAppPlugin implements Plugin<Project> {
             bioWebApp
         }
 
-        //versionConfig = project.extensions.create('webappVersionConfig', VersionConfig)
-
         project.task('initConfig') {
             config = project.extensions.create('webappConfig', WebAppConfig)
             dbUtils = new DBModelUtils(project)
