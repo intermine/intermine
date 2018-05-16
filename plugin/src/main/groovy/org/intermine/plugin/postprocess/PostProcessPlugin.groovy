@@ -18,6 +18,11 @@ class PostProcessPlugin implements Plugin<Project> {
     public static final String DO_SOURCES = "do-sources"
 
     void apply(Project project) {
+        //only buildDB if there are tests to run
+        if ((new File(project.projectDir.absolutePath + "/src/test")).exists()) {
+            project.tasks.test.dependsOn 'buildUnitTestDB'
+        }
+
         String projectXml = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
         org.intermine.plugin.project.Project intermineProject
         List<String> processNames = new ArrayList<String>()
