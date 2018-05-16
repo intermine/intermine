@@ -19,8 +19,6 @@ class WebAppPlugin implements Plugin<Project> {
             bioWebApp
         }
 
-        //versionConfig = project.extensions.create('webappVersionConfig', VersionConfig)
-
         project.task('initConfig') {
             config = project.extensions.create('webappConfig', WebAppConfig)
             dbUtils = new DBModelUtils(project)
@@ -164,6 +162,73 @@ class WebAppPlugin implements Plugin<Project> {
                         templatesXml:buildResourcesMainDir + File.separator + "default-template-queries.xml",
                         username: superUser,
                         superuserPassword: superUserPsw)
+            }
+        }
+
+        project.task('dropPrecomputedTables') {
+            group TaskConstants.TASK_GROUP
+            description "Drops all precomputed tables from the database"
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
+
+            SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
+            String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
+
+            doLast {
+                def ant = new AntBuilder()
+                ant.taskdef(name: "dropPrecomputedTables", classname: "org.intermine.task.DropPrecomputedTablesTask") {
+                    classpath {
+                        dirset(dir: project.getBuildDir().getAbsolutePath())
+                        pathelement(path: project.configurations.getByName("compile").asPath)
+                    }
+                }
+                ant.dropPrecomputedTables(alias: config.objectStoreName)
+            }
+        }
+
+        project.task('precomputeQueries') {
+            group TaskConstants.TASK_GROUP
+            description "Creates temporary tables to make querying faster -- uses 'genomic_precompute.properties'"
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
+
+            SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
+            String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
+
+            doLast {
+                def ant = new AntBuilder()
+                ant.taskdef(name: "precomputeQueries", classname: "org.intermine.task.PrecomputeTask") {
+                    classpath {
+                        dirset(dir: project.getBuildDir().getAbsolutePath())
+                        pathelement(path: project.configurations.getByName("compile").asPath)
+                    }
+                }
+                ant.precomputeQueries(objectStoreAlias: config.objectStoreName, minRows:0,
+                        precomputePropertiesPath: "genomic_precompute.properties")
+            }
+        }
+
+        project.task('precomputeTemplates') {
+            group TaskConstants.TASK_GROUP
+            description "Creates temporary tables to make querying faster -- uses the results of your template queries"
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
+
+            doLast {
+                def ant = new AntBuilder()
+
+                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
+                String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
+                Properties intermineProperties = new Properties()
+                intermineProperties.load(new FileInputStream(buildResourcesMainDir + File.separator + "intermine.properties"));
+                String superUser = intermineProperties.getProperty("superuser.account")
+
+                ant.taskdef(name: "precomputeTemplates", classname: "org.intermine.web.task.PrecomputeTemplatesTask") {
+                    classpath {
+                        dirset(dir: project.getBuildDir().getAbsolutePath())
+                        pathelement(path: project.configurations.getByName("compile").asPath)
+                    }
+                }
+                ant.precomputeTemplates(alias: config.objectStoreName,
+                        userProfileAlias: config.userProfileObjectStoreWriterName, minRows:0,
+                        username: superUser)
             }
         }
     }
