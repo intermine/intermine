@@ -43,7 +43,9 @@ class PostProcessPlugin implements Plugin<Project> {
                     if (postProcess == null) {
                         throw new InvalidUserDataException("Can't find postProcess " + processName + " in project definition file")
                     }
-                    project.dependencies.add("postProcesses", [group: "org.intermine", name: "bio-postprocess-" + processName, version: System.getProperty("bioVersion")])
+                    if (!DO_SOURCES.equals(processName)) {
+                        project.dependencies.add("postProcesses", [group: "org.intermine", name: "bio-postprocess-" + processName, version: System.getProperty("bioVersion")])
+                    }
                 }
             }
         }
