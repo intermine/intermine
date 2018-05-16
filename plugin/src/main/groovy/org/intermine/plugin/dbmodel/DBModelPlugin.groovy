@@ -25,6 +25,7 @@ class DBModelPlugin implements Plugin<Project> {
             api
             mergeSource
             plugin
+            antlr
         }
 
         project.task('initConfig') {
@@ -282,6 +283,27 @@ class DBModelPlugin implements Plugin<Project> {
             }
         }
 
+        project.task('runIQLQuery') {
+            group TaskConstants.TASK_GROUP
+            description "Run an IQL query against the database, e.g. -Pquery=SELECT DISTINCT a2_.primaryIdentifier AS a1_ FROM org.intermine.model.bio.Gene AS a2_"
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'generateModel', 'jar'
+
+            doLast {
+                project.dependencies.add("antlr", [group: "org.antlr", name: "antlr-complete", version: "3.5.2", transitive: false])
+                def ant = new AntBuilder()
+                if (project.hasProperty('query')) {
+                    def query = project.properties['query']
+                    ant.taskdef(name: "runIQLQuery", classname: "org.intermine.task.RunIqlQueryTask") {
+                        classpath {
+                            dirset(dir: project.getBuildDir().getAbsolutePath())
+                            pathelement(path: project.configurations.getByName("compile").asPath)
+                            pathelement(path: project.configurations.getByName("antlr").asPath)
+                        }
+                    }
+                    ant.runIQLQuery(alias: config.objectStoreName, query: query)
+                }
+            }
+        }
 
     }
 }

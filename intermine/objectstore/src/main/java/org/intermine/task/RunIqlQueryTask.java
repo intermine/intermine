@@ -24,7 +24,8 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 
 
 /**
- * Ant task to read an IQL query from a -Dquery="QUERY" parameter and execute it in the database.
+ * Ant task to read an IQL query from a -Pquery="QUERY" parameter and execute it in the database.
+ *
  * @author Richard Smith
  *
  */

@@ -147,7 +147,6 @@ class IntegratePlugin implements Plugin<Project> {
             }
         }
 
-
         project.task('retrieveSingleSource') {
             description "Retrieves a single source into tgt items database"
             dependsOn 'initIntegration','buildTgtItems', 'preRetrieveSingleSource'
@@ -204,6 +203,8 @@ class IntegratePlugin implements Plugin<Project> {
                 integration.loadSingleSource(intermineProject.sources.get(sourceName))
             }
         }
+
+
 
     }
 }
