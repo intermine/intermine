@@ -67,14 +67,6 @@ subprojects {
         defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
     }
 
-    task onlyOne() {
-        dependsOn 'processResources'
-        doLast {
-            println "test"
-            println "${System.env.HOME}"
-        }
-    }
-
     task copyMineProperties() {
         dependsOn 'processResources'
             
