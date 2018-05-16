@@ -33,7 +33,7 @@ else
     if [[ "$TEST_SUITE" = "bio" ]]; then
         # we depend on a flymine data source
         $GIT_GET https://github.com/intermine/flymine-bio-sources.git flymine-bio-sources
-        (cd flymine-bio-sources && ./gradlew install)
+        (cd flymine-bio-sources && ./gradlew bio-source-flymine-static:install)
     fi
 
     # Build resources we might require
