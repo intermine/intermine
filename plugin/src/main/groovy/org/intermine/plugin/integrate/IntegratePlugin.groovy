@@ -29,8 +29,10 @@ class IntegratePlugin implements Plugin<Project> {
             postProcesses
         }
 
+        project.tasks.compileJava.dependsOn project.tasks.generateModel
+
         project.task('initIntegration') {
-            dependsOn 'copyDefaultInterMineProperties', 'copyMineProperties', 'generateModel'
+            dependsOn 'copyDefaultInterMineProperties', 'copyMineProperties', 'jar'
 
             doLast {
                 intermineProject = ProjectXmlBinding.unmarshall(new File(projectXml));
