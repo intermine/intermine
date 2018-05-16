@@ -267,7 +267,7 @@ class DBModelPlugin implements Plugin<Project> {
             doLast {
                 def ant = new AntBuilder()
 
-                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
+                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
                 String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
                 String outputFilePath = buildResourcesMainDir + File.separator + "acceptance_test.html"
                 String acceptanceTestFilePath = buildResourcesMainDir + File.separator + config.mineName + "_acceptance_test.conf"
@@ -305,6 +305,24 @@ class DBModelPlugin implements Plugin<Project> {
             }
         }
 
+        project.task('generateUpdateTriggers') {
+            group TaskConstants.TASK_GROUP
+            description "Generates SQL files for manual CRUD operations on InterMine database. THIS IS AN EXPERIMENTAL FEATURE, USE AT YOUR OWN RISK."
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'generateModel', 'jar'
+
+            doLast {
+                def ant = new AntBuilder()
+                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
+                String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
+                ant.taskdef(name: "generateUpdateTriggers", classname: "org.intermine.task.GenerateUpdateTriggersTask") {
+                    classpath {
+                        dirset(dir: project.getBuildDir().getAbsolutePath())
+                        pathelement(path: project.configurations.getByName("compile").asPath)
+                    }
+                }
+                ant.generateUpdateTriggers(osName: config.objectStoreName, destDir: buildResourcesMainDir)
+            }
+        }
     }
 }
 
