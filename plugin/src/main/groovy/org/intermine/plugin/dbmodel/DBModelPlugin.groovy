@@ -260,7 +260,7 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('runAcceptanceTests') {
             group TaskConstants.TASK_GROUP
-            description "Runs the acceptance tests against the prodcution database"
+            description "Run the configured acceptance tests against the production database, uses <MINE_NAME>_acceptance_test.conf"
             dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
 
             doLast {

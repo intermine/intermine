@@ -187,7 +187,7 @@ class WebAppPlugin implements Plugin<Project> {
 
         project.task('precomputeQueries') {
             group TaskConstants.TASK_GROUP
-            description "Precomputes queries from config file"
+            description "Creates temporary tables to make querying faster -- uses 'genomic_precompute.properties'"
             dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
 
             SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
@@ -208,7 +208,7 @@ class WebAppPlugin implements Plugin<Project> {
 
         project.task('precomputeTemplates') {
             group TaskConstants.TASK_GROUP
-            description "Precomputes templates"
+            description "Creates temporary tables to make querying faster -- uses the results of your template queries"
             dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
 
             doLast {
