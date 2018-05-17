@@ -63,11 +63,16 @@ subprojects {
         defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
     }
 
-    task copyMineProperties(type: Copy) {
-        from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
-        into sourceSets.main.output.resourcesDir
-        rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
-        inputs.sourceFiles.stopExecutionIfEmpty()
+    task copyMineProperties() {
+        dependsOn 'processResources'
+            
+	doLast {
+            copy {
+                from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
+                into sourceSets.main.output.resourcesDir
+                rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
+            }
+        }
     }
  
     jar {
