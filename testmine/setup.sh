@@ -95,12 +95,12 @@ cd $DIR/../intermine
 (cd ../plugin && ./gradlew install)
 ./gradlew install
 
-# populate user profile
-echo "------> Loading userprofile..."
-(cd ../testmine && ./gradlew buildUserDB)
-
 echo "------> Loading demo data set..."
 cd $DIR
+
+echo "------> Loading userprofile..."
+./gradlew insertUserData
+
 echo "-----> Running ./gradlew loadsadata"
 ./gradlew loadsadata
 
