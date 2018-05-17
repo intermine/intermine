@@ -92,7 +92,12 @@ done
 # So we need to install them to Maven so that the testmine Gradle can fetch them
 echo "-----> Installing InterMine Gradle project JARs to local Maven..."
 cd $DIR/../intermine
+(cd ../plugin && ./gradlew install)
 ./gradlew install
+
+# populate user profile
+echo "------> Loading userprofile..."
+(cd ../testmine && ./gradlew buildUserDB)
 
 echo "------> Loading demo data set..."
 cd $DIR
