@@ -34,13 +34,13 @@ else
         (cd flymine-bio-sources && ./gradlew bio-source-flymine-static:install)
     fi
 
-    if [ "$TEST_SUITE" = "ws" ]; then
+    if [[ "$TEST_SUITE" = "ws" ]]; then
+
         # We will need a fully operational web-application
         echo '#---> Building and releasing web application to test against'
         ./testmine/setup.sh
-    fi
 
-    if [[ "$TEST_SUITE" = "ws" ]]; then
+        sleep 20 # let webapp startup
 
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET "$TESTMODEL_URL/service/search" > /dev/null
