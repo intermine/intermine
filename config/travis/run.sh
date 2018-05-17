@@ -6,28 +6,9 @@ echo "RUNNING test suite $TEST_SUITE"
 
 export ANT_OPTS='-server'
 
-FAILURES=$PWD/failures.list
-
-ant_test () {
-    if [ -d "$1/main" ]; then
-      echo RUNNING ant -f "$1/main/build.xml" clean
-      ant -f "$1/main/build.xml" clean
-      echo RUNNING ant -f "$1/main/build.xml"
-      ant -f "$1/main/build.xml"
-    fi
-    echo RUNNING ant -f "$1/test/build.xml" clean
-    ant -f "$1/test/build.xml" clean
-    echo RUNNING ant -f "$1/test/build.xml"
-    ant -f "$1/test/build.xml" -Ddont.minify=true
-    echo CHECKING results
-    ./config/lib/parse_test_report.py "$1"
-    echo ALL TESTS PASSED
-}
-
-if [ "$TEST_SUITE" = "webtasks" ]; then
-    ant_test 'intermine/webtasks'
-elif [ "$TEST_SUITE" = "intermine" ]; then
+if [ "$TEST_SUITE" = "intermine" ]; then
     echo "RUNNING intermine unit tests"
+    (cd plugin && ./gradlew install)
     (cd intermine && ./gradlew build)
 
     echo CHECKING results
@@ -70,9 +51,6 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ./config/lib/parse_checkstyle_report.py 'bio/build/reports/checkstyle/checkstyle_report.xml'
     ./config/lib/parse_checkstyle_report.py 'bio/postprocess/build/reports/checkstyle/checkstyle_report.xml'
     ./config/lib/parse_checkstyle_report.py 'bio/sources/build/reports/checkstyle/checkstyle_report.xml'
-elif [ "$TEST_SUITE" = "webapp" ]; then
-    echo 'Running selenium tests'
-    . config/run-selenium-tests.sh
 elif [ "$TEST_SUITE" = "ws" ]; then
     . config/run-ws-tests.sh
 fi

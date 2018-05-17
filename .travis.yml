@@ -13,7 +13,7 @@ env:
   - TEST_SUITE=intermine
   - TEST_SUITE=bio
   #- TEST_SUITE=ws CLIENT=JS
-  #- TEST_SUITE=ws CLIENT=PY
+  - TEST_SUITE=ws CLIENT=PY
   #- TEST_SUITE=webtasks
   # - TEST_SUITE=checkstyle
 sudo: true
