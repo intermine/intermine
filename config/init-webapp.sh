@@ -38,5 +38,5 @@ sh testmine/setup.sh & # requires PSQL_USER to be set correctly.
 sleep 20 # wait for the webapp to come on line
 
 # For now, just shut it down again
-cd testmine
-./gradlew appStop
+#cd testmine
+#./gradlew tomcatStop
