@@ -344,11 +344,11 @@ public class TransferSequences
         q.setDistinct(false);
 
         // Transcript
-        QueryClass qcCDS =
+        QueryClass qcTranscript =
             new QueryClass(model.getClassDescriptorByName("Transcript").getType());
-        q.addFrom(qcCDS);
-        q.addToSelect(qcCDS);
-        q.addToOrderBy(qcCDS);
+        q.addFrom(qcTranscript);
+        q.addToSelect(qcTranscript);
+        q.addToOrderBy(qcTranscript);
 
         // Exon
         QueryClass qcExon = new QueryClass(model.getClassDescriptorByName("Exon").getType());
@@ -374,7 +374,7 @@ public class TransferSequences
 
         // Transcript.exons
         QueryCollectionReference exonsRef =
-            new QueryCollectionReference(qcCDS, "exons");
+            new QueryCollectionReference(qcTranscript, "exons");
         ContainsConstraint cc1 =
             new ContainsConstraint(exonsRef, ConstraintOp.CONTAINS, qcExon);
         cs.addConstraint(cc1);
@@ -393,7 +393,7 @@ public class TransferSequences
         cs.addConstraint(cc3);
 
         // Transcript.sequence IS NULL
-        QueryObjectReference transcriptSeqRef = new QueryObjectReference(qcCDS, "sequence");
+        QueryObjectReference transcriptSeqRef = new QueryObjectReference(qcTranscript, "sequence");
         ContainsConstraint lsfSeqRefNull =
             new ContainsConstraint(transcriptSeqRef, ConstraintOp.IS_NULL);
 
@@ -471,6 +471,7 @@ public class TransferSequences
         osw.beginTransaction();
 
         ObjectStore os = osw.getObjectStore();
+        // get all CDSs for this chromosome
         Query q = getCDSQuery(chr);
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 1000, true, true, true);
@@ -486,6 +487,7 @@ public class TransferSequences
             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             SequenceFeature cds =  (SequenceFeature) rr.get(0);
 
+            // if this is a new CDS, store the sequence for the just-processed previous CDS
             if (currentCDS == null || !cds.equals(currentCDS)) {
                 if (currentCDS != null) {
                     // copy sequence to CDS
@@ -497,6 +499,7 @@ public class TransferSequences
                                 + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
                     }
                 }
+                // reset for current CDS
                 currentCDSBases = new StringBuffer();
                 currentCDS = cds;
             }
