@@ -12,8 +12,18 @@ package org.intermine.api.searchengine;
 
 import org.intermine.objectstore.ObjectStore;
 
+/**
+ * Interface for handling indexes.
+ *
+ * @author arunans23
+ */
+
 public interface IndexHandler
 {
+    /**
+     *
+     * @param os Objectstore that is passed CreateSearchIndexTask
+     */
     public void createIndex(ObjectStore os);
 
 }
