@@ -51,11 +51,6 @@ public class TransferSequencesTest extends TestCase
     private String expectedExonSequence0 =
         "ctctctctctaaagagaggggaggaggaggactctctctct";
 
-    private String expectedExonSequence4 =
-        "caagtagtaagaaagacggatataaaaaaatagcctacagcaccccggattcccatgttg" +
-        "tctccaaccatagtactaacgaggccctcagacgcttaactgcagtgatcggacgggaac" +
-        "tggtgttttcgcctaggtatggccgtagacat";
-
     private String expectedExonSequence1 =
         "caaaaatcttctagtttttttttagaaaggatacaccaagta";
 
@@ -66,22 +61,27 @@ public class TransferSequencesTest extends TestCase
         "agcgaggaagccagccacgccgacctcgcctgggcgaccatgcacgccctgttaaatgag" +
         "ccactcaccgccggtatcagcaccccgctgacatccaccattctggagttttac";
 
+    private String expectedExonSequence3 =
+            "accgccagcggcccgaaaatggaggcattcacctttggtgagccggtgccggtactcgac" +
+            "cgccgtgacattctggattacgtcgagtgcatcagtaacggcagatggtatgagccaccg" +
+            "gtcagctttaccggtctggcaaaaagcctgcgggctgccgtgcatcacagctcgccgatt" +
+            "tacgtcaaacgcaatattctggcctcgacatttatcccgcatccatggctttcccagcag" +
+            "gatttcagccgctttgtgctggattttctggtgttcggtaatgcgtttctggaaaagcgt" +
+            "tacagcaccaccggtaaggtcatcagactggaaacctcaccggcaaaatatacccgccgt" +
+            "ggcgtggaagaggatgtttactggtgggtgccgtccttcaacgagccgacagccttcgcg" +
+            "cccggctccgtgtttcacctgctggagccggatattaatcaggagctgtacggcctgccg" +
+            "gaatatctcagcgcccttaactctgcctggc";
+
+    private String expectedExonSequence4 =
+            "caagtagtaagaaagacggatataaaaaaatagcctacagcaccccggattcccatgttg" +
+            "tctccaaccatagtactaacgaggccctcagacgcttaactgcagtgatcggacgggaac" +
+            "tggtgttttcgcctaggtatggccgtagacat";
+
     private String expectedExonSequence5 =
         "cagggcgtgcatggtcgcccaggcgaggtcggcgtggctggcttcctcgctgcggctggc" +
         "ctcataggtggcgctgcgtccgctgctggtcatggtcttgcggatagccataaacgagct" +
         "ggtgatgtcggtggcgctgacgtcgtattccagacagccacggcggataacgtcttttgc" +
         "cttgagcaccattgcggttttcatttccggcgtgtaaag";
-
-    private String expectedExonSequence3 =
-        "accgccagcggcccgaaaatggaggcattcacctttggtgagccggtgccggtactcgac" +
-        "cgccgtgacattctggattacgtcgagtgcatcagtaacggcagatggtatgagccaccg" +
-        "gtcagctttaccggtctggcaaaaagcctgcgggctgccgtgcatcacagctcgccgatt" +
-        "tacgtcaaacgcaatattctggcctcgacatttatcccgcatccatggctttcccagcag" +
-        "gatttcagccgctttgtgctggattttctggtgttcggtaatgcgtttctggaaaagcgt" +
-        "tacagcaccaccggtaaggtcatcagactggaaacctcaccggcaaaatatacccgccgt" +
-        "ggcgtggaagaggatgtttactggtgggtgccgtccttcaacgagccgacagccttcgcg" +
-        "cccggctccgtgtttcacctgctggagccggatattaatcaggagctgtacggcctgccg" +
-        "gaatatctcagcgcccttaactctgcctggc";
 
     private String expectedExonSequence6 =
         "aaggggatgcggtgcgcgtccagcaggtcagcggcgctggcttttttgatattaaaaaaa" +
@@ -92,6 +92,8 @@ public class TransferSequencesTest extends TestCase
         "cggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtctcagcgcg" +
         "tcgtgacggcacttagtctgcccgttgaggcgttgtgtgtctgcggggtgttttgtgcgg" +
         "tggtgagcgtg";
+
+    private String expectedCDSSequence0 = "ctcgcc";
 
     private String storedChrSequence =
         "............................................................"+
@@ -205,13 +207,10 @@ public class TransferSequencesTest extends TestCase
         checkTranscriptSequences();
     }
 
-    public void testIgnoreCDS() throws Exception {
+    public void testCDSSequence() throws Exception {
         TransferSequences ts = new TransferSequences(osw);
         ts.transferToLocatedSequenceFeatures();
-        ObjectStore os = osw.getObjectStore();
-        System.out.println("storedCDS.getId(): " + storedCDS.getId());
-        CDS resCDS = (CDS) os.getObjectById(storedCDS.getId());
-        assertNotNull("CDS used to be skipped a long time ago but should be here now", resCDS.getSequence());
+        checkCDSSequences();
     }
 
     public void checkExonSequences() throws Exception {
@@ -220,7 +219,6 @@ public class TransferSequencesTest extends TestCase
         ObjectStore os = osw.getObjectStore();
 
         Exon resExon0 = (Exon) os.getObjectById(storedExons[0].getId());
-
         Assert.assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues().toString());
 
         Exon resExon4 = (Exon) os.getObjectById(storedExons[4].getId());
@@ -262,6 +260,14 @@ public class TransferSequencesTest extends TestCase
                      resTranscript1.getSequence().getResidues().toString());
     }
 
+    public void checkCDSSequences() throws Exception {
+        osw.flushObjectById();
+        ObjectStore os = osw.getObjectStore();
+        CDS resCDS0 = (CDS) os.getObjectById(storedCDS.getId());
+        assertEquals(expectedCDSSequence0, resCDS0.getSequence().getResidues().toString());
+   }
+
+
     private void createData() throws Exception {
         osw.flushObjectById();
 
@@ -272,7 +278,7 @@ public class TransferSequencesTest extends TestCase
         storedChromosome.setLength(new Integer(4000));
         storedChromosome.setId(new Integer(101));
         storedChromosome.setPrimaryIdentifier("store_chromosome");
-
+        toStore.add(storedChromosome);
 
         Sequence chrSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
@@ -280,7 +286,6 @@ public class TransferSequencesTest extends TestCase
         chrSequence.setResidues(clob.subSequence(0, storedChrSequence.length()));
         storedChromosome.setSequence(chrSequence);
         toStore.add(chrSequence);
-        toStore.add(storedChromosome);
 
         storedTranscripts = new Transcript[2];
         for (int i = 0 ; i < storedTranscripts.length ; i++) {
@@ -342,10 +347,17 @@ public class TransferSequencesTest extends TestCase
         storedExons[7].setChromosomeLocation(loc7);
 
         storedCDS = (CDS) DynamicUtil.createObject(Collections.singleton(CDS.class));
-        storedCDS.setPrimaryIdentifier("cds_1");
+        storedCDS.setPrimaryIdentifier("cds_0");
         toStore.add(storedCDS);
-        Location loc8 = createLocation(storedChromosome, storedCDS, "1", 3863, 3993);
-        toStore.add(loc8);
+
+        Location l0 = createLocation(storedChromosome, storedCDS, "1", 3995,  3996);
+        toStore.add(l0);
+
+        Location l1 = createLocation(storedChromosome, storedCDS, "1", 3997,  3998);
+        toStore.add(l1);
+
+        Location l2 = createLocation(storedChromosome, storedCDS, "1", 3999, 4000);
+        toStore.add(l2);
 
         osw.beginTransaction();
         for (InterMineObject obj : toStore) {
