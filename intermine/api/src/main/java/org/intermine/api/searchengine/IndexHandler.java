@@ -12,8 +12,8 @@ package org.intermine.api.searchengine;
 
 import org.intermine.objectstore.ObjectStore;
 
-public interface IndexHandler {
-
+public interface IndexHandler
+{
     public void createIndex(ObjectStore os);
 
 }
