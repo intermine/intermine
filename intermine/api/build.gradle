@@ -32,6 +32,7 @@ dependencies {
     compile group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.2'
     compile group: 'org.apache.lucene', name: 'lucene-highlighter', version: '3.0.2'
     compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.0.2'
+    compile group: 'org.apache.solr', name: 'solr-solrj', version: '7.3.0'
     provided files('libs/json20110106.jar') // Unfortunately, we cannot yet use later versions in the repository since they cause unit test failures
     provided files('libs/bobo-browse-2.5.1.jar') // This version is not in a Maven repository so we will include directly until we update search
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
