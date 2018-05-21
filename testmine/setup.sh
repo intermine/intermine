@@ -10,7 +10,7 @@
 set -e # Errors are fatal.
 
 USERPROFILEDB=userprofile-demo
-PRODDB=objectstore-demo
+PRODDB=intermine-demo
 MINENAME=demomine
 DIR="$(cd $(dirname "$0"); pwd)"
 IMDIR=$HOME/.intermine
@@ -98,11 +98,11 @@ cd $DIR/../intermine
 echo "------> Loading demo data set..."
 cd $DIR
 
-echo "------> Loading userprofile..."
-./gradlew insertUserData
-
 echo "-----> Running ./gradlew loadsadata"
 ./gradlew loadsadata
+
+echo "------> Loading userprofile..."
+./gradlew insertUserData
 
 echo "------> Running webapp"
 echo "-----> Running ./gradlew tomcatstartwar"
