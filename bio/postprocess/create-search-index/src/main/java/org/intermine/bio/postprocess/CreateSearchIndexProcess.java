@@ -21,6 +21,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.api.searchengine.solr.SolrIndexHandler;
 
 
 /**
@@ -59,7 +60,7 @@ public class CreateSearchIndexProcess extends PostProcessor
                 ClassKeyHelper.readKeys(osw.getModel(), classKeyProperties);
 
         //index and save
-        KeywordSearch.saveIndexToDatabase(osw, classKeys);
-        KeywordSearch.deleteIndexDirectory();
+        SolrIndexHandler.saveIndexToDatabase(osw, classKeys);
+        SolrIndexHandler.deleteIndexDirectory();
     }
 }
