@@ -15,7 +15,7 @@ MINENAME=demomine
 DIR="$(cd $(dirname "$0"); pwd)"
 IMDIR=$HOME/.intermine
 LOG=$DIR/build.log
-PROP_FILE=$IMDIR/testmodel.properties.demo
+PROP_FILE=$IMDIR/testmodel.properties
 
 # Inherit SERVER, PORT, PSQL_USER, PSQL_PWD, TOMCAT_USER and TOMCAT_PWD if in env.
 if test -z $SERVER; then

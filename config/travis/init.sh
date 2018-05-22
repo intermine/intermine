@@ -21,6 +21,9 @@ echo "#---> Running $TEST_SUITE tests"
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
 else
+    # Set up properties
+    source config/create-ci-properties-files.sh
+
     echo '#---> Installing python requirements'
     # Install lib requirements
     pip install -r config/lib/requirements.txt
