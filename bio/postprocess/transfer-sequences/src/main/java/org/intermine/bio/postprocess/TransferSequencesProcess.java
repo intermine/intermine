@@ -210,6 +210,9 @@ public class TransferSequencesProcess extends PostProcessor
             SequenceFeature feature = (SequenceFeature) rr.get(0);
             Location locationOnChr = (Location) rr.get(1);
 
+            if (model == null) {
+                model = Model.getInstanceByName("genomic");
+            }
             try {
 
                 if (PostProcessUtil.isInstance(model, feature, "ChromosomeBand")) {

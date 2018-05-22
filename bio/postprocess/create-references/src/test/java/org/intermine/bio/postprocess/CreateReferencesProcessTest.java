@@ -60,7 +60,7 @@ public class CreateReferencesProcessTest extends TestCase {
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
-        osw.getObjectStore().flushObjectById();
+        //osw.getObjectStore().flushObjectById();
         createData();
     }
 
