@@ -106,5 +106,5 @@ echo "------> Loading userprofile..."
 
 echo "------> Running webapp"
 echo "-----> Running ./gradlew tomcatstartwar"
-./gradlew tomcatstartwar
+./gradlew tomcatstartwar & 
 echo "-----> Finished init-webapp.sh"
