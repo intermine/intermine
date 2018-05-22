@@ -41,7 +41,6 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 import org.intermine.metadata.Util;
-import org.junit.Ignore;
 
 /**
  * Tests for the IntergenicRegionUtil class.
