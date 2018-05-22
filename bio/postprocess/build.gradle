@@ -84,7 +84,7 @@ subprojects {
         configFile file("../../../config/checkstyle/checkstyle.xml")
         sourceSets = [sourceSets.main]
         showViolations = true
-        ignoreFailures = true
+        ignoreFailures = false
         maxWarnings = 0
         //reportsDir = file("$project.rootDir/reports/checkstyle/$project.name")
         configProperties = [
