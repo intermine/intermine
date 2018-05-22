@@ -43,7 +43,7 @@ else
         echo '#---> Building and releasing web application to test against'
         ./testmine/setup.sh
 
-        sleep 20 # let webapp startup
+        sleep 60 # let webapp startup
 
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET "$TESTMODEL_URL/service/search" > /dev/null
