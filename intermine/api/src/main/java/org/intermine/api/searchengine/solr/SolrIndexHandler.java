@@ -18,7 +18,11 @@ import org.apache.solr.common.SolrInputDocument;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.*;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.ResultsRow;
 
 import java.util.List;
 import java.util.Map;
@@ -31,15 +35,21 @@ import java.util.Map;
 public final class SolrIndexHandler
 {
     private static final Logger LOG = Logger.getLogger(SolrIndexHandler.class);
+
+    private SolrIndexHandler() {
+
+    }
+
     /**
      *
      * @param os Objectstore that is passed CreateSearchIndexTask
+     * @param classKeys classKeys
      */
     public static void createIndex(ObjectStore os,
                                    Map<String, List<FieldDescriptor>> classKeys) {
 
-        try{
-            LOG.debug("Creating Solr Index for keyword search");
+        try {
+            LOG.debug("Creating Solr Index");
 
             ObjectStore objectStore = os;
 
@@ -47,37 +57,51 @@ public final class SolrIndexHandler
             SolrClient solrClient = new HttpSolrClient.Builder(solrUrlString).build();
 
             String fieldName = "primaryIdentifier";
+            classKeys.remove("DataSet");
+            classKeys.remove("DataSource");
+            classKeys.remove("GOTerm");
+            classKeys.remove("SOTerm");
+            classKeys.remove("OntologyTerm");
+            classKeys.remove("Organism");
+            classKeys.remove("Author");
+            classKeys.remove("Publication");
 
-            for(String className : classKeys.keySet()){
-                ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
-                if (cld == null){
-                    throw new RuntimeException("a class mentioned in ObjectStore summary properties "
-                                                                        + "file (" + className + ") is not in the model");
+            for (String className : classKeys.keySet()) {
+                System.out.println("Indexing: " + className);
+                LOG.debug("Indexing: " + className);
+
+                ClassDescriptor classDescriptor = objectStore.getModel().getClassDescriptorByName(className);
+
+                if (classDescriptor == null) {
+                    throw new RuntimeException("a class mentioned in ObjectStore "
+                            + "summary properties "
+                            + "file (" + className + ") is not in the model");
                 }
 
-                String classAndField = cld.getUnqualifiedName() + "." + fieldName;
+                String classAndField = classDescriptor.getUnqualifiedName();
 
-                Query q = new Query();
-                q.setDistinct(true);
-                QueryClass qc = new QueryClass(Class.forName(cld.getName()));
-                q.addToSelect(new QueryField(qc, fieldName));
-                q.addToSelect(new QueryField(qc, "id"));
-                q.addFrom(qc);
-                Results results = os.execute(q);
+                Query query = new Query();
+                query.setDistinct(true);
+                QueryClass queryClass = new QueryClass(Class.forName(classDescriptor.getName()));
+                query.addToSelect(new QueryField(queryClass, fieldName));
+                query.addToSelect(new QueryField(queryClass, "id"));
+                query.addFrom(queryClass);
+                Results results = objectStore.execute(query);
 
                 for (Object resRow: results) {
+
                     @SuppressWarnings("rawtypes")
                     SolrInputDocument document = new SolrInputDocument();
                     Object fieldValue = ((ResultsRow) resRow).get(0);
                     Object fieldId = ((ResultsRow) resRow).get(1);
-                    if(fieldValue!=null) {
+                    if (fieldValue != null) {
                         document.addField("value", fieldValue.toString());
                         document.addField("type", classAndField);
                         document.addField("objectId", fieldId.toString());
-                        System.out.println(classAndField + " " + fieldValue.toString() + " " + fieldId.toString()+" "+classAndField);
                     }
                     else {
-                        System.out.println("ERROR?" + " "+fieldValue+ " "+fieldId+" "+classAndField);
+                        System.out.println("ERROR?" + " " + fieldValue + " " + fieldId + " " + classAndField);
+                        LOG.debug("ERROR" + " " + fieldValue + " " + fieldId + " " + classAndField);
                     }
 
                     UpdateResponse response = solrClient.add(document);
@@ -87,8 +111,8 @@ public final class SolrIndexHandler
 
             }
 
-        } catch (Exception e){
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 
