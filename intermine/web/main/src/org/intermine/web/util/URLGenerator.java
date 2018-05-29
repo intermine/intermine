@@ -62,13 +62,13 @@ public class URLGenerator
             return getCurrentURL(request, contextPath);
         }
 
-        if (request.getServerPort()!=80 && request.getServerPort()!=443) {
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
             baseUrl += ":" + request.getServerPort();
         }
         String path = webProperties.getProperty("webapp.path");
         URL url = null;
         try {
-	    url = new URL(baseUrl+path);
+	    url = new URL(baseUrl + path);
         } catch (MalformedURLException e) {
             // whoops somethings gone terribly wrong. Use the URL
             return getCurrentURL(request, contextPath);
@@ -80,7 +80,7 @@ public class URLGenerator
     // SH 2/20/18 fix to handle plain HTTPS hosts as well
     private String getCurrentURL(HttpServletRequest request, String contextPath) {
         String port = "";
-        if (request.getServerPort()!=80 && request.getServerPort()!=443) {
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
             port = ":" + request.getServerPort();
         }
         String ret = request.getScheme() + "://" + request.getServerName() + port;
