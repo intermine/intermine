@@ -68,7 +68,7 @@ public class URLGenerator
         String path = webProperties.getProperty("webapp.path");
         URL url = null;
         try {
-	    url = new URL(baseUrl + path);
+            url = new URL(baseUrl + path);
         } catch (MalformedURLException e) {
             // whoops somethings gone terribly wrong. Use the URL
             return getCurrentURL(request, contextPath);
