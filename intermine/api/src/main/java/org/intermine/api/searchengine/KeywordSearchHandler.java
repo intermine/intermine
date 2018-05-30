@@ -18,12 +18,14 @@ import org.intermine.objectstore.ObjectStore;
  * @author arunans23
  */
 
-public class KeywordSearchHandler
+public interface KeywordSearchHandler
 {
     /**
      *
      * @param queryString Objectstore that is passed CreateSearchIndexTask
+     * 
+     * @return SearchResults from the search performed
      */
-    public void doFilteredSearch(String queryString);
+    public SearchResults doFilteredSearch(String queryString);
 
 }
