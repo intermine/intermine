@@ -2,6 +2,7 @@ package org.intermine.plugin.dbmodel
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.util.PatternSet
@@ -80,11 +81,21 @@ class DBModelPlugin implements Plugin<Project> {
             onlyIf {regenerateModel}
 
             doLast {
-                FileTree fileTree = project.zipTree(project.configurations.getByName("bioCore").singleFile)
+                FileTree fileTree
+                String genomicModelName
+                try {
+                    project.configurations.getByName("testModel")
+                    fileTree = project.zipTree(project.configurations.getByName("testModel").singleFile)
+                    genomicModelName = "genomic_model.xml"
+                } catch (UnknownConfigurationException ex) {
+                    fileTree = project.zipTree(project.configurations.getByName("bioCore").singleFile)
+                    genomicModelName = "core.xml"
+                }
                 PatternSet patternSet = new PatternSet()
-                patternSet.include("core.xml")
+                patternSet.include(genomicModelName)
                 File coreXml = fileTree.matching(patternSet).singleFile
                 String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
+
                 coreXml.renameTo(modelFilePath)
                 coreXml.createNewFile()
             }

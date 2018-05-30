@@ -150,7 +150,7 @@ subprojects {
         configurations = ['archives']
     }
 
-    tasks.compileTestJava.dependsOn 'copyMineProperties'
+    tasks.compileTestJava.dependsOn 'copyMineProperties', 'buildUnitTestDB'
 }
 
 task testReport(type: TestReport) {

@@ -194,6 +194,9 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
             final Map<Integer, Set<Gene>> locToGeneMap,
             final Integer chrId)
             throws ObjectStoreException {
+        if (os == null) {
+            os = osw.getObjectStore();
+        }
         final Chromosome chr = (Chromosome) os.getObjectById(chrId);
 
         // do nothing if chromosome has no length set
