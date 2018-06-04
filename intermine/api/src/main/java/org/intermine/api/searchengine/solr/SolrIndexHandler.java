@@ -15,7 +15,9 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.client.solrj.response.schema.SchemaResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.api.lucene.KeywordSearchFacetData;
@@ -254,6 +256,14 @@ public final class SolrIndexHandler
         String solrUrlString = "http://localhost:8983/solr/intermine";
         SolrClient solrClient = new HttpSolrClient.Builder(solrUrlString).build();
 
+        //delete previous documents in solr
+        try {
+            solrClient.deleteByQuery("*:*");
+            solrClient.commit();
+        } catch (SolrServerException e) {
+            LOG.error("Deleting old index failed", e);
+        }
+
         parseProperties(os);
 
         LOG.info("Starting fetcher thread...");
@@ -286,6 +296,36 @@ public final class SolrIndexHandler
 
 
         }
+
+        Set<String> fieldNames = fetchThread.getFieldNames();
+
+        for(String fieldName: fieldNames){
+            Map<String, Object> fieldAttributes = new HashMap();
+            fieldAttributes.put("name", fieldName);
+            fieldAttributes.put("type", "string");
+            fieldAttributes.put("stored", true);
+            fieldAttributes.put("indexed", true);
+            fieldAttributes.put("multiValued", true);
+            fieldAttributes.put("required", false);
+
+            try{
+                SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
+                SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+
+                List<String> copyFieldAttributes = new ArrayList<String>();
+                copyFieldAttributes.add("text");
+
+                SchemaRequest.AddCopyField schemaCopyRequest = new SchemaRequest.AddCopyField("*", copyFieldAttributes);
+                SchemaResponse.UpdateResponse copyFieldResponse =  schemaRequest.process(solrClient);
+
+            } catch (SolrServerException e){
+                LOG.error("Error while adding fields to the solrclient.", e);
+
+                e.printStackTrace();
+            }
+
+        }
+
 
         try {
             UpdateResponse response = solrClient.add(solrInputDocuments);
