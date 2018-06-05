@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.obo.dataadapter.OBOAdapter;
 import org.obo.dataadapter.OBOFileAdapter;
 import org.obo.dataadapter.OBOSerializationEngine;
@@ -44,7 +45,7 @@ import org.obo.datamodel.OBOSession;
 public class OboParser
 {
     private static final Logger LOG = Logger.getLogger(OboParser.class);
-//    private static File temp = null;
+    //    private static File temp = null;
     private final Pattern synPattern = Pattern.compile("\\s*\"(.+?[^\\\\])\".*");
     private final Matcher synMatcher = synPattern.matcher("");
     private Set<String> oboXrefs = new HashSet<String>();
@@ -113,7 +114,7 @@ public class OboParser
         } else {
             temp = File.createTempFile("obo", ".tmp", f);
         }
-    // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
+        // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
         // List); OBOEDIT code
         // TODO OBO will soon release the file containing all transitive closures calculated
         // by obo2linkfile so we can get rid of the code below and just use the downloaded file.
@@ -139,7 +140,6 @@ public class OboParser
         OBOFileAdapter adapter = new OBOFileAdapter();
         OBOSession session = adapter.doOperation(OBOAdapter.READ_ONTOLOGY, readConfig, null);
         SimpleLinkFileAdapter writer = new SimpleLinkFileAdapter();
-
         writer.doOperation(OBOAdapter.WRITE_ONTOLOGY, writeConfig, session);
         LOG.info("PROGRESS:" + writer.getProgressString());
         // END OF OBO2EDIT code
@@ -147,6 +147,7 @@ public class OboParser
         temp.delete();
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Processed transitive closure of OBO file, took: " + timeTaken + " ms");
+
     }
 
     /**
@@ -356,7 +357,7 @@ public class OboParser
         if (vals != null && vals.size() > 0) {
             if (vals.size() > 1) {
                 LOG.warn("Term: " + tagValues + " has more than one (" + vals.size()
-                        + ") is_obsolete values - just using first");
+                         + ") is_obsolete values - just using first");
             }
             return ((String) vals.get(0)).equalsIgnoreCase("true");
         }
@@ -422,38 +423,38 @@ public class OboParser
                 boolean asserted = false, redundant = false;
                 for (int i = 0; i < bits.length; i++) {
                     switch (i) {
-                        case 0:// id1
+                    case 0:// id1
                         {
                             id1 = bits[i];
                             break;
                         }
-                        case 1:// type
+                    case 1:// type
                         {
                             // already initialised
                             break;
                         }
-                        case 2:// id2
+                    case 2:// id2
                         {
                             id2 = bits[i];
                             break;
                         }
-                        case 3:// asserted
+                    case 3:// asserted
                         {
                             asserted = (bits[i]).matches("asserted");
                             break;
                         }
-                        case 4:// ??
+                    case 4:// ??
                         {
                             // do nothing
                             break;
                         }
-                        case 5:// redundant
+                    case 5:// redundant
                         {
                             redundant = (bits[i]).matches("redundant");
                             break;
                         }
-                        default:
-                            break;
+                    default:
+                        break;
                     }
                 }
                 OboRelation relation = new OboRelation(id1, id2, type);
@@ -483,18 +484,18 @@ public class OboParser
 
             if (hadSlash) {
                 switch (ch) {
-                    case 'n':
-                        out.append('\n');
-                        break;
-                    case 't':
-                        out.append('\t');
-                        break;
-                    case 'W':
-                        out.append(' ');
-                        break;
-                    default:
-                        out.append(ch);
-                        break;
+                case 'n':
+                    out.append('\n');
+                    break;
+                case 't':
+                    out.append('\t');
+                    break;
+                case 'W':
+                    out.append(' ');
+                    break;
+                default:
+                    out.append(ch);
+                    break;
                 }
                 hadSlash = false;
             } else if (ch == '\\') {
@@ -507,4 +508,3 @@ public class OboParser
         return out.toString();
     }
 }
-
