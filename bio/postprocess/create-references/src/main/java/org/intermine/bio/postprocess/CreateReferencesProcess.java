@@ -120,6 +120,9 @@ public class CreateReferencesProcess extends PostProcessor
                 + createFieldName + ")";
 
         // Check that classes and fields specified exist in model
+        if (model == null) {
+            model = Model.getInstanceByName("genomic");
+        }
         try {
             String errorMessage = "Not performing " + insertMessage;
             PostProcessUtil.checkFieldExists(model, sourceClsName, sourceClassFieldName,
@@ -137,6 +140,9 @@ public class CreateReferencesProcess extends PostProcessor
 
         Iterator<ResultsRow<InterMineObject>> resIter = null;
 
+        if (model == null) {
+            model = Model.getInstanceByName("genomic");
+        }
         try {
             resIter = PostProcessUtil.findConnectingClasses(
                     osw.getObjectStore(),
@@ -234,6 +240,9 @@ public class CreateReferencesProcess extends PostProcessor
                 + createInFirstClass + ")";
 
         // Check that classes and fields specified exist in model
+        if (model == null) {
+            model = Model.getInstanceByName("genomic");
+        }
         try {
             String errorMessage = "Not performing " + insertMessage;
             PostProcessUtil.checkFieldExists(model, firstClsName, firstClassFieldName,

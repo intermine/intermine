@@ -107,7 +107,9 @@ public class MakeSpanningLocationsProcess extends PostProcessor
                         + "AS a2_, org.intermine.model.bio.BioEntity as a3_ "
                         + "WHERE (a1_.locations CONTAINS a2_ "
                         + "and a3_.locatedFeatures CONTAINS a2_)", null).toQuery();
-
+        if (os == null) {
+            os = osw.getObjectStore();
+        }
         Results parentIdResults = os.execute(parentIdQuery);
         Set<Object> locatedParents = new HashSet<Object>();
         Iterator<?> parentIdIter = parentIdResults.iterator();
