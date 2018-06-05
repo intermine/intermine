@@ -71,7 +71,7 @@ public class ItemTest extends TestCase
         try {
             item1.addAttribute(attr1);
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
         Reference ref1 = new Reference();
@@ -80,7 +80,7 @@ public class ItemTest extends TestCase
         try {
             item1.addReference(ref1);
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
         ReferenceList col1 = new ReferenceList();
@@ -90,7 +90,7 @@ public class ItemTest extends TestCase
         try {
             item1.addCollection(col1);
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
     }
@@ -105,7 +105,7 @@ public class ItemTest extends TestCase
         try {
             item1.setClassName("IllegalClass");
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
 
@@ -125,21 +125,21 @@ public class ItemTest extends TestCase
         try {
             item1.addAttribute(new Attribute("illegalAttribute", "1000"));
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
 
         try {
             item1.addAttribute(new Attribute("name", null));
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
 
         try {
             item1.addAttribute(new Attribute("name", ""));
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
     }
@@ -153,14 +153,14 @@ public class ItemTest extends TestCase
         try {
             item1.setAttribute("name", null);
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
 
         try {
             item1.setAttribute("name", "");
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
 
@@ -171,7 +171,7 @@ public class ItemTest extends TestCase
         try {
             item1.setAttribute("illegalAttribute", "1000");
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
     }
@@ -201,7 +201,7 @@ public class ItemTest extends TestCase
         try {
             item1.addReference(new Reference("illegalReference", "illegal_id"));
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
 
@@ -212,7 +212,7 @@ public class ItemTest extends TestCase
         try {
             item1.setReference("illegalReference", "illegal_id");
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
 
@@ -254,7 +254,7 @@ public class ItemTest extends TestCase
         try {
             item1.addToCollection("illegalCollection", "illegal_id");
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
     }
@@ -289,7 +289,7 @@ public class ItemTest extends TestCase
         try {
             item1.addToCollection("illegalCollection", "illegal_id");
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
     }
@@ -309,7 +309,7 @@ public class ItemTest extends TestCase
         try {
             item1.setCollection("contractors", idsToAdd);
             fail("expected RuntimeException");
-        } catch (RuntimeException _) {
+        } catch (RuntimeException e) {
             // expected
         }
     }

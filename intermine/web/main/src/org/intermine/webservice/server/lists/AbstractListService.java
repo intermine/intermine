@@ -29,6 +29,7 @@ public abstract class AbstractListService extends JSONService
 
     protected static final String LIST_NAME_KEY = "listName";
     protected static final String LIST_SIZE_KEY = "listSize";
+    protected static final String LIST_ID_KEY = "listId";
 
     /** @param im The InterMine state object **/
     public AbstractListService(InterMineAPI im) {

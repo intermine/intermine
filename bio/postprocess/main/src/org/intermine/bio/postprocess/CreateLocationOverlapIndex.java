@@ -50,69 +50,43 @@ public class CreateLocationOverlapIndex
     }
 
     /**
-     * Create an int4range or bioseg index on the start and end columns of the of the location
-     * table. If Postgres is of version 9.3 or later this will be an SPGIST index, otherwise GIST.
+     * Create an int4range index on the start and end columns of the of the location
+     * table. If Postgres is of version 9.3 or later this will be an SPGIST index.
      *
      * @throws SQLException
      *             if commands fail
      */
     public void create() throws SQLException {
         Database db = this.osw.getDatabase();
+        Connection con = db.getConnection();
 
-
-
-        if (osw.getSchema().useRangeTypes()) {
-            Connection con = db.getConnection();
-
-            try {
-                if (hasIndexAlready(con)) {
-                    // index was already created during this build
-                    return;
-                }
-
-                // SPGIST indexes are fastest for range queries but only added support for
-                // ranges in 9.3, for older versions we need to use GIST
-                String indexType = db.isVersionAtLeast("9.3") ? "SPGIST" : "GIST";
-
-                long startTime = System.currentTimeMillis();
-                String indexSql = "CREATE INDEX location__int4range "
-                        + "ON location USING " + indexType + " (" + RANGE_TYPE
-                        + "(intermine_start, intermine_end + 1))";
-                LOG.info(indexSql);
-                Statement statement = con.createStatement();
-                statement.executeUpdate(indexSql);
-                statement.close();
-                long took = System.currentTimeMillis() - startTime;
-                LOG.info("Created " + RANGE_TYPE + " index on location, took: " + took + "ms.");
-            } catch (SQLException e) {
-                throw new SQLException("Failed to create location__" + RANGE_TYPE
-                        + ". You likely have bad locations. ", e);
-            } finally {
-                con.close();
+        try {
+            if (hasIndexAlready(con)) {
+                // index was already created during this build
+                return;
             }
-        } else if (osw.getSchema().hasBioSeg()) {
-            // We have bioseg but don't support built-in range queries
 
-            Connection con = db.getConnection();
-            try {
-                con.setAutoCommit(false);
+            // SPGIST indexes are fastest for range queries but only added support for
+            // ranges in 9.3, for older versions we need to use GIST
+            String indexType = db.isVersionAtLeast("9.3") ? "SPGIST" : "GIST";
 
-                String indexSql = "CREATE INDEX location__bioseg ON location "
-                    + "USING gist (bioseg_create(intermine_start, intermine_end))";
-
-                Statement statement = con.createStatement();
-                statement.executeUpdate(indexSql);
-                statement.close();
-
-                con.commit();
-            } finally {
-                con.close();
-            }
-        } else {
-            throw new IllegalArgumentException("Attempt to create index for range queries on"
-                    + " location table but database doesn't support Postgres built in ranges (has"
-                    + " to be > 9.2) and doesn't have bioseg installed. Aborting.");
+            long startTime = System.currentTimeMillis();
+            String indexSql = "CREATE INDEX location__int4range "
+                    + "ON location USING " + indexType + " (" + RANGE_TYPE
+                    + "(intermine_start, intermine_end + 1))";
+            LOG.info(indexSql);
+            Statement statement = con.createStatement();
+            statement.executeUpdate(indexSql);
+            statement.close();
+            long took = System.currentTimeMillis() - startTime;
+            LOG.info("Created " + RANGE_TYPE + " index on location, took: " + took + "ms.");
+        } catch (SQLException e) {
+            throw new SQLException("Failed to create location__" + RANGE_TYPE
+                    + ". You likely have bad locations. ", e);
+        } finally {
+            con.close();
         }
+
     }
 
     private boolean hasIndexAlready(Connection con) throws SQLException {

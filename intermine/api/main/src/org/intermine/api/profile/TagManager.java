@@ -237,7 +237,7 @@ public class TagManager
         if (user == null) {
             throw new IllegalArgumentException("user may not be null.");
         }
-        if (user.isLoggedIn()) {
+        if (!user.isLoggedIn()) {
             return Collections.emptySet();
         }
         return getUserTagNames(type, user.getUsername());

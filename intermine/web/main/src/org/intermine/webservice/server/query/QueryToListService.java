@@ -91,7 +91,6 @@ public class QueryToListService extends AbstractQueryService
         ListInput input = new ListInput(request, bagManager, profile);
         PathQuery pq = getQuery(request);
 
-        setHeaderAttributes(input.getListName());
         generateListFromQuery(
                 pq,
                 input.getListName(),
@@ -152,6 +151,7 @@ public class QueryToListService extends AbstractQueryService
             InterMineBag newList =
                     profile.createBag(tempName, type, description, im.getClassKeys());
             newList.addToBagFromQuery(q);
+            setHeaderAttributes(name, newList.getSavedBagId());
             try {
                 im.getBagManager().addTagsToBag(tags, newList, profile);
             } catch (TagManager.TagNameException e) {
@@ -201,8 +201,9 @@ public class QueryToListService extends AbstractQueryService
     /**
      * Sets the header attributes map on the current output object.
      * @param name The name of the list.
+     * @param id intermine id for list
      */
-    protected void setHeaderAttributes(String name) {
+    protected void setHeaderAttributes(String name, Integer id) {
         Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
@@ -212,6 +213,7 @@ public class QueryToListService extends AbstractQueryService
         }
         Map<String, String> kvPairs = new HashMap<String, String>();
         kvPairs.put("listName", name);
+        kvPairs.put("listId", "" + id);
         attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
         output.setHeaderAttributes(attributes);
     }
