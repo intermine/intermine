@@ -12,6 +12,7 @@ package org.intermine.postprocess;
 
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import java.lang.IllegalAccessException;
 
 /**
  * Generic defn of a post process step...
@@ -44,7 +45,8 @@ public abstract class PostProcessor
      * All subclasses should override this method so they can be called in a generic fashion.
      *
      * @throws  ObjectStoreException if there is a problem with the object store.
+     * @throws  ObjectStoreException if there is a problem with the object store.
      * */
-    public abstract void postProcess() throws ObjectStoreException;
+    public abstract void postProcess() throws ObjectStoreException, IllegalAccessException;
 
 }
