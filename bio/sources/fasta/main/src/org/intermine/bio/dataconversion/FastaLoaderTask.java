@@ -297,6 +297,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
 
         String attributeValue = getIdentifier(bioJavaSequence);
+
         try {
             imo.setFieldValue(classAttribute, attributeValue);
         } catch (Exception e) {
@@ -388,7 +389,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     protected String getIdentifier(Sequence bioJavaSequence) {
         String name = bioJavaSequence.getAccession().getID() + idSuffix;
         LOG.debug("FFheader " + name);
-
+        // getID does not seem to work properly
+        // quick fix to get only the primaryidentifier
+        if (name.contains(" ")) {
+            String[] bits = name.split(" ");
+            name = bits[0];
+        }
         // description_line=sp|Q9V8R9-2|41_DROME
         if (name.contains("|")) {
             String[] bits = name.split("\\|");
