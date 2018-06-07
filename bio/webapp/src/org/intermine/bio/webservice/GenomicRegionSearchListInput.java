@@ -99,9 +99,9 @@ public class GenomicRegionSearchListInput extends ListInput
             regions.add(regs.getString(i));
         }
         parsed.setRegions(regions);
-
-        parsed.setStrandSpecific(jsonRequest.getBoolean("strandSpecific"));
-
+        if (!jsonRequest.isNull("strandSpecific")) {
+            parsed.setStrandSpecific(jsonRequest.getBoolean("strandSpecific"));
+        }
         return parsed;
     }
 
