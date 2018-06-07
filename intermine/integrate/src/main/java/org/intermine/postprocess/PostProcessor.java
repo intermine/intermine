@@ -12,7 +12,6 @@ package org.intermine.postprocess;
 
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
-import java.lang.IllegalAccessException;
 
 /**
  * Generic defn of a post process step...
