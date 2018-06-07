@@ -43,7 +43,7 @@ dependencies {
     providedCompile group: 'strutstestcase', name: 'strutstestcase', version: '2.1.4-1.2-2.4'
     providedCompile group: 'javax.servlet.jsp', name: 'javax.servlet.jsp-api', version: '2.3.1'
     providedCompile group: 'org.expressme', name: 'JOpenId', version: '1.08'
-    providedCompile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
     providedCompile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.50'
 
     runtime group: 'commons-io', name: 'commons-io', version: '2.0.1'

@@ -151,17 +151,15 @@ task buildDB() {
     group "${taskGroup}"
     description "Build database for testmodel webapp"
     dependsOn 'build','copyDefaultProperties'
-
     doFirst {
-
-            // this is only a fatal error if the user did not supply their credentials
-            // if they have their own property file, we assume human and not travis
-            if (!localMinePropertyFile) {
-                exec {
-                    commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"intermine-demo\";"
-                }
+        // this is only a fatal error if the user did not supply their credentials
+        // if they have their own property file, we assume human and not travis
+        if (!localMinePropertyFile) {
+            exec {
+                ignoreExitValue true
+                commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"intermine-demo\";"
             }
-
+        }
     }
     doLast {
         buildDatabase('unittest', 'testmodel')

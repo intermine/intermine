@@ -27,8 +27,6 @@ else
     echo '#---> Installing python requirements'
     # Install lib requirements
     pip install -r config/lib/requirements.txt
-
-    # install the JARs
     
     if [[ "$TEST_SUITE" = "bio" ]]; then
         # we depend on a flymine data source
@@ -36,30 +34,16 @@ else
         (cd flymine-bio-sources && ./gradlew bio-source-flymine-static:install)
     fi
 
-    # Build resources we might require
-    if [ "$TEST_SUITE" = "webapp" ]; then
-        # We will need python requirements for selenium tests
-        pip install -r testmodel/webapp/selenium/requirements.txt
-    fi
+    if [[ "$TEST_SUITE" = "ws" ]]; then
 
-    if [ "$TEST_SUITE" = "webapp" -o "$TEST_SUITE" = "ws" ]; then
+        # set up database for testing
+        (cd intermine && ./gradlew createUnitTestDatabases)
+
         # We will need a fully operational web-application
         echo '#---> Building and releasing web application to test against'
-        source config/init-webapp.sh
-        # source config/issue-token.sh
-    #elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" -o "$TEST_SUITE" = "webtasks" -o "$TEST_SUITE" = "all" ]; then
-        # api, webtasks, web and all need the testmodel to be built
-        # ant -f testmodel/dbmodel/build.xml build-db    
-    fi
+        ./testmine/setup.sh
 
-    if [[ "$TEST_SUITE" = "bio-webapp" ]]; then
-        echo '#---> Building and releasing the biotestmine'
-        pip install -r 'biotestmine/test/api/requirements.txt'
-        source config/download_and_configure_tomcat.sh
-        ./biotestmine/setup.sh
-    fi
-
-    if [[ "$TEST_SUITE" = "ws" ]]; then
+        sleep 60 # let webapp startup
 
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET "$TESTMODEL_URL/service/search" > /dev/null

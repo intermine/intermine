@@ -53,7 +53,7 @@ class PostProcessPlugin implements Plugin<Project> {
         project.task('postProcess') {
             group TaskConstants.TASK_GROUP
             description "Post processes. Optional input parameters: process (process name) and source(if process=do-sources). E.g. postprocess -Pprocess=create-references"
-            dependsOn 'initPostProcess', 'compileJava', 'copyDefaultInterMineProperties'
+            dependsOn 'initPostProcess', 'compileJava', 'copyDefaultInterMineProperties', 'copyMineProperties'
 
             doLast{
                 processNames.each { processName ->
