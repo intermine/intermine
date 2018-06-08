@@ -239,7 +239,7 @@ attribute when using this service.
                     This service provides the facility to submit one or more queries
                     and save it/them for future reference to a user account on the server.
                 </description>
-                <param required="true" type="XML" description="A definition of the query/ies to save in Path-Query XML format.">xml</param>
+                <param required="true" type="String" description="A definition of the query/ies to save in Path-Query XML or JSON format.">query</param>
                 <param required="false" type="Integer" description="The version of the path-qeury format being used.">version</param>
                 <returns>
                     <format accept="application/json">json</format>
@@ -686,7 +686,7 @@ attribute when using this service.
           This service allows users to save templates they have authored on the server, associated
           with their account. The templates once saved can be used as any other template query.
         </description>
-        <param type="XML" required="true" description="One or more templates, serialised in XML format.">xml</param>
+        <param type="String" required="true" description="One or more templates, serialised in XML or JSON format.">query</param>
         <param type="Integer" required="false" default="2" min="1" max="2" description="The version of the XML format">version</param>
         <returns>
           <format accept="text/plain">text</format>
@@ -2728,7 +2728,7 @@ The different token types are:
                 already exist, they will be over-written. This provides a mechanism for updating
                 the value of saved queries on a service.
             </description>
-            <param required="false" type="XML" default="" description="The queries to upload, if using form parameters.">xml</param>
+            <param required="false" type="String" default="" description="The queries to upload, if using form parameters.">query</param>
             <body description="The queries to upload. If using body content.">
              <content type="application/xml">
                 &lt;query model="genomic" view="Gene.symbol Gene.proteins.proteinDomains.name"&gt;
