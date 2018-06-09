@@ -13,8 +13,6 @@ package org.intermine.api.searchengine;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.api.InterMineAPI;
-import org.intermine.api.lucene.KeywordSearchFacetData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -32,6 +30,11 @@ public class KeywordSearchPropertiesManager {
     private static final Logger LOG = Logger.getLogger(KeywordSearchPropertiesManager.class);
 
     private static KeywordSearchPropertiesManager keywordSearchPropertiesManager;
+
+    /**
+     * maximum number of items to be displayed on a page
+     */
+    public static final int PER_PAGE = 100;
 
     private Properties properties = null;
 

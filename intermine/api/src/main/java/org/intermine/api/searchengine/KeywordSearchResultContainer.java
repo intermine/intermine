@@ -21,9 +21,12 @@ import org.intermine.model.InterMineObject;
  */
 
 public class KeywordSearchResultContainer<E> {
+
     final float score;
     final E document;
     final InterMineObject object;
+
+
 
     public KeywordSearchResultContainer(E document, InterMineObject object, float score) {
 
