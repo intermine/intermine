@@ -10,7 +10,13 @@ package org.intermine.api.searchengine;
  *
  */
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for handling indexes.
@@ -24,6 +30,6 @@ public interface IndexHandler
      *
      * @param os Objectstore that is passed CreateSearchIndexTask
      */
-    public void createIndex(ObjectStore os);
+    public void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys) throws IOException;
 
 }

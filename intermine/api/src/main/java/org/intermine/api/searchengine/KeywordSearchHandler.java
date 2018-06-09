@@ -10,7 +10,11 @@ package org.intermine.api.searchengine;
  *
  */
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.objectstore.ObjectStore;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for handling indexes.
@@ -20,12 +24,7 @@ import org.intermine.objectstore.ObjectStore;
 
 public interface KeywordSearchHandler
 {
-    /**
-     *
-     * @param queryString Objectstore that is passed CreateSearchIndexTask
-     * 
-     * @return SearchResults from the search performed
-     */
-    public SearchResults doFilteredSearch(String queryString);
+    public KeywordSearchResults doKeywordSearch(InterMineAPI im, String queryString, Map<String,
+            String> facetValues, List<Integer> ids, int offSet);
 
 }
