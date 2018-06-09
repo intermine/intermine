@@ -31,12 +31,10 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.lucene.KeywordSearch;
-import org.intermine.api.lucene.KeywordSearchFacet;
-import org.intermine.api.lucene.KeywordSearchFacetData;
-import org.intermine.api.lucene.ResultsWithFacets;
+import org.intermine.api.searchengine.*;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.searchengine.solr.SolrKeywordSearchHandler;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.search.KeywordSearchResult;
@@ -85,8 +83,9 @@ public class KeywordSearchResultsController extends TilesAction
 //            intialiseLogging(SessionMethods.getWebProperties(servletContext).getProperty(
 //                    "project.title", "unknown").toLowerCase());
 //        }
-        KeywordSearch.initKeywordSearch(im, contextPath);
-        Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
+
+        Vector<KeywordSearchFacetData> facets =
+                KeywordSearchPropertiesManager.getInstance(im.getObjectStore()).getFacets();
         int totalHits = 0;
 
         //track the keyword search
@@ -102,14 +101,26 @@ public class KeywordSearchResultsController extends TilesAction
         }
         List<Integer> ids = getBagIds(im, request, searchBag);
         int offset = getOffset(request);
+
         Map<String, String> facetValues = getFacetValues(request, facets);
+
         LOG.debug("Initializing took " + (System.currentTimeMillis() - time) + " ms");
 
 
         long searchTime = System.currentTimeMillis();
 
-        ResultsWithFacets results =
-                KeywordSearch.runBrowseWithFacets(im, searchTerm, offset, facetValues, ids);
+//        ResultsWithFacets results =
+//                KeywordSearch.runBrowseWithFacets(im, searchTerm, offset, facetValues, ids);
+//
+//        Collection<KeywordSearchResult> searchResultsParsed =
+//                SearchUtils.parseResults(im, wc, results.getHits());
+//
+//        Collection<KeywordSearchFacet> searchResultsFacets = results.getFacets();
+//        totalHits = results.getTotalHits();
+
+        KeywordSearchHandler keywordSearchHandler = new SolrKeywordSearchHandler();
+
+        KeywordSearchResults results = keywordSearchHandler.doKeywordSearch(im, searchTerm, facetValues, ids, offset);
 
         Collection<KeywordSearchResult> searchResultsParsed =
                 SearchUtils.parseResults(im, wc, results.getHits());
@@ -142,7 +153,7 @@ public class KeywordSearchResultsController extends TilesAction
 
         // pagination
         context.putAttribute("searchOffset", Integer.valueOf(offset));
-        context.putAttribute("searchPerPage", Integer.valueOf(KeywordSearch.PER_PAGE));
+        context.putAttribute("searchPerPage", Integer.valueOf(KeywordSearchPropertiesManager.PER_PAGE));
         context.putAttribute("searchTotalHits", Integer.valueOf(totalHits));
 
         // facet lists
