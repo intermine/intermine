@@ -27,6 +27,8 @@ import org.apache.solr.common.SolrInputField;
 import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.lucene.*;
+import org.intermine.api.searchengine.KeywordSearchFacetData;
+import org.intermine.api.searchengine.KeywordSearchFacetType;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
