@@ -60,7 +60,13 @@ public class CreateSearchIndexProcess extends PostProcessor
                 ClassKeyHelper.readKeys(osw.getModel(), classKeyProperties);
 
         //index and save
-        SolrIndexHandler.saveIndexToDatabase(osw, classKeys);
-        SolrIndexHandler.deleteIndexDirectory();
+        try {
+		SolrIndexHandler solrIndexHandler = new SolrIndexHandler();
+            solrIndexHandler.createIndex(osw, classKeys);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // SolrIndexHandler.deleteIndexDirectory();
     }
 }
