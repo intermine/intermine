@@ -1,9 +1,0 @@
-<project name="bio-tools-test" default="default" basedir=".">
-
-  <description>perform bio-tools tests</description>
-
-  <import file="../../../imbuild/tests.xml"/>
-
-  
-
-</project>

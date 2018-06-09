@@ -10,12 +10,12 @@
 set -e # Errors are fatal.
 
 USERPROFILEDB=userprofile-demo
-PRODDB=objectstore-demo
+PRODDB=intermine-demo
 MINENAME=demomine
 DIR="$(cd $(dirname "$0"); pwd)"
 IMDIR=$HOME/.intermine
 LOG=$DIR/build.log
-PROP_FILE=$IMDIR/testmodel.properties.demo
+PROP_FILE=$IMDIR/testmodel.properties
 
 # Inherit SERVER, PORT, PSQL_USER, PSQL_PWD, TOMCAT_USER and TOMCAT_PWD if in env.
 if test -z $SERVER; then
@@ -92,14 +92,19 @@ done
 # So we need to install them to Maven so that the testmine Gradle can fetch them
 echo "-----> Installing InterMine Gradle project JARs to local Maven..."
 cd $DIR/../intermine
+(cd ../plugin && ./gradlew install)
 ./gradlew install
 
 echo "------> Loading demo data set..."
 cd $DIR
+
 echo "-----> Running ./gradlew loadsadata"
 ./gradlew loadsadata
 
+echo "------> Loading userprofile..."
+./gradlew insertUserData
+
 echo "------> Running webapp"
 echo "-----> Running ./gradlew tomcatstartwar"
-./gradlew tomcatstartwar
+./gradlew tomcatstartwar & 
 echo "-----> Finished init-webapp.sh"
