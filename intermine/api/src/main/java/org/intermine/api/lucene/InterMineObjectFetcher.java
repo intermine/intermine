@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.searchengine.*;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;

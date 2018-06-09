@@ -57,7 +57,8 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.data.Objects;
-import org.intermine.api.searchengine.solr.SolrIndexHandler;
+import org.intermine.api.searchengine.KeywordSearchFacetData;
+import org.intermine.api.searchengine.KeywordSearchFacetType;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -402,11 +403,11 @@ public final class KeywordSearch
      */
     public static void saveIndexToDatabase(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys) {
-
-        System.out.println("Inside saveIndexToDatabase");
-        System.out.println("Starting to index using solr");
-
-        SolrIndexHandler.createIndex(os, classKeys);
+//
+//        System.out.println("Inside saveIndexToDatabase");
+//        System.out.println("Starting to index using solr");
+//
+//        SolrIndexHandler.createIndex(os, classKeys);
 
 //        try {
 //            if (index == null) {
