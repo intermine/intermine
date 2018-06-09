@@ -1,4 +1,4 @@
-package org.intermine.api.lucene;
+package org.intermine.api.searchengine;
 
 /*
  * Copyright (C) 2002-2017 FlyMine
@@ -18,7 +18,7 @@ import org.intermine.metadata.AttributeDescriptor;
  * container class to cache class attributes
  * @author nils
  */
-class ClassAttributes
+public class ClassAttributes
 {
     String className;
     Set<AttributeDescriptor> attributes;
