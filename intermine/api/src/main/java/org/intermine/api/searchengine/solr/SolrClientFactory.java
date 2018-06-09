@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.intermine.objectstore.ObjectStore;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,47 +41,15 @@ public class SolrClientFactory
      *Static method to get the solr client instance
      *
      */
-    public static SolrClient getInstance(){
+    public static SolrClient getClientInstance(ObjectStore objectStore){
 
         if(solrClient == null){
-            solrUrlString = getSolrUrlString();
+
+            solrUrlString = KeywordSearchPropertiesManager.getInstance(objectStore).getSolrUrl();
+
             solrClient = new HttpSolrClient.Builder(solrUrlString).build();
         }
         return solrClient;
-    }
-
-    /**
-    * Method to retrieve the solr Url from the properties file
-     *
-     * @return solrUrl string parsed from the properties file
-    */
-    private static String getSolrUrlString(){
-        String configFileName = "keyword_search.properties";
-        ClassLoader classLoader = SolrClientFactory.class.getClassLoader();
-        InputStream configStream = classLoader.getResourceAsStream(configFileName);
-
-        String solrUrl = null;
-
-        if (configStream != null) {
-             Properties properties = new Properties();
-            try {
-                properties.load(configStream);
-
-                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                    String key = (String) entry.getKey();
-                    String value = ((String) entry.getValue()).trim();
-
-                    if ("index.solrurl".equals(key) && !StringUtils.isBlank(value)) {
-                        solrUrl = value;
-                    }
-                }
-            } catch (IOException e){
-                LOG.error("keyword_search.properties: error while loading file '" + configFileName
-                        + "'", e);
-            }
-        }
-
-        return solrUrl;
     }
 
 }
