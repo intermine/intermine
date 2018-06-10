@@ -24,6 +24,8 @@ import java.util.*;
 
 /**
  * A manager class to handle all the configuration properties from keyword_search.properties file
+ * @author nils
+ * @author arunans23
  */
 public class KeywordSearchPropertiesManager {
 
@@ -55,9 +57,20 @@ public class KeywordSearchPropertiesManager {
 
     }
 
+    /**
+     * static method to get one instance of KeywordSearchProperties Manager
+     *
+     * @param objectStore Objectstore instance
+     *
+     * @return Manager instance
+     **/
     public static KeywordSearchPropertiesManager getInstance(ObjectStore objectStore){
         if (keywordSearchPropertiesManager == null){
-            keywordSearchPropertiesManager = new KeywordSearchPropertiesManager(objectStore);
+            synchronized (KeywordSearchPropertiesManager.class){
+                if (keywordSearchPropertiesManager == null){
+                    keywordSearchPropertiesManager = new KeywordSearchPropertiesManager(objectStore);
+                }
+            }
         }
         return keywordSearchPropertiesManager;
     }

@@ -25,7 +25,7 @@ import org.intermine.api.searchengine.solr.SolrIndexHandler;
 
 
 /**
- * Create a the keyword search index for a mine.
+ * Create the keyword search index for a mine.
  * @author Alex Kalderimis
  * @author arunans23
  */

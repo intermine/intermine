@@ -3,17 +3,15 @@ package org.intermine.api.searchengine.solr;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.data.Objects;
 import org.intermine.api.searchengine.*;
-import org.intermine.api.searchengine.SolrClientFactory;
+import org.intermine.api.searchengine.SolrClientManager;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -28,12 +26,12 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 
 import java.io.IOException;
-import java.io.ObjectStreamException;
 import java.util.*;
 
 /**
  * Solr implementation of KeywordSearchHandler
  *
+ * @author nils
  * @author arunans23
  */
 
@@ -47,7 +45,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
         //TODO: prepare the querystring
 
-        SolrClient solrClient = SolrClientFactory.getClientInstance(im.getObjectStore());
+        SolrClient solrClient = SolrClientManager.getClientInstance(im.getObjectStore());
 
         QueryResponse resp = null;
 
@@ -97,7 +95,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
                                                Map<String, String> facetValues, List<Integer> ids) {
         //TODO: prepare the querystring
 
-        SolrClient solrClient = SolrClientFactory.getClientInstance(im.getObjectStore());
+        SolrClient solrClient = SolrClientManager.getClientInstance(im.getObjectStore());
 
         QueryResponse resp = null;
 

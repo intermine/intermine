@@ -16,20 +16,20 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.intermine.objectstore.ObjectStore;
 
 /**
- * Factory class to create one instance of Solr Client
+ * Singleton class to create one instance of Solr Client
  *
  * @author arunans23
  */
 
-public class SolrClientFactory
+public class SolrClientManager
 {
-    private static final Logger LOG = Logger.getLogger(SolrClientFactory.class);
+    private static final Logger LOG = Logger.getLogger(SolrClientManager.class);
 
     private static SolrClient solrClient;
 
     private static String solrUrlString;
 
-    private SolrClientFactory(){}
+    private SolrClientManager(){}
 
     /**
      *Static method to get the solr client instance
@@ -40,10 +40,15 @@ public class SolrClientFactory
     public static SolrClient getClientInstance(ObjectStore objectStore){
 
         if(solrClient == null){
+            synchronized (SolrClientManager.class){
+                if (solrClient == null){
+                    solrUrlString = KeywordSearchPropertiesManager.getInstance(objectStore).getSolrUrl();
+                    solrClient = new HttpSolrClient.Builder(solrUrlString).build();
+                }
 
-            solrUrlString = KeywordSearchPropertiesManager.getInstance(objectStore).getSolrUrl();
+            }
 
-            solrClient = new HttpSolrClient.Builder(solrUrlString).build();
+
         }
         return solrClient;
     }

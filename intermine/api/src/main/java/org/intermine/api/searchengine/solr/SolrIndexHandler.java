@@ -19,7 +19,7 @@ import org.apache.solr.client.solrj.response.schema.SchemaResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.searchengine.IndexHandler;
 import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
-import org.intermine.api.searchengine.SolrClientFactory;
+import org.intermine.api.searchengine.SolrClientManager;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.ObjectPipe;
@@ -46,7 +46,7 @@ public final class SolrIndexHandler implements IndexHandler
         long time = System.currentTimeMillis();
         LOG.debug("Creating keyword search index...");
 
-        SolrClient solrClient = SolrClientFactory.getClientInstance(os);
+        SolrClient solrClient = SolrClientManager.getClientInstance(os);
 
         //delete previous documents in solr
 
