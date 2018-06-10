@@ -157,7 +157,7 @@ public class KeywordSearchResultsController extends TilesAction
         context.putAttribute("searchTotalHits", Integer.valueOf(totalHits));
 
         // facet lists
-        context.putAttribute("searchFacets", searchResultsFacets);
+        context.putAttribute("searchFacets", new ArrayList());
 
         // facet values
         for (Entry<String, String> facetValue : facetValues.entrySet()) {

@@ -20,6 +20,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.api.searchengine.IndexHandler;
 import org.intermine.api.searchengine.solr.SolrIndexHandler;
 
 
@@ -63,6 +64,8 @@ public class CreateSearchIndexProcess extends PostProcessor
         try {
 		    IndexHandler indexHandler = new SolrIndexHandler();
             indexHandler.createIndex(osw, classKeys);
+
+            System.out.println("Creating index for keyword search ended successfully");
 
         } catch (Exception e) {
             System.out.println("Creating keyword index failed");
