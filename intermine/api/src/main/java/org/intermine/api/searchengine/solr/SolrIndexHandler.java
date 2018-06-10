@@ -126,18 +126,28 @@ public final class SolrIndexHandler implements IndexHandler
                 SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
                 SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
 
-                List<String> copyFieldAttributes = new ArrayList<String>();
-                copyFieldAttributes.add("text");
-
-                SchemaRequest.AddCopyField schemaCopyRequest = new SchemaRequest.AddCopyField("*", copyFieldAttributes);
-                SchemaResponse.UpdateResponse copyFieldResponse =  schemaRequest.process(solrClient);
-
             } catch (SolrServerException e){
                 LOG.error("Error while adding fields to the solrclient.", e);
 
                 e.printStackTrace();
             }
+        }
 
+        //adding copy field to solr so that all the fields can be searchable
+        //No need to search for Category : gene. Searching for gene is enough
+
+        try{
+
+            List<String> copyFieldAttributes = new ArrayList<String>();
+            copyFieldAttributes.add("_text_");
+
+            SchemaRequest.AddCopyField schemaCopyRequest = new SchemaRequest.AddCopyField("*", copyFieldAttributes);
+            SchemaResponse.UpdateResponse copyFieldResponse =  schemaCopyRequest.process(solrClient);
+
+        } catch (SolrServerException e){
+            LOG.error("Error while adding copy field to the solrclient.", e);
+
+            e.printStackTrace();
         }
 
         LOG.debug("Creating Schema in Solr ends and it took " + (System.currentTimeMillis() - schemaStartTime) + "ms");
