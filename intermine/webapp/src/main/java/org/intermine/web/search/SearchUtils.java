@@ -18,7 +18,6 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
-import org.intermine.api.lucene.KeywordSearchHit;
 import org.intermine.api.searchengine.KeywordSearchResultContainer;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;

@@ -15,6 +15,7 @@ import org.intermine.objectstore.ObjectStore;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Interface for handling indexes.
@@ -26,5 +27,8 @@ public interface KeywordSearchHandler
 {
     public KeywordSearchResults doKeywordSearch(InterMineAPI im, String queryString, Map<String,
             String> facetValues, List<Integer> ids, int offSet);
+
+    public Set<Integer> getObjectIdsFromSearch(InterMineAPI im, String searchString, int offset,
+                                               Map<String, String> facetValues, List<Integer> ids);
 
 }

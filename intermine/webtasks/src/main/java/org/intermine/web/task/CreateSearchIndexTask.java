@@ -19,14 +19,15 @@ import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.lucene.KeywordSearch;
+import org.intermine.api.searchengine.IndexHandler;
+import org.intermine.api.searchengine.solr.SolrIndexHandler;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 /**
- * Create a the Lucene keyword search index for a mine.
+ * Create a keyword search index for a mine.
  * @author Alex Kalderimis
  *
  */
@@ -84,7 +85,7 @@ public class CreateSearchIndexTask extends Task
 
     @Override
     public void execute() {
-        System .out.println("Creating lucene index for keyword search...");
+        System .out.println("Creating index for keyword search...");
 
         ObjectStore objectStore;
         try {
@@ -111,9 +112,15 @@ public class CreateSearchIndexTask extends Task
         Map<String, List<FieldDescriptor>> classKeys =
             ClassKeyHelper.readKeys(objectStore.getModel(), classKeyProperties);
 
-        //index and save
-        KeywordSearch.saveIndexToDatabase(objectStore, classKeys);
-        KeywordSearch.deleteIndexDirectory();
+        //index and save. Deleting previous index happens within itself
+        try {
+            IndexHandler indexHandler = new SolrIndexHandler();
+            indexHandler.createIndex(objectStore, classKeys);
+
+        } catch (Exception e) {
+            System.out.println("Creating keyword index failed");
+            e.printStackTrace();
+        }
     }
 
 

@@ -92,12 +92,56 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
         return null;
     }
 
+    @Override
+    public Set<Integer> getObjectIdsFromSearch(InterMineAPI im, String searchString, int offSet,
+                                               Map<String, String> facetValues, List<Integer> ids) {
+        //TODO: prepare the querystring
+
+        SolrClient solrClient = SolrClientFactory.getClientInstance(im.getObjectStore());
+
+        QueryResponse resp = null;
+
+        KeywordSearchPropertiesManager keywordSearchPropertiesManager
+                = KeywordSearchPropertiesManager.getInstance(im.getObjectStore());
+
+        Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
+
+        try {
+
+            SolrQuery newQuery = new SolrQuery();
+            newQuery.setQuery(searchString);
+            newQuery.setStart(offSet);
+            newQuery.setRows(KeywordSearchPropertiesManager.PER_PAGE);
+
+            for (KeywordSearchFacetData keywordSearchFacetData : facets){
+                newQuery.addFacetField(keywordSearchFacetData.getField());
+            }
+
+            resp = solrClient.query(newQuery);
+
+            SolrDocumentList results = resp.getResults();
+
+            Set<Integer> objectIds = getObjectIds(results);
+
+            return objectIds;
+
+        } catch (SolrServerException e) {
+            e.printStackTrace();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     /**
      * @param documents the query results.
      *
      * @return set of IDs found in the search results
      */
-    public static Set<Integer> getObjectIds(SolrDocumentList documents) {
+    public Set<Integer> getObjectIds(SolrDocumentList documents) {
         long time = System.currentTimeMillis();
         Set<Integer> objectIds = new HashSet<Integer>();
         for (int i = 0; i < documents.size(); i++) {
@@ -122,7 +166,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
      * @param objMap object map
      * @return matching object
      */
-    public static Vector<KeywordSearchResultContainer> getSearchHits(SolrDocumentList documents,
+    public Vector<KeywordSearchResultContainer> getSearchHits(SolrDocumentList documents,
                                                          Map<Integer, InterMineObject> objMap) {
         long time = System.currentTimeMillis();
         Vector<KeywordSearchResultContainer> searchHits = new Vector<KeywordSearchResultContainer>();
@@ -154,7 +198,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
      * @param facetValues values for facets
      * @return search result for given facet
      */
-    public static Vector<KeywordSearchFacet> parseFacets(QueryResponse resp,
+    public Vector<KeywordSearchFacet> parseFacets(QueryResponse resp,
                                                          Vector<KeywordSearchFacetData> facetVector, Map<String, String> facetValues) {
         long time = System.currentTimeMillis();
         Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();

@@ -61,9 +61,9 @@ public class CreateSearchIndexProcess extends PostProcessor
 
         //index and save. Deleting previous index happens within itself
         try {
-		    SolrIndexHandler solrIndexHandler = new SolrIndexHandler();
-            solrIndexHandler.createIndex(osw, classKeys);
-            
+		    IndexHandler indexHandler = new SolrIndexHandler();
+            indexHandler.createIndex(osw, classKeys);
+
         } catch (Exception e) {
             System.out.println("Creating keyword index failed");
             e.printStackTrace();
