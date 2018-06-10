@@ -25,10 +25,30 @@ import java.util.Set;
 
 public interface KeywordSearchHandler
 {
+    /**
+     * Main method to do the search
+     * @param im IntermineAPI instance
+     * @param queryString the search term to be searched
+     * @param facetValues the facet value Map that needs to be returned in the result
+     * @param ids ids to research the search
+     * @param offSet offSet of results
+     *
+     * @return results containing both facet and result rows in the KeywordSearchResuls container
+     */
     public KeywordSearchResults doKeywordSearch(InterMineAPI im, String queryString, Map<String,
             String> facetValues, List<Integer> ids, int offSet);
 
-    public Set<Integer> getObjectIdsFromSearch(InterMineAPI im, String searchString, int offset,
+    /**
+     * A method specifically designed to be used in SaveFromIdsToBagAction class
+     * @param im IntermineAPI instance
+     * @param searchString the search term to be searched
+     * @param facetValues the facet value Map that needs to be returned in the result
+     * @param ids ids to research the search
+     * @param offSet offSet of results
+     *
+     * @return results containing both facet and result rows in the KeywordSearchResuls container
+     */
+    public Set<Integer> getObjectIdsFromSearch(InterMineAPI im, String searchString, int offSet,
                                                Map<String, String> facetValues, List<Integer> ids);
 
 }

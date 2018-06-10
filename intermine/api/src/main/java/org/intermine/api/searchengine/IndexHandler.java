@@ -10,7 +10,6 @@ package org.intermine.api.searchengine;
  *
  */
 
-import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 
@@ -27,8 +26,13 @@ import java.util.Map;
 public interface IndexHandler
 {
     /**
+     * Main method to create the index
+     * Used mostly in post process tasks
      *
      * @param os Objectstore that is passed CreateSearchIndexTask
+     * @param classKeys
+     *                  classKeys from InterMineAPI, map of classname to all key field
+     *                  descriptors
      */
     public void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys) throws IOException;
 
