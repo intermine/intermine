@@ -10,16 +10,10 @@ package org.intermine.api.searchengine;
  *
  */
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.intermine.objectstore.ObjectStore;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * Factory class to create one instance of Solr Client
@@ -39,6 +33,8 @@ public class SolrClientFactory
 
     /**
      *Static method to get the solr client instance
+     *
+     * @param objectStore ObjectStore instance to pass into Properties Manager
      *
      */
     public static SolrClient getClientInstance(ObjectStore objectStore){

@@ -49,12 +49,18 @@ public final class SolrIndexHandler implements IndexHandler
         SolrClient solrClient = SolrClientFactory.getClientInstance(os);
 
         //delete previous documents in solr
+
+        LOG.debug("Delete previous index begins");
+        long deleteStartTime = System.currentTimeMillis();
+
         try {
             solrClient.deleteByQuery("*:*");
             solrClient.commit();
         } catch (SolrServerException e) {
             LOG.error("Deleting old index failed", e);
         }
+
+        LOG.debug("Delete previous index ends and it took " + (System.currentTimeMillis() - deleteStartTime) + "ms");
 
         KeywordSearchPropertiesManager keywordSearchPropertiesManager
                 = KeywordSearchPropertiesManager.getInstance(os);
@@ -84,18 +90,28 @@ public final class SolrIndexHandler implements IndexHandler
 
             indexed++;
 
-            if (indexed % 10000 == 1) {
-                LOG.info("docs indexed=" + indexed + "; thread state="
-                        + fetchThread.getState() + "; docs/ms=" + indexed * 1.0F
-                        / (System.currentTimeMillis() - time) + "; memory="
-                        + Runtime.getRuntime().freeMemory() / 1024 + "k/"
-                        + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
-                        + (System.currentTimeMillis() - time) + "ms");
-            }
+            //This following log is not needed anymore because actual indexing happens below
+
+//            if (indexed % 10000 == 1) {
+//                LOG.info("docs indexed=" + indexed + "; thread state="
+//                        + fetchThread.getState() + "; docs/ms=" + indexed * 1.0F
+//                        / (System.currentTimeMillis() - time) + "; memory="
+//                        + Runtime.getRuntime().freeMemory() / 1024 + "k/"
+//                        + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
+//                        + (System.currentTimeMillis() - time) + "ms");
+//            }
         }
 
         Set<String> fieldNames = fetchThread.getFieldNames();
+
+        //Accessing SchemaAPI from solr and create the schema dynamically
+
+        LOG.debug("Creating Schema in Solr begins...");
+
+        long schemaStartTime = System.currentTimeMillis();
+
         fieldNames.add("Category");
+        fieldNames.add("classname");
 
         for(String fieldName: fieldNames){
             Map<String, Object> fieldAttributes = new HashMap();
@@ -124,16 +140,25 @@ public final class SolrIndexHandler implements IndexHandler
 
         }
 
+        LOG.debug("Creating Schema in Solr ends and it took " + (System.currentTimeMillis() - schemaStartTime) + "ms");
+
+        long indexStartTime = System.currentTimeMillis();
+
+        LOG.debug("Beginning to commit Solr Documents into Solr");
+
         try {
             UpdateResponse response = solrClient.add(solrInputDocuments);
 
             solrClient.commit();
         } catch (SolrServerException e) {
 
-            LOG.error("Error while commiting the solrinputdocuments to the solrclient.", e);
+            LOG.error("Error while commiting the SolrInputdocuments to the Solrclient. " +
+                    "Make sure the Solr instance is up", e);
 
             e.printStackTrace();
         }
+
+        LOG.debug("Solr indexing ends and it took " + (System.currentTimeMillis() - indexStartTime) + "ms");
 
         if (fetchThread.getException() != null) {
             try {
@@ -142,13 +167,6 @@ public final class SolrIndexHandler implements IndexHandler
                 LOG.error("Error closing writer while handling exception.", e);
             }
             throw new RuntimeException("Indexing failed.", fetchThread.getException());
-        }
-//        index.getFieldNames().addAll(fetchThread.getFieldNames());
-//        LOG.debug("Indexing done, optimizing index files...");
-        try {
-
-        } catch (Exception e) {
-            LOG.error("IOException while optimizing and closing IndexWriter", e);
         }
 
         time = System.currentTimeMillis() - time;
