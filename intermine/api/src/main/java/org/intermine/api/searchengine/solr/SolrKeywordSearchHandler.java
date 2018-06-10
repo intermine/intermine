@@ -77,7 +77,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
             Collection<KeywordSearchFacet> searchResultsFacets = parseFacets(resp, facets, facetValues);
 
-            return new KeywordSearchResults(searchHits, searchResultsFacets, results.size());
+            return new KeywordSearchResults(searchHits, searchResultsFacets, (int)results.getNumFound());
 
         } catch (SolrServerException e) {
             e.printStackTrace();
