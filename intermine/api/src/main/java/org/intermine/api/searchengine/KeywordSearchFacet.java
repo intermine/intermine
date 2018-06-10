@@ -17,7 +17,7 @@ import java.util.Map;
  * container for one faceting field, the current faceting value and the list of
  * possible items
  * @author nils
- * @arunans23
+ * @author arunans23
  */
 public class KeywordSearchFacet
 {
