@@ -9,11 +9,13 @@ import org.gradle.api.tasks.util.PatternSet
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
+import org.intermine.plugin.webapp.WebAppPlugin
 
 class DBModelPlugin implements Plugin<Project> {
 
     DBModelConfig config
     DBModelUtils dbUtils
+    WebAppPlugin webAppPlugin
     String buildResourcesMainDir
     boolean regenerateModel = true
     boolean generateKeys = true
@@ -241,6 +243,7 @@ class DBModelPlugin implements Plugin<Project> {
                 dbUtils.createSchema(config.objectStoreName)
                 dbUtils.createTables(config.objectStoreName, config.modelName)
                 dbUtils.storeMetadata(config.objectStoreName, config.modelName)
+
             }
         }
 
@@ -258,16 +261,23 @@ class DBModelPlugin implements Plugin<Project> {
             }
         }
 
-        project.task('buildUserDB') {
+        project.task('createUserDB') {
             group TaskConstants.TASK_GROUP
-            description "Build the user database for the webapp"
+            description "Creates empty tables in the userprofile database."
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyMineProperties', 'copyUserProfileModel', 'jar'
 
-            doLast {
+            doFirst {
                 dbUtils.createSchema(config.userProfileObjectStoreName)
                 dbUtils.createTables(config.userProfileObjectStoreName, config.userProfileModelName)
                 dbUtils.storeMetadata(config.userProfileObjectStoreName, config.userProfileModelName)
             }
+        }
+
+        project.task('buildUserDB') {
+            group TaskConstants.TASK_GROUP
+            description "Creates empty tables in the userprofile database, then loads the superuser and default templates."
+            dependsOn 'createUserDB', ':webapp:loadDefaultTemplates'
+            // do nothing
         }
 
         project.task('runAcceptanceTests') {
