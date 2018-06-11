@@ -152,7 +152,7 @@ public class OmimConverter extends BioDirectoryConverter
         String line = null;
         // find the OMIM ID. OMIM identifiers are 6 digits
         Pattern matchMajorDiseaseNumber = Pattern.compile("(\\d{6})");
-        final String delim = "\\(3\\)";
+        final String delim = "\\)";
         while ((line = br.readLine()) != null) {
             Matcher diseaseMatcher = matchMajorDiseaseNumber.matcher(line);
             String mimNumber = null;
@@ -175,6 +175,7 @@ public class OmimConverter extends BioDirectoryConverter
             String[] firstBits = line.split(delim);
             if (firstBits.length != 2) {
                 // throw exception here?
+                LOG.info("Not processing " + line + " because I don't know how");
                 continue;
             }
             symbols = firstBits[1].trim();

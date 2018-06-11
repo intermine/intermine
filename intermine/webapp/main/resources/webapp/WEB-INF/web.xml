@@ -2908,7 +2908,7 @@ The different token types are:
       <servlet-name>ws-data</servlet-name>
       <url-pattern>/service/data/*</url-pattern>
       <metadata>
-          <name>Simple Data Service</name>
+          <name>JBrowse Simple Data Service</name>
           <minVersion>16</minVersion>
           <method type="GET" authenticationRequired="false" slug="/:type">
               <summary>Get Data about Objects of the Given Type</summary>
