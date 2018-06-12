@@ -17,9 +17,13 @@ sourceSets {
     }
 }
 
+configurations {
+    testModel
+}
+
 dependencies {
+    testModel group: 'org.intermine', name: 'bio-source-flymine-static', version: "2.0.0", transitive: false
     compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
-    testCompile group: "org.intermine", name: "bio-source-flymine-static", version: "2.0.0", transitive: false
 }
 
 processResources {
