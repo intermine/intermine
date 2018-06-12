@@ -1033,7 +1033,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                 start = end;
                 end = tmp;
             }
-            int taxonId = delFeatureData.getOrganismData().getTaxonId();
+            String taxonId = delFeatureData.getOrganismData().getTaxonId();
 
             Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
             if (chrFeatureId == null) {
@@ -1052,7 +1052,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     private void makeAndStoreLocation(Integer chrFeatureId, FeatureData subjectFeatureData,
-            int start, int end, int strand, int taxonId)
+            int start, int end, int strand, String taxonId)
         throws ObjectStoreException {
 
         if ("protein".equalsIgnoreCase(subjectFeatureData.getInterMineType())) {
