@@ -59,8 +59,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private Map<Integer, String> snpVariationIdToItemIdMap = new HashMap<Integer, String>();
 
     // default to human or take value set by parser
-    Integer taxonId = null;
-    private static final int PLANT = 3702;
+    String taxonId = null;
+    private static final String PLANT_TAXON = "3702";
 
     // There may be SNPs from multiple sources in the database, optionally restrict them
     Set<String> snpSources = new HashSet<String>();
@@ -96,7 +96,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      * @param taxonId the organism to load
      */
     public void setOrganism(String taxonId) {
-        this.taxonId = Integer.valueOf(taxonId);
+        this.taxonId = taxonId;
     }
 
     /**
@@ -141,7 +141,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         }
         storeFinalSnps();
 
-        if (PLANT == this.taxonId.intValue()) {
+        if (PLANT_TAXON == this.taxonId) {
             Connection connection = getDatabase().getConnection();
             processGenotypes(connection);
             processPopulations(connection);

@@ -3161,7 +3161,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         String ontologyName = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
-        String genus = or.getOrganismDataByTaxon(Integer.parseInt(taxonId)).getGenus();
+        String genus = or.getOrganismDataByTaxon(taxonId).getGenus();
         if ("Drosophila".equals(genus)) {
             ontologyName = "Fly Development";
         } else {
