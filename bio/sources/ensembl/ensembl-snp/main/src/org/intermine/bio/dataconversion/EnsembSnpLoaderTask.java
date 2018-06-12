@@ -313,7 +313,7 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
     protected Organism getOrganism() throws ObjectStoreException {
         if (org == null) {
             org = getDirectDataLoader().createObject(Organism.class);
-            org.setTaxonId(new Integer(TAXON_ID));
+            org.setTaxonId(TAXON_ID);
             getDirectDataLoader().store(org);
         }
         return org;
