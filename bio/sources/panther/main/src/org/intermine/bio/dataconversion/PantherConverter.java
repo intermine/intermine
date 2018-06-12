@@ -298,9 +298,7 @@ public class PantherConverter extends BioFileConverter
         if (od == null) {
             throw new BuildException("No data for `" + name + "`.  Please add to repository.");
         }
-        int taxonId = od.getTaxonId();
-        String taxonIdString = String.valueOf(taxonId);
-        return taxonIdString;
+        return od.getTaxonId();
     }
 
     private String getEvidence()

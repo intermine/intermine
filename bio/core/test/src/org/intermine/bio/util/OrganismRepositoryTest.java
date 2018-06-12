@@ -23,7 +23,7 @@ public class OrganismRepositoryTest extends TestCase
      */
     public void testGetOrganismRepository() {
         OrganismRepository organismRepository = OrganismRepository.getOrganismRepository();
-        OrganismData drosOrganismData = organismRepository.getOrganismDataByTaxon(7227);
+        OrganismData drosOrganismData = organismRepository.getOrganismDataByTaxon("7227");
         assertEquals(7227, drosOrganismData.getTaxonId());
         assertEquals("melanogaster", drosOrganismData.getSpecies());
         assertEquals("Drosophila", drosOrganismData.getGenus());
@@ -35,7 +35,7 @@ public class OrganismRepositoryTest extends TestCase
         assertEquals("Caenorhabditis", celegansData.getGenus());
         assertEquals("C.elegans", celegansData.getAbbreviation());
 
-        OrganismData peopleData = organismRepository.getOrganismDataByTaxon(9606);
+        OrganismData peopleData = organismRepository.getOrganismDataByTaxon("9606");
         assertEquals("ENSG", peopleData.getEnsemblPrefix());
 
     }
