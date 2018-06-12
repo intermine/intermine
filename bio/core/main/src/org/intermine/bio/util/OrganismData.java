@@ -72,7 +72,7 @@ public class OrganismData
      * Get the taxonId of this organism.
      * @return the taxonId
      */
-    public int getTaxonId() {
+    public String getTaxonId() {
         return taxonId;
     }
 

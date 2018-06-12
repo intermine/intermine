@@ -97,7 +97,7 @@ public abstract class BioDBConverter extends DBConverter
      * @param taxonId the taxon id of the to use when creating the DataSet
      * @return the DataSet Item
      */
-    public Item getDataSetItem(int taxonId) {
+    public Item getDataSetItem(String taxonId) {
         return getDataSetItem(getDataSetTitle(taxonId), getDataSourceItem());
     }
 
@@ -192,7 +192,7 @@ public abstract class BioDBConverter extends DBConverter
      * @param taxonId the taxon id
      * @return the title
      */
-    public abstract String getDataSetTitle(int taxonId);
+    public abstract String getDataSetTitle(String taxonId);
 
     /**
      * Return a DataSource item with the given details.

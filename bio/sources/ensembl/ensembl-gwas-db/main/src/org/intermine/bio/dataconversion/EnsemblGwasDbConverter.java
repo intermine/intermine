@@ -312,7 +312,7 @@ public class EnsemblGwasDbConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxonId) {
+    public String getDataSetTitle(String taxonId) {
         return DATASET_TITLE;
     }
 }

@@ -993,7 +993,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxon) {
+    public String getDataSetTitle(String taxon) {
         return DATASET_TITLE;
     }
 

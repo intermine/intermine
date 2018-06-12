@@ -108,7 +108,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         protected Map<OrganismData, Integer> getChadoOrganismIds(@SuppressWarnings("unused")
                                                                     Connection connection) {
             Map<OrganismData, Integer> retMap = new HashMap<OrganismData, Integer>();
-            retMap.put(OrganismRepository.getOrganismRepository().getOrganismDataByTaxon(7227), 1);
+            retMap.put(OrganismRepository.getOrganismRepository().getOrganismDataByTaxon("7227"), 1);
             return retMap;
         }
     }

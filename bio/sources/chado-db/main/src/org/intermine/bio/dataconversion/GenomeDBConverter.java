@@ -43,7 +43,7 @@ public class GenomeDBConverter extends ChadoDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxonId) {
+    public String getDataSetTitle(String taxonId) {
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         OrganismData od = or.getOrganismDataByTaxon(taxonId);
         String species = od.getSpecies();

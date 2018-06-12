@@ -62,8 +62,8 @@ public class OrganismRepositoryTest extends TestCase
 
     public void testStrains() {
         OrganismRepository or = OrganismRepository.getOrganismRepository();
-        assertNotNull(or.getOrganismDataByTaxon(4932));
-        assertNotNull(or.getOrganismDataByTaxon(559292));
+        assertNotNull(or.getOrganismDataByTaxon("4932"));
+        assertNotNull(or.getOrganismDataByTaxon("559292"));
     }
 
     public void testUniProt() {

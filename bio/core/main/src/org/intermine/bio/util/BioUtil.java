@@ -135,12 +135,12 @@ public final class BioUtil
      * @param taxonId original taxon ID
      * @return taxonId for organism, not the strain
      */
-    public static Integer replaceStrain(Integer taxonId) {
+    public static String replaceStrain(String taxonId) {
         OrganismData od = OR.getOrganismDataByTaxon(taxonId);
         if (od == null) {
             return taxonId;
         }
-        return new Integer(od.getTaxonId());
+        return od.getTaxonId();
     }
 
 }
