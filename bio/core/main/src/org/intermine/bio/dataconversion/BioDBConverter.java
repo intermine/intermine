@@ -141,18 +141,17 @@ public abstract class BioDBConverter extends DBConverter
      * @param taxonId NCBI taxonomy id of organism to create
      * @return the Organism Item
      */
-    public Item getOrganismItem(int taxonId) {
-        String taxonString = String.valueOf(taxonId);
-        Item organism = organisms.get(taxonString);
+    public Item getOrganismItem(String taxonId) {
+        Item organism = organisms.get(taxonId);
         if (organism == null) {
             organism = createItem("Organism");
-            organism.setAttribute("taxonId", taxonString);
+            organism.setAttribute("taxonId", taxonId);
             try {
                 store(organism);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
             }
-            organisms.put(taxonString, organism);
+            organisms.put(taxonId, organism);
         }
         return organism;
     }
@@ -232,7 +231,7 @@ public abstract class BioDBConverter extends DBConverter
      * @throws ObjectStoreException if an Item can't be stored
      * @return the Chromsome Item
      */
-    protected Item getChromosome(String identifier, int taxonId)
+    protected Item getChromosome(String identifier, String taxonId)
         throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
