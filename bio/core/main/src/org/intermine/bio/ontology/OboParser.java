@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
+
 import org.obo.dataadapter.OBOAdapter;
 import org.obo.dataadapter.OBOFileAdapter;
 import org.obo.dataadapter.OBOSerializationEngine;
@@ -423,38 +423,38 @@ public class OboParser
                 boolean asserted = false, redundant = false;
                 for (int i = 0; i < bits.length; i++) {
                     switch (i) {
-                    case 0:// id1
-                        {
+                    case 0:// id
+                            {
                             id1 = bits[i];
                             break;
-                        }
+                            }
                     case 1:// type
-                        {
+                            {
                             // already initialised
                             break;
-                        }
+                            }
                     case 2:// id2
-                        {
+                            {
                             id2 = bits[i];
                             break;
-                        }
+                            }
                     case 3:// asserted
-                        {
+                            {
                             asserted = (bits[i]).matches("asserted");
                             break;
-                        }
+                            }
                     case 4:// ??
-                        {
+                            {
                             // do nothing
                             break;
-                        }
+                            }
                     case 5:// redundant
-                        {
+                            {
                             redundant = (bits[i]).matches("redundant");
                             break;
-                        }
+                            }
                     default:
-                        break;
+                            break;
                     }
                 }
                 OboRelation relation = new OboRelation(id1, id2, type);
@@ -485,17 +485,17 @@ public class OboParser
             if (hadSlash) {
                 switch (ch) {
                 case 'n':
-                    out.append('\n');
-                    break;
+                        out.append('\n');
+                        break;
                 case 't':
-                    out.append('\t');
-                    break;
+                        out.append('\t');
+                        break;
                 case 'W':
-                    out.append(' ');
-                    break;
+                        out.append(' ');
+                        break;
                 default:
-                    out.append(ch);
-                    break;
+                        out.append(ch);
+                        break;
                 }
                 hadSlash = false;
             } else if (ch == '\\') {
