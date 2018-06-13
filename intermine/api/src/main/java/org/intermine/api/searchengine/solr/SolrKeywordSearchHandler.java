@@ -206,20 +206,22 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
             FacetField facetField = resp.getFacetField(facet.getField());
 
-            Map<String, Long> items = new HashMap<String, Long>();
+            List<FacetField.Count> counts = facetField.getValues();
 
-            if (facetField != null) {
-                for (FacetField.Count count : facetField.getValues()) {
-                    if (count.getCount() == 0) {
-                        continue;
-                    }
-                    items.put(count.getName(), count.getCount());
-                }
-            }
+//            Map<String, Long> items = new HashMap<String, Long>();
+//
+//            if (facetField != null) {
+//                for (FacetField.Count count : facetField.getValues()) {
+//                    if (count.getCount() == 0) {
+//                        continue;
+//                    }
+//                    items.put(count.getName(), count.getCount());
+//                }
+//            }
 
             if (facetField != null) {
                 searchResultsFacets.add(new KeywordSearchFacet(facet.getField(), facet
-                        .getName(), facetValues.get(facet.getField()), items));
+                        .getName(), facetValues.get(facet.getField()), counts));
             }
         }
         LOG.debug("Parsing " + searchResultsFacets.size() + " facets took "

@@ -24,6 +24,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.response.FacetField;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.searchengine.*;
@@ -99,10 +100,10 @@ public class QuickSearch extends JSONService
             for (KeywordSearchFacet kwsf: results.getFacets()) {
                 Map<String, Integer> sfData = new HashMap<String, Integer>();
 
-                Map<String, Long> items = kwsf.getItems();
+                List<FacetField.Count> items = kwsf.getItems();
 
-                for ( String key : items.keySet()) {
-                    sfData.put(key, items.get(key).intValue());
+                for ( FacetField.Count key : items) {
+                    sfData.put(key.getName(), (int)key.getCount());
                 }
 
                 facetData.put(kwsf.getField(), sfData);

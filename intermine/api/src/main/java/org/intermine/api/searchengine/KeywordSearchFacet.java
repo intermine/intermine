@@ -10,6 +10,8 @@ package org.intermine.api.searchengine;
  *
  */
 
+import org.apache.solr.client.solrj.response.FacetField;
+
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +21,12 @@ import java.util.Map;
  * @author nils
  * @author arunans23
  */
-public class KeywordSearchFacet
+public class KeywordSearchFacet<E>
 {
     final String field;
     final String name;
     final String value;
-    final Map<String, Long> items;
+    final List<E> items;
 
     /**
      * constructor
@@ -37,7 +39,7 @@ public class KeywordSearchFacet
      * @param items
      *            list of possible values and their counts as BrowseFacets
      */
-    public KeywordSearchFacet(String field, String name, String value, Map<String, Long> items) {
+    public KeywordSearchFacet(String field, String name, String value, List<E> items) {
         super();
         this.field = field;
         this.name = name;
@@ -73,7 +75,7 @@ public class KeywordSearchFacet
      * list of all values and counts
      * @return items
      */
-    public Map<String, Long> getItems() {
+    public List<E> getItems() {
         return items;
     }
 }
