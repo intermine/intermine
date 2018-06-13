@@ -23,7 +23,7 @@ class DBModelPlugin implements Plugin<Project> {
     void apply(Project project) {
 
         project.configurations {
-            bioCore
+            bioModel
             commonResources
             api
             mergeSource
@@ -35,14 +35,15 @@ class DBModelPlugin implements Plugin<Project> {
             config = project.extensions.create('dbModelConfig', DBModelConfig)
 
             doLast {
-                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("bioVersion"), transitive: false])
+                project.dependencies.add("bioModel", [group: "org.intermine", name: "bio-model", version: System.getProperty("bioVersion"), transitive: false])
                 project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")])
                 project.dependencies.add("api", [group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion"), transitive: false])
 
                 dbUtils = new DBModelUtils(project)
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
                 buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
-                if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {
+                if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()
+                    || project.name.equals("bio-core")) {
                     regenerateModel = false
                 }
                 if (!(new File(project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml").exists())) {
@@ -80,18 +81,16 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('copyGenomicModel') {
             dependsOn 'initConfig', 'processResources'
-            onlyIf {regenerateModel}
+            //onlyIf {regenerateModel}
 
             doLast {
                 FileTree fileTree
-                String genomicModelName
+                String genomicModelName = "genomic_model.xml"
                 try {
                     project.configurations.getByName("testModel")
                     fileTree = project.zipTree(project.configurations.getByName("testModel").singleFile)
-                    genomicModelName = "genomic_model.xml"
                 } catch (UnknownConfigurationException ex) {
-                    fileTree = project.zipTree(project.configurations.getByName("bioCore").singleFile)
-                    genomicModelName = "core.xml"
+                    fileTree = project.zipTree(project.configurations.getByName("bioModel").singleFile)
                 }
                 PatternSet patternSet = new PatternSet()
                 patternSet.include(genomicModelName)
@@ -200,7 +199,7 @@ class DBModelPlugin implements Plugin<Project> {
                 } else {
                     ant.taskdef(name: "createSoModel", classname: "org.intermine.bio.task.SOToModelTask") {
                         classpath {
-                            pathelement(path: project.configurations.getByName("bioCore").asPath)
+                            pathelement(path: project.configurations.getByName("bioModel").asPath)
                             pathelement(path: project.configurations.getByName("compile").asPath)
                         }
                     }

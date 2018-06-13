@@ -5,12 +5,21 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 
 class BioCoreDBModelPlugin implements Plugin<Project>{
+    boolean regenerateModel = true
 
     @Override
     void apply(Project project) {
+        project.task('checkRegenerateModel') {
+                if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()
+                        || project.name.equals("bio-core")) {
+                    regenerateModel = false
+                }
+            }
+
         project.task('mergeModels') {
             description "Merges only genomic_additions.xml and so_additions.xml into an intermine XML model"
-            dependsOn 'initConfig', 'copyGenomicModel'
+            dependsOn 'initConfig', 'checkRegenerateModel', 'copyGenomicModel'
+            onlyIf {regenerateModel}
 
             doLast {
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");

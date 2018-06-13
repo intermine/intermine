@@ -24,12 +24,11 @@ sourceSets {
     }
 }
 
-configurations {
-    bioCoreModelArtifact
+processResources {
+    from('.') { include ("core.xml", "genomic_additions.xml")}
 }
 
 dependencies {
-    compile project(':bio-core')
     compile group: "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'commons-lang:commons-lang:2.6'
@@ -49,19 +48,11 @@ task copyMineProperties(type: Copy) {
 }
 
 task copyGenomicModel(type: Copy, overwrite: true) {
-    from "../core/core.xml"
-    into sourceSets.main.output.resourcesDir
-
+    from sourceSets.main.output.resourcesDir
+    include 'core.xml'
+    destinationDir sourceSets.main.output.resourcesDir
     rename { fileName -> fileName.replace('core.xml', 'genomic_model.xml') }
 }
 
-task buildBioCoreModelJar(type: Jar) {
-    from(sourceSets.main.output)
-}
-
 tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
-tasks.install.dependsOn 'buildBioCoreModelJar'
-
-artifacts {
-    bioCoreModelArtifact buildBioCoreModelJar
-}
+tasks.mergeModels.dependsOn 'processResources', 'copyGenomicModel', 'copyMineProperties', 'copyDefaultInterMineProperties'
