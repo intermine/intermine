@@ -27,7 +27,7 @@
       <reference name="gene" referenced-type="Gene" reverse-reference="flankingRegions"/>
     </class>
 
-    <class name="IntergenicRegion" is-interface="true">
+    <class name="IntergenicRegion" extends="SequenceFeature" is-interface="true">
       <collection name="adjacentGenes" referenced-type="Gene"/>
 	 </class>
 
