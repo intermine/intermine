@@ -33,10 +33,6 @@ sourceSets {
     }
 }
 
-processResources {
-    from('.') { include ("core.xml", "genomic_additions.xml")}
-}
-
 configurations {
     provided
     compile.extendsFrom provided
@@ -67,15 +63,8 @@ task copyMineProperties(type: Copy) {
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
-task copyGenomicModel(type: Copy, overwrite: true) {
-    from zipTree(configurations.bioModel.singleFile)
-    into sourceSets.main.output.resourcesDir
-}
-
-
 tasks.test.dependsOn 'buildDB'
 tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
-tasks.mergeModels.dependsOn 'processResources', 'copyGenomicModel', 'copyMineProperties', 'copyDefaultInterMineProperties'
 
 jar {
     dependsOn configurations.runtime
@@ -85,4 +74,7 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
     }
+    exclude 'genomic_model.xml'
 }
+
+
