@@ -40,6 +40,11 @@ class DBModelUtils {
     protected generateModel = { modelName ->
         def ant = new AntBuilder()
         String destination = project.getBuildDir().getAbsolutePath() + File.separator + "gen"
+        File destinationPath = new File(destination);
+        if (! destinationPath.exists()){
+            // we might have done a clean right before. compileJava comes after this step
+            destinationPath.mkdirs();
+        }
         ant.taskdef(name: "modelOutputTask", classname: "org.intermine.task.ModelOutputTask") {
             classpath {
                 dirset(dir: project.getBuildDir().getAbsolutePath())

@@ -22,8 +22,8 @@ configurations {
 }
 
 dependencies {
-    testModel group: 'org.intermine', name: 'bio-source-flymine-static', version: "2.0.0", transitive: false
-    compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
+    bioModel group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
+    compile group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false
 }
 
 processResources {
