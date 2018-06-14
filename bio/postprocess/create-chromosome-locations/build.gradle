@@ -20,7 +20,8 @@ sourceSets {
 dependencies {
     bioModel group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("flymineVersion"), transitive: false
     compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
-    compile group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("flymineVersion"), transitive: false
+    compile group: 'org.intermine', name: 'bio-model', version: imVersion
+    testCompile group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("flymineVersion"), transitive: false
 }
 
 processResources {
