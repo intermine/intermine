@@ -60,6 +60,8 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             newQuery.setQuery(queryString);
             newQuery.setStart(offSet);
             newQuery.setRows(KeywordSearchPropertiesManager.PER_PAGE);
+            newQuery.addField("score");
+            newQuery.addField("id");
 
             for (KeywordSearchFacetData keywordSearchFacetData : facets){
                 newQuery.addFacetField(keywordSearchFacetData.getField());
@@ -71,7 +73,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
             Set<Integer> objectIds = getObjectIds(results);
             Map<Integer, InterMineObject> objMap = Objects.getObjects(im, objectIds);
-            Vector<KeywordSearchResultContainer> searchHits = getSearchHits(results, objMap);
+            Vector<KeywordSearchResultContainer> searchHits = getSearchHits(results, objMap, results.getMaxScore());
 
             Collection<KeywordSearchFacet> searchResultsFacets = parseFacets(resp, facets, facetValues);
 
@@ -162,10 +164,11 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
     /**
      * @param documents search results
      * @param objMap object map
+     * @param maxScore maxScore retrieved from solr document for score calculating purpose
      * @return matching object
      */
     public Vector<KeywordSearchResultContainer> getSearchHits(SolrDocumentList documents,
-                                                         Map<Integer, InterMineObject> objMap) {
+                                                         Map<Integer, InterMineObject> objMap, float maxScore) {
         long time = System.currentTimeMillis();
         Vector<KeywordSearchResultContainer> searchHits = new Vector<KeywordSearchResultContainer>();
         for (int i = 0; i < documents.size(); i++) {
@@ -179,7 +182,8 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
                 } else {
                     Integer id          = Integer.valueOf(document.getFieldValue("id").toString());
                     InterMineObject obj = objMap.get(id);
-                    searchHits.add(new KeywordSearchResultContainer<SolrDocument>(document, obj, Float.valueOf("2.0")));
+                    Float score = Float.valueOf(document.getFieldValue("score").toString())/maxScore;
+                    searchHits.add(new KeywordSearchResultContainer<SolrDocument>(document, obj, score));
                 }
             } catch (NumberFormatException e) {
                 // ignore
