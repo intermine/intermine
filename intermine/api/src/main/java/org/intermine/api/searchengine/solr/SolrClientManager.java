@@ -1,4 +1,4 @@
-package org.intermine.api.searchengine;
+package org.intermine.api.searchengine.solr;
 
 /*
  * Copyright (C) 2002-2017 FlyMine
@@ -13,6 +13,7 @@ package org.intermine.api.searchengine;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
 import org.intermine.objectstore.ObjectStore;
 
 /**
@@ -47,8 +48,6 @@ public class SolrClientManager
                 }
 
             }
-
-
         }
         return solrClient;
     }

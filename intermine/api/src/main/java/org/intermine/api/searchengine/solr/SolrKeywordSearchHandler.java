@@ -11,7 +11,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.data.Objects;
 import org.intermine.api.searchengine.*;
-import org.intermine.api.searchengine.SolrClientManager;
+import org.intermine.api.searchengine.solr.SolrClientManager;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 

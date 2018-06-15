@@ -19,7 +19,7 @@ import org.apache.solr.client.solrj.response.schema.SchemaResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.searchengine.IndexHandler;
 import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
-import org.intermine.api.searchengine.SolrClientManager;
+import org.intermine.api.searchengine.solr.SolrClientManager;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.ObjectPipe;
