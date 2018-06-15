@@ -212,20 +212,20 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
             List<FacetField.Count> counts = facetField.getValues();
 
-//            Map<String, Long> items = new HashMap<String, Long>();
-//
-//            if (facetField != null) {
-//                for (FacetField.Count count : facetField.getValues()) {
-//                    if (count.getCount() == 0) {
-//                        continue;
-//                    }
-//                    items.put(count.getName(), count.getCount());
-//                }
-//            }
+            //Empty List to get only the facet fields with zero count
+            List<FacetField.Count> countsFiltered = new ArrayList<FacetField.Count>();
+
+            for (FacetField.Count count : counts) {
+                if (count.getCount() == 0) {
+                    continue;
+                }
+                countsFiltered.add(count);
+            }
+
 
             if (facetField != null) {
                 searchResultsFacets.add(new KeywordSearchFacet(facet.getField(), facet
-                        .getName(), facetValues.get(facet.getField()), counts));
+                        .getName(), facetValues.get(facet.getField()), countsFiltered));
             }
         }
         LOG.debug("Parsing " + searchResultsFacets.size() + " facets took "
