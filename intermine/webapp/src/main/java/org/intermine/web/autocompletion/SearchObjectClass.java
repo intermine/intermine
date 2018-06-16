@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * LuceneObjectClass contains data for the autocompletion
+ * SearchObjectClass contains data for the autocompletion
  * @author Dominik Grimm
  */
-public class LuceneObjectClass
+public class SearchObjectClass
 {
 
     private String className = null;
@@ -28,7 +28,7 @@ public class LuceneObjectClass
      * Constructor
      * @param className name of the class
      */
-    public LuceneObjectClass(String className) {
+    public SearchObjectClass(String className) {
         this.className = className;
         fieldNames = new Vector<String>();
         values = new HashMap<String, List<String>>();

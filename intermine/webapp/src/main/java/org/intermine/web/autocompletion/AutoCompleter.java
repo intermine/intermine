@@ -12,8 +12,6 @@ package org.intermine.web.autocompletion;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,7 +25,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
@@ -50,7 +47,7 @@ public class AutoCompleter
     private HashMap<String, LuceneSearchEngine> ramIndexMap =
                                         new HashMap<String, LuceneSearchEngine>();
     private HashMap<String, RAMDirectory> blobMap = new HashMap<String, RAMDirectory>();
-    private Properties prob;
+    private Properties properties;
     private LuceneSearchEngine search = null;
 
     private static final File TEMP_DIR =
@@ -68,10 +65,10 @@ public class AutoCompleter
     /**
      * Autocompleter build index constructor.
      * @param os Objectstore
-     * @param prob Properties
+     * @param properties Properties
      */
-    public AutoCompleter(ObjectStore os, Properties prob) {
-        this.prob = prob;
+    public AutoCompleter(ObjectStore os, Properties properties) {
+        this.properties = properties;
         try {
             buildIndex(os);
         } catch (IOException e) {
@@ -80,66 +77,6 @@ public class AutoCompleter
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Autocompleter rebuild constructor.
-     * @param blobInput InputStream from database
-     */
-    @SuppressWarnings("unchecked")
-    public AutoCompleter(InputStream blobInput) {
-        try {
-            ObjectInputStream objectInput = new ObjectInputStream(blobInput);
-
-            Object object = objectInput.readObject();
-
-            blobInput.close();
-
-            if (object instanceof HashMap<?, ?>) {
-                blobMap = (HashMap<String, RAMDirectory>) object;
-
-                for (Iterator<Map.Entry<String, RAMDirectory>> iter = blobMap.entrySet().iterator();
-                        iter.hasNext();) {
-                    Map.Entry<String, RAMDirectory> entry =
-                        iter.next();
-                    String key = entry.getKey();
-                    RAMDirectory value = null;
-                    value = entry.getValue();
-                    search = null;
-                    search = new LuceneSearchEngine(value);
-                    ramIndexMap.put(key, search);
-                    fieldIndexMap.put(key, key);
-                    LOG.info("AutoCompleter read index for: " + key);
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * create the RAMIndex for the search engine
-     * @param classDes String of the class and the field (e.g. GOTerm.name)
-     */
-    public void createRAMIndex(String classDes) {
-        if (ramIndexMap.get(classDes) != null) {
-            search = null;
-            search = ramIndexMap.get(classDes);
-        } else {
-            try {
-                String indexFile = TEMP_DIR.toString() + File.separatorChar + classDes;
-                RAMDirectory ram = new RAMDirectory(FSDirectory.open(new File(indexFile)));
-                search = new LuceneSearchEngine(ram);
-                ramIndexMap.put(classDes, search);
-                blobMap.put(classDes, ram);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         }
     }
 
@@ -207,15 +144,7 @@ public class AutoCompleter
     public void buildIndex(ObjectStore os)
         throws IOException, ObjectStoreException, ClassNotFoundException {
 
-        if (TEMP_DIR.exists()) {
-            if (!TEMP_DIR.isDirectory()) {
-                throw new RuntimeException(TEMP_DIR + " exists but isn't a directory - remove it");
-            }
-        } else {
-            TEMP_DIR.mkdirs();
-        }
-
-        for (Map.Entry<Object, Object> entry: prob.entrySet()) {
+        for (Map.Entry<Object, Object> entry: properties.entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
             if (!key.endsWith(".autocomplete")) {
@@ -243,7 +172,7 @@ public class AutoCompleter
                 q.addFrom(qc);
                 Results results = os.execute(q);
 
-                LuceneObjectClass objectClass = new LuceneObjectClass(classAndField);
+                SearchObjectClass objectClass = new SearchObjectClass(classAndField);
                 objectClass.addField(fieldName);
 
                 for (Object resRow: results) {
@@ -255,12 +184,9 @@ public class AutoCompleter
                     }
                 }
 
-                String indexFileName = TEMP_DIR.getPath() + File.separatorChar + classAndField;
-                LuceneIndex indexer = new LuceneIndex(indexFileName);
+                SolrIndex indexer = new SolrIndex();
                 indexer.addClass(objectClass);
                 indexer.rebuildClassIndexes();
-
-                createRAMIndex(classAndField);
             }
         }
     }
