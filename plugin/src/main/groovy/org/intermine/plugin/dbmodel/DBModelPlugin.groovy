@@ -80,7 +80,7 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('copyGenomicModel') {
             dependsOn 'initConfig', 'processResources'
-            //onlyIf {regenerateModel}
+            onlyIf {regenerateModel}
 
             doLast {
                 FileTree fileTree
