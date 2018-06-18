@@ -43,6 +43,7 @@ class DBModelPlugin implements Plugin<Project> {
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
                 buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
                 if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {
+                    // don't generate the model if it's already there
                     regenerateModel = false
                 }
                 if (!(new File(project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml").exists())) {
@@ -99,6 +100,30 @@ class DBModelPlugin implements Plugin<Project> {
 
                 coreXml.renameTo(modelFilePath)
                 coreXml.createNewFile()
+            }
+        }
+
+        project.task('copyGenomicKeys') {
+            dependsOn 'initConfig', 'processResources'
+            onlyIf {regenerateModel}
+
+            doLast {
+                FileTree fileTree
+                String genomicModelName = "genomic_keyDefs.properties"
+
+                try {
+                    project.configurations.getByName("testModel")
+                    fileTree = project.zipTree(project.configurations.getByName("testModel").singleFile)
+                } catch (UnknownConfigurationException ex) {
+                    fileTree = project.zipTree(project.configurations.getByName("bioModel").singleFile)
+                }
+                PatternSet patternSet = new PatternSet()
+                patternSet.include(genomicModelName)
+                File propertiesFile = fileTree.matching(patternSet).singleFile
+                String keysFilePath = buildResourcesMainDir + File.separator + config.modelName + "_keyDefs.properties"
+
+                propertiesFile.renameTo(keysFilePath)
+                propertiesFile.createNewFile()
             }
         }
 
@@ -240,13 +265,12 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('buildUnitTestDB') {
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar', 'copyGenomicKeys'
 
             doLast {
                 dbUtils.createSchema(config.objectStoreName)
                 dbUtils.createTables(config.objectStoreName, config.modelName)
                 dbUtils.storeMetadata(config.objectStoreName, config.modelName)
-
             }
         }
 

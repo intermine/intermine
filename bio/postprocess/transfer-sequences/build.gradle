@@ -17,14 +17,10 @@ sourceSets {
     }
 }
 
-configurations {
-    testModel
-}
-
 dependencies {
     compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
-    compile group: 'org.intermine', name: 'bio-model', version: bioVersion
-    testCompile group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false
+    compile group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false
+    bioModel group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false
 }
 
 processResources {

@@ -49,6 +49,7 @@ class DBModelUtils {
             classpath {
                 dirset(dir: project.getBuildDir().getAbsolutePath())
                 pathelement(path: project.configurations.getByName("compile").asPath)
+                pathelement(path: project.configurations.getByName("bioModel").asPath)
             }
         }
         ant.modelOutputTask(model: modelName, destDir: destination, type: "java")
@@ -64,6 +65,7 @@ class DBModelUtils {
             classpath {
                 dirset(dir: project.getBuildDir().getAbsolutePath())
                 pathelement(path: project.configurations.getByName("compile").asPath)
+                pathelement(path: project.configurations.getByName("bioModel").asPath)
                 pathelement(path: project.configurations.getByName("api").asPath) //userprofile classes
             }
         }
