@@ -19,7 +19,6 @@ import org.apache.solr.client.solrj.response.schema.SchemaResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.searchengine.IndexHandler;
 import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
-import org.intermine.api.searchengine.solr.SolrClientManager;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.ObjectPipe;
@@ -117,7 +116,7 @@ public final class SolrIndexHandler implements IndexHandler
             Map<String, Object> fieldAttributes = new HashMap();
             fieldAttributes.put("name", fieldName);
             fieldAttributes.put("type", "text_general");
-            fieldAttributes.put("stored", true);
+            fieldAttributes.put("stored", false);
             fieldAttributes.put("indexed", true);
             fieldAttributes.put("multiValued", true);
             fieldAttributes.put("required", false);
