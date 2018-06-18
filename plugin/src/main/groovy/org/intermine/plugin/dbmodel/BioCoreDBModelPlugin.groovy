@@ -7,7 +7,8 @@ class BioCoreDBModelPlugin implements Plugin<Project>{
     @Override
     void apply(Project project) {
         project.task('mergeModels') {
-            description "Merges only genomic_additions.xml and so_additions.xml into an intermine XML model"
+            description "bio-core gets its model from bio-model. Skip this step. MERGE NOTHING!"
+            dependsOn 'initConfig', 'copyGenomicModel'
             // do nothing
 
             // used by biocore and bio-postprocess. packages that do NOT generate their own
