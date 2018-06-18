@@ -265,7 +265,7 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('buildUnitTestDB') {
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar', 'copyGenomicKeys'
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'copyGenomicModel', 'jar', 'copyGenomicKeys'
 
             doLast {
                 dbUtils.createSchema(config.objectStoreName)

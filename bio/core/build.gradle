@@ -43,7 +43,6 @@ dependencies {
     compile group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")
     compile group: "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion") // idresolver needs db
     compile group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion")
-    compile group: "org.intermine", name: "bio-model", version: System.getProperty("bioVersion"), transitive: false
     provided fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar not found in public repo, obo and bbop not available in the public maven repo
     testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
     testCompile group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("flymineVersion"), transitive: false
@@ -64,8 +63,8 @@ task copyMineProperties(type: Copy) {
     inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
-tasks.test.dependsOn 'buildDB'
-tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
+tasks.test.dependsOn 'buildUnitTestDB'
+tasks.buildUnitTestDB.dependsOn ':bio-testresources:createUnitTestDatabases'
 
 jar {
     dependsOn configurations.runtime
