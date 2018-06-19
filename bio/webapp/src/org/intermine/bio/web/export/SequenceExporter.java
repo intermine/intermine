@@ -249,7 +249,7 @@ public class SequenceExporter implements Exporter
             Object object, List<ResultElement> row,
             Collection<Path> unionPathCollection,
             Collection<Path> newPathCollection)
-                    throws CompoundNotFoundException {
+        throws CompoundNotFoundException {
 
         SequenceFeature feature = (SequenceFeature) object;
 
