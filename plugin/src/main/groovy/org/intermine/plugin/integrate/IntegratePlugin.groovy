@@ -52,7 +52,7 @@ class IntegratePlugin implements Plugin<Project> {
                     sourceNames = Arrays.asList(sourceInput.split("\\s*,\\s*"))
                 }
 
-                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("imVersion")])
+                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("imVersion"), transitive: false])
 
                 sourceNames.each { sourceName ->
                     Source source = intermineProject.sources.get(sourceName)
