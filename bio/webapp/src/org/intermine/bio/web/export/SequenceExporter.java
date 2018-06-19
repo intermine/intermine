@@ -26,7 +26,7 @@ import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
-import org.biojava.nbio.core.sequence.template.Sequence;
+import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
@@ -162,7 +162,7 @@ public class SequenceExporter implements Exporter
 
                 if (object instanceof SequenceFeature) {
                     if (extension > 0) {
-                        bioSequence = (BioSequence) createSequenceFeatureWithExtension(
+                        bioSequence = createSequenceFeatureWithExtension(
                                 header, object,
                                 row, unionPathCollection, newPathCollection);
                     } else {
@@ -244,10 +244,12 @@ public class SequenceExporter implements Exporter
     }
 
 
-    private Sequence createSequenceFeatureWithExtension(StringBuffer header,
+    private BioSequence createSequenceFeatureWithExtension(
+            StringBuffer header,
             Object object, List<ResultElement> row,
             Collection<Path> unionPathCollection,
-            Collection<Path> newPathCollection) {
+            Collection<Path> newPathCollection)
+                    throws CompoundNotFoundException {
 
         SequenceFeature feature = (SequenceFeature) object;
 
@@ -283,27 +285,20 @@ public class SequenceExporter implements Exporter
 //        Sequence seq = DNATools.createDNASequence(chrResidueString.substring(start - 1, end),
 //                        seqName);
 
-        Sequence seq = null;
-        try {
-            seq = new DNASequence(chrResidueString.substring(start - 1, end));
-        } catch (CompoundNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        AbstractSequence seq = new DNASequence(chrResidueString.substring(start - 1, end));
 
         if (NEGATIVE_STRAND.equals(strand)) {
-            try {
-                seq = new DNASequence(
-                        chrResidueString.substring(start - 1, end)).getReverseComplement();
-            } catch (CompoundNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            DNASequence ts = new DNASequence(chrResidueString.substring(start - 1, end));
+            seq = new DNASequence(ts.getReverseComplement().getSequenceAsString().toLowerCase());
         }
 
+        BioSequence bioSequence = new BioSequence(seq, (BioEntity) feature);
+        LOG.debug("SEQ: " + seq.getLength() + " - " + seq.getSequenceAsString());
+
         makeHeader(header, object, row, unionPathCollection, newPathCollection);
-        return seq;
+        return bioSequence;
     }
+
 
     /**
      * Set the header to be the contents of row, separated by spaces.

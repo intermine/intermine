@@ -43,7 +43,7 @@ public class BioSequence extends AbstractSequence<Compound>
      * @param bioEntity the BioEntity
      * @throws CompoundNotFoundException exception
      */
-    BioSequence (AbstractSequence seq, BioEntity bioEntity) throws CompoundNotFoundException {
+    public BioSequence (AbstractSequence seq, BioEntity bioEntity) throws CompoundNotFoundException {
 
         super(seq.getSequenceAsString(), seq.getCompoundSet());
 
