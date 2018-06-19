@@ -106,7 +106,6 @@ class DBModelPlugin implements Plugin<Project> {
         project.task('copyGenomicKeys') {
             description "Copies default keys for bio in the case of unit tests."
             dependsOn 'initConfig', 'processResources'
-            onlyIf {regenerateModel}
 
             doLast {
                 FileTree fileTree
