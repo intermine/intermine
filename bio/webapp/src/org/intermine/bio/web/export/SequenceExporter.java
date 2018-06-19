@@ -285,7 +285,8 @@ public class SequenceExporter implements Exporter
 //        Sequence seq = DNATools.createDNASequence(chrResidueString.substring(start - 1, end),
 //                        seqName);
 
-        AbstractSequence seq = new DNASequence(chrResidueString.substring(start - 1, end));
+        AbstractSequence seq =
+                new DNASequence(chrResidueString.substring(start - 1, end).toLowerCase());
 
         if (NEGATIVE_STRAND.equals(strand)) {
             DNASequence ts = new DNASequence(chrResidueString.substring(start - 1, end));
