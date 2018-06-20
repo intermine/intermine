@@ -10,10 +10,7 @@ package org.intermine.api.searchengine;
  *
  */
 
-import org.apache.solr.client.solrj.response.FacetField;
-
 import java.util.List;
-import java.util.Map;
 
 /**
  * container for one faceting field, the current faceting value and the list of

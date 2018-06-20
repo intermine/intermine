@@ -67,6 +67,13 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
                 newQuery.addFacetField(keywordSearchFacetData.getField());
             }
 
+            // add faceting selections
+            for (Map.Entry<String, String> facetValue : facetValues.entrySet()) {
+                if (facetValue != null) {
+                    newQuery.addFacetQuery(facetValue.getKey()+":"+facetValue.getValue());
+                }
+            }
+
             resp = solrClient.query(newQuery);
 
             SolrDocumentList results = resp.getResults();
@@ -221,7 +228,6 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
                 }
                 countsFiltered.add(count);
             }
-
 
             if (facetField != null) {
                 searchResultsFacets.add(new KeywordSearchFacet(facet.getField(), facet

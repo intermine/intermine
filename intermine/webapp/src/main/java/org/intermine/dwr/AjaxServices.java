@@ -1333,7 +1333,7 @@ public class AjaxServices
     public String[] getContent(String suffix, boolean wholeList, String field, String className) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
-        ac.createRAMIndex(className + "." + field);
+        //ac.createRAMIndex(className + "." + field);
 
         // swap "-" for spaces, ticket #2357
         suffix = suffix.replace("-", " ");
