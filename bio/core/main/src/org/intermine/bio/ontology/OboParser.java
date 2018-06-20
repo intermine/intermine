@@ -120,13 +120,13 @@ public class OboParser
         // by obo2linkfile so we can get rid of the code below and just use the downloaded file.
         long startTime = System.currentTimeMillis();
         OBOFileAdapter.OBOAdapterConfiguration readConfig =
-            new OBOFileAdapter.OBOAdapterConfiguration();
+                new OBOFileAdapter.OBOAdapterConfiguration();
 
         readConfig.setBasicSave(false);
         readConfig.getReadPaths().add(dagFileName);
 
         OBOFileAdapter.OBOAdapterConfiguration writeConfig =
-            new OBOFileAdapter.OBOAdapterConfiguration();
+                new OBOFileAdapter.OBOAdapterConfiguration();
         writeConfig.setBasicSave(false);
 
         OBOSerializationEngine.FilteredPath path = new OBOSerializationEngine.FilteredPath();
@@ -158,7 +158,7 @@ public class OboParser
      * @throws IOException if anything goes wrong
      */
     public Map<String, String> getTermIdNameMap(Reader in)
-        throws IOException {
+            throws IOException {
         readTerms(new BufferedReader(in));
         Map<String, String> idNames = new HashMap<String, String>();
         for (OboTerm ot : terms.values()) {
@@ -358,7 +358,7 @@ public class OboParser
         if (vals != null && vals.size() > 0) {
             if (vals.size() > 1) {
                 LOG.warn("Term: " + tagValues + " has more than one (" + vals.size()
-                         + ") is_obsolete values - just using first");
+                    + ") is_obsolete values - just using first");
             }
             return ((String) vals.get(0)).equalsIgnoreCase("true");
         }
@@ -424,38 +424,38 @@ public class OboParser
                 boolean asserted = false, redundant = false;
                 for (int i = 0; i < bits.length; i++) {
                     switch (i) {
-                    case 0:// id
+                        case 0:// id
                         {
                             id1 = bits[i];
                             break;
                         }
-                    case 1:// type
+                        case 1:// type
                         {
                             // already initialised
                             break;
                         }
-                    case 2:// id2
+                        case 2:// id2
                         {
                             id2 = bits[i];
                             break;
                         }
-                    case 3:// asserted
+                        case 3:// asserted
                         {
                             asserted = (bits[i]).matches("asserted");
                             break;
                         }
-                    case 4:// ??
+                        case 4:// ??
                         {
                             // do nothing
                             break;
                         }
-                    case 5:// redundant
+                        case 5:// redundant
                         {
                             redundant = (bits[i]).matches("redundant");
                             break;
                         }
-                    default:
-                        break;
+                        default:
+                            break;
                     }
                 }
                 OboRelation relation = new OboRelation(id1, id2, type);
@@ -485,18 +485,18 @@ public class OboParser
 
             if (hadSlash) {
                 switch (ch) {
-                case 'n':
-                    out.append('\n');
-                    break;
-                case 't':
-                    out.append('\t');
-                    break;
-                case 'W':
-                    out.append(' ');
-                    break;
-                default:
-                    out.append(ch);
-                    break;
+                    case 'n':
+                        out.append('\n');
+                        break;
+                    case 't':
+                        out.append('\t');
+                        break;
+                    case 'W':
+                        out.append(' ');
+                        break;
+                    default:
+                        out.append(ch);
+                        break;
                 }
                 hadSlash = false;
             } else if (ch == '\\') {
