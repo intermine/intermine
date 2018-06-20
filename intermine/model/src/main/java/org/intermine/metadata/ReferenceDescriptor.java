@@ -102,7 +102,7 @@ public class ReferenceDescriptor extends FieldDescriptor
         } else {
             throw new MetaDataException("Unable to find ClassDescriptor for '"
                     + referencedType + "' in model while processing: '" + cld.getName() + "'."
-                    + name + " " + cld.getName());
+                    + name);
         }
 
         // find ReferenceDescriptor for the reverse reference
