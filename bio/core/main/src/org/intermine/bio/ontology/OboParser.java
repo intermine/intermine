@@ -158,7 +158,7 @@ public class OboParser
      * @throws IOException if anything goes wrong
      */
     public Map<String, String> getTermIdNameMap(Reader in)
-            throws IOException {
+        throws IOException {
         readTerms(new BufferedReader(in));
         Map<String, String> idNames = new HashMap<String, String>();
         for (OboTerm ot : terms.values()) {
