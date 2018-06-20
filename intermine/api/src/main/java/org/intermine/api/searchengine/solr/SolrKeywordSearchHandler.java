@@ -70,7 +70,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             // add faceting selections
             for (Map.Entry<String, String> facetValue : facetValues.entrySet()) {
                 if (facetValue != null) {
-                    newQuery.addFacetQuery(facetValue.getKey()+":"+facetValue.getValue());
+                    newQuery.addFilterQuery(facetValue.getKey()+":"+facetValue.getValue());
                 }
             }
 
