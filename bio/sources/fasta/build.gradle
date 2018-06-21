@@ -18,9 +18,10 @@ sourceSets {
 }
 
 dependencies {
-    testCompile group: 'org.intermine', name: 'bio-source-chado-db', version: bioVersion
-    bioModel group: 'org.intermine', name: 'bio-source-chado-db', version: bioVersion, transitive: false
+    bioModel group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false
+    testCompile group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false
     compile fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar
+    compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
 }
 
 processResources {

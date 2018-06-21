@@ -40,10 +40,16 @@ class DBModelUtils {
     protected generateModel = { modelName ->
         def ant = new AntBuilder()
         String destination = project.getBuildDir().getAbsolutePath() + File.separator + "gen"
+        File destinationPath = new File(destination);
+        if (! destinationPath.exists()){
+            // we might have done a clean right before. compileJava comes after this step
+            destinationPath.mkdirs();
+        }
         ant.taskdef(name: "modelOutputTask", classname: "org.intermine.task.ModelOutputTask") {
             classpath {
                 dirset(dir: project.getBuildDir().getAbsolutePath())
                 pathelement(path: project.configurations.getByName("compile").asPath)
+                pathelement(path: project.configurations.getByName("bioModel").asPath)
             }
         }
         ant.modelOutputTask(model: modelName, destDir: destination, type: "java")
@@ -59,6 +65,7 @@ class DBModelUtils {
             classpath {
                 dirset(dir: project.getBuildDir().getAbsolutePath())
                 pathelement(path: project.configurations.getByName("compile").asPath)
+                pathelement(path: project.configurations.getByName("bioModel").asPath)
                 pathelement(path: project.configurations.getByName("api").asPath) //userprofile classes
             }
         }
