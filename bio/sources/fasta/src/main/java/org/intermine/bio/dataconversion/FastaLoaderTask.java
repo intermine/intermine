@@ -54,7 +54,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private String dataSourceName = null;
     private DataSource dataSource = null;
     private String fastaTaxonId = null;
-    private Map<String, Integer> taxonIds = new HashMap<String, Integer>();
+    private Map<String, String> taxonIds = new HashMap<String, String>();
 
     /**
      * Append this suffix to the identifier of the BioEnitys that are stored.
@@ -255,7 +255,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     protected Organism getOrganism(ProteinSequence bioJavaSequence) throws ObjectStoreException {
         if (org == null) {
             org = getDirectDataLoader().createObject(Organism.class);
-            org.setTaxonId(new Integer(fastaTaxonId));
+            org.setTaxonId(fastaTaxonId);
             getDirectDataLoader().store(org);
         }
         return org;
@@ -424,7 +424,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param name eg. Drosophila melanogaster
      * @return the taxonId
      */
-    protected Integer getTaxonId(String name) {
+    protected String getTaxonId(String name) {
         return taxonIds.get(name);
     }
 
@@ -437,15 +437,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         OrganismRepository repo = OrganismRepository.getOrganismRepository();
         String[] fastaTaxonIds = fastaTaxonId.split(" ");
         for (String taxonIdStr : fastaTaxonIds) {
-            Integer taxonId = null;
-            try {
-                taxonId = Integer.valueOf(taxonIdStr);
-            } catch (NumberFormatException e) {
-                throw new RuntimeException("invalid taxonId: " + taxonIdStr);
-            }
-            OrganismData organismData = repo.getOrganismDataByTaxonInternal(taxonId.intValue());
+            OrganismData organismData = repo.getOrganismDataByTaxonInternal(taxonIdStr);
             String name = organismData.getGenus() + " " + organismData.getSpecies();
-            taxonIds.put(name, taxonId);
+            taxonIds.put(name, taxonIdStr);
         }
     }
 }

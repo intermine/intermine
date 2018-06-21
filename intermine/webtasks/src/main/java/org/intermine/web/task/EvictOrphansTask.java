@@ -23,7 +23,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.api.userprofile.Tag;
 
 /**
  * A task for removing tags that don't point to anything.

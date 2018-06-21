@@ -118,7 +118,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     private static final Logger LOG = Logger.getLogger(FlyBaseProcessor.class);
 
     // the configuration for this processor, set when getConfig() is called the first time
-    private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
+    private final Map<String, MultiKeyMap> config = new HashMap<String, MultiKeyMap>();
 
     // a set of feature_ids for those genes that have a location in the featureloc table, set by
     // the constructor
@@ -457,8 +457,8 @@ public class FlyBaseProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
-        processItem(feature, new Integer(taxonId));
+    protected Integer store(Item feature, String taxonId) throws ObjectStoreException {
+        processItem(feature, taxonId);
         Integer itemId = super.store(feature, taxonId);
         return itemId;
     }
@@ -469,11 +469,11 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-                              FeatureData featureData, int taxonId, int featureId)
+                              FeatureData featureData, String taxonId, int featureId)
         throws ObjectStoreException {
         Item location =
             super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId, 0);
-        processItem(location, new Integer(taxonId));
+        processItem(location, taxonId);
         return location;
     }
 
@@ -488,7 +488,7 @@ public class FlyBaseProcessor extends SequenceProcessor
          * the synonym was created when another protein was created in favour of this one.  */
         if (synonym != null) {
             OrganismData od = fdat.getOrganismData();
-            processItem(synonym, new Integer(od.getTaxonId()));
+            processItem(synonym, od.getTaxonId());
         }
         return synonym;
     }
@@ -518,11 +518,11 @@ public class FlyBaseProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
-        MultiKeyMap map = config.get(new Integer(taxonId));
+    protected Map<MultiKey, List<ConfigAction>> getConfig(String taxonId) {
+        MultiKeyMap map = config.get(taxonId);
         if (map == null) {
             map = new MultiKeyMap();
-            config.put(new Integer(taxonId), map);
+            config.put(taxonId, map);
 
             // synomym configuration example: for features of class "Gene", if the type name of
             // the synonym is "fullname" and "is_current" is true, set the "name" attribute of
@@ -733,7 +733,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
-                               String name, String uniqueName, int seqlen, int taxonId) {
+                               String name, String uniqueName, int seqlen, String taxonId) {
         String realInterMineType = interMineType;
 
         if ("protein".equals(chadoFeatureType) && !uniqueName.startsWith("FBpp")) {
@@ -757,7 +757,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             return null;
         }
 
-        if (taxonId != 7227 && "chromosome_arm".equals(chadoFeatureType)) {
+        if (!"7227".equals(taxonId) && "chromosome_arm".equals(chadoFeatureType)) {
             // nothing is located on a chromosome_arm
             return null;
         }
@@ -1033,7 +1033,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                 start = end;
                 end = tmp;
             }
-            int taxonId = delFeatureData.getOrganismData().getTaxonId();
+            String taxonId = delFeatureData.getOrganismData().getTaxonId();
 
             Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
             if (chrFeatureId == null) {
@@ -1052,7 +1052,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     private void makeAndStoreLocation(Integer chrFeatureId, FeatureData subjectFeatureData,
-            int start, int end, int strand, int taxonId)
+            int start, int end, int strand, String taxonId)
         throws ObjectStoreException {
 
         if ("protein".equalsIgnoreCase(subjectFeatureData.getInterMineType())) {
@@ -1162,7 +1162,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             if (subFeatureData != null) {
                 // this is a hack - we should make sure that we only query for features that are in
                 // the feature map, ie. those for the current organism
-                int taxonId = subFeatureData.getOrganismData().getTaxonId();
+                String taxonId = subFeatureData.getOrganismData().getTaxonId();
 
                 makeAndStoreLocation(new Integer(chrId), subFeatureData, start, end, 1, taxonId);
             }
@@ -1778,7 +1778,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     /**
      * Method to add dataSets and DataSources to items before storing
      */
-    private void processItem(Item item, Integer taxonId) {
+    private void processItem(Item item, String taxonId) {
         String className = item.getClassName();
         if ("DataSource".equals(className)
             || "DataSet".equals(className)
@@ -1800,7 +1800,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
         ChadoDBConverter converter = getChadoDBConverter();
         BioStoreHook.setDataSets(getModel(), item,
-                converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
+                converter.getDataSetItem(taxonId).getIdentifier(),
                 converter.getDataSourceItem().getIdentifier());
     }
 }
