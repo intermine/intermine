@@ -18,7 +18,7 @@
     type: 'table',
     url: 'TEST_SERVICE_ROOT',
     token: null,
-    query: {"model":{"name":"testmodel"},"select":["Employee.name","Employee.department.name"],"constraintLogic":"(A or C) and B","where":[{"path":"Employee.department.manager","op":"!=","code":"A","value":"Employee.department.company.CEO"},{"path":"Employee","op":"LOOKUP","code":"B","value":"M*"},{"path":"Employee.department.name","op":"ONE OF","code":"C","values":["Sales","Warehouse"]}]}
+    query: {"model":{"name":"testmodel"},"select":["Employee.name","Employee.department.name"],"constraintLogic":"(A or C) and B","where":[{"path":"Employee.department.manager","op":"!=","code":"A","loopPath":"Employee.department.company.CEO"},{"path":"Employee","op":"LOOKUP","code":"B","value":"M*"},{"path":"Employee.department.name","op":"ONE OF","code":"C","values":["Sales","Warehouse"]}]}
   };
   jQuery('#query-container').imWidget(options);
 </script>

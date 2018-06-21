@@ -15,12 +15,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Model;
 
 import junit.framework.TestCase;
-
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ConstraintOp;
 
 /**
  * Tests for the PathQueryBinding class
@@ -101,22 +103,50 @@ public class PathQueryBindingTest extends TestCase
     public void testQueryWithConstraint() throws Exception {
         assertEquals(expected.get("queryWithConstraint").toString(), savedQueries.get("queryWithConstraint").toString());
     }
-    
+
     public void testRangeQuery() throws Exception {
         PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
         pq.addViews("Employee.name");
         pq.addConstraint(new PathConstraintRange("Employee.age", ConstraintOp.WITHIN, Arrays.asList("40 .. 50", "55 .. 60")));
         pq.addConstraint(new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.OVERLAPS, Arrays.asList("01-01-2012")));
-        
+
         assertEquals(pq.toString(), savedQueries.get("rangeQueries").toString());
     }
-    
+
     public void testMultiTypeQuery() throws Exception {
         PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
         pq.addViews("Employable.name");
         pq.addConstraint(new PathConstraintMultitype("Employable", ConstraintOp.ISA, Arrays.asList("Contractor", "Manager")));
-        
+
         assertEquals(pq.toString(), savedQueries.get("multitype").toString());
+    }
+
+    public void testIdBags() throws Exception {
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Company.name");
+        pq.addViews("Company.vatNumber");
+        List ids = Arrays.asList("1","5","7");
+        pq.addConstraint(new PathConstraintIds("Company", ConstraintOp.IN, ids));
+        assertEquals(pq.toString(), savedQueries.get("idBagConstraints").toString());
+    }
+
+    public void testNullConstraints() throws Exception {
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Department.name");
+        pq.addConstraint(new PathConstraintNull("Department.manager", ConstraintOp.IS_NULL));
+        pq.addOrderBy("Department.name", OrderDirection.ASC);
+        assertEquals(pq.toString(), savedQueries.get("nullConstraint").toString());
+    }
+
+    public void testLoopConstraints() throws Exception {
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Employee.name");
+        pq.addViews("Employee.department.manager.name");
+        pq.addConstraint(new PathConstraintLoop("Employee.department.employees", ConstraintOp.EQUALS, "Employee"));
+        pq.addOrderBy("Employee.name", OrderDirection.ASC);
+        assertEquals(pq.toString(), savedQueries.get("loopConstraint").toString());
+        // try query with `value` instead of `loopPath`
+        assertEquals(pq.toString(), savedQueries.get("loopConstraintAlt").toString());
     }
 
     public void testMarshallings() throws Exception {
@@ -141,16 +171,34 @@ public class PathQueryBindingTest extends TestCase
         assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
     }
 
-    public void testNewPathQuery() throws Exception {
+    public void testJson() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        PathQuery q = new PathQuery(model);
-        q.addView("Employee.name");
-        q.addConstraint(new PathConstraintAttribute("Employee.age", ConstraintOp.LESS_THAN, "50"));
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\"><constraint path=\"Employee.age\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        PathQuery q = getQuery1(model);
+        assertEquals(q, PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false)));
+
+/**     this test fails because
+          the JSON only includes Outer joins that are outer joins
+          JSON doesn't have descriptions for paths
+      q = getQuery2(model);
+      assertEquals(q, PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false)));
+*/
+
+        Map<String, PathQuery> queries = getExpectedQueries();
+        for (Entry<String, PathQuery> entry : queries.entrySet()) {
+            q = entry.getValue();
+            q.clearDescriptions();
+            assertEquals(q, PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false)));
+        }
+
+        for (Entry<String, PathQuery> entry : savedQueries.entrySet()) {
+            q = entry.getValue();
+            q.clearDescriptions();
+            PathQuery actualPathQuery = PathQueryBinding.unmarshalJSONPathQuery(model, q.toJson(false));
+            assertEquals(q, actualPathQuery);
+        }
     }
 
-    public void testNewPathQuery2() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
+    private PathQuery getQuery2(Model model) {
         PathQuery q = new PathQuery(model);
         q.addView("Employee.name");
         q.addView("Employee.department.name");
@@ -161,6 +209,49 @@ public class PathQueryBindingTest extends TestCase
         q.setOuterJoinStatus("Employee.department", OuterJoinStatus.INNER);
         q.setDescription("Flibble");
         q.setDescription("Employee.name", "Albert");
+        return q;
+    }
+
+    private PathQuery getQuery1(Model model) {
+        PathQuery q = new PathQuery(model);
+        q.addView("Employee.name");
+        q.addConstraint(new PathConstraintAttribute("Employee.age", ConstraintOp.LESS_THAN, "50"));
+        return q;
+    }
+
+
+    public void testNewPathQuery() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = getQuery1(model);
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\"><constraint path=\"Employee.age\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+    }
+
+    public void testNewPathQuery2() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = getQuery2(model);
         assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name\" longDescription=\"Flibble\" sortOrder=\"Employee.age asc\" constraintLogic=\"A or B\"><join path=\"Employee.department\" style=\"INNER\"/><pathDescription pathString=\"Employee.name\" description=\"Albert\"/><constraint path=\"Employee.age\" code=\"A\" op=\"&lt;\" value=\"50\"/><constraint path=\"Employee.department.name\" code=\"B\" op=\"=\" value=\"Fred\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+    }
+
+    private PathQuery createQuery(String fileName)  {
+        String path = "PathQueryBindingUnmarshal/" + fileName;
+        InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+        if (is == null) {
+            throw new RuntimeException("Could not find the required XML file: " + path);
+        }
+        Model.getInstanceByName("testmodel");
+        PathQuery ret = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).values().iterator().next();
+        return ret;
+    }
+
+    public void testUnknownModel() {
+        /*
+         * Just now throws exception. It will change later.
+         */
+        try {
+            createQuery("UnknownModel.xml");
+        } catch (Exception ex) {
+            return;
+        }
+        fail("Expected exception");
     }
 }
