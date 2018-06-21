@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
+
 import org.obo.dataadapter.OBOAdapter;
 import org.obo.dataadapter.OBOFileAdapter;
 import org.obo.dataadapter.OBOSerializationEngine;
@@ -45,7 +45,7 @@ import org.obo.datamodel.OBOSession;
 public class OboParser
 {
     private static final Logger LOG = Logger.getLogger(OboParser.class);
-//    private static File temp = null;
+    //    private static File temp = null;
     private final Pattern synPattern = Pattern.compile("\\s*\"(.+?[^\\\\])\".*");
     private final Matcher synMatcher = synPattern.matcher("");
     private Set<String> oboXrefs = new HashSet<String>();
@@ -114,19 +114,19 @@ public class OboParser
         } else {
             temp = File.createTempFile("obo", ".tmp", f);
         }
-    // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
+        // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
         // List); OBOEDIT code
         // TODO OBO will soon release the file containing all transitive closures calculated
         // by obo2linkfile so we can get rid of the code below and just use the downloaded file.
         long startTime = System.currentTimeMillis();
         OBOFileAdapter.OBOAdapterConfiguration readConfig =
-            new OBOFileAdapter.OBOAdapterConfiguration();
+                new OBOFileAdapter.OBOAdapterConfiguration();
 
         readConfig.setBasicSave(false);
         readConfig.getReadPaths().add(dagFileName);
 
         OBOFileAdapter.OBOAdapterConfiguration writeConfig =
-            new OBOFileAdapter.OBOAdapterConfiguration();
+                new OBOFileAdapter.OBOAdapterConfiguration();
         writeConfig.setBasicSave(false);
 
         OBOSerializationEngine.FilteredPath path = new OBOSerializationEngine.FilteredPath();
@@ -140,7 +140,6 @@ public class OboParser
         OBOFileAdapter adapter = new OBOFileAdapter();
         OBOSession session = adapter.doOperation(OBOAdapter.READ_ONTOLOGY, readConfig, null);
         SimpleLinkFileAdapter writer = new SimpleLinkFileAdapter();
-
         writer.doOperation(OBOAdapter.WRITE_ONTOLOGY, writeConfig, session);
         LOG.info("PROGRESS:" + writer.getProgressString());
         // END OF OBO2EDIT code
@@ -148,6 +147,7 @@ public class OboParser
         temp.delete();
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Processed transitive closure of OBO file, took: " + timeTaken + " ms");
+
     }
 
     /**
@@ -248,12 +248,10 @@ public class OboParser
             List<?> names = (List<?>) tvs.get("name");
             if (names != null && !names.isEmpty()) {
                 name = (String) names.get(0);
-            } else {
-                //throw new BuildException("Ontology term did not have a name:" + id);
+                boolean isTransitive = isTrue(tvs, "is_transitive");
+                oboType = new OboTypeDefinition(id, name, isTransitive);
+                types.put(oboType.getId() , oboType);
             }
-            boolean isTransitive = isTrue(tvs, "is_transitive");
-            oboType = new OboTypeDefinition(id, name, isTransitive);
-            types.put(oboType.getId() , oboType);
         }
 
         // Just build all the OboTerms disconnected
@@ -264,12 +262,10 @@ public class OboParser
             List<?> names = (List<?>) tvs.get("name");
             if (names != null && !names.isEmpty()) {
                 name = (String) names.get(0);
-            } else {
-                throw new BuildException("Ontology term did not have a name:" + id);
+                OboTerm term = new OboTerm(id, name);
+                term.setObsolete(isTrue(tvs, "is_obsolete"));
+                terms.put(term.getId(), term);
             }
-            OboTerm term = new OboTerm(id, name);
-            term.setObsolete(isTrue(tvs, "is_obsolete"));
-            terms.put(term.getId(), term);
         }
 
         // Now connect them all together
@@ -362,7 +358,7 @@ public class OboParser
         if (vals != null && vals.size() > 0) {
             if (vals.size() > 1) {
                 LOG.warn("Term: " + tagValues + " has more than one (" + vals.size()
-                        + ") is_obsolete values - just using first");
+                    + ") is_obsolete values - just using first");
             }
             return ((String) vals.get(0)).equalsIgnoreCase("true");
         }
@@ -428,7 +424,7 @@ public class OboParser
                 boolean asserted = false, redundant = false;
                 for (int i = 0; i < bits.length; i++) {
                     switch (i) {
-                        case 0:// id1
+                        case 0:// id
                         {
                             id1 = bits[i];
                             break;
