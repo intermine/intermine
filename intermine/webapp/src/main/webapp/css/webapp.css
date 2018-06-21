@@ -1089,6 +1089,7 @@ div.heading.results #tool_bar_div ul#button_bar li {
     font-family: "Lucida Grande", Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
+    text-align:justify;
 }
 
 #funding-footer img {
@@ -1686,8 +1687,19 @@ div.bagDetails-page div.widget { width:460px; height:auto; max-height:none !impo
   box-sizing: border-box;
   padding: 0.5em;
 }
-.funding-footer p {
-  margin: 0.5em;
+.funding-footer p {text-align:justify;margin:1em;}
+.funding-footer .intermine-default-footer {
+  max-width: 250px;
+  margin:0em 2em;
+  text-align:justify;
+}
+
+
+.funders {display:flex;align-items:center;}
+.funders .wide-n-narrow {
+ display:flex;
+ padding-top:0.5em;
+ flex-direction:column; margin:0em 1em;
 }
 
 #promo-footer .powered-footer, #promo-footer .android-footer {
@@ -1713,10 +1725,12 @@ display:flex;
 align-items:center;
 }
 
-.android img.googleplay {width:80%;}
-.android a {width:100%}
+.mobile-app img.googleplay {width:80%;}
+.mobile-app img.ios {width:70%;}
 
-.android {
+.mobile-app a {width:100%}
+
+.mobile-app {
 max-width:30%;
 margin:1em;
 display:flex;
@@ -1724,8 +1738,9 @@ align-items:center;
 justify-content:space-between;
 background:rgba(255,255,255,0.9)}
 
-.android p {
-width:90%;}
+.mobile-app p {
+width:90%;
+margin:0.5em;}
 
 
 .funding-footer .cite { text-align:justify; }

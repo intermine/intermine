@@ -829,56 +829,11 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
             return null;
         }
-
-        applyUserProfileUpgrades(osw, blockingErrorKeys);
         return osw;
     }
 
-    private void applyUserProfileUpgrades(ObjectStoreWriter osw,
-                                          Map<String, String> blockingErrorKeys) {
-        Connection con = null;
-        try {
-            con = ((ObjectStoreInterMineImpl) osw).getConnection();
-            DatabaseUtil.addColumn(con, "userprofile", "apikey", DatabaseUtil.Type.text);
-            if (!DatabaseUtil.columnExists(con, "userprofile", "localaccount")) {
-                DatabaseUtil.addColumn(con, "userprofile", "localaccount",
-                        DatabaseUtil.Type.boolean_type);
-                DatabaseUtil.updateColumnValue(con, "userprofile", "localaccount", true);
-            }
-            if (!DatabaseUtil.columnExists(con, "userprofile", "superuser")) {
-                DatabaseUtil.addColumn(con, "userprofile", "superuser",
-                        DatabaseUtil.Type.boolean_type);
-                DatabaseUtil.updateColumnValue(con, "userprofile", "superuser", false);
-            }
-
-            // Create the permatoken table, if it does not exist
-            ClassDescriptor ptCld = osw.getModel().getClassDescriptorByName("PermanentToken");
-            if (!DatabaseUtil.tableExists(con, DatabaseUtil.getTableName(ptCld))) {
-                createPermaTokenTable(osw, con);
-            }
-
-            LOG.debug("SUCCESSFULLY APPLIED ALL UPGRADES");
-        } catch (SQLException sqle) {
-            LOG.error("Problem retrieving connection", sqle);
-            blockingErrorKeys.put("errors.init.userprofileconnection", sqle.getMessage());
-        } catch (ClassNotFoundException e) {
-            LOG.error("Problem upgrading database", e);
-            blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
-        } finally {
-            ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
-        }
-    }
-
-    /**
-     * Set the given account to be a superuser.
-     *
-     * @param accountName Name of the account to set as superuser
-     * @param uosw userprofile objectstore
-     * @return true if the account exists and could be set to superuser, false otherwise
-     */
-    private boolean setSuperuser(String accountName, ObjectStoreWriter uosw) {
-        UserProfile superuserProfile = getUserProfile(accountName, uosw);
-
+    private boolean verifySuperUserExist(ObjectStoreWriter uosw) {
+        UserProfile superuserProfile = getSuperUser(uosw);
         if (superuserProfile != null) {
             superuserProfile.setSuperuser(true);
             try {
