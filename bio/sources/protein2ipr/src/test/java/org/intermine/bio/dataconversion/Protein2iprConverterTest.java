@@ -66,7 +66,7 @@ public class Protein2iprConverterTest extends ItemsTestCase
 
         Organism organism = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
         organism.setId(new Integer(102));
-        organism.setTaxonId(7227);
+        organism.setTaxonId("7227");
         osw.store(organism);
 
         Protein protein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));

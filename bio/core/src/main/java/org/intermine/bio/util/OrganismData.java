@@ -20,7 +20,7 @@ public class OrganismData
     private String species;
     private String genus;
     private String abbreviation;
-    private int taxonId;
+    private String taxonId;
     private String ensemblPrefix;
     private String uniprot;
 
@@ -72,7 +72,7 @@ public class OrganismData
      * Get the taxonId of this organism.
      * @return the taxonId
      */
-    public int getTaxonId() {
+    public String getTaxonId() {
         return taxonId;
     }
 
@@ -104,7 +104,7 @@ public class OrganismData
      * Set the taxonId of this organism.
      * @param taxonId the taxonId to set
      */
-    void setTaxonId(int taxonId) {
+    void setTaxonId(String taxonId) {
         this.taxonId = taxonId;
     }
 

@@ -398,8 +398,8 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * @param batchSize the query batch size
      * @return orgTaxonIdMap - a HashMap with organism  as key and its taxonId as value
      */
-    public static Map<String, Integer> getTaxonInfo(InterMineAPI im, int batchSize) {
-        Map<String, Integer> orgTaxonIdMap = new HashMap<String, Integer>();
+    public static Map<String, String> getTaxonInfo(InterMineAPI im, int batchSize) {
+        Map<String, String> orgTaxonIdMap = new HashMap<String, String>();
         Query q = new Query();
         QueryClass organisms = new QueryClass(org.intermine.model.bio.Organism.class);
         q.addFrom(organisms);

@@ -1,0 +1,26 @@
+<items>
+<item id="4_2" class="OntologyAnnotationEvidenceCode">
+<attribute name="code" value="TAS"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="HPO Annotation"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="HPO"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="0_2" class="Ontology">
+<attribute name="name" value="Human Phenotype Ontology"/>
+<attribute name="url" value="http://www.human-phenotype-ontology.org"/>
+</item>
+<item id="3_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="4_1" class="OntologyAnnotationEvidenceCode">
+<attribute name="code" value="IEA"/>
+</item>
+</items>

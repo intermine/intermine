@@ -145,6 +145,11 @@ public class PantherConverter extends BioFileConverter
             }
         }
 
+        // see https://github.com/intermine/intermine/issues/1804
+        if (resolvedGenePid.length() < 2) {
+            return null;
+        }
+
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item gene = createItem("Gene");
@@ -293,9 +298,7 @@ public class PantherConverter extends BioFileConverter
         if (od == null) {
             throw new BuildException("No data for `" + name + "`.  Please add to repository.");
         }
-        int taxonId = od.getTaxonId();
-        String taxonIdString = String.valueOf(taxonId);
-        return taxonIdString;
+        return od.getTaxonId();
     }
 
     private String getEvidence()

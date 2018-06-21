@@ -361,6 +361,19 @@ public class Item implements Comparable<Item>
     }
 
     /**
+     * Add an attribute to this item only if value is not empty or NULL
+     *
+     * @param name the name of the attribute
+     * @param value the value of the attribute - ignored if empty or NULL
+     */
+    public void setAttributeIfNotNull(String name, String value) {
+        if (value == null || "".equals(value)) {
+            return;
+        }
+        addAttribute(new Attribute(name, value));
+    }
+
+    /**
      * Add an attribute to this item and set it to the empty string.
      *
      * @param name the name of the attribute

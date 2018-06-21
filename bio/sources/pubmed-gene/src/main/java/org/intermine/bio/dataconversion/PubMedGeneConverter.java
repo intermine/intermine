@@ -80,7 +80,7 @@ public class PubMedGeneConverter extends BioFileConverter
             }
 
             String originalTaxonId = line[0];
-            String taxonId = BioUtil.replaceStrain(new Integer(originalTaxonId)).toString();
+            String taxonId = BioUtil.replaceStrain(originalTaxonId).toString();
             String geneId = line[1];
             String pubmedId = line[2];
 
