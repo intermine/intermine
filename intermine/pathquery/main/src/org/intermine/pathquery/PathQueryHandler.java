@@ -162,26 +162,6 @@ public class PathQueryHandler extends DefaultHandler
             }
             constraintLogic = attrs.getValue("constraintLogic");
             questionableSubclasses = new ArrayList<PathConstraintSubclass>();
-        } else if ("node".equals(qName)) {
-            // There's a node tag, so all constraints inside must inherit this
-            // path. Set it in a
-            // variable, and reset the variable to null when we see the end tag.
-
-            currentNodePath = attrs.getValue("path");
-            if (currentNodePath.contains(":")) {
-                setOuterJoins(query, currentNodePath);
-                currentNodePath = currentNodePath.replace(':', '.');
-            }
-            String type = attrs.getValue("type");
-            if ((type != null)
-                    && (!ATTRIBUTE_TYPES.contains(type))
-                    && (currentNodePath.contains(".") || currentNodePath
-                            .contains(":"))) {
-                PathConstraintSubclass subclass = new PathConstraintSubclass(
-                        currentNodePath, type);
-                query.addConstraint(subclass);
-                questionableSubclasses.add(subclass);
-            }
         } else if ("constraint".equals(qName)) {
             String path = attrs.getValue("path");
             if (currentNodePath != null) {
@@ -414,8 +394,6 @@ public class PathQueryHandler extends DefaultHandler
                 }
             }
             queries.put(queryName, query);
-        } else if ("node".equals(qName)) {
-            currentNodePath = null;
         } else if ("constraint".equals(qName) && (constraintPath != null)) {
             PathConstraint constraint = processConstraint(query,
                     constraintPath, constraintAttributes, constraintValues);
