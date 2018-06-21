@@ -179,10 +179,12 @@ public class SequenceService extends JSONService
     }
 
     private PathQuery getQuery() {
-        String xml           = new QueryRequestParser(im.getQueryStore(), request).getQueryXml();
-        String schemaUrl     = AbstractQueryService.getSchemaLocation(request);
-        PathQueryBuilder bdr = new PathQueryBuilder(xml, schemaUrl, getListManager());
-
+        String query = new QueryRequestParser(im.getQueryStore(), request).getQueryXml();
+        String schemaUrl = AbstractQueryService.getSchemaLocation(request, "XML");
+        if (!query.startsWith("<")) {
+            schemaUrl = AbstractQueryService.getSchemaLocation(request, "JSON");
+        }
+        PathQueryBuilder bdr = new PathQueryBuilder(im, query, schemaUrl, getListManager());
         return bdr.getQuery();
     }
 
