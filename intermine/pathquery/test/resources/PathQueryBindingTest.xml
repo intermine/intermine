@@ -21,7 +21,6 @@
   </query>
   <query name="hasJoins" model="testmodel" view="Employee.name Employee.department.name Employee.address.address" longDescription="">
     <join path="Employee.department" style="OUTER"/>
-      <join path="Employee.address" style="INNER"/>
   </query>
   <query name="hasOrder" model="testmodel" view="Employee.name Employee.department.name Employee.address.address" longDescription="" sortOrder="Employee.department.name asc Employee.address.address desc"/>
   <query name="viewOnly" model="testmodel" view="Company.name Company.vatNumber" longDescription=""/>
@@ -43,5 +42,18 @@
   <query name="idBagConstraints" model="testmodel" view="Company.name Company.vatNumber" longDescription="">
     <constraint path="Company" op="IN" ids="1,5,7"/>
   </query>
+<!-- null constraint -->
+<query name="nullConstraint" model="testmodel" view="Department.name" sortOrder="Department.name ASC" >
+  <constraint path="Department.manager" op="IS NULL" code="A" />
+</query>
+
+<!-- loop constraints -->
+<query name="loopConstraint" model="testmodel" view="Employee.name Employee.department.manager.name" longDescription="" sortOrder="Employee.name asc">
+  <constraint path="Employee.department.employees" op="=" loopPath="Employee"/>
+</query>
+
+<query name="loopConstraintAlt" model="testmodel" view="Employee.name Employee.department.manager.name" longDescription="" sortOrder="Employee.name asc">
+  <constraint path="Employee.department.employees" op="=" value="Employee"/>
+</query>
 
 </query-list>
