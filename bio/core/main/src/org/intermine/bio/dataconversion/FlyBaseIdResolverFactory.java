@@ -145,8 +145,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 soTermId = res.getString("cvterm_id");
                 String orgConstraint = "";
                 if (taxonId != null) {
-                    String abbrev = or.getOrganismDataByTaxon(
-                            new Integer(taxonId)).getAbbreviation();
+                    String abbrev = or.getOrganismDataByTaxon(taxonId).getAbbreviation();
                     query = "select organism_id"
                         + " from organism"
                         + " where abbreviation = \'" + abbrev + "\'";

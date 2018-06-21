@@ -256,7 +256,7 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
                 throw new RuntimeException("Taxon ID not found. Please set a valid taxon Id"
                         + " in your project XML file");
             }
-            org.setTaxonId(new Integer(taxonId));
+            org.setTaxonId(taxonId);
             getDirectDataLoader().store(org);
         }
         return org;

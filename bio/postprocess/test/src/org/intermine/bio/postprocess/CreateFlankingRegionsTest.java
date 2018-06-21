@@ -85,7 +85,7 @@ public class CreateFlankingRegionsTest extends TestCase {
 
         Organism organism =
             (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
-        organism.setTaxonId(new Integer(7227));
+        organism.setTaxonId("7227");
 
         toStore.add(organism);
 

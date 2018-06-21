@@ -65,6 +65,7 @@
     <merge-additions file="bio/sources/fly/flybase-alleles/flybase-alleles_additions.xml"/>
     <merge-additions file="bio/sources/do/do_additions.xml"/>
     <merge-additions file="bio/sources/gtex/gtex_additions.xml"/>
+    <merge-additions file="bio/sources/fly/uberfly/uberfly_additions.xml"/>
   </target>
 
 </project>

@@ -83,12 +83,7 @@ public class ChadoDBConverter extends BioDBConverter
         //for (int i = 0; i < bits.length; i++) {
         for (String organismIdString: bits) {
             OrganismData od = null;
-            try {
-                Integer taxonId = Integer.valueOf(organismIdString);
-                od = organismRepository.getOrganismDataByTaxon(taxonId);
-            } catch (NumberFormatException e) {
-                od = organismRepository.getOrganismDataByAbbreviation(organismIdString);
-            }
+            od = organismRepository.getOrganismDataByTaxon(organismIdString);
             if (od == null) {
                 throw new RuntimeException("can't find organism for: " + organismIdString);
             }
@@ -250,8 +245,8 @@ public class ChadoDBConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxonId) {
-        OrganismData od = organismRepository.getOrganismDataByTaxon(new Integer(taxonId));
+    public String getDataSetTitle(String taxonId) {
+        OrganismData od = organismRepository.getOrganismDataByTaxon(taxonId);
         if (od != null) {
             return getDataSourceName() + " data set for " + od.getGenus() + " " + od.getSpecies();
         }

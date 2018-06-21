@@ -13,8 +13,7 @@
         <collection name="hpoAnnotations" referenced-type="HPOAnnotation" reverse-reference="hpoTerm" />
         <collection name="diseases" referenced-type="Disease" />
     </class>
-    <class name="Disease" is-interface="true">
-        <attribute name="identifier" type="java.lang.String" />
+    <class name="Disease" extends="Annotatable" is-interface="true">
         <collection name="genes" referenced-type="Gene" reverse-reference="diseases"/>
         <collection name="hpoAnnotations" referenced-type="HPOAnnotation" />
         <collection name="dataSets" referenced-type="DataSet"/>
@@ -23,7 +22,7 @@
         <attribute name="source" type="java.lang.String" />
         <attribute name="frequencyModifier" type="java.lang.String" />
         <attribute name="assignedBy" type="java.lang.String" />
-        <reference name="code" referenced-type="GOEvidenceCode" />
+        <reference name="code" referenced-type="OntologyAnnotationEvidenceCode" />
         <reference name="diseaseReference" referenced-type="Disease" />
         <collection name="publications" referenced-type="Publication" />
         <collection name="with" referenced-type="BioEntity" />

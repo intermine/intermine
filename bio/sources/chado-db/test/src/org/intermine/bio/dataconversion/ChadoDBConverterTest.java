@@ -89,12 +89,12 @@ public class ChadoDBConverterTest extends ItemsTestCase
 
         // if not Dmel genomic_path_regions without '_' should become chromosomes
         Item item = processor.makeFeature(null, "golden_path_region", "DummyType", "3R", "3R", 0,
-                                          7237);
+                                          "7237");
         assertTrue(item.getClassName().endsWith("Chromosome"));
 
         // If an underscore in name and not dmel or dpse, should be a GoldenPathFragment
         item = processor.makeFeature(null, "golden_path_region", "DummyType", "scaffold_10",
-                                     "scaffold_10", 0, 7777);
+                                     "scaffold_10", 0, "7777");
         assertTrue(item.getClassName().endsWith("GoldenPathFragment"));
     }
 
@@ -108,7 +108,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         protected Map<OrganismData, Integer> getChadoOrganismIds(@SuppressWarnings("unused")
                                                                     Connection connection) {
             Map<OrganismData, Integer> retMap = new HashMap<OrganismData, Integer>();
-            retMap.put(OrganismRepository.getOrganismRepository().getOrganismDataByTaxon(7227), 1);
+            retMap.put(OrganismRepository.getOrganismRepository().getOrganismDataByTaxon("7227"), 1);
             return retMap;
         }
     }

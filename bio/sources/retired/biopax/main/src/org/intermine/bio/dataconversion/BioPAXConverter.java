@@ -362,7 +362,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
      */
     private String getTaxonId() {
 
-        int taxonId;
+        String taxonId;
 
         File file = getCurrentFile();
         String filename = file.getName();
@@ -373,7 +373,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
 
         if (m.find()) {
             // Good file name: 83333.owl
-            taxonId = Integer.valueOf(filename.split("\\.")[0]);
+            taxonId = filename.split("\\.")[0];
         } else {
             // underscore or space
             String[] bits = filename.split("[_\\s]");

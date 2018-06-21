@@ -94,7 +94,7 @@ public class ChromosomeLocationHelperTest extends TestCase
 
         List<String> expected = Arrays.asList(
             "SimpleConstraint(QueryField(org.intermine.model.bio.Chromosome, primaryIdentifier) = java.lang.String: \"X\")",
-            "SimpleConstraint(QueryField(org.intermine.model.bio.Organism, taxonId) = java.lang.Integer: \"7227\")",
+            "SimpleConstraint(QueryField(org.intermine.model.bio.Organism, taxonId) = java.lang.String: \"7227\")",
             "org.intermine.model.bio.Chromosome.organism CONTAINS org.intermine.model.bio.Organism",
             "org.intermine.model.bio.Location.locatedOn CONTAINS org.intermine.model.bio.Chromosome",
             "start=QueryField(org.intermine.model.bio.Location, start), end=QueryField(org.intermine.model.bio.Location, end) OVERLAPS start=java.lang.Integer: \"123\", end=java.lang.Integer: \"456\""

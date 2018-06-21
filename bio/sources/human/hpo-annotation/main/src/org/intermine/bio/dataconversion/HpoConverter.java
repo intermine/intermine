@@ -39,7 +39,6 @@ import org.intermine.xml.full.Item;
  */
 public class HpoConverter extends BioDirectoryConverter
 {
-
     private static final String DATASET_TITLE = "HPO Annotation";
     private static final String DATA_SOURCE_NAME = "HPO";
 
@@ -161,7 +160,7 @@ public class HpoConverter extends BioDirectoryConverter
         Item item = diseases.get(omimId);
         if (item == null) {
             item = createItem("Disease");
-            item.setAttribute("identifier", omimId);
+            item.setAttribute("primaryIdentifier", omimId);
             diseases.put(omimId, item);
         }
         return item;
@@ -305,7 +304,7 @@ public class HpoConverter extends BioDirectoryConverter
     private String getEvidenceCode(String code) throws ObjectStoreException {
         String refId = evidenceCodes.get(code);
         if (refId == null) {
-            Item item = createItem("GOEvidenceCode");
+            Item item = createItem("OntologyAnnotationEvidenceCode");
             item.setAttribute("code", code);
             refId = item.getIdentifier();
             evidenceCodes.put(code, refId);
@@ -350,8 +349,7 @@ public class HpoConverter extends BioDirectoryConverter
                     || OBSOLETE.equals(prefix)) {
                 continue;
             }
-
-            omimDiseaseMasterList.add(mimId);
+            omimDiseaseMasterList.add("OMIM:" + mimId);
         }
     }
 }
