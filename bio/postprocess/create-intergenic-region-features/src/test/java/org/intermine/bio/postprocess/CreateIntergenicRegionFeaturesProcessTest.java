@@ -130,7 +130,7 @@ public class CreateIntergenicRegionFeaturesProcessTest extends TestCase
 
         Query q = new Query();
 
-        QueryClass qc = new QueryClass(IntergenicRegion.class);
+        QueryClass qc = new QueryClass(osw.getModel().getClassDescriptorByName("IntergenicRegion").getType());
         q.addFrom(qc);
         q.addToSelect(qc);
         SingletonResults res = os.executeSingleton(q);

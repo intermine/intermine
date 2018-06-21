@@ -9,5 +9,5 @@ export JAVA_OPTS="-server \
     -XX:PermSize=64m -XX:MaxPermSize=128m \
     -Djava.awt.headless=true \
     -Dfile.encoding=UTF-8 \
-    -Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true"
+    -Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true -Dorg.gradle.daemon=false"
 

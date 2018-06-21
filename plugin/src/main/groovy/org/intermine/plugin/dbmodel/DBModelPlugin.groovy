@@ -24,6 +24,7 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.configurations {
             bioModel
+            bioModelForSOOnly
             commonResources
             api
             mergeSource
@@ -35,15 +36,14 @@ class DBModelPlugin implements Plugin<Project> {
             config = project.extensions.create('dbModelConfig', DBModelConfig)
 
             doLast {
-                project.dependencies.add("bioModel", [group: "org.intermine", name: "bio-model", version: System.getProperty("bioVersion"), transitive: false])
                 project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")])
                 project.dependencies.add("api", [group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion"), transitive: false])
 
                 dbUtils = new DBModelUtils(project)
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
                 buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
-                if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()
-                    || project.name.equals("bio-core")) {
+                if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {
+                    // don't generate the model if it's already there
                     regenerateModel = false
                 }
                 if (!(new File(project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml").exists())) {
@@ -81,11 +81,12 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('copyGenomicModel') {
             dependsOn 'initConfig', 'processResources'
-            //onlyIf {regenerateModel}
+            onlyIf {regenerateModel}
 
             doLast {
                 FileTree fileTree
                 String genomicModelName = "genomic_model.xml"
+
                 try {
                     project.configurations.getByName("testModel")
                     fileTree = project.zipTree(project.configurations.getByName("testModel").singleFile)
@@ -99,6 +100,30 @@ class DBModelPlugin implements Plugin<Project> {
 
                 coreXml.renameTo(modelFilePath)
                 coreXml.createNewFile()
+            }
+        }
+
+        project.task('copyGenomicKeys') {
+            description "Copies default keys for bio in the case of unit tests."
+            dependsOn 'initConfig', 'processResources'
+
+            doLast {
+                FileTree fileTree
+                String genomicModelName = "genomic_keyDefs.properties"
+
+                try {
+                    project.configurations.getByName("testModel")
+                    fileTree = project.zipTree(project.configurations.getByName("testModel").singleFile)
+                } catch (UnknownConfigurationException ex) {
+                    fileTree = project.zipTree(project.configurations.getByName("bioModel").singleFile)
+                }
+                PatternSet patternSet = new PatternSet()
+                patternSet.include(genomicModelName)
+                File propertiesFile = fileTree.matching(patternSet).singleFile
+                String keysFilePath = buildResourcesMainDir + File.separator + config.modelName + "_keyDefs.properties"
+
+                propertiesFile.renameTo(keysFilePath)
+                propertiesFile.createNewFile()
             }
         }
 
@@ -187,6 +212,10 @@ class DBModelPlugin implements Plugin<Project> {
             onlyIf {regenerateModel}
 
             doLast {
+                // we need bio-model for the SO files. It may be on the classpath already
+                // but we can't be sure.
+                project.dependencies.add("bioModelForSOOnly", [group: "org.intermine", name: "bio-model", version: System.getProperty("bioVersion"), transitive: false])
+
                 def ant = new AntBuilder()
                 //when we execute bio-model build, bio-core might be not installed yet
                 if (project.name.equals("bio-model")) {
@@ -199,7 +228,7 @@ class DBModelPlugin implements Plugin<Project> {
                 } else {
                     ant.taskdef(name: "createSoModel", classname: "org.intermine.bio.task.SOToModelTask") {
                         classpath {
-                            pathelement(path: project.configurations.getByName("bioModel").asPath)
+                            pathelement(path: project.configurations.getByName("bioModelForSOOnly").asPath)
                             pathelement(path: project.configurations.getByName("compile").asPath)
                         }
                     }
@@ -236,13 +265,12 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('buildUnitTestDB') {
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'copyGenomicModel', 'jar', 'copyGenomicKeys'
 
             doLast {
                 dbUtils.createSchema(config.objectStoreName)
                 dbUtils.createTables(config.objectStoreName, config.modelName)
                 dbUtils.storeMetadata(config.objectStoreName, config.modelName)
-
             }
         }
 

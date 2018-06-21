@@ -11,7 +11,7 @@ buildscript {
     }
 }
 apply plugin: 'dbmodel'
-apply plugin: 'biocore-dbmodel'
+apply plugin: 'biomodel-dbmodel'
 
 sourceSets {
     main {
