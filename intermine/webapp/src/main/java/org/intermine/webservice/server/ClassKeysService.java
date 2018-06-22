@@ -61,6 +61,9 @@ public class ClassKeysService extends SummaryService
         }
 
         JSONObject jo = new JSONObject(ckData);
+
+        System.out.println(jo.toString());
+
         output.addResultItem(Collections.singletonList(jo.toString()));
     }
 

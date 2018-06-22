@@ -10,7 +10,6 @@ package org.intermine.api.searchengine;
  *
  */
 
-import org.intermine.api.searchengine.KeywordSearchFacetType;
 
 /**
  * container class for a facet field and its settings

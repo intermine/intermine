@@ -143,6 +143,56 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
         return null;
     }
 
+    @Override
+    public Collection<KeywordSearchFacet> doFacetSearch(InterMineAPI im, String queryString, Map<String, String> facetValues) {
+
+        //TODO: prepare the querystring
+
+        SolrClient solrClient = SolrClientManager.getClientInstance(im.getObjectStore());
+
+        QueryResponse resp = null;
+
+        KeywordSearchPropertiesManager keywordSearchPropertiesManager
+                = KeywordSearchPropertiesManager.getInstance(im.getObjectStore());
+
+        Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
+
+        try {
+
+            SolrQuery newQuery = new SolrQuery();
+            newQuery.setQuery(queryString);
+            newQuery.setRows(0); //search results is not important here. Only facet categories
+
+            for (KeywordSearchFacetData keywordSearchFacetData : facets){
+                newQuery.addFacetField(keywordSearchFacetData.getField());
+            }
+
+            // add faceting selections
+            for (Map.Entry<String, String> facetValue : facetValues.entrySet()) {
+                if (facetValue != null) {
+                    newQuery.addFilterQuery(facetValue.getKey()+":"+facetValue.getValue());
+                }
+            }
+
+            resp = solrClient.query(newQuery);
+
+            SolrDocumentList results = resp.getResults();
+
+            Collection<KeywordSearchFacet> searchResultsFacets = parseFacets(resp, facets, facetValues);
+
+            return searchResultsFacets;
+
+        } catch (SolrServerException e) {
+            e.printStackTrace();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+
+        return null;
+    }
+
     /**
      * @param documents the query results.
      *

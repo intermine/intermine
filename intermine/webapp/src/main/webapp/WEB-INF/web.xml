@@ -1554,6 +1554,41 @@ to will also be returned.
 
    <!-- NEW IN VERSION 9 -->
 
+    <servlet>
+        <servlet-name>ws-facet-search</servlet-name>
+        <servlet-class>org.intermine.webservice.server.FacetServlet</servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ws-facet-search</servlet-name>
+        <url-pattern>/service/facet</url-pattern>
+        <!-- Custom extensions that allow us to automatically generate documentation -->
+        <metadata>
+            <name>FacetSearch</name>
+            <minVersion>9</minVersion>
+            <method authenticationRequired="false" type="GET" ALSO="POST">
+                <summary>Perform a key-word search and retrieve the facets</summary>
+                <description>
+                    Run a general key-word style search over all data in the data-warehouse.
+                    This is similar to Quick Search but here only the facet category counts are returned.
+                </description>
+                <param type="String" required="false" description="The query string to search with. If absent, or blank, all results will be returned">q</param>
+                <param type="String"
+                       options="/lists|lists{status=CURRENT}"
+                       default="{name}"
+                       required="false" description="A list to search within.">list</param>
+                <param type="String[]" required="false" description="A facet parameter, eg facet_Organism=D.melanogaster">facet_?</param>
+                <returns>
+                    <format key="facets">json</format>
+                </returns>
+            </method>
+        </metadata>
+    </servlet-mapping>
+
   <servlet>
     <servlet-name>ws-quick-search</servlet-name>
     <servlet-class>org.intermine.webservice.server.search.QuickSearchServlet</servlet-class>
