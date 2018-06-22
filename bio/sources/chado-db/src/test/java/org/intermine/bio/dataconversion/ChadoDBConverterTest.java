@@ -95,7 +95,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         // If an underscore in name and not dmel or dpse, should be a GoldenPathFragment
         item = processor.makeFeature(null, "golden_path_region", "DummyType", "scaffold_10",
                                      "scaffold_10", 0, "7777");
-        assertTrue(item.getClassName().endsWith("GoldenPathFragment"));
+        assertTrue(item.getClassName().endsWith("Chromosome"));
     }
 
     private class TestChadoDBConverter extends GenomeDBConverter {

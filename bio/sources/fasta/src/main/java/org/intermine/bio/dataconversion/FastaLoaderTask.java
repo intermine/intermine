@@ -240,7 +240,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     protected Organism getOrganism() throws ObjectStoreException {
         if (org == null) {
             org = getDirectDataLoader().createObject(Organism.class);
-            org.setTaxonId(new Integer(fastaTaxonId));
+            org.setTaxonId(fastaTaxonId);
             getDirectDataLoader().store(org);
         }
         return org;

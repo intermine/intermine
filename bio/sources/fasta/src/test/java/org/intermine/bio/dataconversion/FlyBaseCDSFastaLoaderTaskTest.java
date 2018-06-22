@@ -85,7 +85,7 @@ public class FlyBaseCDSFastaLoaderTaskTest {
                 assertEquals("1", loc.getStrand());
                 assertEquals("X", loc.getLocatedOn().getPrimaryIdentifier());
                 assertEquals("FBtr0070823", cds.getTranscript().getPrimaryIdentifier());
-                assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
+                assertEquals("36329", cds.getOrganism().getTaxonId());
             } else {
                 if ("CG6844-PB_CDS".equals(cds.getPrimaryIdentifier())) {
                     seenCG6844PB = true;
@@ -95,7 +95,7 @@ public class FlyBaseCDSFastaLoaderTaskTest {
                     assertEquals("1", loc.getStrand());
                     assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
                     assertEquals("FBtr0084640", cds.getTranscript().getPrimaryIdentifier());
-                    assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
+                    assertEquals("36329", cds.getOrganism().getTaxonId());
                 }
             }
         }

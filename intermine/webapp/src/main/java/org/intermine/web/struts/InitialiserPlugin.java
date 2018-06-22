@@ -832,6 +832,44 @@ public class InitialiserPlugin implements PlugIn
         return osw;
     }
 
+    /**
+     * Set the given account to be a superuser.
+     *
+     * @param accountName Name of the account to set as superuser
+     * @param uosw userprofile objectstore
+     * @return true if the account exists and could be set to superuser, false otherwise
+     */
+    private boolean setSuperuser(String accountName, ObjectStoreWriter uosw) {
+        UserProfile superuserProfile = getUserProfile(accountName, uosw);
+
+        if (superuserProfile != null) {
+            superuserProfile.setSuperuser(true);
+            try {
+                uosw.store(superuserProfile);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Unable to set the flag to the user profile", e);
+            }
+            return true;
+        }
+
+        blockingErrorKeys.put("errors.init.superusernotexist", null);
+        return false;
+    }
+
+    private UserProfile getSuperUser(ObjectStoreWriter uosw) {
+        String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
+        UserProfile superuserProfile = new UserProfile();
+        superuserProfile.setUsername(superuser);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("username");
+        try {
+            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
+        }
+        return superuserProfile;
+    }
+
     private boolean verifySuperUserExist(ObjectStoreWriter uosw) {
         UserProfile superuserProfile = getSuperUser(uosw);
         if (superuserProfile != null) {

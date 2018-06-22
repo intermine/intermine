@@ -84,8 +84,13 @@ public class ChadoDBConverter extends BioDBConverter
         for (String organismIdString: bits) {
             OrganismData od = null;
             od = organismRepository.getOrganismDataByTaxon(organismIdString);
+
             if (od == null) {
-                throw new RuntimeException("can't find organism for: " + organismIdString);
+                // trying again!
+                od = organismRepository.getOrganismDataByAbbreviation(organismIdString);
+            }
+            if (od == null) {
+                throw new RuntimeException("can't find organism for: '" + organismIdString + "'");
             }
             organismsToProcess.add(od);
         }

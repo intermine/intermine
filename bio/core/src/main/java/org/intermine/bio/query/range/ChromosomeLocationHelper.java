@@ -115,12 +115,7 @@ public class ChromosomeLocationHelper implements RangeHelper
         }
 
         private void specifyOrganism(ConstraintSet cs, String taxonId) {
-            QueryValue taxon;
-            if (taxonIdsAreStrings) {
-                taxon = new QueryValue(taxonId);
-            } else {
-                taxon = new QueryValue(Integer.valueOf(taxonId));
-            }
+            QueryValue taxon = new QueryValue(taxonId);
             QueryObjectReference orgref = new QueryObjectReference(chromosome, "organism");
             addFrom(q, organism);
             cs.addConstraint(new ContainsConstraint(orgref, ConstraintOp.CONTAINS, organism));

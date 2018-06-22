@@ -369,19 +369,4 @@ public class CreateIntronFeaturesProcess extends PostProcessor
         }
         transcripts.add(transcript);
     }
-
-    /**
-     * Set a comma separated list of taxon ids to create introns for.  If no list
-     * is provided introns will be created for all organisms.
-     * @param organisms a comma separated list of taxon ids
-     */
-    private void setOrganisms(String organisms) {
-        if (!StringUtils.isEmpty(organisms)) {
-            String[] array = organisms.split(",");
-            for (int i = 0; i < array.length; i++) {
-                taxonIds.add(new Integer(array[i].trim()));
-            }
-        }
-    }
-
 }
