@@ -10,13 +10,16 @@ package org.intermine.web.autocompletion;
  *
  */
 
+import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.client.solrj.response.schema.SchemaResponse;
 import org.apache.solr.common.SolrInputDocument;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Creates the indexes for Autocomplete fields
@@ -24,6 +27,8 @@ import java.util.Vector;
  * @author arunans23
  */
 public class SolrIndex {
+
+    private static final Logger LOG = Logger.getLogger(SolrIndex.class);
 
     private List<SearchObjectClass> lObjClass = null;
 
@@ -34,8 +39,44 @@ public class SolrIndex {
     private void indexClass(SearchObjectClass objClass) {
         try {
 
-            String urlString = "http:localhost:8983/solr/intermine-autocomplete";
+            String urlString = "http:localhost:8983/solr/autocomplete";
             HttpSolrClient solrClient = new HttpSolrClient.Builder(urlString).build();
+
+            for(String fieldName: objClass.getFieldNames()){
+                Map<String, Object> fieldAttributes = new HashMap();
+                fieldAttributes.put("name", fieldName);
+                fieldAttributes.put("type", "text_general");
+                fieldAttributes.put("stored", true);
+                fieldAttributes.put("indexed", true);
+                fieldAttributes.put("multiValued", true);
+                fieldAttributes.put("required", false);
+
+                try{
+                    SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
+                    SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+
+                } catch (SolrServerException e){
+                    LOG.error("Error while adding autocomplete fields to the solrclient.", e);
+
+                    e.printStackTrace();
+                }
+            }
+
+            //adding copy field to solr so that all the fields can be recognised by suggest handler
+
+            try{
+
+                List<String> copyFieldAttributes = new ArrayList<String>();
+                copyFieldAttributes.add("suggestTerm");
+
+                SchemaRequest.AddCopyField schemaCopyRequest = new SchemaRequest.AddCopyField("*", copyFieldAttributes);
+                SchemaResponse.UpdateResponse copyFieldResponse =  schemaCopyRequest.process(solrClient);
+
+            } catch (SolrServerException e){
+                LOG.error("Error while adding autocomplete copy field to the solrclient.", e);
+
+                e.printStackTrace();
+            }
 
             for (int i = 0; i < objClass.getSizeValues(); i++) {
                 SolrInputDocument doc = new SolrInputDocument();
@@ -48,6 +89,7 @@ public class SolrIndex {
 
                 solrClient.commit();
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,7 +109,7 @@ public class SolrIndex {
     }
 
     /**
-     * rebuild all indexes from LuceneObjectClasses in the map
+     * rebuild all indexes from SearchObjectClasses in the map
      * @throws IOException IOException
      */
     public void rebuildClassIndexes() throws IOException {
