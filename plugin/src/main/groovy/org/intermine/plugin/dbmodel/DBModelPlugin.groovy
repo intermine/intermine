@@ -9,11 +9,13 @@ import org.gradle.api.tasks.util.PatternSet
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.project.ProjectXmlBinding
 import org.intermine.plugin.project.Source
+import org.intermine.plugin.webapp.WebAppPlugin
 
 class DBModelPlugin implements Plugin<Project> {
 
     DBModelConfig config
     DBModelUtils dbUtils
+    WebAppPlugin webAppPlugin
     String buildResourcesMainDir
     boolean regenerateModel = true
     boolean generateKeys = true
@@ -21,7 +23,8 @@ class DBModelPlugin implements Plugin<Project> {
     void apply(Project project) {
 
         project.configurations {
-            bioCore
+            bioModel
+            bioModelForSOOnly
             commonResources
             api
             mergeSource
@@ -33,7 +36,6 @@ class DBModelPlugin implements Plugin<Project> {
             config = project.extensions.create('dbModelConfig', DBModelConfig)
 
             doLast {
-                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("bioVersion"), transitive: false])
                 project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")])
                 project.dependencies.add("api", [group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion"), transitive: false])
 
@@ -41,6 +43,7 @@ class DBModelPlugin implements Plugin<Project> {
                 SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
                 buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
                 if (new File(project.getBuildDir().getAbsolutePath() + File.separator + "gen").exists()) {
+                    // don't generate the model if it's already there
                     regenerateModel = false
                 }
                 if (!(new File(project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml").exists())) {
@@ -82,14 +85,13 @@ class DBModelPlugin implements Plugin<Project> {
 
             doLast {
                 FileTree fileTree
-                String genomicModelName
+                String genomicModelName = "genomic_model.xml"
+
                 try {
                     project.configurations.getByName("testModel")
                     fileTree = project.zipTree(project.configurations.getByName("testModel").singleFile)
-                    genomicModelName = "genomic_model.xml"
                 } catch (UnknownConfigurationException ex) {
-                    fileTree = project.zipTree(project.configurations.getByName("bioCore").singleFile)
-                    genomicModelName = "core.xml"
+                    fileTree = project.zipTree(project.configurations.getByName("bioModel").singleFile)
                 }
                 PatternSet patternSet = new PatternSet()
                 patternSet.include(genomicModelName)
@@ -98,6 +100,30 @@ class DBModelPlugin implements Plugin<Project> {
 
                 coreXml.renameTo(modelFilePath)
                 coreXml.createNewFile()
+            }
+        }
+
+        project.task('copyGenomicKeys') {
+            description "Copies default keys for bio in the case of unit tests."
+            dependsOn 'initConfig', 'processResources'
+
+            doLast {
+                FileTree fileTree
+                String genomicModelName = "genomic_keyDefs.properties"
+
+                try {
+                    project.configurations.getByName("testModel")
+                    fileTree = project.zipTree(project.configurations.getByName("testModel").singleFile)
+                } catch (UnknownConfigurationException ex) {
+                    fileTree = project.zipTree(project.configurations.getByName("bioModel").singleFile)
+                }
+                PatternSet patternSet = new PatternSet()
+                patternSet.include(genomicModelName)
+                File propertiesFile = fileTree.matching(patternSet).singleFile
+                String keysFilePath = buildResourcesMainDir + File.separator + config.modelName + "_keyDefs.properties"
+
+                propertiesFile.renameTo(keysFilePath)
+                propertiesFile.createNewFile()
             }
         }
 
@@ -186,6 +212,10 @@ class DBModelPlugin implements Plugin<Project> {
             onlyIf {regenerateModel}
 
             doLast {
+                // we need bio-model for the SO files. It may be on the classpath already
+                // but we can't be sure.
+                project.dependencies.add("bioModelForSOOnly", [group: "org.intermine", name: "bio-model", version: System.getProperty("bioVersion"), transitive: false])
+
                 def ant = new AntBuilder()
                 //when we execute bio-model build, bio-core might be not installed yet
                 if (project.name.equals("bio-model")) {
@@ -198,7 +228,7 @@ class DBModelPlugin implements Plugin<Project> {
                 } else {
                     ant.taskdef(name: "createSoModel", classname: "org.intermine.bio.task.SOToModelTask") {
                         classpath {
-                            pathelement(path: project.configurations.getByName("bioCore").asPath)
+                            pathelement(path: project.configurations.getByName("bioModelForSOOnly").asPath)
                             pathelement(path: project.configurations.getByName("compile").asPath)
                         }
                     }
@@ -235,7 +265,7 @@ class DBModelPlugin implements Plugin<Project> {
 
         project.task('buildUnitTestDB') {
             description "Build the database for the webapp"
-            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar', 'generateKeys'
+            dependsOn 'initConfig', 'copyMineProperties', 'copyDefaultInterMineProperties', 'copyGenomicModel', 'jar', 'copyGenomicKeys'
 
             doLast {
                 dbUtils.createSchema(config.objectStoreName)
@@ -258,16 +288,23 @@ class DBModelPlugin implements Plugin<Project> {
             }
         }
 
-        project.task('buildUserDB') {
+        project.task('createUserDB') {
             group TaskConstants.TASK_GROUP
-            description "Build the user database for the webapp"
+            description "Creates empty tables in the userprofile database."
             dependsOn 'initConfig', 'copyDefaultInterMineProperties', 'copyMineProperties', 'copyUserProfileModel', 'jar'
 
-            doLast {
+            doFirst {
                 dbUtils.createSchema(config.userProfileObjectStoreName)
                 dbUtils.createTables(config.userProfileObjectStoreName, config.userProfileModelName)
                 dbUtils.storeMetadata(config.userProfileObjectStoreName, config.userProfileModelName)
             }
+        }
+
+        project.task('buildUserDB') {
+            group TaskConstants.TASK_GROUP
+            description "Creates empty tables in the userprofile database, then loads the superuser and default templates."
+            dependsOn 'createUserDB', ':webapp:loadDefaultTemplates'
+            // do nothing
         }
 
         project.task('runAcceptanceTests') {

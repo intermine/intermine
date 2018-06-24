@@ -44,7 +44,8 @@ public abstract class PostProcessor
      * All subclasses should override this method so they can be called in a generic fashion.
      *
      * @throws  ObjectStoreException if there is a problem with the object store.
+     * @throws  IllegalAccessException if setting a field value fails
      * */
-    public abstract void postProcess() throws ObjectStoreException;
+    public abstract void postProcess() throws ObjectStoreException, IllegalAccessException;
 
 }

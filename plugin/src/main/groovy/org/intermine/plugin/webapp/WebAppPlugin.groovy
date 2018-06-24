@@ -137,7 +137,8 @@ class WebAppPlugin implements Plugin<Project> {
         project.task('loadDefaultTemplates') {
             group TaskConstants.TASK_GROUP
             description "Loads default template queries from an XML file into a given user profile"
-            dependsOn 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar'
+            dependsOn 'copyMineProperties', 'copyDefaultInterMineProperties', 'jar', ':dbmodel:createUserDB'
+            mustRunAfter ':dbmodel:createUserDB'
             //jar dependency has been added in order to generate the dbmodel.jar (in case a clean plugin has been called)
             //to allow to read class_keys.properties file
 

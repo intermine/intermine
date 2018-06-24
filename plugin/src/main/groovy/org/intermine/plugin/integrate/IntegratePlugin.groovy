@@ -27,6 +27,7 @@ class IntegratePlugin implements Plugin<Project> {
         project.configurations {
             integrateSource
             postProcesses
+            bioCore
         }
 
         project.tasks.compileJava.dependsOn project.tasks.generateModel
@@ -50,6 +51,9 @@ class IntegratePlugin implements Plugin<Project> {
                 } else {
                     sourceNames = Arrays.asList(sourceInput.split("\\s*,\\s*"))
                 }
+
+                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("imVersion"), transitive: false])
+
                 sourceNames.each { sourceName ->
                     Source source = intermineProject.sources.get(sourceName)
                     if (source == null) {
