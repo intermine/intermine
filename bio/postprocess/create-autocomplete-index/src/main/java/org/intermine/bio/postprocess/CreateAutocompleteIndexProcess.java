@@ -48,7 +48,7 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
      */
     public void postProcess()
             throws ObjectStoreException {
-        System.out .println("create lucene index ...");
+        System.out .println("create autocomplete index ...");
         Properties props = new Properties();
         try {
             props.load(getClass().getClassLoader().getResourceAsStream(
@@ -58,17 +58,18 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
 
             AutoCompleter ac = new AutoCompleter(os, props);
-            if (ac.getBinaryIndexMap() != null) {
-                MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
-                        ac.getBinaryIndexMap());
-            }
+            // if (ac.getBinaryIndexMap() != null) {
+            //     MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
+            //             ac.getBinaryIndexMap());
+            // }
+
+            System.out.println("Creating auto complete index has completed");
 
         } catch (IOException e) {
             throw new BuildException("Could not open the class keys");
         } catch (NullPointerException e) {
             throw new BuildException("Could not find the class keys");
-        } catch (SQLException e) {
-            throw new BuildException("Could not store autocomplete index");
         }
+
     }
 }
