@@ -33,5 +33,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/biojava-core-4.2.0.jar" sourcepath="lib/biojava-core-4.2.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/biojava-genome-4.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/biojava-ontology-4.2.0.jar"/>
+	<classpathentry kind="lib" path="/bio-core-main/lib/biojava-core-4.2.0.jar"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>
