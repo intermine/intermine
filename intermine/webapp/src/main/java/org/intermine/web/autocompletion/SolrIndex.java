@@ -39,8 +39,15 @@ public class SolrIndex {
     private void indexClass(SearchObjectClass objClass) {
         try {
 
-            String urlString = "http:localhost:8983/solr/autocomplete";
+            String urlString = "http://localhost:8983/solr/autocomplete";
             HttpSolrClient solrClient = new HttpSolrClient.Builder(urlString).build();
+
+            try {
+                solrClient.deleteByQuery("*:*");
+                solrClient.commit();
+            } catch (SolrServerException e) {
+                LOG.error("Deleting old index failed", e);
+            }
 
             for(String fieldName: objClass.getFieldNames()){
                 Map<String, Object> fieldAttributes = new HashMap();
@@ -78,6 +85,8 @@ public class SolrIndex {
                 e.printStackTrace();
             }
 
+            List<SolrInputDocument> solrInputDocumentList = new ArrayList<SolrInputDocument>();
+
             for (int i = 0; i < objClass.getSizeValues(); i++) {
                 SolrInputDocument doc = new SolrInputDocument();
                 for (int j = 0; j < objClass.getSizeFields(); j++) {
@@ -85,9 +94,19 @@ public class SolrIndex {
                             objClass.getValuesForField(objClass.getFieldName(j), i));
                 }
 
-                UpdateResponse response = solrClient.add(doc);
+                solrInputDocumentList.add(doc);
+            }
+
+            try {
+                UpdateResponse response = solrClient.add(solrInputDocumentList);
 
                 solrClient.commit();
+            } catch (SolrServerException e) {
+
+                LOG.error("Error while commiting the AutoComplete SolrInputdocuments to the Solrclient. " +
+                        "Make sure the Solr instance is up", e);
+
+                e.printStackTrace();
             }
 
         } catch (Exception e) {
