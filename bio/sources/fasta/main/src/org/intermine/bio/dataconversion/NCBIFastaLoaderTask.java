@@ -32,8 +32,9 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
     protected String getIdentifier(Sequence bioJavaSequence) {
 
         String header = ((DNASequence) bioJavaSequence).getOriginalHeader();
-        // >gi|568815597|ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p2 Primary Assembly
-        // gi|251831106|ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
+        LOG.debug("NCBIFL : header -> " + header);
+        // >ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p12 Primary Assembly
+        // >ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
         for (String headerString : header.split("\\|")) {
             if (headerString.contains("mitochondrion")) {
                 return "MT";

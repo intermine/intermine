@@ -25,7 +25,12 @@ import org.apache.tools.ant.BuildException;
 import org.biojava.nbio.core.exceptions.ParserException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
+import org.biojava.nbio.core.sequence.compound.AmbiguityDNACompoundSet;
+import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
+import org.biojava.nbio.core.sequence.io.DNASequenceCreator;
+import org.biojava.nbio.core.sequence.io.FastaReader;
 import org.biojava.nbio.core.sequence.io.FastaReaderHelper;
+import org.biojava.nbio.core.sequence.io.PlainFastaHeaderParser;
 import org.biojava.nbio.core.sequence.template.Sequence;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
@@ -208,10 +213,14 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     public void processFile(File file) {
         try {
             System.err .println("reading " + sequenceType + " sequence from: " + file);
-
+            LOG.debug("FLT loading file " + file.getName());
             if ("dna".equalsIgnoreCase(sequenceType)) {
-                LinkedHashMap<String, DNASequence> b =
-                        FastaReaderHelper.readFastaDNASequence(file);
+                FastaReader<DNASequence, NucleotideCompound> aFastaReader
+                = new FastaReader<DNASequence, NucleotideCompound>(file,
+                        new PlainFastaHeaderParser<DNASequence, NucleotideCompound>(),
+                        new DNASequenceCreator(AmbiguityDNACompoundSet.getDNACompoundSet()));
+
+                LinkedHashMap<String, DNASequence> b = aFastaReader.process();
                 for (Entry<String, DNASequence> entry : b.entrySet()) {
                     Sequence bioJavaSequence = entry.getValue();
                     processSequence(getOrganism(bioJavaSequence), bioJavaSequence);
@@ -221,8 +230,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
                         FastaReaderHelper.readFastaProteinSequence(file);
                 for (Entry<String, ProteinSequence> entry : b.entrySet()) {
                     Sequence bioJavaSequence = entry.getValue();
-                    LOG.debug("XXX " + entry.getValue().getOriginalHeader()
-                            + "=" + entry.getValue().getSequenceAsString() );
                     processSequence(getOrganism((ProteinSequence) bioJavaSequence),
                              bioJavaSequence);
                 }
@@ -297,7 +304,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
 
         String attributeValue = getIdentifier(bioJavaSequence);
-
         try {
             imo.setFieldValue(classAttribute, attributeValue);
         } catch (Exception e) {

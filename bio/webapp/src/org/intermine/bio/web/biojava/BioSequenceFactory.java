@@ -14,6 +14,7 @@ import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.biojava.nbio.core.sequence.RNASequence;
+import org.biojava.nbio.core.sequence.compound.AmbiguityDNACompoundSet;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.SequenceFeature;
@@ -126,7 +127,10 @@ public abstract class BioSequenceFactory
                 return null;
             } else {
                 String residues = feature.getSequence().getResidues().toString().toLowerCase();
-                return new BioSequence(new DNASequence(residues), feature);
+                // uses the Ambiguity compound set to deal with homo sapiens,
+                // where 'm', 'r' and 'y' compound are used (ncbi).
+                return new BioSequence(new DNASequence(
+                        residues, AmbiguityDNACompoundSet.getDNACompoundSet()), feature);
             }
         } else if (type.equals(SequenceType.RNA)) {
             // we want an RNA sequence, which appears to be a nucleotide one -> lowercase
