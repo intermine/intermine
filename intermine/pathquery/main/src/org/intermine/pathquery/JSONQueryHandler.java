@@ -172,7 +172,7 @@ public final class JSONQueryHandler
                         } else if (idArray != null) {
                             List<Integer> ids = new ArrayList<Integer>();
                             for (int j = 0; j < idArray.length(); j++) {
-                                String id = idArray.getString(j);
+                                String id = idArray.get(j).toString();
                                 ids.add(Integer.parseInt(id));
                             }
                             constraint = new PathConstraintIds(path, constraintOp, ids);
