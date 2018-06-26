@@ -216,7 +216,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             LOG.debug("FLT loading file " + file.getName());
             if ("dna".equalsIgnoreCase(sequenceType)) {
                 FastaReader<DNASequence, NucleotideCompound> aFastaReader
-                = new FastaReader<DNASequence, NucleotideCompound>(file,
+                    = new FastaReader<DNASequence, NucleotideCompound>(file,
                         new PlainFastaHeaderParser<DNASequence, NucleotideCompound>(),
                         new DNASequenceCreator(AmbiguityDNACompoundSet.getDNACompoundSet()));
 
