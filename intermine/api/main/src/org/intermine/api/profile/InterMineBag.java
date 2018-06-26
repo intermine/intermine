@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -249,7 +250,9 @@ public class InterMineBag extends StorableBag implements Cloneable
         q.addToSelect(osb);
         q.setDistinct(false);
         SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
-        return ((List) res);
+        Set resultSet = new HashSet(res);
+        // See #1686
+        return new ArrayList(resultSet);
     }
 
     /**

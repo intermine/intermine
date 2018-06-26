@@ -35,5 +35,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/org.apache.oltu.oauth2.client-1.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.apache.oltu.oauth2.common-1.0.0.jar"/>
 	<classpathentry kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="lib" path="lib/org.everit.json.schema-1.5.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -449,6 +449,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 String type = getAttrValue(attrs, "type");
                 String id = getAttrValue(attrs, "id");
                 disease.setIdentifier(type + ":" + id);
+            } else if ("scope".equals(qName) && "reference".equals(previousQName)) {
+                attName = "scope";
             } else if ("dbreference".equals(qName) || "comment".equals(qName)
                     || "isoform".equals(qName) || "gene".equals(qName)) {
                 // set temporary holder variables to null
@@ -576,6 +578,12 @@ public class UniprotConverter extends BioDirectoryConverter
             } else if ("comment".equals(qName)) {
                 // on closing a comment, make sure the disease holder is empty
                 disease = null;
+            } else if ("scope".equals(qName)) {
+                String scope = attValue.toString();
+                // the publication we just processed was RETRACTED, so we don't want to load
+                if (scope.contains("RETRACTED")) {
+                    entry.deleteLastPub();
+                }
             } else if ("name".equals(qName) && "isoform".equals(previousQName)) {
                 if (!attValue.toString().matches("[0-9]+")) {
                     entry.addIsoformSynonym(attValue.toString());

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.LogManager;
 import org.intermine.model.StringConstructor;
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
@@ -34,7 +35,7 @@ import org.postgresql.copy.CopyManager;
  */
 public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImpl
 {
-    private static final Logger LOG = Logger.getLogger(BatchWriterPostgresCopyImpl.class);
+    private static final Logger LOG = LogManager.getLogger(BatchWriterPostgresCopyImpl.class);
     protected static final BigInteger TEN = new BigInteger("10");
     protected static final BigInteger HUNDRED = new BigInteger("100");
     protected static final BigInteger THOUSAND = new BigInteger("1000");

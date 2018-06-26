@@ -2,6 +2,13 @@
 <item id="8_63" class="Publication">
 <attribute name="pubMedId" value="9312173"/>
 </item>
+<item id="4_2" class="Disease">
+<attribute name="identifier" value="OMIM:601665"/>
+<attribute name="name" value="OBESITY"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/><reference ref_id="6_6"/><reference ref_id="6_7"/><reference ref_id="6_8"/></collection>
+<collection name="publications"><reference ref_id="8_92"/><reference ref_id="8_93"/><reference ref_id="8_94"/><reference ref_id="8_95"/><reference ref_id="8_96"/><reference ref_id="8_97"/><reference ref_id="8_98"/><reference ref_id="8_99"/><reference ref_id="8_100"/><reference ref_id="8_101"/><reference ref_id="8_102"/><reference ref_id="8_103"/><reference ref_id="8_104"/><reference ref_id="8_105"/><reference ref_id="8_106"/><reference ref_id="8_107"/><reference ref_id="8_108"/><reference ref_id="8_109"/><reference ref_id="8_110"/><reference ref_id="8_111"/><reference ref_id="8_112"/><reference ref_id="8_113"/><reference ref_id="8_114"/><reference ref_id="8_115"/><reference ref_id="8_116"/><reference ref_id="8_117"/><reference ref_id="8_118"/><reference ref_id="8_119"/><reference ref_id="8_120"/><reference ref_id="8_121"/><reference ref_id="8_122"/><reference ref_id="8_123"/><reference ref_id="8_124"/><reference ref_id="8_125"/><reference ref_id="8_126"/><reference ref_id="8_127"/><reference ref_id="8_128"/><reference ref_id="8_129"/><reference ref_id="8_130"/><reference ref_id="8_131"/><reference ref_id="8_132"/><reference ref_id="8_133"/><reference ref_id="8_134"/><reference ref_id="8_135"/><reference ref_id="8_136"/><reference ref_id="8_137"/><reference ref_id="8_138"/><reference ref_id="8_139"/></collection>
+</item>
 <item id="8_94" class="Publication">
 <attribute name="pubMedId" value="15863669"/>
 </item>
@@ -105,6 +112,13 @@
 <item id="8_29" class="Publication">
 <attribute name="pubMedId" value="9758619"/>
 </item>
+<item id="4_1" class="Disease">
+<attribute name="identifier" value="OMIM:125853"/>
+<attribute name="name" value="DIABETES MELLITUS, NONINSULIN-DEPENDENT"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/></collection>
+<collection name="publications"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/><reference ref_id="8_5"/><reference ref_id="8_6"/><reference ref_id="8_7"/><reference ref_id="8_8"/><reference ref_id="8_9"/><reference ref_id="8_10"/><reference ref_id="8_11"/><reference ref_id="8_12"/><reference ref_id="8_13"/><reference ref_id="8_14"/><reference ref_id="8_15"/><reference ref_id="8_16"/><reference ref_id="8_17"/><reference ref_id="8_18"/><reference ref_id="8_19"/><reference ref_id="8_20"/><reference ref_id="8_21"/><reference ref_id="8_22"/><reference ref_id="8_23"/><reference ref_id="8_24"/><reference ref_id="8_25"/><reference ref_id="8_26"/><reference ref_id="8_27"/><reference ref_id="8_28"/><reference ref_id="8_29"/><reference ref_id="8_30"/><reference ref_id="8_31"/><reference ref_id="8_32"/><reference ref_id="8_33"/><reference ref_id="8_34"/><reference ref_id="8_35"/><reference ref_id="8_36"/><reference ref_id="8_37"/><reference ref_id="8_38"/><reference ref_id="8_39"/><reference ref_id="8_40"/><reference ref_id="8_41"/><reference ref_id="8_42"/><reference ref_id="8_43"/><reference ref_id="8_44"/><reference ref_id="8_45"/><reference ref_id="8_46"/><reference ref_id="8_47"/><reference ref_id="8_48"/><reference ref_id="8_49"/><reference ref_id="8_50"/><reference ref_id="8_51"/><reference ref_id="8_52"/><reference ref_id="8_53"/><reference ref_id="8_54"/><reference ref_id="8_55"/><reference ref_id="8_56"/><reference ref_id="8_57"/><reference ref_id="8_58"/><reference ref_id="8_59"/><reference ref_id="8_60"/><reference ref_id="8_61"/><reference ref_id="8_62"/><reference ref_id="8_63"/><reference ref_id="8_64"/><reference ref_id="8_65"/><reference ref_id="8_66"/><reference ref_id="8_67"/><reference ref_id="8_68"/><reference ref_id="8_69"/><reference ref_id="8_70"/><reference ref_id="8_71"/><reference ref_id="8_72"/><reference ref_id="8_73"/><reference ref_id="8_74"/><reference ref_id="8_75"/><reference ref_id="8_76"/><reference ref_id="8_77"/><reference ref_id="8_78"/><reference ref_id="8_79"/><reference ref_id="8_80"/><reference ref_id="8_81"/><reference ref_id="8_82"/><reference ref_id="8_83"/><reference ref_id="8_84"/><reference ref_id="8_85"/><reference ref_id="8_86"/><reference ref_id="8_87"/></collection>
+</item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="OMIM diseases"/>
 <reference name="dataSource" ref_id="1_1"/>
@@ -182,12 +196,6 @@
 </item>
 <item id="8_11" class="Publication">
 <attribute name="pubMedId" value="17463246"/>
-</item>
-<item id="4_2" class="Disease">
-<attribute name="identifier" value="OMIM:601665"/>
-<attribute name="name" value="OBESITY"/>
-<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/><reference ref_id="6_6"/><reference ref_id="6_7"/><reference ref_id="6_8"/></collection>
-<collection name="publications"><reference ref_id="8_92"/><reference ref_id="8_93"/><reference ref_id="8_94"/><reference ref_id="8_95"/><reference ref_id="8_96"/><reference ref_id="8_97"/><reference ref_id="8_98"/><reference ref_id="8_99"/><reference ref_id="8_100"/><reference ref_id="8_101"/><reference ref_id="8_102"/><reference ref_id="8_103"/><reference ref_id="8_104"/><reference ref_id="8_105"/><reference ref_id="8_106"/><reference ref_id="8_107"/><reference ref_id="8_108"/><reference ref_id="8_109"/><reference ref_id="8_110"/><reference ref_id="8_111"/><reference ref_id="8_112"/><reference ref_id="8_113"/><reference ref_id="8_114"/><reference ref_id="8_115"/><reference ref_id="8_116"/><reference ref_id="8_117"/><reference ref_id="8_118"/><reference ref_id="8_119"/><reference ref_id="8_120"/><reference ref_id="8_121"/><reference ref_id="8_122"/><reference ref_id="8_123"/><reference ref_id="8_124"/><reference ref_id="8_125"/><reference ref_id="8_126"/><reference ref_id="8_127"/><reference ref_id="8_128"/><reference ref_id="8_129"/><reference ref_id="8_130"/><reference ref_id="8_131"/><reference ref_id="8_132"/><reference ref_id="8_133"/><reference ref_id="8_134"/><reference ref_id="8_135"/><reference ref_id="8_136"/><reference ref_id="8_137"/><reference ref_id="8_138"/><reference ref_id="8_139"/></collection>
 </item>
 <item id="8_36" class="Publication">
 <attribute name="pubMedId" value="11158011"/>
@@ -274,12 +282,6 @@
 </item>
 <item id="8_20" class="Publication">
 <attribute name="pubMedId" value="17273962"/>
-</item>
-<item id="4_4" class="Disease">
-<attribute name="identifier" value="OMIM:609338"/>
-<attribute name="name" value="CAROTID INTIMAL MEDIAL THICKNESS 1"/>
-<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/></collection>
-<collection name="publications"><reference ref_id="8_140"/><reference ref_id="8_141"/><reference ref_id="8_142"/><reference ref_id="8_143"/></collection>
 </item>
 <item id="8_74" class="Publication">
 <attribute name="pubMedId" value="12727978"/>
@@ -383,17 +385,18 @@
 <item id="8_95" class="Publication">
 <attribute name="pubMedId" value="1978328"/>
 </item>
+<item id="4_3" class="Disease">
+<attribute name="identifier" value="OMIM:604367"/>
+<attribute name="name" value="LIPODYSTROPHY, FAMILIAL PARTIAL, TYPE 3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/></collection>
+<collection name="publications"><reference ref_id="8_88"/><reference ref_id="8_89"/><reference ref_id="8_90"/><reference ref_id="8_91"/></collection>
+</item>
 <item id="8_134" class="Publication">
 <attribute name="pubMedId" value="12754702"/>
 </item>
 <item id="8_80" class="Publication">
 <attribute name="pubMedId" value="21118154"/>
-</item>
-<item id="4_3" class="Disease">
-<attribute name="identifier" value="OMIM:604367"/>
-<attribute name="name" value="LIPODYSTROPHY, FAMILIAL PARTIAL, TYPE 3"/>
-<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/></collection>
-<collection name="publications"><reference ref_id="8_88"/><reference ref_id="8_89"/><reference ref_id="8_90"/><reference ref_id="8_91"/></collection>
 </item>
 <item id="8_128" class="Publication">
 <attribute name="pubMedId" value="3340128"/>
@@ -445,12 +448,6 @@
 </item>
 <item id="8_119" class="Publication">
 <attribute name="pubMedId" value="19151714"/>
-</item>
-<item id="4_1" class="Disease">
-<attribute name="identifier" value="OMIM:125853"/>
-<attribute name="name" value="DIABETES MELLITUS, NONINSULIN-DEPENDENT"/>
-<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/></collection>
-<collection name="publications"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/><reference ref_id="8_5"/><reference ref_id="8_6"/><reference ref_id="8_7"/><reference ref_id="8_8"/><reference ref_id="8_9"/><reference ref_id="8_10"/><reference ref_id="8_11"/><reference ref_id="8_12"/><reference ref_id="8_13"/><reference ref_id="8_14"/><reference ref_id="8_15"/><reference ref_id="8_16"/><reference ref_id="8_17"/><reference ref_id="8_18"/><reference ref_id="8_19"/><reference ref_id="8_20"/><reference ref_id="8_21"/><reference ref_id="8_22"/><reference ref_id="8_23"/><reference ref_id="8_24"/><reference ref_id="8_25"/><reference ref_id="8_26"/><reference ref_id="8_27"/><reference ref_id="8_28"/><reference ref_id="8_29"/><reference ref_id="8_30"/><reference ref_id="8_31"/><reference ref_id="8_32"/><reference ref_id="8_33"/><reference ref_id="8_34"/><reference ref_id="8_35"/><reference ref_id="8_36"/><reference ref_id="8_37"/><reference ref_id="8_38"/><reference ref_id="8_39"/><reference ref_id="8_40"/><reference ref_id="8_41"/><reference ref_id="8_42"/><reference ref_id="8_43"/><reference ref_id="8_44"/><reference ref_id="8_45"/><reference ref_id="8_46"/><reference ref_id="8_47"/><reference ref_id="8_48"/><reference ref_id="8_49"/><reference ref_id="8_50"/><reference ref_id="8_51"/><reference ref_id="8_52"/><reference ref_id="8_53"/><reference ref_id="8_54"/><reference ref_id="8_55"/><reference ref_id="8_56"/><reference ref_id="8_57"/><reference ref_id="8_58"/><reference ref_id="8_59"/><reference ref_id="8_60"/><reference ref_id="8_61"/><reference ref_id="8_62"/><reference ref_id="8_63"/><reference ref_id="8_64"/><reference ref_id="8_65"/><reference ref_id="8_66"/><reference ref_id="8_67"/><reference ref_id="8_68"/><reference ref_id="8_69"/><reference ref_id="8_70"/><reference ref_id="8_71"/><reference ref_id="8_72"/><reference ref_id="8_73"/><reference ref_id="8_74"/><reference ref_id="8_75"/><reference ref_id="8_76"/><reference ref_id="8_77"/><reference ref_id="8_78"/><reference ref_id="8_79"/><reference ref_id="8_80"/><reference ref_id="8_81"/><reference ref_id="8_82"/><reference ref_id="8_83"/><reference ref_id="8_84"/><reference ref_id="8_85"/><reference ref_id="8_86"/><reference ref_id="8_87"/></collection>
 </item>
 <item id="8_56" class="Publication">
 <attribute name="pubMedId" value="9541507"/>
@@ -520,6 +517,13 @@
 </item>
 <item id="8_55" class="Publication">
 <attribute name="pubMedId" value="9498630"/>
+</item>
+<item id="4_4" class="Disease">
+<attribute name="identifier" value="OMIM:609338"/>
+<attribute name="name" value="CAROTID INTIMAL MEDIAL THICKNESS 1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/></collection>
+<collection name="publications"><reference ref_id="8_140"/><reference ref_id="8_141"/><reference ref_id="8_142"/><reference ref_id="8_143"/></collection>
 </item>
 <item id="7_1" class="SOTerm">
 <attribute name="name" value="gene"/>

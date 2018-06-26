@@ -78,11 +78,11 @@ public class IntronUtil
         this.os = osw.getObjectStore();
         this.model = os.getModel();
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
-        dataSource.setName("FlyMine");
+        dataSource.setName("InterMine");
         try {
             dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
         } catch (ObjectStoreException e) {
-            throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
+            throw new RuntimeException("unable to fetch IntermMine DataSource object", e);
         }
     }
 
@@ -108,10 +108,10 @@ public class IntronUtil
         throws ObjectStoreException {
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        dataSet.setName("FlyMine introns");
-        dataSet.setDescription("Introns calculated by FlyMine");
+        dataSet.setName("Calculated introns");
+        dataSet.setDescription("Introns calculated by InterMine post-processing.");
         dataSet.setVersion("" + new Date()); // current time and date
-        dataSet.setUrl("http://www.flymine.org");
+        dataSet.setUrl("http://www.intermine.org");
         dataSet.setDataSource(dataSource);
 
         // Documented as an example of how to use the query API
