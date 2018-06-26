@@ -266,7 +266,6 @@
   <definition name="headMenu.tile" path="/headMenu.jsp" controllerUrl="/initSubMenu.do" />
   <definition name="templates.tile" path="/templates.jsp" controllerUrl="/initTemplates.do" />
   <definition name="passwordReset.tile" path="/passwordReset.jsp" controllerUrl="/initPasswordReset.do"/>
-  <definition name="hints.tile" path="/hints.jsp" controllerUrl="/initHints.do" />
 
   <definition name="keywordSearch.tile" path="/keywordSearch.jsp"/>
   <definition name="keywordsearchresults.tile" path="/keywordSearchResults.jsp"

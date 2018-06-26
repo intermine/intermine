@@ -92,7 +92,12 @@ public class TemplateUploadService extends WebService
 
         Map<String, TemplateQuery> templates;
         try {
-            templates = TemplateQueryBinding.unmarshalTemplates(r, version);
+            if (templatesXML.startsWith("<")) {
+                templates = TemplateQueryBinding.unmarshalTemplates(r, version);
+            } else {
+                templates = TemplateQueryBinding.unmarshalJSONTemplates(r, im.getModel());
+            }
+
         } catch (Exception e) {
             throw new BadRequestException("Could not parse templates: " + e.getMessage(), e);
         }
