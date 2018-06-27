@@ -157,7 +157,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
     /**
      * @throws IOException
      */
-    private void executeLoaderTask(String className, String utrFastaFile) throws IOException {
+    private void executeLoaderTask(String className, String utrFastaFile) throws Exception {
         FastaLoaderTask flt = new FlyBaseUTRFastaLoaderTask();
         flt.setFastaTaxonId("36329");
         flt.setIgnoreDuplicates(true);
@@ -187,6 +187,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         files[0] = tmpFile;
         flt.setFileArray(files);
         flt.execute();
+        flt.close();
     }
 
     /**
