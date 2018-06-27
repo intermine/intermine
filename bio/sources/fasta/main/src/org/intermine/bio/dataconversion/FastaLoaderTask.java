@@ -223,7 +223,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     public void processFile(File file) {
         try {
             System.err .println("reading " + sequenceType + " sequence from: " + file);
-            LOG.debug("FLT loading file " + file.getName());
+            LOG.debug("FastaLoaderTask loading file " + file.getName());
             if ("dna".equalsIgnoreCase(sequenceType)) {
                 FastaReader<DNASequence, NucleotideCompound> aFastaReader
                     = new FastaReader<DNASequence, NucleotideCompound>(file,
@@ -403,7 +403,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     protected String getIdentifier(Sequence bioJavaSequence) {
         String name = bioJavaSequence.getAccession().getID() + idSuffix;
-        LOG.debug("FFheader " + name);
         // getID does not seem to work properly
         // quick fix to get only the primaryidentifier
         if (name.contains(" ")) {
@@ -468,6 +467,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param bioJavaSequence the biojava sequence to be parsed
      * @throws ObjectStoreException if there is a problem
      * @return the new Organism
+     *
+     * there is a specialised method getOrganism in the subclass UniProtFastaLoaderTask
+     * which is actually used.
      */
     protected Organism getOrganism(ProteinSequence bioJavaSequence)
         throws ObjectStoreException {
