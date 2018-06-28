@@ -423,13 +423,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param bioJavaSequence the Sequenece
      * @return an identifier
      */
-<<<<<<< HEAD:bio/sources/fasta/src/main/java/org/intermine/bio/dataconversion/FastaLoaderTask.java
-    protected String getIdentifier(ProteinSequence bioJavaSequence) {
-        String header = bioJavaSequence.getOriginalHeader() + idSuffix;
-        String[] tokens = header.trim().split("\\s+");
-        String name = tokens[0];
-
-=======
     protected String getIdentifier(Sequence bioJavaSequence) {
         String name = bioJavaSequence.getAccession().getID() + idSuffix;
         // getID does not seem to work properly
@@ -438,7 +431,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             String[] bits = name.split(" ");
             name = bits[0];
         }
->>>>>>> dev:bio/sources/fasta/main/src/org/intermine/bio/dataconversion/FastaLoaderTask.java
         // description_line=sp|Q9V8R9-2|41_DROME
         if (name.contains("|")) {
             String[] bits = name.split("\\|");
