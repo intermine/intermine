@@ -76,7 +76,6 @@ public class JSONResultsIteratorTest extends TestCase {
     private Company bms;
     private Address address2;
 
-
     @Override
     protected void setUp() {
         os = new ObjectStoreDummyImpl();
@@ -190,7 +189,6 @@ public class JSONResultsIteratorTest extends TestCase {
         address2 = new Address();
         address2.setId(new Integer(24));
         address2.setAddress("19 West Oxford St, Reading");
-
     }
 
     private final Model model = Model.getInstanceByName("testmodel");
@@ -212,6 +210,33 @@ public class JSONResultsIteratorTest extends TestCase {
 
         PathQuery pq = new PathQuery(model);
         pq.addViews("Manager.name", "Manager.age");
+
+        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
+
+        List<JSONObject> got = new ArrayList<JSONObject>();
+        for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
+            got.add(gotRow);
+        }
+
+        assertEquals(1, got.size());
+
+        assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
+
+    }
+
+    public void testEmptyColumn() throws Exception {
+        os.setResultsSize(1);
+
+        String jsonString = "{ 'class': 'Manager', 'objectId': 3, 'end': null, 'name': 'David Brent' }";
+        JSONObject expected = new JSONObject(jsonString);
+
+        ResultsRow<Object> row = new ResultsRow<Object>();
+        row.add(david);
+
+        os.addRow(row);
+
+        PathQuery pq = new PathQuery(model);
+        pq.addViews("Employee.name", "Employee.end");
 
         JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
 

@@ -354,7 +354,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                         .iterator().next().getKey();
                 try {
                     codeBody.append(INDENT + INDENT + "query.addConstraint("
-                            + pathContraintUtil(pc, javaImports) + ");"
+                            + pathConstraintUtil(pc, javaImports) + ");"
                             + endl);
                 } catch (UnhandledFeatureException e) {
                     constraintProblems.add(e.getMessage());
@@ -367,7 +367,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                     codeBody.append(INDENT2 + "query.addConstraint(");
                     String conArg = null;
                     try {
-                        conArg = pathContraintUtil(pc, javaImports);
+                        conArg = pathConstraintUtil(pc, javaImports);
                     } catch (UnhandledFeatureException e) {
                         constraintProblems.add(e.getMessage());
                     }
@@ -636,7 +636,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
      * @return a string like "Constraints.lessThan(\"Gene.length\", \"1000\")"
      * @throws UnhandledFeatureException
      */
-    private static String pathContraintUtil(PathConstraint pc, Set<String> javaImports)
+    private static String pathConstraintUtil(PathConstraint pc, Set<String> javaImports)
         throws UnhandledFeatureException {
         // Generate a string like "Constraints.lessThan(\"Gene.length\", \"1000\")"
         // Ref to Constraints

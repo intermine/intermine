@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!-- footer.jsp -->
 <br/>
@@ -34,9 +35,16 @@
       <img src="images/icons/intermine-footer-logo.png" alt="InterMine logo" />
     </a>
   </div>
-    <div class="android">
-        <p>Have you tried our InterMine Android app?</p>
-        <a href='https://play.google.com/store/apps/details?id=org.intermine.app&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1' target="_blank"><img class="googleplay" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' /></a>
+    <div class="mobile-app">
+        <p>Have you tried our InterMine mobile apps?</p>
+        <div>
+        <a href='https://play.google.com/store/apps/details?id=org.intermine.app&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1' target="_blank">
+          <img class="googleplay" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' />
+        </a>
+        <a href="https://itunes.apple.com/us/app/intermine-gene-search/id1271710231?mt=8" target="_blank">
+          <img src="images/apple-app-store.svg" class="ios">
+        </a>
+      </div>
     </div>
     <div class="cite-footer footer">
       <strong>Cite us:</strong>
@@ -45,8 +53,12 @@
 </div>
 <div class="funding-footer footer">
   <!-- funding -->
-  <div class="funders"><fmt:message key="funding" /></div>
-  <div class="credits"><fmt:message key="credits" /></div>
+  <fmt:message key="funding" />
+  <c:set var="credits"><fmt:message key="credits" /></c:set>
+
+  <c:if test="${!fn:startsWith(credits,'???')}">
+       ${credits}
+    </c:if>
 </div>
 
 </div>

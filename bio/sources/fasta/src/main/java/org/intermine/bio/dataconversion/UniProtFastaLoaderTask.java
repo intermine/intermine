@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.biojava3.core.sequence.ProteinSequence;
+import org.apache.log4j.Logger;
+import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -24,6 +24,7 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class UniProtFastaLoaderTask extends FastaLoaderTask
 {
+    protected static final Logger LOG = Logger.getLogger(FastaLoaderTask.class);
     private Map<Integer, Organism> organisms = new HashMap<Integer, Organism>();
 
     /**
@@ -31,8 +32,6 @@ public class UniProtFastaLoaderTask extends FastaLoaderTask
      */
     @Override
     protected Organism getOrganism(ProteinSequence bioJavaSequence) throws ObjectStoreException {
-        //description_line=sp|Q9V8R9-2|41_DROME Isoform 2 of Protein 4.1 homolog OS=Drosophila
-        // melanogaster GN=cora,
         String header = bioJavaSequence.getOriginalHeader();
         final String regexp = "OS\\=\\w+\\s\\w+";
         Pattern p = Pattern.compile(regexp);
