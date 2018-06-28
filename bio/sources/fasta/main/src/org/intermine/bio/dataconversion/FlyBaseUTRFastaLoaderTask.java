@@ -16,8 +16,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Sequence;
+import org.apache.log4j.Logger;
+import org.biojava.nbio.core.sequence.template.Sequence;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -38,7 +38,7 @@ import org.intermine.util.DynamicUtil;
  */
 public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 {
-
+    private static final Logger LOG = Logger.getLogger(FlyBaseUTRFastaLoaderTask.class);
     Map<String, Chromosome> chrMap = new HashMap<String, Chromosome>();
 
     /**
@@ -46,12 +46,12 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      */
     @Override
     protected void extraProcessing(Sequence bioJavaSequence,
-            @SuppressWarnings("unused") org.intermine.model.bio.Sequence flymineSequence,
+            org.intermine.model.bio.Sequence flymineSequence,
             BioEntity bioEntity, Organism organism,
-            @SuppressWarnings("unused") DataSet dataSet)
+            DataSet dataSet)
         throws ObjectStoreException {
-        Annotation annotation = bioJavaSequence.getAnnotation();
-        String mrnaIdentifier = bioJavaSequence.getName();
+        String header = bioJavaSequence.getAccession().getID();
+        String mrnaIdentifier = getIdentifier(header);
 
         ObjectStore os = getIntegrationWriter().getObjectStore();
         Model model = os.getModel();
@@ -68,7 +68,6 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                 Set<? extends InterMineObject> mrnas = new HashSet(Collections.singleton(mrna));
                 bioEntity.setFieldValue("transcripts", mrnas);
             }
-            String header = (String) annotation.getProperty("description");
             Location loc = getLocationFromHeader(header, (SequenceFeature) bioEntity,
                     organism);
             getDirectDataLoader().store(loc);
@@ -79,13 +78,29 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
     }
 
     /**
+     * @param header the header
+     * @return the identifier
+     *
+     */
+    protected String getIdentifier(String header) {
+        String[] tokens = header.trim().split("\\s+");
+        String id = tokens[0];
+        return id;
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     @Override
     protected String getIdentifier(Sequence bioJavaSequence) {
+
+        String header = bioJavaSequence.getAccession().getID();
+        String[] tokens = header.trim().split("\\s+");
+        String id = tokens[0];
         if (getClassName().endsWith(".FivePrimeUTR")) {
-            return bioJavaSequence.getName() + "-5-prime-utr";
+            return id + "-5-prime-utr";
         }
-        return bioJavaSequence.getName() + "-3-prime-utr";
+        return id + "-3-prime-utr";
     }
 }
