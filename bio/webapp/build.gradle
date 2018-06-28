@@ -32,9 +32,11 @@ dependencies {
     providedCompile group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), classifier: "classes"
     providedCompile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: System.getProperty("imVersion")
     providedCompile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'
+    compile group: "org.biojava", name: "biojava-core", version: "4.2.0"
+    compile group: "org.biojava", name: "biojava-genome", version: "4.2.0"
+    compile group: "org.biojava", name: "biojava-ontology", version: "4.2.0"
     compile fileTree(dir: 'libs', include: '*.jar')
     imWebApp group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), transitive: false
-    runtime group: 'org.biojava', name: 'core', version: '1.9.1'
 }
 
 task unwarIMWebApp(type: Copy) {

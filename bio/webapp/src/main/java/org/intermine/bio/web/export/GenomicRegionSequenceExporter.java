@@ -20,10 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.biojava.bio.seq.DNATools;
-import org.biojava.bio.seq.Sequence;
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
+import org.apache.log4j.Logger;
+import org.biojava.nbio.core.sequence.AccessionID;
+import org.biojava.nbio.core.sequence.DNASequence;
+import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
+//import org.biojava.bio.seq.DNATools;
+//import org.biojava.bio.seq.Sequence;
+//import org.biojava.bio.seq.io.FastaFormat;
+//import org.biojava.bio.seq.io.SeqIOTools;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.metadata.StringUtil;
 import org.intermine.model.bio.Chromosome;
@@ -38,6 +42,7 @@ import org.intermine.util.DynamicUtil;
  */
 public class GenomicRegionSequenceExporter
 {
+    private static final Logger LOG = Logger.getLogger(SequenceExporter.class);
     private ObjectStore os;
     private OutputStream out;
     // Map to hold DNA sequence of a whole chromosome in memory
@@ -109,19 +114,15 @@ public class GenomicRegionSequenceExporter
             headerBits.add(end - start + 1 + "bp");
             headerBits.add(gr.getOrganism());
             String header = StringUtil.join(headerBits, " ");
-
             String seqName = "genomic_region_" + gr.getChr() + "_"
                     + start + "_" + end + "_"
                     + gr.getOrganism().replace("\\. ", "_");
 
-            Sequence chrSeg = DNATools.createDNASequence(
-                chrResidueString.substring(start - 1, end),
-                seqName);
-            chrSeg.getAnnotation().setProperty(
-                    FastaFormat.PROPERTY_DESCRIPTIONLINE, header);
+            DNASequence chrSeg = new DNASequence(
+                    chrResidueString.substring(start - 1, end).toLowerCase());
+            chrSeg.setAccession(new AccessionID(header.toString()));
+            FastaWriterHelper.writeSequence(out, chrSeg);
 
-            // write it out
-            SeqIOTools.writeFasta(out, chrSeg);
         }
         out.flush();
     }

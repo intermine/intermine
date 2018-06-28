@@ -21,15 +21,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.utils.ChangeVetoException;
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
+import org.biojava.nbio.core.sequence.AccessionID;
+import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
+import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
@@ -54,8 +52,8 @@ import org.intermine.web.struts.InterMineAction;
  */
 public class SequenceExportAction extends InterMineAction
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(SequenceExportAction.class);
+    // private static final Logger LOG = Logger.getLogger(SequenceExportAction.class);
+    private static final String PROPERTY_DESCRIPTIONLINE = "description_line";
 
     /**
      * This action is invoked directly to export SequenceFeatures.
@@ -79,7 +77,7 @@ public class SequenceExportAction extends InterMineAction
         //SequenceHttpExporter.setSequenceExportHeader(response);
 
         Properties webProps = (Properties) session.getServletContext().
-            getAttribute(Constants.WEB_PROPERTIES);
+                getAttribute(Constants.WEB_PROPERTIES);
         Integer objectId = new Integer(request.getParameter("object"));
         InterMineObject obj = getObject(os, webProps, objectId);
 
@@ -89,7 +87,9 @@ public class SequenceExportAction extends InterMineAction
             response.setContentType("text/plain");
             if (bioSequence != null) {
                 OutputStream out = response.getOutputStream();
-                SeqIOTools.writeFasta(out, bioSequence);
+                bioSequence.setAccession(new AccessionID((String)
+                        obj.getFieldValue("primaryIdentifier")));
+                FastaWriterHelper.writeSequence(out, bioSequence);
             } else {
                 PrintWriter out = response.getWriter();
                 out.write("Sequence information not availble for this sequence feature...");
@@ -101,14 +101,15 @@ public class SequenceExportAction extends InterMineAction
     }
 
     private BioSequence createBioSequence(InterMineObject obj)
-        throws IllegalSymbolException, IllegalAccessException, ChangeVetoException {
+        throws IllegalAccessException, CompoundNotFoundException {
         BioSequence bioSequence;
         BioEntity bioEntity = (BioEntity) obj;
         bioSequence = BioSequenceFactory.make(bioEntity, SequenceType.DNA);
         if (bioSequence == null) {
             return null;
         }
-        Annotation annotation = bioSequence.getAnnotation();
+
+        SmallAnnotation annotation = bioSequence.getAnnotation();
         // try hard to find an identifier
         String identifier = bioEntity.getPrimaryIdentifier();
         if (identifier == null) {
@@ -127,7 +128,8 @@ public class SequenceExportAction extends InterMineAction
                 }
             }
         }
-        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, identifier);
+        annotation.setProperty(PROPERTY_DESCRIPTIONLINE, identifier);
+
         return bioSequence;
     }
 
@@ -139,7 +141,7 @@ public class SequenceExportAction extends InterMineAction
             String [] classArray = classNames.split(",");
             for (int i = 0; i < classArray.length; i++) {
                 classList.add(TypeUtil.instantiate(os.getModel().getPackageName() + "."
-                                                   + classArray[i]));
+                        + classArray[i]));
             }
         } else {
             classList.addAll(Arrays.asList(new Class<?>[] {
@@ -153,7 +155,7 @@ public class SequenceExportAction extends InterMineAction
             Sequence sequence = (Sequence) obj;
             for (Class<?> clazz : classList) {
                 obj = ResidueFieldExporter.getIMObjectForSequence(os, clazz,
-                                                                  sequence);
+                        sequence);
                 if (obj != null) {
                     break;
                 }
