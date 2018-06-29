@@ -131,7 +131,7 @@ public class AutoCompleter
      * @return string array with search results and an error flag at position 0
      */
     public String[] getFastList(String query, String field, int n) {
-        return search.fastSearch(query, field, n);
+        return SolrIndex.fastSearch(query, field, n);
     }
 
     /**
@@ -185,6 +185,7 @@ public class AutoCompleter
                 }
 
                 SolrIndex indexer = new SolrIndex();
+
                 indexer.addClass(objectClass);
                 indexer.rebuildClassIndexes();
             }

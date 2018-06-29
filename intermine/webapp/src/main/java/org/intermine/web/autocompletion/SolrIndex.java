@@ -11,12 +11,19 @@ package org.intermine.web.autocompletion;
  */
 
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SuggesterResponse;
+import org.apache.solr.client.solrj.response.Suggestion;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
 
 import java.io.IOException;
 import java.util.*;
@@ -139,4 +146,73 @@ public class SolrIndex {
 
     }
 
+    /**
+     * Perform the lucene search.
+     * @param queryString
+     *            the string for what you search in the indexes
+     * @param toSearch
+     *            the field in which you search
+     * @return Hits list of documents (search results)
+     * @throws IOException
+     *             IOException
+     */
+    public static String[] fastSearch(String queryString, String toSearch, int n) {
+
+//        if (!"".equals(queryString) && !queryString.trim().startsWith("*")) {
+//
+//            Query query;
+//
+//            if (queryString.endsWith(" ")) {
+//                queryString = queryString.substring(0, queryString.length() - 1);
+//            }
+//
+//            String[] tmp;
+//            if (queryString.contains(" ")) {
+//                tmp = queryString.replaceAll(" +", " ").trim().split(" ");
+//                queryString = new String();
+//
+//                for (int i = 0; i < tmp.length; i++) {
+//                    queryString += tmp[i];
+//                    if (i < tmp.length - 1) {
+//                        queryString += "* AND ";
+//                    }
+//                }
+//            }
+//            query = parser.parse(queryString + "*");
+//
+//            return indexSearch.search(query, 500); // FIXME: hardcoded maximum
+//            // number of results
+//        }
+
+        SolrClient solrClient = SolrClientHandler.getClientInstance();
+        QueryResponse resp = null;
+        try {
+
+            SolrQuery newQuery = new SolrQuery();
+            newQuery.setQuery(queryString);
+            newQuery.setRequestHandler("suggest");
+            newQuery.setRows(n); // FIXME: hardcoded maximum
+
+            resp = solrClient.query(newQuery);
+
+            SuggesterResponse suggesterResponse = resp.getSuggesterResponse();
+            Map<String, List<Suggestion>> array = suggesterResponse.getSuggestions();
+
+            System.out.println(array.toString());
+
+            SolrDocumentList results = resp.getResults();
+
+            String[] stringResults = new String[results.size()];
+
+            return stringResults;
+
+        } catch (SolrServerException e) {
+            e.printStackTrace();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
