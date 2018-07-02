@@ -24,7 +24,6 @@ subprojects {
 
     dependencies {
         compile group: "org.intermine", name: "intermine-resources", version: imVersion
-        compile group: "org.intermine", name: "intermine-testresources", version: imVersion
         compile group: "org.intermine", name: "intermine-integrate", version: imVersion
         compile group: 'ant', name: 'ant', version: '1.6.5'
         compile group: 'log4j', name: 'log4j', version: '1.2.17'

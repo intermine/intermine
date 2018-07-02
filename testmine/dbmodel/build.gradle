@@ -9,7 +9,7 @@ sourceSets {
 }
 
 configurations {
-    compile
+    testModelProps
 }
 
 dependencies {
@@ -17,6 +17,7 @@ dependencies {
     compile group: "org.intermine", name: "intermine-api", version: imVersion
     compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
     compile group: 'antlr', name: 'antlr', version: '2.7.6'
+    testModelProps group: "org.intermine", name: "intermine-testresources", version: imVersion, transitive: false
 }
 
 ext {
@@ -42,6 +43,25 @@ task copyMineProperties(type: Copy) {
     into sourceSets.main.output.resourcesDir
     rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
     inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+// the JAR file has an intermine.properties files for unit tests. if we put the JAR on the classpath
+// the testmine uses that property file instead. SO ... copy all the files to the build dir.
+task copyTestModel(type: Copy) {
+    description "Copies testmodel_model.xml file (from resources project) into resources output to be used by testmine"
+
+    from({ zipTree(configurations.testModelProps.singleFile) }) {
+        include "testmodel_model.xml"
+        include "testmodel_keyDefs.properties"
+        include "testmodel_extra_data.xml"
+        include "testmodel_data.xml"
+        include "testmodel_enormo_data.xml"
+        include "testmodel_webapp_data.xml"
+        include "testsource_keys.properties"
+        include "testmodel_priorities.properties"
+        include "org/intermine/model/testmodel/*"
+    }
+    into sourceSets.main.output.resourcesDir
 }
 
 processResources {
@@ -99,8 +119,8 @@ void insertDataUnitTest() {
     // <delete file="${objectstoresummary.properties}"/>
     ant.taskdef(name: 'insertDataUnittest', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
-            pathelement(path: configurations.testCompile.asPath)
-            dirset(dir: 'build/resources/main') // intermine.properties
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
         }
     }   
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_webapp_data.xml", sourceName: "testsource", sourceType: "testsource")
@@ -111,8 +131,8 @@ void loadsadataLoader() {
     // <delete file="${objectstoresummary.properties}"/>
     ant.taskdef(name: 'loadsadata', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
-            pathelement(path: configurations.testCompile.asPath)
-            dirset(dir: 'build/resources/main') // intermine.properties
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
         }
     }
 
@@ -124,7 +144,7 @@ void enormocorpLoader() {
     // <delete file="${objectstoresummary.properties}"/>
     ant.taskdef(name: 'enormocorp', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
-            pathelement(path: configurations.testCompile.asPath)
+            pathelement(path: configurations.compile.asPath)
             dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
@@ -150,7 +170,7 @@ task loadsadata(dependsOn: 'insertData') {
 task buildDB() {
     group "${taskGroup}"
     description "Build database for testmodel webapp"
-    dependsOn 'build','copyDefaultProperties'
+    dependsOn 'build','copyDefaultProperties', 'copyTestModel'
     doFirst {
         // this is only a fatal error if the user did not supply their credentials
         // if they have their own property file, we assume human and not travis
