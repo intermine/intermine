@@ -22,6 +22,7 @@ import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.intermine.metadata.ClassDescriptor;
@@ -139,7 +140,9 @@ public class AutoCompleter
             String[] stringResults = new String[results.size()];
 
             for (int i = 0; i < results.size(); i++){
-                stringResults[i] = results.get(i).getFieldValue(field).toString();
+                SolrDocument document = results.get(i);
+
+                stringResults[i] = ((ArrayList<String>)document.getFieldValue(field)).get(0);
             }
 
             return stringResults;
