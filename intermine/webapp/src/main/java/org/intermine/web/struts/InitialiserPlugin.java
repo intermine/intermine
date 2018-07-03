@@ -411,7 +411,7 @@ public class InitialiserPlugin implements PlugIn
     private void loadAutoCompleter(ServletContext servletContext,
             ObjectStore os) throws ServletException {
         if (os instanceof ObjectStoreInterMineImpl) {
-            SessionMethods.setAutoCompleter(servletContext, new AutoCompleter());
+            SessionMethods.setAutoCompleter(servletContext, new AutoCompleter(os));
         }
     }
 
