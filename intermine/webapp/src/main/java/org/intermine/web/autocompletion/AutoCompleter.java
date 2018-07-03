@@ -139,7 +139,7 @@ public class AutoCompleter
             String[] stringResults = new String[results.size()];
 
             for (int i = 0; i < results.size(); i++){
-                stringResults[i] = (String) results.get(i).getFieldValue(field);
+                stringResults[i] = results.get(i).getFieldValue(field).toString();
             }
 
             return stringResults;
