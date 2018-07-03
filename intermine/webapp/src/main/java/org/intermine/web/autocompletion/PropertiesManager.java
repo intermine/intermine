@@ -73,7 +73,8 @@ public class PropertiesManager {
                     String key = (String) entry.getKey();
                     String value = (String) entry.getValue();
                     if (key.endsWith(".autocomplete")) {
-                        classFieldMap.put(key, value);
+                        String className = key.substring(0, key.lastIndexOf("."));
+                        classFieldMap.put(className, value);
                     } else if ("autocomplete.solrurl".equals(key) && !StringUtils.isBlank(value)) {
                         solrUrl = value;
                     }
