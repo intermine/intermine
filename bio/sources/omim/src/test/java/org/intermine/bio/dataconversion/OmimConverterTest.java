@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -39,6 +40,9 @@ public class OmimConverterTest extends ItemsTestCase
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         converter = new OmimConverter(itemWriter, model);
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("9606", "1111", Collections.singleton("PPARG"));
+        converter.rslv.addResolverEntry("9606", "2222", Collections.singleton("CIMT1"));
         super.setUp();
     }
 
