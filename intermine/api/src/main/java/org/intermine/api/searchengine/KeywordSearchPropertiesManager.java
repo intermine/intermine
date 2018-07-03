@@ -33,6 +33,8 @@ public class KeywordSearchPropertiesManager {
 
     private static KeywordSearchPropertiesManager keywordSearchPropertiesManager;
 
+    private String CONFIG_FILE_NAME = "keyword_search.properties";
+
     /**
      * maximum number of items to be displayed on a page
      */
@@ -88,7 +90,7 @@ public class KeywordSearchPropertiesManager {
         debugOutput = true;
 
         // load config file to figure out special classes
-        String configFileName = "keyword_search.properties";
+        String configFileName = CONFIG_FILE_NAME;
         ClassLoader classLoader = KeywordSearchPropertiesManager.class.getClassLoader();
         InputStream configStream = classLoader.getResourceAsStream(configFileName);
         if (configStream != null) {
