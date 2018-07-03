@@ -57,11 +57,18 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
             ObjectStore os = osw.getObjectStore();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
 
-            AutoCompleter ac = new AutoCompleter(os, props);
-            // if (ac.getBinaryIndexMap() != null) {
-            //     MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
-            //             ac.getBinaryIndexMap());
-            // }
+            
+
+        try {
+	    AutoCompleter ac = new AutoCompleter(os);
+            ac.buildIndex(os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ObjectStoreException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
             System.out.println("Creating auto complete index has completed");
 
