@@ -779,10 +779,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             realInterMineType = "Chromosome";
         }
 
-        if ("golden_path_region".equals(chadoFeatureType)) {
-            realInterMineType = "Chromosome";
-        }
-
         if (chadoFeatureType.equals(CHROMOSOME_STRUCTURE_VARIATION_SO_NAME)) {
             Integer cvtermId = chromosomeStructureVariationTypes.get(featureId);
 
