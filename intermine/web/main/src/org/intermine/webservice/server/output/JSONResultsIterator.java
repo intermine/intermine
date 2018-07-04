@@ -268,6 +268,8 @@ public class JSONResultsIterator implements Iterator<JSONObject>
             newValue = ConstraintValueParser.ISO_DATE_FORMAT.format(cell.getField());
         } else if (cell.getField() instanceof ClobAccess) {
             newValue = cell.getField().toString();
+        } else if (cell.getField() == null) {
+            newValue = JSONObject.NULL;
         } else {
             newValue = cell.getField();
         }
