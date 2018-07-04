@@ -88,14 +88,14 @@ public class ChadoDBConverterTest extends ItemsTestCase
         FlyBaseProcessor processor = new TestFlyBaseProcessor(converter);
 
         // if not Dmel genomic_path_regions without '_' should become chromosomes
-        Item item = processor.makeFeature(null, "golden_path_region", "DummyType", "3R", "3R", 0,
+        Item item = processor.makeFeature(null, "golden_path_region", "GoldenPathRegion", "3R", "3R", 0,
                                           "7237");
-        assertTrue(item.getClassName().endsWith("Chromosome"));
+        assertTrue(item.getClassName().endsWith("GoldenPathRegion"));
 
         // If an underscore in name and not dmel or dpse, should be a GoldenPathFragment
-        item = processor.makeFeature(null, "golden_path_region", "DummyType", "scaffold_10",
+        item = processor.makeFeature(null, "golden_path_region", "GoldenPathRegion", "scaffold_10",
                                      "scaffold_10", 0, "7777");
-        assertTrue(item.getClassName().endsWith("Chromosome"));
+        assertTrue(item.getClassName().endsWith("GoldenPathRegion"));
     }
 
     private class TestChadoDBConverter extends GenomeDBConverter {
