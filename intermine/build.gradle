@@ -29,9 +29,8 @@ subprojects {
     repositories {
         mavenLocal()
         jcenter()
-
-        flatDir {
-            dirs '../libs'
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
         }
     }
 

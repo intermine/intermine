@@ -25,7 +25,7 @@ subprojects {
         mavenLocal()
         jcenter()
         maven {
-            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+            url 'http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
         }
     }
 
