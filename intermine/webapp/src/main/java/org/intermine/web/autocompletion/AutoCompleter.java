@@ -203,12 +203,13 @@ public class AutoCompleter
                 for (Object resRow: results) {
                     @SuppressWarnings("rawtypes")
                     Object fieldValue = ((ResultsRow) resRow).get(0);
-                    SolrInputDocument solrInputDocument = new SolrInputDocument();
-                    solrInputDocument.addField(fieldName, fieldValue.toString());
-                    solrInputDocument.addField(CLASSNAME_FIELD, cld.getUnqualifiedName());
-                    solrDocumentList.add(solrInputDocument);
+                    if (fieldValue != null) {
+                        SolrInputDocument solrInputDocument = new SolrInputDocument();
+                        solrInputDocument.addField(fieldName, fieldValue.toString());
+                        solrInputDocument.addField(CLASSNAME_FIELD, cld.getUnqualifiedName());
+                        solrDocumentList.add(solrInputDocument);
+                    }
                 }
-
             }
         }
 
