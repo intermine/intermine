@@ -15,6 +15,12 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.util.Version;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -123,35 +129,74 @@ public class AutoCompleter
      * @return string array with search results and an error flag at position 0
      */
     public String[] getFastList(String query, String field, String className,  int n) {
+
+        String status = "true";
+        String[] stringResults = null;
+
         SolrClient solrClient = SolrClientHandler.getClientInstance();
         QueryResponse resp = null;
-        try {
 
-            SolrQuery newQuery = new SolrQuery();
-            newQuery.setQuery(field + ":" + query + "*"); //adding a wildcard in the end
-            newQuery.setRequestHandler("suggest");
-            newQuery.setRows(n); // FIXME: hardcoded maximum
-            newQuery.setFilterQueries(CLASSNAME_FIELD + ":" + className);
+        if (!"".equals(query) && !query.trim().startsWith("*")) {
 
-            resp = solrClient.query(newQuery);
+            if (query.endsWith(" ")) {
+                query = query.substring(0, query.length() - 1);
+            }
 
-            SolrDocumentList results = resp.getResults();
+            String[] tmp;
+            if (query.contains(" ")) {
+                tmp = query.replaceAll(" +", " ").trim().split(" ");
+                query = new String();
 
-            String[] stringResults = new String[results.size()];
+                for (int i = 0; i < tmp.length; i++) {
+                    query += tmp[i];
+                    if (i < tmp.length - 1) {
+                        query += "* AND ";
+                    }
+                }
+            }
 
-            for (int i = 0; i < results.size(); i++){
-                SolrDocument document = results.get(i);
+            try {
 
-                stringResults[i] = ((ArrayList<String>)document.getFieldValue(field)).get(0);
+                SolrQuery newQuery = new SolrQuery();
+                newQuery.setQuery(field + ":" + query + "*"); //adding a wildcard in the end
+                newQuery.setRequestHandler("suggest");
+                newQuery.setRows(n); // FIXME: hardcoded maximum
+                newQuery.setFilterQueries(CLASSNAME_FIELD + ":" + className);
+
+                resp = solrClient.query(newQuery);
+
+                SolrDocumentList results = resp.getResults();
+
+                stringResults = new String[results.size() + 1];
+
+                for (int i = 1; i < results.size() + 1; i++) {
+
+                    try {
+                        SolrDocument document = results.get(i - 1);
+
+                        stringResults[i] = ((ArrayList<String>) document.getFieldValue(field)).get(0);
+
+                    } catch (Exception e) {
+                        status = "No results! Please try again.";
+                    }
+                }
+
+                stringResults[0] = status;
+
+
+                return stringResults;
+
+            } catch (SolrServerException e) {
+                e.printStackTrace();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                status = "Please type in more characters to get results.";
+                stringResults = new String[1];
+                stringResults[0] = status;
             }
 
             return stringResults;
-
-        } catch (SolrServerException e) {
-            e.printStackTrace();
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         return null;
