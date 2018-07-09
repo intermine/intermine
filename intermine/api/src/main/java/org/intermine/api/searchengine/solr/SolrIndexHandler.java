@@ -115,7 +115,7 @@ public final class SolrIndexHandler implements IndexHandler
         for(String fieldName: fieldNames){
             Map<String, Object> fieldAttributes = new HashMap();
             fieldAttributes.put("name", fieldName);
-            fieldAttributes.put("type", "text_general");
+            fieldAttributes.put("type", "string");
             fieldAttributes.put("stored", false);
             fieldAttributes.put("indexed", true);
             fieldAttributes.put("multiValued", true);
