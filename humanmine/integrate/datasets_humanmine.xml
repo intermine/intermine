@@ -2,9 +2,9 @@
 <?xml version="1.0"?>
 <items>
     <item id="0" class="" implements="DataSource">
-        <attribute name="name" value="FlyMine"/>
-        <attribute name="description" value="The FlyMine Drosophila and Anopheles data warehouse"/>
-        <attribute name="url" value="http://www.flymine.org"/>
+        <attribute name="name" value="HumanMine"/>
+        <attribute name="description" value="An integrated database of Homo sapiens genomic data"/>
+        <attribute name="url" value="http://www.humanmine.org"/>
     </item>
 
     <item id="20" class="" implements="Publication"> 
