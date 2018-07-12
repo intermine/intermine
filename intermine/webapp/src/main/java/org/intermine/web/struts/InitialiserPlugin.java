@@ -466,14 +466,14 @@ public class InitialiserPlugin implements PlugIn
                                               validationMessage);
                     }
                 } catch (FileNotFoundException fnf) {
-                    LOG.error("Problem to find the webconfig-model.xml file.", fnf);
+                    LOG.error("Can't find the webconfig-model.xml file.", fnf);
                     blockingErrorKeys.put("errors.init.webconfig.notfound", null);
                 } catch (ClassNotFoundException cnf) {
                     LOG.error("Classes mentioned in the webconfig-model.xml"
                             + " file aren't in the Model", cnf);
                     blockingErrorKeys.put("errors.init.webconfig.classnotfound", cnf.getMessage());
                 } catch (Exception e) {
-                    LOG.error("Problem to parse the webconfig-model.xml file", e);
+                    LOG.error("Could not parse the webconfig-model.xml file", e);
                     blockingErrorKeys.put("errors.init.webconfig.parsing", e.getMessage());
                 }
             }
