@@ -28,15 +28,17 @@ configurations {
 
 dependencies {
     providedCompile project(':bio-core')
+    providedCompile project(':bio-model')
     providedCompile group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), classifier: "classes"
-    compile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: System.getProperty("imVersion")
+    providedCompile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: System.getProperty("imVersion")
     providedCompile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'
-    compile project(':bio-tools') // needed for the export
+    compile (project(':bio-tools')) { transitive = false }
 
     compile group: 'psidev.psi.mi.jami.bridges', name: 'bridges-core', version: '1.1.0'
     compile group: 'psidev.psi.mi.jami.bridges', name: 'jami-ols', version: '1.1.0'
     compile group: 'psidev.psi.mi.jami', name: 'jami-core', version: '1.2.3'
     compile group: 'psidev.psi.mi.jami', name: 'jami-interactionviewer-json', version: '2.0.2'
+
 
     // horrible hack don't look! see #1846
     compile group: "org.biojava", name: "biojava-core", version: "4.2.1"
