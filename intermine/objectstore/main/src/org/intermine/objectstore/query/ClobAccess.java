@@ -51,8 +51,8 @@ public class ClobAccess implements CharSequence, Lazy
     public ClobAccess(ObjectStore os, Clob clob) {
         this.os = os;
         this.clob = clob;
-        offset = 0;
-        subSequence = false;
+        this.offset = 0;
+        this.subSequence = false;
     }
 
     /**
@@ -68,8 +68,8 @@ public class ClobAccess implements CharSequence, Lazy
         this.clob = clob;
         this.offset = offset;
         this.length = length;
-        os = results.getObjectStore();
-        subSequence = true;
+        this.os = results.getObjectStore();
+        this.subSequence = true;
     }
 
     /**
@@ -168,6 +168,42 @@ public class ClobAccess implements CharSequence, Lazy
             return this;
         }
         return new ClobAccess(results, clob, start + offset, end - start);
+    }
+
+    /**
+     * Returns a new CharSequence that is a supersequence of this sequence, by adding a specified flank amount.
+     * NOTE that flank amounts are adjusted automatically to avoid invalid coordinates.
+     *
+     * @param startFlank the amount of flank to add to the proximal (start) side
+     * @param endFlank the amount of flank to add to the distal (end) side
+     * @return the specified sequence
+     * @throws IndexOutOfBoundsException if the startFlank or endFlank are negative.
+     * @throws IllegalArgumentException if this clob is not a subsequence
+     */
+    public ClobAccess addFlank(int startFlank, int endFlank) {
+	if (!subSequence) {
+            throw new IllegalArgumentException("ClobAccess object is not a subsequence.");
+	}
+        if (startFlank < 0) {
+            throw new IndexOutOfBoundsException("startFlank is less than zero");
+        }
+        if (endFlank < 0) {
+            throw new IndexOutOfBoundsException("endFlank is less than zero");
+        }
+	startFlank = Math.min(startFlank, offset);
+	// TODO: need to check endFlank against chromosome length!!
+        return new ClobAccess(results, clob, offset-startFlank, length+startFlank+endFlank);
+    }
+    /**
+     * Returns a new CharSequence that is a supersequence of this sequence, by adding a specified flank amount.
+     * NOTE that flank amounts are adjusted automatically to avoid invalid coordinates.
+     *
+     * @param flank the amount of flank to add at both ends
+     * @return the specified sequence
+     * @throws IllegalArgumentException if this clob is not a subsequence
+     */
+    public ClobAccess addFlank(int flank) {
+        return addFlank(flank, flank);
     }
 
     /**

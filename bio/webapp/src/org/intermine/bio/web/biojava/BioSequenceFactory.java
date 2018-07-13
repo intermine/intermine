@@ -67,19 +67,7 @@ public abstract class BioSequenceFactory
         if (feature.getSequence() == null) {
             return null;
         } else {
-            String residues = feature.getSequence().getResidues().toString();
-	    if (extension > 0) {
-	        String[] pieces = residues.split(",");
-		if (pieces.length == 3) {
-		    LOG.info("Residues before extension:" + residues);
-		    int start  = Integer.parseInt(pieces[1]);
-		    int length = Integer.parseInt(pieces[2]);
-		    start = Math.max(0, start - extension);
-		    length += 2*extension; // FIXME: clip at end of chromosome
-		    residues = pieces[0] + "," + start + "," + length;
-		    LOG.info("Residues after extension: " + residues);
-		}
-	    }
+            String residues = feature.getSequence().getResidues().addFlank(extension).toString();
             return new BioSequence(DNATools.createDNA(residues), feature);
         }
     }
