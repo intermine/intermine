@@ -16,6 +16,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.searchengine.IndexHandler;
 import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
@@ -55,6 +56,7 @@ public final class SolrIndexHandler implements IndexHandler
         try {
             solrClient.deleteByQuery("*:*");
             solrClient.commit();
+
         } catch (SolrServerException e) {
             LOG.error("Deleting old index failed", e);
         }
@@ -80,8 +82,28 @@ public final class SolrIndexHandler implements IndexHandler
 
         List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
 
+        //adding copy field to solr so that all the fields can be searchable
+        //No need to search for Category : gene. Searching for gene is enough
+
+        try{
+
+            List<String> copyFieldAttributes = new ArrayList<String>();
+            copyFieldAttributes.add("_text_");
+
+            SchemaRequest.AddCopyField schemaCopyRequest = new SchemaRequest.AddCopyField("*", copyFieldAttributes);
+            SchemaResponse.UpdateResponse copyFieldResponse =  schemaCopyRequest.process(solrClient);
+
+        } catch (SolrServerException e){
+            LOG.error("Error while adding copy field to the solrclient.", e);
+
+            e.printStackTrace();
+        }
+
         // loop and index while we still have fetchers running
         LOG.debug("Starting to index...");
+
+        long indexStartTime = System.currentTimeMillis();
+
         while (indexingQueue.hasNext()) {
             SolrInputDocument doc = indexingQueue.next();
 
@@ -99,15 +121,45 @@ public final class SolrIndexHandler implements IndexHandler
 //                        + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
 //                        + (System.currentTimeMillis() - time) + "ms");
 //            }
+
+            if (solrInputDocuments.size() == 1000){
+
+                //We cannot pass the fieldNames directly while it is being used by the object handler thread
+                ArrayList<String> fieldNamesList = new ArrayList<String>(fetchThread.getFieldNames());
+
+                commitBatchData(solrClient, solrInputDocuments, fieldNamesList);
+
+                solrInputDocuments = new ArrayList<SolrInputDocument>();
+            }
+
         }
 
-        Set<String> fieldNames = fetchThread.getFieldNames();
+        ArrayList<String> fieldNamesList = new ArrayList<String>(fetchThread.getFieldNames());
+        commitBatchData(solrClient, solrInputDocuments, fieldNamesList);
 
+
+        LOG.debug("Solr indexing ends and it took " + (System.currentTimeMillis() - indexStartTime) + "ms");
+
+        if (fetchThread.getException() != null) {
+            try {
+
+            } catch (Exception e) {
+                LOG.error("Error closing writer while handling exception.", e);
+            }
+            throw new RuntimeException("Indexing failed.", fetchThread.getException());
+        }
+
+        time = System.currentTimeMillis() - time;
+        int seconds = (int) Math.floor(time / 1000);
+        LOG.info("Indexing of " + indexed + " documents finished in "
+                + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
+                time % 1000) + " minutes");
+    }
+
+
+    private void commitBatchData(SolrClient solrClient, List<SolrInputDocument> solrDocumentList,
+                                 ArrayList<String> fieldNames) throws IOException {
         //Accessing SchemaAPI from solr and create the schema dynamically
-
-        LOG.debug("Creating Schema in Solr begins...");
-
-        long schemaStartTime = System.currentTimeMillis();
 
         fieldNames.add("Category");
         fieldNames.add("classname");
@@ -132,31 +184,14 @@ public final class SolrIndexHandler implements IndexHandler
             }
         }
 
-        //adding copy field to solr so that all the fields can be searchable
-        //No need to search for Category : gene. Searching for gene is enough
 
-        try{
 
-            List<String> copyFieldAttributes = new ArrayList<String>();
-            copyFieldAttributes.add("_text_");
 
-            SchemaRequest.AddCopyField schemaCopyRequest = new SchemaRequest.AddCopyField("*", copyFieldAttributes);
-            SchemaResponse.UpdateResponse copyFieldResponse =  schemaCopyRequest.process(solrClient);
-
-        } catch (SolrServerException e){
-            LOG.error("Error while adding copy field to the solrclient.", e);
-
-            e.printStackTrace();
-        }
-
-        LOG.debug("Creating Schema in Solr ends and it took " + (System.currentTimeMillis() - schemaStartTime) + "ms");
-
-        long indexStartTime = System.currentTimeMillis();
 
         LOG.debug("Beginning to commit Solr Documents into Solr");
 
         try {
-            UpdateResponse response = solrClient.add(solrInputDocuments);
+            UpdateResponse response = solrClient.add(solrDocumentList);
 
             solrClient.commit();
         } catch (SolrServerException e) {
@@ -166,26 +201,6 @@ public final class SolrIndexHandler implements IndexHandler
 
             e.printStackTrace();
         }
-
-        LOG.debug("Solr indexing ends and it took " + (System.currentTimeMillis() - indexStartTime) + "ms");
-
-        if (fetchThread.getException() != null) {
-            try {
-
-            } catch (Exception e) {
-                LOG.error("Error closing writer while handling exception.", e);
-            }
-            throw new RuntimeException("Indexing failed.", fetchThread.getException());
-        }
-
-        time = System.currentTimeMillis() - time;
-        int seconds = (int) Math.floor(time / 1000);
-        LOG.info("Indexing of " + indexed + " documents finished in "
-                + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
-                time % 1000) + " minutes");
     }
-
-
-
 
 }

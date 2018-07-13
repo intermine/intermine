@@ -42,7 +42,6 @@ public class KeywordSearchPropertiesManager {
 
     private Properties properties = null;
 
-    private String tempDirectory = null;
     private Map<Class<? extends InterMineObject>, String[]> specialReferences;
     private Set<Class<? extends InterMineObject>> ignoredClasses;
     private Map<Class<? extends InterMineObject>, Set<String>> ignoredFields;
@@ -199,7 +198,6 @@ public class KeywordSearchPropertiesManager {
                         solrUrl = value;
                     }
 
-                    tempDirectory = properties.getProperty("index.temp.directory", "");
                 }
             } catch (IOException e) {
                 LOG.error("keyword_search.properties: errow while loading file '" + configFileName
@@ -236,7 +234,6 @@ public class KeywordSearchPropertiesManager {
         }
 
         LOG.info("Search - Debug mode: " + debugOutput);
-        LOG.info("Indexing - Temp Dir: " + tempDirectory);
     }
 
     private void addAttributePrefix(String classAndAttribute, String prefix) {
@@ -305,10 +302,6 @@ public class KeywordSearchPropertiesManager {
 
     public Properties getProperties() {
         return properties;
-    }
-
-    public String getTempDirectory() {
-        return tempDirectory;
     }
 
     public Map<Class<? extends InterMineObject>, String[]> getSpecialReferences() {
