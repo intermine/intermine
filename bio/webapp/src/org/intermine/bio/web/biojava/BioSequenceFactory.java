@@ -10,6 +10,7 @@ package org.intermine.bio.web.biojava;
  *
  */
 
+import org.apache.log4j.Logger;
 import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.seq.RNATools;
@@ -26,6 +27,8 @@ import org.intermine.model.bio.Protein;
 
 public abstract class BioSequenceFactory
 {
+    private static final Logger LOG = Logger.getLogger(BioSequenceFactory.class);
+
     /**
      * Type of sequences.
      *
@@ -53,6 +56,36 @@ public abstract class BioSequenceFactory
     /**
      * Create a new BioSequence from a SequenceFeature
      * @param feature the SequenceFeature
+     * @param extension the amount of flanking sequence to include
+     * @return a new BioSequence object or null if the SequenceFeature doesn't have a
+     * Sequence
+     * @throws IllegalSymbolException if any of the residues of the SequenceFeature can't be
+     * turned into DNA symbols.
+     */
+    public static BioSequence make(SequenceFeature feature, int extension)
+        throws IllegalSymbolException {
+        if (feature.getSequence() == null) {
+            return null;
+        } else {
+            String residues = feature.getSequence().getResidues().toString();
+	    if (extension > 0) {
+	        String[] pieces = residues.split(",");
+		if (pieces.length == 3) {
+		    LOG.info("Residues before extension:" + residues);
+		    int start  = Integer.parseInt(pieces[1]);
+		    int length = Integer.parseInt(pieces[2]);
+		    start = Math.max(0, start - extension);
+		    length += 2*extension; // FIXME: clip at end of chromosome
+		    residues = pieces[0] + "," + start + "," + length;
+		    LOG.info("Residues after extension: " + residues);
+		}
+	    }
+            return new BioSequence(DNATools.createDNA(residues), feature);
+        }
+    }
+    /**
+     * Create a new BioSequence from a SequenceFeature
+     * @param feature the SequenceFeature
      * @return a new BioSequence object or null if the SequenceFeature doesn't have a
      * Sequence
      * @throws IllegalSymbolException if any of the residues of the SequenceFeature can't be
@@ -60,12 +93,7 @@ public abstract class BioSequenceFactory
      */
     public static BioSequence make(SequenceFeature feature)
         throws IllegalSymbolException {
-        if (feature.getSequence() == null) {
-            return null;
-        } else {
-            String residues = feature.getSequence().getResidues().toString();
-            return new BioSequence(DNATools.createDNA(residues), feature);
-        }
+	return make(feature, 0);
     }
 
     /**

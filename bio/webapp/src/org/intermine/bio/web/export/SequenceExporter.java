@@ -162,13 +162,8 @@ public class SequenceExporter implements Exporter
                 }
 
                 if (object instanceof SequenceFeature) {
-                    if (extension > 0) {
-                        bioSequence = createSequenceFeatureWithExtension(header, object,
-                                row, unionPathCollection, newPathCollection);
-                    } else {
-                        bioSequence = createSequenceFeature(header, object,
-                                row, unionPathCollection, newPathCollection);
-                    }
+		    bioSequence = createSequenceFeature(header, object,
+			    row, unionPathCollection, newPathCollection);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row,
                             unionPathCollection, newPathCollection);
@@ -233,65 +228,10 @@ public class SequenceExporter implements Exporter
         throws IllegalSymbolException {
         BioSequence bioSequence;
         SequenceFeature feature = (SequenceFeature) object;
-        bioSequence = BioSequenceFactory.make(feature);
+        bioSequence = BioSequenceFactory.make(feature, extension);
 
         makeHeader(header, object, row, unionPathCollection, newPathCollection);
         return bioSequence;
-    }
-
-    private Sequence createSequenceFeatureWithExtension(StringBuffer header,
-            Object object, List<ResultElement> row,
-            Collection<Path> unionPathCollection,
-            Collection<Path> newPathCollection)
-        throws IllegalSymbolException {
-
-        SequenceFeature feature = (SequenceFeature) object;
-
-        Chromosome chr = feature.getChromosome();
-        String chrName = chr.getPrimaryIdentifier();
-        int chrLength = chr.getLength();
-        int start = feature.getChromosomeLocation().getStart();
-        int end = feature.getChromosomeLocation().getEnd();
-        String org = feature.getOrganism().getShortName();
-        String strand = feature.getChromosomeLocation().getStrand();
-
-        String chrResidueString;
-        if (chromosomeSequenceMap.get(new MultiKey(chrName, org)) == null) {
-            chrResidueString = chr.getSequence().getResidues()
-                    .toString();
-            chromosomeSequenceMap.put(
-                    new MultiKey(chrName, strand, org), chr.getSequence().getResidues().toString());
-        } else {
-            chrResidueString = chromosomeSequenceMap.get(new MultiKey(chrName, strand, org));
-        }
-
-        if (extension > 0) {
-            start = start - extension;
-            end = end + extension;
-        }
-
-        end = Math.min(end, chrLength);
-        start = Math.max(start, 1);
-
-        String seqName = "genomic_region_" + chrName + "_"
-                + start + "_" + end + "_"
-                + org.replace("\\. ", "_");
-
-        Sequence seq = DNATools.createDNASequence(chrResidueString.substring(start - 1, end),
-                        seqName);
-
-        if (NEGATIVE_STRAND.equals(strand)) {
-            try {
-                SymbolList flippedSeq = DNATools.reverseComplement(seq);
-                seq = DNATools.createDNASequence(flippedSeq.seqString(), seqName);
-            } catch (IllegalAlphabetException e) {
-                LOG.error("Export failed, Invalid sequence", e);
-                return null;
-            }
-        }
-
-        makeHeader(header, object, row, unionPathCollection, newPathCollection);
-        return seq;
     }
 
     /**
