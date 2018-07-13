@@ -123,14 +123,19 @@ public final class SolrIndexHandler implements IndexHandler
 //            }
 
             if (solrInputDocuments.size() == 1000){
-                commitBatchData(solrClient, solrInputDocuments, fetchThread.getFieldNames());
+
+                //We cannot pass the fieldNames directly while it is being used by the object handler thread
+                ArrayList<String> fieldNamesList = new ArrayList<String>(fetchThread.getFieldNames());
+
+                commitBatchData(solrClient, solrInputDocuments, fieldNamesList);
 
                 solrInputDocuments = new ArrayList<SolrInputDocument>();
             }
 
         }
 
-        commitBatchData(solrClient, solrInputDocuments, fetchThread.getFieldNames());
+        ArrayList<String> fieldNamesList = new ArrayList<String>(fetchThread.getFieldNames());
+        commitBatchData(solrClient, solrInputDocuments, fieldNamesList);
 
 
         LOG.debug("Solr indexing ends and it took " + (System.currentTimeMillis() - indexStartTime) + "ms");
@@ -153,7 +158,7 @@ public final class SolrIndexHandler implements IndexHandler
 
 
     private void commitBatchData(SolrClient solrClient, List<SolrInputDocument> solrDocumentList,
-                                 Set<String> fieldNames) throws IOException {
+                                 ArrayList<String> fieldNames) throws IOException {
         //Accessing SchemaAPI from solr and create the schema dynamically
 
         fieldNames.add("Category");
