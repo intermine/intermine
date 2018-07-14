@@ -127,7 +127,7 @@ public class AutoCompleter
         String status = "true";
         String[] stringResults = null;
 
-        SolrClient solrClient = SolrClientHandler.getClientInstance();
+        SolrClient solrClient = SolrClientHandler.getClientInstance(this.propertiesManager.getSolrUrl());
         QueryResponse resp = null;
 
         if (!"".equals(query) && !query.trim().startsWith("*")) {
@@ -252,7 +252,7 @@ public class AutoCompleter
             }
         }
 
-        SolrClient solrClient = SolrClientHandler.getClientInstance();
+        SolrClient solrClient = SolrClientHandler.getClientInstance(this.propertiesManager.getSolrUrl());
 
         try {
             solrClient.deleteByQuery("*:*");
