@@ -48,8 +48,10 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
      */
     public void postProcess()
             throws ObjectStoreException {
+
         System.out .println("create autocomplete index ...");
         Properties props = new Properties();
+        
         try {
             props.load(getClass().getClassLoader().getResourceAsStream(
                 "objectstoresummary.config.properties"));
@@ -57,20 +59,22 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
             ObjectStore os = osw.getObjectStore();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
 
-            
+            try {
+                AutoCompleter ac = new AutoCompleter(os);
+                ac.buildIndex(os);
 
-        try {
-	    AutoCompleter ac = new AutoCompleter(os);
-            ac.buildIndex(os);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ObjectStoreException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+            } catch (IOException e) {
+                e.printStackTrace();
 
-            System.out.println("Creating auto complete index has completed");
+            } catch (ObjectStoreException e) {
+                e.printStackTrace();
+
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                
+            }
+
+        System.out.println("Creating auto complete index has completed");
 
         } catch (IOException e) {
             throw new BuildException("Could not open the class keys");
