@@ -50,11 +50,8 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
             throws ObjectStoreException {
 
         System.out .println("create autocomplete index ...");
-        Properties props = new Properties();
-        
+
         try {
-            props.load(getClass().getClassLoader().getResourceAsStream(
-                "objectstoresummary.config.properties"));
 
             ObjectStore os = osw.getObjectStore();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
