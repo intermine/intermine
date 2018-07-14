@@ -22,6 +22,7 @@ public class Clob implements QuerySelectable
     public static final int CLOB_PAGE_SIZE = 7000;
 
     private final int clobId;
+    protected int length = -1;	// the discovered length of the clob - set by ClobAccess (see init).
 
     /**
      * Constructs a new Clob. This method should only be called from an ObjectStore which can
@@ -42,6 +43,28 @@ public class Clob implements QuerySelectable
      */
     public int getClobId() {
         return clobId;
+    }
+
+    /**
+     * Returns the length of the Clob. 
+     *
+     * @return an int
+     */
+    public int getLength() {
+        return length;
+    }
+
+    /**
+     * Sets the length of the Clob. 
+     *
+     * @return an int
+     * @throws IllegalArgumentException if the length argument is negative.
+     */
+    public void setLength(int len) {
+	 if (len < 0) {
+	     throw new IllegalArgumentException("length is less than zero");
+	 }
+         length = len;
     }
 
     /**

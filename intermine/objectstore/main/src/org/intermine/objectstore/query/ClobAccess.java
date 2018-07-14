@@ -78,7 +78,7 @@ public class ClobAccess implements CharSequence, Lazy
      * the ObjectStoreWriter while it has exclusive use of the connection.
      */
     protected void init() {
-        if (results == null) {
+        if (clob.getLength() == -1) {
             Query q = new Query();
             q.addToSelect(clob);
             results = os.executeSingleton(q, 20, false, false, true);
@@ -89,6 +89,7 @@ public class ClobAccess implements CharSequence, Lazy
                 String lastPage = (String) results.get(pageCount - 1);
                 length = CLOB_PAGE_SIZE * (pageCount - 1) + lastPage.length();
             }
+	    clob.setLength(length);
         }
     }
 
@@ -171,28 +172,30 @@ public class ClobAccess implements CharSequence, Lazy
     }
 
     /**
-     * Returns a new CharSequence that is a supersequence of this sequence, by adding a specified flank amount.
+     * Returns a new CharSequence that is a supersequence of this one, by adding specified flank 
+     * amounts to each end.
      * NOTE that flank amounts are adjusted automatically to avoid invalid coordinates.
      *
-     * @param startFlank the amount of flank to add to the proximal (start) side
-     * @param endFlank the amount of flank to add to the distal (end) side
+     * @param leftFlank the amount of flank to add to the proximal (start) side
+     * @param rightFlank the amount of flank to add to the distal (end) side
      * @return the specified sequence
-     * @throws IndexOutOfBoundsException if the startFlank or endFlank are negative.
+     * @throws IndexOutOfBoundsException if the leftFlank or rightFlank are negative.
      * @throws IllegalArgumentException if this clob is not a subsequence
      */
-    public ClobAccess addFlank(int startFlank, int endFlank) {
+    public ClobAccess addFlank(int leftFlank, int rightFlank) {
+	init();
 	if (!subSequence) {
             throw new IllegalArgumentException("ClobAccess object is not a subsequence.");
 	}
-        if (startFlank < 0) {
-            throw new IndexOutOfBoundsException("startFlank is less than zero");
+        if (leftFlank < 0) {
+            throw new IndexOutOfBoundsException("leftFlank is less than zero");
         }
-        if (endFlank < 0) {
-            throw new IndexOutOfBoundsException("endFlank is less than zero");
+        if (rightFlank < 0) {
+            throw new IndexOutOfBoundsException("rightFlank is less than zero");
         }
-	startFlank = Math.min(startFlank, offset);
-	// TODO: need to check endFlank against chromosome length!!
-        return new ClobAccess(results, clob, offset-startFlank, length+startFlank+endFlank);
+	leftFlank  = Math.min(leftFlank, offset);
+	rightFlank = Math.min(rightFlank, clob.getLength() - offset - length);
+        return new ClobAccess(results, clob, offset-leftFlank, length+leftFlank+rightFlank);
     }
     /**
      * Returns a new CharSequence that is a supersequence of this sequence, by adding a specified flank amount.
