@@ -69,7 +69,7 @@ public final class SolrIndexHandler implements IndexHandler
 
         AnalyzerDefinition queryAnalyzerDefinition = new AnalyzerDefinition();
         Map<String, Object> queryAnalzerAttributes = new HashMap<String, Object>();
-        queryAnalzerAttributes.put("class", "olr.KeywordTokenizerFactory");
+        queryAnalzerAttributes.put("class", "solr.KeywordTokenizerFactory");
 
         fieldTypeDefinition.setAttributes(fieldTypeAttributes);
         fieldTypeDefinition.setIndexAnalyzer(indexAnalyzerDefinition);
