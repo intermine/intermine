@@ -72,7 +72,7 @@ public final class SolrIndexHandler implements IndexHandler
 
         AnalyzerDefinition queryAnalyzerDefinition = new AnalyzerDefinition();
         Map<String, Object> queryTokenizerAttributes = new HashMap<String, Object>();
-        queryTokenizerAttributes.put("class", "solr.KeywordTokenizerFactory");
+        queryTokenizerAttributes.put("class", "solr.StandardTokenizerFactory");
         queryAnalyzerDefinition.setTokenizer(queryTokenizerAttributes);
 
         fieldTypeDefinition.setAttributes(fieldTypeAttributes);
@@ -244,10 +244,6 @@ public final class SolrIndexHandler implements IndexHandler
                     e.printStackTrace();
                 }
             }
-
-
-
-
 
             LOG.debug("Beginning to commit Solr Documents into Solr");
 

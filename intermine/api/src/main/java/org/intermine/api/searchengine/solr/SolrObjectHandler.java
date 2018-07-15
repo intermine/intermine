@@ -358,6 +358,7 @@ public class SolrObjectHandler extends Thread {
                                     } else {
                                         doc.addField(virtualPathField,
                                                 (String) facetValue);
+                                        fieldNames.add(virtualPathField);
                                     }
                                 }
                             }
@@ -378,6 +379,7 @@ public class SolrObjectHandler extends Thread {
                                 && !StringUtils.isBlank((String) facetValue)) {
                             doc.addField(referenceFacet.getField(),
                                     (String) facetValue);
+                            fieldNames.add(referenceFacet.getField());
                         }
                     }
                 }
