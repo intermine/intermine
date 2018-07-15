@@ -40,6 +40,8 @@ public final class SolrIndexHandler implements IndexHandler
 
     private static final String LUCENE_INDEX_DIR = "keyword_search_index";
 
+    private static final String FIELD_TYPE_NAME = "string_keyword";
+
     private static ObjectPipe<SolrInputDocument> indexingQueue = new ObjectPipe<SolrInputDocument>(100000);
 
     @Override
@@ -58,7 +60,7 @@ public final class SolrIndexHandler implements IndexHandler
         FieldTypeDefinition fieldTypeDefinition = new FieldTypeDefinition();
 
         Map<String, Object> fieldTypeAttributes = new HashMap();
-        fieldTypeAttributes.put("name", "stringkeyword");
+        fieldTypeAttributes.put("name", FIELD_TYPE_NAME);
         fieldTypeAttributes.put("class", "solr.TextField");
         fieldTypeAttributes.put("positionIncrementGap", 100);
         fieldTypeAttributes.put("multiValued", true);
@@ -82,7 +84,7 @@ public final class SolrIndexHandler implements IndexHandler
             SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
 
         } catch (SolrServerException e){
-            LOG.error("Error while adding fields to the solrclient.", e);
+            LOG.error("Error while adding fieldtype to the solrclient.", e);
 
             e.printStackTrace();
         }
@@ -215,7 +217,7 @@ public final class SolrIndexHandler implements IndexHandler
 
                 Map<String, Object> fieldAttributes = new HashMap();
                 fieldAttributes.put("name", fieldName);
-                fieldAttributes.put("type", "string");
+                fieldAttributes.put("type", FIELD_TYPE_NAME);
                 fieldAttributes.put("stored", false);
                 fieldAttributes.put("indexed", true);
                 fieldAttributes.put("multiValued", true);
