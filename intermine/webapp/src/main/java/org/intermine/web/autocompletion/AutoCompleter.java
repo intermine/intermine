@@ -144,7 +144,7 @@ public class AutoCompleter
                 for (int i = 0; i < tmp.length; i++) {
                     query += tmp[i];
                     if (i < tmp.length - 1) {
-                        query += "* AND " + field+":";
+                        query += "* AND " + field + ":";
                     }
                 }
             }
