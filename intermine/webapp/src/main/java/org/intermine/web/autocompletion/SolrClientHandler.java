@@ -33,16 +33,14 @@ public class SolrClientHandler
 
     /**
      *Static method to get the solr client instance
-     *
-     * @param objectStore ObjectStore instance to pass into Properties Manager
-     *
+     * @param solrUrlString Url address of solr instance
+     *                      eg : "http://localhost:8983/solr/autocomplete"
      */
-    public static SolrClient getClientInstance(){
+    public static SolrClient getClientInstance(String solrUrlString){
 
         if(solrClient == null){
             synchronized (SolrClientHandler.class){
                 if (solrClient == null){
-                    solrUrlString = "http://localhost:8983/solr/autocomplete";
                     solrClient = new HttpSolrClient.Builder(solrUrlString).build();
                 }
 

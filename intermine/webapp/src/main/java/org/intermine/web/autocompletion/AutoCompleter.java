@@ -15,12 +15,6 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.util.Version;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -133,7 +127,7 @@ public class AutoCompleter
         String status = "true";
         String[] stringResults = null;
 
-        SolrClient solrClient = SolrClientHandler.getClientInstance();
+        SolrClient solrClient = SolrClientHandler.getClientInstance(this.propertiesManager.getSolrUrl());
         QueryResponse resp = null;
 
         if (!"".equals(query) && !query.trim().startsWith("*")) {
@@ -258,7 +252,7 @@ public class AutoCompleter
             }
         }
 
-        SolrClient solrClient = SolrClientHandler.getClientInstance();
+        SolrClient solrClient = SolrClientHandler.getClientInstance(this.propertiesManager.getSolrUrl());
 
         try {
             solrClient.deleteByQuery("*:*");
