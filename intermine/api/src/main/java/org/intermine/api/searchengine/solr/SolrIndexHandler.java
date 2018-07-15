@@ -89,6 +89,25 @@ public final class SolrIndexHandler implements IndexHandler
             e.printStackTrace();
         }
 
+        Map<String, Object> textFieldAttributes = new HashMap();
+        textFieldAttributes.put("name", "_text_");
+        textFieldAttributes.put("type", FIELD_TYPE_NAME);
+        textFieldAttributes.put("stored", false);
+        textFieldAttributes.put("indexed", true);
+        textFieldAttributes.put("multiValued", true);
+
+
+
+        try{
+            SchemaRequest.ReplaceField replaceFieldRequest = new SchemaRequest.ReplaceField(textFieldAttributes);
+            SchemaResponse.UpdateResponse replaceFieldResponse =  replaceFieldRequest.process(solrClient);
+
+        } catch (SolrServerException e){
+            LOG.error("Error while modifying _text_ fieldtype", e);
+
+            e.printStackTrace();
+        }
+
         try {
             solrClient.deleteByQuery("*:*");
             solrClient.commit();
@@ -206,14 +225,6 @@ public final class SolrIndexHandler implements IndexHandler
             fieldNames.add("classname");
 
             for(String fieldName: fieldNames){
-
-                try {
-                    SchemaRequest.Field field = new SchemaRequest.Field(fieldName);
-                    SchemaResponse.FieldResponse response =  field.process(solrClient);
-
-                } catch (Exception e) {
-
-                }
 
                 Map<String, Object> fieldAttributes = new HashMap();
                 fieldAttributes.put("name", fieldName);
