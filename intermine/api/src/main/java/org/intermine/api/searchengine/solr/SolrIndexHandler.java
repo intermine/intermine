@@ -64,12 +64,14 @@ public final class SolrIndexHandler implements IndexHandler
         fieldTypeAttributes.put("multiValued", true);
 
         AnalyzerDefinition indexAnalyzerDefinition = new AnalyzerDefinition();
-        Map<String, Object> indexAnalyzerAttributes = new HashMap<String, Object>();
-        indexAnalyzerAttributes.put("class", "solr.KeywordTokenizerFactory");
+        Map<String, Object> indexTokenizerAttributes = new HashMap<String, Object>();
+        indexTokenizerAttributes.put("class", "solr.KeywordTokenizerFactory");
+        indexAnalyzerDefinition.setTokenizer(indexTokenizerAttributes);
 
         AnalyzerDefinition queryAnalyzerDefinition = new AnalyzerDefinition();
-        Map<String, Object> queryAnalzerAttributes = new HashMap<String, Object>();
-        queryAnalzerAttributes.put("class", "solr.KeywordTokenizerFactory");
+        Map<String, Object> queryTokenizerAttributes = new HashMap<String, Object>();
+        queryTokenizerAttributes.put("class", "solr.KeywordTokenizerFactory");
+        queryAnalyzerDefinition.setTokenizer(queryTokenizerAttributes);
 
         fieldTypeDefinition.setAttributes(fieldTypeAttributes);
         fieldTypeDefinition.setIndexAnalyzer(indexAnalyzerDefinition);
