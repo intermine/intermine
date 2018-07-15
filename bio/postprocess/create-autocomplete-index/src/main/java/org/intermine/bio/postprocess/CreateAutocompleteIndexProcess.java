@@ -73,8 +73,6 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
 
         System.out.println("Creating auto complete index has completed");
 
-        } catch (IOException e) {
-            throw new BuildException("Could not open the class keys");
         } catch (NullPointerException e) {
             throw new BuildException("Could not find the class keys");
         }
