@@ -95,8 +95,6 @@ public final class SolrIndexHandler implements IndexHandler
         textFieldAttributes.put("indexed", true);
         textFieldAttributes.put("multiValued", true);
 
-
-
         try{
             SchemaRequest.ReplaceField replaceFieldRequest = new SchemaRequest.ReplaceField(textFieldAttributes);
             SchemaResponse.UpdateResponse replaceFieldResponse =  replaceFieldRequest.process(solrClient);
@@ -140,6 +138,9 @@ public final class SolrIndexHandler implements IndexHandler
             e.printStackTrace();
         }
 
+        addFieldNameToSchema("classname", solrClient);
+        addFieldNameToSchema("Category", solrClient);
+
         LOG.info("Starting fetcher thread...");
         SolrObjectHandler fetchThread =
                 new SolrObjectHandler(os, classKeys, indexingQueue,
@@ -148,7 +149,8 @@ public final class SolrIndexHandler implements IndexHandler
                         keywordSearchPropertiesManager.getSpecialReferences(),
                         keywordSearchPropertiesManager.getClassBoost(),
                         keywordSearchPropertiesManager.getFacets(),
-                        keywordSearchPropertiesManager.getAttributePrefixes());
+                        keywordSearchPropertiesManager.getAttributePrefixes(),
+                        solrClient);
         fetchThread.start();
 
         int indexed = 0;
@@ -220,29 +222,6 @@ public final class SolrIndexHandler implements IndexHandler
         //Accessing SchemaAPI from solr and create the schema dynamically
 
         if (solrDocumentList.size() != 0) {
-            fieldNames.add("Category");
-            fieldNames.add("classname");
-
-            for(String fieldName: fieldNames){
-
-                Map<String, Object> fieldAttributes = new HashMap();
-                fieldAttributes.put("name", fieldName);
-                fieldAttributes.put("type", FIELD_TYPE_NAME);
-                fieldAttributes.put("stored", false);
-                fieldAttributes.put("indexed", true);
-                fieldAttributes.put("multiValued", true);
-                fieldAttributes.put("required", false);
-
-                try{
-                    SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
-                    SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
-
-                } catch (SolrServerException e){
-                    LOG.error("Error while adding fields to the solrclient.", e);
-
-                    e.printStackTrace();
-                }
-            }
 
             LOG.debug("Beginning to commit Solr Documents into Solr");
 
@@ -261,4 +240,25 @@ public final class SolrIndexHandler implements IndexHandler
 
     }
 
+    public void addFieldNameToSchema(String fieldName, SolrClient solrClient) {
+
+        Map<String, Object> fieldAttributes = new HashMap();
+        fieldAttributes.put("name", fieldName);
+        fieldAttributes.put("type", FIELD_TYPE_NAME);
+        fieldAttributes.put("stored", false);
+        fieldAttributes.put("indexed", true);
+        fieldAttributes.put("multiValued", true);
+        fieldAttributes.put("required", false);
+
+        try {
+            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
+            SchemaResponse.UpdateResponse response = schemaRequest.process(solrClient);
+
+        } catch (Exception e) {
+            LOG.error("Error while adding fields to the solrclient.", e);
+
+            e.printStackTrace();
+        }
+
+    }
 }

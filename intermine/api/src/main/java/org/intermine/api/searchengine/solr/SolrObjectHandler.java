@@ -23,6 +23,10 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
+import org.apache.solr.client.solrj.response.schema.SchemaResponse;
 import org.apache.solr.common.SolrInputField;
 import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.config.ClassKeyHelper;
@@ -62,6 +66,8 @@ public class SolrObjectHandler extends Thread {
 
     private static final Logger LOG = Logger.getLogger(SolrObjectHandler.class);
 
+    private static final String FIELD_TYPE_NAME = "string_keyword";
+
     final ObjectStore os;
     final Map<String, List<FieldDescriptor>> classKeys;
     final ObjectPipe<SolrInputDocument> indexingQueue;
@@ -77,6 +83,7 @@ public class SolrObjectHandler extends Thread {
     final Map<Class<?>, Vector<ClassAttributes>> decomposedClassesCache =
             new HashMap<Class<?>, Vector<ClassAttributes>>();
 
+    private SolrClient solrClient;
 
     private volatile Exception error;
 
@@ -110,7 +117,9 @@ public class SolrObjectHandler extends Thread {
                                   Map<Class<? extends InterMineObject>, Set<String>> ignoredFields,
                                   Map<Class<? extends InterMineObject>, String[]> specialReferences,
                                   Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
-                                  Map<String, String> attributePrefixes) {
+                                  Map<String, String> attributePrefixes,
+                                  SolrClient solrClient
+                             ) {
         super();
 
         this.os = os;
@@ -122,6 +131,8 @@ public class SolrObjectHandler extends Thread {
         this.classBoost = classBoost;
         this.facets = facets;
         this.attributePrefixes = attributePrefixes;
+
+        this.solrClient = solrClient;
     }
 
     /**
@@ -358,7 +369,7 @@ public class SolrObjectHandler extends Thread {
                                     } else {
                                         doc.addField(virtualPathField,
                                                 (String) facetValue);
-                                        fieldNames.add(virtualPathField);
+                                        addFieldNameToSchema(virtualPathField);
                                     }
                                 }
                             }
@@ -379,7 +390,7 @@ public class SolrObjectHandler extends Thread {
                                 && !StringUtils.isBlank((String) facetValue)) {
                             doc.addField(referenceFacet.getField(),
                                     (String) facetValue);
-                            fieldNames.add(referenceFacet.getField());
+                            addFieldNameToSchema(referenceFacet.getField());
                         }
                     }
                 }
@@ -550,7 +561,7 @@ public class SolrObjectHandler extends Thread {
             }
 
             doc.addField(f.getName(), f.getValue());
-            fieldNames.add(f.getName());
+            addFieldNameToSchema(f.getName());
 
             return f;
         }
@@ -641,6 +652,32 @@ public class SolrObjectHandler extends Thread {
         q.addToSelect(parentQueryClass); // select last class
 
         return q;
+    }
+
+    public void addFieldNameToSchema( String fieldName) {
+
+        if (!fieldNames.contains(fieldName)){
+            fieldNames.add(fieldName);
+
+            Map<String, Object> fieldAttributes = new HashMap();
+            fieldAttributes.put("name", fieldName);
+            fieldAttributes.put("type", FIELD_TYPE_NAME);
+            fieldAttributes.put("stored", false);
+            fieldAttributes.put("indexed", true);
+            fieldAttributes.put("multiValued", true);
+            fieldAttributes.put("required", false);
+
+            try{
+                SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
+                SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+
+            } catch (Exception e){
+                LOG.error("Error while adding fields to the solrclient.", e);
+
+                e.printStackTrace();
+            }
+        }
+
     }
 
 }
