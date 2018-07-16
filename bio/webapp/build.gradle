@@ -41,7 +41,7 @@ dependencies {
 
 
     // horrible hack don't look! see #1846
-    compile group: "org.biojava", name: "biojava-core", version: "4.2.1"
+    compile group: "org.biojava", name: "biojava-core", version: "4.2.0"
     compile group: "org.biojava", name: "biojava-genome", version: "4.2.0"
     compile group: "org.biojava", name: "biojava-ontology", version: "4.2.0"
     imWebApp group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), transitive: false
