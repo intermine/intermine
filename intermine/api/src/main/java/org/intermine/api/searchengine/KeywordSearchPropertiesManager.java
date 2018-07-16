@@ -52,6 +52,8 @@ public class KeywordSearchPropertiesManager {
 
     private String solrUrl;
 
+    private int indexBatchSize = 1000;
+
     private KeywordSearchPropertiesManager(ObjectStore objectStore){
 
         parseProperties(objectStore);
@@ -196,6 +198,8 @@ public class KeywordSearchPropertiesManager {
                                         || "on".equals(value.toLowerCase());
                     } else if ("index.solrurl".equals(key) && !StringUtils.isBlank(value)) {
                         solrUrl = value;
+                    } else if ("index.batch.size".equals(key) && !StringUtils.isBlank(value)) {
+                        indexBatchSize = Integer.parseInt(value);
                     }
 
                 }
@@ -334,5 +338,9 @@ public class KeywordSearchPropertiesManager {
 
     public String getSolrUrl() {
         return solrUrl;
+    }
+
+    public int getIndexBatchSize() {
+        return indexBatchSize;
     }
 }

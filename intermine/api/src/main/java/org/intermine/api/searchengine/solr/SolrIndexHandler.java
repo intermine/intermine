@@ -157,8 +157,6 @@ public final class SolrIndexHandler implements IndexHandler
 
         List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
 
-
-
         // loop and index while we still have fetchers running
         LOG.debug("Starting to index...");
 
@@ -171,32 +169,23 @@ public final class SolrIndexHandler implements IndexHandler
 
             indexed++;
 
-            //This following log is not needed anymore because actual indexing happens below
+            if (solrInputDocuments.size() == keywordSearchPropertiesManager.getIndexBatchSize()){
 
-//            if (indexed % 10000 == 1) {
-//                LOG.info("docs indexed=" + indexed + "; thread state="
-//                        + fetchThread.getState() + "; docs/ms=" + indexed * 1.0F
-//                        / (System.currentTimeMillis() - time) + "; memory="
-//                        + Runtime.getRuntime().freeMemory() / 1024 + "k/"
-//                        + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
-//                        + (System.currentTimeMillis() - time) + "ms");
-//            }
+                commitBatchData(solrClient, solrInputDocuments);
 
-            if (solrInputDocuments.size() == 1000){
-
-                //We cannot pass the fieldNames directly while it is being used by the object handler thread
-                ArrayList<String> fieldNamesList = new ArrayList<String>(fetchThread.getFieldNames());
-
-                commitBatchData(solrClient, solrInputDocuments, fieldNamesList);
+                LOG.info("docs indexed=" + indexed + "; thread state="
+                        + fetchThread.getState() + "; docs/ms=" + indexed * 1.0F
+                        / (System.currentTimeMillis() - time) + "; memory="
+                        + Runtime.getRuntime().freeMemory() / 1024 + "k/"
+                        + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
+                        + (System.currentTimeMillis() - time) + "ms");
 
                 solrInputDocuments = new ArrayList<SolrInputDocument>();
             }
 
         }
 
-        ArrayList<String> fieldNamesList = new ArrayList<String>(fetchThread.getFieldNames());
-        commitBatchData(solrClient, solrInputDocuments, fieldNamesList);
-
+        commitBatchData(solrClient, solrInputDocuments);
 
         LOG.debug("Solr indexing ends and it took " + (System.currentTimeMillis() - indexStartTime) + "ms");
 
@@ -217,8 +206,7 @@ public final class SolrIndexHandler implements IndexHandler
     }
 
 
-    private void commitBatchData(SolrClient solrClient, List<SolrInputDocument> solrDocumentList,
-                                 ArrayList<String> fieldNames) throws IOException {
+    private void commitBatchData(SolrClient solrClient, List<SolrInputDocument> solrDocumentList) throws IOException {
         //Accessing SchemaAPI from solr and create the schema dynamically
 
         if (solrDocumentList.size() != 0) {
