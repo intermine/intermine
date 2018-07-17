@@ -71,48 +71,6 @@ public class AutoCompleter
 
     }
 
-    /**
-     * returns a string array with the search results of the query in the field
-     * @param query is the string used for search
-     * @param field is the field in which you like to search (e.g. name)
-     * @return stringList string array with the whole search results including
-     *           an error flag at position 0
-     */
-    public String[] getList(String query, String field) {
-        String[] stringList = null;
-//        String status = "true";
-//        int counter = 1;
-//
-//        TopDocs topDocs = null;
-//        try {
-//            topDocs = search.performSearch(query, field);
-//        } catch (IOException e) {
-//
-//        } catch (ParseException e) {
-//            status = "Please type in more characters to get results.";
-//        }
-//
-//        if (topDocs != null) {
-//            stringList = new String[topDocs.totalHits + 1];
-//
-//            for (int i = 0; i < topDocs.totalHits; i++) {
-//                ScoreDoc scoreDoc = topDocs.scoreDocs[i];
-//                Document doc;
-//                try {
-//                    doc = search.getIndexSearch().doc(scoreDoc.doc);
-//
-//                    stringList[counter] = doc.get(field);
-//                    counter++;
-//                } catch (IOException e) {
-//                    //TODO: shouldn't this go outside the for loop?
-//                    status = "No results! Please try again.";
-//                }
-//            }
-//        }
-//        stringList[0] = status;
-
-        return stringList;
-    }
 
     /**
      * Returns n search results
