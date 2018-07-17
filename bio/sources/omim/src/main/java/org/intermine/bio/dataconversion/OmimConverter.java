@@ -148,12 +148,30 @@ public class OmimConverter extends BioDirectoryConverter
 
     private void processMorbidMapFile(Reader reader) throws IOException, ObjectStoreException {
         BufferedReader br = new BufferedReader(reader);
-        String line = null;
         // find the OMIM ID. OMIM identifiers are 6 digits
         Pattern matchMajorDiseaseNumber = Pattern.compile("(\\d{6})");
-        final String delim = "\\)";
-        while ((line = br.readLine()) != null) {
-            Matcher diseaseMatcher = matchMajorDiseaseNumber.matcher(line);
+
+        // don't want the header
+        String line = br.readLine();
+        while (line != null) {
+            line = br.readLine();
+
+            // there are blank lines to skip
+            if (line == null || line == "" || line.startsWith("#")) {
+                continue;
+            }
+
+            // split the line by the number present (2)
+            // the line isn't space or tab delimited properly, hence this weirdness
+            String[] bits = line.split("\\s\\(\\d\\)\\s");
+            if (bits.length != 2) {
+                throw new RuntimeException(" bad line: '" + line + "' ");
+            }
+
+            String unformattedDiseaseString = bits[0];
+            String unformattedGeneSymbols = bits[1].trim();
+
+            Matcher diseaseMatcher = matchMajorDiseaseNumber.matcher(unformattedDiseaseString);
             String mimNumber = null;
             if (diseaseMatcher.find()) {
                 mimNumber = diseaseMatcher.group(1);
@@ -170,18 +188,9 @@ public class OmimConverter extends BioDirectoryConverter
                 // relying on our diseases map to be populated by the processOmimTxtFile() method
                 continue;
             }
-            String symbols = null;
-            String[] firstBits = line.split(delim);
-            if (firstBits.length != 2) {
-                // throw exception here?
-                LOG.info("Not processing " + line + " because I don't know how");
-                continue;
-            }
-            symbols = firstBits[1].trim();
-            // remove the trailing columns
-            String[] bits = symbols.split("(\\t)|(\\s\\s)");
-            String chompedSymbols = bits[0];
-            for (String geneSymbol : chompedSymbols.split(",")) {
+            String[] lineColumns = unformattedGeneSymbols.split("\\s+");
+            String geneSymbols = lineColumns[0];
+            for (String geneSymbol : geneSymbols.split(",")) {
                 String geneRefId = getGene(geneSymbol.trim());
                 if (geneRefId != null) {
                     disease.addToCollection("genes", geneRefId);
