@@ -64,7 +64,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             newQuery.addField("id");
 
             for (KeywordSearchFacetData keywordSearchFacetData : facets){
-                newQuery.addFacetField(keywordSearchFacetData.getField());
+                newQuery.addFacetField("facet_" + keywordSearchFacetData.getField());
             }
 
             // add faceting selections
@@ -164,7 +164,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             newQuery.setRows(0); //search results is not important here. Only facet categories
 
             for (KeywordSearchFacetData keywordSearchFacetData : facets){
-                newQuery.addFacetField(keywordSearchFacetData.getField());
+                newQuery.addFacetField("facet_" + keywordSearchFacetData.getField());
             }
 
             // add faceting selections
@@ -265,7 +265,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
             List<FacetField> facetFields = resp.getFacetFields();
 
-            FacetField facetField = resp.getFacetField(facet.getField());
+            FacetField facetField = resp.getFacetField("facet_" + facet.getField());
 
             List<FacetField.Count> counts = facetField.getValues();
 
