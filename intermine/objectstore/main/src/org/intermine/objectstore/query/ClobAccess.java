@@ -89,7 +89,7 @@ public class ClobAccess implements CharSequence, Lazy
                 String lastPage = (String) results.get(pageCount - 1);
                 length = CLOB_PAGE_SIZE * (pageCount - 1) + lastPage.length();
             }
-	    clob.setLength(length);
+            clob.setLength(length);
         }
     }
 
@@ -172,7 +172,7 @@ public class ClobAccess implements CharSequence, Lazy
     }
 
     /**
-     * Returns a new CharSequence that is a supersequence of this one, by adding specified flank 
+     * Returns a new CharSequence that is a supersequence of this one, by adding specified flank
      * amounts to each end.
      * NOTE that flank amounts are adjusted automatically to avoid invalid coordinates.
      *
@@ -183,23 +183,24 @@ public class ClobAccess implements CharSequence, Lazy
      * @throws IllegalArgumentException if this clob is not a subsequence
      */
     public ClobAccess addFlank(int leftFlank, int rightFlank) {
-	init();
-	if (!subSequence) {
+        init();
+        if (!subSequence) {
             throw new IllegalArgumentException("ClobAccess object is not a subsequence.");
-	}
+        }
         if (leftFlank < 0) {
             throw new IndexOutOfBoundsException("leftFlank is less than zero");
         }
         if (rightFlank < 0) {
             throw new IndexOutOfBoundsException("rightFlank is less than zero");
         }
-	leftFlank  = Math.min(leftFlank, offset);
-	rightFlank = Math.min(rightFlank, clob.getLength() - offset - length);
-        return new ClobAccess(results, clob, offset-leftFlank, length+leftFlank+rightFlank);
+        leftFlank  = Math.min(leftFlank, offset);
+        rightFlank = Math.min(rightFlank, clob.getLength() - offset - length);
+        return new ClobAccess(results, clob, offset - leftFlank, length + leftFlank + rightFlank);
     }
     /**
-     * Returns a new CharSequence that is a supersequence of this sequence, by adding a specified flank amount.
-     * NOTE that flank amounts are adjusted automatically to avoid invalid coordinates.
+     * Returns a new CharSequence that is a supersequence of this sequence, by adding
+     * a specified flank amount. NOTE that flank amounts are adjusted automatically to
+     * avoid invalid coordinates.
      *
      * @param flank the amount of flank to add at both ends
      * @return the specified sequence
