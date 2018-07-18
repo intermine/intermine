@@ -309,7 +309,7 @@ public class Engine extends CommandRunner
         cs.addConstraint(new SimpleConstraint(
             new QueryField(organisms, "taxonId"),
             ConstraintOp.EQUALS,
-            new QueryValue(Integer.valueOf(taxonId))));
+            new QueryValue(taxonId)));
         return cs;
     }
 
