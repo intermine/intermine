@@ -41,7 +41,7 @@ public class PathQueryBuilderTest extends TestCase {
     }
 
     private final Model model = Model.getInstanceByName("testmodel");
-    private final String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
+    private final String schemaUrl = this.getClass().getClassLoader().getResource("query.xsd").toString();
     private final String goodXML = "<query model=\"testmodel\" view=\"Employee.age Employee.name\">" +
         "<constraint path=\"Employee.name\" op=\"=\" value=\"Tim Canterbury\" />" +
         "</query>";
@@ -80,7 +80,7 @@ public class PathQueryBuilderTest extends TestCase {
     }
 
     public void testBuildGoodQuery() {
-        pqb.buildQuery(goodXML, schemaUrl, bags);
+        pqb.buildXMLQuery(goodXML, schemaUrl, bags);
         assertEquals(expectedGoodQuery.toString(), pqb.getQuery().toString());
 
     }
@@ -88,7 +88,7 @@ public class PathQueryBuilderTest extends TestCase {
     public void testBuildBadQueryNoView() {
 
         try {
-            pqb.buildQuery(invalidXML, schemaUrl, bags);
+            pqb.buildXMLQuery(invalidXML, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -101,11 +101,11 @@ public class PathQueryBuilderTest extends TestCase {
             fail("Unexpected error when building a query from bad xml" + t.getMessage());
         }
     }
-    
+
     public void testBuildBadQueryMultipleRoots() {
 
         try {
-            pqb.buildQuery(badQuery, schemaUrl, bags);
+            pqb.buildXMLQuery(badQuery, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -120,15 +120,14 @@ public class PathQueryBuilderTest extends TestCase {
     }
 
     public void testBuildBadQueryUnknownList() {
-
         try {
-            pqb.buildQuery(bagXML, schemaUrl, bags);
+            pqb.buildXMLQuery(bagXML, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
         } catch (BadRequestException e) {
             assertEquals(
-                    "The query XML is well formatted but you do not have access to the following " +
+                    "The query is well formatted but you do not have access to the following " +
                     "mentioned lists:\nDecent Human Beings.",
                     e.getMessage().trim()
             );

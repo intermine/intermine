@@ -89,7 +89,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
     /**
      * @throws IOException
      */
-    private void executeLoaderTask(String className, String fastaFile) throws IOException {
+    private void executeLoaderTask(String className, String fastaFile) throws Exception {
         FastaLoaderTask flt = new NCBIFastaLoaderTask();
         flt.setFastaTaxonId("9606");
         flt.setIgnoreDuplicates(true);
@@ -111,6 +111,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         files[0] = fasta;
         flt.setFileArray(files);
         flt.execute();
+        flt.close();
     }
 
     /**

@@ -81,6 +81,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
         files[0].deleteOnExit();
         flt.setFileArray(files);
         flt.execute();
+        flt.close();
 
         //Check the results to see if we have some data...
         ObjectStore os = osw.getObjectStore();

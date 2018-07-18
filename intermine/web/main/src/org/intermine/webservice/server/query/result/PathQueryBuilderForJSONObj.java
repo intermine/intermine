@@ -48,7 +48,7 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder
      */
     public PathQueryBuilderForJSONObj(String xml, String schemaUrl,
             Producer<Map<String, InterMineBag>> savedBags) {
-        super(xml, schemaUrl, savedBags);
+        super(null, xml, schemaUrl, savedBags);
     }
 
     /**

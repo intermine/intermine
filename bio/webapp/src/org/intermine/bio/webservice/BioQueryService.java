@@ -45,7 +45,7 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
  */
 public abstract class BioQueryService extends AbstractQueryService
 {
-    private static final String XML_PARAM = "query";
+    private static final String QUERY_PARAM = "query";
     private static final String VIEW_PARAM = "view";
 
     private PrintWriter pw;
@@ -115,8 +115,8 @@ public abstract class BioQueryService extends AbstractQueryService
      * @return A query.
      */
     protected PathQuery getQuery() {
-        String xml = getRequiredParameter(XML_PARAM);
-        PathQueryBuilder builder = getQueryBuilder(xml);
+        String queryString = getRequiredParameter(QUERY_PARAM);
+        PathQueryBuilder builder = getQueryBuilder(queryString);
         PathQuery pq = builder.getQuery();
 
         List<String> newView = new ArrayList<String>();

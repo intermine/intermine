@@ -6,7 +6,7 @@ Dev: [![Build Status: dev][travis-badge-dev]][ci]
 [![Version](http://img.shields.io/badge/version-1.8.2-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
-[![Conda](https://anaconda.org/intermine/intermine/badges/installer/conda.svg)](https://anaconda.org/intermine/intermine)
+[![Conda](https://anaconda.org/intermine/intermine/badges/installer/conda.svg)](https://anaconda.org/bioconda/intermine)
 
 A powerful open source data warehouse system. InterMine allows users
 to integrate diverse data sources with a minimum of effort, providing
@@ -60,7 +60,7 @@ provided to the setup scripts as `PSQL_USER`, `PSQL_PWD`,
 Copyright and Licence
 ------------------------
 
-Copyright (C) 2002-2017 FlyMine
+Copyright (C) 2002-2018 FlyMine
 
 See [LICENSE](LICENSE) file for licensing information.
 
@@ -83,6 +83,6 @@ Please cite
 [readthedocs]: http://intermine.readthedocs.org/en/latest
 [tutorial]: http://intermine.readthedocs.org/en/latest/get-started/tutorial
 [psql]: http://www.postgresql.org
-[java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+[java]: http://openjdk.java.net
 [apache]: http://www.apache.org
 [tomcat]: http://tomcat.apache.org/download-70.cgi
