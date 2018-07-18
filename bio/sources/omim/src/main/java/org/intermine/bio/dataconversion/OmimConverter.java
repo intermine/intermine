@@ -157,7 +157,7 @@ public class OmimConverter extends BioDirectoryConverter
             line = br.readLine();
 
             // there are blank lines to skip
-            if (line == null || line == "" || line.startsWith("#")) {
+            if (StringUtils.isEmpty(line) || line.startsWith("#")) {
                 continue;
             }
 
