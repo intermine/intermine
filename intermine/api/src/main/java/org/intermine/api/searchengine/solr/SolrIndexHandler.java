@@ -149,13 +149,13 @@ public final class SolrIndexHandler implements IndexHandler
             e.printStackTrace();
         }
 
-        addFieldNameToSchema("classname", FIELD_TYPE_NAME, solrClient);
-        addFieldNameToSchema("Category", FIELD_TYPE_NAME, solrClient);
+        addFieldNameToSchema("classname", FIELD_TYPE_NAME, false, true, false, solrClient);
+        addFieldNameToSchema("Category", "string", false, true, true, solrClient);
 
         for (KeywordSearchFacetData facetData: keywordSearchPropertiesManager.getFacets()){
             for (String field : facetData.getFields()){
-                addFieldNameToSchema(field, FIELD_TYPE_NAME, solrClient);
-                addFieldNameToSchema("facet_" + field, "string", solrClient);
+                addFieldNameToSchema(field, FIELD_TYPE_NAME, false, true, true, solrClient);
+                addFieldNameToSchema("facet_" + field, "string", false, true, true, solrClient);
                 addCopyFieldToSchema(field, "facet_" + field, solrClient);
             }
         }
@@ -247,13 +247,15 @@ public final class SolrIndexHandler implements IndexHandler
 
     }
 
-    public void addFieldNameToSchema(String fieldName, String fieldType, SolrClient solrClient) throws IOException{
+    public void addFieldNameToSchema(String fieldName, String fieldType, boolean stored,
+                                     boolean indexed, boolean omitNorms, SolrClient solrClient) throws IOException{
 
         Map<String, Object> fieldAttributes = new HashMap();
         fieldAttributes.put("name", fieldName);
         fieldAttributes.put("type", fieldType);
-        fieldAttributes.put("stored", false);
-        fieldAttributes.put("indexed", true);
+        fieldAttributes.put("stored", stored);
+        fieldAttributes.put("indexed", indexed);
+        fieldAttributes.put("omitNorms", omitNorms);
         fieldAttributes.put("multiValued", true);
         fieldAttributes.put("required", false);
 

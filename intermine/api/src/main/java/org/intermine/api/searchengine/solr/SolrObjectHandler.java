@@ -654,16 +654,18 @@ public class SolrObjectHandler extends Thread {
         return q;
     }
 
-    public void addFieldNameToSchema( String fieldName) {
+    public void addFieldNameToSchema(String fieldName, String fieldType,
+                                     boolean stored, boolean indexed, boolean omitNorms) {
 
         if (!fieldNames.contains(fieldName)){
             fieldNames.add(fieldName);
 
             Map<String, Object> fieldAttributes = new HashMap();
             fieldAttributes.put("name", fieldName);
-            fieldAttributes.put("type", FIELD_TYPE_NAME);
-            fieldAttributes.put("stored", false);
-            fieldAttributes.put("indexed", true);
+            fieldAttributes.put("type", fieldType);
+            fieldAttributes.put("stored", stored);
+            fieldAttributes.put("indexed", indexed);
+            fieldAttributes.put("omitNorms", omitNorms);
             fieldAttributes.put("multiValued", true);
             fieldAttributes.put("required", false);
 
