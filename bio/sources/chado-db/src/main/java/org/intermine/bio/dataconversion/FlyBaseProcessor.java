@@ -14,12 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -728,6 +723,36 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "       AND object_id IN (" + getLocatedGenesSql() + ")))";
     }
 
+    // See https://github.com/intermine/intermine/issues/1843
+    private static final Set<String> VALID_CHROMOSOMES = new HashSet<String>();
+
+    static {
+        VALID_CHROMOSOMES.add("211000022278279");
+        VALID_CHROMOSOMES.add("211000022278436");
+        VALID_CHROMOSOMES.add("211000022278449");
+        VALID_CHROMOSOMES.add("211000022278760");
+        VALID_CHROMOSOMES.add("211000022279165");
+        VALID_CHROMOSOMES.add("211000022279188");
+        VALID_CHROMOSOMES.add("211000022279264");
+        VALID_CHROMOSOMES.add("211000022279681");
+        VALID_CHROMOSOMES.add("211000022280328");
+        VALID_CHROMOSOMES.add("211000022280341");
+        VALID_CHROMOSOMES.add("211000022280347");
+        VALID_CHROMOSOMES.add("211000022280481");
+        VALID_CHROMOSOMES.add("211000022280494");
+        VALID_CHROMOSOMES.add("2L");
+        VALID_CHROMOSOMES.add("2R");
+        VALID_CHROMOSOMES.add("3L");
+        VALID_CHROMOSOMES.add("3R");
+        VALID_CHROMOSOMES.add("4");
+        VALID_CHROMOSOMES.add("2R");
+        VALID_CHROMOSOMES.add("Unmapped_Scaffold_8_D1580_D1567");
+        VALID_CHROMOSOMES.add("X");
+        VALID_CHROMOSOMES.add("Y");
+        VALID_CHROMOSOMES.add("rDNA");
+    }
+
+
     /**
      * {@inheritDoc}
      */
@@ -777,6 +802,13 @@ public class FlyBaseProcessor extends SequenceProcessor
                 return null;
             }
             realInterMineType = "Chromosome";
+        }
+
+        if ("golden_path_region".equals(chadoFeatureType)) {
+            // only change to be a chromosome if it's a chromosome in our list.
+            if (VALID_CHROMOSOMES.contains(uniqueName)) {
+                realInterMineType = "Chromosome";
+            }
         }
 
         if (chadoFeatureType.equals(CHROMOSOME_STRUCTURE_VARIATION_SO_NAME)) {
