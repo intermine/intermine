@@ -57,6 +57,7 @@ public class Clob implements QuerySelectable
     /**
      * Sets the length of the Clob.
      *
+     * @param len The length.
      * @throws IllegalArgumentException if the length argument is negative.
      */
     public void setLength(int len) {
