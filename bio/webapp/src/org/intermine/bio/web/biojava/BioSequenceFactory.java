@@ -67,7 +67,8 @@ public abstract class BioSequenceFactory
         if (feature.getSequence() == null) {
             return null;
         } else {
-            String residues = feature.getSequence().getResidues().addFlank(extension).toString().toLowerCase();
+            String residues =
+	        feature.getSequence().getResidues().addFlank(extension).toString().toLowerCase();
             return new BioSequence(new DNASequence(residues), feature);
         }
     }
@@ -81,7 +82,7 @@ public abstract class BioSequenceFactory
      */
     public static BioSequence make(SequenceFeature feature)
         throws IllegalSymbolException {
-	return make(feature, 0);
+        return make(feature, 0);
     }
 
     /**

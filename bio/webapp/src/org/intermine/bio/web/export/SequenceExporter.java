@@ -24,9 +24,7 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
-import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
-import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
@@ -161,8 +159,8 @@ public class SequenceExporter implements Exporter
                 }
 
                 if (object instanceof SequenceFeature) {
-		                bioSequence = createSequenceFeature(header, object,
-			                     row, unionPathCollection, newPathCollection);
+                    bioSequence = createSequenceFeature(header, object,
+                            row, unionPathCollection, newPathCollection);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row,
                             unionPathCollection, newPathCollection);
