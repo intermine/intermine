@@ -78,7 +78,7 @@ public class ClobAccess implements CharSequence, Lazy
      * the ObjectStoreWriter while it has exclusive use of the connection.
      */
     protected void init() {
-        if (clob.getLength() == -1) {
+        if (results == null) {
             Query q = new Query();
             q.addToSelect(clob);
             results = os.executeSingleton(q, 20, false, false, true);
