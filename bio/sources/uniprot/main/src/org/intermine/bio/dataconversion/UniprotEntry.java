@@ -255,6 +255,15 @@ public class UniprotEntry
     }
 
     /**
+     * This publication has been retracted. We don't know about retractions until after we've
+     * parsed the pubmed, so we have to do it this dumb way.
+     */
+    public void deleteLastPub() {
+        List<String> pubs = collections.get("pubs");
+        pubs.remove(pubs.size() - 1);
+    }
+
+    /**
      * @return list of ecNumbers for this protein
      */
     public List<String> getECNumbers() {

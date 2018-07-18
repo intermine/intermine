@@ -18,7 +18,7 @@
     type: 'table',
     url: 'TEST_SERVICE_ROOT',
     token: null,
-    query: {"model":{"name":"testmodel"},"select":["Employee.name","Employee.department.name"],"where":[{"path":"Employee.department.manager","op":"=","code":"A","value":"Employee.department.company.CEO"}]}
+    query: {"model":{"name":"testmodel"},"select":["Employee.name","Employee.department.name"],"where":[{"path":"Employee.department.manager","op":"=","code":"A","loopPath":"Employee.department.company.CEO"}]}
   };
   jQuery('#query-container').imWidget(options);
 </script>
