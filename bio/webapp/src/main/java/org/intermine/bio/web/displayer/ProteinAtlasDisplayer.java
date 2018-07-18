@@ -108,14 +108,13 @@ public class ProteinAtlasDisplayer extends ReportDisplayer
     private PathQuery geneProteinAtlasExpressionQuery(String genePrimaryID, PathQuery query) {
         query.addViews(
                 "Gene.proteinAtlasExpression.cellType",
-                "Gene.proteinAtlasExpression.expressionType",
                 "Gene.proteinAtlasExpression.level",
                 "Gene.proteinAtlasExpression.reliability",
                 "Gene.proteinAtlasExpression.tissue.name",
                 "Gene.proteinAtlasExpression.tissue.tissueGroup.name",
                 "Gene.primaryIdentifier");
         // TODO order by organ name
-        query.addOrderBy("Gene.proteinAtlasExpression.expressionType", OrderDirection.ASC);
+        query.addOrderBy("Gene.proteinAtlasExpression.tissue.name", OrderDirection.ASC);
         query.addConstraint(Constraints.eq("Gene.primaryIdentifier", genePrimaryID));
 
         return query;
