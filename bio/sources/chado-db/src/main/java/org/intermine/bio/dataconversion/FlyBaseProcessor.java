@@ -14,7 +14,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -805,7 +813,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
         if ("golden_path_region".equals(chadoFeatureType)) {
-            // only change to be a chromosome if it's a chromosome in our list.
+            // only change to be a chromosome if it's on our list of good ones.
             if (VALID_CHROMOSOMES.contains(uniqueName)) {
                 realInterMineType = "Chromosome";
             }
