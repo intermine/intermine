@@ -29,7 +29,7 @@
         <attribute name="pubMedId" value="11443197"/>
     </item>
     <item id="1_1" class="DataSource">
-        <attribute name="name" value="Online Mendelian Inheritance in Man"/>
+        <attribute name="name" value="OMIM"/>
     </item>
     <item id="8_3" class="Publication">
         <attribute name="pubMedId" value="12574549"/>

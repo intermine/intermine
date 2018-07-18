@@ -76,7 +76,7 @@ public class PsiConverter extends BioFileConverter
      * @param model the Model
      */
     public PsiConverter(ItemWriter writer, Model model) {
-        super(writer, model, "IntAct", "IntAct interactions data set");
+        super(writer, model, "IntAct", "IntAct molecular interactions");
         readConfig();
         try {
             termId = getTerm(BINDING_SITE);

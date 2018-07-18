@@ -41,7 +41,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final Logger LOG = Logger.getLogger(OmimConverter.class);
 
     private static final String DATASET_TITLE = "OMIM diseases";
-    private static final String DATA_SOURCE_NAME = "Online Mendelian Inheritance in Man";
+    private static final String DATA_SOURCE_NAME = "OMIM";
     private static final String TAXON_ID = "9606";
     private static final String OMIM_PREFIX = "OMIM:";
 
