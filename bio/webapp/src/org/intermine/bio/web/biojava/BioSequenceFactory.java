@@ -68,7 +68,7 @@ public abstract class BioSequenceFactory
             return null;
         } else {
             String residues =
-	        feature.getSequence().getResidues().addFlank(extension).toString().toLowerCase();
+                feature.getSequence().getResidues().addFlank(extension).toString().toLowerCase();
             return new BioSequence(new DNASequence(residues), feature);
         }
     }
