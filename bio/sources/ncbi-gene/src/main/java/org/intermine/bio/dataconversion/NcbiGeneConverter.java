@@ -36,7 +36,7 @@ public class NcbiGeneConverter extends BioFileConverter
 {
     //
     private static final String DATASET_TITLE = "NCBI Entrez Gene identifiers";
-    private static final String DATA_SOURCE_NAME = "NCBI Entrez Gene";
+    private static final String DATA_SOURCE_NAME = "NCBI";
     private Set<String> taxonIds = null;
 
     protected static final Logger LOG = Logger.getLogger(NcbiGeneConverter.class);
