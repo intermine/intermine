@@ -170,7 +170,7 @@ task loadsadata(dependsOn: 'insertData') {
 task buildDB() {
     group "${taskGroup}"
     description "Build database for testmodel webapp"
-    dependsOn 'build','copyDefaultProperties', 'copyTestModel'
+    dependsOn 'processResources', 'build','copyDefaultProperties', 'copyTestModel'
     doFirst {
         // this is only a fatal error if the user did not supply their credentials
         // if they have their own property file, we assume human and not travis

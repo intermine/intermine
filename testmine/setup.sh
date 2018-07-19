@@ -90,7 +90,7 @@ done
 
 # This is the first point at which we need to refer to the InterMine jars previous built
 # So we need to install them to Maven so that the testmine Gradle can fetch them
-echo "-----> Installing InterMine Gradle project JARs to local Maven..."
+echo "------> Installing InterMine Gradle project JARs to local Maven..."
 cd $DIR/../intermine
 (cd ../plugin && ./gradlew install)
 ./gradlew install
@@ -98,13 +98,13 @@ cd $DIR/../intermine
 echo "------> Loading demo data set..."
 cd $DIR
 
-echo "-----> Running ./gradlew loadsadata"
+echo "------> Running ./gradlew loadsadata"
 ./gradlew loadsadata
 
 echo "------> Loading userprofile..."
 ./gradlew insertUserData
 
 echo "------> Running webapp"
-echo "-----> Running ./gradlew tomcatstartwar"
+echo "------> Running ./gradlew tomcatstartwar"
 ./gradlew tomcatstartwar & 
-echo "-----> Finished init-webapp.sh"
+echo "------> Finished"
