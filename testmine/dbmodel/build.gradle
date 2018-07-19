@@ -145,7 +145,7 @@ void enormocorpLoader() {
     ant.taskdef(name: 'enormocorp', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
             pathelement(path: configurations.compile.asPath)
-            dirset(dir: 'build/resources/main') // intermine.properties
+            dirset(dir: "$buildDir") // intermine.properties
         }
     }
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_enormo_data.xml", sourceName: "testsource", sourceType: "testsource")
@@ -170,7 +170,7 @@ task loadsadata(dependsOn: 'insertData') {
 task buildDB() {
     group "${taskGroup}"
     description "Build database for testmodel webapp"
-    dependsOn 'processResources', 'build','copyDefaultProperties', 'copyTestModel'
+    dependsOn 'build','copyDefaultProperties', 'copyMineProperties', 'copyTestModel'
     doFirst {
         // this is only a fatal error if the user did not supply their credentials
         // if they have their own property file, we assume human and not travis
