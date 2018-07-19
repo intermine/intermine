@@ -92,6 +92,7 @@ void buildDatabase(osname, model) {
         classpath {
             pathelement(path: configurations.compile.asPath)
             dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
@@ -99,6 +100,7 @@ void buildDatabase(osname, model) {
         classpath {
             pathelement(path: configurations.compile.asPath)
             dirset(dir: "$buildDir") // intermine.properties, os.unittest-schema.xml
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.buildDB(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
@@ -106,6 +108,7 @@ void buildDatabase(osname, model) {
         classpath {
             pathelement(path: configurations.compile.asPath)
             dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.insertModel(osname: "os.$osname", modelName: "$model")
@@ -145,7 +148,7 @@ void enormocorpLoader() {
     ant.taskdef(name: 'enormocorp', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
             pathelement(path: configurations.compile.asPath)
-            dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_enormo_data.xml", sourceName: "testsource", sourceType: "testsource")
