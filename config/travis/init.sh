@@ -61,7 +61,7 @@ else
             # We need the imjs code to exercise the webservices
             $GIT_GET https://github.com/intermine/imjs.git client
         elif [[ "$CLIENT" = "PY" ]]; then
-            $GIT_GET https://github.com/intermine/intermine-ws-client.py client
+            $GIT_GET -b master https://github.com/intermine/intermine-ws-python client
         fi
     fi
 fi
