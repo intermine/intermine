@@ -93,10 +93,10 @@ echo "------> Loading demo data set..."
 cd $DIR
 
 echo "------> Running ./gradlew loadsadata"
-./gradlew loadsadata
+./gradlew loadsadata --stacktrace
 
 echo "------> Loading userprofile..."
-./gradlew insertUserData
+./gradlew insertUserData --stacktrace
 
 echo "------> Running webapp"
 echo "------> Running ./gradlew tomcatstartwar"
