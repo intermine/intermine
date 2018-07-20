@@ -161,7 +161,7 @@ void loadTemplates() {
             dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
-    ant.loadDefaultTemplates(osAlias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', templatesXml:"$project.rootDir/dbmodel/resources/default-template-queries.xml", username: 'intermine', superuserPassword: 'intermine')
+    ant.loadDefaultTemplates(osAlias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', templatesXml:"$project.rootDir/dbmodel/resources/default-template-queries.xml", username: 'superuser@intermine.org', superuserPassword: 'intermine')
 }
 
 task insertUserData() {
@@ -170,7 +170,7 @@ task insertUserData() {
     dependsOn 'build','copyDefaultProperties', 'copyMineProperties'
 
     doLast {
-        loadTemplates()
         insertUserTestData()
+        loadTemplates()
     }
 }
