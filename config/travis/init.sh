@@ -36,6 +36,13 @@ else
 
     if [[ "$TEST_SUITE" = "ws" ]]; then
 
+    # install everything first. we don't want to test what's in maven
+        (cd plugin && ./gradlew install)
+        (cd intermine && ./gradlew install)    
+        (cd bio && ./gradlew install)
+        (cd bio/sources && ./gradlew install)
+        (cd bio/postprocess && ./gradlew install)
+
         # set up database for testing
         (cd intermine && ./gradlew createUnitTestDatabases)
 
