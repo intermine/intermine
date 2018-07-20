@@ -175,3 +175,19 @@ task insertUserData() {
         loadTemplates()
     }
 }
+
+
+task createSearchIndex {
+    description "Generate the lucene keyword serach index"
+    dependsOn 'copyDefaultProperties', 'copyMineProperties', 'copyTestModel'
+
+    doLast {
+        ant.taskdef(name: "createSearchIndexTask", classname: "org.intermine.web.task.CreateSearchIndexTask") {
+            classpath {
+                dirset(dir: "$buildDir")
+                pathelement(path: configurations.compile.asPath)
+            }
+        }
+        ant.createSearchIndexTask(osalias: "os.unittest")
+    }
+}

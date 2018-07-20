@@ -84,20 +84,6 @@ task summariseTestObjectStore {
     }
 }
 
-task createSearchIndex {
-    description "Generate the lucene keyword serach index"
-    dependsOn 'copyDefaultProperties', 'copyMineProperties'
-
-    doLast {
-        ant.taskdef(name: "createSearchIndexTask", classname: "org.intermine.web.task.CreateSearchIndexTask") {
-            classpath {
-                dirset(dir: "$buildDir")
-                pathelement(path: configurations.compile.asPath)
-            }
-        }
-        ant.createSearchIndexTask(osalias: "os.unittest")
-    }
-}
 
 task unwarIMWebApp(type: Copy) {
     description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
