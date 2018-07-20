@@ -127,10 +127,11 @@ task loadsadata(dependsOn: 'insertData') {
 
 task buildDB() {
     group "${taskGroup}"
-    description "Build database for testmodel webapp"
+    description "Build database and userprofile for testmodel webapp"
     dependsOn 'build','copyDefaultProperties', 'copyMineProperties', 'copyTestModel'
     doLast {
         buildDatabase('unittest', 'testmodel')
+        buildDatabase('userprofile-test', 'userprofile')
     }
 }
 
