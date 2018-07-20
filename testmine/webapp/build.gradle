@@ -86,7 +86,7 @@ task summariseTestObjectStore {
 
 task createSearchIndex {
     description "Generate the lucene keyword serach index"
-    dependsOn 'copyDefaultProperties'
+    dependsOn 'copyDefaultProperties', 'copyMineProperties'
 
     doLast {
         ant.taskdef(name: "createSearchIndexTask", classname: "org.intermine.web.task.CreateSearchIndexTask") {
