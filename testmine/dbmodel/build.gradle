@@ -20,31 +20,6 @@ dependencies {
     testModelProps group: "org.intermine", name: "intermine-testresources", version: imVersion, transitive: false
 }
 
-ext {
-    // suffix for property file. might be blank
-    mineRelease = hasProperty('release') ? "." + release : ''
-    // filename for property file
-    minePropertyFileName = "testmodel.properties$mineRelease"
-    // full path to file
-    minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
-    localMinePropertyFile = true
-    // NO PROPERTY FILE -- use the default
-    if( !file(minePropertyFile).exists() ) {
-        localMinePropertyFile = false
-        minePropertyFile = "$project.rootDir/dbmodel/resources/testmodel.properties"
-    }
-
-    println "Using InterMine properties file $minePropertyFile"
-}
-
-task copyMineProperties(type: Copy) {
-    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
-    from minePropertyFile
-    into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
-
 // the JAR file has an intermine.properties files for unit tests. if we put the JAR on the classpath
 // the testmine uses that property file instead. SO ... copy all the files to the build dir.
 task copyTestModel(type: Copy) {
@@ -62,29 +37,6 @@ task copyTestModel(type: Copy) {
         include "org/intermine/model/testmodel/*"
     }
     into sourceSets.main.output.resourcesDir
-}
-
-processResources {
-  if( !localMinePropertyFile ) {
-    def db_username = System.getenv('USER')
-    def db_pw = System.getenv('USER')
-
-    eachFile { copyDetails ->
-        if (copyDetails.path == 'testmodel.properties') {
-            filter { line ->
-                line.replace('PSQL_USER', "$db_username")
-            }
-        }
-        if (copyDetails.path == 'testmodel.properties') {
-            filter { line ->
-                line.replace('PSQL_PWD', "$db_pw")
-            }
-        }
-        rename { fileName -> fileName.replace("testmodel.properties", "intermine.properties") }
-    }
-  } else {
-      tasks.copyMineProperties.execute()
-  }
 }
 
 void buildDatabase(osname, model) {
@@ -124,6 +76,7 @@ void insertDataUnitTest() {
         classpath {
             pathelement(path: configurations.compile.asPath)
             dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }   
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_webapp_data.xml", sourceName: "testsource", sourceType: "testsource")
@@ -136,6 +89,7 @@ void loadsadataLoader() {
         classpath {
             pathelement(path: configurations.compile.asPath)
             dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
 
@@ -174,16 +128,6 @@ task buildDB() {
     group "${taskGroup}"
     description "Build database for testmodel webapp"
     dependsOn 'build','copyDefaultProperties', 'copyMineProperties', 'copyTestModel'
-    doFirst {
-        // this is only a fatal error if the user did not supply their credentials
-        // if they have their own property file, we assume human and not travis
-        if (!localMinePropertyFile) {
-            exec {
-                ignoreExitValue true
-                commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"intermine-demo\";"
-            }
-        }
-    }
     doLast {
         buildDatabase('unittest', 'testmodel')
     }
@@ -194,19 +138,6 @@ task insertData(dependsOn: 'buildDB') {
     description "Build database and load data for intermine-test webapp"
     doLast {
         insertDataUnitTest()
-    }
-}
-
-// this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to dbs
-task dropDB {
-    description "drop all the testmodel databases. used for debugging only. or not, do what you want I'm not the police."
-    doLast {
-        exec {
-            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
-            // create ones that aren't there
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"intermine-demo\";"
-        }
     }
 }
 
@@ -235,26 +166,8 @@ task insertUserData() {
     description "Build userprofile database with test users for testmodel webapp"
     dependsOn 'build','copyDefaultProperties'
 
-    doFirst {
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"userprofile-demo\";"
-        }
-        buildDatabase('userprofile-test', 'userprofile')
-    }
     doLast {
         loadTemplates()
         insertUserTestData()
-    }
-}
-
-// this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to dbs
-task dropUserDB {
-    description "drop the userprofile testmodel database. used for debugging only. "
-    doLast {
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"userprofile-demo\";"
-        }
     }
 }
