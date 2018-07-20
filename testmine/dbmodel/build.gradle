@@ -167,7 +167,7 @@ void loadTemplates() {
 task insertUserData() {
     group "${taskGroup}"
     description "Build userprofile database with test users for testmodel webapp"
-    dependsOn 'build','copyDefaultProperties', 'copyMineProperties',
+    dependsOn 'build','copyDefaultProperties', 'copyMineProperties'
 
     doLast {
         loadTemplates()
