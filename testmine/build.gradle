@@ -39,7 +39,7 @@ subprojects {
         description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
         from minePropertyFile
         into sourceSets.main.output.resourcesDir
-        rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
+        rename { fileName -> fileName.replace("testmodel.properties", "intermine.properties") }
         inputs.sourceFiles.stopExecutionIfEmpty()
     }
 
