@@ -180,6 +180,7 @@ public final class SolrIndexHandler implements IndexHandler
         LOG.debug("Starting to index...");
 
         long indexStartTime = System.currentTimeMillis();
+        int indexBatchSize = keywordSearchPropertiesManager.getIndexBatchSize();
 
         while (indexingQueue.hasNext()) {
             SolrInputDocument doc = indexingQueue.next();
@@ -188,7 +189,7 @@ public final class SolrIndexHandler implements IndexHandler
 
             indexed++;
 
-            if (solrInputDocuments.size() == keywordSearchPropertiesManager.getIndexBatchSize()){
+            if (indexed % indexBatchSize == 0){
 
                 commitBatchData(solrClient, solrInputDocuments);
 
@@ -203,7 +204,7 @@ public final class SolrIndexHandler implements IndexHandler
             }
 
         }
-
+        LOG.info("Last commit");
         commitBatchData(solrClient, solrInputDocuments);
 
         LOG.debug("Solr indexing ends and it took " + (System.currentTimeMillis() - indexStartTime) + "ms");
@@ -230,21 +231,22 @@ public final class SolrIndexHandler implements IndexHandler
 
         if (solrDocumentList.size() != 0) {
 
-            LOG.debug("Beginning to commit Solr Documents into Solr");
+            LOG.info("Beginning to commit Solr Documents into Solr");
 
             try {
                 UpdateResponse response = solrClient.add(solrDocumentList);
                 solrClient.commit();
-
+                LOG.info("Commited!");
             } catch (SolrServerException e) {
 
                 LOG.error("Error while commiting the SolrInputdocuments to the Solrclient. " +
                         "Make sure the Solr instance is up", e);
 
                 e.printStackTrace();
+            } catch (IOException io) {
+                LOG.error("Error while commiting the SolrInputdocuments to the Solrclient. ", io.fillInStackTrace());
             }
         }
-
     }
 
     public void addFieldNameToSchema(String fieldName, String fieldType, SolrClient solrClient) throws IOException{
@@ -261,6 +263,7 @@ public final class SolrIndexHandler implements IndexHandler
             SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
             SchemaResponse.UpdateResponse response = schemaRequest.process(solrClient);
 
+            LOG.info("addFieldnameToSchema - update response status is:" +response.getStatus());
         } catch (SolrServerException e) {
             LOG.error("Error while adding fields to the solrclient.", e);
 
