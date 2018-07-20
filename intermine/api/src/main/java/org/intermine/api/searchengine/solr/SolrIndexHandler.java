@@ -181,6 +181,9 @@ public final class SolrIndexHandler implements IndexHandler
 
         long indexStartTime = System.currentTimeMillis();
 
+        int tempDocs = 0;
+        long tempTime = System.currentTimeMillis();
+
         while (indexingQueue.hasNext()) {
             SolrInputDocument doc = indexingQueue.next();
 
@@ -192,9 +195,12 @@ public final class SolrIndexHandler implements IndexHandler
 
                 commitBatchData(solrClient, solrInputDocuments);
 
+                tempDocs = indexed - tempDocs;
+                tempTime = System.currentTimeMillis() - tempTime;
+
                 LOG.info("docs indexed=" + indexed + "; thread state="
-                        + fetchThread.getState() + "; docs/ms=" + indexed * 1.0F
-                        / (System.currentTimeMillis() - time) + "; memory="
+                        + fetchThread.getState() + "; docs/ms=" + tempDocs * 1.0F
+                        / (tempTime) + "; memory="
                         + Runtime.getRuntime().freeMemory() / 1024 + "k/"
                         + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
                         + (System.currentTimeMillis() - time) + "ms");
