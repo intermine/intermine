@@ -52,14 +52,5 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ./config/lib/parse_checkstyle_report.py 'bio/postprocess/build/reports/checkstyle/checkstyle_report.xml'
     ./config/lib/parse_checkstyle_report.py 'bio/sources/build/reports/checkstyle/checkstyle_report.xml'
 elif [ "$TEST_SUITE" = "ws" ]; then
-
-    # install everything first. we don't want to test what's in maven
-    echo "RUNNING web services tests"
-    (cd plugin && ./gradlew install)
-    (cd intermine && ./gradlew install)    
-    (cd bio && ./gradlew install)
-    (cd bio/sources && ./gradlew install)
-    (cd bio/postprocess && ./gradlew install)
-
     ./config/run-ws-tests.sh
 fi

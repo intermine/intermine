@@ -95,6 +95,9 @@ cd $DIR
 echo "------> Running ./gradlew loadsadata"
 ./gradlew loadsadata --stacktrace
 
+echo "------> Building search index..."
+./gradlew createSearchIndex --stacktrace
+
 echo "------> Loading userprofile..."
 ./gradlew insertUserData --stacktrace
 
