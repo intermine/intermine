@@ -181,6 +181,9 @@ public final class SolrIndexHandler implements IndexHandler
 
         long indexStartTime = System.currentTimeMillis();
 
+        int tempDocs = 0;
+        long tempTime = System.currentTimeMillis();
+
         while (indexingQueue.hasNext()) {
             SolrInputDocument doc = indexingQueue.next();
 
@@ -190,21 +193,27 @@ public final class SolrIndexHandler implements IndexHandler
 
             if (solrInputDocuments.size() == keywordSearchPropertiesManager.getIndexBatchSize()){
 
+                tempTime = System.currentTimeMillis();
+
                 commitBatchData(solrClient, solrInputDocuments);
 
+                tempDocs = indexed - tempDocs;
+
                 LOG.info("docs indexed=" + indexed + "; thread state="
-                        + fetchThread.getState() + "; docs/ms=" + indexed * 1.0F
-                        / (System.currentTimeMillis() - time) + "; memory="
+                        + fetchThread.getState() + "; docs/ms=" + tempDocs * 1.0F
+                        / (System.currentTimeMillis() - tempTime) + "; memory="
                         + Runtime.getRuntime().freeMemory() / 1024 + "k/"
                         + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
                         + (System.currentTimeMillis() - time) + "ms");
 
-                solrInputDocuments = new ArrayList<SolrInputDocument>();
+                solrInputDocuments.clear();
             }
 
         }
 
         commitBatchData(solrClient, solrInputDocuments);
+
+        commitSolrClient(solrClient);
 
         LOG.debug("Solr indexing ends and it took " + (System.currentTimeMillis() - indexStartTime) + "ms");
 
@@ -233,8 +242,7 @@ public final class SolrIndexHandler implements IndexHandler
             LOG.debug("Beginning to commit Solr Documents into Solr");
 
             try {
-                UpdateResponse response = solrClient.add(solrDocumentList);
-                solrClient.commit();
+                UpdateResponse response = solrClient.add(solrDocumentList, 30000);
 
             } catch (SolrServerException e) {
 
@@ -286,6 +294,17 @@ public final class SolrIndexHandler implements IndexHandler
 
         } catch (SolrServerException e) {
             LOG.error("Error while adding copyfields to the solrclient.", e);
+            e.printStackTrace();
+        }
+    }
+
+    private void commitSolrClient(SolrClient solrClient) throws IOException{
+        try {
+            solrClient.commit();
+            solrClient.optimize();
+
+        } catch (SolrServerException e) {
+            LOG.error("Error while commiting.", e);
             e.printStackTrace();
         }
     }
