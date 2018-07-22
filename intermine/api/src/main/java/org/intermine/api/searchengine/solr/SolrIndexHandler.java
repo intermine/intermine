@@ -206,7 +206,7 @@ public final class SolrIndexHandler implements IndexHandler
                         + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
                         + (System.currentTimeMillis() - time) + "ms");
 
-                solrInputDocuments = new ArrayList<SolrInputDocument>();
+                solrInputDocuments.clear();
             }
 
         }
@@ -243,7 +243,6 @@ public final class SolrIndexHandler implements IndexHandler
 
             try {
                 UpdateResponse response = solrClient.add(solrDocumentList, 30000);
-//                solrClient.commit();
 
             } catch (SolrServerException e) {
 
