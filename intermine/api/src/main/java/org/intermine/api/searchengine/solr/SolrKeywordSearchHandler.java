@@ -12,6 +12,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.data.Objects;
 import org.intermine.api.searchengine.*;
 import org.intermine.api.searchengine.solr.SolrClientManager;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -54,6 +55,8 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
         Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
 
+        Map<ClassDescriptor, Float> classBoost = keywordSearchPropertiesManager.getClassBoost();
+
         try {
 
             SolrQuery newQuery = new SolrQuery();
@@ -62,6 +65,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             newQuery.setRows(KeywordSearchPropertiesManager.PER_PAGE);
             newQuery.addField("score");
             newQuery.addField("id");
+            newQuery.add("defType", "edismax");
 
             for (KeywordSearchFacetData keywordSearchFacetData : facets){
                 newQuery.addFacetField("facet_" + keywordSearchFacetData.getField());
@@ -73,6 +77,16 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
                     newQuery.addFilterQuery(facetValue.getKey()+":"+facetValue.getValue());
                 }
             }
+
+            String boostQuery = "";
+
+            for (Map.Entry<ClassDescriptor, Float> boostValue : classBoost.entrySet()){
+                if (boostValue != null){
+                    boostQuery += "classname:" + boostValue.getKey().getUnqualifiedName() + "^" + boostValue.getValue() + " ";
+                }
+            }
+
+            newQuery.add("bq", boostQuery);
 
             resp = solrClient.query(newQuery);
 
