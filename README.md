@@ -22,6 +22,8 @@ the life sciences, including:
   * [ThaleMine](https://apps.araport.org/thalemine)
   * [PhytoMine](https://phytozome.jgi.doe.gov/phytomine)
 
+For the full list of InterMines, please see the [registry](http://registry.intermine.org)
+
 For details, please visit: [InterMine Documentation][readthedocs]
 
 If you run an InterMine, or use one in your research, in order to improve the chance of continued funding for the
@@ -42,8 +44,6 @@ data-warehouse and associated web-application by running an
 automated bootstrap script:
 
 ```bash
-  # Set up tomcat
-./config/download_and_configure_tomcat.sh
   # For a genomic application, with test data from Malaria
 ./biotestmine/setup.sh
   # For the testmodel
@@ -52,10 +52,9 @@ automated bootstrap script:
 
 This requires that you have all the software dependencies
 installed and running with the appropriate user permissions
-(postgres, Tomcat, Java SDK). You will need to have set up usernames
-and passwords for Tomcat and postgres first, and these can be
-provided to the setup scripts as `PSQL_USER`, `PSQL_PWD`,
-`TOMCAT_USER`, and `TOMCAT_PWD`.
+(PostgreSQL, Java SDK). You will need to have set up usernames
+and passwords for PostgreSQL first, and these can be
+provided to the setup scripts as `PSQL_USER`.
 
 Copyright and Licence
 ------------------------
