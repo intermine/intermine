@@ -48,7 +48,7 @@ subprojects {
         preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
         tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
         newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
-        version = "2.0.0-RC-SNAPSHOT"
+        version = "2.0.0-RC-01"
         tagTemplate = '${project.name}-${version}'
         versionPropertyFile = 'gradle.properties'
         versionProperties = []

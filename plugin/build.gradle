@@ -1,5 +1,5 @@
 group 'org.intermine'
-version '2.0.0-RC-SNAPSHOT'
+version '2.0.0-RC-01'
 
 buildscript {
     repositories {
