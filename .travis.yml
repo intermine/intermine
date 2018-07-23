@@ -1,6 +1,6 @@
 language: python
 addons:
-  postgresql: 9.3
+  postgresql: 9.6
 env:
   global:
   - TESTMODEL_URL=http://localhost:8080/intermine-demo
@@ -15,6 +15,9 @@ env:
 sudo: true
 jdk:
 - openjdk8
+python:
+    - "2.7"
+    - "3.5" 
 before_script:
 - "./config/travis/init.sh"
 script:
