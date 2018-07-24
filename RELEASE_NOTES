@@ -13,8 +13,9 @@ InterMine 2.0 (Summer 2018)
 #39 - Keyword search autocomplete enabled
 #83 - BioJava - update library
 #160 - Create ECO data parser and add descriptions to GO evidence codes
-#397 - spin out the java webservice client from the server code
+#397 - Spin out the java webservice client from the server code
 #412 - Process xrefs correctly in OBO files, e.g. alt_ids
+#464 - Remove dependency on tomcat
 #482 - Make filter edit / delete icons more clear
 #600 - Write up tutorial on how to write a Java source
 #611 - Upgrade ant jar
@@ -29,12 +30,14 @@ InterMine 2.0 (Summer 2018)
 #971 - PSI Interactions - taxon ID is strain 
 #983 - Layout.jsp - remove old variable
 #1030 - data sets should have more details - descriptions and pubs
+#1045 - PRIDE data parser
 #1093 - Add to list: does not see there other relevant lists when picking items from the table
 #1099 - UniprotKB now uses evidence codes from the Evidence Ontology (ECO)
 #1109 - Bioseg error messages in postgres on webapp deploy
 #1139 - Pathways from UniProt
 #1168 - PSI-Complexes -- allow for more data types 
 #1177 - Genome browser
+#1178 - CNVs
 #1215 - Web services: make template popularity available
 #1278 - Checkstyle 6 
 #1312 - Interactions widget not displaying correctly in live humanMine
@@ -50,24 +53,26 @@ InterMine 2.0 (Summer 2018)
 #1525 - Add SyntenicRegion and SyntenyBlock to core data model
 #1531 - Remove legacy code for upgrading 
 #1547 - Issue in committing with large file that's already been removed
-#1583 - Update InterMIne code generation to be Python 3 compatible
 #1602 - FASTA source - make sure biojava.jar is in main/lib
 #1604 - Footer broken
 #1608 - Java client - requires genomic model
 #1620 - Ontology Annotations: Annotate all the things!
+#1651 - Simple data service GET /data/:type - what does it do?
 #1655 - JSON and XML queries are different
 #1656 - Loop constraints are implemented incorrectly in JSON
 #1657 - Remove legacy registry code.
-#1660 - Reactome - linky outy
 #1669 - Add list id to the result of query/tolist service
+#1674 - Remove legacy flymine/doc
 #1675 - We are using sets and lists interchangably
 #1676 - End points have an attribute for queries called "XML". We accept JSON queries so this attribute name is becoming increasingly inaccurate.
 #1677 - Delete HintManager
 #1684 - Clients - update to use registry
 #1689 - Move GO annotation evidence to Ontology annotation
 #1694 - UniProt - loading retracted papers
+#1697 - Update JSON jar
 #1706 - Template error - casting String to an array
 #1707 - Genomic Intervals as GFF3 - needs strandSpecific parameter
+#1719 - NCBI web services - new API rules (3 requests per second)
 #1723 - Intermine Registry: please set Access-Control-Allow-Origin
 #1734 - Update Chebi JAR
 #1738 - Update so.obo
@@ -78,11 +83,36 @@ InterMine 2.0 (Summer 2018)
 #1755 - Gradle: bio install requires bio-test
 #1756 - Gradle: builddb requires clean
 #1757 - Gradle: project build script replacement
+#1758 - GO parser - rewrite
 #1759 - BioJava - update JAR 
 #1761 - HumanMine: External Links broken
+#1765 - Update URLGenerator.java to handle HTTPS sites 
 #1773 - Gradle: when installing bio project, intermine-bio-test.properties SHOULD NOT be mandatory
 #1774 - GO: data load now takes 3 hours instead of 10 minutes
 #1777 - Region search: update API to include strandSpecific
+#1788 - Gradle: postprocess dependencies need a different model than bio-model
+#1790 - Need old integrate/resources/organism_config.properties functionality
+#1791 - Gradle: treat postprocesses like bio-sources
+#1792 - Galaxy: export failed - update URL
+#1794 - Gradle postprocesses: treat like sources 
+#1798 - Model change: move HPO annotations to be annotable
+#1799 - Gradle: need a replacement for bio/test-all/dbmodel
+#1802 - Add IllegalAccessException to be thrown by PostProcessor.postProcess()
+#1804 - Panther: bad data
+#1812 - Update Postgres and Hikari driver
+#1816 - ./gradlew buildUserDB doesn't create superuser
+#1821 - Change taxon ID to be a String
+#1831 - GO annotation - new evidence code HDA
+#1838 - Update version of Postgres JDBC driver?
+#1839 - Galaxy: fix bug that required user to retype the Galaxy URL
+#1846 - Gradle: FASTA export fails
+#1850 - HumanMine: Some genes don't have Ensembl identifier
+#1857 - Webapp can't find org.intermine.webservice.server.jbrowse.Config
+#1858 - cargo task doesn't use port given in .intermine/mymine.properties
+#1859 - /service/jbrowse/NNNN/stats/global throws 500
+#1860 - oss.jfrog.org is returning 409 on the HEAD request on the new psidev packages
+#1861 - Gradle: biojava fasta export is wrong
+
 
 InterMine 1.8.5 (2017 August)
 
