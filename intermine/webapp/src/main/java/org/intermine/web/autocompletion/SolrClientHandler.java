@@ -27,8 +27,6 @@ public class SolrClientHandler
 
     private static SolrClient solrClient;
 
-    private static String solrUrlString;
-
     private SolrClientHandler(){}
 
     /**
