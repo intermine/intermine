@@ -4,8 +4,10 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.schema.SchemaResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.intermine.api.InterMineAPI;
@@ -57,6 +59,8 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
         Map<ClassDescriptor, Float> classBoost = keywordSearchPropertiesManager.getClassBoost();
 
+        List<String> fieldNames = getFieldNamesFromSolrSchema(solrClient);
+
         try {
 
             SolrQuery newQuery = new SolrQuery();
@@ -86,7 +90,20 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
                 }
             }
 
+            String fieldListQuery = "";
+
+            for (String field : fieldNames){
+                fieldListQuery = fieldListQuery + field;
+                if (field.endsWith("_raw")){
+                    fieldListQuery = fieldListQuery + "^2";
+                }
+                fieldListQuery = fieldListQuery + " ";
+            }
+
+            System.out.println(fieldListQuery);
+
             newQuery.add("bq", boostQuery);
+            newQuery.add("qf", fieldListQuery);
 
             resp = solrClient.query(newQuery);
 
@@ -301,6 +318,35 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
         LOG.debug("Parsing " + searchResultsFacets.size() + " facets took "
                 + (System.currentTimeMillis() - time) + " ms");
         return searchResultsFacets;
+    }
+
+    private List<String> getFieldNamesFromSolrSchema(SolrClient solrClient){
+        List<String> fieldNames = null;
+
+        try {
+            SchemaRequest.Fields request = new SchemaRequest.Fields();
+            SchemaResponse.FieldsResponse response =  request.process(solrClient);
+
+            List<Map<String, Object>> fieldList = response.getFields();
+
+            fieldNames = new ArrayList<String>();
+
+            for (int i = 0; i < fieldList.size(); i++){
+                String value = fieldList.get(i).get("name").toString();
+
+                if (value.equals("_root_") || value.equals("_text_") || value.equals("_version_") || value.contains("facet_")){
+                    continue;
+                }
+
+                fieldNames.add(value);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Retrieving fieldNames failed", e);
+            e.printStackTrace();
+        }
+
+        return fieldNames;
     }
 
 }

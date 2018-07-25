@@ -369,7 +369,7 @@ public class SolrObjectHandler extends Thread {
                                     } else {
                                         doc.addField(virtualPathField,
                                                 (String) facetValue);
-                                        addFieldNameToSchema(virtualPathField);
+                                        addFieldNameToSchema(virtualPathField, "string", false, true, false);
                                     }
                                 }
                             }
@@ -390,7 +390,7 @@ public class SolrObjectHandler extends Thread {
                                 && !StringUtils.isBlank((String) facetValue)) {
                             doc.addField(referenceFacet.getField(),
                                     (String) facetValue);
-                            addFieldNameToSchema(referenceFacet.getField());
+                            addFieldNameToSchema(referenceFacet.getField(), "string", false, true, false);
                         }
                     }
                 }
@@ -561,7 +561,17 @@ public class SolrObjectHandler extends Thread {
             }
 
             doc.addField(f.getName(), f.getValue());
-            addFieldNameToSchema(f.getName());
+
+            if ((value.indexOf(" ") == -1) && raw) {
+                addFieldNameToSchema(f.getName(), "string", false, true, false);
+            } else if ((value.indexOf(" ") == -1) && !raw){
+                addFieldNameToSchema(f.getName(), FIELD_TYPE_NAME, false, true, true);
+            } else if ((value.indexOf(" ") != -1) && raw){
+                addFieldNameToSchema(f.getName(), "string", false, true, false);
+            } else {
+                addFieldNameToSchema(f.getName(), FIELD_TYPE_NAME, false, true, false);
+            }
+
 
             return f;
         }
