@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,8 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.biojava3.core.sequence.ProteinSequence;
+import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -24,15 +23,13 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class UniProtFastaLoaderTask extends FastaLoaderTask
 {
-    private Map<Integer, Organism> organisms = new HashMap<Integer, Organism>();
+    private Map<String, Organism> organisms = new HashMap<String, Organism>();
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected Organism getOrganism(ProteinSequence bioJavaSequence) throws ObjectStoreException {
-        //description_line=sp|Q9V8R9-2|41_DROME Isoform 2 of Protein 4.1 homolog OS=Drosophila
-        // melanogaster GN=cora,
         String header = bioJavaSequence.getOriginalHeader();
         final String regexp = "OS\\=\\w+\\s\\w+";
         Pattern p = Pattern.compile(regexp);
@@ -43,7 +40,7 @@ public class UniProtFastaLoaderTask extends FastaLoaderTask
             if (bits.length != 2) {
                 return null;
             }
-            Integer taxonId = getTaxonId(bits[1]);
+            String taxonId = getTaxonId(bits[1]);
             if (taxonId == null) {
                 return null;
             }

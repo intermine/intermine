@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,6 +7,88 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+InterMine 2.0 (Summer 2018)
+
+#39 - Keyword search autocomplete enabled
+#83 - BioJava - update library
+#160 - Create ECO data parser and add descriptions to GO evidence codes
+#397 - Spin out the java webservice client from the server code
+#412 - Process xrefs correctly in OBO files, e.g. alt_ids
+#464 - Remove dependency on tomcat
+#482 - Make filter edit / delete icons more clear
+#600 - Write up tutorial on how to write a Java source
+#611 - Upgrade ant jar
+#612 - Maven - try using Gradle instead of Ant for dependency management
+#767 - Move sub-projects to their own repo
+#831 - Organism config - needs updating
+#836 - OrthDB - fail if invalid config
+#861 - postprocessing 'do-sources' with many sources fails
+#917 - JBrowse - update config
+#940 - Need public registry for friendly mines.
+#941 - im-ant-tasks JAR can't be created
+#971 - PSI Interactions - taxon ID is strain 
+#983 - Layout.jsp - remove old variable
+#1030 - Data sets should have more details - descriptions and pubs
+#1093 - Add to list: does not see there other relevant lists when picking items from the table
+#1099 - UniprotKB now uses evidence codes from the Evidence Ontology (ECO)
+#1109 - Bioseg error messages in postgres on webapp deploy
+#1168 - PSI-Complexes -- allow for more data types 
+#1177 - Genome browser
+#1215 - Web services: make template popularity available
+#1278 - Checkstyle 6 
+#1312 - Interactions widget not displaying correctly in live humanMine
+#1327 - Query web services should accept JSON queries.
+#1343 - Java 8 - Duplicate default methods 
+#1351 - Postprocess for datasource with multiple entries in the project file
+#1358 - Protein molecular weight - change to be a float instead of integer
+#1405 - Replace iharder and apache.commons Base64 impls with Base64 in Java 8 SDK
+#1450 - org.json jar file is old and lacks some JSON spec methods
+#1477 - Update PathQueryHandler deleting code related to the node tag
+#1483 - Migrate to gradle
+#1510 - Split post-processors out the way data sources are
+#1525 - Add SyntenicRegion and SyntenyBlock to core data model
+#1531 - Remove legacy code for upgrading 
+#1602 - FASTA source - make sure biojava.jar is in main/lib
+#1604 - Footer broken
+#1608 - Java client - requires genomic model
+#1620 - Ontology Annotations: Annotate all the things!
+#1655 - JSON and XML queries are different
+#1656 - Loop constraints are implemented incorrectly in JSON
+#1657 - Remove legacy registry code.
+#1669 - Add list id to the result of query/tolist service
+#1674 - Remove legacy flymine/doc
+#1675 - We are using sets and lists interchangably
+#1676 - End points have an attribute for queries called "XML". We accept JSON queries so this attribute name is becoming increasingly inaccurate.
+#1677 - Delete HintManager
+#1684 - Clients - update to use registry
+#1689 - Move GO annotation evidence to Ontology annotation
+#1694 - UniProt - loading retracted papers
+#1697 - Update JSON jar
+#1707 - Genomic Intervals as GFF3 - needs strandSpecific parameter
+#1719 - NCBI web services - new API rules (3 requests per second)
+#1723 - Intermine Registry: please set Access-Control-Allow-Origin
+#1734 - Update Chebi JAR
+#1738 - Update so.obo to latest version
+#1747 - Asking for non-expiring API token should generate one if doesn't exist
+#1751 - Registry - add organisation and URL
+#1754 - OMIM: not loading a gene-disease relationship
+#1759 - BioJava - update JAR 
+#1761 - HumanMine: External Links broken
+#1765 - Update URLGenerator.java to handle HTTPS sites 
+#1774 - GO: data load now takes 3 hours instead of 10 minutes
+#1777 - Region search: update API to include strandSpecific
+#1790 - Need old integrate/resources/organism_config.properties functionality
+#1792 - Galaxy: export failed - update URL
+#1798 - Model change: move HPO annotations to be annotable
+#1804 - Panther: bad data
+#1812 - Update Postgres and Hikari driver
+#1821 - Change taxon ID to be a String
+#1831 - GO annotation - new evidence code HDA
+#1838 - Update version of Postgres JDBC driver?
+#1839 - Galaxy: fix bug that required user to retype the Galaxy URL
+#1850 - HumanMine: Some genes don't have Ensembl identifier
+
 InterMine 1.8.5 (2017 August)
 
 #1661 - Anonymous session tokens are not authenticating

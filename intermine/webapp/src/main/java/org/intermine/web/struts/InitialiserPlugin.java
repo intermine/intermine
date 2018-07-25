@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -454,14 +454,14 @@ public class InitialiserPlugin implements PlugIn
                                               validationMessage);
                     }
                 } catch (FileNotFoundException fnf) {
-                    LOG.error("Problem to find the webconfig-model.xml file.", fnf);
+                    LOG.error("Can't find the webconfig-model.xml file.", fnf);
                     blockingErrorKeys.put("errors.init.webconfig.notfound", null);
                 } catch (ClassNotFoundException cnf) {
                     LOG.error("Classes mentioned in the webconfig-model.xml"
                             + " file aren't in the Model", cnf);
                     blockingErrorKeys.put("errors.init.webconfig.classnotfound", cnf.getMessage());
                 } catch (Exception e) {
-                    LOG.error("Problem to parse the webconfig-model.xml file", e);
+                    LOG.error("Could not parse the webconfig-model.xml file", e);
                     blockingErrorKeys.put("errors.init.webconfig.parsing", e.getMessage());
                 }
             }
@@ -817,44 +817,7 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
             return null;
         }
-
-        applyUserProfileUpgrades(osw, blockingErrorKeys);
         return osw;
-    }
-
-    private void applyUserProfileUpgrades(ObjectStoreWriter osw,
-                                          Map<String, String> blockingErrorKeys) {
-        Connection con = null;
-        try {
-            con = ((ObjectStoreInterMineImpl) osw).getConnection();
-            DatabaseUtil.addColumn(con, "userprofile", "apikey", DatabaseUtil.Type.text);
-            if (!DatabaseUtil.columnExists(con, "userprofile", "localaccount")) {
-                DatabaseUtil.addColumn(con, "userprofile", "localaccount",
-                        DatabaseUtil.Type.boolean_type);
-                DatabaseUtil.updateColumnValue(con, "userprofile", "localaccount", true);
-            }
-            if (!DatabaseUtil.columnExists(con, "userprofile", "superuser")) {
-                DatabaseUtil.addColumn(con, "userprofile", "superuser",
-                        DatabaseUtil.Type.boolean_type);
-                DatabaseUtil.updateColumnValue(con, "userprofile", "superuser", false);
-            }
-
-            // Create the permatoken table, if it does not exist
-            ClassDescriptor ptCld = osw.getModel().getClassDescriptorByName("PermanentToken");
-            if (!DatabaseUtil.tableExists(con, DatabaseUtil.getTableName(ptCld))) {
-                createPermaTokenTable(osw, con);
-            }
-
-            LOG.debug("SUCCESSFULLY APPLIED ALL UPGRADES");
-        } catch (SQLException sqle) {
-            LOG.error("Problem retrieving connection", sqle);
-            blockingErrorKeys.put("errors.init.userprofileconnection", sqle.getMessage());
-        } catch (ClassNotFoundException e) {
-            LOG.error("Problem upgrading database", e);
-            blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
-        } finally {
-            ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
-        }
     }
 
     /**
@@ -867,6 +830,36 @@ public class InitialiserPlugin implements PlugIn
     private boolean setSuperuser(String accountName, ObjectStoreWriter uosw) {
         UserProfile superuserProfile = getUserProfile(accountName, uosw);
 
+        if (superuserProfile != null) {
+            superuserProfile.setSuperuser(true);
+            try {
+                uosw.store(superuserProfile);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Unable to set the flag to the user profile", e);
+            }
+            return true;
+        }
+
+        blockingErrorKeys.put("errors.init.superusernotexist", null);
+        return false;
+    }
+
+    private UserProfile getSuperUser(ObjectStoreWriter uosw) {
+        String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
+        UserProfile superuserProfile = new UserProfile();
+        superuserProfile.setUsername(superuser);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("username");
+        try {
+            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
+        }
+        return superuserProfile;
+    }
+
+    private boolean verifySuperUserExist(ObjectStoreWriter uosw) {
+        UserProfile superuserProfile = getSuperUser(uosw);
         if (superuserProfile != null) {
             superuserProfile.setSuperuser(true);
             try {

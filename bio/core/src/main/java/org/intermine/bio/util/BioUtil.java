@@ -1,7 +1,7 @@
 package org.intermine.bio.util;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -135,12 +135,12 @@ public final class BioUtil
      * @param taxonId original taxon ID
      * @return taxonId for organism, not the strain
      */
-    public static Integer replaceStrain(Integer taxonId) {
+    public static String replaceStrain(String taxonId) {
         OrganismData od = OR.getOrganismDataByTaxon(taxonId);
         if (od == null) {
             return taxonId;
         }
-        return new Integer(od.getTaxonId());
+        return od.getTaxonId();
     }
 
 }

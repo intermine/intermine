@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,12 +11,17 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,11 +33,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.model.bio.BioEntity;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.metadata.StringUtil;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.FormattedTextParser;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
@@ -47,6 +53,7 @@ import org.intermine.xml.full.ReferenceList;
 public class GoConverter extends BioFileConverter
 {
     protected static final String PROP_FILE = "go-annotation_config.properties";
+    protected static final String EVIDENCE_CODES_FILE = "go-evidence-codes";
 
     // configuration maps
     private Map<String, Config> configs = new HashMap<String, Config>();
@@ -93,6 +100,7 @@ public class GoConverter extends BioFileConverter
         defaultConfig = new Config(DEFAULT_IDENTIFIER_FIELD, DEFAULT_IDENTIFIER_FIELD,
                 DEFAULT_ANNOTATION_TYPE);
         readConfig();
+        loadEvidenceCodes();
     }
 
     /**
@@ -159,6 +167,27 @@ public class GoConverter extends BioFileConverter
         }
     }
 
+    private void loadEvidenceCodes() throws URISyntaxException, FileNotFoundException,
+        IOException, ObjectStoreException {
+        InputStream is = getClass().getClassLoader().getResourceAsStream(EVIDENCE_CODES_FILE);
+        Iterator<String[]> lineIter = FormattedTextParser
+                .parseTabDelimitedReader(new InputStreamReader(is));
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
+            String code = line[0];
+            String name = line[1];
+            String url = line[2];
+
+            Item item = createItem("GOEvidenceCode");
+            item.setAttribute("code", code);
+            item.setAttribute("name", name);
+            item.setAttribute("url", url);
+            evidenceCodes.put(code, item.getIdentifier());
+            store(item);
+        }
+    }
+
+
     /**
      * {@inheritDoc}
      */
@@ -206,7 +235,12 @@ public class GoConverter extends BioFileConverter
                 annotationExtension = array[15];
             }
             if (StringUtils.isNotEmpty(strEvidence)) {
-                storeEvidenceCode(strEvidence);
+                if (!evidenceCodes.containsKey(strEvidence)) {
+                    throw new IllegalArgumentException("Evidence code is `" + strEvidence
+                            + "' which is not in the legal list of evidence codes. Oh no! "
+                            + "Is it new? Add to /resources/go-evidence-codes and try again. And "
+                            + "let InterMiners know so they can update the file too");
+                }
             } else {
                 throw new IllegalArgumentException("Evidence is a required column but not "
                         + "found for goterm " + goId + " and productId " + productId);
@@ -553,14 +587,6 @@ public class GoConverter extends BioFileConverter
         return goTermIdentifier;
     }
 
-    private void storeEvidenceCode(String code) throws ObjectStoreException {
-        if (evidenceCodes.get(code) == null) {
-            Item item = createItem("GOEvidenceCode");
-            item.setAttribute("code", code);
-            evidenceCodes.put(code, item.getIdentifier());
-            store(item);
-        }
-    }
 
     private String getDataSourceCodeName(String sourceCode) {
         String title = sourceCode;

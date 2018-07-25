@@ -43,7 +43,8 @@ dependencies {
     compile group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")
     compile group: "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion") // idresolver needs db
     compile group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion")
-    provided fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar not found in public repo, obo and bbop not available in the public maven repo
+
+    provided fileTree(dir: 'libs', include: '*.jar') // obo and bbop not available in the public maven repo
     testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
     testCompile group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("flymineVersion"), transitive: false
     bioModel group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("flymineVersion"), transitive: false

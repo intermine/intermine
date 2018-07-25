@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -237,7 +237,7 @@ public class TagManager
         if (user == null) {
             throw new IllegalArgumentException("user may not be null.");
         }
-        if (user.isLoggedIn()) {
+        if (!user.isLoggedIn()) {
             return Collections.emptySet();
         }
         return getUserTagNames(type, user.getUsername());

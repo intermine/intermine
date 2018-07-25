@@ -1,5 +1,10 @@
 <?xml version="1.0"?>
 <model name="genomic" package="org.intermine.model.bio">
+ <class name="Annotatable" is-interface="true">
+  <attribute name="primaryIdentifier" type="java.lang.String"/>
+  <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
+  <collection name="publications" referenced-type="Publication" reverse-reference="entities"/>
+ </class>
   <class name="Author" is-interface="true">
     <attribute name="firstName" type="java.lang.String"/>
     <attribute name="lastName" type="java.lang.String"/>
@@ -8,8 +13,7 @@
     <collection name="publications" referenced-type="Publication" reverse-reference="authors"/>
   </class>
 
-  <class name="BioEntity" is-interface="true">
-    <attribute name="primaryIdentifier" type="java.lang.String"/>
+  <class name="BioEntity" is-interface="true" extends="Annotatable">
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
@@ -19,7 +23,6 @@
     <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
     <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
     <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
-    <collection name="publications" referenced-type="Publication" reverse-reference="bioEntities"/>
     <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
   </class>
 
@@ -79,6 +82,17 @@
     <attribute name="url" type="java.lang.String"/>
   </class>
 
+  <class name="OntologyAnnotationEvidenceCode" is-interface="true">
+    <attribute name="code" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="url" type="java.lang.String"/>
+  </class>
+
+  <class name="OntologyEvidence" is-interface="true">
+    <reference name="code" referenced-type="OntologyAnnotationEvidenceCode"/>
+    <collection name="publications" referenced-type="Publication"/>
+  </class>
+
   <class name="OntologyTerm" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
@@ -104,9 +118,10 @@
 
   <class name="OntologyAnnotation" is-interface="true">
     <attribute name="qualifier" type="java.lang.String"/>
-    <reference name="subject" referenced-type="BioEntity" reverse-reference="ontologyAnnotations"/>
-    <collection name="dataSets" referenced-type="DataSet" />
+    <reference name="subject" referenced-type="Annotatable" reverse-reference="ontologyAnnotations"/>
     <reference name="ontologyTerm" referenced-type="OntologyTerm" reverse-reference="ontologyAnnotations"/>
+    <collection name="dataSets" referenced-type="DataSet" />
+    <collection name="evidence" referenced-type="OntologyEvidence"/>
   </class>
 
   <class name="OntologyTermSynonym" is-interface="true">
@@ -116,7 +131,7 @@
 
   <class name="Organism" is-interface="true">
     <attribute name="genus" type="java.lang.String"/>
-    <attribute name="taxonId" type="java.lang.Integer"/>
+    <attribute name="taxonId" type="java.lang.String"/>
     <attribute name="species" type="java.lang.String"/>
     <attribute name="commonName" type="java.lang.String"/>
     <attribute name="shortName" type="java.lang.String"/>
@@ -127,7 +142,7 @@
     <attribute name="md5checksum" type="java.lang.String"/>
     <attribute name="primaryAccession" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Integer"/>
-    <attribute name="molecularWeight" type="java.lang.Integer"/>
+    <attribute name="molecularWeight" type="java.lang.Double"/>
     <reference name="sequence" referenced-type="Sequence"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="proteins"/>
   </class>
@@ -145,7 +160,7 @@
     <attribute name="firstAuthor" type="java.lang.String"/>
     <attribute name="abstractText" type="java.lang.String"/>
     <collection name="authors" referenced-type="Author" reverse-reference="publications" />
-    <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="publications" />
+    <collection name="entities" referenced-type="Annotatable" reverse-reference="publications" />
     <collection name="meshTerms" referenced-type="MeshTerm" reverse-reference="publications" />
   </class>
 
@@ -179,4 +194,12 @@
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
+  <class name="SyntenyBlock" is-interface="true">
+    <collection name="syntenicRegions" referenced-type="SyntenicRegion" reverse-reference="syntenyBlock" />
+    <collection name="dataSets" referenced-type="DataSet" />
+    <collection name="publications" referenced-type="Publication" />
+  </class>
+  <class name="SyntenicRegion" extends="SequenceFeature" is-interface="true">
+    <reference name="syntenyBlock" referenced-type="SyntenyBlock" reverse-reference="syntenicRegions"/>
+  </class>
 </model>

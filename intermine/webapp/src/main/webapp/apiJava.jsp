@@ -35,8 +35,8 @@
     <li>
       <div onclick="javascript:showText('prerequisite')"><h3 style="font-weight: bold;">Prerequisites</h3></div>
       <div id="prerequisite" style="padding: 5px">
-        <p>All you need is java 1.5+ and our package
-    (<a href="https://github.com/intermine/intermine-ws-java/raw/master/download/dist/java-intermine-webservice-client.zip">download</a>)
+        <p>All you need is java 1.8+ and our package
+    (<a href="https://github.com/intermine/intermine-ws-java/raw/master/download/dist/java-intermine-webservice-client-2.0.zip">download</a>)
         which contains the client library and all dependencies.
       </p>
       </div>
@@ -64,12 +64,12 @@
            <ol style="padding:0px">
             <li>
               Unzip the distribution package (see above):<br>
-                <pre>&gt; unzip ${fileName}</pre>
+                <pre>&gt; unzip java-intermine-webservice-client-2.0.zip</pre>
             </li>
             <li>
               <c:set var="dirName" value="${javasieProjectTitle}"/>
 
-              In the intermine-client-x.x directory that has been created make a new directory called
+              In the intermine-webservice-client-x.x directory that has been created make a new directory called
               <code><c:out value="${dirName}"/></code> (this is the package name in the generated Java).<br>
         <pre>&gt; cd ${fn:substringBefore(fileName, ".zip")}
 &gt; mkdir ${dirName}</pre>

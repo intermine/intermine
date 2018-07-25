@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -97,7 +97,7 @@ public abstract class BioDBConverter extends DBConverter
      * @param taxonId the taxon id of the to use when creating the DataSet
      * @return the DataSet Item
      */
-    public Item getDataSetItem(int taxonId) {
+    public Item getDataSetItem(String taxonId) {
         return getDataSetItem(getDataSetTitle(taxonId), getDataSourceItem());
     }
 
@@ -120,7 +120,7 @@ public abstract class BioDBConverter extends DBConverter
      * @return the new Location object
      */
     protected Item makeLocation(String chromosomeId, String locatedSequenceFeatureId,
-                                int start, int end, int strand, int taxonId) {
+                                int start, int end, int strand, String taxonId) {
         Item location = createItem("Location");
 
         if (start < end) {
@@ -141,18 +141,17 @@ public abstract class BioDBConverter extends DBConverter
      * @param taxonId NCBI taxonomy id of organism to create
      * @return the Organism Item
      */
-    public Item getOrganismItem(int taxonId) {
-        String taxonString = String.valueOf(taxonId);
-        Item organism = organisms.get(taxonString);
+    public Item getOrganismItem(String taxonId) {
+        Item organism = organisms.get(taxonId);
         if (organism == null) {
             organism = createItem("Organism");
-            organism.setAttribute("taxonId", taxonString);
+            organism.setAttribute("taxonId", taxonId);
             try {
                 store(organism);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
             }
-            organisms.put(taxonString, organism);
+            organisms.put(taxonId, organism);
         }
         return organism;
     }
@@ -192,7 +191,7 @@ public abstract class BioDBConverter extends DBConverter
      * @param taxonId the taxon id
      * @return the title
      */
-    public abstract String getDataSetTitle(int taxonId);
+    public abstract String getDataSetTitle(String taxonId);
 
     /**
      * Return a DataSource item with the given details.
@@ -232,7 +231,7 @@ public abstract class BioDBConverter extends DBConverter
      * @throws ObjectStoreException if an Item can't be stored
      * @return the Chromsome Item
      */
-    protected Item getChromosome(String identifier, int taxonId)
+    protected Item getChromosome(String identifier, String taxonId)
         throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {

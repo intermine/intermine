@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -80,7 +80,7 @@ public class PubMedGeneConverter extends BioFileConverter
             }
 
             String originalTaxonId = line[0];
-            String taxonId = BioUtil.replaceStrain(new Integer(originalTaxonId)).toString();
+            String taxonId = BioUtil.replaceStrain(originalTaxonId).toString();
             String geneId = line[1];
             String pubmedId = line[2];
 

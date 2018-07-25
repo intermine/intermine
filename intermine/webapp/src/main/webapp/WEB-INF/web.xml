@@ -162,8 +162,8 @@ attribute when using this service.
             </description>
             <param
                 required="true"
-                type="XML"
-                description="A definition of the query to execute in Path-Query XML format">query</param>
+                type="String"
+                description="A definition of the query to execute in Path-Query XML or JSON format">query</param>
             <param
                 description="The name for the new list. There must be no existing list of this name"
                 required="true"
@@ -207,7 +207,7 @@ attribute when using this service.
                   the view list may only contain a single item, which should refer to the
                   internal id attribute of an object in the query.
               </description>
-              <param required="true" type="XML" description="A definition of the query to execute in Path-Query XML format.">query</param>
+              <param required="true" type="String" description="A definition of the query to execute in Path-Query XML or JSON format.">query</param>
               <param required="true" type="String" description="The list to append items to.">name</param>
               <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
               <returns>
@@ -239,7 +239,7 @@ attribute when using this service.
                     This service provides the facility to submit one or more queries
                     and save it/them for future reference to a user account on the server.
                 </description>
-                <param required="true" type="XML" description="A definition of the query/ies to save in Path-Query XML format.">xml</param>
+                <param required="true" type="String" description="A definition of the query/ies to save in Path-Query XML or JSON format.">query</param>
                 <param required="false" type="Integer" description="The version of the path-qeury format being used.">version</param>
                 <returns>
                     <format accept="application/json">json</format>
@@ -686,7 +686,7 @@ attribute when using this service.
           This service allows users to save templates they have authored on the server, associated
           with their account. The templates once saved can be used as any other template query.
         </description>
-        <param type="XML" required="true" description="One or more templates, serialised in XML format.">xml</param>
+        <param type="String" required="true" description="One or more templates, serialised in XML or JSON format.">query</param>
         <param type="Integer" required="false" default="2" min="1" max="2" description="The version of the XML format">version</param>
         <returns>
           <format accept="text/plain">text</format>
@@ -1044,7 +1044,7 @@ to will also be returned.
             <description>
                 Upload a set of templates to the current user profile.
             </description>
-            <param required="false" type="XML" default="" description="The xml to load, if using form parameters.">xml</param>
+            <param required="false" type="String" default="" description="The xml or JSON to load, if using form parameters.">xml</param>
             <body description="The templates to upload. If using body content.">
              <content type="application/xml">
                 &lt;template name="my-new-template"&gt;
@@ -1294,7 +1294,7 @@ to will also be returned.
               languages based on a pathquery provided in serialised form.
           </description>
             <param type="enumerated" default="py" values="pl,py,rb,js,java" required="true" description="The language to generate code in.">lang</param>
-            <param type="XML" required="true" description="The query to generate code for, in XML form." schema="/service/schema/query.xsd">query</param>
+            <param type="String" required="true" description="The query to generate code for, in XML or JSON form.">query</param>
             <returns>
                 <format accept="text/plain">text</format>
               <format accept="application/json" key="code">json</format>
@@ -2094,7 +2094,7 @@ following [json-schema](http://json-schema.org/) schema:
         </method>
         <method authenticationRequired="false" type="POST">
             <summary>Store a query</summary>
-            <param type="String" required="true" description="The xml of the query to store.">query</param>
+            <param type="String" required="true" description="The xml OR JSON of the query to store.">query</param>
             <returns>
                 <format key="id">json</format>
             </returns>
@@ -2142,12 +2142,12 @@ query could be used:
             </description>
             <param type="Integer" required="false" default="0" description="The start index">start</param>
             <param type="Integer" required="false" description="The end index">end</param>
-            <param type="XML"
+            <param type="String"
                 default="
 &lt;query model=&quot;genomic&quot; view=&quot;Chromosome.sequence.residues&quot;&gt;
     &lt;constraint path=&quot;Chromosome&quot; op=&quot;LOOKUP&quot; value=&quot;X&quot; extraValue=&quot;D. melanogaster&quot;/&gt;
 &lt;/query&gt;"
-                required="true" description="The xml of the query to run.">query</param>
+                required="true" description="The xml OR JSON of the query to run.">query</param>
             <returns>
                 <format key="results">json</format>
             </returns>
@@ -2737,7 +2737,7 @@ The different token types are:
                 Queries that the user uploads should all be valid, and ideally have names. If they
                 do not have names, names will be assigned to them.
             </description>
-            <param required="false" type="XML" default="" description="The queries to upload, if using form parameters.">xml</param>
+            <param required="false" type="String" default="" description="The queries to upload, if using form parameters.">xml</param>
             <body description="The queries to upload. If using body content.">
              <content type="application/xml">
                 &lt;query model="genomic" view="Gene.symbol Gene.proteins.proteinDomains.name"&gt;
@@ -2763,7 +2763,7 @@ The different token types are:
                 already exist, they will be over-written. This provides a mechanism for updating
                 the value of saved queries on a service.
             </description>
-            <param required="false" type="XML" default="" description="The queries to upload, if using form parameters.">xml</param>
+            <param required="false" type="String" default="" description="The queries to upload, if using form parameters.">query</param>
             <body description="The queries to upload. If using body content.">
              <content type="application/xml">
                 &lt;query model="genomic" view="Gene.symbol Gene.proteins.proteinDomains.name"&gt;
@@ -2943,7 +2943,7 @@ The different token types are:
       <servlet-name>ws-data</servlet-name>
       <url-pattern>/service/data/*</url-pattern>
       <metadata>
-          <name>Simple Data Service</name>
+          <name>JBrowse Simple Data Service</name>
           <minVersion>16</minVersion>
           <method type="GET" authenticationRequired="false" slug="/:type">
               <summary>Get Data about Objects of the Given Type</summary>

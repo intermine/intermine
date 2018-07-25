@@ -1,7 +1,7 @@
 package org.intermine.bio.web.struts;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -426,7 +426,7 @@ public class GenomicRegionSearchAjaxAction extends Action
 
                 Set<String> organisms = new HashSet<String>();
                 organisms.add(organism);
-                Set<Integer> taxIds = grsService.getTaxonIds(organisms);
+                Set<String> taxIds = grsService.getTaxonIds(organisms);
 
                 WebResultsExecutor executor = api.getWebResultsExecutor(profile);
                 PagedTable pt = new PagedTable(executor.execute(q));

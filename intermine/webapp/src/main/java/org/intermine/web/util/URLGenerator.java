@@ -1,7 +1,7 @@
 package org.intermine.web.util;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -53,6 +53,7 @@ public class URLGenerator
         return generateURL(request, request.getContextPath());
     }
 
+    // SH 2/20/18 fix to handle plain HTTPS hosts as well and remove the extra slash
     private String generateURL(HttpServletRequest request, String contextPath) {
         final Properties webProperties = InterMineContext.getWebProperties();
         String baseUrl = webProperties.getProperty("webapp.baseurl");
@@ -61,13 +62,13 @@ public class URLGenerator
             return getCurrentURL(request, contextPath);
         }
 
-        if (request.getServerPort() != 80) {
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
             baseUrl += ":" + request.getServerPort();
         }
         String path = webProperties.getProperty("webapp.path");
         URL url = null;
         try {
-            url = new URL(baseUrl + "/" + path);
+            url = new URL(baseUrl + path);
         } catch (MalformedURLException e) {
             // whoops somethings gone terribly wrong. Use the URL
             return getCurrentURL(request, contextPath);
@@ -76,9 +77,10 @@ public class URLGenerator
     }
 
     // only use if they haven't set up baseURL
+    // SH 2/20/18 fix to handle plain HTTPS hosts as well
     private String getCurrentURL(HttpServletRequest request, String contextPath) {
         String port = "";
-        if (request.getServerPort() != 80) {
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
             port = ":" + request.getServerPort();
         }
         String ret = request.getScheme() + "://" + request.getServerName() + port;

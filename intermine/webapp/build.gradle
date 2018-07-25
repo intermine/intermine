@@ -38,6 +38,8 @@ dependencies {
     compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.2.2'
     compile group: 'commons-httpclient', name: 'commons-httpclient', version: '3.0'
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
+    compile group: 'org.everit.json', name: 'org.everit.json.schema', version: '1.5.1'
+
     compile files('libs/stringtree-json-2.0.5.jar')
     providedCompile group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.client', version: '1.0.0'
     providedCompile group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.common', version: '1.0.0'

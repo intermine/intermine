@@ -52,5 +52,5 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ./config/lib/parse_checkstyle_report.py 'bio/postprocess/build/reports/checkstyle/checkstyle_report.xml'
     ./config/lib/parse_checkstyle_report.py 'bio/sources/build/reports/checkstyle/checkstyle_report.xml'
 elif [ "$TEST_SUITE" = "ws" ]; then
-    . config/run-ws-tests.sh
+    ./config/run-ws-tests.sh
 fi

@@ -21,9 +21,3 @@ elif [ "$CLIENT" = "PY" ]; then
     python setup.py livetest
 
 fi
-
-cd ..
-
-if [ -e someone.jwt ]; then
-    ./config/lib/check_jwt.py < someone.jwt
-fi

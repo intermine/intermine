@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -73,7 +73,7 @@ public class GFF3Exporter implements Exporter
     private IntPresentSet exportedIds = new IntPresentSet();
     private List<String> attributesNames;
     private String sourceName;
-    private Set<Integer> organisms;
+    private Set<String> organisms;
     // this one to store the lower case class names of  soClassNames,
     // for comparison with path elements classes.
     private Set<String> cNames = new HashSet<String>();
@@ -93,7 +93,7 @@ public class GFF3Exporter implements Exporter
      * @param makeUcscCompatible true if chromosome ids should be prefixed by 'chr'
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
-            List<String> attributesNames, String sourceName, Set<Integer> organisms,
+            List<String> attributesNames, String sourceName, Set<String> organisms,
             boolean makeUcscCompatible) {
         this.out = out;
         this.featureIndexes = indexes;
@@ -122,7 +122,7 @@ public class GFF3Exporter implements Exporter
      * @param paths paths
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
-            List<String> attributesNames, String sourceName, Set<Integer> organisms,
+            List<String> attributesNames, String sourceName, Set<String> organisms,
             boolean makeUcscCompatible, List<Path> paths) {
         this.out = out;
         this.featureIndexes = indexes;
@@ -147,8 +147,8 @@ public class GFF3Exporter implements Exporter
         Properties props = PropertiesUtil.getProperties();
 
         if (organisms != null && !organisms.isEmpty()) {
-            for (Integer taxId : organisms) {
-                if (taxId == 7227) {
+            for (String taxId : organisms) {
+                if ("7227".equals(taxId)) {
                     String fV = props.getProperty("genomeVersion.fly");
                     if (fV != null && fV.length() > 0) {
                         header.append("\n##species " + FLY_LINK);
@@ -156,8 +156,8 @@ public class GFF3Exporter implements Exporter
                     }
                 }
             }
-            for (Integer taxId : organisms) {
-                if (taxId == 6239) {
+            for (String taxId : organisms) {
+                if ("6239".equals(taxId)) {
                     String wV = props.getProperty("genomeVersion.worm");
                     if (wV != null && wV.length() > 0) {
                         header.append("\n##species " + WORM_LINK);

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -88,7 +88,7 @@ public class GenomicRegionSearchService
     private GenomicRegionSearchConstraint grsc = null;
     private static Set<String> featureTypesInOrgs = null;
     private static Map<String, List<String>> featureTypeToSOTermMap = null;
-    private static Map<String, Integer> orgTaxonIdMap = null;
+    private static Map<String, String> orgTaxonIdMap = null;
     private List<String> selectionInfo = new ArrayList<String>();
 
     /**
@@ -808,7 +808,7 @@ public class GenomicRegionSearchService
      *
      * @return orgTaxonIdMap
      */
-    public Map<String, Integer> getOrganismToTaxonMap() {
+    public Map<String, String> getOrganismToTaxonMap() {
         if (orgTaxonIdMap == null) {
             orgTaxonIdMap = GenomicRegionSearchQueryRunner.getTaxonInfo(interMineAPI,
                     initBatchSize);
@@ -1761,13 +1761,11 @@ public class GenomicRegionSearchService
      * @param organisms set of org names
      * @return set of taxonIds
      */
-    public Set<Integer> getTaxonIds(Set<String> organisms) {
-        Set<Integer> taxIds = new HashSet<Integer>();
-
+    public Set<String> getTaxonIds(Set<String> organisms) {
+        Set<String> taxIds = new HashSet<String>();
         for (String org : organisms) {
             taxIds.add(this.getOrganismToTaxonMap().get(org));
         }
-
         return taxIds;
     }
 
@@ -1826,7 +1824,7 @@ public class GenomicRegionSearchService
      */
     public String generateJBrowseURL(GenomicRegion s, List<String> featureTypes) {
 
-        int taxonId = OrganismRepository.getOrganismRepository()
+        String taxonId = OrganismRepository.getOrganismRepository()
                 .getOrganismDataByShortName(s.getOrganism()).getTaxonId();
         String orgPrefix = webProperties.getProperty(
                 "genomicRegionSearch.jbrowse." + taxonId).trim();

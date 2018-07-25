@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -68,8 +68,19 @@ public class TableCellFormatter
                 link = PortalHelper.generateReportPath(cell);
             }
             mapping.put(CELL_KEY_URL, link);
-            mapping.put(CELL_KEY_CLASS, cell.getType());
-            mapping.put(CELL_KEY_ID, cell.getId());
+
+            if (cell.getType() == null) {
+                mapping.put(CELL_KEY_CLASS, JSONObject.NULL);
+            } else {
+                mapping.put(CELL_KEY_CLASS, cell.getType());
+            }
+
+            if (cell.getId() == null) {
+                mapping.put(CELL_KEY_ID, JSONObject.NULL);
+            } else {
+                mapping.put(CELL_KEY_ID, cell.getId());
+            }
+
             mapping.put(CELL_KEY_COLUMN, cell.getPath().toStringNoConstraints());
             final Object raw = cell.getField();
             final Object cooked; // After formatting and any transformations.
@@ -87,7 +98,11 @@ public class TableCellFormatter
             } else {
                 cooked = raw;
             }
-            mapping.put(CELL_KEY_VALUE, cooked);
+            if (cooked == null) {
+                mapping.put(CELL_KEY_VALUE, JSONObject.NULL);
+            } else {
+                mapping.put(CELL_KEY_VALUE, cooked);
+            }
         }
         return mapping;
     }

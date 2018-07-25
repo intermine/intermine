@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,7 +48,7 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder
      */
     public PathQueryBuilderForJSONObj(String xml, String schemaUrl,
             Producer<Map<String, InterMineBag>> savedBags) {
-        super(xml, schemaUrl, savedBags);
+        super(null, xml, schemaUrl, savedBags);
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -92,7 +92,12 @@ public class TemplateUploadService extends WebService
 
         Map<String, TemplateQuery> templates;
         try {
-            templates = TemplateQueryBinding.unmarshalTemplates(r, version);
+            if (templatesXML.startsWith("<")) {
+                templates = TemplateQueryBinding.unmarshalTemplates(r, version);
+            } else {
+                templates = TemplateQueryBinding.unmarshalJSONTemplates(r, im.getModel());
+            }
+
         } catch (Exception e) {
             throw new BadRequestException("Could not parse templates: " + e.getMessage(), e);
         }

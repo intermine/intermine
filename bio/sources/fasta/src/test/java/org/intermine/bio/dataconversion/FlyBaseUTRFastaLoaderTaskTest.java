@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -88,7 +88,7 @@ public class FlyBaseUTRFastaLoaderTaskTest {
                 assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
                 Transcript transcript = utr.getTranscripts().iterator().next();
                 assertEquals("FBtr0112632", transcript.getPrimaryIdentifier());
-                assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
+                assertEquals("36329", utr.getOrganism().getTaxonId());
             } else {
                 if ("FBtr0100521-5-prime-utr".equals(utr.getPrimaryIdentifier())) {
                     seenFBtr0100521 = true;
@@ -99,7 +99,7 @@ public class FlyBaseUTRFastaLoaderTaskTest {
                     assertEquals("2R", loc.getLocatedOn().getPrimaryIdentifier());
                     Transcript transcript = utr.getTranscripts().iterator().next();
                     assertEquals("FBtr0100521", transcript.getPrimaryIdentifier());
-                    assertEquals(36329, transcript.getOrganism().getTaxonId().intValue());
+                    assertEquals("36329", transcript.getOrganism().getTaxonId());
                 }
             }
         }
@@ -138,7 +138,7 @@ public class FlyBaseUTRFastaLoaderTaskTest {
                 assertEquals("2R", loc.getLocatedOn().getPrimaryIdentifier());
                 Transcript transcript = utr.getTranscripts().iterator().next();
                 assertEquals("FBtr0071764", transcript.getPrimaryIdentifier());
-                assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
+                assertEquals("36329", utr.getOrganism().getTaxonId());
             } else {
                 if ("FBtr0082533-3-prime-utr".equals(utr.getPrimaryIdentifier())) {
                     seenFBtr0082533 = true;
@@ -148,7 +148,7 @@ public class FlyBaseUTRFastaLoaderTaskTest {
                     assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
                     Transcript transcript = utr.getTranscripts().iterator().next();
                     assertEquals("FBtr0082533", transcript.getPrimaryIdentifier());
-                    assertEquals(36329, transcript.getOrganism().getTaxonId().intValue());
+                    assertEquals("36329", transcript.getOrganism().getTaxonId());
                 }
             }
         }

@@ -20,8 +20,8 @@ sourceSets {
 dependencies {
     bioModel group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false
     testCompile group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false
-    compile fileTree(dir: 'libs', include: '*.jar') //biojava-1.7.1.jar
     compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
+    compile group: "org.biojava", name: "biojava-core", version: "4.2.0"
 }
 
 processResources {

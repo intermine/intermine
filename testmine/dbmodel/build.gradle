@@ -9,7 +9,7 @@ sourceSets {
 }
 
 configurations {
-    compile
+    testModelProps
 }
 
 dependencies {
@@ -17,54 +17,26 @@ dependencies {
     compile group: "org.intermine", name: "intermine-api", version: imVersion
     compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
     compile group: 'antlr', name: 'antlr', version: '2.7.6'
+    testModelProps group: "org.intermine", name: "intermine-testresources", version: imVersion, transitive: false
 }
 
-ext {
-    // suffix for property file. might be blank
-    mineRelease = hasProperty('release') ? "." + release : ''
-    // filename for property file
-    minePropertyFileName = "testmodel.properties$mineRelease"
-    // full path to file
-    minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
-    localMinePropertyFile = true
-    // NO PROPERTY FILE -- use the default
-    if( !file(minePropertyFile).exists() ) {
-        localMinePropertyFile = false
-        minePropertyFile = "$project.rootDir/dbmodel/resources/testmodel.properties"
+// the JAR file has an intermine.properties files for unit tests. if we put the JAR on the classpath
+// the testmine uses that property file instead. SO ... copy all the files to the build dir.
+task copyTestModel(type: Copy) {
+    description "Copies testmodel_model.xml file (from resources project) into resources output to be used by testmine"
+
+    from({ zipTree(configurations.testModelProps.singleFile) }) {
+        include "testmodel_model.xml"
+        include "testmodel_keyDefs.properties"
+        include "testmodel_extra_data.xml"
+        include "testmodel_data.xml"
+        include "testmodel_enormo_data.xml"
+        include "testmodel_webapp_data.xml"
+        include "testsource_keys.properties"
+        include "testmodel_priorities.properties"
+        include "org/intermine/model/testmodel/*"
     }
-
-    println "Using InterMine properties file $minePropertyFile"
-}
-
-task copyMineProperties(type: Copy) {
-    description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
-    from minePropertyFile
     into sourceSets.main.output.resourcesDir
-    rename { fileName -> fileName.replace("testmodel.properties$mineRelease", "intermine.properties") }
-    inputs.sourceFiles.stopExecutionIfEmpty()
-}
-
-processResources {
-  if( !localMinePropertyFile ) {
-    def db_username = System.getenv('USER')
-    def db_pw = System.getenv('USER')
-
-    eachFile { copyDetails ->
-        if (copyDetails.path == 'testmodel.properties') {
-            filter { line ->
-                line.replace('PSQL_USER', "$db_username")
-            }
-        }
-        if (copyDetails.path == 'testmodel.properties') {
-            filter { line ->
-                line.replace('PSQL_PWD', "$db_pw")
-            }
-        }
-        rename { fileName -> fileName.replace("testmodel.properties", "intermine.properties") }
-    }
-  } else {
-      tasks.copyMineProperties.execute()
-  }
 }
 
 void buildDatabase(osname, model) {
@@ -72,6 +44,7 @@ void buildDatabase(osname, model) {
         classpath {
             pathelement(path: configurations.compile.asPath)
             dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
@@ -79,6 +52,7 @@ void buildDatabase(osname, model) {
         classpath {
             pathelement(path: configurations.compile.asPath)
             dirset(dir: "$buildDir") // intermine.properties, os.unittest-schema.xml
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.buildDB(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
@@ -86,6 +60,7 @@ void buildDatabase(osname, model) {
         classpath {
             pathelement(path: configurations.compile.asPath)
             dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
     ant.insertModel(osname: "os.$osname", modelName: "$model")
@@ -99,7 +74,8 @@ void insertDataUnitTest() {
     // <delete file="${objectstoresummary.properties}"/>
     ant.taskdef(name: 'insertDataUnittest', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
-            pathelement(path: configurations.testCompile.asPath)
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
             dirset(dir: 'build/resources/main') // intermine.properties
         }
     }   
@@ -111,7 +87,8 @@ void loadsadataLoader() {
     // <delete file="${objectstoresummary.properties}"/>
     ant.taskdef(name: 'loadsadata', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
-            pathelement(path: configurations.testCompile.asPath)
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
             dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
@@ -124,7 +101,8 @@ void enormocorpLoader() {
     // <delete file="${objectstoresummary.properties}"/>
     ant.taskdef(name: 'enormocorp', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
         classpath {
-            pathelement(path: configurations.testCompile.asPath)
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
             dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
@@ -149,20 +127,11 @@ task loadsadata(dependsOn: 'insertData') {
 
 task buildDB() {
     group "${taskGroup}"
-    description "Build database for testmodel webapp"
-    dependsOn 'build','copyDefaultProperties'
-    doFirst {
-        // this is only a fatal error if the user did not supply their credentials
-        // if they have their own property file, we assume human and not travis
-        if (!localMinePropertyFile) {
-            exec {
-                ignoreExitValue true
-                commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"intermine-demo\";"
-            }
-        }
-    }
+    description "Build database and userprofile for testmodel webapp"
+    dependsOn 'build','copyDefaultProperties', 'copyMineProperties', 'copyTestModel'
     doLast {
         buildDatabase('unittest', 'testmodel')
+        buildDatabase('userprofile-test', 'userprofile')
     }
 }
 
@@ -174,23 +143,11 @@ task insertData(dependsOn: 'buildDB') {
     }
 }
 
-// this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to dbs
-task dropDB {
-    description "drop all the testmodel databases. used for debugging only. or not, do what you want I'm not the police."
-    doLast {
-        exec {
-            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
-            // create ones that aren't there
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"intermine-demo\";"
-        }
-    }
-}
-
 void insertUserTestData() {
     ant.taskdef(name: 'readUserprofileXML', classname: 'org.intermine.web.task.ProfileReadTask') {
         classpath {
             pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
             dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
@@ -201,37 +158,36 @@ void loadTemplates() {
     ant.taskdef(name: 'loadDefaultTemplates', classname: 'org.intermine.web.task.LoadDefaultTemplatesTask') {
         classpath {
             pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
             dirset(dir: 'build/resources/main') // intermine.properties
         }
     }
-    ant.loadDefaultTemplates(osAlias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', templatesXml:"$project.rootDir/dbmodel/resources/default-template-queries.xml", username: 'intermine', superuserPassword: 'intermine')
+    ant.loadDefaultTemplates(osAlias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', templatesXml:"$project.rootDir/dbmodel/resources/default-template-queries.xml", username: 'superuser@intermine.org', superuserPassword: 'intermine')
 }
 
 task insertUserData() {
     group "${taskGroup}"
     description "Build userprofile database with test users for testmodel webapp"
-    dependsOn 'build','copyDefaultProperties'
+    dependsOn 'build','copyDefaultProperties', 'copyMineProperties'
 
-    doFirst {
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "create database \"userprofile-demo\";"
-        }
-        buildDatabase('userprofile-test', 'userprofile')
-    }
     doLast {
-        loadTemplates()
         insertUserTestData()
+        loadTemplates()
     }
 }
 
-// this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to dbs
-task dropUserDB {
-    description "drop the userprofile testmodel database. used for debugging only. "
+
+task createSearchIndex {
+    description "Generate the lucene keyword serach index"
+    dependsOn 'copyDefaultProperties', 'copyMineProperties', 'copyTestModel'
+
     doLast {
-        exec {
-            ignoreExitValue true
-            commandLine 'psql', '-h', 'localhost', '-d', 'postgres', '-c', "drop database \"userprofile-demo\";"
+        ant.taskdef(name: "createSearchIndexTask", classname: "org.intermine.web.task.CreateSearchIndexTask") {
+            classpath {
+                dirset(dir: "$buildDir")
+                pathelement(path: configurations.compile.asPath)
+            }
         }
+        ant.createSearchIndexTask(osalias: "os.unittest")
     }
 }

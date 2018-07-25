@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -144,7 +144,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @return the Map from configuration key to a list of actions
      */
     @SuppressWarnings("unchecked")
-    protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
+    protected Map<MultiKey, List<ConfigAction>> getConfig(String taxonId) {
         return DEFAULT_CONFIG;
     }
 
@@ -463,7 +463,7 @@ public class SequenceProcessor extends ChadoProcessor
         if (feature == null) {
             return null;
         }
-        int taxonId = organismData.getTaxonId();
+        String taxonId = organismData.getTaxonId();
         FeatureData fdat = new FeatureData();
         Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
         feature.setReference("organism", organismItem);
@@ -491,7 +491,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @return the database id of the new Item
      * @throws ObjectStoreException if an error occurs while storing
      */
-    protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
+    protected Integer store(Item feature, String taxonId) throws ObjectStoreException {
         return getChadoDBConverter().store(feature);
     }
 
@@ -508,7 +508,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
             String name, String uniqueName,
-            int seqlen, int taxonId) {
+            int seqlen, String taxonId) {
         return getChadoDBConverter().createItem(interMineType);
     }
 
@@ -629,7 +629,7 @@ public class SequenceProcessor extends ChadoProcessor
                 FeatureData srcFeatureData = featureMap.get(srcFeatureId);
                 if (featureMap.containsKey(featureId)) {
                     FeatureData featureData = featureMap.get(featureId);
-                    int taxonId = featureData.organismData.getTaxonId();
+                    String taxonId = featureData.organismData.getTaxonId();
                     Item location =
                             makeLocation(start, end, strand, srcFeatureData, featureData, taxonId,
                                     featureId);
@@ -708,7 +708,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     // modMine overrides in subclass
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-            FeatureData featureData, int taxonId, int featureId)
+            FeatureData featureData, String taxonId, int featureId)
         throws ObjectStoreException {
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.getItemIdentifier(),
                 featureData.getItemIdentifier(),
@@ -1041,7 +1041,7 @@ public class SequenceProcessor extends ChadoProcessor
                 }
                 accession  = fixIdentifier(fdat, accession);
 
-                int taxonId = fdat.organismData.getTaxonId();
+                String taxonId = fdat.organismData.getTaxonId();
                 Map<MultiKey, List<ConfigAction>> orgConfig =
                         getConfig(taxonId);
                 List<ConfigAction> actionList = orgConfig.get(key);
@@ -1119,7 +1119,7 @@ public class SequenceProcessor extends ChadoProcessor
 
                 FeatureData fdat = featureMap.get(featureId);
                 MultiKey key = new MultiKey("prop", fdat.getInterMineType(), propTypeName);
-                int taxonId = fdat.organismData.getTaxonId();
+                String taxonId = fdat.organismData.getTaxonId();
                 List<ConfigAction> actionList = getConfig(taxonId).get(key);
                 if (actionList == null) {
                     // no actions configured for this prop
@@ -1190,7 +1190,7 @@ public class SequenceProcessor extends ChadoProcessor
             if (featureMap.containsKey(featureId)) {
                 FeatureData fdat = featureMap.get(featureId);
                 MultiKey key = new MultiKey("library", fdat.getInterMineType(), propTypeName);
-                int taxonId = fdat.organismData.getTaxonId();
+                String taxonId = fdat.organismData.getTaxonId();
                 List<ConfigAction> actionList = getConfig(taxonId).get(key);
                 if (actionList == null) {
                     // no actions configured for this prop
@@ -1248,7 +1248,7 @@ public class SequenceProcessor extends ChadoProcessor
             if (featureMap.containsKey(featureId)) {
                 FeatureData fdat = featureMap.get(featureId);
                 MultiKey key = new MultiKey("anatomyterm", fdat.getInterMineType(), null);
-                int taxonId = fdat.organismData.getTaxonId();
+                String taxonId = fdat.organismData.getTaxonId();
                 List<ConfigAction> actionList = getConfig(taxonId).get(key);
                 if (actionList == null) {
                     // no actions configured for this prop
@@ -1309,7 +1309,7 @@ public class SequenceProcessor extends ChadoProcessor
 
             MultiKey key = new MultiKey("cvterm", fdat.getInterMineType(), cvName);
 
-            int taxonId = fdat.organismData.getTaxonId();
+            String taxonId = fdat.organismData.getTaxonId();
 
             List<ConfigAction> actionList = getConfig(taxonId).get(key);
             if (actionList == null) {
@@ -1480,7 +1480,7 @@ public class SequenceProcessor extends ChadoProcessor
                 MultiKey key =
                         new MultiKey("synonym", fdat.getInterMineType(),
                                 synonymTypeName, isCurrent);
-                int taxonId = fdat.organismData.getTaxonId();
+                String taxonId = fdat.organismData.getTaxonId();
                 Map<MultiKey, List<ConfigAction>> orgConfig = getConfig(taxonId);
                 List<ConfigAction> actionList = orgConfig.get(key);
 

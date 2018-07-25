@@ -1,7 +1,7 @@
 package org.intermine.bio.util;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -54,7 +54,7 @@ public class BioUtilTest extends TestCase
 
         storedOrganism1 = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
         storedOrganism1.setShortName("Homo sapiens");
-        storedOrganism1.setTaxonId(9606);
+        storedOrganism1.setTaxonId("9606");
         storedOrganism1.setId(new Integer(2001));
         toStore.add(storedOrganism1);
 
@@ -66,7 +66,7 @@ public class BioUtilTest extends TestCase
 
         storedOrganism2 = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
         storedOrganism2.setShortName("Drosophila melanogaster");
-        storedOrganism2.setTaxonId(7227);
+        storedOrganism2.setTaxonId("7227");
         storedOrganism2.setId(new Integer(2002));
         toStore.add(storedOrganism2);
 
@@ -97,15 +97,15 @@ public class BioUtilTest extends TestCase
     }
 
     public void testReplaceStrain() {
-        Integer taxonId = 9606;
-        Integer expectedTaxon = 9606;
+        String taxonId = "9606";
+        String expectedTaxon = "9606";
 
-        Integer actualTaxon = BioUtil.replaceStrain(taxonId);
+        String actualTaxon = BioUtil.replaceStrain(taxonId);
         assertEquals(expectedTaxon, actualTaxon);
 
-        Integer strainId = 46245;
-        taxonId = 7237;
-        actualTaxon = BioUtil.replaceStrain(46245);
+        String strainId = "46245";
+        taxonId = "7237";
+        actualTaxon = BioUtil.replaceStrain("46245");
         assertEquals(taxonId, actualTaxon);
     }
 }

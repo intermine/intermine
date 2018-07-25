@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -108,14 +108,13 @@ public class ProteinAtlasDisplayer extends ReportDisplayer
     private PathQuery geneProteinAtlasExpressionQuery(String genePrimaryID, PathQuery query) {
         query.addViews(
                 "Gene.proteinAtlasExpression.cellType",
-                "Gene.proteinAtlasExpression.expressionType",
                 "Gene.proteinAtlasExpression.level",
                 "Gene.proteinAtlasExpression.reliability",
                 "Gene.proteinAtlasExpression.tissue.name",
                 "Gene.proteinAtlasExpression.tissue.tissueGroup.name",
                 "Gene.primaryIdentifier");
         // TODO order by organ name
-        query.addOrderBy("Gene.proteinAtlasExpression.expressionType", OrderDirection.ASC);
+        query.addOrderBy("Gene.proteinAtlasExpression.tissue.name", OrderDirection.ASC);
         query.addConstraint(Constraints.eq("Gene.primaryIdentifier", genePrimaryID));
 
         return query;

@@ -23,13 +23,15 @@ subprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
 
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         mavenLocal()
         jcenter()
-
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+        }
         flatDir {
             dirs '../libs'
         }
@@ -46,7 +48,7 @@ subprojects {
         preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
         tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
         newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
-        version = "2.0.0-RC-SNAPSHOT"
+        version = "2.0.0-RC-01"
         tagTemplate = '${project.name}-${version}'
         versionPropertyFile = 'gradle.properties'
         versionProperties = []
@@ -155,6 +157,12 @@ subprojects {
             userOrg = user
             licenses = ['LGPL-2.1']
             vcsUrl = 'https://github.com/intermine/intermine.git'
+            publicDownloadNumbers = true
+            version {
+                name = '2.0.0-RC-01'
+                desc = 'InterMine 2.0 Release Candidate v1'
+                vcsTag = 'intermine-2.0.0-RC-01'
+            }
         }
         configurations = ['archives']
     }

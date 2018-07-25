@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -44,8 +44,8 @@ public class WormBaseProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
-        processItem(feature, new Integer(taxonId));
+    protected Integer store(Item feature, String taxonId) throws ObjectStoreException {
+        processItem(feature, taxonId);
         Integer itemId = super.store(feature, taxonId);
         return itemId;
     }
@@ -53,7 +53,7 @@ public class WormBaseProcessor extends SequenceProcessor
     /**
      * Method to add dataSets and DataSources to items before storing
      */
-    private void processItem(Item item, Integer taxonId) {
+    private void processItem(Item item, String taxonId) {
         if ("DataSource".equals(item.getClassName())
                 || "DataSet".equals(item.getClassName())
                 || "Organism".equals(item.getClassName())
@@ -73,8 +73,8 @@ public class WormBaseProcessor extends SequenceProcessor
             }
         }
         ChadoDBConverter converter = getChadoDBConverter();
-        BioStoreHook.setDataSets(getModel(), item,  converter.getDataSetItem(
-                taxonId.intValue()).getIdentifier(), converter.getDataSourceItem().getIdentifier());
+        BioStoreHook.setDataSets(getModel(), item,  converter.getDataSetItem(taxonId)
+                .getIdentifier(), converter.getDataSourceItem().getIdentifier());
 
     }
 
@@ -83,7 +83,7 @@ public class WormBaseProcessor extends SequenceProcessor
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
+    protected Map<MultiKey, List<ConfigAction>> getConfig(String taxonId) {
         if (config == null) {
             config = new MultiKeyMap();
             config.put(new MultiKey("feature", "Gene", "WormBase", "uniquename"),

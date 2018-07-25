@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,7 +36,7 @@ public class NcbiGeneConverter extends BioFileConverter
 {
     //
     private static final String DATASET_TITLE = "NCBI Entrez Gene identifiers";
-    private static final String DATA_SOURCE_NAME = "NCBI Entrez Gene";
+    private static final String DATA_SOURCE_NAME = "NCBI";
     private Set<String> taxonIds = null;
 
     protected static final Logger LOG = Logger.getLogger(NcbiGeneConverter.class);

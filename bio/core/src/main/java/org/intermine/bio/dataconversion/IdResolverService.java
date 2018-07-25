@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -58,12 +58,27 @@ public final class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getIdResolverByOrganism(Set<String> taxonIds) {
-        // HACK - for worm in ncbi
-        IdResolverService.getWormIdResolver();
-        IdResolverService.getFlyIdResolver();
+
+        // if only worm, use that resolver only
+        if (taxonIds.size() == 1 && taxonIds.contains("6239")) {
+            return IdResolverService.getWormIdResolver();
+        }
+
+        // if only fly, use that resolver only
+        if (taxonIds.size() == 1 && taxonIds.contains("7227")) {
+            return IdResolverService.getFlyIdResolver();
+        }
+
+        // otherwise, use the entrez gene, merge the other two
         Set<String> validTaxonIds = new HashSet<String>(taxonIds);
-        validTaxonIds.remove("6239");
-        validTaxonIds.remove("7227");
+        if (taxonIds.contains("6239")) {
+            IdResolverService.getWormIdResolver();
+            validTaxonIds.remove("6239");
+        }
+        if (taxonIds.contains("7227")) {
+            IdResolverService.getFlyIdResolver();
+            validTaxonIds.remove("7227");
+        }
         return new EntrezGeneIdResolverFactory().getIdResolver(validTaxonIds);
     }
 

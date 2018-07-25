@@ -4,21 +4,12 @@ apply from: "https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.p
 def explodedWebAppDir = "$buildDir/explodedWebApp"
 def mergePropsDir = "$buildDir/props"
 
-// duplicate of code from testmodel-db
 ext {
-    // suffix for property file. might be blank
-    mineRelease = hasProperty('release') ? "." + release : ''
-    // filename for property file
-    minePropertyFileName = "testmodel.properties$mineRelease"
-    // full path to file
+    minePropertyFileName = "testmodel.properties"
     minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
-    // NO PROPERTY FILE -- use the default
-    if( !file(minePropertyFile).exists() ) {
-        minePropertyFile = "$project.rootDir/dbmodel/resources/testmodel.properties"
-    }
-
-    println "Using InterMine properties file $minePropertyFile"
+    println "Using properties file: '$minePropertyFile' "
 }
+
 
 configurations {
     imWebApp
@@ -92,6 +83,7 @@ task summariseTestObjectStore {
         }
     }
 }
+
 
 task unwarIMWebApp(type: Copy) {
     description "Unwar intermine-webapp under the build/explodedWebAppDir directory"

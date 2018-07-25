@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,6 +12,7 @@ package org.intermine.dataloader;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -209,7 +210,8 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
             summaryTimes.put(summaryName, new Long(time + soFar.longValue()));
             summaryCounts.put(summaryName, new Integer(soFarCount.intValue() + 1));
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
-            @SuppressWarnings("unchecked") Set<InterMineObject> retval = (Set) result;
+            @SuppressWarnings("unchecked")
+            Set<InterMineObject> retval = new HashSet(result);
             return retval;
         } else {
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));

@@ -1,7 +1,7 @@
 package org.intermine.bio.query.range;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -94,7 +94,7 @@ public class ChromosomeLocationHelperTest extends TestCase
 
         List<String> expected = Arrays.asList(
             "SimpleConstraint(QueryField(org.intermine.model.bio.Chromosome, primaryIdentifier) = java.lang.String: \"X\")",
-            "SimpleConstraint(QueryField(org.intermine.model.bio.Organism, taxonId) = java.lang.Integer: \"7227\")",
+            "SimpleConstraint(QueryField(org.intermine.model.bio.Organism, taxonId) = java.lang.String: \"7227\")",
             "org.intermine.model.bio.Chromosome.organism CONTAINS org.intermine.model.bio.Organism",
             "org.intermine.model.bio.Location.locatedOn CONTAINS org.intermine.model.bio.Chromosome",
             "start=QueryField(org.intermine.model.bio.Location, start), end=QueryField(org.intermine.model.bio.Location, end) OVERLAPS start=java.lang.Integer: \"123\", end=java.lang.Integer: \"456\""

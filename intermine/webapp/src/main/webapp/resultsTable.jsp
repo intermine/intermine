@@ -77,7 +77,7 @@ jQuery(function() {
     var customGalaxy = "${GALAXY_URL}";
     var url = window.location.origin + "/${WEB_PROPERTIES['webapp.path']}/loadQuery.do";
     if (customGalaxy !== "") {
-        imtables.configure('Download.Galaxy.Current', customGalaxy);
+        imtables.configure('Destination.Galaxy.Current', customGalaxy);
     }
     imtables.configure("CustomEvents.List.Create", window.LIST_EVENTS["list-creation:success"]);
     var consumers = null, consumerBtnClass = null;
