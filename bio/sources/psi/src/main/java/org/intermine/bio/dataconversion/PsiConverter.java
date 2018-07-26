@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -76,7 +76,7 @@ public class PsiConverter extends BioFileConverter
      * @param model the Model
      */
     public PsiConverter(ItemWriter writer, Model model) {
-        super(writer, model, "IntAct", "IntAct interactions data set");
+        super(writer, model, "IntAct", "IntAct molecular interactions");
         readConfig();
         try {
             termId = getTerm(BINDING_SITE);

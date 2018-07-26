@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,7 +55,7 @@ public class PathConstraintAttribute extends PathConstraint
         }
         if (!VALID_OPS.contains(op)) {
             throw new IllegalArgumentException("PathConstraints on attributes must use an op in"
-                    + " the list \"" + VALID_OPS + "\"");
+                    + " the list \"" + VALID_OPS + "\" Your operator `" + op + "` is illegal");
         }
         if (value == null) {
             throw new NullPointerException("Cannot create a constraint on a null value");

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -83,14 +83,14 @@ public class ChadoDBConverter extends BioDBConverter
         //for (int i = 0; i < bits.length; i++) {
         for (String organismIdString: bits) {
             OrganismData od = null;
-            try {
-                Integer taxonId = Integer.valueOf(organismIdString);
-                od = organismRepository.getOrganismDataByTaxon(taxonId);
-            } catch (NumberFormatException e) {
+            od = organismRepository.getOrganismDataByTaxon(organismIdString);
+
+            if (od == null) {
+                // trying again!
                 od = organismRepository.getOrganismDataByAbbreviation(organismIdString);
             }
             if (od == null) {
-                throw new RuntimeException("can't find organism for: " + organismIdString);
+                throw new RuntimeException("can't find organism for: '" + organismIdString + "'");
             }
             organismsToProcess.add(od);
         }
@@ -250,8 +250,8 @@ public class ChadoDBConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxonId) {
-        OrganismData od = organismRepository.getOrganismDataByTaxon(new Integer(taxonId));
+    public String getDataSetTitle(String taxonId) {
+        OrganismData od = organismRepository.getOrganismDataByTaxon(taxonId);
         if (od != null) {
             return getDataSourceName() + " data set for " + od.getGenus() + " " + od.getSpecies();
         }

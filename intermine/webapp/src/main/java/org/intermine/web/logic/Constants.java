@@ -1,7 +1,7 @@
 package org.intermine.web.logic;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -213,13 +213,14 @@ public final class Constants
      * 24 - Add web properties service
      * 25 - Add id to whoami
      * 26 - Add listId to all web services. #1669
+     * 27 - Renamed xml parameter to query #1676
      */
-    public static final int WEB_SERVICE_VERSION = 26;
+    public static final int WEB_SERVICE_VERSION = 27;
 
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "2.0.0-SNAPSHOT";
+    public static final String INTERMINE_VERSION = "2.0.0-RC-SNAPSHOT";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

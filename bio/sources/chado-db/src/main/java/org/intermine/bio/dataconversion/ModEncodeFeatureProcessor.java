@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -205,7 +205,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-            FeatureData featureData, int taxonId, int featureId)
+            FeatureData featureData, String taxonId, int featureId)
         throws ObjectStoreException {
         // if a common feature, do it only once..
         if (commonFeaturesMap.containsKey(featureId)) {
@@ -329,7 +329,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * see FlyBaseProcessor for many more examples of configuration
      */
     @Override
-    protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
+    protected Map<MultiKey, List<ConfigAction>> getConfig(String taxonId) {
         MultiKeyMap map = config.get(new Integer(taxonId));
         if (map == null) {
             map = new MultiKeyMap();
@@ -478,7 +478,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
-            String name, String uniqueName, int seqlen, int taxonId) {
+            String name, String uniqueName, int seqlen, String taxonId) {
         String realInterMineType = interMineType;
         if ("chromosome_arm".equals(chadoFeatureType)
                 || "ultra_scaffold".equals(chadoFeatureType)) {

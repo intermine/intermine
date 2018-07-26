@@ -1,7 +1,7 @@
 package org.intermine.template.xml;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,12 +19,17 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.io.IOUtils;
+import org.intermine.metadata.Model;
 import org.intermine.metadata.SAXParser;
+import org.intermine.pathquery.JSONQueryHandler;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.xml.sax.InputSource;
 
 /**
@@ -141,6 +146,40 @@ public class TemplateQueryBinding extends PathQueryBinding
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+        return templates;
+    }
+
+    /**
+     * Parse TemplateQueries from JSON.
+     *
+     * @param reader the saved templates
+     * @param model the model
+     * @return a Map from template name to TemplateQuery
+     */
+    public static Map<String, TemplateQuery> unmarshalJSONTemplates(Reader reader, Model model) {
+        Map<String, TemplateQuery> templates = new LinkedHashMap<String, TemplateQuery>();
+        try {
+            String jsonQueries = IOUtils.toString(reader);
+            JSONObject obj = new JSONObject(jsonQueries);
+            JSONArray jsonTemplateArray = obj.getJSONArray("template-queries");
+            for (int i = 0; i < jsonTemplateArray.length(); i++) {
+                JSONObject jsonTemplate = jsonTemplateArray.getJSONObject(i);
+
+                String name = jsonTemplate.getString("name");
+                String title = jsonTemplate.getString("title");
+                String comment = null;
+                if (jsonTemplate.has("comment")) {
+                    comment = jsonTemplate.getString("comment");
+                }
+                String jsonQuery = jsonTemplate.getString("query");
+
+                PathQuery pathQuery = JSONQueryHandler.parse(model, jsonQuery);
+                TemplateQuery template = new TemplateQuery(name, title, comment, pathQuery);
+                templates.put(name, template);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
         return templates;
     }

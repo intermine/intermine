@@ -1,7 +1,7 @@
 package org.intermine.objectstore.proxy;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,8 +11,7 @@ package org.intermine.objectstore.proxy;
  */
 
 import java.util.List;
-import java.util.Set;
-
+import java.util.Collection;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -23,7 +22,7 @@ import org.intermine.objectstore.query.ResultsInfo;
  * @author Matthew Wakeling
  * @param <E> The element type
  */
-public interface LazyCollection<E> extends Lazy, Set<E>
+public interface LazyCollection<E> extends Lazy, Collection<E>
 {
     /**
      * Sets this LazyCollection to bypass the optimiser

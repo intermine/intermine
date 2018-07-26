@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -354,8 +354,12 @@ public class PsiComplexesConverter extends BioFileConverter
             }
             Organism organism = participant.getOrganism();
             if (organism != null) {
-                String organismRefId = getOrganism(String.valueOf(organism.getTaxId()));
-                protein.setReference("organism", organismRefId);
+                int taxonId = organism.getTaxId();
+                // non bioentities will not have a valid taxon. just skip.
+                if (taxonId >= 1) {
+                    String organismRefId = getOrganism(String.valueOf(taxonId));
+                    protein.setReference("organism", organismRefId);
+                }
             }
             store(protein);
             refId = protein.getIdentifier();

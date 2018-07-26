@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -2473,9 +2473,13 @@ public class PathQuery implements Cloneable
         } else {
             String value = PathConstraint.getValue(constraint);
             String extraValue = PathConstraint.getExtraValue(constraint);
-
             if (value != null) {
-                conb.append(",\"value\":\"" + StringEscapeUtils.escapeJava(value) + "\"");
+                if (constraint instanceof PathConstraintLoop) {
+                    conb.append(",\"loopPath\":\"" + StringEscapeUtils.escapeJava(value)
+                        + "\"");
+                } else {
+                    conb.append(",\"value\":\"" + StringEscapeUtils.escapeJava(value) + "\"");
+                }
             }
             if (extraValue != null) {
                 conb.append(",\"extraValue\":\"" + StringEscapeUtils.escapeJava(extraValue) + "\"");

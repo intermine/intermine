@@ -10,7 +10,7 @@ buildscript {
 
 subprojects {
     group = 'org.intermine'
-    version = '2.0.0-RC-SNAPSHOT'
+    version = '2.0.0-RC-01'
 
     apply plugin: "java"
     apply plugin: "maven"
@@ -18,14 +18,17 @@ subprojects {
     apply plugin: "com.jfrog.artifactory"
     apply plugin: "checkstyle"
 
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         mavenLocal()
         jcenter()
         maven {
             url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+        }
+        maven {
+            url 'http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
         }
     }
 
@@ -97,6 +100,12 @@ subprojects {
             userOrg = user
             licenses = ['LGPL-2.1']
             vcsUrl = 'https://github.com/intermine/intermine.git'
+            publicDownloadNumbers = true
+            version {
+                name = '2.0.0-RC-01'
+                desc = 'InterMine 2.0 Release Candidate v1'
+                vcsTag = 'intermine-2.0.0-RC-01'
+            }
         }
         configurations = ['archives']
     }

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.struts;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,7 +20,7 @@ import org.intermine.web.struts.TableExportForm;
  */
 public class GFF3ExportForm extends TableExportForm
 {
-    private Set<Integer> taxonIds = null;
+    private Set<String> taxonIds = null;
     private boolean makeUcscCompatible = false;
 
     /**
@@ -44,7 +44,7 @@ public class GFF3ExportForm extends TableExportForm
      *
      * @param taxonIds set of taxon ids
      */
-    public void setOrganisms(Set<Integer> taxonIds) {
+    public void setOrganisms(Set<String> taxonIds) {
         this.taxonIds = taxonIds;
     }
 
@@ -53,7 +53,7 @@ public class GFF3ExportForm extends TableExportForm
      *
      * @return a set of taxon ids
      */
-    public Set<Integer> getOrganisms() {
+    public Set<String> getOrganisms() {
         return taxonIds;
     }
 }

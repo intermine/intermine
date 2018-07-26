@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -149,7 +149,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
             String orgConstraint = "";
             if (taxonId != null) {
-                String abbrev = or.getOrganismDataByTaxon(new Integer(taxonId)).getAbbreviation();
+                String abbrev = or.getOrganismDataByTaxon(taxonId).getAbbreviation();
                 query = "select organism_id"
                     + " from organism"
                     + " where abbreviation = \'" + abbrev + "\'";

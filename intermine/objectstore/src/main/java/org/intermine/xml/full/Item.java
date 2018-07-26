@@ -1,7 +1,7 @@
 package org.intermine.xml.full;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -356,6 +356,19 @@ public class Item implements Comparable<Item>
         if ("".equals(value)) {
             throw new RuntimeException("value cannot be an empty string for attribute "
                                        + className + "."  + name);
+        }
+        addAttribute(new Attribute(name, value));
+    }
+
+    /**
+     * Add an attribute to this item only if value is not empty or NULL
+     *
+     * @param name the name of the attribute
+     * @param value the value of the attribute - ignored if empty or NULL
+     */
+    public void setAttributeIfNotNull(String name, String value) {
+        if (value == null || "".equals(value)) {
+            return;
         }
         addAttribute(new Attribute(name, value));
     }

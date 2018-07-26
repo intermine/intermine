@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -124,14 +124,19 @@ public class QueryUploadService extends WebService
     @Override
     protected void execute() throws Exception {
 
-        String queriesXML = getXML();
+        String queriesString = getQueryString();
         Map<String, PathQuery> toSave = new HashMap<String, PathQuery>();
         int version = getVersion();
 
-        Reader r = new StringReader(queriesXML);
+        Reader r = new StringReader(queriesString);
         Map<String, PathQuery> queries;
         try {
-            queries = PathQueryBinding.unmarshalPathQueries(r, version);
+            if (queriesString.startsWith("<")) {
+                queries = PathQueryBinding.unmarshalPathQueries(r, version);
+            } else {
+                queries = PathQueryBinding.unmarshalJSONPathQueries(r, im.getModel());
+            }
+
         } catch (Exception e) {
             throw new BadRequestException("Could not de-serialize queries: " + e.getMessage());
         }
@@ -210,7 +215,7 @@ public class QueryUploadService extends WebService
      * @return The XML.
      * @throws IOException If we can't read from the request.
      */
-    protected String getXML() throws IOException {
+    protected String getQueryString() throws IOException {
         String contentType = StringUtils.defaultString(request.getContentType(), "").trim();
         if (contentType.contains(";")) {
             String[] parts = contentType.split(";", 2);
@@ -218,14 +223,17 @@ public class QueryUploadService extends WebService
         }
 
         LOG.debug("Reading queries from " + contentType + " data");
-        String queriesXML;
+        String queriesString;
         if ("application/xml".equals(contentType) || "text/xml".equals(contentType)) {
             InputStream in = request.getInputStream();
-            queriesXML = IOUtils.toString(in);
+            queriesString = IOUtils.toString(in);
+        } else if ("application/json".equals(contentType) || "text/json".equals(contentType)) {
+            InputStream in = request.getInputStream();
+            queriesString = IOUtils.toString(in);
         } else {
-            queriesXML = getRequiredParameter("xml");
+            queriesString = getRequiredParameter("xml");
         }
-        return queriesXML;
+        return queriesString;
     }
 
     private String formatMessage(List<String> msgs) {

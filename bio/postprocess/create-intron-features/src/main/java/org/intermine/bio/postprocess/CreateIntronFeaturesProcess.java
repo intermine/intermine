@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -86,6 +86,20 @@ public class CreateIntronFeaturesProcess extends PostProcessor
             dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
         } catch (ObjectStoreException e) {
             throw new RuntimeException("unable to fetch IntermMine DataSource object", e);
+        }
+    }
+
+    /**
+     * Set a comma separated list of taxon ids to create introns for.  If no list
+     * is provided introns will be created for all organisms.
+     * @param organisms a comma separated list of taxon ids
+     */
+    public void setOrganisms(String organisms) {
+        if (!StringUtils.isEmpty(organisms)) {
+            String[] array = organisms.split(",");
+            for (int i = 0; i < array.length; i++) {
+                taxonIds.add(new Integer(array[i].trim()));
+            }
         }
     }
 
@@ -355,19 +369,4 @@ public class CreateIntronFeaturesProcess extends PostProcessor
         }
         transcripts.add(transcript);
     }
-
-    /**
-     * Set a comma separated list of taxon ids to create introns for.  If no list
-     * is provided introns will be created for all organisms.
-     * @param organisms a comma separated list of taxon ids
-     */
-    private void setOrganisms(String organisms) {
-        if (!StringUtils.isEmpty(organisms)) {
-            String[] array = organisms.split(",");
-            for (int i = 0; i < array.length; i++) {
-                taxonIds.add(new Integer(array[i].trim()));
-            }
-        }
-    }
-
 }

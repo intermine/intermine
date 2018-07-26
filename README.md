@@ -6,7 +6,7 @@ Dev: [![Build Status: dev][travis-badge-dev]][ci]
 [![Version](http://img.shields.io/badge/version-1.8.2-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
-[![Conda](https://anaconda.org/intermine/intermine/badges/installer/conda.svg)](https://anaconda.org/intermine/intermine)
+[![Conda](https://anaconda.org/intermine/intermine/badges/installer/conda.svg)](https://anaconda.org/bioconda/intermine)
 
 A powerful open source data warehouse system. InterMine allows users
 to integrate diverse data sources with a minimum of effort, providing
@@ -21,6 +21,8 @@ the life sciences, including:
   * [TargetMine](http://targetmine.mizuguchilab.org/)
   * [ThaleMine](https://apps.araport.org/thalemine)
   * [PhytoMine](https://phytozome.jgi.doe.gov/phytomine)
+
+For the full list of InterMines, please see the [registry](http://registry.intermine.org)
 
 For details, please visit: [InterMine Documentation][readthedocs]
 
@@ -42,8 +44,6 @@ data-warehouse and associated web-application by running an
 automated bootstrap script:
 
 ```bash
-  # Set up tomcat
-./config/download_and_configure_tomcat.sh
   # For a genomic application, with test data from Malaria
 ./biotestmine/setup.sh
   # For the testmodel
@@ -52,15 +52,14 @@ automated bootstrap script:
 
 This requires that you have all the software dependencies
 installed and running with the appropriate user permissions
-(postgres, Tomcat, Java SDK). You will need to have set up usernames
-and passwords for Tomcat and postgres first, and these can be
-provided to the setup scripts as `PSQL_USER`, `PSQL_PWD`,
-`TOMCAT_USER`, and `TOMCAT_PWD`.
+(PostgreSQL, Java SDK). You will need to have set up usernames
+and passwords for PostgreSQL first, and these can be
+provided to the setup scripts as `PSQL_USER`.
 
 Copyright and Licence
 ------------------------
 
-Copyright (C) 2002-2017 FlyMine
+Copyright (C) 2002-2018 FlyMine
 
 See [LICENSE](LICENSE) file for licensing information.
 
@@ -83,6 +82,6 @@ Please cite
 [readthedocs]: http://intermine.readthedocs.org/en/latest
 [tutorial]: http://intermine.readthedocs.org/en/latest/get-started/tutorial
 [psql]: http://www.postgresql.org
-[java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+[java]: http://openjdk.java.net
 [apache]: http://www.apache.org
 [tomcat]: http://tomcat.apache.org/download-70.cgi

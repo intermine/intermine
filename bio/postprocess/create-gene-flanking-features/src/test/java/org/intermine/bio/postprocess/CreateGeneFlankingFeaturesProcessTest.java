@@ -84,9 +84,8 @@ public class CreateGeneFlankingFeaturesProcessTest extends TestCase {
         Set<InterMineObject> toStore = new HashSet<InterMineObject>();
 
         Organism organism =
-                (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
-        organism.setTaxonId(new Integer(7227));
-
+            (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
+        organism.setTaxonId("7227");
         toStore.add(organism);
 
         Chromosome chr =

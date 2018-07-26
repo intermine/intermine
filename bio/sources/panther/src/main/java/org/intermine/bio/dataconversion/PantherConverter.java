@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,7 +40,7 @@ public class PantherConverter extends BioFileConverter
 {
     private Properties props = new Properties();
     private static final String PROP_FILE = "panther_config.properties";
-    private static final String DATASET_TITLE = "Panther data set";
+    private static final String DATASET_TITLE = "Orthologue and paralogue predictions";
     private static final String DATA_SOURCE_NAME = "Panther";
     private static final Logger LOG = Logger.getLogger(PantherConverter.class);
     private Set<String> taxonIds = new HashSet<String>();
@@ -143,6 +143,11 @@ public class PantherConverter extends BioFileConverter
             if (resolvedGenePid == null) {
                 return null;
             }
+        }
+
+        // see https://github.com/intermine/intermine/issues/1804
+        if (resolvedGenePid.length() < 2) {
+            return null;
         }
 
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
@@ -293,9 +298,7 @@ public class PantherConverter extends BioFileConverter
         if (od == null) {
             throw new BuildException("No data for `" + name + "`.  Please add to repository.");
         }
-        int taxonId = od.getTaxonId();
-        String taxonIdString = String.valueOf(taxonId);
-        return taxonIdString;
+        return od.getTaxonId();
     }
 
     private String getEvidence()

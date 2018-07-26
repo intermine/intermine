@@ -31,17 +31,10 @@
     <attribute name="name" type="java.lang.String" />
     <reference name="protein" referenced-type="Protein" reverse-reference="components" />
   </class>
-<class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true">
-  <collection name="evidence" referenced-type="GOEvidence"/>
-</class>
-<class name="GOEvidenceCode" is-interface="true">
-  <attribute name="code" type="java.lang.String" />
-</class>
+<class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true"/>
 <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
-<class name="GOEvidence" is-interface="true">
-  <reference name="code" referenced-type="GOEvidenceCode"/>
-  <collection name="publications" referenced-type="Publication"/>
-</class>
+<class name="GOEvidence" extends="OntologyEvidence" is-interface="true" />
+<class name="GOEvidenceCode" extends="OntologyAnnotationEvidenceCode" is-interface="true"/>
 <class name="Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
 </class>

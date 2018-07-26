@@ -1,6 +1,3 @@
-group 'org.intermine'
-version '2.0.0-RC-SNAPSHOT'
-
 buildscript {
     repositories {
         jcenter()
@@ -15,19 +12,40 @@ buildscript {
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: "com.jfrog.artifactory"
 
-sourceCompatibility = 1.7
+group 'org.intermine'
+version '2.0.0-RC-02'
+sourceCompatibility = 1.8
 
 repositories {
     mavenLocal()
     jcenter()
+    maven {
+        url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+    }
 }
 
 dependencies {
     compile gradleApi()
     compile localGroovy()
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
 
 artifactory {
@@ -58,14 +76,49 @@ artifactory {
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
-
+    filesSpec {
+        from 'build/libs'
+        into '.'
+    }
+    dryRun = true //[Default: false] Whether to run this as dry-run, without deploying
+    publish = false //[Default: false] Whether version should be auto published after an upload
+    override = true //[Default: false] Whether to override version artifacts already published
     pkg {
         repo = 'intermine'
         name = project.name
         userOrg = user
         licenses = ['LGPL-2.1']
         vcsUrl = 'https://github.com/intermine/intermine.git'
+        publicDownloadNumbers = true
+        version {
+            name = '2.0.0-RC-02'
+            desc = 'InterMine 2.0 Release Candidate v1'
+            vcsTag = 'intermine-2.0.0-RC-02'
+        }
     }
 
     configurations = ['archives']
+}
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+            groupId 'org.intermine'
+            artifactId 'plugin'
+            version '2.0.0-RC-02'
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Plugin for InterMine')
+                root.appendNode('name', 'plugin')
+                root.appendNode('url', 'https://github.com/intermine/intermine')
+                root.children().last() + pomConfig
+            }
+        }
+    }
 }

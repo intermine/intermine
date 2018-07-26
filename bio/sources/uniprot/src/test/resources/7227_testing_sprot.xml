@@ -46,6 +46,7 @@
     <dbReference type="PubMed" id="1111111" key="9"/>
   </citation>
 </reference>
+<reference key="10"><citation type="journal article" date="2002" name="Nature" volume="419" first="857" last="862"><title>Histone methylation by the Drosophila epigenetic transcriptional regulator Ash1.</title><authorList><person name="Beisel C."/><person name="Imhof A."/><person name="Greene J."/><person name="Kremmer E."/><person name="Sauer F."/></authorList><dbReference type="PubMed" id="12397363"/><dbReference type="DOI" id="10.1038/nature01126"/></citation><scope>RETRACTED PAPER</scope></reference>
 <comment type="subcellular location">
   <text evidence="EC1">Nucleus.</text>
 </comment>

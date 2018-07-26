@@ -1,7 +1,7 @@
 package org.intermine.bio.web.biojava;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,13 +10,14 @@ package org.intermine.bio.web.biojava;
  *
  */
 
-import org.biojava.bio.seq.DNATools;
-import org.biojava.bio.seq.ProteinTools;
-import org.biojava.bio.seq.RNATools;
-import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
+import org.biojava.nbio.core.sequence.DNASequence;
+import org.biojava.nbio.core.sequence.ProteinSequence;
+import org.biojava.nbio.core.sequence.RNASequence;
+import org.biojava.nbio.core.sequence.compound.AmbiguityDNACompoundSet;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.SequenceFeature;
 
 /**
  * A factory for creating BioSequence objects.
@@ -55,16 +56,16 @@ public abstract class BioSequenceFactory
      * @param feature the SequenceFeature
      * @return a new BioSequence object or null if the SequenceFeature doesn't have a
      * Sequence
-     * @throws IllegalSymbolException if any of the residues of the SequenceFeature can't be
+     * @throws CompoundNotFoundException if any of the residues of the SequenceFeature can't be
      * turned into DNA symbols.
      */
     public static BioSequence make(SequenceFeature feature)
-        throws IllegalSymbolException {
+        throws CompoundNotFoundException {
         if (feature.getSequence() == null) {
             return null;
         } else {
-            String residues = feature.getSequence().getResidues().toString();
-            return new BioSequence(DNATools.createDNA(residues), feature);
+            String residues = feature.getSequence().getResidues().toString().toLowerCase();
+            return new BioSequence(new DNASequence(residues), feature);
         }
     }
 
@@ -72,16 +73,16 @@ public abstract class BioSequenceFactory
      * Create a new BioSequence from a Protein
      * @param protein the Protein
      * @return a new BioSequence object or null if the Protein doesn't have a Sequence
-     * @throws IllegalSymbolException if any of the residues of the Protein can't be
+     * @throws CompoundNotFoundException if any of the residues of the Protein can't be
      * turned into amino acid symbols.
      */
     public static BioSequence make(Protein protein)
-        throws IllegalSymbolException {
+        throws CompoundNotFoundException {
         if (protein.getSequence() == null) {
             return null;
         } else {
             String residues = protein.getSequence().getResidues().toString();
-            return new BioSequence(ProteinTools.createProtein(residues), protein);
+            return new BioSequence(new ProteinSequence(residues), protein);
         }
     }
     /**
@@ -89,7 +90,7 @@ public abstract class BioSequenceFactory
      * @param bioEnt the bio entity
      * @param type the SequenceType
      * @return a new BioSequence object or null if the BioEntity doesn't have a Sequence
-     * @throws IllegalSymbolException if any of the residues of the BioEntity can't be
+     * @throws CompoundNotFoundException if any of the residues of the BioEntity can't be
      * turned into symbols of the given SequenceType.
      * @author Sam Hokin
      *
@@ -100,7 +101,7 @@ public abstract class BioSequenceFactory
      * I added RNA support as well.
      */
     public static BioSequence make(BioEntity bioEnt, SequenceType type)
-        throws IllegalSymbolException {
+        throws CompoundNotFoundException {
         if (bioEnt instanceof Protein) {
             // it really is a protein, which is not a SequenceFeature
             Protein protein = (Protein) bioEnt;
@@ -108,7 +109,7 @@ public abstract class BioSequenceFactory
                 return null;
             } else {
                 String residues = protein.getSequence().getResidues().toString();
-                return new BioSequence(ProteinTools.createProtein(residues), protein);
+                return new BioSequence(new ProteinSequence(residues) , protein);
             }
         } else if (type.equals(SequenceType.PROTEIN)) {
             // it's an amino acid SequenceFeature, like a polypeptide from chado
@@ -117,7 +118,7 @@ public abstract class BioSequenceFactory
                 return null;
             } else {
                 String residues = feature.getSequence().getResidues().toString();
-                return new BioSequence(ProteinTools.createProtein(residues), feature);
+                return new BioSequence(new ProteinSequence(residues), feature);
             }
         } else if (type.equals(SequenceType.DNA)) {
             // it's a DNA sequence
@@ -125,21 +126,23 @@ public abstract class BioSequenceFactory
             if (feature.getSequence() == null || feature.getSequence().getResidues() == null) {
                 return null;
             } else {
-                String residues = feature.getSequence().getResidues().toString();
-                return new BioSequence(DNATools.createDNA(residues), feature);
+                String residues = feature.getSequence().getResidues().toString().toLowerCase();
+                // uses the Ambiguity compound set to deal with homo sapiens,
+                // where 'm', 'r' and 'y' compound are used (ncbi).
+                return new BioSequence(new DNASequence(
+                        residues, AmbiguityDNACompoundSet.getDNACompoundSet()), feature);
             }
         } else if (type.equals(SequenceType.RNA)) {
-            // we want an RNA sequence
+            // we want an RNA sequence, which appears to be a nucleotide one -> lowercase
             SequenceFeature feature = (SequenceFeature) bioEnt;
             if (feature.getSequence() == null || feature.getSequence().getResidues() == null) {
                 return null;
             } else {
-                String residues = feature.getSequence().getResidues().toString();
-                return new BioSequence(RNATools.createRNA(residues), feature);
+                String residues = feature.getSequence().getResidues().toString().toLowerCase();
+                return new BioSequence(new RNASequence(residues), feature);
             }
         } else {
             throw new RuntimeException("Sequence type not defined. Choices are PROTEIN, DNA, RNA.");
         }
     }
-
 }

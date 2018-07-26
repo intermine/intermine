@@ -1,7 +1,7 @@
 package org.intermine.bio.web.struts;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -176,13 +176,13 @@ class ResultManipulater extends HttpExporterBase
      * @param index index of pagedTable column for the feature to export
      * @return A Map: Key - organism's TaxonId; Value - organism's shortName
      */
-    public Map<Integer, String> findOrganisms(PagedTable pt,
+    public Map<String, String> findOrganisms(PagedTable pt,
             HttpServletRequest request, int index) {
 
 //        if (pt.getEstimatedSize() > 10000) { }
         ExportResultsIterator resultIt = getResultRows(pt, request);
 
-        Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();
+        Map<String, String> orgNameMap = new LinkedHashMap<String, String>();
         try {
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();

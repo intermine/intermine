@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -101,15 +101,15 @@ public class EntrezOrganismRetriever extends Task
 
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
 
-            Map<Integer, Organism> orgMap = getOrganisms(os);
+            Map<String, Organism> orgMap = getOrganisms(os);
 
-            Set<Integer> taxonIds = new HashSet<Integer>();
+            Set<String> taxonIds = new HashSet<String>();
             Set<Item> toStore = new HashSet<Item>();
 
             ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
             writer.write(FullRenderer.getHeader() + "\n");
-            for (Iterator<Integer> i = orgMap.keySet().iterator(); i.hasNext();) {
-                Integer taxonId = i.next();
+            for (Iterator<String> i = orgMap.keySet().iterator(); i.hasNext();) {
+                String taxonId = i.next();
                 taxonIds.add(taxonId);
                 if (taxonIds.size() == BATCH_SIZE || !i.hasNext()) {
                     SAXParser.parse(new InputSource(getReader(taxonIds)),
@@ -142,14 +142,14 @@ public class EntrezOrganismRetriever extends Task
      * @param os the ObjectStore to read from
      * @return a Map from taxonid to Organism object
      */
-    protected Map<Integer, Organism> getOrganisms(ObjectStore os) {
+    protected Map<String, Organism> getOrganisms(ObjectStore os) {
         Query q = new Query();
         QueryClass qc = new QueryClass(Organism.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         List<?> results = os.executeSingleton(q);
 
-        Map<Integer, Organism> retMap = new HashMap<Integer, Organism>();
+        Map<String, Organism> retMap = new HashMap<String, Organism>();
 
         Iterator<?> resIter = results.iterator();
 
@@ -167,7 +167,7 @@ public class EntrezOrganismRetriever extends Task
      * @return a Reader for the information
      * @throws Exception if an error occurs
      */
-    protected Reader getReader(Set<Integer> ids) throws Exception {
+    protected Reader getReader(Set<String> ids) throws Exception {
         URL url = new URL(ESUMMARY_URL + StringUtil.join(ids, ","));
         return new BufferedReader(new InputStreamReader(url.openStream()));
     }

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -66,7 +66,7 @@ public class Protein2iprConverter extends BioFileConverter
     private static final String DATASET_TITLE = "InterPro data set";
     private static final String DATA_SOURCE_NAME = "InterPro";
 
-    private Collection<Integer> taxonIds = new ArrayList<Integer>();
+    private Collection<String> taxonIds = new ArrayList<String>();
 
     private Set<String> proteinIds = new HashSet<String>();
     private Set<MultiKey> xrefs = new HashSet<MultiKey>();
@@ -79,7 +79,7 @@ public class Protein2iprConverter extends BioFileConverter
     public void setProtein2iprOrganisms(String taxonIds) {
         String[] taxonStringIds = StringUtils.split(taxonIds, " ");
         for (String string : taxonStringIds) {
-            this.taxonIds.add(Integer.valueOf(string));
+            this.taxonIds.add(string);
         }
         LOG.info("Setting list of organisms to " + this.taxonIds);
     }

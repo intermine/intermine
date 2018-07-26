@@ -1,7 +1,7 @@
 package org.intermine.web.logic.config;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -450,8 +450,8 @@ public class WebConfig
             if (startClass != null && !"".equals(startClass)) {
                 startClass = model.getPackageName() + "." + widget.getStartClass();
                 if (!model.getClassNames().contains(startClass)) {
-                    validationMessage = validationMessage.append("The attribute startClass for the"
-                                        + " widget " + widgetId + " is not in the model.");
+                    validationMessage = validationMessage.append("The attribute startClass '"
+                            + startClass + "' for the widget " + widgetId + " is not in the model.");
                 }
             }
             //verify typeClass
@@ -459,8 +459,8 @@ public class WebConfig
             if (typeClass != null && !"".equals(typeClass)) {
                 if (!model.getClassNames().contains(model.getPackageName() + "."
                                                     + widget.getTypeClass())) {
-                    validationMessage = validationMessage.append("The attribute typeClass for the "
-                                        + "widget " + widgetId + " is not in the model.");
+                    validationMessage = validationMessage.append("The attribute typeClass '"
+                    + typeClass + "' for the widget " + widgetId + " is not in the model.");
                 }
             }
             //verify constraints (only path)

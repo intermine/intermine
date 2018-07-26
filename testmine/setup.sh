@@ -4,14 +4,12 @@
 # This script requires the standard InterMine dependencies:
 #  * psql (createdb, psql) - your user should have a postgres
 #    role with password authentication set up.
-#  * ant
-#  * a deployment container (tomcat) - see config/download_and_configure_tomcat.sh
 
 set -e # Errors are fatal.
 
 USERPROFILEDB=userprofile-demo
 PRODDB=intermine-demo
-MINENAME=demomine
+MINENAME=testmine
 DIR="$(cd $(dirname "$0"); pwd)"
 IMDIR=$HOME/.intermine
 LOG=$DIR/build.log
@@ -37,7 +35,7 @@ if test -z $TOMCAT_PWD; then
     TOMCAT_PWD=manager
 fi
 
-for dep in psql createdb ant; do
+for dep in psql createdb; do
   if test -z $(which $dep); then
     echo "ERROR: $dep not found - please make sure $dep is installed and configured correctly"
     exit 1
@@ -51,8 +49,6 @@ if test ! -z $DEBUG; then
   echo '# $PORT        = '$PORT
   echo '# $PSQL_USER   = '$PSQL_USER
   echo '# $PSQL_PWD    = '$PSQL_PWD
-  echo '# $TOMCAT_USER = '$TOMCAT_USER
-  echo '# $TOMCAT_PWD  = '$TOMCAT_PWD
 fi
 
 cd $HOME
@@ -69,8 +65,6 @@ if test ! -f $PROP_FILE; then
     cp $DIR/dbmodel/resources/testmodel.properties $PROP_FILE
     sed -i=bak -e "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
     sed -i=bak -e "s/PSQL_PWD/$PSQL_PWD/g" $PROP_FILE
-    sed -i=bak -e "s/TOMCAT_USER/$TOMCAT_USER/g" $PROP_FILE
-    sed -i=bak -e "s/TOMCAT_PWD/$TOMCAT_PWD/g" $PROP_FILE
     sed -i=bak -e "s/USERPROFILEDB/$USERPROFILEDB/g" $PROP_FILE
     sed -i=bak -e "s/PRODDB/$PRODDB/g" $PROP_FILE
     sed -i=bak -e "s/SERVER/$SERVER/g" $PROP_FILE
@@ -90,7 +84,7 @@ done
 
 # This is the first point at which we need to refer to the InterMine jars previous built
 # So we need to install them to Maven so that the testmine Gradle can fetch them
-echo "-----> Installing InterMine Gradle project JARs to local Maven..."
+echo "------> Installing InterMine Gradle project JARs to local Maven..."
 cd $DIR/../intermine
 (cd ../plugin && ./gradlew install)
 ./gradlew install
@@ -98,13 +92,16 @@ cd $DIR/../intermine
 echo "------> Loading demo data set..."
 cd $DIR
 
-echo "-----> Running ./gradlew loadsadata"
-./gradlew loadsadata
+echo "------> Running ./gradlew loadsadata"
+./gradlew loadsadata --stacktrace
+
+echo "------> Building search index..."
+./gradlew createSearchIndex --stacktrace
 
 echo "------> Loading userprofile..."
-./gradlew insertUserData
+./gradlew insertUserData --stacktrace
 
 echo "------> Running webapp"
-echo "-----> Running ./gradlew tomcatstartwar"
+echo "------> Running ./gradlew tomcatstartwar"
 ./gradlew tomcatstartwar & 
-echo "-----> Finished init-webapp.sh"
+echo "------> Finished"

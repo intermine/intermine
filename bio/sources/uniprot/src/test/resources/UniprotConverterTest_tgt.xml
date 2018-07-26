@@ -310,6 +310,9 @@
 <attribute name="identifier" value="GO:0000001"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="3_3" class="Publication">
+<attribute name="pubMedId" value="12397363"/>
+</item>
 <item id="5_4" class="OntologyTerm">
 <attribute name="name" value="helix"/>
 <reference name="ontology" ref_id="0_2"/>

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -268,6 +268,8 @@ public class JSONResultsIterator implements Iterator<JSONObject>
             newValue = ConstraintValueParser.ISO_DATE_FORMAT.format(cell.getField());
         } else if (cell.getField() instanceof ClobAccess) {
             newValue = cell.getField().toString();
+        } else if (cell.getField() == null) {
+            newValue = JSONObject.NULL;
         } else {
             newValue = cell.getField();
         }

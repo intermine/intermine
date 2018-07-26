@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,14 +19,18 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.SAXParser;
 import org.intermine.metadata.StringUtil;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Convert PathQueries to and from XML
+ * Convert PathQueries to and from XML or JSON
  *
  * @author Matthew Wakeling
  */
@@ -267,8 +271,8 @@ public class PathQueryBinding
      * @param model The model to use in preference. May be null.
      * @return a Map from query name to PathQuery
      */
-    public static Map<String, PathQuery> unmarshalPathQueries(
-            Reader reader, int version, Model model) {
+    public static Map<String, PathQuery> unmarshalPathQueries(Reader reader, int version,
+        Model model) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
             InputSource src = new InputSource(reader);
@@ -278,6 +282,43 @@ public class PathQueryBinding
             throw new RuntimeException(e.getMessage(), e);
         }
         return queries;
+    }
+
+    /**
+     * Parse PathQueries from JSON
+     *
+     * @param reader the saved queries
+     * @param model The model to use in preference. May be null.
+     * @return a Map from query name to PathQuery
+     */
+    public static Map<String, PathQuery> unmarshalJSONPathQueries(Reader reader, Model model) {
+        Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
+        try {
+            String jsonQueries = IOUtils.toString(reader);
+            JSONObject obj = new JSONObject(jsonQueries);
+            JSONArray jsonQueryArray = obj.getJSONArray("queries");
+            for (int i = 0; i < jsonQueryArray.length(); i++) {
+                JSONObject jsonQuery = jsonQueryArray.getJSONObject(i);
+                PathQuery pathQuery = unmarshalJSONPathQuery(model, jsonQuery.toString());
+                queries.put(pathQuery.getTitle(), pathQuery);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return queries;
+    }
+
+    /**
+     * Parse PathQuery from JSON
+     * @param model the data model
+     * @param jsonQueryString the query in JSON format
+     * @return a Map from query name to PathQuery
+     * @throws JSONException if poorly formatted JSON
+     */
+    public static PathQuery unmarshalJSONPathQuery(Model model, String jsonQueryString)
+        throws JSONException {
+        PathQuery query = JSONQueryHandler.parse(model, jsonQueryString);
+        return query;
     }
 
     /**

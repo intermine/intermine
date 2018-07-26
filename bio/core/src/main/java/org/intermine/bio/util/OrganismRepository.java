@@ -1,7 +1,7 @@
 package org.intermine.bio.util;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,11 +28,11 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 public final class OrganismRepository
 {
     private static OrganismRepository or = null;
-    private Map<Integer, OrganismData> taxonMap = new HashMap<Integer, OrganismData>();
+    private Map<String, OrganismData> taxonMap = new HashMap<String, OrganismData>();
     private Map<String, OrganismData> abbreviationMap = new HashMap<String, OrganismData>();
     private Map<String, OrganismData> shortNameMap = new HashMap<String, OrganismData>();
     private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap<MultiKey, OrganismData>();
-    private Map<Integer, OrganismData> strains = new HashMap<Integer, OrganismData>();
+    private Map<String, OrganismData> strains = new HashMap<String, OrganismData>();
     private Map<String, String> organismsWithStrains = new HashMap<String, String>();
     private static Map<String, OrganismData> uniprotToTaxon = new HashMap<String, OrganismData>();
 
@@ -94,9 +94,8 @@ public final class OrganismRepository
                     Matcher matcher = pattern.matcher(name);
                     if (matcher.matches()) {
                         String taxonIdString = matcher.group(1);
-                        int taxonId = Integer.valueOf(taxonIdString).intValue();
                         String fieldName = matcher.group(2);
-                        OrganismData od = or.getOrganismDataByTaxonInternal(taxonId);
+                        OrganismData od = or.getOrganismDataByTaxonInternal(taxonIdString);
                         final String attributeValue = props.getProperty(name);
                         if (fieldName.equals(ABBREVIATION)) {
                             od.setAbbreviation(attributeValue);
@@ -105,7 +104,7 @@ public final class OrganismRepository
                             String[] strains = attributeValue.split(" ");
                             for (String strain : strains) {
                                 try {
-                                    or.strains.put(Integer.valueOf(strain), od);
+                                    or.strains.put(strain, od);
                                     or.organismsWithStrains.put(taxonIdString, strain);
                                 } catch (NumberFormatException e) {
                                     throw new NumberFormatException("taxon ID must be a number");
@@ -156,12 +155,12 @@ public final class OrganismRepository
      * @param taxonId the taxon id
      * @return the OrganismData
      */
-    public OrganismData getOrganismDataByTaxonInternal(int taxonId) {
-        OrganismData od = taxonMap.get(new Integer(taxonId));
+    public OrganismData getOrganismDataByTaxonInternal(String taxonId) {
+        OrganismData od = taxonMap.get(taxonId);
         if (od == null) {
             od = new OrganismData();
             od.setTaxonId(taxonId);
-            taxonMap.put(new Integer(taxonId), od);
+            taxonMap.put(taxonId, od);
         }
         return od;
     }
@@ -173,8 +172,8 @@ public final class OrganismRepository
      * @param taxonId the taxon id
      * @return the OrganismData
      */
-    public OrganismData getOrganismDataByTaxon(int taxonId) {
-        OrganismData od = taxonMap.get(new Integer(taxonId));
+    public OrganismData getOrganismDataByTaxon(String taxonId) {
+        OrganismData od = taxonMap.get(taxonId);
         if (od == null) {
             od = strains.get(taxonId);
         }

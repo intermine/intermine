@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -3121,7 +3121,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // there may be duplicate terms for fly and worm, include taxon in key
         String taxonId = getTaxonIdForSubmission(dccId);
         OrganismRepository or = OrganismRepository.getOrganismRepository();
-        String genus = or.getOrganismDataByTaxon(Integer.parseInt(taxonId)).getGenus();
+        String genus = or.getOrganismDataByTaxon(taxonId).getGenus();
         String key = value + "_" + genus;
         String identifier = devStageTerms.get(key);
         if (identifier == null) {
@@ -3160,7 +3160,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         String ontologyName = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
-        String genus = or.getOrganismDataByTaxon(Integer.parseInt(taxonId)).getGenus();
+        String genus = or.getOrganismDataByTaxon(taxonId).getGenus();
         if ("Drosophila".equals(genus)) {
             ontologyName = "Fly Development";
         } else {

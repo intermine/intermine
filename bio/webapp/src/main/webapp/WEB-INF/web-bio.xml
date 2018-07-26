@@ -23,9 +23,9 @@
         <summary>Query the Database for Sequence Annotations.</summary>
         <description format="markdown">
 This service provides full access to arbitrary database queries.
-Queries are accepted in a serialised XML format, executed and returned
+Queries are accepted in a serialised XML or JSON format, executed and returned
 in a streaming manner. The query format is a custom subset of the capabilities
-of SQL; see the InterMine documentation for a full description of the query XML
+of SQL; see the InterMine documentation for a full description of the query XML and JSON
 syntax.
 
 This endpoint specialises in dealing with queries for sequence
@@ -38,63 +38,16 @@ particular field selected is not important, and the object itself
 will be selected.
         </description>
         <param required="true"
-            type="XML"
+            type="String"
             default="&lt;query name=&quot;short genes on the X chromosome&quot; model=&quot;genomic&quot; view=&quot;Gene.id Gene.exons.id&quot;&gt;&#10;    &lt;constraint path=&quot;Gene.chromosome.primaryIdentifier&quot; op=&quot;=&quot; value=&quot;X&quot;/&gt;&#10;    &lt;constraint path=&quot;Gene.length&quot; op=&quot;&amp;lt;&quot; value=&quot;1000&quot;/&gt;&#10;&lt;/query&gt;"
             schema="/schema/query.xsd"
-            description="A definition of the query to execute in Path-Query XML format">query</param>
+            description="A definition of the query to execute in Path-Query XML or JSON format">query</param>
         <param type="String[]" required="false"
             description="Extra columns to include as extra information in the ninth column"
             default="Gene.length">view</param>
     </method>
   </metadata>
 </servlet-mapping>
-
-<!-- TODO: The GAF export still needs to be implemented.
-<servlet>
-  <servlet-name>ws-gaf-query</servlet-name>
-  <servlet-class>org.intermine.bio.webservice.GAFQueryServlet</servlet-class>
-  <init-param>
-     <param-name>debug</param-name>
-     <param-value>true</param-value>
-  </init-param>
-</servlet>
-
-<servlet-mapping>
-  <servlet-name>ws-gaf-query</servlet-name>
-  <url-pattern>/service/query/results/gaf</url-pattern>
-  <metadata>
-    <name>GAF Query Results</name>
-    <minVersion>16</minVersion>
-    <method type="POST" authenticationRequired="false" ALSO="GET">
-        <summary>Query the Database for Sequence Annotations.</summary>
-        <description format="markdown">
-This service provides full access to arbitrary database queries.
-Queries are accepted in a serialised XML format, executed and returned
-in a streaming manner. The query format is a custom subset of the capabilities
-of SQL; see the InterMine documentation for a full description of the query XML
-syntax.
-
-This endpoint specialises in dealing with queries for sequence
-annotations, and returning results in [GAF](http://www.geneontology.org/GO.format.gaf-2_0.shtml)
-format. The user is responsible for
-ensuring that the query contains only suitable types for export.
-A suitable query is one where every view column references a
-field of a `SequenceFeature` (including all sub-classes). The
-particular field selected is not important, and the object itself
-will be selected.
-        </description>
-        <param required="true"
-            type="XML"
-            default="&lt;query name=&quot;short genes on the X chromosome&quot; model=&quot;genomic&quot; view=&quot;Gene.id Gene.exons.id&quot;&gt;&#10;    &lt;constraint path=&quot;Gene.chromosome.primaryIdentifier&quot; op=&quot;=&quot; value=&quot;X&quot;/&gt;&#10;    &lt;constraint path=&quot;Gene.length&quot; op=&quot;&amp;lt;&quot; value=&quot;1000&quot;/&gt;&#10;&lt;/query&gt;"
-            schema="/schema/query.xsd"
-            description="A definition of the query to execute in Path-Query XML format">query</param>
-        <param type="String[]" required="false"
-            description="Extra columns to include as extra information in the ninth column"
-            default="Gene.length">view</param>
-    </method>
-  </metadata>
-</servlet-mapping>
--->
 
 <servlet>
   <servlet-name>ws-gff3-lists</servlet-name>
@@ -178,9 +131,9 @@ of `SequenceFeature`s or `Protein`s as
         <summary>Query the Database for Sequence.</summary>
         <description format="markdown">
 This service provides full access to arbitrary database queries.
-Queries are accepted in a serialised XML format, executed and returned
+Queries are accepted in a serialised XML or JSON format, executed and returned
 in a streaming manner. The query format is a custom subset of the capabilities
-of SQL; see the InterMine documentation for a full description of the query XML
+of SQL; see the InterMine documentation for a full description of the query XML and JSON
 syntax.
 
 This endpoint specialises in dealing with queries for sequence,
@@ -194,10 +147,10 @@ a `Protein`. The particular field selected is not important, and the object itse
 will be selected.
         </description>
         <param required="true"
-            type="XML"
+            type="String"
             default="&lt;query name=&quot;short genes on the X chromosome&quot; model=&quot;genomic&quot; view=&quot;Gene.id&quot;&gt;&#10;    &lt;constraint path=&quot;Gene.chromosome.primaryIdentifier&quot; op=&quot;=&quot; value=&quot;X&quot;/&gt;&#10;    &lt;constraint path=&quot;Gene.length&quot; op=&quot;&amp;lt;&quot; value=&quot;1000&quot;/&gt;&#10;&lt;/query&gt;"
             schema="/schema/query.xsd"
-            description="A definition of the query to execute in Path-Query XML format">query</param>
+            description="A definition of the query to execute in Path-Query XML or JSON format">query</param>
         <param type="String[]" required="false"
             description="Extra columns to include as extra information in the ninth column"
             default="Gene.length">view</param>
@@ -224,9 +177,9 @@ will be selected.
         <summary>Query the Database for Locations.</summary>
         <description format="markdown">
 This service provides full access to arbitrary database queries.
-Queries are accepted in a serialised XML format, executed and returned
+Queries are accepted in a serialised XML or JSON format, executed and returned
 in a streaming manner. The query format is a custom subset of the capabilities
-of SQL; see the InterMine documentation for a full description of the query XML
+of SQL; see the InterMine documentation for a full description of the query XML and JSON
 syntax.
 
 This endpoint specialises in dealing with queries for genomic locations,
@@ -239,10 +192,10 @@ The particular field selected is not important, and the object itself
 will be selected.
         </description>
         <param required="true"
-            type="XML"
+            type="String"
             default="&lt;query name=&quot;short genes on the X chromosome&quot; model=&quot;genomic&quot; view=&quot;Gene.id Gene.exons.id&quot;&gt;&#10;    &lt;constraint path=&quot;Gene.chromosome.primaryIdentifier&quot; op=&quot;=&quot; value=&quot;X&quot;/&gt;&#10;    &lt;constraint path=&quot;Gene.length&quot; op=&quot;&amp;lt;&quot; value=&quot;1000&quot;/&gt;&#10;&lt;/query&gt;"
             schema="/schema/query.xsd"
-            description="A definition of the query to execute in Path-Query XML format">query</param>
+            description="A definition of the query to execute in Path-Query XML or JSON format">query</param>
     </method>
   </metadata>
 </servlet-mapping>
@@ -312,7 +265,7 @@ following [json-schema](http://json-schema.org/) schema:
               required="false"
               type="boolean"
               default="false">replaceExisting</param>
-          <param 
+          <param
               description="The region search input"
               default="
 {&#10;
@@ -439,7 +392,7 @@ following [json-schema](http://json-schema.org/) schema:
 }
 ```
           </description>
-          <param 
+          <param
               description="The region search input"
               default="
 {&#10;
@@ -526,7 +479,7 @@ following [json-schema](http://json-schema.org/) schema:
           <description format="markdown">
 This service returns information about features found
 overlapping a set of genomic intervals. The results are
-returned in the 
+returned in the
 [FASTA](http://en.wikipedia.org/wiki/FASTA_format) format
 where each record represents a feature, including the sequence
 associated with that feature.
@@ -556,7 +509,7 @@ following [json-schema](http://json-schema.org/) schema:
 }
 ```
           </description>
-          <param 
+          <param
               description="The region search input"
               default="
 {&#10;
@@ -576,7 +529,7 @@ following [json-schema](http://json-schema.org/) schema:
           <description format="markdown">
 This service returns information about features found
 overlapping a set of genomic intervals. The results are
-returned in the 
+returned in the
 [FASTA](http://en.wikipedia.org/wiki/FASTA_format) format
 where each record represents a feature, including the sequence
 associated with that feature.
@@ -671,7 +624,7 @@ following [json-schema](http://json-schema.org/) schema:
 }
 ```
           </description>
-          <param 
+          <param
               description="The region search input"
               default="
 {&#10;

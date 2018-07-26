@@ -1,7 +1,7 @@
 package org.intermine.web.task;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,19 +10,19 @@ package org.intermine.web.task;
  *
  */
 
-import java.util.Set;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.api.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.api.userprofile.Tag;
 
 /**
  * A task for removing tags that don't point to anything.
@@ -76,7 +76,7 @@ public class EvictOrphansTask extends Task
         QueryClass qc = new QueryClass(Tag.class);
         q.setConstraint(new SimpleConstraint(
                 new QueryField(qc, "userProfile"), ConstraintOp.IS_NULL));
-        Set<Object> res;
+        List<Object> res;
         try {
             res = osw.executeSingleton(q);
         } catch (Exception e) {

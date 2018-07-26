@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.jbrowse.genomic;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -309,7 +309,7 @@ public class Engine extends CommandRunner
         cs.addConstraint(new SimpleConstraint(
             new QueryField(organisms, "taxonId"),
             ConstraintOp.EQUALS,
-            new QueryValue(Integer.valueOf(taxonId))));
+            new QueryValue(taxonId)));
         return cs;
     }
 

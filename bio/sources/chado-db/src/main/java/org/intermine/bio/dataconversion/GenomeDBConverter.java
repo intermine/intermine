@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,7 +43,7 @@ public class GenomeDBConverter extends ChadoDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxonId) {
+    public String getDataSetTitle(String taxonId) {
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         OrganismData od = or.getOrganismDataByTaxon(taxonId);
         String species = od.getSpecies();
@@ -55,7 +55,7 @@ public class GenomeDBConverter extends ChadoDBConverter
      * {@inheritDoc}
      */
     @Override
-    public Item getDataSetItem(int taxonId) {
+    public Item getDataSetItem(String taxonId) {
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         OrganismData od = or.getOrganismDataByTaxon(taxonId);
         String species = od.getSpecies();

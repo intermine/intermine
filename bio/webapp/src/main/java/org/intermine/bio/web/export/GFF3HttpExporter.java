@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -76,7 +76,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
-        Set<Integer> organisms = null;
+        Set<String> organisms = null;
         boolean makeUcscCompatible = false;
         // try to find the organism from the form
         if (form != null && form instanceof GFF3ExportForm) {

@@ -20,7 +20,7 @@ tasks.test.dependsOn(':intermine-testresources:buildDB')
 
 dependencies {
     compile project(':intermine-model')
-    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
     compile group: 'commons-io', name: 'commons-io', version: '1.2'
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
     compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0'

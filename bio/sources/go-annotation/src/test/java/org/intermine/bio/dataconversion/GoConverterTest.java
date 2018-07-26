@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -93,8 +93,8 @@ public class GoConverterTest extends ItemsTestCase
         organism.setAttribute("taxonId", "7227");
 
         Set<String> expected = new HashSet<String>();
-        expected.add("1_1");
-        expected.add("1_2");
+        expected.add("2_1");
+        expected.add("2_2");
         converter.initialiseMapsForFile();
         assertEquals(expected, new HashSet<String>(converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612",

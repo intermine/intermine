@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -99,9 +99,9 @@ public class GenomicRegionSearchListInput extends ListInput
             regions.add(regs.getString(i));
         }
         parsed.setRegions(regions);
-
-        parsed.setStrandSpecific(jsonRequest.getBoolean("strandSpecific"));
-
+        if (!jsonRequest.isNull("strandSpecific")) {
+            parsed.setStrandSpecific(jsonRequest.getBoolean("strandSpecific"));
+        }
         return parsed;
     }
 
