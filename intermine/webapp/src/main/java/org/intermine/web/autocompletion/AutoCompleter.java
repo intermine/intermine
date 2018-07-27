@@ -111,7 +111,7 @@ public class AutoCompleter
 
                 SolrQuery newQuery = new SolrQuery();
                 newQuery.setQuery(field + ":" + query + "*"); //adding a wildcard in the end
-                newQuery.setRequestHandler("suggest");
+                newQuery.setRequestHandler("select");
                 newQuery.setRows(n); // FIXME: hardcoded maximum
                 newQuery.setFilterQueries(CLASSNAME_FIELD + ":" + className);
 
