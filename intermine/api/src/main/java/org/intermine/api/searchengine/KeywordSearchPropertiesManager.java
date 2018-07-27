@@ -13,6 +13,8 @@ package org.intermine.api.searchengine;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -35,6 +37,8 @@ public class KeywordSearchPropertiesManager {
 
     private String CONFIG_FILE_NAME = "keyword_search.properties";
 
+    private String CLASS_KEYS_FILE_NAME = "class_keys.properties";
+
     /**
      * maximum number of items to be displayed on a page
      */
@@ -49,6 +53,8 @@ public class KeywordSearchPropertiesManager {
     private Vector<KeywordSearchFacetData> facets;
     private boolean debugOutput;
     private Map<String, String> attributePrefixes = null;
+
+    Map<String, List<FieldDescriptor>> classKeys;
 
     private String solrUrl;
 
@@ -82,6 +88,19 @@ public class KeywordSearchPropertiesManager {
         if (properties != null) {
             return;
         }
+
+        //read class keys to figure out what are keyFields during indexing
+        Properties classKeyProperties = new Properties();
+        try {
+            classKeyProperties.load(getClass().getClassLoader().getResourceAsStream(
+                    CLASS_KEYS_FILE_NAME));
+        } catch (IOException e) {
+            throw new BuildException("Could not open the class keys");
+        } catch (NullPointerException e) {
+            throw new BuildException("Could not find the class keys");
+        }
+        classKeys =
+                ClassKeyHelper.readKeys(os.getModel(), classKeyProperties);
 
         specialReferences = new HashMap<Class<? extends InterMineObject>, String[]>();
         ignoredClasses = new HashSet<Class<? extends InterMineObject>>();
@@ -342,5 +361,9 @@ public class KeywordSearchPropertiesManager {
 
     public int getIndexBatchSize() {
         return indexBatchSize;
+    }
+
+    public Map<String, List<FieldDescriptor>> getClassKeys() {
+        return classKeys;
     }
 }

@@ -66,7 +66,11 @@ public class SolrObjectHandler extends Thread {
 
     private static final Logger LOG = Logger.getLogger(SolrObjectHandler.class);
 
-    private static final String FIELD_TYPE_NAME = "string_keyword";
+    //this field type is analyzed
+    private final String ANALYZED_FIELD_TYPE_NAME = "analyzed_string";
+
+    //this field type is not analyzed
+    private final String RAW_FIELD_TYPE_NAME = "raw_string";
 
     final ObjectStore os;
     final Map<String, List<FieldDescriptor>> classKeys;
@@ -369,7 +373,7 @@ public class SolrObjectHandler extends Thread {
                                     } else {
                                         doc.addField(virtualPathField,
                                                 (String) facetValue);
-                                        addFieldNameToSchema(virtualPathField);
+                                        addFieldNameToSchema(virtualPathField, RAW_FIELD_TYPE_NAME, false, true, true);
                                     }
                                 }
                             }
@@ -390,7 +394,7 @@ public class SolrObjectHandler extends Thread {
                                 && !StringUtils.isBlank((String) facetValue)) {
                             doc.addField(referenceFacet.getField(),
                                     (String) facetValue);
-                            addFieldNameToSchema(referenceFacet.getField());
+                            addFieldNameToSchema(referenceFacet.getField(), RAW_FIELD_TYPE_NAME, false, true, true);
                         }
                     }
                 }
@@ -554,14 +558,24 @@ public class SolrObjectHandler extends Thread {
 
             if (!raw) {
                 f = new SolrInputField(fieldName);
-                f.setValue(value.toLowerCase());
+                f.setValue(value);
             } else {
                 f = new SolrInputField(fieldName + "_raw");
-                f.setValue(value.toLowerCase());
+                f.setValue(value);
             }
 
             doc.addField(f.getName(), f.getValue());
-            addFieldNameToSchema(f.getName());
+
+            if ((value.indexOf(" ") == -1) && raw) {
+                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
+            } else if ((value.indexOf(" ") == -1) && !raw){
+                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, true);
+            } else if ((value.indexOf(" ") != -1) && raw){
+                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
+            } else {
+                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, false);
+            }
+
 
             return f;
         }
@@ -654,16 +668,18 @@ public class SolrObjectHandler extends Thread {
         return q;
     }
 
-    public void addFieldNameToSchema( String fieldName) {
+    public void addFieldNameToSchema(String fieldName, String fieldType,
+                                     boolean stored, boolean indexed, boolean omitNorms) {
 
         if (!fieldNames.contains(fieldName)){
             fieldNames.add(fieldName);
 
             Map<String, Object> fieldAttributes = new HashMap();
             fieldAttributes.put("name", fieldName);
-            fieldAttributes.put("type", FIELD_TYPE_NAME);
-            fieldAttributes.put("stored", false);
-            fieldAttributes.put("indexed", true);
+            fieldAttributes.put("type", fieldType);
+            fieldAttributes.put("stored", stored);
+            fieldAttributes.put("indexed", indexed);
+            fieldAttributes.put("omitNorms", omitNorms);
             fieldAttributes.put("multiValued", true);
             fieldAttributes.put("required", false);
 

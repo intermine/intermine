@@ -36,13 +36,17 @@ import java.util.*;
  */
 public final class SolrIndexHandler implements IndexHandler
 {
-    private static final Logger LOG = Logger.getLogger(SolrIndexHandler.class);
+    private final Logger LOG = Logger.getLogger(SolrIndexHandler.class);
 
-    private static final String LUCENE_INDEX_DIR = "keyword_search_index";
+    //this field type is analyzed
+    private final String ANALYZED_FIELD_TYPE_NAME = "analyzed_string";
 
-    private static final String FIELD_TYPE_NAME = "string_keyword";
+    //this field type is not analyzed
+    private final String RAW_FIELD_TYPE_NAME = "raw_string";
 
-    private static ObjectPipe<SolrInputDocument> indexingQueue = new ObjectPipe<SolrInputDocument>(100000);
+    private boolean enableOptimize = true;
+
+    private ObjectPipe<SolrInputDocument> indexingQueue = new ObjectPipe<SolrInputDocument>(100000);
 
     @Override
     public void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys)
@@ -57,64 +61,24 @@ public final class SolrIndexHandler implements IndexHandler
         LOG.debug("Delete previous index begins");
         long deleteStartTime = System.currentTimeMillis();
 
-        FieldTypeDefinition fieldTypeDefinition = new FieldTypeDefinition();
+        createFieldTypeDefinitions(solrClient);
 
-        Map<String, Object> fieldTypeAttributes = new HashMap();
-        fieldTypeAttributes.put("name", FIELD_TYPE_NAME);
-        fieldTypeAttributes.put("class", "solr.TextField");
-        fieldTypeAttributes.put("positionIncrementGap", 100);
-        fieldTypeAttributes.put("multiValued", true);
-
-        AnalyzerDefinition indexAnalyzerDefinition = new AnalyzerDefinition();
-        Map<String, Object> indexTokenizerAttributes = new HashMap<String, Object>();
-        indexTokenizerAttributes.put("class", "solr.WhitespaceTokenizerFactory");
-        indexAnalyzerDefinition.setTokenizer(indexTokenizerAttributes);
-        Map<String, Object> indexLowerCaseFilterAttributes = new HashMap<String, Object>();
-        indexLowerCaseFilterAttributes.put("class", "solr.LowerCaseFilterFactory");
-        List<Map<String, Object>> indexFilterAttributes = new ArrayList<Map<String, Object>>();
-        indexFilterAttributes.add(indexLowerCaseFilterAttributes);
-        indexAnalyzerDefinition.setFilters(indexFilterAttributes);
-
-        AnalyzerDefinition queryAnalyzerDefinition = new AnalyzerDefinition();
-        Map<String, Object> queryTokenizerAttributes = new HashMap<String, Object>();
-        queryTokenizerAttributes.put("class", "solr.WhitespaceTokenizerFactory");
-        queryAnalyzerDefinition.setTokenizer(queryTokenizerAttributes);
-        Map<String, Object> queryLowerCaseFilterAttributes = new HashMap<String, Object>();
-        queryLowerCaseFilterAttributes.put("class", "solr.LowerCaseFilterFactory");
-        List<Map<String, Object>> queryFilterAttributes = new ArrayList<Map<String, Object>>();
-        queryFilterAttributes.add(queryLowerCaseFilterAttributes);
-        queryAnalyzerDefinition.setFilters(queryFilterAttributes);
-
-        fieldTypeDefinition.setAttributes(fieldTypeAttributes);
-        fieldTypeDefinition.setIndexAnalyzer(indexAnalyzerDefinition);
-        fieldTypeDefinition.setQueryAnalyzer(queryAnalyzerDefinition);
-
-        try{
-            SchemaRequest.AddFieldType schemaRequest = new SchemaRequest.AddFieldType(fieldTypeDefinition);
-            SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
-
-        } catch (SolrServerException e){
-            LOG.error("Error while adding fieldtype to the solrclient.", e);
-
-            e.printStackTrace();
-        }
-
-        Map<String, Object> textFieldAttributes = new HashMap();
-        textFieldAttributes.put("name", "_text_");
-        textFieldAttributes.put("type", FIELD_TYPE_NAME);
-        textFieldAttributes.put("stored", false);
-        textFieldAttributes.put("indexed", true);
-        textFieldAttributes.put("multiValued", true);
-
-        try{
-            SchemaRequest.ReplaceField replaceFieldRequest = new SchemaRequest.ReplaceField(textFieldAttributes);
-            SchemaResponse.UpdateResponse replaceFieldResponse =  replaceFieldRequest.process(solrClient);
-
-        } catch (SolrServerException e){
-            LOG.error("Error while modifying _text_ fieldtype", e);
-
-            e.printStackTrace();
-        }
+//        Map<String, Object> textFieldAttributes = new HashMap();
+//        textFieldAttributes.put("name", "_text_");
+//        textFieldAttributes.put("type", ANALYZED_FIELD_TYPE_NAME);
+//        textFieldAttributes.put("stored", false);
+//        textFieldAttributes.put("indexed", true);
+//        textFieldAttributes.put("multiValued", true);
+//
+//        try{
+//            SchemaRequest.ReplaceField replaceFieldRequest = new SchemaRequest.ReplaceField(textFieldAttributes);
+//            SchemaResponse.UpdateResponse replaceFieldResponse =  replaceFieldRequest.process(solrClient);
+//
+//        } catch (SolrServerException e){
+//            LOG.error("Error while modifying _text_ fieldtype", e);
+//
+//            e.printStackTrace();
+//        }
 
         try {
             solrClient.deleteByQuery("*:*");
@@ -129,40 +93,42 @@ public final class SolrIndexHandler implements IndexHandler
         KeywordSearchPropertiesManager keywordSearchPropertiesManager
                 = KeywordSearchPropertiesManager.getInstance(os);
 
-        //adding copy field to solr so that all the fields can be searchable
-        //No need to search for Category : gene. Searching for gene is enough
+//        //adding copy field to solr so that all the fields can be searchable
+//        //No need to search for Category : gene. Searching for gene is enough
+//
+//        try{
+//
+//            List<String> copyFieldAttributes = new ArrayList<String>();
+//            copyFieldAttributes.add("_text_");
+//
+//            SchemaRequest.DeleteCopyField deleteCopyField = new SchemaRequest.DeleteCopyField("*", copyFieldAttributes);
+//            SchemaResponse.UpdateResponse deleteCopyFieldRes =  deleteCopyField.process(solrClient);
+//
+//            SchemaRequest.AddCopyField schemaCopyRequest = new SchemaRequest.AddCopyField("*", copyFieldAttributes);
+//            SchemaResponse.UpdateResponse copyFieldResponse =  schemaCopyRequest.process(solrClient);
+//
+//        } catch (SolrServerException e){
+//            LOG.error("Error while adding copy field to the solrclient.", e);
+//
+//            e.printStackTrace();
+//        }
 
-        try{
-
-            List<String> copyFieldAttributes = new ArrayList<String>();
-            copyFieldAttributes.add("_text_");
-
-            SchemaRequest.DeleteCopyField deleteCopyField = new SchemaRequest.DeleteCopyField("*", copyFieldAttributes);
-            SchemaResponse.UpdateResponse deleteCopyFieldRes =  deleteCopyField.process(solrClient);
-
-            SchemaRequest.AddCopyField schemaCopyRequest = new SchemaRequest.AddCopyField("*", copyFieldAttributes);
-            SchemaResponse.UpdateResponse copyFieldResponse =  schemaCopyRequest.process(solrClient);
-
-        } catch (SolrServerException e){
-            LOG.error("Error while adding copy field to the solrclient.", e);
-
-            e.printStackTrace();
-        }
-
-        addFieldNameToSchema("classname", FIELD_TYPE_NAME, solrClient);
-        addFieldNameToSchema("Category", FIELD_TYPE_NAME, solrClient);
+        addFieldNameToSchema("classname", ANALYZED_FIELD_TYPE_NAME, false, true, true, solrClient);
+        addFieldNameToSchema("Category", "string", false, true, true, solrClient);
 
         for (KeywordSearchFacetData facetData: keywordSearchPropertiesManager.getFacets()){
             for (String field : facetData.getFields()){
-                addFieldNameToSchema(field, FIELD_TYPE_NAME, solrClient);
-                addFieldNameToSchema("facet_" + field, "string", solrClient);
+                addFieldNameToSchema(field, ANALYZED_FIELD_TYPE_NAME, false, true, true, solrClient);
+                addFieldNameToSchema("facet_" + field, "string", false, true, true, solrClient);
                 addCopyFieldToSchema(field, "facet_" + field, solrClient);
             }
         }
 
         LOG.info("Starting fetcher thread...");
         SolrObjectHandler fetchThread =
-                new SolrObjectHandler(os, classKeys, indexingQueue,
+                new SolrObjectHandler(os,
+                        keywordSearchPropertiesManager.getClassKeys(),
+                        indexingQueue,
                         keywordSearchPropertiesManager.getIgnoredClasses(),
                         keywordSearchPropertiesManager.getIgnoredFields(),
                         keywordSearchPropertiesManager.getSpecialReferences(),
@@ -180,7 +146,6 @@ public final class SolrIndexHandler implements IndexHandler
         LOG.debug("Starting to index...");
 
         long indexStartTime = System.currentTimeMillis();
-        int indexBatchSize = keywordSearchPropertiesManager.getIndexBatchSize();
 
         int tempDocs = 0;
         long tempTime = System.currentTimeMillis();
@@ -192,11 +157,11 @@ public final class SolrIndexHandler implements IndexHandler
 
             indexed++;
 
-            if (indexed % indexBatchSize == 0){
+            if (solrInputDocuments.size() == keywordSearchPropertiesManager.getIndexBatchSize()){
 
                 tempTime = System.currentTimeMillis();
 
-                commitBatchData(solrClient, solrInputDocuments);
+                addSolrDocuments(solrClient, solrInputDocuments);
 
                 tempDocs = indexed - tempDocs;
 
@@ -207,14 +172,18 @@ public final class SolrIndexHandler implements IndexHandler
                         + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
                         + (System.currentTimeMillis() - time) + "ms");
 
-                solrInputDocuments = new ArrayList<SolrInputDocument>();
+                solrInputDocuments.clear();
             }
 
         }
-        LOG.info("Last commit");
-        commitBatchData(solrClient, solrInputDocuments);
 
-        commitSolrClient(solrClient);
+        addSolrDocuments(solrClient, solrInputDocuments);
+
+        commit(solrClient);
+
+        if (enableOptimize) {
+            optimize(solrClient);
+        }
 
         LOG.debug("Solr indexing ends and it took " + (System.currentTimeMillis() - indexStartTime) + "ms");
 
@@ -235,32 +204,36 @@ public final class SolrIndexHandler implements IndexHandler
     }
 
 
-    private void commitBatchData(SolrClient solrClient, List<SolrInputDocument> solrDocumentList) throws IOException {
+    private void addSolrDocuments(SolrClient solrClient, List<SolrInputDocument> solrDocumentList) throws IOException {
         //Accessing SchemaAPI from solr and create the schema dynamically
 
         if (solrDocumentList.size() != 0) {
 
+            LOG.debug("Beginning to commit Solr Documents into Solr");
+
             try {
                 UpdateResponse response = solrClient.add(solrDocumentList, 30000);
+
             } catch (SolrServerException e) {
 
                 LOG.error("Error while commiting the SolrInputdocuments to the Solrclient. " +
                         "Make sure the Solr instance is up", e);
 
                 e.printStackTrace();
-            } catch (IOException io) {
-                LOG.error("Error while commiting the SolrInputdocuments to the Solrclient. ", io.fillInStackTrace());
             }
         }
+
     }
 
-    public void addFieldNameToSchema(String fieldName, String fieldType, SolrClient solrClient) throws IOException{
+    public void addFieldNameToSchema(String fieldName, String fieldType, boolean stored,
+                                     boolean indexed, boolean omitNorms, SolrClient solrClient) throws IOException{
 
         Map<String, Object> fieldAttributes = new HashMap();
         fieldAttributes.put("name", fieldName);
         fieldAttributes.put("type", fieldType);
-        fieldAttributes.put("stored", false);
-        fieldAttributes.put("indexed", true);
+        fieldAttributes.put("stored", stored);
+        fieldAttributes.put("indexed", indexed);
+        fieldAttributes.put("omitNorms", omitNorms);
         fieldAttributes.put("multiValued", true);
         fieldAttributes.put("required", false);
 
@@ -268,7 +241,6 @@ public final class SolrIndexHandler implements IndexHandler
             SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
             SchemaResponse.UpdateResponse response = schemaRequest.process(solrClient);
 
-            LOG.info("addFieldnameToSchema - update response status is:" +response.getStatus());
         } catch (SolrServerException e) {
             LOG.error("Error while adding fields to the solrclient.", e);
 
@@ -296,14 +268,116 @@ public final class SolrIndexHandler implements IndexHandler
         }
     }
 
-    private void commitSolrClient(SolrClient solrClient) throws IOException{
+    private void commit(SolrClient solrClient) throws IOException{
         try {
             solrClient.commit();
-            solrClient.optimize();
 
         } catch (SolrServerException e) {
             LOG.error("Error while commiting.", e);
             e.printStackTrace();
         }
     }
+
+    private void optimize(SolrClient solrClient) throws IOException{
+
+        long startTime = System.currentTimeMillis();
+
+        try {
+            solrClient.optimize();
+
+            LOG.info("Optimizing Solr Index finished in " + (System.currentTimeMillis() -  startTime) + "ms");
+
+        } catch (SolrServerException e) {
+            LOG.error("Error while optimizing", e);
+            e.printStackTrace();
+        }
+
+    }
+
+    public void createFieldTypeDefinitions(SolrClient solrClient) throws IOException {
+        FieldTypeDefinition analyzedFieldTypeDefinition = new FieldTypeDefinition();
+
+        Map<String, Object> analyzedFieldTypeAttributes = new HashMap();
+        analyzedFieldTypeAttributes.put("name", ANALYZED_FIELD_TYPE_NAME);
+        analyzedFieldTypeAttributes.put("class", "solr.TextField");
+        analyzedFieldTypeAttributes.put("positionIncrementGap", 100);
+        analyzedFieldTypeAttributes.put("multiValued", true);
+
+        AnalyzerDefinition indexAnalyzerDefinition1 = new AnalyzerDefinition();
+        Map<String, Object> indexTokenizerAttributes1 = new HashMap<String, Object>();
+        indexTokenizerAttributes1.put("class", "solr.WhitespaceTokenizerFactory");
+        indexAnalyzerDefinition1.setTokenizer(indexTokenizerAttributes1);
+        Map<String, Object> indexLowerCaseFilterAttributes1 = new HashMap<String, Object>();
+        indexLowerCaseFilterAttributes1.put("class", "solr.LowerCaseFilterFactory");
+        List<Map<String, Object>> indexFilterAttributes1 = new ArrayList<Map<String, Object>>();
+        indexFilterAttributes1.add(indexLowerCaseFilterAttributes1);
+        indexAnalyzerDefinition1.setFilters(indexFilterAttributes1);
+
+        AnalyzerDefinition queryAnalyzerDefinition1 = new AnalyzerDefinition();
+        Map<String, Object> queryTokenizerAttributes1 = new HashMap<String, Object>();
+        queryTokenizerAttributes1.put("class", "solr.WhitespaceTokenizerFactory");
+        queryAnalyzerDefinition1.setTokenizer(queryTokenizerAttributes1);
+        Map<String, Object> queryLowerCaseFilterAttributes1 = new HashMap<String, Object>();
+        queryLowerCaseFilterAttributes1.put("class", "solr.LowerCaseFilterFactory");
+        List<Map<String, Object>> queryFilterAttributes1 = new ArrayList<Map<String, Object>>();
+        queryFilterAttributes1.add(queryLowerCaseFilterAttributes1);
+        queryAnalyzerDefinition1.setFilters(queryFilterAttributes1);
+
+        analyzedFieldTypeDefinition.setAttributes(analyzedFieldTypeAttributes);
+        analyzedFieldTypeDefinition.setIndexAnalyzer(indexAnalyzerDefinition1);
+        analyzedFieldTypeDefinition.setQueryAnalyzer(queryAnalyzerDefinition1);
+
+        try{
+            SchemaRequest.AddFieldType schemaRequest = new SchemaRequest.AddFieldType(analyzedFieldTypeDefinition);
+            SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+
+        } catch (SolrServerException e){
+            LOG.error("Error while adding fieldtype '" + ANALYZED_FIELD_TYPE_NAME + "' to the solrclient.", e);
+
+            e.printStackTrace();
+        }
+
+        FieldTypeDefinition rawFieldTypeDefinition = new FieldTypeDefinition();
+
+        Map<String, Object> rawFieldTypeAttributes = new HashMap();
+        rawFieldTypeAttributes.put("name", RAW_FIELD_TYPE_NAME);
+        rawFieldTypeAttributes.put("class", "solr.TextField");
+        rawFieldTypeAttributes.put("positionIncrementGap", 100);
+        rawFieldTypeAttributes.put("multiValued", true);
+
+        AnalyzerDefinition indexAnalyzerDefinition2 = new AnalyzerDefinition();
+        Map<String, Object> indexTokenizerAttributes2 = new HashMap<String, Object>();
+        indexTokenizerAttributes2.put("class", "solr.KeywordTokenizerFactory");
+        indexAnalyzerDefinition2.setTokenizer(indexTokenizerAttributes2);
+        Map<String, Object> indexLowerCaseFilterAttributes2 = new HashMap<String, Object>();
+        indexLowerCaseFilterAttributes2.put("class", "solr.LowerCaseFilterFactory");
+        List<Map<String, Object>> indexFilterAttributes2 = new ArrayList<Map<String, Object>>();
+        indexFilterAttributes2.add(indexLowerCaseFilterAttributes2);
+        indexAnalyzerDefinition2.setFilters(indexFilterAttributes2);
+
+        AnalyzerDefinition queryAnalyzerDefinition2 = new AnalyzerDefinition();
+        Map<String, Object> queryTokenizerAttributes2 = new HashMap<String, Object>();
+        queryTokenizerAttributes2.put("class", "solr.KeywordTokenizerFactory");
+        queryAnalyzerDefinition2.setTokenizer(queryTokenizerAttributes2);
+        Map<String, Object> queryLowerCaseFilterAttributes2 = new HashMap<String, Object>();
+        queryLowerCaseFilterAttributes2.put("class", "solr.LowerCaseFilterFactory");
+        List<Map<String, Object>> queryFilterAttributes2 = new ArrayList<Map<String, Object>>();
+        queryFilterAttributes2.add(queryLowerCaseFilterAttributes2);
+        queryAnalyzerDefinition2.setFilters(queryFilterAttributes2);
+
+        rawFieldTypeDefinition.setAttributes(rawFieldTypeAttributes);
+        rawFieldTypeDefinition.setIndexAnalyzer(indexAnalyzerDefinition2);
+        rawFieldTypeDefinition.setQueryAnalyzer(queryAnalyzerDefinition2);
+
+        try{
+            SchemaRequest.AddFieldType schemaRequest = new SchemaRequest.AddFieldType(rawFieldTypeDefinition);
+            SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+
+        } catch (SolrServerException e){
+            LOG.error("Error while adding fieldtype '" +  RAW_FIELD_TYPE_NAME + "' to the solrclient.", e);
+
+            e.printStackTrace();
+        }
+    }
+
 }
