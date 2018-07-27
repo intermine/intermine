@@ -62,15 +62,7 @@ public class SaveFromIdsToBagAction extends InterMineAction
             String type = (String) request.getParameter("type");
             String allChecked = (String) request.getParameter("allChecked");
 
-            String bagName = request.getParameter("newBagName");
-            if (bagName == null) {
-                bagName = "new_list";
-            }
-            bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
             InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            InterMineBag bag = profile.createBag(bagName, type, "", im.getClassKeys());
-            bag.addIdsToBag(idSet, type);
-            profile.saveBag(bag.getName(), bag);
 
             if ("true".equals(allChecked)) {
                 // TODO do something more clever than running the search again
@@ -96,9 +88,19 @@ public class SaveFromIdsToBagAction extends InterMineAction
                 }
             }
 
+            String bagName = request.getParameter("newBagName");
+            if (bagName == null) {
+                bagName = "new_list";
+            }
+            bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
+            InterMineBag bag = profile.createBag(bagName, type, "", im.getClassKeys());
+            bag.addIdsToBag(idSet, type);
+            profile.saveBag(bag.getName(), bag);
+
             ForwardParameters forwardParameters = new ForwardParameters(
                     mapping.findForward("bagDetails"));
             return forwardParameters.addParameter("bagName", bagName).forward();
+
         } catch (Exception e) {
             e.printStackTrace();
             try {

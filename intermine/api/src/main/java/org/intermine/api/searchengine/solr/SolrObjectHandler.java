@@ -66,7 +66,11 @@ public class SolrObjectHandler extends Thread {
 
     private static final Logger LOG = Logger.getLogger(SolrObjectHandler.class);
 
-    private static final String FIELD_TYPE_NAME = "string_keyword";
+    //this field type is analyzed
+    private final String ANALYZED_FIELD_TYPE_NAME = "analyzed_string";
+
+    //this field type is not analyzed
+    private final String RAW_FIELD_TYPE_NAME = "raw_string";
 
     final ObjectStore os;
     final Map<String, List<FieldDescriptor>> classKeys;
@@ -369,7 +373,7 @@ public class SolrObjectHandler extends Thread {
                                     } else {
                                         doc.addField(virtualPathField,
                                                 (String) facetValue);
-                                        addFieldNameToSchema(virtualPathField, "string", false, true, false);
+                                        addFieldNameToSchema(virtualPathField, RAW_FIELD_TYPE_NAME, false, true, true);
                                     }
                                 }
                             }
@@ -390,7 +394,7 @@ public class SolrObjectHandler extends Thread {
                                 && !StringUtils.isBlank((String) facetValue)) {
                             doc.addField(referenceFacet.getField(),
                                     (String) facetValue);
-                            addFieldNameToSchema(referenceFacet.getField(), "string", false, true, false);
+                            addFieldNameToSchema(referenceFacet.getField(), RAW_FIELD_TYPE_NAME, false, true, true);
                         }
                     }
                 }
@@ -554,22 +558,22 @@ public class SolrObjectHandler extends Thread {
 
             if (!raw) {
                 f = new SolrInputField(fieldName);
-                f.setValue(value.toLowerCase());
+                f.setValue(value);
             } else {
                 f = new SolrInputField(fieldName + "_raw");
-                f.setValue(value.toLowerCase());
+                f.setValue(value);
             }
 
             doc.addField(f.getName(), f.getValue());
 
             if ((value.indexOf(" ") == -1) && raw) {
-                addFieldNameToSchema(f.getName(), "string", false, true, false);
+                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
             } else if ((value.indexOf(" ") == -1) && !raw){
-                addFieldNameToSchema(f.getName(), FIELD_TYPE_NAME, false, true, true);
+                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, true);
             } else if ((value.indexOf(" ") != -1) && raw){
-                addFieldNameToSchema(f.getName(), "string", false, true, false);
+                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
             } else {
-                addFieldNameToSchema(f.getName(), FIELD_TYPE_NAME, false, true, false);
+                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, false);
             }
 
 

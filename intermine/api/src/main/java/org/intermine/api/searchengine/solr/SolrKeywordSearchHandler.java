@@ -144,16 +144,53 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
         Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
 
+
+        Map<ClassDescriptor, Float> classBoost = keywordSearchPropertiesManager.getClassBoost();
+
+        List<String> fieldNames = getFieldNamesFromSolrSchema(solrClient);
+
         try {
 
             SolrQuery newQuery = new SolrQuery();
             newQuery.setQuery(searchString);
             newQuery.setStart(offSet);
-            newQuery.setRows(KeywordSearchPropertiesManager.PER_PAGE);
+            newQuery.setRows(10000);
+            newQuery.addField("id");
+            newQuery.add("defType", "edismax");
 
             for (KeywordSearchFacetData keywordSearchFacetData : facets){
-                newQuery.addFacetField(keywordSearchFacetData.getField());
+                newQuery.addFacetField("facet_" + keywordSearchFacetData.getField());
             }
+
+            // add faceting selections
+            for (Map.Entry<String, String> facetValue : facetValues.entrySet()) {
+                if (facetValue != null) {
+                    newQuery.addFilterQuery(facetValue.getKey()+":"+facetValue.getValue());
+                }
+            }
+
+            String boostQuery = "";
+
+            for (Map.Entry<ClassDescriptor, Float> boostValue : classBoost.entrySet()){
+                if (boostValue != null){
+                    boostQuery += "classname:" + boostValue.getKey().getUnqualifiedName() + "^" + boostValue.getValue() + " ";
+                }
+            }
+
+            String fieldListQuery = "";
+
+            for (String field : fieldNames){
+                fieldListQuery = fieldListQuery + field;
+                if (field.endsWith("_raw")){
+                    fieldListQuery = fieldListQuery + "^2";
+                }
+                fieldListQuery = fieldListQuery + " ";
+            }
+
+            System.out.println(fieldListQuery);
+
+            newQuery.add("bq", boostQuery);
+            newQuery.add("qf", fieldListQuery);
 
             resp = solrClient.query(newQuery);
 
@@ -188,11 +225,16 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
         Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
 
+        Map<ClassDescriptor, Float> classBoost = keywordSearchPropertiesManager.getClassBoost();
+
+        List<String> fieldNames = getFieldNamesFromSolrSchema(solrClient);
+
         try {
 
             SolrQuery newQuery = new SolrQuery();
             newQuery.setQuery(queryString);
             newQuery.setRows(0); //search results is not important here. Only facet categories
+            newQuery.add("defType", "edismax");
 
             for (KeywordSearchFacetData keywordSearchFacetData : facets){
                 newQuery.addFacetField("facet_" + keywordSearchFacetData.getField());
@@ -204,6 +246,29 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
                     newQuery.addFilterQuery(facetValue.getKey()+":"+facetValue.getValue());
                 }
             }
+
+            String boostQuery = "";
+
+            for (Map.Entry<ClassDescriptor, Float> boostValue : classBoost.entrySet()){
+                if (boostValue != null){
+                    boostQuery += "classname:" + boostValue.getKey().getUnqualifiedName() + "^" + boostValue.getValue() + " ";
+                }
+            }
+
+            String fieldListQuery = "";
+
+            for (String field : fieldNames){
+                fieldListQuery = fieldListQuery + field;
+                if (field.endsWith("_raw")){
+                    fieldListQuery = fieldListQuery + "^2";
+                }
+                fieldListQuery = fieldListQuery + " ";
+            }
+
+            System.out.println(fieldListQuery);
+
+            newQuery.add("bq", boostQuery);
+            newQuery.add("qf", fieldListQuery);
 
             resp = solrClient.query(newQuery);
 
