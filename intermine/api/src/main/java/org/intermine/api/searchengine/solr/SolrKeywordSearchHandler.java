@@ -95,7 +95,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             for (String field : fieldNames){
                 fieldListQuery = fieldListQuery + field;
                 if (field.endsWith("_raw")){
-                    fieldListQuery = fieldListQuery + "^2";
+                    fieldListQuery = fieldListQuery + "^2.0";
                 }
                 fieldListQuery = fieldListQuery + " ";
             }
@@ -182,7 +182,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             for (String field : fieldNames){
                 fieldListQuery = fieldListQuery + field;
                 if (field.endsWith("_raw")){
-                    fieldListQuery = fieldListQuery + "^2";
+                    fieldListQuery = fieldListQuery + "^2.0";
                 }
                 fieldListQuery = fieldListQuery + " ";
             }
@@ -260,7 +260,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             for (String field : fieldNames){
                 fieldListQuery = fieldListQuery + field;
                 if (field.endsWith("_raw")){
-                    fieldListQuery = fieldListQuery + "^2";
+                    fieldListQuery = fieldListQuery + "^2.0";
                 }
                 fieldListQuery = fieldListQuery + " ";
             }
