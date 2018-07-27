@@ -154,8 +154,8 @@ public final class SolrIndexHandler implements IndexHandler
 
         for (KeywordSearchFacetData facetData: keywordSearchPropertiesManager.getFacets()){
             for (String field : facetData.getFields()){
-                addFieldNameToSchema(field, FIELD_TYPE_NAME, solrClient);
-                addFieldNameToSchema("facet_" + field, "string", solrClient);
+                addFieldNameToSchema(field, FIELD_TYPE_NAME, false, true, true, solrClient);
+                addFieldNameToSchema("facet_" + field, "string", false, true, true, solrClient);
                 addCopyFieldToSchema(field, "facet_" + field, solrClient);
             }
         }
