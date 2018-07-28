@@ -566,11 +566,17 @@ public class SolrObjectHandler extends Thread {
 
             doc.addField(f.getName(), f.getValue());
 
-            if ((value.indexOf(" ") == -1) && raw) {
-                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
-            } else if ((value.indexOf(" ") == -1) && !raw){
-                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, true);
-            } else if ((value.indexOf(" ") != -1) && raw){
+//            if ((value.indexOf(" ") == -1) && raw) {
+//                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
+//            } else if ((value.indexOf(" ") == -1) && !raw){
+//                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, true);
+//            } else if ((value.indexOf(" ") != -1) && raw){
+//                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
+//            } else {
+//                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, false);
+//            }
+
+            if(raw){
                 addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
             } else {
                 addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, false);
@@ -679,7 +685,7 @@ public class SolrObjectHandler extends Thread {
             fieldAttributes.put("type", fieldType);
             fieldAttributes.put("stored", stored);
             fieldAttributes.put("indexed", indexed);
-            fieldAttributes.put("omitNorms", omitNorms);
+//            fieldAttributes.put("omitNorms", omitNorms);
             fieldAttributes.put("multiValued", true);
             fieldAttributes.put("required", false);
 
