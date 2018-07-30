@@ -417,7 +417,7 @@ public final class MetadataManager
          * @param con a database Connection, to which this object will have exclusive access, and
          * which must not be in autocommit mode. The connection will be closed when this object is
          * closed
-         * * @param commitMode whether autoCommit should be on or off when restoring object
+         * @param commitMode whether autoCommit should be on or off when restoring object
          * @param obj a LargeObject to write to
          */
         public LargeObjectOutputStream(Connection con, LargeObject obj, boolean commitMode) {
