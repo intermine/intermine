@@ -1592,10 +1592,6 @@ to will also be returned.
     <servlet>
         <servlet-name>ws-facet-list</servlet-name>
         <servlet-class>org.intermine.webservice.server.FacetListServlet</servlet-class>
-        <init-param>
-            <param-name>debug</param-name>
-            <param-value>true</param-value>
-        </init-param>
     </servlet>
 
     <servlet-mapping>
@@ -1605,7 +1601,7 @@ to will also be returned.
         <metadata>
             <name>FacetList</name>
             <minVersion>9</minVersion>
-            <method authenticationRequired="false" type="GET" ALSO="POST">
+            <method authenticationRequired="false" type="GET">
                 <summary>Retreive all the possible facets</summary>
                 <description>
                     Retreive all the possible facets.
