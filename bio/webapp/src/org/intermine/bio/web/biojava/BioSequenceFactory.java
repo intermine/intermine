@@ -77,7 +77,7 @@ public abstract class BioSequenceFactory
      * @param feature the SequenceFeature
      * @return a new BioSequence object or null if the SequenceFeature doesn't have a
      * Sequence
-     * @throws IllegalSymbolException if any of the residues of the SequenceFeature can't be
+     * @throws CompoundNotFoundException if any of the residues of the SequenceFeature can't be
      * turned into DNA symbols.
      */
     public static BioSequence make(SequenceFeature feature)
