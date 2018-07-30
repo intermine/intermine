@@ -12,12 +12,11 @@ buildscript {
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
-apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: "com.jfrog.artifactory"
 
 group 'org.intermine'
-version '2.0.0-RC-02'
+version '2.0.0-RC-01'
 sourceCompatibility = 1.8
 
 repositories {
@@ -80,8 +79,8 @@ bintray {
         from 'build/libs'
         into '.'
     }
-    dryRun = true //[Default: false] Whether to run this as dry-run, without deploying
-    publish = false //[Default: false] Whether version should be auto published after an upload
+    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+    publish = true //[Default: false] Whether version should be auto published after an upload
     override = true //[Default: false] Whether to override version artifacts already published
     pkg {
         repo = 'intermine'
@@ -91,34 +90,11 @@ bintray {
         vcsUrl = 'https://github.com/intermine/intermine.git'
         publicDownloadNumbers = true
         version {
-            name = '2.0.0-RC-02'
+            name = '2.0.0-RC-01'
             desc = 'InterMine 2.0 Release Candidate v1'
-            vcsTag = 'intermine-2.0.0-RC-02'
+            vcsTag = 'intermine-2.0.0-RC-01'
         }
     }
 
     configurations = ['archives']
-}
-
-publishing {
-    publications {
-        mavenPublication(MavenPublication) {
-            artifact sourcesJar {
-                classifier "sources"
-            }
-            artifact javadocJar {
-                classifier "javadoc"
-            }
-            groupId 'org.intermine'
-            artifactId 'plugin'
-            version '2.0.0-RC-02'
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', 'Plugin for InterMine')
-                root.appendNode('name', 'plugin')
-                root.appendNode('url', 'https://github.com/intermine/intermine')
-                root.children().last() + pomConfig
-            }
-        }
-    }
 }

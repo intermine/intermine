@@ -23,6 +23,8 @@ subprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
 
+    group 'org.intermine'
+    version '2.0.0-RC-01'
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
@@ -34,32 +36,6 @@ subprojects {
         }
         flatDir {
             dirs '../libs'
-        }
-    }
-
-    release {
-        failOnCommitNeeded = true
-        failOnPublishNeeded = true
-        failOnSnapshotDependencies = true
-        failOnUnversionedFiles = true
-        failOnUpdateNeeded = true
-        revertOnFail = true
-        preCommitText = ''
-        preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
-        tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
-        newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
-        version = "2.0.0-RC-01"
-        tagTemplate = '${project.name}-${version}'
-        versionPropertyFile = 'gradle.properties'
-        versionProperties = []
-        buildTasks = ['build']
-
-        git {
-            requireBranch = 'gradle'
-            pushToRemote = 'origin'
-            pushToBranchPrefix = ''
-            commitVersionFileOnly = false
-            signTag = false
         }
     }
 
@@ -125,6 +101,22 @@ subprojects {
         }
     }
 
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+
+
     artifactory {
         contextUrl = 'https://oss.jfrog.org/artifactory/'
         resolve {
@@ -151,6 +143,13 @@ subprojects {
     bintray {
         user = System.getenv('BINTRAY_USER')
         key = System.getenv('BINTRAY_KEY')
+        filesSpec {
+            from 'build/libs'
+            into '.'
+        }
+        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+        publish = true //[Default: false] Whether version should be auto published after an upload
+        override = true //[Default: false] Whether to override version artifacts already published
         pkg {
             repo = 'intermine'
             name = project.name
