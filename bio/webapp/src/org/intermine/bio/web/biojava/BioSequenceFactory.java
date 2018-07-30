@@ -81,7 +81,7 @@ public abstract class BioSequenceFactory
      * turned into DNA symbols.
      */
     public static BioSequence make(SequenceFeature feature)
-        throws IllegalSymbolException {
+        throws CompoundNotFoundException {
         return make(feature, 0);
     }
 
