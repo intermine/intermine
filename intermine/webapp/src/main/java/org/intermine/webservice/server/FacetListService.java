@@ -53,7 +53,7 @@ public class FacetListService extends JSONService {
 
         JSONObject jo = new JSONObject(ckData);
 
-        output.addResultItem(Collections.singletonList(jo.toString()));
+        addResultItem(ckData, false);
 
     }
 

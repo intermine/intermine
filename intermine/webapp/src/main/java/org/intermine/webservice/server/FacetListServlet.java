@@ -1,22 +1,15 @@
 package org.intermine.webservice.server;
 
-import org.intermine.webservice.server.core.NoServiceException;
-import org.intermine.webservice.server.core.WebServiceServlet;
+import org.intermine.web.context.InterMineContext;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-public class FacetListServlet extends WebServiceServlet {
+public class FacetListServlet extends HttpServlet {
     @Override
-    protected WebService getService(Method method) throws NoServiceException {
-        ServletContext ctx = this.getServletContext();
-        switch (method) {
-            case GET:
-                return new FacetListService(api);
-            case POST:
-                return new FacetListService(api);
-            default:
-                throw new NoServiceException();
-
-        }
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
+        FacetListService facetListService = new FacetListService(InterMineContext.getInterMineAPI());
+        facetListService.service(request, response);
     }
 }
