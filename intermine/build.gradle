@@ -54,6 +54,10 @@ subprojects {
         }
     }
 
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+
     checkstyle {
         toolVersion '7.8.1'
         configFile file("../../config/checkstyle/checkstyle.xml")
