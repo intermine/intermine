@@ -72,11 +72,8 @@ public class SaveFromIdsToBagAction extends InterMineAction
                 JSONObject jsonRequest = new JSONObject(request.getParameter("jsonFacets"));
                 Map<String, String> facetMap = jsonToJava(jsonRequest);
                 int offset = 0;
-                boolean pagination = false;
 
                 KeywordSearchHandler keywordSearchHandler = new SolrKeywordSearchHandler();
-
-                //TODO: handle pagination
 
                 idSet = keywordSearchHandler.getObjectIdsFromSearch(im, searchTerm, offset, facetMap, new ArrayList<Integer>());
 

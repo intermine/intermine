@@ -233,7 +233,7 @@ public final class SolrIndexHandler implements IndexHandler
         fieldAttributes.put("type", fieldType);
         fieldAttributes.put("stored", stored);
         fieldAttributes.put("indexed", indexed);
-        fieldAttributes.put("omitNorms", omitNorms);
+//        fieldAttributes.put("omitNorms", omitNorms);
         fieldAttributes.put("multiValued", true);
         fieldAttributes.put("required", false);
 

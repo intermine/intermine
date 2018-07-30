@@ -90,6 +90,8 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
                 }
             }
 
+            System.out.println("BoostQuery : " + boostQuery);
+
             String fieldListQuery = "";
 
             for (String field : fieldNames){
@@ -100,7 +102,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
                 fieldListQuery = fieldListQuery + " ";
             }
 
-            System.out.println(fieldListQuery);
+            System.out.println("Field list : " + fieldListQuery);
 
             newQuery.add("bq", boostQuery);
             newQuery.add("qf", fieldListQuery);
