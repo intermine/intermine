@@ -104,7 +104,7 @@ public class XmlDataLoaderTask extends Task
 
     /**
      * {@inheritDoc}
-     * @throws BuildException
+     * @throws BuildException if build fails
      */
     @Override
     public void execute() {
