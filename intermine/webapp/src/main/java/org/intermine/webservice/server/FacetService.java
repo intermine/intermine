@@ -66,10 +66,12 @@ public class FacetService extends JSONService {
             rootArray.put(outerObject);
         }
 
-        JSONObject jo = new JSONObject(ckData);
         System.out.println(rootArray.toString());
 
-        output.addResultItem(Collections.singletonList(rootArray.toString()));
+        JSONObject jo = new JSONObject();
+        jo.put("results", rootArray);
+
+        output.addResultItem(Collections.singletonList(jo.toString()));
 
     }
 
