@@ -1589,6 +1589,34 @@ to will also be returned.
         </metadata>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ws-facet-list</servlet-name>
+        <servlet-class>org.intermine.webservice.server.FacetListServlet</servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ws-facet-list</servlet-name>
+        <url-pattern>/service/facet-list</url-pattern>
+        <!-- Custom extensions that allow us to automatically generate documentation -->
+        <metadata>
+            <name>FacetList</name>
+            <minVersion>9</minVersion>
+            <method authenticationRequired="false" type="GET" ALSO="POST">
+                <summary>Retreive all the possible facets</summary>
+                <description>
+                    Retreive all the possible facets.
+                </description>
+                <returns>
+                    <format key="facetlist">json</format>
+                </returns>
+            </method>
+        </metadata>
+    </servlet-mapping>
+
   <servlet>
     <servlet-name>ws-quick-search</servlet-name>
     <servlet-class>org.intermine.webservice.server.search.QuickSearchServlet</servlet-class>
