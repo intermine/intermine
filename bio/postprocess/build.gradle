@@ -77,6 +77,11 @@ subprojects {
         exclude "intermine.properties"
     }
 
+    // see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+
     checkstyle {
         toolVersion '7.8.1'
         configFile file("../../../config/checkstyle/checkstyle.xml")
