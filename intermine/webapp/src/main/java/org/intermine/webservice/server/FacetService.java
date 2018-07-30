@@ -45,24 +45,31 @@ public class FacetService extends JSONService {
 
         Map<String, Map<String, Long>> ckData = new HashMap<String, Map<String, Long>>();
 
-        JSONObject rootObject = new JSONObject();
+        JSONArray rootArray = new JSONArray();
 
         for(KeywordSearchFacet<FacetField.Count> keywordSearchFacet : keywordSearchFacets){
             Map<String, Long> temp = new HashMap<String, Long>();
 
+            JSONArray innerArray = new JSONArray();
             for (FacetField.Count count : keywordSearchFacet.getItems()){
                 temp.put(count.getName(), count.getCount());
+                JSONObject innerObject = new JSONObject();
+                innerObject.put("name", count.getName());
+                innerObject.put("value", count.getCount());
+
+                innerArray.put(innerObject);
             }
 
             ckData.put(keywordSearchFacet.getName(), temp);
-
-            rootObject.put(keywordSearchFacet.getName(), temp);
+            JSONObject outerObject  = new JSONObject();
+            outerObject.put(keywordSearchFacet.getName(), innerArray);
+            rootArray.put(outerObject);
         }
 
         JSONObject jo = new JSONObject(ckData);
-        System.out.println(rootObject.toString());
+        System.out.println(rootArray.toString());
 
-        output.addResultItem(Collections.singletonList(rootObject.toString()));
+        output.addResultItem(Collections.singletonList(rootArray.toString()));
 
     }
 
