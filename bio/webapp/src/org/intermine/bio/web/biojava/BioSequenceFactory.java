@@ -9,7 +9,7 @@ package org.intermine.bio.web.biojava;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
+import org.apache.log4j.Logger;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.ProteinSequence;
@@ -27,6 +27,8 @@ import org.intermine.model.bio.SequenceFeature;
 
 public abstract class BioSequenceFactory
 {
+    private static final Logger LOG = Logger.getLogger(BioSequenceFactory.class);
+
     /**
      * Type of sequences.
      *
@@ -54,19 +56,33 @@ public abstract class BioSequenceFactory
     /**
      * Create a new BioSequence from a SequenceFeature
      * @param feature the SequenceFeature
+     * @param extension the amount of flanking sequence to include
      * @return a new BioSequence object or null if the SequenceFeature doesn't have a
      * Sequence
      * @throws CompoundNotFoundException if any of the residues of the SequenceFeature can't be
      * turned into DNA symbols.
      */
-    public static BioSequence make(SequenceFeature feature)
+    public static BioSequence make(SequenceFeature feature, int extension)
         throws CompoundNotFoundException {
         if (feature.getSequence() == null) {
             return null;
         } else {
-            String residues = feature.getSequence().getResidues().toString().toLowerCase();
+            String residues =
+                feature.getSequence().getResidues().addFlank(extension).toString().toLowerCase();
             return new BioSequence(new DNASequence(residues), feature);
         }
+    }
+    /**
+     * Create a new BioSequence from a SequenceFeature
+     * @param feature the SequenceFeature
+     * @return a new BioSequence object or null if the SequenceFeature doesn't have a
+     * Sequence
+     * @throws IllegalSymbolException if any of the residues of the SequenceFeature can't be
+     * turned into DNA symbols.
+     */
+    public static BioSequence make(SequenceFeature feature)
+        throws IllegalSymbolException {
+        return make(feature, 0);
     }
 
     /**

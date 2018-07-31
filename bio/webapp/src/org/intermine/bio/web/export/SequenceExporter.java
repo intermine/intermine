@@ -24,9 +24,7 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
-import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
-import org.biojava.nbio.core.sequence.template.AbstractSequence;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
@@ -161,14 +159,8 @@ public class SequenceExporter implements Exporter
                 }
 
                 if (object instanceof SequenceFeature) {
-                    if (extension > 0) {
-                        bioSequence = createSequenceFeatureWithExtension(
-                                header, object,
-                                row, unionPathCollection, newPathCollection);
-                    } else {
-                        bioSequence = createSequenceFeature(header, object,
-                                row, unionPathCollection, newPathCollection);
-                    }
+                    bioSequence = createSequenceFeature(header, object,
+                            row, unionPathCollection, newPathCollection);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row,
                             unionPathCollection, newPathCollection);
@@ -237,69 +229,11 @@ public class SequenceExporter implements Exporter
         throws CompoundNotFoundException {
         BioSequence bioSequence;
         SequenceFeature feature = (SequenceFeature) object;
-        bioSequence = BioSequenceFactory.make(feature);
+        bioSequence = BioSequenceFactory.make(feature, extension);
 
         makeHeader(header, object, row, unionPathCollection, newPathCollection);
         return bioSequence;
     }
-
-
-    private BioSequence createSequenceFeatureWithExtension(
-            StringBuffer header,
-            Object object, List<ResultElement> row,
-            Collection<Path> unionPathCollection,
-            Collection<Path> newPathCollection)
-        throws CompoundNotFoundException {
-
-        SequenceFeature feature = (SequenceFeature) object;
-
-        Chromosome chr = feature.getChromosome();
-        String chrName = chr.getPrimaryIdentifier();
-        int chrLength = chr.getLength();
-        int start = feature.getChromosomeLocation().getStart();
-        int end = feature.getChromosomeLocation().getEnd();
-        String org = feature.getOrganism().getShortName();
-        String strand = feature.getChromosomeLocation().getStrand();
-
-        String chrResidueString;
-        if (chromosomeSequenceMap.get(new MultiKey(chrName, org)) == null) {
-            chrResidueString = chr.getSequence().getResidues()
-                    .toString();
-            chromosomeSequenceMap.put(
-                    new MultiKey(chrName, strand, org), chr.getSequence().getResidues().toString());
-        } else {
-            chrResidueString = chromosomeSequenceMap.get(new MultiKey(chrName, strand, org));
-        }
-
-        if (extension > 0) {
-            start = start - extension;
-            end = end + extension;
-        }
-
-        end = Math.min(end, chrLength);
-        start = Math.max(start, 1);
-
-//        String seqName = "genomic_region_" + chrName + "_"
-//                + start + "_" + end + "_"
-//                + org.replace("\\. ", "_");
-//        Sequence seq = DNATools.createDNASequence(chrResidueString.substring(start - 1, end),
-//                        seqName);
-
-        AbstractSequence seq =
-                new DNASequence(chrResidueString.substring(start - 1, end).toLowerCase());
-
-        if (NEGATIVE_STRAND.equals(strand)) {
-            DNASequence ts = new DNASequence(chrResidueString.substring(start - 1, end));
-            seq = new DNASequence(ts.getReverseComplement().getSequenceAsString().toLowerCase());
-        }
-
-        BioSequence bioSequence = new BioSequence(seq, (BioEntity) feature);
-        LOG.debug("SEQ: " + seq.getLength() + " - " + seq.getSequenceAsString());
-
-        makeHeader(header, object, row, unionPathCollection, newPathCollection);
-        return bioSequence;
-    }
-
 
     /**
      * Set the header to be the contents of row, separated by spaces.
