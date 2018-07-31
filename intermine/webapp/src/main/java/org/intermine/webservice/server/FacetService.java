@@ -26,6 +26,11 @@ public class FacetService extends JSONService {
     }
 
     @Override
+    protected String getResultsKey() {
+        return "facets";
+    }
+
+    @Override
     protected void execute() throws Exception {
 
         KeywordSearchPropertiesManager keywordSearchPropertiesManager
@@ -45,16 +50,31 @@ public class FacetService extends JSONService {
 
         Map<String, Map<String, Long>> ckData = new HashMap<String, Map<String, Long>>();
 
+        JSONArray rootArray = new JSONArray();
+
         for(KeywordSearchFacet<FacetField.Count> keywordSearchFacet : keywordSearchFacets){
             Map<String, Long> temp = new HashMap<String, Long>();
+
+            JSONArray innerArray = new JSONArray();
             for (FacetField.Count count : keywordSearchFacet.getItems()){
                 temp.put(count.getName(), count.getCount());
+                JSONObject innerObject = new JSONObject();
+                innerObject.put("name", count.getName());
+                innerObject.put("value", count.getCount());
+
+                innerArray.put(innerObject);
             }
+
             ckData.put(keywordSearchFacet.getName(), temp);
+            JSONObject outerObject  = new JSONObject();
+            outerObject.put(keywordSearchFacet.getName(), innerArray);
+            rootArray.put(outerObject);
         }
 
-        JSONObject jo = new JSONObject(ckData);
-        System.out.println(jo.toString());
+        System.out.println(rootArray.toString());
+
+        JSONObject jo = new JSONObject();
+        jo.put("results", rootArray);
 
         output.addResultItem(Collections.singletonList(jo.toString()));
 
