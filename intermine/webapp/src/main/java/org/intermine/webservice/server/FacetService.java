@@ -26,6 +26,11 @@ public class FacetService extends JSONService {
     }
 
     @Override
+    protected String getResultsKey() {
+        return "facets";
+    }
+
+    @Override
     protected void execute() throws Exception {
 
         KeywordSearchPropertiesManager keywordSearchPropertiesManager

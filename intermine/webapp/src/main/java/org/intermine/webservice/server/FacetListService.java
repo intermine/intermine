@@ -57,4 +57,9 @@ public class FacetListService extends JSONService {
 
     }
 
+    @Override
+    protected String getResultsKey() {
+        return "facet-list";
+    }
+
 }
