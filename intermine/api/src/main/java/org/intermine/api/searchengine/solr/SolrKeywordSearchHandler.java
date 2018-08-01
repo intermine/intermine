@@ -3,6 +3,7 @@ package org.intermine.api.searchengine.solr;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -107,7 +108,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             newQuery.add("bq", boostQuery);
             newQuery.add("qf", fieldListQuery);
 
-            resp = solrClient.query(newQuery);
+            resp = solrClient.query(newQuery, SolrRequest.METHOD.POST);
 
             SolrDocumentList results = resp.getResults();
 
@@ -194,7 +195,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             newQuery.add("bq", boostQuery);
             newQuery.add("qf", fieldListQuery);
 
-            resp = solrClient.query(newQuery);
+            resp = solrClient.query(newQuery, SolrRequest.METHOD.POST);
 
             SolrDocumentList results = resp.getResults();
 
@@ -272,7 +273,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             newQuery.add("bq", boostQuery);
             newQuery.add("qf", fieldListQuery);
 
-            resp = solrClient.query(newQuery);
+            resp = solrClient.query(newQuery, SolrRequest.METHOD.POST);
 
             SolrDocumentList results = resp.getResults();
 
