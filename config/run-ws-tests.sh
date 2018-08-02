@@ -14,11 +14,10 @@ if [ "$CLIENT" = "JS" ]; then
 
     npm install # installs deps and runs tests.
 
-# we are triggering the python tests in the pyton repo instead now
-#elif [ "$CLIENT" = "PY" ]; then
+elif [ "$CLIENT" = "PY" ]; then
 
-    # No dependencies.
-#    python setup.py test
-#    python setup.py livetest
+    pip install -r requirements.txt
+    python setup.py test
+    python setup.py livetest
 
 fi
