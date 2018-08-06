@@ -47,250 +47,66 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
     @Override
     public KeywordSearchResults doKeywordSearch(InterMineAPI im, String queryString, Map<String, String> facetValues, List<Integer> ids, int offSet) {
 
-        //TODO: prepare the querystring
-
-        SolrClient solrClient = SolrClientManager.getClientInstance(im.getObjectStore());
-
-        QueryResponse resp = null;
-
         KeywordSearchPropertiesManager keywordSearchPropertiesManager
                 = KeywordSearchPropertiesManager.getInstance(im.getObjectStore());
-
         Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
 
-        Map<ClassDescriptor, Float> classBoost = keywordSearchPropertiesManager.getClassBoost();
+        QueryResponse resp = performSearch(im, queryString, facetValues, ids, offSet, keywordSearchPropertiesManager.PER_PAGE);
 
-        List<String> fieldNames = getFieldNamesFromSolrSchema(solrClient);
+        SolrDocumentList results = resp.getResults();
+
+        Set<Integer> objectIds = getObjectIds(results);
+
+        Map<Integer, InterMineObject> objMap = null;
 
         try {
+            objMap = Objects.getObjects(im, objectIds);
 
-            SolrQuery newQuery = new SolrQuery();
-            newQuery.setQuery(queryString);
-            newQuery.setStart(offSet);
-            newQuery.setRows(KeywordSearchPropertiesManager.PER_PAGE);
-            newQuery.addField("score");
-            newQuery.addField("id");
-            newQuery.add("defType", "edismax");
-
-            for (KeywordSearchFacetData keywordSearchFacetData : facets){
-                newQuery.addFacetField("facet_" + keywordSearchFacetData.getField());
-            }
-
-            // add faceting selections
-            for (Map.Entry<String, String> facetValue : facetValues.entrySet()) {
-                if (facetValue != null) {
-                    newQuery.addFilterQuery(facetValue.getKey()+":"+facetValue.getValue());
-                }
-            }
-
-            String boostQuery = "";
-
-            for (Map.Entry<ClassDescriptor, Float> boostValue : classBoost.entrySet()){
-                if (boostValue != null){
-                    boostQuery += "classname:" + boostValue.getKey().getUnqualifiedName() + "^" + boostValue.getValue() + " ";
-                }
-            }
-
-            System.out.println("BoostQuery : " + boostQuery);
-
-            String fieldListQuery = "";
-
-            for (String field : fieldNames){
-                fieldListQuery = fieldListQuery + field;
-                if (field.endsWith("_raw")){
-                    fieldListQuery = fieldListQuery + "^2.0";
-                }
-                fieldListQuery = fieldListQuery + " ";
-            }
-
-            System.out.println("Field list : " + fieldListQuery);
-
-            newQuery.add("bq", boostQuery);
-            newQuery.add("qf", fieldListQuery);
-
-            resp = solrClient.query(newQuery, SolrRequest.METHOD.POST);
-
-            SolrDocumentList results = resp.getResults();
-
-            Set<Integer> objectIds = getObjectIds(results);
-            Map<Integer, InterMineObject> objMap = Objects.getObjects(im, objectIds);
-            Vector<KeywordSearchResultContainer> searchHits = getSearchHits(results, objMap, results.getMaxScore());
-
-            Collection<KeywordSearchFacet> searchResultsFacets = parseFacets(resp, facets, facetValues);
-
-            return new KeywordSearchResults(searchHits, searchResultsFacets, (int)results.getNumFound());
-
-        } catch (SolrServerException e) {
-            e.printStackTrace();
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
         } catch (ObjectStoreException e){
-            e.printStackTrace();
+            LOG.error("ObjectStoreException for query term : " + queryString, e);
         }
 
-        return null;
+        Vector<KeywordSearchResultContainer> searchHits = getSearchHits(results, objMap, results.getMaxScore());
+
+        Collection<KeywordSearchFacet> searchResultsFacets = parseFacets(resp, facets, facetValues);
+
+        return new KeywordSearchResults(searchHits, searchResultsFacets, (int)results.getNumFound());
+
     }
 
     @Override
     public Set<Integer> getObjectIdsFromSearch(InterMineAPI im, String searchString, int offSet,
-                                               Map<String, String> facetValues, List<Integer> ids) {
-        //TODO: prepare the querystring
+                                               Map<String, String> facetValues, List<Integer> ids, int listSize) {
 
-        SolrClient solrClient = SolrClientManager.getClientInstance(im.getObjectStore());
-
-        QueryResponse resp = null;
-
-        KeywordSearchPropertiesManager keywordSearchPropertiesManager
-                = KeywordSearchPropertiesManager.getInstance(im.getObjectStore());
-
-        Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
-
-
-        Map<ClassDescriptor, Float> classBoost = keywordSearchPropertiesManager.getClassBoost();
-
-        List<String> fieldNames = getFieldNamesFromSolrSchema(solrClient);
-
-        try {
-
-            SolrQuery newQuery = new SolrQuery();
-            newQuery.setQuery(searchString);
-            newQuery.setStart(offSet);
-            newQuery.setRows(10000);
-            newQuery.addField("id");
-            newQuery.add("defType", "edismax");
-
-            for (KeywordSearchFacetData keywordSearchFacetData : facets){
-                newQuery.addFacetField("facet_" + keywordSearchFacetData.getField());
-            }
-
-            // add faceting selections
-            for (Map.Entry<String, String> facetValue : facetValues.entrySet()) {
-                if (facetValue != null) {
-                    newQuery.addFilterQuery(facetValue.getKey()+":"+facetValue.getValue());
-                }
-            }
-
-            String boostQuery = "";
-
-            for (Map.Entry<ClassDescriptor, Float> boostValue : classBoost.entrySet()){
-                if (boostValue != null){
-                    boostQuery += "classname:" + boostValue.getKey().getUnqualifiedName() + "^" + boostValue.getValue() + " ";
-                }
-            }
-
-            String fieldListQuery = "";
-
-            for (String field : fieldNames){
-                fieldListQuery = fieldListQuery + field;
-                if (field.endsWith("_raw")){
-                    fieldListQuery = fieldListQuery + "^2.0";
-                }
-                fieldListQuery = fieldListQuery + " ";
-            }
-
-            System.out.println(fieldListQuery);
-
-            newQuery.add("bq", boostQuery);
-            newQuery.add("qf", fieldListQuery);
-
-            resp = solrClient.query(newQuery, SolrRequest.METHOD.POST);
-
-            SolrDocumentList results = resp.getResults();
-
-            Set<Integer> objectIds = getObjectIds(results);
-
-            return objectIds;
-
-        } catch (SolrServerException e) {
-            e.printStackTrace();
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
+        if (listSize == 0) {
+            listSize = 10000;
         }
 
-        return null;
-    }
+        QueryResponse resp = performSearch(im, searchString, facetValues, ids, offSet, listSize);
+
+        SolrDocumentList results = resp.getResults();
+
+        Set<Integer> objectIds = getObjectIds(results);
+
+        return objectIds;
+     }
 
     @Override
     public Collection<KeywordSearchFacet> doFacetSearch(InterMineAPI im, String queryString, Map<String, String> facetValues) {
 
-        //TODO: prepare the querystring
-
-        SolrClient solrClient = SolrClientManager.getClientInstance(im.getObjectStore());
-
-        QueryResponse resp = null;
-
         KeywordSearchPropertiesManager keywordSearchPropertiesManager
                 = KeywordSearchPropertiesManager.getInstance(im.getObjectStore());
-
         Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
 
-        Map<ClassDescriptor, Float> classBoost = keywordSearchPropertiesManager.getClassBoost();
+        QueryResponse resp = performSearch(im, queryString, facetValues, null, 0, 0);;
 
-        List<String> fieldNames = getFieldNamesFromSolrSchema(solrClient);
+        SolrDocumentList results = resp.getResults();
 
-        try {
+        Collection<KeywordSearchFacet> searchResultsFacets = parseFacets(resp, facets, facetValues);
 
-            SolrQuery newQuery = new SolrQuery();
-            newQuery.setQuery(queryString);
-            newQuery.setRows(0); //search results is not important here. Only facet categories
-            newQuery.add("defType", "edismax");
+        return searchResultsFacets;
 
-            for (KeywordSearchFacetData keywordSearchFacetData : facets){
-                newQuery.addFacetField("facet_" + keywordSearchFacetData.getField());
-            }
-
-            // add faceting selections
-            for (Map.Entry<String, String> facetValue : facetValues.entrySet()) {
-                if (facetValue != null) {
-                    newQuery.addFilterQuery(facetValue.getKey()+":"+facetValue.getValue());
-                }
-            }
-
-            String boostQuery = "";
-
-            for (Map.Entry<ClassDescriptor, Float> boostValue : classBoost.entrySet()){
-                if (boostValue != null){
-                    boostQuery += "classname:" + boostValue.getKey().getUnqualifiedName() + "^" + boostValue.getValue() + " ";
-                }
-            }
-
-            String fieldListQuery = "";
-
-            for (String field : fieldNames){
-                fieldListQuery = fieldListQuery + field;
-                if (field.endsWith("_raw")){
-                    fieldListQuery = fieldListQuery + "^2.0";
-                }
-                fieldListQuery = fieldListQuery + " ";
-            }
-
-            System.out.println(fieldListQuery);
-
-            newQuery.add("bq", boostQuery);
-            newQuery.add("qf", fieldListQuery);
-
-            resp = solrClient.query(newQuery, SolrRequest.METHOD.POST);
-
-            SolrDocumentList results = resp.getResults();
-
-            Collection<KeywordSearchFacet> searchResultsFacets = parseFacets(resp, facets, facetValues);
-
-            return searchResultsFacets;
-
-        } catch (SolrServerException e) {
-            e.printStackTrace();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-
-        return null;
-    }
+       }
 
     /**
      * @param documents the query results.
@@ -368,7 +184,7 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 
             List<FacetField.Count> counts = facetField.getValues();
 
-            //Empty List to get only the facet fields with zero count
+            //Empty List to get only the facet fields without zero count
             List<FacetField.Count> countsFiltered = new ArrayList<FacetField.Count>();
 
             for (FacetField.Count count : counts) {
@@ -388,6 +204,11 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
         return searchResultsFacets;
     }
 
+    /**
+     * This method is used to get the field names that are indexed from the solr managed schema
+     * @param solrClient a solrclient instance
+     * @return a list of field names
+     */
     private List<String> getFieldNamesFromSolrSchema(SolrClient solrClient){
         List<String> fieldNames = null;
 
@@ -415,6 +236,92 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
         }
 
         return fieldNames;
+    }
+
+
+    private QueryResponse performSearch(InterMineAPI im, String queryString, Map<String, String> facetValues,
+                                        List<Integer> ids, int offSet, int rowSize) {
+
+        SolrClient solrClient = SolrClientManager.getClientInstance(im.getObjectStore());
+
+        QueryResponse resp = null;
+
+        KeywordSearchPropertiesManager keywordSearchPropertiesManager
+                = KeywordSearchPropertiesManager.getInstance(im.getObjectStore());
+
+        Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
+
+        Map<ClassDescriptor, Float> classBoost = keywordSearchPropertiesManager.getClassBoost();
+
+        List<String> fieldNames = getFieldNamesFromSolrSchema(solrClient);
+
+        try {
+
+            SolrQuery newQuery = new SolrQuery();
+            newQuery.setQuery(queryString);
+            newQuery.setStart(offSet);
+            newQuery.setRows(rowSize);
+            newQuery.addField("score");
+            newQuery.addField("id");
+            newQuery.add("defType", "edismax");
+
+            for (KeywordSearchFacetData keywordSearchFacetData : facets) {
+                newQuery.addFacetField("facet_" + keywordSearchFacetData.getField());
+            }
+
+            // add faceting selections
+            for (Map.Entry<String, String> facetValue : facetValues.entrySet()) {
+                if (facetValue != null) {
+                    newQuery.addFilterQuery(facetValue.getKey() + ":" + facetValue.getValue());
+                }
+            }
+
+            //limiting the query based on search bag
+            if (ids != null && !ids.isEmpty()) {
+                for (int id : ids) {
+                    newQuery.addFilterQuery("id", Integer.toString(id));
+                }
+            }
+
+            String boostQuery = "";
+
+            for (Map.Entry<ClassDescriptor, Float> boostValue : classBoost.entrySet()){
+                if (boostValue != null){
+                    boostQuery += "classname:" + boostValue.getKey().getUnqualifiedName() + "^" + boostValue.getValue() + " ";
+                }
+            }
+
+            System.out.println("BoostQuery : " + boostQuery);
+
+            String fieldListQuery = "";
+
+            for (String field : fieldNames){
+                fieldListQuery = fieldListQuery + field;
+                if (field.endsWith("_raw")){
+                    fieldListQuery = fieldListQuery + "^2.0";
+                }
+                fieldListQuery = fieldListQuery + " ";
+            }
+
+
+            newQuery.add("bq", boostQuery);
+            newQuery.add("qf", fieldListQuery);
+
+            resp = solrClient.query(newQuery, SolrRequest.METHOD.POST);
+
+            return resp;
+
+        } catch (SolrServerException e) {
+            LOG.error("Query performed on solr failed for search term : " + queryString, e);
+            e.printStackTrace();
+
+        } catch (IOException e) {
+            LOG.error("Query performed on solr failed for search term : " + queryString, e);
+            e.printStackTrace();
+
+        }
+
+        return resp;
     }
 
 }
