@@ -15,6 +15,10 @@ import java.util.List;
 /**
  * container for one faceting field, the current faceting value and the list of
  * possible items
+ *
+ * @param <E> This is generic type for items variable.
+ *          Currenly it used as a list FacetField.Count in solr.
+ *
  * @author nils
  * @author arunans23
  */

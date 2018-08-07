@@ -45,11 +45,13 @@ public interface KeywordSearchHandler
      * @param facetValues the facet value Map that needs to be returned in the result
      * @param ids ids to research the search
      * @param offSet offSet of results
+     * @param listSize the listSize that needs to be returned. (ie rowSize in solr)
      *
      * @return results containing both facet and result rows in the KeywordSearchResuls container
      */
     Set<Integer> getObjectIdsFromSearch(InterMineAPI im, String searchString, int offSet,
-                                               Map<String, String> facetValues, List<Integer> ids, int listSize);
+                                        Map<String, String> facetValues,
+                                        List<Integer> ids, int listSize);
 
 
     /**
@@ -60,7 +62,7 @@ public interface KeywordSearchHandler
      *
      * @return A Collection of keywordsearch facets
      */
-    public Collection<KeywordSearchFacet> doFacetSearch(InterMineAPI im, String queryString, Map<String,
+    Collection<KeywordSearchFacet> doFacetSearch(InterMineAPI im, String queryString, Map<String,
             String> facetValues);
 
 }

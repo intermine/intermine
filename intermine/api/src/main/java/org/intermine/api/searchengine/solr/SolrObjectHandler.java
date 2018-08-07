@@ -24,13 +24,16 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse;
 import org.apache.solr.common.SolrInputField;
 import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.searchengine.*;
+import org.intermine.api.searchengine.ClassAttributes;
+import org.intermine.api.searchengine.InterMineResultsContainer;
+import org.intermine.api.searchengine.KeywordSearchFacetData;
+import org.intermine.api.searchengine.KeywordSearchFacetType;
+import org.intermine.api.searchengine.ObjectValueContainer;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
@@ -62,15 +65,16 @@ import org.intermine.util.ObjectPipe;
  * @author nils
  * @author arunans23
  */
-public class SolrObjectHandler extends Thread {
+public class SolrObjectHandler extends Thread
+{
 
     private static final Logger LOG = Logger.getLogger(SolrObjectHandler.class);
 
     //this field type is analyzed
-    private final String ANALYZED_FIELD_TYPE_NAME = "analyzed_string";
+    private static final String ANALYZED_FIELD_TYPE_NAME = "analyzed_string";
 
     //this field type is not analyzed
-    private final String RAW_FIELD_TYPE_NAME = "raw_string";
+    private static final String RAW_FIELD_TYPE_NAME = "raw_string";
 
     final ObjectStore os;
     final Map<String, List<FieldDescriptor>> classKeys;
@@ -114,16 +118,17 @@ public class SolrObjectHandler extends Thread {
      *            fields used for faceting - will be indexed untokenized in
      *            addition to the normal indexing
      * @param attributePrefixes prefixes to be ignored
+     * @param solrClient solrClient Instance
      */
-    public SolrObjectHandler(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
-                                  ObjectPipe<SolrInputDocument> indexingQueue,
-                                  Set<Class<? extends InterMineObject>> ignoredClasses,
-                                  Map<Class<? extends InterMineObject>, Set<String>> ignoredFields,
-                                  Map<Class<? extends InterMineObject>, String[]> specialReferences,
-                                  Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
-                                  Map<String, String> attributePrefixes,
-                                  SolrClient solrClient
-                             ) {
+    SolrObjectHandler(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
+                      ObjectPipe<SolrInputDocument> indexingQueue,
+                      Set<Class<? extends InterMineObject>> ignoredClasses,
+                      Map<Class<? extends InterMineObject>, Set<String>> ignoredFields,
+                      Map<Class<? extends InterMineObject>, String[]> specialReferences,
+                      Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
+                      Map<String, String> attributePrefixes,
+                      SolrClient solrClient
+    ) {
         super();
 
         this.os = os;
@@ -373,7 +378,8 @@ public class SolrObjectHandler extends Thread {
                                     } else {
                                         doc.addField(virtualPathField,
                                                 (String) facetValue);
-                                        addFieldNameToSchema(virtualPathField, RAW_FIELD_TYPE_NAME, false, true, true);
+                                        addFieldNameToSchema(virtualPathField,
+                                                RAW_FIELD_TYPE_NAME, false, true);
                                     }
                                 }
                             }
@@ -394,7 +400,8 @@ public class SolrObjectHandler extends Thread {
                                 && !StringUtils.isBlank((String) facetValue)) {
                             doc.addField(referenceFacet.getField(),
                                     (String) facetValue);
-                            addFieldNameToSchema(referenceFacet.getField(), RAW_FIELD_TYPE_NAME, false, true, true);
+                            addFieldNameToSchema(referenceFacet.getField(),
+                                    RAW_FIELD_TYPE_NAME, false, true);
                         }
                     }
                 }
@@ -434,7 +441,9 @@ public class SolrObjectHandler extends Thread {
         return i;
     }
 
-    private SolrInputDocument createDocument(InterMineObject object, ClassDescriptor classDescriptor) {
+    private SolrInputDocument createDocument(InterMineObject object,
+                                             ClassDescriptor classDescriptor) {
+
         SolrInputDocument doc = new SolrInputDocument();
 
 
@@ -445,7 +454,7 @@ public class SolrObjectHandler extends Thread {
         // special case for faceting
         doc.addField("Category", classDescriptor.getUnqualifiedName());
 
-        addToDocument(doc, "classname", classDescriptor.getUnqualifiedName(), 1F, false);
+        addToDocument(doc, "classname", classDescriptor.getUnqualifiedName(), false);
 
         addObjectToDocument(object, classDescriptor, doc);
 
@@ -467,12 +476,12 @@ public class SolrObjectHandler extends Thread {
 
         Set<ObjectValueContainer> attributes = getAttributeMapForObject(os.getModel(), object);
         for (ObjectValueContainer attribute : attributes) {
-            addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), 1F, false);
+            addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), false);
 
             // index all key fields as raw data with a higher boost, favors
             // "exact matches"
             if (keyFields.contains(attribute.getName())) {
-                addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), 2F, true);
+                addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), true);
             }
         }
     }
@@ -514,8 +523,9 @@ public class SolrObjectHandler extends Thread {
                                         att.getName(), string));
                             }
 
-                            String prefix =
-                                    getAttributePrefix(classAttributes.getClassName(), att.getName());
+                            String prefix = getAttributePrefix(classAttributes.getClassName(),
+                                                                att.getName());
+
                             if (prefix != null) {
                                 String unPrefixedValue = string.substring(prefix.length());
                                 values.add(new ObjectValueContainer(classAttributes.getClassName(),
@@ -551,8 +561,8 @@ public class SolrObjectHandler extends Thread {
         return null;
     }
 
-    private SolrInputField addToDocument(SolrInputDocument doc, String fieldName, String value, float boost,
-                                boolean raw) {
+    private SolrInputField addToDocument(SolrInputDocument doc, String fieldName, String value,
+                                         boolean raw) {
         if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value)) {
             SolrInputField f;
 
@@ -566,20 +576,10 @@ public class SolrObjectHandler extends Thread {
 
             doc.addField(f.getName(), f.getValue());
 
-//            if ((value.indexOf(" ") == -1) && raw) {
-//                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
-//            } else if ((value.indexOf(" ") == -1) && !raw){
-//                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, true);
-//            } else if ((value.indexOf(" ") != -1) && raw){
-//                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
-//            } else {
-//                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, false);
-//            }
-
-            if(raw){
-                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true, false);
+            if (raw) {
+                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true);
             } else {
-                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true, false);
+                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true);
             }
 
 
@@ -674,10 +674,10 @@ public class SolrObjectHandler extends Thread {
         return q;
     }
 
-    public void addFieldNameToSchema(String fieldName, String fieldType,
-                                     boolean stored, boolean indexed, boolean omitNorms) {
+    private void addFieldNameToSchema(String fieldName, String fieldType,
+                                     boolean stored, boolean indexed) {
 
-        if (!fieldNames.contains(fieldName)){
+        if (!fieldNames.contains(fieldName)) {
             fieldNames.add(fieldName);
 
             Map<String, Object> fieldAttributes = new HashMap();
@@ -685,15 +685,14 @@ public class SolrObjectHandler extends Thread {
             fieldAttributes.put("type", fieldType);
             fieldAttributes.put("stored", stored);
             fieldAttributes.put("indexed", indexed);
-//            fieldAttributes.put("omitNorms", omitNorms);
             fieldAttributes.put("multiValued", true);
             fieldAttributes.put("required", false);
 
-            try{
+            try {
                 SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
                 SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
 
-            } catch (Exception e){
+            } catch (Exception e) {
                 LOG.error("Error while adding fields to the solrclient.", e);
 
                 e.printStackTrace();

@@ -16,25 +16,43 @@ import org.intermine.model.InterMineObject;
  * Container for individual Keyword Search Result
  *
  * The document type has been given as generic type.
- *  *
+ *
+ * @param <E> This is generic type for document.
+ *          Currenly it used as a SolrDocument in solr.
+ *
  * @author arunans23
  */
-
-public class KeywordSearchResultContainer<E> {
+public class KeywordSearchResultContainer<E>
+{
 
     final float score;
     final E document;
     final InterMineObject object;
 
-
-
+    /**
+     * constructor
+     * @param document
+     *            Individual Document returned from the search
+     * @param object
+     *            Intermine Object associated with the document. Matched by ID
+     * @param score
+     *            score value for that particular document. (Level of relation)
+     */
     public KeywordSearchResultContainer(E document, InterMineObject object, float score) {
-
-        //TODO: add code to check nullability
 
         this.score = score;
         this.document = document;
         this.object = object;
+
+        if (score < 0) {
+            throw new IllegalArgumentException("score must be >= 0, got: " + score);
+        }
+        if (document == null) {
+            throw new NullPointerException("document must not be null.");
+        }
+        if (object == null) {
+            throw new NullPointerException("object must not be null.");
+        }
     }
     /**
      * score

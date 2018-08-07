@@ -33,7 +33,9 @@ public interface IndexHandler
      * @param classKeys
      *                  classKeys from InterMineAPI, map of classname to all key field
      *                  descriptors
+     * @throws IOException IOException is thrown from Objectstore
      */
-    void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys) throws IOException;
+    void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys)
+            throws IOException;
 
 }

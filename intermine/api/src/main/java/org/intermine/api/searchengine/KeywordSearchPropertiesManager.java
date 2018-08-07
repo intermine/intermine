@@ -22,22 +22,32 @@ import org.intermine.objectstore.ObjectStore;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Vector;
+
+
 
 /**
  * A manager class to handle all the configuration properties from keyword_search.properties file
  * @author nils
  * @author arunans23
  */
-public class KeywordSearchPropertiesManager {
+public final class KeywordSearchPropertiesManager
+{
 
     private static final Logger LOG = Logger.getLogger(KeywordSearchPropertiesManager.class);
 
     private static KeywordSearchPropertiesManager keywordSearchPropertiesManager;
 
-    private String CONFIG_FILE_NAME = "keyword_search.properties";
+    private static final String CONFIG_FILE_NAME = "keyword_search.properties";
 
-    private String CLASS_KEYS_FILE_NAME = "class_keys.properties";
+    private static final String CLASS_KEYS_FILE_NAME = "class_keys.properties";
 
     /**
      * maximum number of items to be displayed on a page
@@ -60,7 +70,7 @@ public class KeywordSearchPropertiesManager {
 
     private int indexBatchSize = 1000;
 
-    private KeywordSearchPropertiesManager(ObjectStore objectStore){
+    private KeywordSearchPropertiesManager(ObjectStore objectStore) {
 
         parseProperties(objectStore);
 
@@ -73,11 +83,12 @@ public class KeywordSearchPropertiesManager {
      *
      * @return Manager instance
      **/
-    public static KeywordSearchPropertiesManager getInstance(ObjectStore objectStore){
-        if (keywordSearchPropertiesManager == null){
-            synchronized (KeywordSearchPropertiesManager.class){
-                if (keywordSearchPropertiesManager == null){
-                    keywordSearchPropertiesManager = new KeywordSearchPropertiesManager(objectStore);
+    public static KeywordSearchPropertiesManager getInstance(ObjectStore objectStore) {
+        if (keywordSearchPropertiesManager == null) {
+            synchronized (KeywordSearchPropertiesManager.class) {
+                if (keywordSearchPropertiesManager == null) {
+                    keywordSearchPropertiesManager
+                            = new KeywordSearchPropertiesManager(objectStore);
                 }
             }
         }
@@ -223,8 +234,8 @@ public class KeywordSearchPropertiesManager {
 
                 }
             } catch (IOException e) {
-                LOG.error("keyword_search.properties: errow while loading file '" + configFileName
-                        + "'", e);
+                LOG.error("keyword_search.properties: errow while loading file '"
+                        + configFileName + "'", e);
             }
         } else {
             LOG.error("keyword_search.properties: file '" + configFileName + "' not found!");
@@ -236,8 +247,8 @@ public class KeywordSearchPropertiesManager {
         }
 
         LOG.debug("Indexing - Special References:");
-        for (Map.Entry<Class<? extends InterMineObject>, String[]> specialReference : specialReferences
-                .entrySet()) {
+        for (Map.Entry<Class<? extends InterMineObject>, String[]>
+                specialReference : specialReferences.entrySet()) {
             LOG.debug("- " + specialReference.getKey() + " = "
                     + Arrays.toString(specialReference.getValue()));
         }
@@ -323,46 +334,79 @@ public class KeywordSearchPropertiesManager {
         }
     }
 
+    /**
+     * @return properties which is read from the config file
+     */
     public Properties getProperties() {
         return properties;
     }
 
+    /**
+     * @return special references map
+     */
     public Map<Class<? extends InterMineObject>, String[]> getSpecialReferences() {
         return specialReferences;
     }
 
+    /**
+     * @return ignoredClasses
+     */
     public Set<Class<? extends InterMineObject>> getIgnoredClasses() {
         return ignoredClasses;
     }
 
+    /**
+     * @return ignored fields
+     */
     public Map<Class<? extends InterMineObject>, Set<String>> getIgnoredFields() {
         return ignoredFields;
     }
 
+    /**
+     * @return classboost eg: Gene = 1.5
+     */
     public Map<ClassDescriptor, Float> getClassBoost() {
         return classBoost;
     }
 
+    /**
+     * @return facets that are defined in the configuration file
+     */
     public Vector<KeywordSearchFacetData> getFacets() {
         return facets;
     }
 
+    /**
+     * @return debug output flag
+     */
     public boolean isDebugOutput() {
         return debugOutput;
     }
 
+    /**
+     * @return attribute prefixes
+     */
     public Map<String, String> getAttributePrefixes() {
         return attributePrefixes;
     }
 
+    /**
+     * @return solr url string
+     */
     public String getSolrUrl() {
         return solrUrl;
     }
 
+    /**
+     * @return index batch size needed by solr
+     */
     public int getIndexBatchSize() {
         return indexBatchSize;
     }
 
+    /**
+     * @return classkeys that is used for boosting
+     */
     public Map<String, List<FieldDescriptor>> getClassKeys() {
         return classKeys;
     }
