@@ -120,7 +120,8 @@ public class KeywordSearchResultsController extends TilesAction
 
         KeywordSearchHandler keywordSearchHandler = new SolrKeywordSearchHandler();
 
-        KeywordSearchResults results = keywordSearchHandler.doKeywordSearch(im, searchTerm, facetValues, ids, offset);
+        KeywordSearchResults results
+                = keywordSearchHandler.doKeywordSearch(im, searchTerm, facetValues, ids, offset);
 
         Collection<KeywordSearchResult> searchResultsParsed =
                 SearchUtils.parseResults(im, wc, results.getHits());
@@ -148,15 +149,16 @@ public class KeywordSearchResultsController extends TilesAction
         context.putAttribute("searchResults", request.getAttribute("searchResults"));
         context.putAttribute("searchTerm", request.getAttribute("searchTerm"));
         context.putAttribute("searchBag", request.getAttribute("searchBag"));
-        context.putAttribute("searchFacetValues", request.getAttribute("searchFacetValues"));
+        context.putAttribute("searchFacetValues",
+                request.getAttribute("searchFacetValues"));
         context.putAttribute("jsonFacets", request.getAttribute("jsonFacets"));
 
         // pagination
         context.putAttribute("searchOffset", Integer.valueOf(offset));
-        context.putAttribute("searchPerPage", Integer.valueOf(KeywordSearchPropertiesManager.PER_PAGE));
+        context.putAttribute("searchPerPage",
+                Integer.valueOf(KeywordSearchPropertiesManager.PER_PAGE));
         context.putAttribute("searchTotalHits", Integer.valueOf(totalHits));
 
-        // facet lists TODO: fix facets
         context.putAttribute("searchFacets", searchResultsFacets);
 
         // facet values

@@ -13,7 +13,6 @@ package org.intermine.web.autocompletion;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.intermine.objectstore.ObjectStore;
 
 /**
  * Singleton class to create one instance of Solr Client
@@ -33,12 +32,13 @@ public class SolrClientHandler
      *Static method to get the solr client instance
      * @param solrUrlString Url address of solr instance
      *                      eg : "http://localhost:8983/solr/autocomplete"
+     * @return solrClient instance
      */
     public static SolrClient getClientInstance(String solrUrlString){
 
-        if(solrClient == null){
-            synchronized (SolrClientHandler.class){
-                if (solrClient == null){
+        if(solrClient == null) {
+            synchronized (SolrClientHandler.class) {
+                if (solrClient == null) {
                     solrClient = new HttpSolrClient.Builder(solrUrlString).build();
                 }
 

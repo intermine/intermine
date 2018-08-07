@@ -15,7 +15,9 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * A manager class to handle all the configuration properties from objectstoresummary.config.properties file
@@ -26,7 +28,7 @@ public class PropertiesManager {
 
     private static PropertiesManager propertiesManager;
 
-    private String CONFIG_FILE_NAME = "objectstoresummary.config.properties";
+    private static final String CONFIG_FILE_NAME = "objectstoresummary.config.properties";
 
     private Properties properties = null;
 
@@ -89,11 +91,11 @@ public class PropertiesManager {
         }
     }
 
-    public HashMap<String, String> getClassFieldMap() {
+    HashMap<String, String> getClassFieldMap() {
         return classFieldMap;
     }
 
-    public String getSolrUrl() {
+    String getSolrUrl() {
         return solrUrl;
     }
 }

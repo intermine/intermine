@@ -1,5 +1,15 @@
 package org.intermine.webservice.server;
 
+/*
+ * Copyright (C) 2002-2018 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -14,7 +24,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 
 public class FacetService extends JSONService {
@@ -44,7 +58,8 @@ public class FacetService extends JSONService {
 
         Map<String, String> facetValues = getFacetValues(request, facets);
 
-        Collection<KeywordSearchFacet> keywordSearchFacets = searchHandler.doFacetSearch(im, searchTerm, facetValues);
+        Collection<KeywordSearchFacet> keywordSearchFacets
+                = searchHandler.doFacetSearch(im, searchTerm, facetValues);
 
         output.setHeaderAttributes(getHeaderAttributes());
 
@@ -52,11 +67,11 @@ public class FacetService extends JSONService {
 
         JSONArray rootArray = new JSONArray();
 
-        for(KeywordSearchFacet<FacetField.Count> keywordSearchFacet : keywordSearchFacets){
+        for(KeywordSearchFacet<FacetField.Count> keywordSearchFacet : keywordSearchFacets) {
             Map<String, Long> temp = new HashMap<String, Long>();
 
             JSONArray innerArray = new JSONArray();
-            for (FacetField.Count count : keywordSearchFacet.getItems()){
+            for (FacetField.Count count : keywordSearchFacet.getItems()) {
                 temp.put(count.getName(), count.getCount());
                 JSONObject innerObject = new JSONObject();
                 innerObject.put("name", count.getName());
