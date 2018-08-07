@@ -28,5 +28,3 @@ project(':intermine-jbrowse-endpoint').projectDir = new File(settingsDir, './jbr
 ////project(':intermine-webservice-client').projectDir = new File(settingsDir, './webservice/client/main')
 ////project(':intermine-webservice-samples').projectDir = new File(settingsDir, './webservice/client/samples')
 ////project(':intermine-webservice-test').projectDir = new File(settingsDir, './webservice/client/test')
-
-systemProp.javax.xml.stream.XMLOutputFactory = com.sun.xml.internal.stream.XMLOutputFactoryImpl
