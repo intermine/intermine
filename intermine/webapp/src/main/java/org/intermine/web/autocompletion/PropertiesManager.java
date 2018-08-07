@@ -49,9 +49,9 @@ final class PropertiesManager
      * @return Manager instance
      **/
     public static PropertiesManager getInstance() {
-        if (propertiesManager == null){
+        if (propertiesManager == null) {
             synchronized (PropertiesManager.class) {
-                if (propertiesManager == null){
+                if (propertiesManager == null) {
                     propertiesManager = new PropertiesManager();
                 }
             }

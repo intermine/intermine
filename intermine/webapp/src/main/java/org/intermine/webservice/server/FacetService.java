@@ -40,6 +40,10 @@ public class FacetService extends JSONService
 
     private static final Logger LOG = Logger.getLogger(FacetService.class);
 
+    /**
+     * Constructor
+     * @param im InterMine settings
+     */
     public FacetService(InterMineAPI im) {
         super(im);
     }

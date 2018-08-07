@@ -25,7 +25,8 @@ public class FacetListServlet extends HttpServlet
 {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        FacetListService facetListService = new FacetListService(InterMineContext.getInterMineAPI());
+        FacetListService facetListService
+                = new FacetListService(InterMineContext.getInterMineAPI());
         facetListService.service(request, response);
     }
 }
