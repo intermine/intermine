@@ -20,13 +20,13 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
  * @author arunans23
  */
 
-public class SolrClientHandler
+final class SolrClientHandler
 {
     private static final Logger LOG = Logger.getLogger(SolrClientHandler.class);
 
     private static SolrClient solrClient;
 
-    private SolrClientHandler(){}
+    private SolrClientHandler() { }
 
     /**
      *Static method to get the solr client instance
@@ -34,9 +34,9 @@ public class SolrClientHandler
      *                      eg : "http://localhost:8983/solr/autocomplete"
      * @return solrClient instance
      */
-    public static SolrClient getClientInstance(String solrUrlString){
+    public static SolrClient getClientInstance(String solrUrlString) {
 
-        if(solrClient == null) {
+        if (solrClient == null) {
             synchronized (SolrClientHandler.class) {
                 if (solrClient == null) {
                     solrClient = new HttpSolrClient.Builder(solrUrlString).build();

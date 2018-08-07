@@ -15,8 +15,13 @@ import org.intermine.webservice.server.core.WebServiceServlet;
 
 import javax.servlet.ServletContext;
 
-
-public class FacetServlet extends WebServiceServlet {
+/**
+ * A web service for returning facet related to particular query
+ * @author arunans23
+ *
+ */
+public class FacetServlet extends WebServiceServlet
+{
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         ServletContext ctx = this.getServletContext();

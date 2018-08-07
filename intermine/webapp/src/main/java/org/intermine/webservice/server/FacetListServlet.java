@@ -16,6 +16,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * A web service for returning all the facet list
+ * @author arunans23
+ *
+ */
 public class FacetListServlet extends HttpServlet
 {
     @Override

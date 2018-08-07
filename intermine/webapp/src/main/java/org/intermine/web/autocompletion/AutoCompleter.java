@@ -68,7 +68,7 @@ public class AutoCompleter
 
         this.os = os;
 
-        if(propertiesManager == null) {
+        if (propertiesManager == null) {
             this.propertiesManager = PropertiesManager.getInstance();
             this.classFieldMap = propertiesManager.getClassFieldMap();
             createFieldIndexMap();
@@ -230,7 +230,7 @@ public class AutoCompleter
             e.printStackTrace();
         }
 
-        for(String fieldName: fieldList) {
+        for (String fieldName: fieldList) {
             Map<String, Object> fieldAttributes = new HashMap();
             fieldAttributes.put("name", fieldName);
             fieldAttributes.put("type", "text_general");
@@ -279,7 +279,7 @@ public class AutoCompleter
         return false;
     }
 
-    public void createFieldIndexMap() {
+    private void createFieldIndexMap() {
         for (Map.Entry<String, String> entry: classFieldMap.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();

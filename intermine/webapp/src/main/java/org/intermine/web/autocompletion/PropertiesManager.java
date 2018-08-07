@@ -20,10 +20,13 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * A manager class to handle all the configuration properties from objectstoresummary.config.properties file
+ * A manager class to handle all the configuration properties
+ * from objectstoresummary.config.properties file
+ *
  * @author arunans23
  */
-public class PropertiesManager {
+final class PropertiesManager
+{
     private static final Logger LOG = Logger.getLogger(PropertiesManager.class);
 
     private static PropertiesManager propertiesManager;
@@ -36,7 +39,7 @@ public class PropertiesManager {
 
     private String solrUrl;
 
-    private PropertiesManager(){
+    private PropertiesManager() {
         parseProperties();
     }
 
@@ -45,9 +48,9 @@ public class PropertiesManager {
      *
      * @return Manager instance
      **/
-    public static PropertiesManager getInstance(){
+    public static PropertiesManager getInstance() {
         if (propertiesManager == null){
-            synchronized (PropertiesManager.class){
+            synchronized (PropertiesManager.class) {
                 if (propertiesManager == null){
                     propertiesManager = new PropertiesManager();
                 }
@@ -91,10 +94,16 @@ public class PropertiesManager {
         }
     }
 
+    /**
+    * @return classFieldMap
+    */
     HashMap<String, String> getClassFieldMap() {
         return classFieldMap;
     }
 
+    /**
+     * @return solrUrl
+     */
     String getSolrUrl() {
         return solrUrl;
     }

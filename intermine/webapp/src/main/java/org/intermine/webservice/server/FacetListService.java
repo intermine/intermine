@@ -25,10 +25,20 @@ import java.util.List;
 import java.util.Map;
 
 
-public class FacetListService extends JSONService {
+/**
+ * A web service for returning all the facet list
+ * @author arunans23
+ *
+ */
+public class FacetListService extends JSONService
+{
 
     private static final Logger LOG = Logger.getLogger(FacetService.class);
 
+    /**
+     * Constructor
+     * @param im InterMine settings
+     */
     public FacetListService(InterMineAPI im) {
         super(im);
     }
@@ -48,7 +58,7 @@ public class FacetListService extends JSONService {
 
         Map<String, List<String>> ckData = new HashMap<String, List<String>>();
 
-        for (KeywordSearchFacet<FacetField.Count> keywordSearchFacet : keywordSearchFacets){
+        for (KeywordSearchFacet<FacetField.Count> keywordSearchFacet : keywordSearchFacets) {
             List<String> facetInnerList = new ArrayList<String>();
 
             for (FacetField.Count count : keywordSearchFacet.getItems()) {

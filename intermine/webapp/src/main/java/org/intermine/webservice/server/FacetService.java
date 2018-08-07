@@ -30,8 +30,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-
-public class FacetService extends JSONService {
+/**
+ * A web service for returning facet related to particular query
+ * @author arunans23
+ *
+ */
+public class FacetService extends JSONService
+{
 
     private static final Logger LOG = Logger.getLogger(FacetService.class);
 
@@ -67,7 +72,7 @@ public class FacetService extends JSONService {
 
         JSONArray rootArray = new JSONArray();
 
-        for(KeywordSearchFacet<FacetField.Count> keywordSearchFacet : keywordSearchFacets) {
+        for (KeywordSearchFacet<FacetField.Count> keywordSearchFacet : keywordSearchFacets) {
             Map<String, Long> temp = new HashMap<String, Long>();
 
             JSONArray innerArray = new JSONArray();
@@ -85,8 +90,6 @@ public class FacetService extends JSONService {
             outerObject.put(keywordSearchFacet.getName(), innerArray);
             rootArray.put(outerObject);
         }
-
-        System.out.println(rootArray.toString());
 
         JSONObject jo = new JSONObject();
         jo.put("results", rootArray);
