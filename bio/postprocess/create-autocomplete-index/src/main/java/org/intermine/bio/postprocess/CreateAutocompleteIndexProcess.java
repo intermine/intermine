@@ -52,28 +52,21 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
         try {
 
             ObjectStore os = osw.getObjectStore();
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+        
+            AutoCompleter ac = new AutoCompleter(os);
 
-            try {
-                AutoCompleter ac = new AutoCompleter(os);
-                ac.buildIndex(os);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-
-            } catch (ObjectStoreException e) {
-                e.printStackTrace();
-
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            
-            }
+            ac.buildIndex(os);
 
             System.out .println("Creating auto complete index has completed");
 
         } catch (NullPointerException e) {
             throw new BuildException("Could not find the class keys");
-        }
 
+        } catch (IOException e) {
+            throw new BuildException("Creating autocomplete index failed", e);
+
+        } catch (ClassNotFoundException e) {
+            throw new BuildException("Creating autocomplete index failed", e);
+        }
     }
 }
