@@ -23,12 +23,13 @@ dependencies {
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
     compile group: 'commons-io', name: 'commons-io', version: '1.2'
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
-    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0', transitive: false // conflict with log4j library this JAR needs
     compile group: 'net.iharder', name: 'base64', version: '2.3.8' //not clear wich version is currently used
     compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven
     compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
     compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
     compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.1'
     provided fileTree(dir: 'libs', include: '*.jar') // eventually replace torque
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
     antlr name: 'antlr-2.7.6-caching'
