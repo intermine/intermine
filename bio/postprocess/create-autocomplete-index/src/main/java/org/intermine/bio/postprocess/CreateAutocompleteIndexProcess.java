@@ -47,7 +47,7 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
         try {
 
             ObjectStore os = osw.getObjectStore();
-        
+            
             AutoCompleter ac = new AutoCompleter(os);
 
             ac.buildIndex(os);
