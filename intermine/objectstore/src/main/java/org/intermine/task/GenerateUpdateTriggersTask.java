@@ -39,7 +39,7 @@ import org.intermine.sql.DatabaseUtil;
  */
 
 /**
- * @author Joe Carlson <JWCarlson@lbl.gov>
+ * @author Joe Carlson JWCarlson@lbl.gov
  * @version 0.1
  */
 public class GenerateUpdateTriggersTask extends Task

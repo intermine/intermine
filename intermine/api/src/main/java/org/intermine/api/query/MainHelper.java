@@ -931,7 +931,7 @@ public final class MainHelper
 
     /**
      * Make a SimpleConstraint for the given Date Constraint.  The time stored in the Date will be
-     * ignored.  Example webapp constraints and the coresponding object store constraints:
+     * ignored.  Example webapp constraints and the corresponding object store constraints:
      * <table>
      *     <thead>
      *       <tr>

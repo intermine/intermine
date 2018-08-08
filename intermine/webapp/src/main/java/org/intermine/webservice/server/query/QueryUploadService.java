@@ -231,7 +231,7 @@ public class QueryUploadService extends WebService
             InputStream in = request.getInputStream();
             queriesString = IOUtils.toString(in);
         } else {
-            queriesString = getRequiredParameter("xml");
+            queriesString = getRequiredParameter("query");
         }
         return queriesString;
     }

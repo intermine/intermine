@@ -21,14 +21,14 @@ import org.intermine.util.SensibleByteArrayOutputStream;
 public class PostgresByteArrayOutputStream extends SensibleByteArrayOutputStream
 {
     /**
-     * @see ByteArrayOutputStream
+     * see ByteArrayOutputStream
      */
     public PostgresByteArrayOutputStream() {
         super();
     }
 
     /**
-     * @see ByteArrayOutputStream
+     * see ByteArrayOutputStream
      *
      * @param size the initial size of the byte array
      */
