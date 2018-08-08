@@ -13,14 +13,9 @@ package org.intermine.bio.postprocess;
 import java.io.IOException;
 
 
-
-import java.util.Properties;
-
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.sql.Database;
 import org.apache.tools.ant.BuildException;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
