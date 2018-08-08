@@ -70,6 +70,8 @@ public final class KeywordSearchPropertiesManager
 
     private int indexBatchSize = 1000;
 
+    private boolean enableOptimize = false;
+
     private KeywordSearchPropertiesManager(ObjectStore objectStore) {
 
         parseProperties(objectStore);
@@ -230,6 +232,8 @@ public final class KeywordSearchPropertiesManager
                         solrUrl = value;
                     } else if ("index.batch.size".equals(key) && !StringUtils.isBlank(value)) {
                         indexBatchSize = Integer.parseInt(value);
+                    } else if ("index.optimize".equals(key) && !StringUtils.isBlank(value)) {
+                        enableOptimize = Boolean.parseBoolean(value);
                     }
 
                 }
@@ -402,6 +406,13 @@ public final class KeywordSearchPropertiesManager
      */
     public int getIndexBatchSize() {
         return indexBatchSize;
+    }
+
+    /**
+     * @return flag to whether optimize the index or not
+     */
+    public boolean getEnableOptimize() {
+        return enableOptimize;
     }
 
     /**

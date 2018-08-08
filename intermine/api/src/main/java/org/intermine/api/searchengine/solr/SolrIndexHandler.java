@@ -47,8 +47,6 @@ public final class SolrIndexHandler implements IndexHandler
     //this field type is not analyzed
     private static final String RAW_FIELD_TYPE_NAME = "raw_string";
 
-    private boolean enableOptimize = true;
-
     private ObjectPipe<SolrInputDocument> indexingQueue = new ObjectPipe<SolrInputDocument>(100000);
 
     @Override
@@ -148,7 +146,7 @@ public final class SolrIndexHandler implements IndexHandler
 
         commit(solrClient);
 
-        if (enableOptimize) {
+        if (keywordSearchPropertiesManager.getEnableOptimize()) {
             optimize(solrClient);
         }
 
