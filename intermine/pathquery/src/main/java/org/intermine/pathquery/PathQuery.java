@@ -1369,7 +1369,7 @@ public class PathQuery implements Cloneable
         return new Path(model, path, lSubclasses);
     }
 
-    /** @assert that the query is dirty and needs to be re-checked. **/
+    /** assert that the query is dirty and needs to be re-checked. **/
     public synchronized void deVerify() {
         isVerified = false;
     }

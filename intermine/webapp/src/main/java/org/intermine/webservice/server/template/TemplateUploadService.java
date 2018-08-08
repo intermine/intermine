@@ -39,7 +39,7 @@ public class TemplateUploadService extends WebService
 {
 
     /** The key for the templates parameter **/
-    public static final String TEMPLATES_PARAMETER = "xml";
+    public static final String TEMPLATES_PARAMETER = "query";
     /** The key for the version parameter **/
     public static final String VERSION_PARAMETER = "version";
 

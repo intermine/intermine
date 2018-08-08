@@ -16,7 +16,7 @@ if [ "$CLIENT" = "JS" ]; then
 
 elif [ "$CLIENT" = "PY" ]; then
 
-    # No dependencies.
+    pip install -r requirements.txt
     python setup.py test
     python setup.py livetest
 

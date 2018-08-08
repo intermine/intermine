@@ -47,7 +47,7 @@ public class ConsistentSet<E> extends AbstractSet<E>
      *
      * @param obj the object to be added
      * @return true if the set was altered
-     * @see Set#add
+     * see Set#add
      */
     @Override
     public boolean add(E obj) {
@@ -64,7 +64,7 @@ public class ConsistentSet<E> extends AbstractSet<E>
      *
      * @param col the Collection of objects to be added
      * @return true if the set was altered
-     * @see Set#addAll
+     * see Set#addAll
      */
     @Override
     public boolean addAll(Collection<? extends E> col) {

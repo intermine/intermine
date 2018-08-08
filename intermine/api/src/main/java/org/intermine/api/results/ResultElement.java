@@ -30,7 +30,7 @@ public class ResultElement implements Serializable, ResultCell
     protected Object field;
     protected FastPathObject imObj;
     protected String htmlId;
-    /** @boolean protected as we need to determine if the element is a key field from JSP */
+    /** boolean protected as we need to determine if the element is a key field from JSP */
     protected final boolean keyField;
     private final Path path;
     private String linkRedirect;
