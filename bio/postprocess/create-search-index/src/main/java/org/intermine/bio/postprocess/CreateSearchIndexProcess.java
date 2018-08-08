@@ -65,7 +65,7 @@ public class CreateSearchIndexProcess extends PostProcessor
 		    IndexHandler indexHandler = new SolrIndexHandler();
             indexHandler.createIndex(osw, classKeys);
 
-            System.out.println("Creating index for keyword search ended successfully");
+            System.out .println("Creating index for keyword search ended successfully");
 
         } catch (Exception e) {
             System.out.println("Creating keyword index failed");
