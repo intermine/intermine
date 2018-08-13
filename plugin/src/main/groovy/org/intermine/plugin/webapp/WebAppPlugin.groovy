@@ -84,20 +84,12 @@ class WebAppPlugin implements Plugin<Project> {
                     w << content.replace("<!--@MODEL_INCLUDE@-->", tilesDefsModel.text)
                 }
 
-                //web.xml - bio (from intermine-bio package)
-                File webBio = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/web-bio.xml")
-                File web = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/web.xml")
-                content = web.text
-                web.withWriter { w ->
-                    w << content.replace("<!--@MODEL_INCLUDE@-->", webBio.text)
-                }
-
-                //web.xml - model (from the mine)
-                File webModel = new File(buildResDir + "web-model.xml")
+                // web.xml
                 File webXml = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/web.xml")
+                File webBio = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/web-bio.xml")
                 content = webXml.text
                 webXml.withWriter { w ->
-                    w << content.replace("<!--@MODEL_INCLUDE@-->", webModel.text)
+                    w << content.replace("<!--@MODEL_INCLUDE@-->", webBio.text)
                 }
 
                 //internationalisation
