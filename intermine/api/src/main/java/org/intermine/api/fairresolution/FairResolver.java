@@ -7,7 +7,7 @@ import java.util.Map;
  * Resolve our FAIR unique and persistent URIs to internal InterMine object information.
  */
 public class FairResolver {
-    Map<String, Map<String, Integer>> registry = new HashMap<String, Map<String, Integer>>();
+    private Map<String, Map<String, Integer>> registry = new HashMap<String, Map<String, Integer>>();
 
     /**
      * Add a mapping from FAIR id components to the InterMine internal ID
