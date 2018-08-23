@@ -20,6 +20,12 @@ public class FairResolverTest {
             Assert.assertEquals(id, 1);
         }
 
+        // But not the local unique identifiers
+        {
+            Integer id = fr.resolve("eNSEMBl", "ensg00000092054");
+            Assert.assertNull(id);
+        }
+
         // Not found case
         {
             Integer id = fr.resolve("garbage", "flatfoot");
