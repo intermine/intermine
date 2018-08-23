@@ -14,17 +14,17 @@ public class FairResolver {
      * Add a mapping from FAIR id components to the InterMine internal ID
      *
      * @param prefix
-     * @param localUniqueIdentifier
-     * @param intermineOsId
+     * @param uniqueId
+     * @param intermineId
      */
-    public void addMapping(String prefix, String localUniqueIdentifier, int intermineOsId) {
+    public void addMapping(String prefix, String uniqueId, int intermineId) {
         prefix = prefix.toLowerCase();
 
         if (!registry.containsKey(prefix)) {
             registry.put(prefix, new HashMap<String, Integer>());
         }
 
-        if (registry.get(prefix).put(localUniqueIdentifier, intermineOsId) == null) {
+        if (registry.get(prefix).put(uniqueId, intermineId) == null) {
             idsCount += 1;
         }
     }
@@ -33,10 +33,10 @@ public class FairResolver {
      * For a given FAIR prefix and local unique identifier, resolve to an internal InterMine object ID.
      *
      * @param prefix prefix of the FAIR identifier
-     * @param localUniqueIdentifier local unique id component
+     * @param uniqueId local unique id component
      * @return null if the inputs did not resolve to an internal object ID
      */
-    public Integer resolve(String prefix, String localUniqueIdentifier) {
+    public Integer resolve(String prefix, String uniqueId) {
         prefix = prefix.toLowerCase();
 
         Map<String, Integer> localMap = registry.get(prefix);
@@ -45,10 +45,10 @@ public class FairResolver {
             return null;
         }
 
-        return localMap.get(localUniqueIdentifier);
+        return localMap.get(uniqueId);
     }
 
-    public long localUniqueIdsSize() {
+    public long idsSize() {
         return idsCount;
     }
 
