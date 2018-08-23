@@ -46,14 +46,6 @@ public class FairResolver {
         }
 
         return localMap.get(localUniqueIdentifier);
-
-        /*
-        if (prefix.equals("ensembl") && localUniqueIdentifier.equals("ENSG00000092054")) {
-            return 1;
-        }
-
-        return null;
-        */
     }
 
     public long localUniqueIdsSize() {
