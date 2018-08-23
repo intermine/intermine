@@ -11,37 +11,22 @@ public class FairResolverTest {
 
         Assert.assertNull(fr.resolve("ensembl", "ENSG00000092054"));
 
-        {
-            fr.addMapping("ensembl", "ENSG00000092054", 1);
-            int id = fr.resolve("ensembl", "ENSG00000092054");
-            Assert.assertEquals(id, 1);
-        }
+        fr.addMapping("ensembl", "ENSG00000092054", 1);
+        Assert.assertEquals(1, fr.resolve("ensembl", "ENSG00000092054").intValue());
 
         // Overwriting the mapping simply replaces
-        {
-            fr.addMapping("ensembl", "ENSG00000092054", 3);
-            int id = fr.resolve("ensembl", "ENSG00000092054");
-            Assert.assertEquals(id, 3);
-        }
+        fr.addMapping("ensembl", "ENSG00000092054", 3);
+        Assert.assertEquals(3, fr.resolve("ensembl", "ENSG00000092054").intValue());
 
         // Prefixes should be case insensitive
-        {
-            fr.addMapping("eNSEMBL", "ENSG1234", 11);
-            int id = fr.resolve("ensembl", "ENSG1234");
-            Assert.assertEquals(id, 11);
-        }
+        fr.addMapping("eNSEMBL", "ENSG1234", 11);
+        Assert.assertEquals(11, fr.resolve("ensembl", "ENSG1234").intValue());
+
 
         // But local IDs should not
-        {
-            fr.addMapping("ensembl", "ensg1234", 13);
-            int id = fr.resolve("ensembl", "ENSG1234");
-            Assert.assertEquals(id, 11);
-        }
-
-        {
-            int id = fr.resolve("ensembl", "ensg1234");
-            Assert.assertEquals(id, 13);
-        }
+        fr.addMapping("ensembl", "ensg1234", 13);
+        Assert.assertEquals(11, fr.resolve("ensembl", "ENSG1234").intValue());
+        Assert.assertEquals(13, fr.resolve("ensembl", "ensg1234").intValue());
     }
 
     @Test
@@ -71,28 +56,15 @@ public class FairResolverTest {
         FairResolver fr = new FairResolver();
         fr.addMapping("ensembl", "ENSG00000092054", 1);
 
-        // Found case
-        {
-            int id = fr.resolve("ensembl", "ENSG00000092054");
-            Assert.assertEquals(id, 1);
-        }
+        Assert.assertEquals(1, fr.resolve("ensembl", "ENSG00000092054").intValue());
 
         // Allow prefixes to have any combination of case
-        {
-            int id = fr.resolve("eNSEMBl", "ENSG00000092054");
-            Assert.assertEquals(id, 1);
-        }
+        Assert.assertEquals(1, fr.resolve("eNSEMBl", "ENSG00000092054").intValue());
 
         // But not the local unique identifiers
-        {
-            Integer id = fr.resolve("eNSEMBl", "ensg00000092054");
-            Assert.assertNull(id);
-        }
+        Assert.assertNull(fr.resolve("eNSEMBl", "ensg00000092054"));
 
         // Not found case
-        {
-            Integer id = fr.resolve("garbage", "flatfoot");
-            Assert.assertNull(id);
-        }
+        Assert.assertNull(fr.resolve("garbage", "flatfoot"));
     }
 }
