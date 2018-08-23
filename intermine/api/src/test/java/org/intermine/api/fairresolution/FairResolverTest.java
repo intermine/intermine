@@ -4,9 +4,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class FairResolverTest {
+
     @Test
     public void testResolve() {
         FairResolver fr = new FairResolver();
+        fr.addMapping("ensembl", "ENSG00000092054", 1);
 
         // Found case
         {
