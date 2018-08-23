@@ -12,7 +12,9 @@ public class FairResolver {
      * @return null if the inputs did not resolve to an internal object ID
      */
     public Integer resolve(String prefix, String localUniqueIdentifier) {
-        if (prefix.equals("Ensembl") && localUniqueIdentifier.equals("ENSG00000092054")) {
+        prefix = prefix.toLowerCase();
+
+        if (prefix.equals("ensembl") && localUniqueIdentifier.equals("ENSG00000092054")) {
             return 1;
         }
 
