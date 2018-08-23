@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class FairResolver {
     private Map<String, Map<String, Integer>> registry = new HashMap<String, Map<String, Integer>>();
+    private long idsCount;
 
     /**
      * Add a mapping from FAIR id components to the InterMine internal ID
@@ -23,7 +24,9 @@ public class FairResolver {
             registry.put(prefix, new HashMap<String, Integer>());
         }
 
-        registry.get(prefix).put(localUniqueIdentifier, intermineOsId);
+        if (registry.get(prefix).put(localUniqueIdentifier, intermineOsId) == null) {
+            idsCount += 1;
+        }
     }
 
     /**
@@ -51,5 +54,13 @@ public class FairResolver {
 
         return null;
         */
+    }
+
+    public long localUniqueIdsSize() {
+        return idsCount;
+    }
+
+    public long prefixesSize() {
+        return registry.size();
     }
 }

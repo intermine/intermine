@@ -45,6 +45,28 @@ public class FairResolverTest {
     }
 
     @Test
+    public void testSize() {
+        FairResolver fr = new FairResolver();
+        Assert.assertEquals(0, fr.localUniqueIdsSize());
+        Assert.assertEquals(0, fr.prefixesSize());
+
+        fr.addMapping("a", "a1", 1);
+        Assert.assertEquals(1, fr.localUniqueIdsSize());
+        Assert.assertEquals(1, fr.prefixesSize());
+
+        fr.addMapping("a", "a2", 2);
+        fr.addMapping("b", "b1", 3);
+        Assert.assertEquals(2, fr.prefixesSize());
+
+        Assert.assertEquals(3, fr.localUniqueIdsSize());
+
+        // Replace shouldn't change the size
+        fr.addMapping("a", "a2", 4);
+        Assert.assertEquals(3, fr.localUniqueIdsSize());
+        Assert.assertEquals(2, fr.prefixesSize());
+    }
+
+    @Test
     public void testResolve() {
         FairResolver fr = new FairResolver();
         fr.addMapping("ensembl", "ENSG00000092054", 1);
