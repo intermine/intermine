@@ -51,7 +51,7 @@ public class FairResolverTest {
 
         // Found case
         {
-            int id = fr.resolve("Ensembl", "ENSG00000092054");
+            int id = fr.resolve("ensembl", "ENSG00000092054");
             Assert.assertEquals(id, 1);
         }
 
