@@ -3,11 +3,11 @@ package org.intermine.api.fairresolution;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FairResolverTest {
+public class FairRegistryTest {
 
     @Test
     public void testAddMapping() {
-        FairResolver fr = new FairResolver();
+        FairRegistry fr = new FairRegistry();
 
         Assert.assertNull(fr.resolve("ensembl", "ENSG00000092054"));
 
@@ -31,7 +31,7 @@ public class FairResolverTest {
 
     @Test
     public void testSize() {
-        FairResolver fr = new FairResolver();
+        FairRegistry fr = new FairRegistry();
         Assert.assertEquals(0, fr.idsSize());
         Assert.assertEquals(0, fr.prefixesSize());
 
@@ -53,7 +53,7 @@ public class FairResolverTest {
 
     @Test
     public void testResolve() {
-        FairResolver fr = new FairResolver();
+        FairRegistry fr = new FairRegistry();
         fr.addMapping("ensembl", "ENSG00000092054", 1);
 
         Assert.assertEquals(1, fr.resolve("ensembl", "ENSG00000092054").intValue());

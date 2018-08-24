@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /***
- * Resolve our FAIR unique and persistent URIs to internal InterMine object information.
+ * A register of FAIR IDs to intermine object IDs
  */
-public class FairResolver {
+public class FairRegistry {
     private Map<String, Map<String, Integer>> registry = new HashMap<String, Map<String, Integer>>();
     private long idsCount;
 
