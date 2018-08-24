@@ -11,20 +11,20 @@ public class FairRegistryTest {
 
         Assert.assertNull(fr.resolve("ensembl", "ENSG00000092054"));
 
-        fr.addMapping("ensembl", "ENSG00000092054", 1);
+        fr.add("ensembl", "ENSG00000092054", 1);
         Assert.assertEquals(1, fr.resolve("ensembl", "ENSG00000092054").intValue());
 
         // Overwriting the mapping simply replaces
-        fr.addMapping("ensembl", "ENSG00000092054", 3);
+        fr.add("ensembl", "ENSG00000092054", 3);
         Assert.assertEquals(3, fr.resolve("ensembl", "ENSG00000092054").intValue());
 
         // Prefixes should be case insensitive
-        fr.addMapping("eNSEMBL", "ENSG1234", 11);
+        fr.add("eNSEMBL", "ENSG1234", 11);
         Assert.assertEquals(11, fr.resolve("ensembl", "ENSG1234").intValue());
 
 
         // But local IDs should not
-        fr.addMapping("ensembl", "ensg1234", 13);
+        fr.add("ensembl", "ensg1234", 13);
         Assert.assertEquals(11, fr.resolve("ensembl", "ENSG1234").intValue());
         Assert.assertEquals(13, fr.resolve("ensembl", "ensg1234").intValue());
     }
@@ -35,18 +35,18 @@ public class FairRegistryTest {
         Assert.assertEquals(0, fr.idsSize());
         Assert.assertEquals(0, fr.prefixesSize());
 
-        fr.addMapping("a", "a1", 1);
+        fr.add("a", "a1", 1);
         Assert.assertEquals(1, fr.idsSize());
         Assert.assertEquals(1, fr.prefixesSize());
 
-        fr.addMapping("a", "a2", 2);
-        fr.addMapping("b", "b1", 3);
+        fr.add("a", "a2", 2);
+        fr.add("b", "b1", 3);
         Assert.assertEquals(2, fr.prefixesSize());
 
         Assert.assertEquals(3, fr.idsSize());
 
         // Replace shouldn't change the size
-        fr.addMapping("a", "a2", 4);
+        fr.add("a", "a2", 4);
         Assert.assertEquals(3, fr.idsSize());
         Assert.assertEquals(2, fr.prefixesSize());
     }
@@ -54,7 +54,7 @@ public class FairRegistryTest {
     @Test
     public void testResolve() {
         FairRegistry fr = new FairRegistry();
-        fr.addMapping("ensembl", "ENSG00000092054", 1);
+        fr.add("ensembl", "ENSG00000092054", 1);
 
         Assert.assertEquals(1, fr.resolve("ensembl", "ENSG00000092054").intValue());
 

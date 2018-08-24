@@ -17,7 +17,7 @@ public class FairRegistry {
      * @param uniqueId
      * @param intermineId
      */
-    public void addMapping(String prefix, String uniqueId, int intermineId) {
+    public void add(String prefix, String uniqueId, int intermineId) {
         prefix = prefix.toLowerCase();
 
         if (!registry.containsKey(prefix)) {
