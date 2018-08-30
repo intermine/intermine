@@ -23,4 +23,4 @@ query.add_constraint("department.manager", "CEO")
 query.add_view("name", "age")
 
 for row in query.rows():
-    print row["name"], row["age"]
+    print(row["name"], row["age"])

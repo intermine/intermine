@@ -33,5 +33,5 @@ query.add_constraint("Gene", "LOOKUP", "eve", code = "B")
 # query.set_logic("A and B")
 
 for row in query.rows():
-    print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], \
-        row["organism.shortName"]
+    print(row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], \
+        row["organism.shortName"])

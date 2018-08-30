@@ -22,4 +22,4 @@ rows = template.rows(
     A = {"op": "ONE OF", "values": "["Employee A1", "EmployeeA2"]"}
 )
 for row in rows:
-    print row["name"]
+    print(row["name"])

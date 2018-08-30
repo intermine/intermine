@@ -26,4 +26,4 @@ query.add_constraint("department.manager", "IS", "department.company.CEO", code 
 # query.set_logic("A")
 
 for row in query.rows():
-    print row["name"], row["department.name"]
+    print(row["name"], row["department.name"])

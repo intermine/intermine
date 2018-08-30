@@ -22,5 +22,5 @@ query.add_view(
 )
 
 for row in query.rows():
-    print \
-        row["proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.primaryAccession"]
+    print( \
+        row["proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.genes.proteins.primaryAccession"])

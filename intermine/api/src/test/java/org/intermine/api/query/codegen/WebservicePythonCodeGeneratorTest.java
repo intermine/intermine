@@ -38,7 +38,7 @@ public class WebservicePythonCodeGeneratorTest extends WebserviceJavaCodeGenerat
     }
 
     @Test
-    public void testPrint() throws Exception {
+    public void testPrintOneAttribute() throws Exception {
         List<ClassDescriptor> cds = new ArrayList<ClassDescriptor>();
         List<AttributeDescriptor> ads = new ArrayList<AttributeDescriptor>();
 
@@ -59,7 +59,38 @@ public class WebservicePythonCodeGeneratorTest extends WebserviceJavaCodeGenerat
         String[] lines = result.split("\n");
 
         Assert.assertEquals(23, lines.length);
-        Assert.assertEquals("print row[\"testatt\"]", lines[22].trim());
+        Assert.assertEquals("print(row[\"testatt\"])", lines[22].trim());
+
+        // System.out.println(result);
+    }
+
+    @Test
+    public void testPrintThreeAttributes() throws Exception {
+        List<ClassDescriptor> cds = new ArrayList<ClassDescriptor>();
+        List<AttributeDescriptor> ads = new ArrayList<AttributeDescriptor>();
+
+        ads.add(new AttributeDescriptor("testatt", "java.lang.String"));
+        ads.add(new AttributeDescriptor("testatt2", "java.lang.String"));
+        ads.add(new AttributeDescriptor("testatt3", "java.lang.String"));
+
+        cds.add(
+            new ClassDescriptor(
+                "testns.testclass", null, false,
+                ads,
+                new HashSet<ReferenceDescriptor>(),
+                new HashSet<CollectionDescriptor>()));
+
+        Model m = new Model("model1", "testns", cds);
+
+        PathQuery pq = new PathQuery(m);
+        pq.addViews("testclass.testatt", "testclass.testatt2", "testclass.testatt3");
+
+        String result = cg.generate(new WebserviceCodeGenInfo(pq, null, null, null, true, null, "\n"));
+        String[] lines = result.split("\n");
+
+        Assert.assertEquals(23, lines.length);
+        Assert.assertEquals(
+            "print(row[\"testatt\"], row[\"testatt2\"], row[\"testatt3\"])", lines[lines.length - 1].trim());
 
         // System.out.println(result);
     }

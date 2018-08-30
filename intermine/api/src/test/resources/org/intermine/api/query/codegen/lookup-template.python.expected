@@ -22,4 +22,4 @@ rows = template.rows(
     A = {"op": "LOOKUP", "value": "EmployeeA1"}
 )
 for row in rows:
-    print row["name"]
+    print(row["name"])

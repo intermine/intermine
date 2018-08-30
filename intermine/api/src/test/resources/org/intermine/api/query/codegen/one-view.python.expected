@@ -23,4 +23,4 @@ query.add_view("primaryIdentifier")
 # query.add_sort_order("Gene.primaryIdentifier", "ASC")
 
 for row in query.rows():
-    print row["primaryIdentifier"]
+    print(row["primaryIdentifier"])

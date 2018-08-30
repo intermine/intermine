@@ -148,24 +148,34 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             return error;
         }
 
-        StringBuffer currentLine = new StringBuffer(INDENT + "print");
+        StringBuffer currentLine = new StringBuffer(INDENT + "print(");
         Iterator<String> rowKeyIt = rowKeyAccesses.iterator();
+
+        boolean firstElement = true;
+
         while (rowKeyIt.hasNext()) {
             String toPrint = rowKeyIt.next();
-            if (StringUtils.isNotBlank(currentLine.toString())) {
+            if (!firstElement && StringUtils.isNotBlank(currentLine.toString())) {
                 toPrint = " " + toPrint;
             }
+
             if (rowKeyIt.hasNext()) {
                 toPrint += ",";
             }
+
             if (currentLine.length() + toPrint.length() > 100) {
                 sb.append(currentLine.toString() + " \\" + endl);
                 currentLine = new StringBuffer(INDENT + INDENT);
-                toPrint = toPrint.substring(1);
+
+                if (!firstElement)
+                    toPrint = toPrint.substring(1);
             }
+
             currentLine.append(toPrint);
+            firstElement = false;
         }
-        sb.append(currentLine.toString() + endl);
+
+        sb.append(currentLine.toString() + ")" + endl);
 
         return sb.toString();
     }
