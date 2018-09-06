@@ -167,8 +167,9 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 sb.append(currentLine.toString() + " \\" + endl);
                 currentLine = new StringBuffer(INDENT + INDENT);
 
-                if (!firstElement)
+                if (!firstElement) {
                     toPrint = toPrint.substring(1);
+                }
             }
 
             currentLine.append(toPrint);
