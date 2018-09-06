@@ -69,12 +69,20 @@ This product includes software developed by the
 Please cite
 ------------------------
 
+**InterMine: extensive web services for modern biology.**<br/>
+*Kalderimis A, Lyne R, Butano D, Contrino S, Lyne M, Heimbach J, Hu F, Smith R,
+Stěpán R, Sullivan J, Micklem G.* <br/>
+[Nucleic Acids Res. 2014 Jul;42(Web Server issue):W468-72](http://bioinformatics.oxfordjournals.org/content/28/23/3163.abstract) <br/>
+[![doi](http://img.shields.io/badge/doi/10.1093%2Fnar%2Fgku301-blue.svg?style=flat)](https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gku301) 
+[![pubmed](http://img.shields.io/badge/pubmed-24753429-blue.svg?style=flat)](http://www.ncbi.nlm.nih.gov/pubmed/24753429)
+
 **InterMine: a flexible data warehouse system for the integration and analysis of heterogeneous biological data.**<br/>
 *Smith RN, Aleksic J, Butano D, Carr A, Contrino S, Hu F, Lyne M, Lyne R, Kalderimis A, Rutherford K, Stepan R, Sullivan J, Wakeling M, Watkins X, Micklem G.* <br/>
 [Bioinformatics (2012) 28 (23): 3163-3165.](http://bioinformatics.oxfordjournals.org/content/28/23/3163.abstract) <br/>
 [![doi](http://img.shields.io/badge/doi-10.1093%2Fbioinformatics%2Fbts577-blue.svg?style=flat)](http://bioinformatics.oxfordjournals.org/content/28/23/3163.abstract) 
 [![pubmed](http://img.shields.io/badge/pubmed-23023984-blue.svg?style=flat)](http://www.ncbi.nlm.nih.gov/pubmed/23023984)
 
+See [zotero](https://www.zotero.org/groups/2117194/intermine/) for the full list of InterMine publications.
 
 [travis-badge-master]: https://travis-ci.org/intermine/intermine.svg?branch=master
 [travis-badge-dev]: https://travis-ci.org/intermine/intermine.svg?branch=dev
