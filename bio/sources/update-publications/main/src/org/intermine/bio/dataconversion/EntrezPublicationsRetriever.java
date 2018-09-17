@@ -64,6 +64,10 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 
+import java.io.DataOutputStream;
+import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * Class to fill in all publication information from pubmed
  * @author Mark Woodbridge
@@ -81,7 +85,7 @@ public class EntrezPublicationsRetriever
     protected static final String ESUMMARY_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/"
             + "eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
     // number of records to retrieve per request
-    protected static final int BATCH_SIZE = 400;
+    protected static final int BATCH_SIZE = 500;
     // number of times to try the same batch from the server
     private static final int MAX_TRIES = 5;
     private String osAlias = null, outputFile = null;
@@ -356,12 +360,37 @@ public class EntrezPublicationsRetriever
      * @throws Exception if an error occurs
      */
     protected Reader getReader(Set<Integer> ids) throws Exception {
-        String urlString = ESUMMARY_URL + StringUtil.join(ids, ",");
-        if (loadFullRecord) {
-            urlString = EFETCH_URL + StringUtil.join(ids, ",");
-        }
-        System.err .println("retrieving: " + urlString);
-        return new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
+
+		/**
+		 * Fix - Use HTTP POST instead of HTTP GET method for uploading
+		 * Pubmed Ids
+		 * Author: Norbert Auer
+		 * e-mail: norbert.auer@boku.ac.at
+		 */
+		String url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
+		URL obj = new URL(url);
+		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+		//add reuqest header to POST
+		con.setRequestMethod("POST");
+		//con.setRequestProperty("User-Agent", USER_AGENT);
+		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+		String urlParameters = "tool=flymine&db=pubmed&rettype=abstract&retmode=xml&id=" + StringUtil.join(ids, ",");
+
+		// Send post request
+		con.setDoOutput(true);
+		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		wr.writeBytes(urlParameters);
+		wr.flush();
+		wr.close();
+
+		int responseCode = con.getResponseCode();
+		//System.out.println("\nSending 'POST' request to URL : " + url);
+		//System.out.println("Post parameters : " + urlParameters);
+		//System.out.println("Response Code : " + responseCode);
+
+		return new BufferedReader(new InputStreamReader(con.getInputStream()));
     }
 
     private Set<Item> mapToItems(ItemFactory factory, Map map) {
