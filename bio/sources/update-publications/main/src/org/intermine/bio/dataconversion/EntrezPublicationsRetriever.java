@@ -365,28 +365,29 @@ public class EntrezPublicationsRetriever
          * Author: Norbert Auer
          * e-mail: norbert.auer@boku.ac.at
          */
-         String url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
-         URL obj = new URL(url);
-         HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+        String url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
+        URL obj = new URL(url);
+        HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
 
-         // add reuqest header to POST
-         con.setRequestMethod("POST");
+        // add reuqest header to POST
+        con.setRequestMethod("POST");
 
-         // con.setRequestProperty("User-Agent", USER_AGENT);
-         con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+        // con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
-         String urlParameters = "tool=flymine&db=pubmed&rettype=abstract&retmode=xml&id=" + StringUtil.join(ids, ",");
+        String urlParameters = "tool=flymine&db=pubmed&rettype=abstract&retmode=xml&id="
+            + StringUtil.join(ids, ",");
 
-         // Send post request
-         con.setDoOutput(true);
-         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-         wr.writeBytes(urlParameters);
-         wr.flush();
-         wr.close();
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
 
-         int responseCode = con.getResponseCode();
+        int responseCode = con.getResponseCode();
 
-         return new BufferedReader(new InputStreamReader(con.getInputStream()));
+        return new BufferedReader(new InputStreamReader(con.getInputStream()));
     }
 
     private Set<Item> mapToItems(ItemFactory factory, Map map) {
