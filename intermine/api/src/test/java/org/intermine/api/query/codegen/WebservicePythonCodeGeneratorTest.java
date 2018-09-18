@@ -58,8 +58,10 @@ public class WebservicePythonCodeGeneratorTest extends WebserviceJavaCodeGenerat
         String result = cg.generate(new WebserviceCodeGenInfo(pq, null, null, null, true, null, "\n"));
         String[] lines = result.split("\n");
 
-        Assert.assertEquals(23, lines.length);
-        Assert.assertEquals("print(row[\"testatt\"])", lines[22].trim());
+        int expectedLines = 27;
+
+        Assert.assertEquals(expectedLines, lines.length);
+        Assert.assertEquals("print(row[\"testatt\"])", lines[expectedLines - 1].trim());
 
         // System.out.println(result);
     }
@@ -88,9 +90,11 @@ public class WebservicePythonCodeGeneratorTest extends WebserviceJavaCodeGenerat
         String result = cg.generate(new WebserviceCodeGenInfo(pq, null, null, null, true, null, "\n"));
         String[] lines = result.split("\n");
 
-        Assert.assertEquals(23, lines.length);
+        int expectedLines = 27;
+
+        Assert.assertEquals(expectedLines, lines.length);
         Assert.assertEquals(
-            "print(row[\"testatt\"], row[\"testatt2\"], row[\"testatt3\"])", lines[lines.length - 1].trim());
+            "print(row[\"testatt\"], row[\"testatt2\"], row[\"testatt3\"])", lines[expectedLines - 1].trim());
 
         // System.out.println(result);
     }

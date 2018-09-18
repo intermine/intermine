@@ -84,6 +84,9 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             + "#" + endl
             + "# For further documentation you can visit:" + endl
             + "#     http://intermine.readthedocs.org/en/latest/web-services/" + endl + endl
+            + "# The line below will be needed if you are running this script with python 2." + endl
+            + "# Python 3 will ignore it." + endl
+            + "from __future__ import print_function" + endl + endl
             + "# The following two lines will be needed in every python script:" + endl
             + "from intermine.webservice import Service" + endl;
         return boilerplate;
