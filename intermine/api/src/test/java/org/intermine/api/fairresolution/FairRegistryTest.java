@@ -18,7 +18,7 @@ public class FairRegistryTest {
         fr.add("ensembl", "ENSG00000092054", 3);
         Assert.assertEquals(3, fr.resolve("ensembl", "ENSG00000092054").intValue());
 
-        // Prefixes should be case insensitive
+        // PrefixRegistry should be case insensitive
         fr.add("eNSEMBL", "ENSG1234", 11);
         Assert.assertEquals(11, fr.resolve("ensembl", "ENSG1234").intValue());
 

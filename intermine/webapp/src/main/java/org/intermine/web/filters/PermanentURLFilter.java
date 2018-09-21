@@ -12,8 +12,8 @@ package org.intermine.web.filters;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
+import org.intermine.api.url.*;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.url.PermanentURL;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -28,21 +28,20 @@ public class PermanentURLFilter implements Filter
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        LOGGER.debug("PermanentURLFilter: doFilter.....");
 
         try {
-            Integer id = PermanentURL.getInterMineId(request);
-            if (id == null) {
+            PermanentURL permanentURL = new PermanentURL(request.getRequestURI());
+            URLConverter urlConverter = new URLConverter();
+            Integer id = urlConverter.getIntermineID(permanentURL);
+            if (id == -1) {
+                response.setStatus(HttpStatus.SC_NOT_FOUND);
                 chain.doFilter(req, res);
             } else {
-                if (id == -1) {
-                    response.setStatus(HttpStatus.SC_NOT_FOUND);
-                    chain.doFilter(req, res);
-                } else {
-                    String redirectURL = request.getContextPath() + "/report.do?id=" + id;
-                    response.sendRedirect(redirectURL);
-                }
+                String redirectURL = request.getContextPath() + "/report.do?id=" + id;
+                response.sendRedirect(redirectURL);
             }
+        } catch (InvalidPermanentURLException ex) {
+            chain.doFilter(req, res);
         } catch (ObjectStoreException ex) {
             response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
