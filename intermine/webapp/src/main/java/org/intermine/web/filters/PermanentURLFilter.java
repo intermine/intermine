@@ -12,7 +12,10 @@ package org.intermine.web.filters;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
-import org.intermine.api.url.*;
+import org.intermine.api.url.CURIE;
+import org.intermine.api.url.CURIEConverter;
+import org.intermine.api.url.InvalidPermanentURLException;
+
 import org.intermine.objectstore.ObjectStoreException;
 
 import javax.servlet.*;
@@ -29,8 +32,10 @@ import java.io.IOException;
  */
 public class PermanentURLFilter implements Filter
 {
-    private static final Logger LOGGER = Logger.getLogger(PermanentURLFilter.class);
-
+    /**
+     * Filters all the intermine requests
+     * {@inheritDoc}
+     */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
