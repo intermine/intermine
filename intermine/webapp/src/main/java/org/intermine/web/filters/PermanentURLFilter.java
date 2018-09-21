@@ -20,6 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Filter applied to all the requests to the InterMine server in order
+ * to catch the requests with permanent URL and redirect to the report page.
+ * Example: humanmine.org/humanmine/uniprot:P31946 -> humanmine.org/humanmine/report.do?id=1234567
+ *
+ * @author danielabutano
+ */
 public class PermanentURLFilter implements Filter
 {
     private static final Logger LOGGER = Logger.getLogger(PermanentURLFilter.class);
@@ -30,8 +37,8 @@ public class PermanentURLFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) res;
 
         try {
-            PermanentURL permanentURL = new PermanentURL(request.getRequestURI());
-            URLConverter urlConverter = new URLConverter();
+            CURIE permanentURL = new CURIE(request.getRequestURI());
+            CURIEConverter urlConverter = new CURIEConverter();
             Integer id = urlConverter.getIntermineID(permanentURL);
             if (id == -1) {
                 response.setStatus(HttpStatus.SC_NOT_FOUND);

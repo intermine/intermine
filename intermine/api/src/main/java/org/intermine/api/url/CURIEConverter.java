@@ -23,33 +23,31 @@ import org.intermine.pathquery.PathQuery;
 import java.util.List;
 
 /**
- * This class converts an intermineID into a permanentURL
- * or a permanentURL into an intermineID.
+ * This class converts an intermineID into a CURIE
+ * or a CURIE into an intermineID.
  *
  * @author danielabutano
  */
-public class URLConverter
+public class CURIEConverter
 {
     private Integer intermineID = null;
-    private PermanentURL permanentURL = null;
+    private CURIE curie = null;
     private static final Integer INTERMINE_ID_NOT_FOUND = -1;
 
-    private static final Logger LOGGER = Logger.getLogger(URLConverter.class);
+    private static final Logger LOGGER = Logger.getLogger(CURIEConverter.class);
 
-    public URLConverter() {
+    public CURIEConverter() {
     }
 
-    public Integer getIntermineID(PermanentURL permanentURL) throws ObjectStoreException {
-        if (permanentURL != null) {
+    public Integer getIntermineID(CURIE curie) throws ObjectStoreException {
+        if (curie != null) {
             List<String> classNames = PrefixRegistry.getRegistry()
-                    .getClassNames(permanentURL.getPrefix());
+                    .getClassNames(curie.getPrefix());
             Integer intermineId = INTERMINE_ID_NOT_FOUND;
 
             for (String className : classNames) {
-                PathQuery pathQuery = buildPathQuery(permanentURL.getPrefix(),
-                        className, permanentURL.getExternalLocalId());
-                LOGGER.info("URLConverter: pathQuery to retrieve internal id: " + pathQuery.toString());
-                //PathQueryExecutor executor = PathQueryAPI.getPathQueryExecutor();
+                PathQuery pathQuery = buildPathQuery(curie, className);
+                LOGGER.info("CURIEConverter: pathQuery to retrieve internal id: " + pathQuery.toString());
                 PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
                         PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
                 ExportResultsIterator iterator = executor.execute(pathQuery);
@@ -63,19 +61,21 @@ public class URLConverter
             return intermineId;
 
         }
-        throw new RuntimeException("PermanentURL is null");
+        throw new RuntimeException("CURIE is null");
     }
 
-    private PathQuery buildPathQuery(String prefix, String className, String externalLocalId) {
+    private PathQuery buildPathQuery(CURIE curie, String className) {
         PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
         String viewPath = className + ".id";
         pathQuery.addView(viewPath);
         PrefixKeysProperties prefixKeys = PrefixKeysProperties.getProperties();
+        String prefix = curie.getPrefix();
         String prefixKey = prefixKeys.getPrefixKey(prefix);
-        LOGGER.info("URLConverter: given the prefix " + prefix + " the key is: " + prefixKey);
+        LOGGER.info("CURIEConverter: given the prefix " + prefix + " the key is: " + prefixKey);
         String contstraintPath = className + "." + prefixKey;
-        String constraintValue = prefixKeys.getInterMineExternalIdValue(prefix, externalLocalId);
-        LOGGER.info("URLConverter: given the prefix " + prefix + " the constraintValue is: " + constraintValue);
+        String localUniqueId = curie.getLocalUniqueId();
+        String constraintValue = prefixKeys.getInterMineValue(curie);
+        LOGGER.info("CURIEConverter: given the prefix " + prefix + " the constraintValue is: " + constraintValue);
         pathQuery.addConstraint(Constraints.eq(contstraintPath, constraintValue));
         if (!pathQuery.isValid()) {
             throw new RuntimeException("The PathQuery :" + pathQuery.toString() + " is not valid");
@@ -83,11 +83,11 @@ public class URLConverter
         return pathQuery;
     }
 
-    public PermanentURL getPermanentURL(Integer intermineID) {
+    public CURIE getPermanentURL(Integer intermineID) {
         if (intermineID != null) {
-            //given an intermine ID retrieve te prefix ans the value of the externalLocalId
+            //given an intermine ID retrieve te prefix and the value of the localUniqueId
             //TODO
-            return permanentURL;
+            return curie;
         }
         throw new RuntimeException("intermineID is null");
     }

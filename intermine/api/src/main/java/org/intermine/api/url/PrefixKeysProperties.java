@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 /**
  * Class to manage the keys used by the data source providers (e.g. primaryAccession for uniprot,
  * pubMedId for pubmed) and the possible prefixes (e.g. 'GO:', 'DOID:') applied to the
- * localExternalId values by InterMine.
- * An example: go uses local ID as 0000186 which is stored in intermine as GO:0000186.
+ * local unique identifiers values by InterMine.
+ * An example: go uses as LUI 0000186 which is stored in intermine as GO:0000186.
  * The class extracts all the info from the prefix-keys.properties file.
  *
  * @author danielabutano
@@ -44,6 +44,13 @@ public final class PrefixKeysProperties
                 return;
             }
             prefixKeysProperties.load(inputStream);
+            for (Object value : prefixKeysProperties.values()) {
+                if (!((String) value).matches(regex)) {
+                    LOGGER.error("In the prefix-keys.properties file, the key " + value.toString()
+                            + " has a value which does not match the regular expression");
+                    return;
+                }
+            }
         } catch (IOException ex) {
             LOGGER.error("Error loading prefix-keys.properties file", ex);
             return;
@@ -81,37 +88,38 @@ public final class PrefixKeysProperties
     }
 
     /**
-     * This methos is used to convert the localExternalID into the value stored by InterMine which,
-     * in some case, might be different. Some example:
-     * go uses local ID as 0000186 which is stored in intermine as GO:0000186
-     * doid(disease ontology) uses local ID as 0001816 which is stored in intermine as DOID:0001816
-     * uniprot uses local ID as P81928 which is stored in intermine with no alteration as P81928
-     * @param prefix the prefix
-     * @param localExternalId the localEXternalId (e.g. 0000186 for go)
-     * @return the value used by Intermine to represent the externalId
+     * This methos is used to convert the LUI(local unique identifier) into the value stored
+     * by InterMine which, in some case, might be different. Some example:
+     * go uses 0000186 as LUI which is stored in intermine as GO:0000186
+     * doid(disease ontology) uses 0001816 as LUI which is stored in intermine as DOID:0001816
+     * uniprot uses P81928 which is stored in intermine with no alteration as P81928
+     * @param curie the compact uri
+     * @return the value used by Intermine to represent the localUniqueId
      */
-    public String getInterMineExternalIdValue(String prefix, String localExternalId) {
+    public String getInterMineValue(CURIE curie) {
         if (prefixKeysProperties != null) {
+            String prefix = curie.getPrefix();
             String propertyValue = prefixKeysProperties.getProperty(prefix);
             if (!propertyValue.matches(regex)) {
                 LOGGER.error("In the prefix-keys.properties file, the key " + prefix
                         + " has a value which does not match the regular expression");
                 return null;
             }
-            String interMineExternalIdValue = null;
+            String interMineValue = null;
+            String localUniqueId = curie.getLocalUniqueId();
             if (propertyValue.startsWith("{")) {
-                interMineExternalIdValue = localExternalId;
+                interMineValue = localUniqueId;
             } else {
                 int index = propertyValue.indexOf("{");
                 if (propertyValue.startsWith("+")) {
                     String prefixToRemove = propertyValue.substring(1, index);
-                    interMineExternalIdValue = localExternalId.replace(prefixToRemove, "");
+                    interMineValue = localUniqueId.replace(prefixToRemove, "");
                 } else if (propertyValue.startsWith("-")) {
                     String prefixToAdd = propertyValue.substring(1, index);
-                    interMineExternalIdValue = prefixToAdd + localExternalId;
+                    interMineValue = prefixToAdd + localUniqueId;
                 }
             }
-            return interMineExternalIdValue;
+            return interMineValue;
         }
         return null;
     }

@@ -16,23 +16,23 @@ import java.util.Set;
 
 /**
  * Class to represent the permanentURL pattern adopted in InterMine.
- * Permamanent ULR pattern: domain/context/prefix:external_local_id
- * (e.g. humanmine.org/humanmine/uniprot:P31946)
+ * Permanent ULR pattern: domain/context/CURIE where CURIE: prefix:external_local_id
+ * (e.g. humanmine.org/humanmine/uniprot:P31946-> CURIE=uniprot:P31946)
  *
  * @author danielabutano
  */
-public class PermanentURL
+public class CURIE
 {
     private String prefix;
     private static final String LOCAL_ID_SEPARATOR = ":";
-    private String externalLocalId;
-    private static final Logger LOGGER = Logger.getLogger(PermanentURL.class);
+    private String localUniqueId;
+    private static final Logger LOGGER = Logger.getLogger(CURIE.class);
 
     /**
-     * Constructor. Build a PermanentURL after verifying the prefix
+     * Constructor. Build a CURIE after verifying the prefix
      * @param permanentURI URI as humanmine/uniprot:P31946
     */
-    public PermanentURL(String permanentURI) throws InvalidPermanentURLException {
+    public CURIE(String permanentURI) throws InvalidPermanentURLException {
         int locadIdSeparatorPosition = permanentURI.lastIndexOf(LOCAL_ID_SEPARATOR);
         if (locadIdSeparatorPosition == -1) {
             throw new InvalidPermanentURLException();
@@ -46,7 +46,7 @@ public class PermanentURL
                 for (String tmpPrefix : prefixes) {
                     if (prefixFromPermanentURI.equals(tmpPrefix)) {
                         this.prefix = prefixFromPermanentURI;
-                        externalLocalId = permanentURI.substring(locadIdSeparatorPosition + 1);
+                        localUniqueId = permanentURI.substring(locadIdSeparatorPosition + 1);
                         validURL = true;
                     }
                 }
@@ -70,15 +70,15 @@ public class PermanentURL
         this.prefix = prefix;
     }
 
-    public String getExternalLocalId() {
-        return externalLocalId;
+    public String getLocalUniqueId() {
+        return localUniqueId;
     }
 
-    public void setExternalLocalId(String externalLocalId) {
-        this.externalLocalId = externalLocalId;
+    public void setLocalUniqueId(String localUniqueId) {
+        this.localUniqueId = localUniqueId;
     }
 
     public String toString() {
-        return prefix + LOCAL_ID_SEPARATOR + externalLocalId;
+        return prefix + LOCAL_ID_SEPARATOR + localUniqueId;
     }
 }
