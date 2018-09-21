@@ -12,6 +12,7 @@ package org.intermine.api.url;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,11 +28,19 @@ public class PrefixRegistryTest
         registry = PrefixRegistry.getRegistry();
     }
 
+    @Test
     public void testGetPrefixes() {
         Set<String> prefixes = registry.getPrefixes();
         Assert.assertEquals(6, prefixes);
         for (String prefix : prefixes) {
             Assert.assertTrue(prefixes.contains(prefix));
         }
+    }
+
+    @Test
+    public void testGetPrefixesGivenClassName() {
+        List<String> prefixes = registry.getPrefixes("Protein");
+        Assert.assertEquals("uniprot", prefixes.get(0));
+        Assert.assertEquals("fb", prefixes.get(1));
     }
 }

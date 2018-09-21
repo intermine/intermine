@@ -14,8 +14,7 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
-import java.util.regex.Matcher;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 /**
@@ -34,6 +33,9 @@ public final class PrefixKeysProperties
     private String regex = "(((-([a-zA-Z])+)|(\\+([a-zA-Z])+)):?)?\\{([a-zA-Z])+\\}";
     private static final Logger LOGGER = Logger.getLogger(PrefixKeysProperties.class);
 
+    /**
+     * Private constructor called by getProperties (singleton)
+     */
     private PrefixKeysProperties() {
         prefixKeysProperties = new Properties();
         try {
@@ -57,6 +59,10 @@ public final class PrefixKeysProperties
         }
     }
 
+    /**
+     * Static method to create the instance of PrefixKeysProperties class
+     * @return the PrefixKeysProperties instance
+     */
     public static PrefixKeysProperties getProperties() {
         if (instance == null) {
             instance = new PrefixKeysProperties();
@@ -66,7 +72,9 @@ public final class PrefixKeysProperties
 
     /**
      * Given the prefix, returns the key (e.g. primaryAccession, pubmedid, primaryIdentifier)
-     * associated to it, because not all the data source providers have the same keys
+     * associated to it; data source providers have different keys
+     * @param prefix the prefix
+     * @return the key assigned to the prefix
      */
     public String getPrefixKey(String prefix) {
         if (prefixKeysProperties != null) {

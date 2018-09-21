@@ -1,10 +1,12 @@
 package org.intermine.api.fairresolution;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class FairRegistryTest {
-
+/*
     @Test
     public void testAddMapping() {
         FairRegistry fr = new FairRegistry();
@@ -66,5 +68,5 @@ public class FairRegistryTest {
 
         // Not found case
         Assert.assertNull(fr.resolve("garbage", "flatfoot"));
-    }
+    }*/
 }

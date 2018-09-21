@@ -11,7 +11,6 @@ package org.intermine.api.url;
  */
 
 import org.apache.log4j.Logger;
-
 import java.util.Set;
 
 /**
@@ -31,6 +30,7 @@ public class CURIE
     /**
      * Constructor. Build a CURIE after verifying the prefix
      * @param permanentURI URI as humanmine/uniprot:P31946
+     * @throws InvalidPermanentURLException if the permanentURI in input is not an permanent URI
     */
     public CURIE(String permanentURI) throws InvalidPermanentURLException {
         int locadIdSeparatorPosition = permanentURI.lastIndexOf(LOCAL_ID_SEPARATOR);
@@ -38,8 +38,8 @@ public class CURIE
             throw new InvalidPermanentURLException();
         }
         try {
-            String prefixFromPermanentURI = permanentURI.substring(permanentURI.lastIndexOf("/") + 1,
-                    locadIdSeparatorPosition);
+            String prefixFromPermanentURI = permanentURI.substring(
+                    permanentURI.lastIndexOf("/") + 1, locadIdSeparatorPosition);
             Set<String> prefixes = PrefixRegistry.getRegistry().getPrefixes();
             boolean validURL = false;
             if (prefixes != null) {
@@ -62,22 +62,42 @@ public class CURIE
 
     }
 
+    /**
+     * Get the prefix
+     * @return the prefix
+     */
     public String getPrefix() {
         return prefix;
     }
 
+    /**
+     * Set the prefix
+     * @param prefix the value to set
+     */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
 
+    /**
+     * Get the LUI (local unique identifier)
+     * @return the LUI
+     */
     public String getLocalUniqueId() {
         return localUniqueId;
     }
 
+    /**
+     * Set the LUI (local unique identifier)
+     * @param localUniqueId the LUI
+     */
     public void setLocalUniqueId(String localUniqueId) {
         this.localUniqueId = localUniqueId;
     }
 
+    /**
+     * Returns the String which represents the CURIE -> prefix:localUniqueId
+     * @return the string in the format prefix:localUniqueId
+     */
     public String toString() {
         return prefix + LOCAL_ID_SEPARATOR + localUniqueId;
     }

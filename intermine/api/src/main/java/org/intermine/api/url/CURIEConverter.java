@@ -36,9 +36,18 @@ public class CURIEConverter
 
     private static final Logger LOGGER = Logger.getLogger(CURIEConverter.class);
 
+    /**
+     * Constructor
+     */
     public CURIEConverter() {
     }
 
+    /**
+     * Given a curie (compact uri -> uniprot:P27362) returns the internal intermine Id
+     * @param curie the curie
+     * @return internal intermine id
+     * @throws ObjectStoreException if there are any objectstore issues
+     */
     public Integer getIntermineID(CURIE curie) throws ObjectStoreException {
         if (curie != null) {
             List<String> classNames = PrefixRegistry.getRegistry()
@@ -47,7 +56,8 @@ public class CURIEConverter
 
             for (String className : classNames) {
                 PathQuery pathQuery = buildPathQuery(curie, className);
-                LOGGER.info("CURIEConverter: pathQuery to retrieve internal id: " + pathQuery.toString());
+                LOGGER.info("CURIEConverter: pathQuery to retrieve internal id: "
+                        + pathQuery.toString());
                 PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
                         PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
                 ExportResultsIterator iterator = executor.execute(pathQuery);
@@ -64,6 +74,12 @@ public class CURIEConverter
         throw new RuntimeException("CURIE is null");
     }
 
+    /**
+     * Create a path query to retrieve the intermine id given a curie and the class name
+     * @param curie
+     * @param className the class name used to create the view an dthe contstrints
+     * @return the pathquery
+     */
     private PathQuery buildPathQuery(CURIE curie, String className) {
         PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
         String viewPath = className + ".id";
@@ -75,7 +91,8 @@ public class CURIEConverter
         String contstraintPath = className + "." + prefixKey;
         String localUniqueId = curie.getLocalUniqueId();
         String constraintValue = prefixKeys.getInterMineValue(curie);
-        LOGGER.info("CURIEConverter: given the prefix " + prefix + " the constraintValue is: " + constraintValue);
+        LOGGER.info("CURIEConverter: given the prefix " + prefix + " the constraintValue is: "
+                + constraintValue);
         pathQuery.addConstraint(Constraints.eq(contstraintPath, constraintValue));
         if (!pathQuery.isValid()) {
             throw new RuntimeException("The PathQuery :" + pathQuery.toString() + " is not valid");
@@ -83,8 +100,13 @@ public class CURIEConverter
         return pathQuery;
     }
 
-    public CURIE getPermanentURL(Integer intermineID) {
-        if (intermineID != null) {
+    /**
+     * Generate the CURIE associated to the internal interMine ID
+     * @param interMineID the interMineID
+     * @return the CURIE
+     */
+    public CURIE getCURIE(Integer interMineID) {
+        if (interMineID != null) {
             //given an intermine ID retrieve te prefix and the value of the localUniqueId
             //TODO
             return curie;

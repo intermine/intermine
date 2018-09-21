@@ -14,7 +14,14 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Properties;
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Arrays;
 
 /**
  * A registry for all the prefixes set in the prefixes.properties file
@@ -29,6 +36,9 @@ public final class PrefixRegistry
     private Map<String, List<String>> prefixClassNamesMap = null;
     private static final Logger LOGGER = Logger.getLogger(PrefixRegistry.class);
 
+    /**
+     * Private constructor
+     */
     private PrefixRegistry() {
         prefixProperties = new Properties();
         try {
@@ -60,6 +70,10 @@ public final class PrefixRegistry
         }
     }
 
+    /**
+     * Static method to create the instance of PrefixRegistry class
+     * @return the PrefixRegistry instance
+     */
     public static PrefixRegistry getRegistry() {
         if (instance == null) {
             instance = new PrefixRegistry();
@@ -76,9 +90,11 @@ public final class PrefixRegistry
     }
 
     /**
-     * Get the prefixes which can be associated to the class name given in input
-     * Flybase (with prefix fb) can provide proteins which are not provided by uniprot so given in input
-     * Protein class name the list of prefixes might be: uniprot, fb
+     * Get the prefixes which can be associated to the class name given in input.
+     * Flybase (with prefix fb) can provide, for example, proteins which are not provided
+     * by uniprot so given in input 'Protein' as class name the list of prefixes returned
+     * might be: uniprot, fb.
+     * @param className the class name, e.g. Protein
      * @return the list of prefixes
      */
     public List<String> getPrefixes(String className) {
@@ -91,7 +107,7 @@ public final class PrefixRegistry
 
     /**
      * Return the list of class names assigned to a prefix
-     * @param prefix
+     * @param prefix the prefix
      * @return the list of class names assigned to a prefix given in input
      */
     public List<String> getClassNames(String prefix) {
