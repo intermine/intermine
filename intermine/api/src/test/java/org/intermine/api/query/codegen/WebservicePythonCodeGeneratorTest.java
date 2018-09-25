@@ -11,6 +11,15 @@ package org.intermine.api.query.codegen;
  */
 
 
+import org.intermine.metadata.*;
+import org.intermine.pathquery.PathQuery;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 /**
  * Tests for the WebservicePythonCodeGenerator class.
  *
@@ -22,19 +31,71 @@ public class WebservicePythonCodeGeneratorTest extends WebserviceJavaCodeGenerat
         super(name);
     }
 
-    /**
-     * Sets up the test fixture.
-     * (Called before every test case method.)
-     */
     @Override
     public void setUp() {
         lang = "python";
         cg = new WebservicePythonCodeGenerator();
     }
 
-    /*
-     * The tests are defined in the parent class. This subclass simply redefines the language
-     * to be used for the generator.
-     */
+    @Test
+    public void testPrintOneAttribute() throws Exception {
+        List<ClassDescriptor> cds = new ArrayList<ClassDescriptor>();
+        List<AttributeDescriptor> ads = new ArrayList<AttributeDescriptor>();
 
+        ads.add(new AttributeDescriptor("testatt", "java.lang.String"));
+        cds.add(
+            new ClassDescriptor(
+                "testns.testclass", null, false,
+                ads,
+                new HashSet<ReferenceDescriptor>(),
+                new HashSet<CollectionDescriptor>()));
+
+        Model m = new Model("model1", "testns", cds);
+
+        PathQuery pq = new PathQuery(m);
+        pq.addView("testclass.testatt");
+
+        String result = cg.generate(new WebserviceCodeGenInfo(pq, null, null, null, true, null, "\n"));
+        String[] lines = result.split("\n");
+
+        int expectedLines = 27;
+
+        Assert.assertEquals(expectedLines, lines.length);
+        Assert.assertEquals("print(row[\"testatt\"])", lines[expectedLines - 1].trim());
+
+        // System.out.println(result);
+    }
+
+    @Test
+    public void testPrintThreeAttributes() throws Exception {
+        List<ClassDescriptor> cds = new ArrayList<ClassDescriptor>();
+        List<AttributeDescriptor> ads = new ArrayList<AttributeDescriptor>();
+
+        ads.add(new AttributeDescriptor("testatt", "java.lang.String"));
+        ads.add(new AttributeDescriptor("testatt2", "java.lang.String"));
+        ads.add(new AttributeDescriptor("testatt3", "java.lang.String"));
+
+        cds.add(
+            new ClassDescriptor(
+                "testns.testclass", null, false,
+                ads,
+                new HashSet<ReferenceDescriptor>(),
+                new HashSet<CollectionDescriptor>()));
+
+        Model m = new Model("model1", "testns", cds);
+
+        PathQuery pq = new PathQuery(m);
+        pq.addViews("testclass.testatt", "testclass.testatt2", "testclass.testatt3");
+
+        String result = cg.generate(new WebserviceCodeGenInfo(pq, null, null, null, true, null, "\n"));
+        String[] lines = result.split("\n");
+
+        int expectedLines = 27;
+
+        Assert.assertEquals(expectedLines, lines.length);
+        Assert.assertEquals(
+            "print(row[\"testatt\"], row[\"testatt2\"], row[\"testatt3\"])", lines[expectedLines - 1].trim());
+
+        // System.out.println(result);
+    }
 }
