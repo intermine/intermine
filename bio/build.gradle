@@ -10,7 +10,7 @@ buildscript {
 
 subprojects {
     group = 'org.intermine'
-    version = '2.0.0-RC-03'
+    version = '2.0.0'
 
     apply plugin: "java"
     apply plugin: "maven"
