@@ -84,6 +84,9 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             + "#" + endl
             + "# For further documentation you can visit:" + endl
             + "#     http://intermine.readthedocs.org/en/latest/web-services/" + endl + endl
+            + "# The line below will be needed if you are running this script with python 2." + endl
+            + "# Python 3 will ignore it." + endl
+            + "from __future__ import print_function" + endl + endl
             + "# The following two lines will be needed in every python script:" + endl
             + "from intermine.webservice import Service" + endl;
         return boilerplate;
@@ -148,24 +151,35 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             return error;
         }
 
-        StringBuffer currentLine = new StringBuffer(INDENT + "print");
+        StringBuffer currentLine = new StringBuffer(INDENT + "print(");
         Iterator<String> rowKeyIt = rowKeyAccesses.iterator();
+
+        boolean firstElement = true;
+
         while (rowKeyIt.hasNext()) {
             String toPrint = rowKeyIt.next();
-            if (StringUtils.isNotBlank(currentLine.toString())) {
+            if (!firstElement && StringUtils.isNotBlank(currentLine.toString())) {
                 toPrint = " " + toPrint;
             }
+
             if (rowKeyIt.hasNext()) {
                 toPrint += ",";
             }
+
             if (currentLine.length() + toPrint.length() > 100) {
                 sb.append(currentLine.toString() + " \\" + endl);
                 currentLine = new StringBuffer(INDENT + INDENT);
-                toPrint = toPrint.substring(1);
+
+                if (!firstElement) {
+                    toPrint = toPrint.substring(1);
+                }
             }
+
             currentLine.append(toPrint);
+            firstElement = false;
         }
-        sb.append(currentLine.toString() + endl);
+
+        sb.append(currentLine.toString() + ")" + endl);
 
         return sb.toString();
     }
