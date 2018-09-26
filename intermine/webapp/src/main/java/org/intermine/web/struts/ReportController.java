@@ -36,6 +36,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.url.CURIEConverter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -75,7 +76,10 @@ public class ReportController extends InterMineAction
 
         HttpSession session = request.getSession();
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-
+        //to test
+        String idString = request.getParameter("id");
+        CURIEConverter converter = new CURIEConverter();
+        converter.getCURIE(Integer.parseInt(idString));
         if (im.getBagManager().isAnyBagToUpgrade(SessionMethods.getProfile(session))) {
             recordError(new ActionMessage("login.upgradeListManually"), request);
         }

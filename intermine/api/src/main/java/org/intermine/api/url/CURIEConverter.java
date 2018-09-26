@@ -10,16 +10,21 @@ package org.intermine.api.url;
  *
  */
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -30,8 +35,8 @@ import java.util.List;
  */
 public class CURIEConverter
 {
-    private Integer intermineID = null;
-    private CURIE curie = null;
+    //private Integer intermineID = null;
+    //private CURIE curie = null;
     private static final Integer INTERMINE_ID_NOT_FOUND = -1;
 
     private static final Logger LOGGER = Logger.getLogger(CURIEConverter.class);
@@ -43,7 +48,7 @@ public class CURIEConverter
     }
 
     /**
-     * Given a curie (compact uri -> uniprot:P27362) returns the internal intermine Id
+     * Given a curie (compact uri, e.g. uniprot:P27362) returns the internal intermine Id
      * @param curie the curie
      * @return internal intermine id
      * @throws ObjectStoreException if there are any objectstore issues
@@ -109,8 +114,39 @@ public class CURIEConverter
         if (interMineID != null) {
             //given an intermine ID retrieve te prefix and the value of the localUniqueId
             //TODO
-            return curie;
+            String type = getType(interMineID);
+            return null;
         }
         throw new RuntimeException("intermineID is null");
+    }
+
+    private String getType(Integer interMineID) {
+        ObjectStore os = PathQueryAPI.getObjectStore();
+        InterMineObject imObj = null;
+        try {
+            imObj = os.getObjectById(interMineID);
+            Class shadowClass = imObj.getClass();
+
+            try {
+                LOGGER.info("CURIEConverter");
+                Field field = shadowClass.getField("shadowOf");
+                Class clazz1 = field.getType();
+                LOGGER.info("CURIEConverter: after getType");
+                LOGGER.info("CURIEConverter: field.getType().getSimpleName():" + clazz1.getSimpleName());
+                Class clazz = (Class) field.get(null);
+                LOGGER.info("CURIEConverter: " + clazz.getSimpleName());
+            } catch (NoSuchFieldException e) {
+                LOGGER.error(e);
+            } catch (IllegalAccessException e) {
+                LOGGER.error("CURIEConverter", e);
+            }
+
+            LOGGER.info("CURIEConverter: given the interMineID " + interMineID + " the canonicalname is:" + imObj.getClass().getCanonicalName());
+            LOGGER.info("CURIEConverter: given the interMineID " + interMineID + " the simplename is:" + imObj.getClass().getSimpleName());
+            LOGGER.info("CURIEConverter: given the interMineID " + interMineID + " the typename is:" + imObj.getClass().getTypeName());
+        } catch (ObjectStoreException e) {
+            LOGGER.error("Failed to find the object with id: " + interMineID, e);
+        }
+        return imObj.getClass().getName();
     }
 }
