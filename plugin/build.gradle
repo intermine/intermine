@@ -90,9 +90,9 @@ bintray {
         vcsUrl = 'https://github.com/intermine/intermine.git'
         publicDownloadNumbers = true
         version {
-            name = '2.0.0-RC-03'
-            desc = 'InterMine 2.0 Release Candidate v3'
-            vcsTag = 'intermine-2.0.0-RC-03'
+            name = '2.0.0'
+            desc = 'InterMine 2.0'
+            vcsTag = 'intermine-2.0.0'
         }
     }
 
