@@ -9,9 +9,9 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Sequence;
+import org.apache.log4j.Logger;
+import org.biojava.nbio.core.sequence.DNASequence;
+import org.biojava.nbio.core.sequence.template.Sequence;
 
 /**
  * A loader that works for FASTA files with an NCBI formatted header:
@@ -21,7 +21,7 @@ import org.biojava.bio.seq.Sequence;
  */
 public class NCBIFastaLoaderTask extends FastaLoaderTask
 {
-    //protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
+    protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
     private static final String ORG_HEADER = " Homo sapiens ";
     private static final String CHROMOSOME_HEADER = "chromosome";
 
@@ -30,10 +30,10 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
      */
     @Override
     protected String getIdentifier(Sequence bioJavaSequence) {
-        Annotation anno = bioJavaSequence.getAnnotation();
-        String header = anno.getProperty("description_line").toString();
-        // >gi|568815597|ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p2 Primary Assembly
-        // gi|251831106|ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
+
+        String header = ((DNASequence) bioJavaSequence).getOriginalHeader();
+        // >ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p12 Primary Assembly
+        // >ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
         for (String headerString : header.split("\\|")) {
             if (headerString.contains("mitochondrion")) {
                 return "MT";
@@ -46,7 +46,6 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
                 String identifier = headerSubStrings[0].substring(ORG_HEADER.length()
                         + CHROMOSOME_HEADER.length());
                 return identifier.trim();
-
             }
         }
         // nothing found

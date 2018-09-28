@@ -20,7 +20,6 @@
 	<classpathentry kind="lib" path="lib/jaxb-api-2.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-core-2.2.7.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl-2.2.7.jar"/>
-	<classpathentry kind="lib" path="lib/biojava-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/axis-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-discovery-0.4.jar"/>
 	<classpathentry kind="lib" path="lib/ehcache-core-2.6.11.jar"/>
@@ -31,5 +30,9 @@
 	<classpathentry kind="lib" path="lib/jami-interactionviewer-json-2.0.2-20150304.115400-2.jar"/>
 	<classpathentry kind="lib" path="lib/jami-mitab-1.1.2-20150304.115341-1.jar"/>
 	<classpathentry kind="lib" path="lib/jami-xml-1.1.3-20150304.115347-1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/biojava-core-4.2.0.jar" sourcepath="lib/biojava-core-4.2.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/biojava-genome-4.2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/biojava-ontology-4.2.0.jar"/>
+	<classpathentry kind="lib" path="/bio-core-main/lib/biojava-core-4.2.0.jar"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>

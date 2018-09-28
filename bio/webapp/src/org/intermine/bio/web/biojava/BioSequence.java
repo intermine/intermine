@@ -10,9 +10,12 @@ package org.intermine.bio.web.biojava;
  *
  */
 
-import org.biojava.bio.seq.impl.SimpleSequence;
-import org.biojava.bio.symbol.SymbolList;
 
+import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
+import org.biojava.nbio.core.sequence.AccessionID;
+import org.biojava.nbio.core.sequence.template.AbstractSequence;
+import org.biojava.nbio.core.sequence.template.Compound;
+import org.biojava.nbio.ontology.utils.SmallAnnotation;
 import org.intermine.model.bio.BioEntity;
 
 /**
@@ -20,7 +23,7 @@ import org.intermine.model.bio.BioEntity;
  *
  * @author Kim Rutherford
  */
-public class BioSequence extends SimpleSequence
+public class BioSequence extends AbstractSequence<Compound>
 {
     /**
      *
@@ -31,14 +34,31 @@ public class BioSequence extends SimpleSequence
      */
     @SuppressWarnings("unused")
     private BioEntity bioEntity = null;
+    private SmallAnnotation annotation;
 
     /**
      * Create a new BioSequence from a BioEntity
-     * @param symbols a DNA SymbolList created from the BioEntity
+     * @param seq a biojava sequence
      * @param bioEntity the BioEntity
+     * @throws CompoundNotFoundException exception
      */
-    BioSequence (SymbolList symbols, BioEntity bioEntity) {
-        super(symbols, null, bioEntity.getPrimaryIdentifier(), null);
+    public BioSequence (AbstractSequence seq, BioEntity bioEntity)
+        throws CompoundNotFoundException {
+
+        super(seq.getSequenceAsString(), seq.getCompoundSet());
+
+        AccessionID seqAccession = new AccessionID(bioEntity.getPrimaryIdentifier());
+        seq.setAccession(seqAccession);
+        annotation = new SmallAnnotation();
         this.bioEntity = bioEntity;
+    }
+
+    /**
+     * @return the annotation
+     */
+
+    public SmallAnnotation getAnnotation() {
+        // TODO Auto-generated method stub
+        return annotation;
     }
 }

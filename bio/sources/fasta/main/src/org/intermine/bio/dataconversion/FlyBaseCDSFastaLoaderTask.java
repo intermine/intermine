@@ -13,8 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Sequence;
+import org.biojava.nbio.core.sequence.template.Sequence;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -26,6 +25,7 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
+import org.apache.log4j.Logger;
 
 /**
  * A fasta loader that understand the headers of FlyBase fasta CDS fasta files and can make the
@@ -34,16 +34,18 @@ import org.intermine.util.DynamicUtil;
  */
 public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 {
+    private static final Logger LOG = Logger.getLogger(FlyBaseCDSFastaLoaderTask.class);
+
    /**
      * {@inheritDoc}
      */
     @Override
-    protected void extraProcessing(Sequence bioJavaSequence,
+    protected void extraProcessing (Sequence bioJavaSequence,
             org.intermine.model.bio.Sequence flymineSequence,
             BioEntity bioEntity, Organism organism, DataSet dataSet)
         throws ObjectStoreException {
-        Annotation annotation = bioJavaSequence.getAnnotation();
-        String header = (String) annotation.getProperty("description");
+
+        String header = bioJavaSequence.getAccession().getID();
         String mrnaIdentifier = getMRNAIdentifier(header);
 
         ObjectStore os = getIntegrationWriter().getObjectStore();
@@ -74,8 +76,7 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      */
     @Override
     protected String getIdentifier(Sequence bioJavaSequence) {
-        Annotation annotation = bioJavaSequence.getAnnotation();
-        String header = (String) annotation.getProperty("description");
+        String header = bioJavaSequence.getAccession().getID();
 
         final String regexp = ".*FlyBase_Annotation_IDs:([^, =;]+).*";
         Pattern p = Pattern.compile(regexp);
@@ -86,7 +87,6 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         }
         // it doesn't matter too much what the CDS identifier is
         return getMRNAIdentifier(header) + "_CDS";
-
     }
 
     private String getMRNAIdentifier(String header) {

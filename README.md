@@ -83,6 +83,6 @@ Please cite
 [readthedocs]: http://intermine.readthedocs.org/en/latest
 [tutorial]: http://intermine.readthedocs.org/en/latest/get-started/tutorial
 [psql]: http://www.postgresql.org
-[java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+[java]: http://openjdk.java.net
 [apache]: http://www.apache.org
 [tomcat]: http://tomcat.apache.org/download-70.cgi

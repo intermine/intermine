@@ -12,6 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
-	<classpathentry kind="lib" path="main/lib/biojava-1.7.1.jar"/>
+	<classpathentry kind="lib" path="/bio-core-main/lib/biojava-core-4.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
