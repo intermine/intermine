@@ -23,6 +23,7 @@ public class Source extends Action
     private String name;
     private String type;
     private File location;
+    private String prefix;
 
     /**
      * Set the name of this Source.
@@ -71,6 +72,23 @@ public class Source extends Action
     public File getLocation() {
         return location;
     }
+
+    /**
+     * Set the prefix of this Source.
+     * @param prefix the name
+     */
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    /**
+     * Get the prefix of this object.
+     * @return the prefix
+     */
+    public String getPrefix() {
+        return prefix;
+    }
+
 }
 
 

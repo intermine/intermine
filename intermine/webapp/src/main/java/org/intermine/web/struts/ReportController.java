@@ -36,6 +36,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.url.CURIE;
 import org.intermine.api.url.CURIEConverter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -76,10 +77,7 @@ public class ReportController extends InterMineAction
 
         HttpSession session = request.getSession();
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        //to test
-        String idString = request.getParameter("id");
-        CURIEConverter converter = new CURIEConverter();
-        converter.getCURIE(Integer.parseInt(idString));
+
         if (im.getBagManager().isAnyBagToUpgrade(SessionMethods.getProfile(session))) {
             recordError(new ActionMessage("login.upgradeListManually"), request);
         }
@@ -188,11 +186,17 @@ public class ReportController extends InterMineAction
             String type = reportObject.getType();
             request.setAttribute("objectType", type);
 
-            String stableLink =
-                PortalHelper.generatePortalLink(reportObject.getObject(), im, request);
-            if (stableLink != null) {
+            /*String stableLink =
+                PortalHelper.generatePortalLink(reportObject.getObject(), im, request);*/
+            String idString = request.getParameter("id");
+            LOG.info("ReportContrller: request.getParameter('id'): " + idString);
+            CURIEConverter converter = new CURIEConverter();
+            CURIE curie = converter.getCURIE(Integer.parseInt(idString));
+            if (curie != null) {
+                String stableLink = PortalHelper.getBaseUrl(request) + "/" + curie.toString();
                 request.setAttribute("stableLink", stableLink);
             }
+
 
             stepTime = System.currentTimeMillis();
             startTime = stepTime;

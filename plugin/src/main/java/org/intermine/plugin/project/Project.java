@@ -248,4 +248,15 @@ public class Project
             }
         }
     }
+
+    public List<String> getSourceNames(String prefix) {
+        List<String> sourceNames = new ArrayList<>();
+        for (Source source : sources.values()) {
+            String sourcePrefix = source.getPrefix();
+            if (sourcePrefix != null && sourcePrefix.equals(prefix)) {
+                sourceNames.add(source.getName());
+            }
+        }
+        return sourceNames;
+    }
 }

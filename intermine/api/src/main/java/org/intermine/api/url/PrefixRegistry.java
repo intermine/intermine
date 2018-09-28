@@ -31,8 +31,10 @@ import java.util.Arrays;
 public final class PrefixRegistry
 {
     private static PrefixRegistry instance = null;
-    private Properties prefixProperties = null;
     private Set<String> prefixes = null;
+    //a map to cache all the prefixes which can be used by a class
+    private Map<String, List<String>> classPrefixesMap = null;
+    // a map to cache all the classes which can be used by a prefix
     private Map<String, List<String>> prefixClassNamesMap = null;
     private static final Logger LOGGER = Logger.getLogger(PrefixRegistry.class);
 
@@ -40,7 +42,7 @@ public final class PrefixRegistry
      * Private constructor
      */
     private PrefixRegistry() {
-        prefixProperties = new Properties();
+        Properties prefixProperties = new Properties();
         try {
             InputStream inputStream = getClass().getClassLoader()
                     .getResourceAsStream("prefixes.properties");
@@ -54,17 +56,19 @@ public final class PrefixRegistry
             return;
         }
         prefixes = new HashSet<>();
+        classPrefixesMap = new HashMap<>();
         prefixClassNamesMap = new HashMap<>();
         for (Map.Entry<Object, Object> entry : prefixProperties.entrySet()) {
             String prefixesAsString = entry.getValue().toString();
             List<String> prefixList = Arrays.asList(prefixesAsString.split(",(\\s){0,}"));
             prefixes.addAll(prefixList);
+            classPrefixesMap.put((String) entry.getKey(), prefixList);
             for (String prefix : prefixList) {
                 if (!prefixClassNamesMap.containsKey(prefix)) {
                     prefixClassNamesMap.put(prefix,
-                            new ArrayList<>(Arrays.asList(entry.getKey().toString())));
+                            new ArrayList<>(Arrays.asList((String)entry.getKey())));
                 } else {
-                    prefixClassNamesMap.get(prefix).add(entry.getKey().toString());
+                    prefixClassNamesMap.get(prefix).add((String)entry.getKey());
                 }
             }
         }
@@ -90,7 +94,7 @@ public final class PrefixRegistry
     }
 
     /**
-     * Get the prefixes which can be associated to the class name given in input.
+     * Returns the prefixes which can be associated to the class name given in input.
      * Flybase (with prefix fb) can provide, for example, proteins which are not provided
      * by uniprot so given in input 'Protein' as class name the list of prefixes returned
      * might be: uniprot, fb.
@@ -98,15 +102,11 @@ public final class PrefixRegistry
      * @return the list of prefixes
      */
     public List<String> getPrefixes(String className) {
-        String prefixesAsString = prefixProperties.getProperty(className);
-        if (prefixesAsString != null && !prefixesAsString.isEmpty()) {
-            return Arrays.asList(prefixesAsString.split(","));
-        }
-        return null;
+        return classPrefixesMap.get(className);
     }
 
     /**
-     * Return the list of class names assigned to a prefix
+     * Return the list of class names which might be resolved by the prefix given in input
      * @param prefix the prefix
      * @return the list of class names assigned to a prefix given in input
      */

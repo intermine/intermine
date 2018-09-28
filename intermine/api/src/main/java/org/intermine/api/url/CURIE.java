@@ -16,7 +16,9 @@ import java.util.Set;
 /**
  * Class to represent the permanentURL pattern adopted in InterMine.
  * Permanent ULR pattern: domain/context/CURIE where CURIE: prefix:external_local_id
- * (e.g. humanmine.org/humanmine/uniprot:P31946-> CURIE=uniprot:P31946)
+ * Some examples:
+ * humanmine.org/humanmine/uniprot:P31946-> CURIE=uniprot:P31946
+ * humanmine.org/humanmine/go:0000186-> CURIE=go:0000186
  *
  * @author danielabutano
  */
@@ -26,6 +28,16 @@ public class CURIE
     private static final String LOCAL_ID_SEPARATOR = ":";
     private String localUniqueId;
     private static final Logger LOGGER = Logger.getLogger(CURIE.class);
+
+    /**
+     * Constructor. Build a CURIE given prefix and LUI
+     * @param prefix the prefix (e.g. uniprot)
+     * @param localUniqueId the LUI (e.g. P31946, 0000186)
+     */
+    public CURIE(String prefix, String localUniqueId) {
+        this.prefix = prefix;
+        this.localUniqueId = localUniqueId;
+    }
 
     /**
      * Constructor. Build a CURIE after verifying the prefix
