@@ -111,7 +111,7 @@ void enormocorpLoader() {
 
 task enormocorp(dependsOn: 'loadsadata') {
     group "${taskGroup}"
-    description "Build database and load extra data for intermine-test webapp"
+    description "Load basic data set, extra data (testmodel_extra_data.xml) AND testmodel_enormo_data.xml"
     doLast {
         enormocorpLoader()
     }
@@ -119,7 +119,7 @@ task enormocorp(dependsOn: 'loadsadata') {
 
 task loadsadata(dependsOn: 'insertData') {
     group "${taskGroup}"
-    description "Build database and load extra data for intermine-test webapp"
+    description "Load basic data set AND extra data in testmodel_extra_data.xml"
     doLast {
         loadsadataLoader()
     }
@@ -137,7 +137,7 @@ task buildDB() {
 
 task insertData(dependsOn: 'buildDB') {
     group "${taskGroup}"
-    description "Build database and load data for intermine-test webapp"
+    description "Load basic data set for intermine-test webapp"
     doLast {
         insertDataUnitTest()
     }
