@@ -2167,8 +2167,7 @@ query could be used:
             <param type="Integer" required="false" default="0" description="The start index">start</param>
             <param type="Integer" required="false" description="The end index">end</param>
             <param type="String"
-                default="
-&lt;query model=&quot;genomic&quot; view=&quot;Chromosome.sequence.residues&quot;&gt;
+                default="&lt;query model=&quot;genomic&quot; view=&quot;Chromosome.sequence.residues&quot;&gt;
     &lt;constraint path=&quot;Chromosome&quot; op=&quot;LOOKUP&quot; value=&quot;X&quot; extraValue=&quot;D. melanogaster&quot;/&gt;
 &lt;/query&gt;"
                 required="true" description="The xml OR JSON of the query to run.">query</param>

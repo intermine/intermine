@@ -84,12 +84,12 @@ class WebAppPlugin implements Plugin<Project> {
                     w << content.replace("<!--@MODEL_INCLUDE@-->", tilesDefsModel.text)
                 }
 
-                //web.xml
-                File webModel = new File(buildResDir + "web-model.xml")
-                File web = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/web.xml")
-                content = web.text
-                web.withWriter { w ->
-                    w << content.replace("<!--@MODEL_INCLUDE@-->", webModel.text)
+                // web.xml
+                File webXml = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/web.xml")
+                File webBio = new File(project.buildDir.absolutePath + "/explodedWebApp/WEB-INF/web-bio.xml")
+                content = webXml.text
+                webXml.withWriter { w ->
+                    w << content.replace("<!--@MODEL_INCLUDE@-->", webBio.text)
                 }
 
                 //internationalisation
