@@ -106,17 +106,6 @@ public class Project
     }
 
     /**
-     * Return the version of this project. Can be null.
-     *
-     * @param sourceName the name of the source of interest
-     * @return the version for this source
-     */
-    public String getVersion(String sourceName) {
-        Source source = sources.get(sourceName);
-        return source.getVersion();
-    }
-
-    /**
      * Validate contents of a project.xml file once it has been unmarshalled.  This will check
      *     a) that 'source.location' properties point to valid locations (IF SET)
      *     b) that all sources lists can be found in 'source.location' directories
