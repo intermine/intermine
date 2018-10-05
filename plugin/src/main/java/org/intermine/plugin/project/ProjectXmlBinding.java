@@ -104,6 +104,10 @@ public final class ProjectXmlBinding
                 Source source = new Source();
                 source.setType(attrs.getValue("type"));
                 source.setName(attrs.getValue("name"));
+                String version = attrs.getValue("version");
+                if (version != null && !"".equals(version)) {
+                    source.setVersion(version);
+                }
                 project.addSource(attrs.getValue("name"), source);
                 action = source;
             } else if ("property".equals(qName)) {
