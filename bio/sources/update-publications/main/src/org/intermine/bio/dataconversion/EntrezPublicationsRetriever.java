@@ -78,11 +78,10 @@ public class EntrezPublicationsRetriever
     // full record (new)
     // rettype=abstract or just leave it out
     protected static final String EFETCH_URL =
-        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?tool=flymine&db=pubmed"
-        + "&rettype=abstract&retmode=xml&id=";
+        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
     // summary
     protected static final String ESUMMARY_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/"
-            + "eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
+            + "eutils/esummary.fcgi";
     // number of records to retrieve per request
     protected static final int BATCH_SIZE = 500;
     // number of times to try the same batch from the server
@@ -365,17 +364,21 @@ public class EntrezPublicationsRetriever
          * Author: Norbert Auer
          * e-mail: norbert.auer@boku.ac.at
          */
-        String url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
-        URL obj = new URL(url);
+
+        String urlString = ESUMMARY_URL;
+        if (loadFullRecord) {
+            urlString = EFETCH_URL;
+        }
+        URL obj = new URL(urlString);
         HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
 
-        // add reuqest header to POST
+        // add request header to POST
         con.setRequestMethod("POST");
 
         // con.setRequestProperty("User-Agent", USER_AGENT);
         con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
-        String urlParameters = "tool=flymine&db=pubmed&rettype=abstract&retmode=xml&id="
+        String urlParameters = "tool=intermine&db=pubmed&rettype=abstract&retmode=xml&id="
             + StringUtil.join(ids, ",");
 
         // Send post request
