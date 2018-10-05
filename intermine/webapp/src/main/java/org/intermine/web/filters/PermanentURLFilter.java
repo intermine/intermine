@@ -11,9 +11,8 @@ package org.intermine.web.filters;
  */
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.Logger;
-import org.intermine.api.url.CURIE;
-import org.intermine.api.url.CURIEConverter;
+import org.intermine.api.url.PermanentURI;
+import org.intermine.api.url.PermanentURIConverter;
 import org.intermine.api.url.InvalidPermanentURLException;
 
 import org.intermine.objectstore.ObjectStoreException;
@@ -42,8 +41,8 @@ public class PermanentURLFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) res;
 
         try {
-            CURIE permanentURL = new CURIE(request.getRequestURI());
-            CURIEConverter urlConverter = new CURIEConverter();
+            PermanentURI permanentURL = new PermanentURI(request.getRequestURI());
+            PermanentURIConverter urlConverter = new PermanentURIConverter();
             Integer id = urlConverter.getIntermineID(permanentURL);
             if (id == -1) {
                 response.setStatus(HttpStatus.SC_NOT_FOUND);

@@ -19,81 +19,67 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Class to map the key used by the data source providers (e.g. primaryAccession for uniprot,
- * pubMedId for pubmed) and the possible prefixes (e.g. 'GO:', 'DOID:') applied to the
- * local unique identifiers values by InterMine.
- * An example: go uses as LUI 0000186 which is stored in intermine as GO:0000186.
- * The class extracts all the info from the prefix-keys.properties file.
+ * Class to map the class name defined in the core.xml with the identifier used by the data source
+ * providers (e.g. Protein ->primaryAccession,  Publication ->pubMedId)
  *
  * @author danielabutano
  */
-public final class PrefixKeyMapper
+public final class ClassNameURIIdentifierMapper
 {
-    private static PrefixKeyMapper instance = null;
+    private static ClassNameURIIdentifierMapper instance = null;
     private Properties properties = null;
-    //map tp cache the key associated to a prefix
-    private Map<String, String> prefixKeyMap = null;
-    private String regex = "(((-([a-zA-Z])+)|(\\+([a-zA-Z])+)):?)?\\{([a-zA-Z])+\\}";
-    private static final Logger LOGGER = Logger.getLogger(PrefixKeyMapper.class);
+    //map tp cache the identifier associated to a class Name
+    private Map<String, String> classNameIdentifiersMap = null;
+    private static final Logger LOGGER = Logger.getLogger(ClassNameURIIdentifierMapper.class);
 
     /**
      * Private constructor called by getMapper (singleton)
      */
-    private PrefixKeyMapper() {
+    private ClassNameURIIdentifierMapper() {
         properties = new Properties();
-        prefixKeyMap = new HashMap();
+        classNameIdentifiersMap = new HashMap();
         try {
             InputStream inputStream = getClass().getClassLoader()
-                    .getResourceAsStream("prefix-key.properties");
+                    .getResourceAsStream("uri_identifiers.properties");
             if (inputStream == null) {
-                LOGGER.error("File prefix-key.properties not found");
+                LOGGER.error("File uri_identifiers.properties not found");
                 return;
             }
             properties.load(inputStream);
-            String propertyValue;
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                propertyValue = (String) entry.getValue();
-                if (!propertyValue.matches(regex)) {
-                    LOGGER.error("In the prefix-key.properties file, the key " + entry.getKey().toString()
-                            + " has a value which does not match the regular expression");
-                    return;
-                } else {
-                    int start = propertyValue.indexOf("{");
-                    int end = propertyValue.indexOf("}");
-                    prefixKeyMap.put((String) entry.getKey(), propertyValue.substring(start + 1, end));
-                }
+                classNameIdentifiersMap.put((String) entry.getKey(), (String) entry.getValue());
             }
         } catch (IOException ex) {
-            LOGGER.error("Error loading prefix-key.properties file", ex);
+            LOGGER.error("Error loading uri_identifiers.properties file", ex);
             return;
         }
     }
 
     /**
-     * Static method to create the instance of PrefixKeyMapper class
-     * @return the PrefixKeyMapper instance
+     * Static method to create the instance of ClassNameURIIdentifierMapper class
+     * @return the ClassNameURIIdentifierMapper instance
      */
-    public static PrefixKeyMapper getMapper() {
+    public static ClassNameURIIdentifierMapper getMapper() {
         if (instance == null) {
-            instance = new PrefixKeyMapper();
+            instance = new ClassNameURIIdentifierMapper();
         }
         return instance;
     }
 
     /**
-     * Given the prefix, returns the key (e.g. primaryAccession, pubmedid, primaryIdentifier)
-     * associated to it; data source providers have different keys
-     * @param prefix the prefix
-     * @return the key assigned to the prefix
+     * Given the className, returns the identifier (e.g. primaryAccession, pubMedId,
+     * primaryIdentifier) associated to it; data source providers have different keys
+     * @param className the className
+     * @return the identifier assigned to the className
      */
-    public String getKey(String prefix) {
-        if (prefixKeyMap != null) {
-            return prefixKeyMap.get(prefix);
+    public String getIdentifier(String className) {
+        if (classNameIdentifiersMap != null) {
+            return classNameIdentifiersMap.get(className);
         }
         return null;
     }
 
-    /**
+/*    *//**
      * This method is used to convert the LUI(local unique identifier) into the value stored
      * by InterMine which, in some case, might be different. Some example:
      * go uses 0000186 as LUI which is stored in intermine as GO:0000186
@@ -101,8 +87,8 @@ public final class PrefixKeyMapper
      * uniprot uses P81928 which is stored in intermine with no alteration as P81928
      * @param curie the compact uri
      * @return the value used by Intermine to represent the localUniqueId
-     */
-    public String getInterMineAdaptedLUI(CURIE curie) {
+     *//*
+    public String getInterMineAdaptedLUI(PermanentURI curie) {
         if (properties != null) {
             String prefix = curie.getPrefix();
             String propertyValue = properties.getProperty(prefix);
@@ -144,5 +130,5 @@ public final class PrefixKeyMapper
             return originalValue;
         }
         return null;
-    }
+    }*/
 }
