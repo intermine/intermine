@@ -78,7 +78,7 @@ public class EntrezPublicationsRetriever
     // full record (new)
     // rettype=abstract or just leave it out
     protected static final String EFETCH_URL =
-        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
+            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
     // summary
     protected static final String ESUMMARY_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/"
             + "eutils/esummary.fcgi";
@@ -199,7 +199,7 @@ public class EntrezPublicationsRetriever
                         // Try to find this publication object in berkeleydb and write item xml to
                         // cache file
                         ByteArrayInputStream mapInputStream =
-                            new ByteArrayInputStream(data.getData());
+                                new ByteArrayInputStream(data.getData());
                         ObjectInputStream deserializer = new ObjectInputStream(mapInputStream);
                         Map<String, Object> pubMap = (Map) deserializer.readObject();
                         writeItems(writer, mapToItems(itemFactory, pubMap));
@@ -207,7 +207,7 @@ public class EntrezPublicationsRetriever
                     } catch (EOFException e) {
                         // ignore and fetch it again
                         System.err .println("found in cache, but igored due to cache problem: "
-                                            + pubMedIdInteger);
+                                + pubMedIdInteger);
                     }
                 } else {
                     // berkeleydb cached pubs will be written to cache file, the rest will be
@@ -238,11 +238,11 @@ public class EntrezPublicationsRetriever
                             try {
                                 if (loadFullRecord) {
                                     SAXParser.parse(new InputSource(
-                                            new StringReader(buf.toString())),
-                                                new FullRecordHandler(fromServerMap), false);
+                                                    new StringReader(buf.toString())),
+                                            new FullRecordHandler(fromServerMap), false);
                                 } else {
                                     SAXParser.parse(new InputSource(
-                                            new StringReader(buf.toString())),
+                                                    new StringReader(buf.toString())),
                                             new SummaryRecordHandler(fromServerMap), false);
                                 }
                             } catch (Throwable e) {
@@ -252,8 +252,8 @@ public class EntrezPublicationsRetriever
                             }
                             if (i == MAX_TRIES) {
                                 throw new RuntimeException("failed to parse: " + buf.toString()
-                                                           + " - tried " + MAX_TRIES + " times",
-                                                           throwable);
+                                        + " - tried " + MAX_TRIES + " times",
+                                        throwable);
                             } else {
                                 if (throwable != null) {
                                     // try again
@@ -305,8 +305,8 @@ public class EntrezPublicationsRetriever
      * Add a Map of pubication information to the Database
      */
     private static void addToDb(Transaction txn, Database db,
-                         Map<String, Map<String, Object>> fromServerMap)
-        throws IOException, DatabaseException {
+                                Map<String, Map<String, Object>> fromServerMap)
+            throws IOException, DatabaseException {
         for (Map.Entry<String, Map<String, Object>> entry: fromServerMap.entrySet()) {
             String pubMedId = entry.getKey();
             DatabaseEntry key = new DatabaseEntry(pubMedId.getBytes());
@@ -334,15 +334,15 @@ public class EntrezPublicationsRetriever
         ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
 
         SimpleConstraint scTitle =
-            new SimpleConstraint(new QueryField(qc, "title"), ConstraintOp.IS_NULL);
+                new SimpleConstraint(new QueryField(qc, "title"), ConstraintOp.IS_NULL);
         cs.addConstraint(scTitle);
 
         SimpleConstraint scYear =
-            new SimpleConstraint(new QueryField(qc, "year"), ConstraintOp.IS_NULL);
+                new SimpleConstraint(new QueryField(qc, "year"), ConstraintOp.IS_NULL);
         cs.addConstraint(scYear);
 
         SimpleConstraint scFirstAuthor =
-            new SimpleConstraint(new QueryField(qc, "firstAuthor"), ConstraintOp.IS_NULL);
+                new SimpleConstraint(new QueryField(qc, "firstAuthor"), ConstraintOp.IS_NULL);
         cs.addConstraint(scFirstAuthor);
 
         q.setConstraint(cs);
@@ -379,7 +379,7 @@ public class EntrezPublicationsRetriever
         con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
         String urlParameters = "tool=intermine&db=pubmed&rettype=abstract&retmode=xml&id="
-            + StringUtil.join(ids, ",");
+                + StringUtil.join(ids, ",");
 
         // Send post request
         con.setDoOutput(true);
@@ -511,8 +511,8 @@ public class EntrezPublicationsRetriever
         public void characters(char[] ch, int start, int length) {
             int st = start;
             int l = length;
-                // DefaultHandler may call this method more than once for a single
-                // attribute content -> hold text & create attribute in endElement
+            // DefaultHandler may call this method more than once for a single
+            // attribute content -> hold text & create attribute in endElement
             while (l > 0) {
                 boolean whitespace = false;
                 switch(ch[st]) {
