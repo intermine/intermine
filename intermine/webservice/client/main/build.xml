@@ -1,7 +1,0 @@
-<project name="intermine-webservice-client" default="default" basedir=".">
-  
-  <description>build, test, package intermine-webservice-client</description>
-  <import file="../../../../imbuild/library.xml"/>
-    
-</project>
-

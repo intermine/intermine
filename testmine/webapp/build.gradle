@@ -1,0 +1,112 @@
+apply plugin: "war"
+apply from: "https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin"
+
+def explodedWebAppDir = "$buildDir/explodedWebApp"
+def mergePropsDir = "$buildDir/props"
+
+ext {
+    minePropertyFileName = "testmodel.properties"
+    minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
+    println "Using properties file: '$minePropertyFile' "
+}
+
+
+configurations {
+    imWebApp
+}
+
+dependencies { 
+    compile project(":dbmodel")
+    compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
+    compile group: "org.intermine", name: "intermine-api", version: imVersion
+    compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
+    compile group: "javax.servlet", name: "jstl", version: "1.2"
+    compile group: "org.apache.struts", name: "struts-core", version: "1.3.10"
+    compile group: 'org.apache.struts', name: 'struts-taglib', version: '1.3.10'
+    compile group: 'org.apache.struts', name: 'struts-extras', version: '1.3.10'
+    compile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'    
+    compile group: 'javax.mail', name: 'mail', version: '1.4'
+    compile group: 'org.directwebremoting', name: 'dwr', version: '2.0.1'
+    runtime group: 'commons-codec', name: 'commons-codec', version: '1.9'
+    runtime group: 'javax.servlet.jsp', name: 'javax.servlet.jsp-api', version: '2.3.1'
+    runtime group: 'taglibs', name: 'string', version: '1.1.0'
+    runtime group: 'commons-httpclient', name: 'commons-httpclient', version: '3.0'
+    runtime group: 'commons-fileupload', name: 'commons-fileupload', version: '1.2.2' 
+    imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, transitive: false
+}
+
+processResources {
+    exclude "default-template-queries.xml"
+    exclude "main/"
+}
+
+task copyModelProperties(type: Copy) {
+    description "Copies mine specific intermine.properties file into resources output to be included in the war."
+    dependsOn 'processResources'
+    from project.parent.project(':dbmodel').sourceSets.main.output.resourcesDir.absolutePath + "/intermine.properties"
+    into sourceSets.main.output.resourcesDir
+}
+
+war {
+    dependsOn 'mergeProperties', 'summariseTestObjectStore', 'unwarIMWebApp'
+    finalizedBy 'warTestModelWebApp'
+}
+
+task mergeProperties(type: Copy) {
+    description "Appendes intermine.properties to web.properties file"
+    dependsOn 'copyModelProperties'
+    from "${webAppDirName}/WEB-INF/web.properties"
+    into "${mergePropsDir}"
+    doLast {
+        def intermineProperties = project.parent.project(':dbmodel').sourceSets.main.output.resourcesDir.absolutePath + "/intermine.properties"
+        (new File("$mergePropsDir/web.properties")).append( (new File("$intermineProperties")).getText())
+    }   
+}
+
+// this task requires a database to exist and be populated. However this task is run at compile time, not runtime.
+// We have no guarantee there will be a database. Hence the try/catch
+task summariseTestObjectStore {
+    description "Summarise Test model ObjectStore into objectstoresummary.properties file"
+    dependsOn 'copyDefaultProperties'
+
+    doLast {
+        try {
+            ant.taskdef(name: "summarizeObjectStoreTask", classname: "org.intermine.task.SummariseObjectStoreTask") {
+                classpath {
+                    dirset(dir: "$buildDir")
+                    pathelement(path: configurations.compile.asPath)
+                }
+            }
+            ant.summarizeObjectStoreTask(alias: "os.unittest", configFileName: "objectstoresummary.config.properties", outputFile: "build/props/objectstoresummary.properties")
+        } catch (Exception e) {
+            println "ERROR" + e
+        }
+    }
+}
+
+
+task unwarIMWebApp(type: Copy) {
+    description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
+    from { zipTree(configurations.imWebApp.singleFile) }
+    destinationDir = new File("$explodedWebAppDir")
+}
+
+task warTestModelWebApp(type: War) {
+    description "Create the war from the build/explodedWebAppDir directory"
+    from "${explodedWebAppDir}"
+    exclude "WEB-INF/web.properties"
+    webInf { from "${mergePropsDir}" }
+}
+
+gretty {
+    // needed for Tomcat 8.0.x, Maybe remove for Tomcat 9? Still needed for Tomcat 8.5.x?
+    jvmArgs = ['-Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true']
+
+    // read in intermine.properties to get the contextPath
+    def props = new Properties()
+    file(minePropertyFile).withInputStream { props.load(it) }
+
+    // needed to deploy the webapp
+    contextPath = props.getProperty("webapp.path")
+}
+

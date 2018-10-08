@@ -1,5 +1,0 @@
-<project name="worm-expression-score" default="default" basedir=".">
-  <description>build, test, package worm-expression-score</description>
-  
-  <import file="../../../../imbuild/source.xml"/>
-</project>

@@ -1,0 +1,69 @@
+<items>
+    <item id="4_1" class="Disease">
+        <attribute name="name" value="DIABETES MELLITUS, NONINSULIN-DEPENDENT"/>
+        <attribute name="primaryIdentifier" value="OMIM:125853"/>
+        <collection name="dataSets"><reference ref_id="2_1"/></collection>
+        <collection name="genes"><reference ref_id="6_1"/></collection>
+        <collection name="publications"><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
+    </item>
+    <item id="4_2" class="Disease">
+        <attribute name="name" value="OBESITY"/>
+        <attribute name="primaryIdentifier" value="OMIM:601665"/>
+        <collection name="dataSets"><reference ref_id="2_1"/></collection>
+    </item>
+    <item id="4_3" class="Disease">
+        <attribute name="name" value="LIPODYSTROPHY, FAMILIAL PARTIAL, TYPE 3"/>
+        <attribute name="primaryIdentifier" value="OMIM:604367"/>
+        <collection name="dataSets"><reference ref_id="2_1"/></collection>
+    </item>
+    <item id="4_4" class="Disease">
+        <attribute name="name" value="CAROTID INTIMAL MEDIAL THICKNESS 1"/>
+        <attribute name="primaryIdentifier" value="OMIM:609338"/>
+        <collection name="dataSets"><reference ref_id="2_1"/></collection>
+        <collection name="publications"><reference ref_id="8_3"/></collection>
+    </item>
+    <item id="3_1" class="Organism">
+        <attribute name="taxonId" value="9606"/>
+    </item>
+    <item id="8_2" class="Publication">
+        <attribute name="pubMedId" value="11443197"/>
+    </item>
+    <item id="1_1" class="DataSource">
+        <attribute name="name" value="OMIM"/>
+    </item>
+    <item id="8_3" class="Publication">
+        <attribute name="pubMedId" value="12574549"/>
+    </item>
+    <item id="6_1" class="Gene">
+        <attribute name="primaryIdentifier" value="1111"/>
+        <reference name="organism" ref_id="3_1"/>
+        <reference name="sequenceOntologyTerm" ref_id="7_1"/>
+        <collection name="dataSets"><reference ref_id="2_1"/></collection>
+    </item>
+    <item id="5_2" class="Synonym">
+        <attribute name="value" value="FPLD3"/>
+        <reference name="subject" ref_id="4_3"/>
+        <collection name="dataSets"><reference ref_id="2_1"/></collection>
+    </item>
+    <item id="2_1" class="DataSet">
+        <attribute name="name" value="OMIM diseases"/>
+        <reference name="dataSource" ref_id="1_1"/>
+    </item>
+    <item id="0_1" class="Ontology">
+        <attribute name="name" value="Sequence Ontology"/>
+        <attribute name="url" value="http://www.sequenceontology.org"/>
+    </item>
+    <item id="5_1" class="Synonym">
+        <attribute name="value" value="NIDDM"/>
+        <reference name="subject" ref_id="4_1"/>
+        <collection name="dataSets"><reference ref_id="2_1"/></collection>
+    </item>
+    <item id="8_1" class="Publication">
+        <attribute name="pubMedId" value="17726085"/>
+    </item>
+    <item id="7_1" class="SOTerm">
+        <attribute name="name" value="gene"/>
+        <reference name="ontology" ref_id="0_1"/>
+        <collection name="dataSets"><reference ref_id="2_1"/></collection>
+    </item>
+</items>

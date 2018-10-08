@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="PhenotypeAnnotation" is-interface="true">
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="annotationType" type="java.lang.String"/>
+    <reference name="allele" referenced-type="Allele" reverse-reference="phenotypeAnnotations"/>
+    <!-- removed as the "with" clauses from FlyBase have errors - see ticket #889
+    <collection name="with" referenced-type="Allele"/>
+    -->
+    <reference name="anatomyTerm" referenced-type="AnatomyTerm"/>
+    <reference name="developmentTerm" referenced-type="DevelopmentTerm"/>
+    <collection name="cvTerms" referenced-type="CVTerm"/>
+    <collection name="publications" referenced-type="Publication"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
+  </class>
+  <class name="Allele" extends="BioEntity" is-interface="true">
+    <attribute name="alleleClass" type="java.lang.String"/>
+    <collection name="mutagens" referenced-type="Mutagen" reverse-reference="alleles"/>
+    <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="allele"/>
+  </class>
+  <class name="Mutagen" is-interface="true">
+    <attribute name="description" type="java.lang.String"/>
+    <collection name="alleles" referenced-type="Allele" reverse-reference="mutagens"/>
+  </class>
+  <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true" />
+  <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true" />
+  <class name="CVTerm" extends="OntologyTerm" is-interface="true"/>
+  <class name="ChromosomeStructureVariation" is-interface="true">
+    <collection name="abberationSOTerms" referenced-type="SOTerm"/>
+  </class>
+  <class name="CDNAClone" is-interface="true">
+    <attribute name="stage" type="java.lang.String"/>
+    <reference name="tissueSource" referenced-type="AnatomyTerm" />
+  </class>
+  <!-- postprocess needs this -->
+  <class name="Intron" extends="SequenceFeature" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="introns"/>
+  </class>
+  <class name="CDS" extends="SequenceFeature" is-interface="true">
+    <reference name="transcript" referenced-type="Transcript" reverse-reference="CDSs"/>
+  </class>
+  <class name="Transcript" extends="SequenceFeature" is-interface="true">
+    <reference name="gene" referenced-type="Gene" reverse-reference="transcripts"/>
+    <collection name="introns" referenced-type="Intron" reverse-reference="transcripts"/>
+    <collection name="CDSs" referenced-type="CDS" reverse-reference="transcript"/>
+    <collection name="UTRs" referenced-type="UTR" reverse-reference="transcripts"/>
+  </class>
+  <class name="MRNA" extends="Transcript" is-interface="true">
+        <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
+        <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
+  </class>
+  <class name="FivePrimeUTR" extends="UTR" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="UTRs"/>
+  </class>
+  <class name="ThreePrimeUTR" extends="UTR" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="UTRs"/>
+  </class>
+  <class name="Gene" extends="SequenceFeature" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="gene"/>
+  </class>
+  <class name="UTR" extends="SequenceFeature" is-interface="true">
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="UTRs"/>
+  </class>
+  <class name="PointMutation" extends="SequenceFeature" is-interface="true"/>
+  <class name="TransposableElementInsertionSite" extends="SequenceFeature" is-interface="true"/>
+  <class name="CDNAClone" extends="SequenceFeature" is-interface="true"/>
+  <class name="GoldenPathRegion" extends="SequenceFeature" is-interface="true"/>
+</classes>

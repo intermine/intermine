@@ -1,0 +1,18 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/gen']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+dependencies {
+    compile group: 'org.intermine', name: 'bio-model', version: bioVersion //to read genomic_keyDefs.properties
+}
+
+processResources {
+    from('.') { include ("*.properties")}
+}

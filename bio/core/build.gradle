@@ -1,0 +1,81 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+        }
+    }
+    dependencies {
+        classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")
+    }
+}
+
+apply plugin: 'dbmodel'
+apply plugin: 'biocore-dbmodel'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+configurations {
+    provided
+    compile.extendsFrom provided
+    bioModel
+}
+
+dependencies {
+    compile group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")
+    compile group: "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion") // idresolver needs db
+    compile group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion")
+
+    provided fileTree(dir: 'libs', include: '*.jar') // obo and bbop not available in the public maven repo
+    testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
+    testCompile group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("flymineVersion"), transitive: false
+    bioModel group: "org.intermine", name: "bio-source-flymine-static", version: System.getProperty("flymineVersion"), transitive: false
+    runtime fileTree(dir: 'libs', include: '*.jar') //antlr-2.7.6-caching.jar
+}
+
+dbModelConfig {
+    objectStoreName = "os.bio-test"
+    modelName = "genomic"
+    defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
+}
+
+task copyMineProperties(type: Copy) {
+    from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
+    into sourceSets.main.output.resourcesDir
+    rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+tasks.test.dependsOn 'buildUnitTestDB'
+tasks.buildUnitTestDB.dependsOn ':bio-testresources:createUnitTestDatabases'
+
+jar {
+    dependsOn configurations.runtime
+    // put all the JARs included in `provided` config and include them in the JAR
+    from {
+        (configurations.provided).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    exclude 'genomic_model.xml'
+}
+
+

@@ -1,0 +1,25 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+    compile project(':intermine-webapp')
+    testCompile project(':intermine-objectstore')
+    testCompile project(':intermine-resources')
+    testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
+}

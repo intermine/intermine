@@ -1,0 +1,17 @@
+void createDbInternal(dbName) {
+    println 'Creating database ' + dbName
+    exec {
+        ignoreExitValue true
+        commandLine 'psql', '-d', 'postgres', '-c', "create database \"" + dbName + "\";"
+    }   
+}
+
+task createUnitTestDatabases {
+    description "create databases needed for unit tests"
+    doLast {
+        // fail if DB is already there. Instead we could read in the list of DBs and only
+        // create ones that aren't there
+        createDbInternal('bio-test')
+        createDbInternal('bio-fulldata-test')
+    }   
+}

@@ -1,0 +1,193 @@
+apply plugin: 'idea'
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+}
+
+configurations {
+    testModelProps
+}
+
+dependencies {
+    compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
+    compile group: "org.intermine", name: "intermine-api", version: imVersion
+    compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
+    compile group: 'antlr', name: 'antlr', version: '2.7.6'
+    testModelProps group: "org.intermine", name: "intermine-testresources", version: imVersion, transitive: false
+}
+
+// the JAR file has an intermine.properties files for unit tests. if we put the JAR on the classpath
+// the testmine uses that property file instead. SO ... copy all the files to the build dir.
+task copyTestModel(type: Copy) {
+    description "Copies testmodel_model.xml file (from resources project) into resources output to be used by testmine"
+
+    from({ zipTree(configurations.testModelProps.singleFile) }) {
+        include "testmodel_model.xml"
+        include "testmodel_keyDefs.properties"
+        include "testmodel_extra_data.xml"
+        include "testmodel_data.xml"
+        include "testmodel_enormo_data.xml"
+        include "testmodel_webapp_data.xml"
+        include "testsource_keys.properties"
+        include "testmodel_priorities.properties"
+        include "org/intermine/model/testmodel/*"
+    }
+    into sourceSets.main.output.resourcesDir
+}
+
+void buildDatabase(osname, model) {
+    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+    ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
+    ant.taskdef(name: 'buildDB', classname: 'org.intermine.task.BuildDbTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties, os.unittest-schema.xml
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+    ant.buildDB(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
+    ant.taskdef(name: 'insertModel', classname: 'org.intermine.task.StoreMetadataTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+    ant.insertModel(osname: "os.$osname", modelName: "$model")
+
+    // <create-indexes alias="${objectstore.name}" />
+    // <analyse-db osName="${objectstore.name}"/>
+}
+
+void insertDataUnitTest() {
+    // TODO this
+    // <delete file="${objectstoresummary.properties}"/>
+    ant.taskdef(name: 'insertDataUnittest', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }   
+    ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_webapp_data.xml", sourceName: "testsource", sourceType: "testsource")
+}
+
+void loadsadataLoader() {
+    // TODO this
+    // <delete file="${objectstoresummary.properties}"/>
+    ant.taskdef(name: 'loadsadata', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+
+    ant.loadsadata(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_extra_data.xml", sourceName: "testsource", sourceType: "testsource")
+}
+
+void enormocorpLoader() {
+    // TODO this
+    // <delete file="${objectstoresummary.properties}"/>
+    ant.taskdef(name: 'enormocorp', classname: 'org.intermine.dataloader.XmlDataLoaderTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+    ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_enormo_data.xml", sourceName: "testsource", sourceType: "testsource")
+}
+
+task enormocorp(dependsOn: 'loadsadata') {
+    group "${taskGroup}"
+    description "Load basic data set, extra data (testmodel_extra_data.xml) AND testmodel_enormo_data.xml"
+    doLast {
+        enormocorpLoader()
+    }
+}
+
+task loadsadata(dependsOn: 'insertData') {
+    group "${taskGroup}"
+    description "Load basic data set AND extra data in testmodel_extra_data.xml"
+    doLast {
+        loadsadataLoader()
+    }
+}
+
+task buildDB() {
+    group "${taskGroup}"
+    description "Build database and userprofile for testmodel webapp"
+    dependsOn 'build','copyDefaultProperties', 'copyMineProperties', 'copyTestModel'
+    doLast {
+        buildDatabase('unittest', 'testmodel')
+        buildDatabase('userprofile-test', 'userprofile')
+    }
+}
+
+task insertData(dependsOn: 'buildDB') {
+    group "${taskGroup}"
+    description "Load basic data set for intermine-test webapp"
+    doLast {
+        insertDataUnitTest()
+    }
+}
+
+void insertUserTestData() {
+    ant.taskdef(name: 'readUserprofileXML', classname: 'org.intermine.web.task.ProfileReadTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+    ant.readUserprofileXML(osalias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', filename:"$project.rootDir/webapp/src/main/resources/userprofile-withuser.xml")
+}
+
+void loadTemplates() {
+    ant.taskdef(name: 'loadDefaultTemplates', classname: 'org.intermine.web.task.LoadDefaultTemplatesTask') {
+        classpath {
+            pathelement(path: configurations.compile.asPath)
+            dirset(dir: "$buildDir") // intermine.properties
+            dirset(dir: 'build/resources/main') // intermine.properties
+        }
+    }
+    ant.loadDefaultTemplates(osAlias: 'os.unittest', userProfileAlias: 'osw.userprofile-test', templatesXml:"$project.rootDir/dbmodel/resources/default-template-queries.xml", username: 'superuser@intermine.org', superuserPassword: 'intermine')
+}
+
+task insertUserData() {
+    group "${taskGroup}"
+    description "Build userprofile database with test users for testmodel webapp"
+    dependsOn 'build','copyDefaultProperties', 'copyMineProperties'
+
+    doLast {
+        insertUserTestData()
+        loadTemplates()
+    }
+}
+
+
+task createSearchIndex {
+    description "Generate the lucene keyword serach index"
+    dependsOn 'copyDefaultProperties', 'copyMineProperties', 'copyTestModel'
+
+    doLast {
+        ant.taskdef(name: "createSearchIndexTask", classname: "org.intermine.web.task.CreateSearchIndexTask") {
+            classpath {
+                dirset(dir: "$buildDir")
+                pathelement(path: configurations.compile.asPath)
+            }
+        }
+        ant.createSearchIndexTask(osalias: "os.unittest")
+    }
+}

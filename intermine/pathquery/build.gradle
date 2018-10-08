@@ -1,0 +1,32 @@
+apply plugin: 'antlr'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/generated-src/antlr/main']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+        antlr {
+            srcDirs = ['src/main/antlr']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
+dependencies {
+    compile project(':intermine-model')
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    antlr name: 'antlr-2.7.6-caching'
+    runtime group: 'stax', name: 'stax', version: '1.2.0'
+}

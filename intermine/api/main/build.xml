@@ -1,8 +1,0 @@
-
-<project name="intermine-api" default="default" basedir=".">
-  
-  <description>build, test, package intermine-api</description>
-  <import file="../../../imbuild/library.xml"/>
-    
-</project>
-

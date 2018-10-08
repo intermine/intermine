@@ -1,1 +1,0 @@
-model name: [% service.model.model_name %], cds: [% service.model.get_all_classdescriptors.size %]

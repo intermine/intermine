@@ -1,8 +1,0 @@
-
-<project name="fly-development-ontology" default="default" basedir=".">
-  <description>build, test, package fly-development-ontology</description>
-  
-  <import file="../../../../imbuild/source.xml"/>
-  
-</project>
-

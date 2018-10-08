@@ -1,4 +1,0 @@
-<project name="bdgp-clone-tasks" default="default" basedir=".">
-  <description>build bdgp-clone tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>

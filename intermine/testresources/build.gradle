@@ -1,0 +1,219 @@
+// Prevent the build target from building an empty compile jar
+// we only have testCompile classes and we want them to be in the jar instead via the buildTestModelJar target
+jar.enabled = false
+
+configurations {
+    testArtifacts
+    commonResources
+}
+
+dependencies {
+    commonResources project(':intermine-resources')
+
+     // We need this dependency because the pre-generated userprofile classes and model XML are here, which is necessary to build the userprofile-test db
+    testCompile project(':intermine-api')
+    testCompile project(':intermine-objectstore')
+    testCompile 'commons-lang:commons-lang:2.6'
+}
+
+void generateModel(model, destination, type) {
+    ant.taskdef(name: 'modelOutputTask', classname: 'org.intermine.task.ModelOutputTask') {
+        classpath {
+            fileset(dir: '../model/build/libs/', includes: '*.jar')
+            dirset(dir: 'src/test/resources/')
+            pathelement(path: configurations.testCompile.asPath)
+        }
+    }   
+
+    ant.modelOutputTask(model: model, destDir: destination, type: type)
+}
+
+task generateTestModel {
+    description "generate the testmodel Java files from the data model, eg. Employee.java"
+    doLast {
+        generateModel('testmodel', 'src/test/java', 'java')
+    }
+}
+
+void insertDataModel(model, osname) {
+    ant.taskdef(name: 'insertModelTask', classname: 'org.intermine.task.StoreMetadataTask') {
+        classpath {
+            fileset(dir: '../model/build/libs/', includes: '*.jar')
+            dirset(dir: 'src/test/resources/')
+            dirset(dir: 'build/') // intermine.properties
+            pathelement(path: configurations.testCompile.asPath)
+        }
+    }
+
+    ant.insertModelTask(osname: osname, modelName: model)
+}
+
+task insertModel (dependsOn: 'buildDB') {
+    description "put the generated model file into the intermine_metadata table"
+
+    doLast {
+        insertDataModel('testmodel', 'os.unittest')
+    }
+}
+
+task copyDefaultProperties(type: Copy) {
+    description "Copies default.intermine.test.properties file (from resources project) into resources output to be included in the war"
+
+    from({ zipTree(configurations.commonResources.singleFile) }) {
+        include "default.intermine.test.properties"
+    }
+    into sourceSets.test.output.resourcesDir
+    rename { fileName -> fileName.replace("default.intermine.test.properties", "default.intermine.properties") }
+}
+
+processTestResources {
+    dependsOn "copyDefaultProperties"
+
+    def intermineTestPropertiesPath = "${System.env.HOME}/.intermine/intermine-test.properties"
+
+    doFirst {
+        println "Using InterMine test properties path: '$intermineTestPropertiesPath'"
+    }
+
+    from intermineTestPropertiesPath
+    rename { fileName ->
+        fileName.replace('intermine-test.properties', 'intermine.properties')
+    }
+
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+task buildTestModelJar(type: Jar) {
+    from(sourceSets.test.output)
+}
+
+void createDbInternal(dbName) {
+    println 'Creating database ' + dbName
+    exec {
+        ignoreExitValue true
+        commandLine 'psql', '-d', 'postgres', '-c', "create database \"" + dbName + "\";"
+    }
+}
+
+task createUnitTestDatabases {
+    description "create databases needed for unit tests"
+    doLast {
+        // just fail silently if DB is already there. Instead we could read in the list of DBs and only
+        // create ones that aren't there
+        createDbInternal('notxmltest')
+        createDbInternal('truncunittest')
+        createDbInternal('flatmodetest')
+        createDbInternal('fulldatatest')
+        createDbInternal('userprofile-test')
+        createDbInternal('unittest')
+    }
+}
+
+// this only works correctly after you stop the gradlew process. --stop. otherwise it keeps the connection to unittest
+// this is incorrect as the tests should drop the database connections themselves
+task dropDBs {
+    description "drop all the test databases. used for debugging only."
+    doLast {
+        exec {
+            // just fail silently if DB is already there. Instead we could read in the list of DBs and only
+            // create ones that aren't there
+            ignoreExitValue true
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database notxmltest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database truncunittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database flatmodetest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database fulldatatest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database \"userprofile-test\";"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database unittest;"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database \"bio-test\";"
+        }
+        exec {
+            ignoreExitValue true
+            commandLine 'psql', '-d', 'postgres', '-c', "drop database \"bio-fulldata-test\";"
+        }
+    }
+}
+
+void createTables(osname, model) {
+    println 'Setting up InterMine tables in ' + osname + ' and inserting XML for ' + model
+
+    ant.taskdef(name: 'buildDBUnittest', classname: 'org.intermine.task.BuildDbTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes and schemas
+            dirset(dir: 'src/test/resources/') // testmodel classes and schemas
+        }
+    }
+    ant.buildDBUnittest(osname: "os.$osname", model: "$model", schemafile:"os.$osname-schema.xml", tempDir: "$buildDir/tmp")
+    ant.taskdef(name: 'insertModel', classname: 'org.intermine.task.StoreMetadataTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes and schemas
+            dirset(dir: 'src/test/resources/') // testmodel classes and schemas
+        }
+    }
+    ant.insertModel(osname: "os.$osname", modelName: "$model")
+    // <create-indexes alias="${objectstore.name}" />
+    // <analyse-db osName="${objectstore..name}"/>
+}
+
+void generateSchema(osname, model) {
+    ant.taskdef(name: 'torque', classname: 'org.intermine.objectstore.intermine.TorqueModelOutputTask') {
+        classpath {
+            pathelement(path: configurations.testCompile.asPath)
+            dirset(dir: 'build/') // testmodel classes and intermine.properties
+            dirset(dir: 'src/test/resources') // testmodel_model.xml
+        }
+    }
+    ant.torque(osname: "os.$osname", destFile:"$buildDir/os.$osname-schema.xml")
+}
+
+task buildDB {
+    dependsOn 'compileTestJava'
+    dependsOn 'createUnitTestDatabases'
+    dependsOn 'generateTestModel'
+    description "Create tables for database for intermine tests"
+    doLast {
+        generateSchema('unittest', 'testmodel')
+        createTables('unittest', 'testmodel')
+
+        generateSchema('truncunittest', 'testmodel')
+        createTables('truncunittest', 'testmodel')
+
+        generateSchema('notxmlunittest', 'testmodel')
+        createTables('notxmlunittest', 'testmodel')
+
+        generateSchema('flatmodeunittest', 'testmodel')
+        createTables('flatmodeunittest', 'testmodel')
+
+        generateSchema('userprofile-test', 'userprofile')
+        createTables('userprofile-test', 'userprofile')
+
+        // don't need to generate schema, never changes
+        createTables('fulldatatest', 'fulldata')
+    }
+}
+
+tasks.compileTestJava.dependsOn('generateTestModel')
+tasks.buildTestModelJar.dependsOn 'testClasses'
+
+artifacts {
+    testArtifacts buildTestModelJar
+}

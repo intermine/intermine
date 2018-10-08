@@ -1,9 +1,0 @@
-.*.bak
-blib
-Build
-_build
-.*svn.*
-.*.swp
-^MYMETA\.yml$
-^MYMETA\.json$
-.*tar\.gz
