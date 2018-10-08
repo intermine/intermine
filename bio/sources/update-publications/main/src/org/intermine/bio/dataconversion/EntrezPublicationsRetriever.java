@@ -64,6 +64,9 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 
+import java.io.DataOutputStream;
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * Class to fill in all publication information from pubmed
  * @author Mark Woodbridge
@@ -75,13 +78,12 @@ public class EntrezPublicationsRetriever
     // full record (new)
     // rettype=abstract or just leave it out
     protected static final String EFETCH_URL =
-        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?tool=flymine&db=pubmed"
-        + "&rettype=abstract&retmode=xml&id=";
+        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
     // summary
     protected static final String ESUMMARY_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/"
-            + "eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
+            + "eutils/esummary.fcgi";
     // number of records to retrieve per request
-    protected static final int BATCH_SIZE = 400;
+    protected static final int BATCH_SIZE = 500;
     // number of times to try the same batch from the server
     private static final int MAX_TRIES = 5;
     private String osAlias = null, outputFile = null;
@@ -356,12 +358,39 @@ public class EntrezPublicationsRetriever
      * @throws Exception if an error occurs
      */
     protected Reader getReader(Set<Integer> ids) throws Exception {
-        String urlString = ESUMMARY_URL + StringUtil.join(ids, ",");
+        /**
+         * Fix - Use HTTP POST instead of HTTP GET method for uploading
+         * Pubmed Ids
+         * Author: Norbert Auer
+         * e-mail: norbert.auer@boku.ac.at
+         */
+
+        String urlString = ESUMMARY_URL;
         if (loadFullRecord) {
-            urlString = EFETCH_URL + StringUtil.join(ids, ",");
+            urlString = EFETCH_URL;
         }
-        System.err .println("retrieving: " + urlString);
-        return new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
+        URL obj = new URL(urlString);
+        HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+        // add request header to POST
+        con.setRequestMethod("POST");
+
+        // con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+        String urlParameters = "tool=intermine&db=pubmed&rettype=abstract&retmode=xml&id="
+            + StringUtil.join(ids, ",");
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+
+        return new BufferedReader(new InputStreamReader(con.getInputStream()));
     }
 
     private Set<Item> mapToItems(ItemFactory factory, Map map) {
