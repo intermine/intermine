@@ -22,7 +22,7 @@ import org.intermine.objectstore.ObjectStore;
  * @author arunans23
  */
 
-public class SolrClientManager
+public final class SolrClientManager
 {
     private static final Logger LOG = Logger.getLogger(SolrClientManager.class);
 
@@ -30,20 +30,22 @@ public class SolrClientManager
 
     private static String solrUrlString;
 
-    private SolrClientManager(){}
+    private SolrClientManager() { }
 
     /**
      *Static method to get the solr client instance
      *
      * @param objectStore ObjectStore instance to pass into Properties Manager
+     * @return solrClient that is created
      *
      */
-    public static SolrClient getClientInstance(ObjectStore objectStore){
+    public static SolrClient getClientInstance(ObjectStore objectStore) {
 
-        if(solrClient == null){
-            synchronized (SolrClientManager.class){
-                if (solrClient == null){
-                    solrUrlString = KeywordSearchPropertiesManager.getInstance(objectStore).getSolrUrl();
+        if (solrClient == null) {
+            synchronized (SolrClientManager.class) {
+                if (solrClient == null) {
+                    solrUrlString = KeywordSearchPropertiesManager
+                            .getInstance(objectStore).getSolrUrl();
                     solrClient = new HttpSolrClient.Builder(solrUrlString).build();
                 }
 

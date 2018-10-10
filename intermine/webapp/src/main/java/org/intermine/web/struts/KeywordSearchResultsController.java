@@ -31,7 +31,11 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.searchengine.*;
+import org.intermine.api.searchengine.KeywordSearchFacet;
+import org.intermine.api.searchengine.KeywordSearchFacetData;
+import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
+import org.intermine.api.searchengine.KeywordSearchResults;
+import org.intermine.api.searchengine.KeywordSearchHandler;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.searchengine.solr.SolrKeywordSearchHandler;
@@ -120,7 +124,8 @@ public class KeywordSearchResultsController extends TilesAction
 
         KeywordSearchHandler keywordSearchHandler = new SolrKeywordSearchHandler();
 
-        KeywordSearchResults results = keywordSearchHandler.doKeywordSearch(im, searchTerm, facetValues, ids, offset);
+        KeywordSearchResults results
+                = keywordSearchHandler.doKeywordSearch(im, searchTerm, facetValues, ids, offset);
 
         Collection<KeywordSearchResult> searchResultsParsed =
                 SearchUtils.parseResults(im, wc, results.getHits());
@@ -148,15 +153,16 @@ public class KeywordSearchResultsController extends TilesAction
         context.putAttribute("searchResults", request.getAttribute("searchResults"));
         context.putAttribute("searchTerm", request.getAttribute("searchTerm"));
         context.putAttribute("searchBag", request.getAttribute("searchBag"));
-        context.putAttribute("searchFacetValues", request.getAttribute("searchFacetValues"));
+        context.putAttribute("searchFacetValues",
+                request.getAttribute("searchFacetValues"));
         context.putAttribute("jsonFacets", request.getAttribute("jsonFacets"));
 
         // pagination
         context.putAttribute("searchOffset", Integer.valueOf(offset));
-        context.putAttribute("searchPerPage", Integer.valueOf(KeywordSearchPropertiesManager.PER_PAGE));
+        context.putAttribute("searchPerPage",
+                Integer.valueOf(KeywordSearchPropertiesManager.PER_PAGE));
         context.putAttribute("searchTotalHits", Integer.valueOf(totalHits));
 
-        // facet lists TODO: fix facets
         context.putAttribute("searchFacets", searchResultsFacets);
 
         // facet values

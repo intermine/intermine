@@ -1,7 +1,7 @@
 package org.intermine.api.searchengine;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,7 +33,9 @@ public interface IndexHandler
      * @param classKeys
      *                  classKeys from InterMineAPI, map of classname to all key field
      *                  descriptors
+     * @throws IOException IOException is thrown from Objectstore
      */
-    public void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys) throws IOException;
+    void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys)
+            throws IOException;
 
 }

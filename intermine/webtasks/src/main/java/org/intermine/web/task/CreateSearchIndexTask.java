@@ -118,7 +118,7 @@ public class CreateSearchIndexTask extends Task
             indexHandler.createIndex(objectStore, classKeys);
 
         } catch (Exception e) {
-            System.out.println("Creating keyword index failed");
+            System.out .println("Creating keyword index failed");
             e.printStackTrace();
         }
     }
