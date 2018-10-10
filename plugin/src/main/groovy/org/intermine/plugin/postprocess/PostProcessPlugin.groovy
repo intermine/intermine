@@ -47,7 +47,7 @@ class PostProcessPlugin implements Plugin<Project> {
                     // default version
                     String version = System.getProperty("bioVersion")
                     // check if we have a custom version
-                    } if (postProcess.version != null) {
+                    if (postProcess.version != null) {
                         version = postProcess.version
                     }
 
