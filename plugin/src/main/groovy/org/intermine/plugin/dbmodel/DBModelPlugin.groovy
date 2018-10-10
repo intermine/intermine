@@ -64,9 +64,9 @@ class DBModelPlugin implements Plugin<Project> {
                 def projectXml = parser.parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
                     if (source.@type == "intermine-items-xml-file") {
-                        dbUtils.addBioSourceDependency(source.'@name')
+                        dbUtils.addBioSourceDependency(source.'@name', 'source.@version')
                     }
-                    dbUtils.addBioSourceDependency(source.'@type')
+                    dbUtils.addBioSourceDependency(source.'@type', 'source.@version')
                 }
             }
         }
@@ -148,14 +148,20 @@ class DBModelPlugin implements Plugin<Project> {
                 sourceNames.each { sourceName ->
 
                     Source source = intermineProject.sources.get(sourceName)
+                    String sourceVersion = source.version
                     String sourceType = source.getType()
                     FileTree dataSourceJar = null
                     File sourceKeysFile = null
 
-                    // Prefix because actual value of the version string is 2.+ while the real version is 2.0.0
-                    // Also versions might be strings, so can't use regular expressions (eg. RC or SNAPSHOT)
-                    // have to include the version number at all because go-annotation will match go
-                    String bioVersionPrefix = System.getProperty("bioVersion").substring(0, 1)
+                    // use the version set in project XML
+                    String bioVersionPrefix = sourceVersion
+
+                    if (bioVersionPrefix == "") {
+                        // Prefix because actual value of the version string is 2.+ while the real version is 2.0.0
+                        // Also versions might be strings, so can't use regular expressions (eg. RC or SNAPSHOT)
+                        // have to include the version number at all because go-annotation will match go
+                        bioVersionPrefix = System.getProperty("bioVersion").substring(0, 1)
+                    }
 
                     project.configurations.getByName("mergeSource").asFileTree.each {
                         if (it.name.startsWith("bio-source-$sourceName-$bioVersionPrefix")) {
