@@ -98,6 +98,10 @@ public final class ProjectXmlBinding
                 }
             } else if ("post-process".equals(qName)) {
                 PostProcess postProcess = new PostProcess();
+                String version = attrs.getValue("version");
+                if (version != null && !"".equals(version)) {
+                    postProcess.setVersion(version);
+                }
                 action = postProcess;
                 project.addPostProcess(attrs.getValue("name"), postProcess);
             } else if ("source".equals(qName)) {
