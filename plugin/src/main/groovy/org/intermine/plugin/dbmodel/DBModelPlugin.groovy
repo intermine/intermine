@@ -63,10 +63,14 @@ class DBModelPlugin implements Plugin<Project> {
                 parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
                 def projectXml = parser.parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
-                    String version = System.getProperty("bioVersion");
-                    if (source.'@version' != "") {
+                   String version = System.getProperty("bioVersion")
+                    System.out.println("**** bioVersion ${version}")
+                    System.out.println("**** source name ${source.'@name'}")
+                    if (source.'@version' != null) {
                         version = source.'@version'
+                        System.out.println("** source version ${version}")
                     }
+                    System.out.println("** final ${version}")
                     if (source.@type == "intermine-items-xml-file") {
                         dbUtils.addBioSourceDependency(source.'@name', version)
                     }
@@ -157,15 +161,14 @@ class DBModelPlugin implements Plugin<Project> {
                     FileTree dataSourceJar = null
                     File sourceKeysFile = null
 
-                    // use the version set in project XML
-                    String bioVersionPrefix = sourceVersion
-
-                    if (bioVersionPrefix == "") {
-                        // Prefix because actual value of the version string is 2.+ while the real version is 2.0.0
-                        // Also versions might be strings, so can't use regular expressions (eg. RC or SNAPSHOT)
-                        // have to include the version number at all because go-annotation will match go
-                        bioVersionPrefix = System.getProperty("bioVersion").substring(0, 1)
+                    // Prefix because actual value of the version string is 2.+ while the real version is 2.0.0
+                    // Also versions might be strings, so can't use regular expressions (eg. RC or SNAPSHOT)
+                    // have to include the version number at all because go-annotation will match go
+                    String bioVersionPrefix = System.getProperty("bioVersion").substring(0, 1)
+                    if (sourceVersion != null && sourceVersion != "") {
+                        bioVersionPrefix = sourceVersion
                     }
+
 
                     project.configurations.getByName("mergeSource").asFileTree.each {
                         if (it.name.startsWith("bio-source-$sourceName-$bioVersionPrefix")) {
