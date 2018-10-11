@@ -16,5 +16,21 @@ package org.intermine.plugin.project;
  */
 public class PostProcess extends Action
 {
-    // empty
+    private String version;
+
+    /**
+     * Set the version of this Source, e.g. 2.0.0
+     * @param version the version
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
+     * Get the version of this object.
+     * @return the version
+     */
+    public String getVersion() {
+        return version;
+    }
 }

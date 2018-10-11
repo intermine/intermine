@@ -165,7 +165,6 @@ public class ChadoDBConverter extends BioDBConverter
      * Return a map from chado organism id to OrganismData for the organisms in the organism table
      * in chado.  This is a protected method so that it can be overriden for testing
      * @param conn the db connection
-     * @param organismsToProcess organisms to process
      * @return a Map from abbreviation to chado organism_id
      * @throws SQLException if the is a database problem
      */
