@@ -64,9 +64,9 @@ class DBModelPlugin implements Plugin<Project> {
                 def projectXml = parser.parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
                     if (source.@type == "intermine-items-xml-file") {
-                        dbUtils.addBioSourceDependency(source.'@name', 'source.@version')
+                        dbUtils.addBioSourceDependency(source.'@name', source.'@version')
                     }
-                    dbUtils.addBioSourceDependency(source.'@type', 'source.@version')
+                    dbUtils.addBioSourceDependency(source.'@type', source.'@version')
                 }
             }
         }

@@ -52,7 +52,7 @@ class IntegratePlugin implements Plugin<Project> {
                     sourceNames = Arrays.asList(sourceInput.split("\\s*,\\s*"))
                 }
 
-                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("imVersion"), transitive: false])
+                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("bioVersion"), transitive: false])
 
                 // keep track of the versions, only take the first one encountered
                 Map<String, String> typesToVersions = new HashMap<String, String>()
