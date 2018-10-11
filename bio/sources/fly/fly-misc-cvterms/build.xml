@@ -1,6 +1,0 @@
-<project name="fly-misc-cvterms" default="default" basedir=".">
-  <description>build, test, package fly-misc-cvterms</description>
-
-  <import file="../../../../imbuild/source.xml"/>
-</project>
-

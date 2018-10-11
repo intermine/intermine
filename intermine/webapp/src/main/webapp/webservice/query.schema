@@ -1,0 +1,62 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Query",
+    "description": "A representation of a path query.",
+    "type": "object",
+    "properties": {
+        "model": {
+            "description": "Name of data model",
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"}
+            },
+            "required": ["name"]
+        },
+        "select": {
+            "description": "The view list for the query",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+        },
+        "where": {
+            "description": "Constraints for the query",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": {
+                    "path": "string",
+                    "op": "string",
+                    "code": "string",
+                    "value": "string",
+                    "values": "array",
+                    "ids": "array",
+                    "loopPath": "string",
+                    "type": "string"
+                },
+                "required": ["path"]
+            },
+            "uniqueItems": true
+        },
+        "joins": {
+            "description": "List of paths that are outer joins.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "uniqueItems": true
+        },
+        "orderBy": {
+            "description": "List of paths to sort the query results",
+            "type": "array",
+            "items": {
+                "type": "object"
+            },
+            "uniqueItems": true
+        }
+    },
+    "required": ["model"]
+}
+

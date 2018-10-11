@@ -1,0 +1,31 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
+dependencies {
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    compile group: 'cglib', name: 'cglib', version: '3.1'
+    compile group: 'commons-io', name: 'commons-io', version: '1.2'
+    compile group: 'org.skyscreamer', name: 'jsonassert', version: '1.2.3'
+    compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
+
+}

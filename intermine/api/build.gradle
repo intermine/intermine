@@ -1,0 +1,51 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+dependencies {
+    compile project(':intermine-pathquery')
+    compile project(':intermine-integrate')
+    compile group: 'xalan', name: 'xalan', version: '2.7.2' // version 1.3 not in maven
+    compile group: 'org.apache.lucene', name: 'lucene-core', version: '3.0.2'
+    compile group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.2'
+    compile group: 'org.apache.lucene', name: 'lucene-highlighter', version: '3.0.2'
+    compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.0.2'
+    compile group: 'org.json', name: 'json', version: '20170516'
+    provided files('libs/bobo-browse-2.5.1.jar') // This version is not in a Maven repository so we will include directly until we update search
+    testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
+    testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
+    testCompile project(':intermine-objectstore').sourceSets.test.output
+    testCompile project(':intermine-resources')
+}
+
+jar {
+    dependsOn configurations.runtime
+    // put all the JARs included in `provided` config and include them in the JAR
+    from {
+        (configurations.provided).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}

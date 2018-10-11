@@ -1,5 +1,0 @@
-<project name="kegg-example" default="default" basedir=".">
-  <description>build, test, package kegg-example</description>
-  <import file="../../../imbuild/source.xml"/>
-</project>
-

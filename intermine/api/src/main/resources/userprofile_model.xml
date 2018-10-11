@@ -1,0 +1,49 @@
+<model name="userprofile" package="org.intermine.api.userprofile">
+  <class name="UserProfile" is-interface="false">
+    <attribute name="username" type="java.lang.String"/>
+    <attribute name="password" type="java.lang.String"/>
+    <attribute name="apiKey" type="java.lang.String"/>
+    <attribute name="localAccount" type="boolean"/>
+    <attribute name="superuser" type="boolean"/>
+    <collection name="savedBags" referenced-type="SavedBag" reverse-reference="userProfile"/>
+    <collection name="savedQuerys" referenced-type="SavedQuery" reverse-reference="userProfile"/>
+    <collection name="savedTemplateQuerys" referenced-type="SavedTemplateQuery" reverse-reference="userProfile"/>
+    <collection name="tags" referenced-type="Tag" reverse-reference="userProfile"/>
+    <collection name="permanentTokens" referenced-type="PermanentToken" reverse-reference="userProfile"/>
+  </class>
+  <class name="SavedBag" is-interface="false">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="dateCreated" type="java.util.Date"/>
+    <attribute name="osbId" type="int"/>
+    <attribute name="state" type="java.lang.String"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="savedBags"/>
+  </class>
+  <class name="SavedQuery" is-interface="false">
+    <attribute name="query" type="java.lang.String"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="savedQuerys"/>
+  </class>
+  <class name="SavedTemplateQuery" is-interface="false">
+    <attribute name="templateQuery" type="java.lang.String"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="savedTemplateQuerys"/>
+    <collection name="summaries" referenced-type="TemplateSummary" reverse-reference="template"/>
+  </class>
+  <class name="Tag" is-interface="false">
+    <attribute name="tagName" type="java.lang.String"/>
+    <attribute name="objectIdentifier" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="tags"/>
+  </class>
+  <class name="TemplateSummary" is-interface="false">
+    <attribute name="summary" type="java.lang.String"/>
+    <reference name="template" referenced-type="SavedTemplateQuery" reverse-reference="summaries"/>
+  </class>
+  <class name="PermanentToken" is-interface="false">
+    <attribute name="token" type="java.lang.String"/> <!--  Ideally this should be a UUID. -->
+    <attribute name="level" type="java.lang.String"/>
+    <attribute name="message" type="java.lang.String"/>
+    <attribute name="dateCreated" type="java.util.Date"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="permanentTokens"/>
+  </class>
+</model>

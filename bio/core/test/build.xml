@@ -1,9 +1,0 @@
-<project name="bio-core-test" default="default" basedir=".">
-
-  <description>perform core processing tests</description>
-
-  <import file="../../../imbuild/tests.xml"/>
-
-  
-
-</project>

@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<classes>
-<class name="BindingSite" is-interface="true">
-  <reference name="factor" referenced-type="Gene"/>
-</class>
-<class name="RegulatoryRegion" is-interface="true">
-  <attribute name="evidenceMethod" type="java.lang.String"/>
-</class>
-</classes>

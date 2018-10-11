@@ -1,0 +1,48 @@
+apply plugin: 'antlr'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/generated-src/antlr/main']
+        }
+        antlr {
+            srcDirs = ['src/main/antlr']
+        }
+    }
+}
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
+dependencies {
+    compile project(':intermine-model')
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
+    compile group: 'commons-io', name: 'commons-io', version: '1.2'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0', transitive: false // conflict with log4j library this JAR needs
+    compile 'org.slf4j:slf4j-jdk14:1.7.10' // hikari needs this
+
+    compile group: 'net.iharder', name: 'base64', version: '2.3.8' //not clear wich version is currently used
+    compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven
+    compile group: 'org.ow2.asm', name: 'asm', version: '4.2'
+    compile group: 'mockobjects', name: 'mockobjects-core', version: '0.09'
+    compile group: 'mockobjects', name: 'mockobjects-jdk1.3', version: '0.09'
+    provided fileTree(dir: 'libs', include: '*.jar') // eventually replace torque
+    testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
+    antlr name: 'antlr-2.7.6-caching'
+}
+
+jar {
+    dependsOn configurations.runtime
+    // put all the JARs included in `provided` config and include them in the JAR
+    from {
+        (configurations.provided).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+

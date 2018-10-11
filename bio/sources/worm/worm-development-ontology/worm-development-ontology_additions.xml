@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-
-<classes>
-  <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true"/>
-
-</classes>

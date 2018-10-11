@@ -1,0 +1,55 @@
+<userprofiles>
+  <userprofile username="bob" password="bob_pass" apikey="BOBKEY"
+    localAccount="true" superUser="false">
+    <bags>
+      <bag name="bag1" type="Department" date-created="1322666095693"
+        description="This is some description" status="CURRENT">
+        <bagValue value="DepartmentA1" extra="" />
+        <bagValue value="DepartmentB1" extra="" />
+      </bag>
+    </bags>
+    <shared-bags></shared-bags>
+    <queries>
+      <saved-query name="query1" date-created="1322666095688">
+        <query name="query1" model="testmodel" view="" longDescription=""></query>
+      </saved-query>
+    </queries>
+    <template-queries>
+      <template name="template" title="ttitle" comment="tcomment">
+        <query name="template" model="testmodel" view="" longDescription=""></query>
+      </template>
+    </template-queries>
+    <tags>
+      <tag name="test-tag" objectIdentifier="Department.company" type="reference"></tag>
+      <tag name="test-tag2" objectIdentifier="Department.name" type="attribute"></tag>
+      <tag name="test-tag2" objectIdentifier="Department.company" type="reference"></tag>
+      <tag name="test-tag2" objectIdentifier="Department.employees"
+        type="collection"></tag>
+    </tags>
+    <preferences></preferences><invitations></invitations>
+  </userprofile>
+  <userprofile username="sally" password="sally_pass" 
+    localAccount="true" superUser="false">
+    <bags>
+      <bag name="bag2" type="Employee" date-created="1322666095854"
+        description="description" status="CURRENT">
+        <bagValue value="EmployeeB1" extra="" />
+      </bag>
+    </bags>
+    <shared-bags></shared-bags>
+    <queries>
+      <saved-query name="query1" date-created="1322666095688">
+        <query name="query1" model="testmodel" view="" longDescription=""></query>
+      </saved-query>
+    </queries>
+    <template-queries>
+      <template name="template" title="ttitle" comment="tcomment">
+        <query name="template" model="testmodel" view="" longDescription=""></query>
+      </template>
+    </template-queries>
+    <tags>
+      <tag name="test-tag" objectIdentifier="Department.company" type="reference"></tag>
+    </tags>
+    <preferences></preferences><invitations></invitations>
+  </userprofile>
+</userprofiles>

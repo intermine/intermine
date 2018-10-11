@@ -1,5 +1,0 @@
-entrez-organism is a source that operates in two steps.  It first queries the
-ObjectStore to find the NCBI taxonomy identifiers of all Organism objects.  It
-then queries the NCBI taxonomy server to find the full species and genus of
-the organism and then updates the Organism objects with that information.  All
-InterMine sources use taxon ID to identify organism.

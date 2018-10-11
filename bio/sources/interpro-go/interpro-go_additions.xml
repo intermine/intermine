@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<classes>
-<class name="ProteinDomain" is-interface="true">
-  <collection name="goAnnotation" referenced-type="GOAnnotation"/>
-</class>
-</classes>

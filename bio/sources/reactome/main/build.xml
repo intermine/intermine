@@ -1,4 +1,0 @@
-<project name="reactome-tasks" default="default" basedir=".">
-  <description>build reactome tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

@@ -1,0 +1,90 @@
+rootProject.name = 'bio-sources'
+
+include ':bio-source-biogrid',
+':bio-source-chado-db',
+':bio-source-do',
+':bio-source-eco',
+':bio-source-ensembl-compara',
+':bio-source-entrez-organism',
+':bio-source-fasta',
+':bio-source-go',
+':bio-source-go-annotation',
+':bio-source-hgnc',
+':bio-source-homologene',
+':bio-source-intermine-items-large-xml-file',
+':bio-source-intermine-items-xml-file',
+':bio-source-interpro',
+':bio-source-interpro-go',
+':bio-source-kegg-orthologues',
+':bio-source-kegg-pathway',
+':bio-source-mammalian-phenotype-ontology',
+':bio-source-mgi-identifiers',
+':bio-source-ncbi-gene',
+':bio-source-ncbi-gff',
+':bio-source-omim',
+':bio-source-orthodb',
+':bio-source-panther',
+':bio-source-protein2ipr',
+':bio-source-psi',
+':bio-source-psi-complexes',
+':bio-source-psi-mi-ontology',
+':bio-source-pubmed-gene',
+':bio-source-reactome',
+':bio-source-rgd-identifiers',
+':bio-source-so',
+':bio-source-treefam',
+':bio-source-uniprot',
+':bio-source-uniprot-keywords',
+':bio-source-update-data-sources',
+':bio-source-update-publications',
+':bio-source-vcf',
+':bio-source-wormbase-identifiers'
+//bio-examples-sources
+//':bio-source-kegg',
+//':bio-source-kegg-identifiers',
+//':bio-source-malaria-gff'
+
+project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
+project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
+project(':bio-source-do').projectDir = new File(settingsDir, './do')
+project(':bio-source-eco').projectDir = new File(settingsDir, './eco')
+project(':bio-source-ensembl-compara').projectDir = new File(settingsDir, './ensembl-compara')
+project(':bio-source-entrez-organism').projectDir = new File(settingsDir, './entrez-organism')
+project(':bio-source-fasta').projectDir = new File(settingsDir, './fasta')
+project(':bio-source-go').projectDir = new File(settingsDir, './go')
+project(':bio-source-go-annotation').projectDir = new File(settingsDir, './go-annotation')
+project(':bio-source-hgnc').projectDir = new File(settingsDir, './hgnc')
+project(':bio-source-homologene').projectDir = new File(settingsDir, './homologene')
+project(':bio-source-intermine-items-large-xml-file').projectDir = new File(settingsDir, './intermine-items-large-xml-file')
+project(':bio-source-intermine-items-xml-file').projectDir = new File(settingsDir, './intermine-items-xml-file')
+project(':bio-source-interpro').projectDir = new File(settingsDir, './interpro')
+project(':bio-source-interpro-go').projectDir = new File(settingsDir, './interpro-go')
+project(':bio-source-kegg-orthologues').projectDir = new File(settingsDir, './kegg-orthologues')
+project(':bio-source-kegg-pathway').projectDir = new File(settingsDir, './kegg-pathway')
+project(':bio-source-mammalian-phenotype-ontology').projectDir = new File(settingsDir, './mammalian-phenotype-ontology')
+project(':bio-source-ncbi-gene').projectDir = new File(settingsDir, './ncbi-gene')
+project(':bio-source-mgi-identifiers').projectDir = new File(settingsDir, './mgi-identifiers')
+project(':bio-source-ncbi-gff').projectDir = new File(settingsDir, './ncbi-gff')
+project(':bio-source-omim').projectDir = new File(settingsDir, './omim')
+project(':bio-source-orthodb').projectDir = new File(settingsDir, './orthodb')
+project(':bio-source-panther').projectDir = new File(settingsDir, './panther')
+project(':bio-source-protein2ipr').projectDir = new File(settingsDir, './protein2ipr')
+project(':bio-source-psi').projectDir = new File(settingsDir, './psi')
+project(':bio-source-psi-complexes').projectDir = new File(settingsDir, './psi-complexes')
+project(':bio-source-psi-mi-ontology').projectDir = new File(settingsDir, './psi-mi-ontology')
+project(':bio-source-pubmed-gene').projectDir = new File(settingsDir, './pubmed-gene')
+project(':bio-source-reactome').projectDir = new File(settingsDir, './reactome')
+project(':bio-source-rgd-identifiers').projectDir = new File(settingsDir, './rgd-identifiers')
+project(':bio-source-so').projectDir = new File(settingsDir, './so')
+project(':bio-source-treefam').projectDir = new File(settingsDir, './treefam')
+project(':bio-source-uniprot').projectDir = new File(settingsDir, './uniprot')
+project(':bio-source-uniprot-keywords').projectDir = new File(settingsDir, './uniprot-keywords')
+project(':bio-source-update-data-sources').projectDir = new File(settingsDir, './update-data-sources')
+project(':bio-source-update-publications').projectDir = new File(settingsDir, './update-publications')
+project(':bio-source-vcf').projectDir = new File(settingsDir, './vcf')
+project(':bio-source-wormbase-identifiers').projectDir = new File(settingsDir, './wormbase-identifiers')
+//project(':bio-source-kegg').projectDir = new File(settingsDir, './example-sources/kegg-example')
+//project(':bio-source-kegg-identifiers').projectDir = new File(settingsDir, './example-sources/kegg-identifiers')
+//project(':bio-source-malaria-gff').projectDir = new File(settingsDir, './example-sources/malaria-gff')
+
+

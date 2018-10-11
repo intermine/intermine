@@ -1,0 +1,8 @@
+rootProject.name = 'bio'
+
+include ':bio-core', ':bio-model', ':bio-testresources', ':bio-tools', ':bio-webapp'
+project(':bio-core').projectDir = new File(settingsDir, './core')
+project(':bio-model').projectDir = new File(settingsDir, './model')
+project(':bio-tools').projectDir = new File(settingsDir, './tools')
+project(':bio-webapp').projectDir = new File(settingsDir, './webapp')
+project(':bio-testresources').projectDir = new File(settingsDir, './testresources')
