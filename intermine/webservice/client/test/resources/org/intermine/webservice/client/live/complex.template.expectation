@@ -1,5 +1,0 @@
-Employee.name          | Employee.age           | Employee.end           | Employee.fullTime     
-EmployeeB1             | 40                     | 4                      | true                  
-EmployeeB2             | 50                     | 5                      | true                  
-EmployeeB3             | 60                     | 6                      | true                  
-3 rows

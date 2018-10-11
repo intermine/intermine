@@ -1,0 +1,30 @@
+rootProject.name = 'intermine'
+
+include ':intermine-model',
+':intermine-testresources',
+':intermine-pathquery',
+':intermine-objectstore',
+':intermine-integrate',
+':intermine-api',
+':intermine-resources',
+':intermine-webapp', 
+':intermine-webtasks', 
+':intermine-jbrowse-endpoint' 
+//':intermine-webservice-client', ':intermine-webservice-test'
+
+project(':intermine-model').projectDir = new File(settingsDir, './model')
+project(':intermine-testresources').projectDir = new File(settingsDir, './testresources')
+project(':intermine-pathquery').projectDir = new File(settingsDir, './pathquery')
+project(':intermine-objectstore').projectDir = new File(settingsDir, './objectstore')
+
+project(':intermine-integrate').projectDir = new File(settingsDir, './integrate')
+project(':intermine-api').projectDir = new File(settingsDir, './api')
+project(':intermine-webapp').projectDir = new File(settingsDir, './webapp')
+project(':intermine-resources').projectDir = new File(settingsDir, './resources')
+project(':intermine-webtasks').projectDir = new File(settingsDir, './webtasks')
+project(':intermine-jbrowse-endpoint').projectDir = new File(settingsDir, './jbrowse-endpoint')
+
+//intermine-webservice
+////project(':intermine-webservice-client').projectDir = new File(settingsDir, './webservice/client/main')
+////project(':intermine-webservice-samples').projectDir = new File(settingsDir, './webservice/client/samples')
+////project(':intermine-webservice-test').projectDir = new File(settingsDir, './webservice/client/test')

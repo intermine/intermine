@@ -1,0 +1,43 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/gen']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+    compile group: 'org.intermine', name: 'bio-core', version: bioVersion, transitive: false
+    compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
+    runtime fileTree(dir: 'libs', include: '*.jar') //antlr-2.7.6-caching.jar
+    bioModel group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
+}
+
+processResources {
+    from('.') { include ("*.properties")}
+}
+
+mergeModels {   
+    doLast {
+        ant.taskdef(name: "mergeBioSourceModel", classname: "org.intermine.task.ModelMergerTask") {
+            classpath {
+                pathelement(path: configurations.mergeModel.asPath)
+                dirset(dir: buildDir)
+            }
+        }
+        ant.mergeBioSourceModel(inputModelFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml",
+                additionsFile: "flybase-chado-db_additions.xml",
+                outputFile: "$sourceSets.main.output.resourcesDir/genomic_model.xml")
+    }
+}

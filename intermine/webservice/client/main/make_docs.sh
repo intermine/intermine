@@ -1,1 +1,0 @@
-javadoc -d doc -sourcepath src:../../../pathquery/main/src:../../../api/main/src:../../../objectstore/main/src -subpackages org.intermine.webservice.client:org.intermine.pathquery:org.intermine.api.template:org.intermine.metadata

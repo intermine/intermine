@@ -1,0 +1,59 @@
+ext {
+    imVersion = "2.0.+"
+    taskGroup = "InterMine"
+    minePropertyFileName = "testmodel.properties"
+    minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
+    println "Using properties file: '$minePropertyFile' "
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+        }
+        maven {
+            url 'http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
+        }
+        maven { url 'https://clojars.org/repo' }
+    }
+
+
+    configurations {
+        commonResources
+    }
+
+    dependencies {
+        compile group: 'ant', name: 'ant', version: '1.6.5'
+        compile group: 'log4j', name: 'log4j', version: '1.2.17'
+        commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
+    }
+
+    task copyMineProperties(type: Copy) {
+        description "Copies mine specific intermine.properties file (from .intermine directory) into resources output to be included in the war"
+        from minePropertyFile
+        into sourceSets.main.output.resourcesDir
+        rename { fileName -> fileName.replace("testmodel.properties", "intermine.properties") }
+        inputs.sourceFiles.stopExecutionIfEmpty()
+    }
+
+    task copyDefaultProperties(type: Copy) {
+        description "Copies default.intermine.properties file (from resources project) into resources output to be included in the war"
+        dependsOn 'processResources'
+        from({ zipTree(configurations.commonResources.singleFile) }) {
+            include "default.intermine.test.properties"
+        }
+        into sourceSets.main.output.resourcesDir
+        rename { fileName -> fileName.replace("default.intermine.test.properties", "default.intermine.properties") }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1'
+}

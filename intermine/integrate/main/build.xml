@@ -1,7 +1,0 @@
-
-<project name="intermine-integrate" default="default" basedir=".">
-  <description>build, test, package intermine-integrate</description>
-  <import file="../../../imbuild/library.xml"/>
-
-</project>
-

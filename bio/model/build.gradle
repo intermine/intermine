@@ -1,0 +1,58 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+        }
+    }
+    dependencies {
+        classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")
+    }
+}
+apply plugin: 'dbmodel'
+apply plugin: 'biomodel-dbmodel'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['build/gen']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+processResources {
+    from('.') { include ("core.xml", "genomic_additions.xml")}
+}
+
+dependencies {
+    compile group: "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'commons-lang:commons-lang:2.6'
+}
+
+dbModelConfig {
+    objectStoreName = "os.bio-test"
+    modelName = "genomic"
+    defaultInterminePropertiesFile = "default.intermine.bio-test.properties"
+}
+
+task copyMineProperties(type: Copy) {
+    from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
+    into sourceSets.main.output.resourcesDir
+    rename { fileName -> fileName.replace('intermine-bio-test.properties', 'intermine.properties') }
+    inputs.sourceFiles.stopExecutionIfEmpty()
+}
+
+task copyGenomicModel(type: Copy, overwrite: true) {
+    from sourceSets.main.output.resourcesDir
+    include 'core.xml'
+    destinationDir sourceSets.main.output.resourcesDir
+    rename { fileName -> fileName.replace('core.xml', 'genomic_model.xml') }
+}
+
+tasks.buildDB.dependsOn ':bio-testresources:createUnitTestDatabases'
+tasks.mergeModels.dependsOn 'processResources', 'copyGenomicModel', 'copyMineProperties', 'copyDefaultInterMineProperties'

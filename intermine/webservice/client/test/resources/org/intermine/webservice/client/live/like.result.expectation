@@ -1,6 +1,0 @@
-Employee.name     | Employee.age      | Employee.fullTime | Employee.end      | Employee.address.
-Didier Leguélec   | 49                | false             | null              | Rue Représentant 
-Gilles Triquet    | 57                | false             | null              | Rue Représentant 
-Jacques Plagnol J | 51                | false             | null              | Rue Représentant 
-Joel Liotard      | 34                | false             | null              | Rue Représentant 
-4 rows

@@ -1,0 +1,19 @@
+tasks.test.dependsOn(':intermine-testresources:buildDB')
+
+dependencies {
+    compile project(':intermine-objectstore')
+    compile group: 'stax', name: 'stax', version: '1.2.0' //stax-ri 1.0 not available on maven
+    testCompile group: 'xmlunit', name: 'xmlunit', version: '1.6'
+    testCompile project(':intermine-objectstore').sourceSets.test.output
+    testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
+    testCompile project(':intermine-resources')
+}
+
+task testClassesJar(type: Jar) {
+    classifier = 'testClasses'
+    from sourceSets.test.output
+}
+
+artifacts {
+    archives testClassesJar
+}
