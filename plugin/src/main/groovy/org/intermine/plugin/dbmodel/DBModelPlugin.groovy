@@ -148,7 +148,7 @@ class DBModelPlugin implements Plugin<Project> {
                 sourceNames.each { sourceName ->
 
                     Source source = intermineProject.sources.get(sourceName)
-                    String sourceVersion = source.version
+                    String sourceVersion = source.getVersion()
                     String sourceType = source.getType()
                     FileTree dataSourceJar = null
                     File sourceKeysFile = null
