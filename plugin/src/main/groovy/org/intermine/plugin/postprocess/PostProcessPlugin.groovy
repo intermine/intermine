@@ -52,7 +52,7 @@ class PostProcessPlugin implements Plugin<Project> {
                     }
 
                     if (!DO_SOURCES.equals(processName)) {
-                        project.dependencies.add("postProcesses", [group: "org.intermine", name: "bio-postprocess-" + processName, version: postProcess])
+                        project.dependencies.add("postProcesses", [group: "org.intermine", name: "bio-postprocess-" + processName, version: version])
                     }
                 }
             }
