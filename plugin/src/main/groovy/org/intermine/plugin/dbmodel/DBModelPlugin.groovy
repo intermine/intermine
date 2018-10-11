@@ -64,13 +64,9 @@ class DBModelPlugin implements Plugin<Project> {
                 def projectXml = parser.parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
                    String version = System.getProperty("bioVersion")
-                    System.out.println("**** bioVersion ${version}")
-                    System.out.println("**** source name ${source.'@name'}")
                     if (source.'@version' != null) {
                         version = source.'@version'
-                        System.out.println("** source version ${version}")
                     }
-                    System.out.println("** final ${version}")
                     if (source.@type == "intermine-items-xml-file") {
                         dbUtils.addBioSourceDependency(source.'@name', version)
                     }
