@@ -63,10 +63,14 @@ class DBModelPlugin implements Plugin<Project> {
                 parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
                 def projectXml = parser.parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
-                    if (source.@type == "intermine-items-xml-file") {
-                        dbUtils.addBioSourceDependency(source.'@name', source.'@version')
+                    String version = System.getProperty("bioVersion");
+                    if (source.'@version' != "") {
+                        version = source.'@version'
                     }
-                    dbUtils.addBioSourceDependency(source.'@type', source.'@version')
+                    if (source.@type == "intermine-items-xml-file") {
+                        dbUtils.addBioSourceDependency(source.'@name', version)
+                    }
+                    dbUtils.addBioSourceDependency(source.'@type', version)
                 }
             }
         }
