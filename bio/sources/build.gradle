@@ -37,12 +37,6 @@ subprojects {
     repositories {
         mavenLocal()
         jcenter()
-        maven{
-            url "https://dl.bintray.com/intermineorg/intermine/"
-        }
-        maven{
-            url "https://dl.bintray.com/intermineorg/bio/"
-        }
         maven {
             url 'http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
         }
