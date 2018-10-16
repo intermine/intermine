@@ -156,6 +156,8 @@ public class InitialiserPlugin implements PlugIn
         loadOpenIDProviders(servletContext);
         loadOAuth2Providers(servletContext, webProperties);
 
+
+            // web properties
         // set up core InterMine application
         os = getProductionObjectStore(webProperties);
         if (os == null) {
@@ -343,6 +345,8 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private ObjectStore getProductionObjectStore(Properties webProperties) {
+
+
         String osAlias = (String) webProperties.get("webapp.os.alias");
 
         try {
