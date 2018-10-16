@@ -109,7 +109,7 @@
          }
       } else {
           alert('Please input a value such as 100, 1.2k or 2M');
-          jQuery("input#${sliderIdentifier}-input-box").val(0);
+          jQuery("#${sliderIdentifier} input[type='text']").val(0);
           adjustSliderPosition();
       }
 

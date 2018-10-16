@@ -8,6 +8,15 @@
  *
  */
 
+InterMine 2.1 (October 2018)
+
+#1583 - Update InterMIne code generation to be Python 3 compatible
+#1803 - Discontiguous CDS sequences and lengths not set properly
+#1844 - FASTA query web service: times out when extensions are used
+#1881 - Regions bug: trying to leave extended region field blank results in error message that takes over the page
+#1892 - Update publications: POST instead of GET
+#1895 - Some SO terms were not updated in 2.0 release
+
 InterMine 2.0 (Summer 2018)
 
 #39 - Keyword search autocomplete enabled
