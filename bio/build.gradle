@@ -71,6 +71,8 @@ subprojects {
 
     test {
         ignoreFailures = true
+        // we have a system property that we need to get to the tests
+        systemProperties System.properties
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {

@@ -118,6 +118,7 @@ subprojects {
     }
 
     test {
+        systemProperties System.properties
         ignoreFailures = true
         forkEvery = 1
     }
