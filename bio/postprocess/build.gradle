@@ -112,6 +112,11 @@ subprojects {
         include '**/*Test.class'
     }
 
+    main {
+        // we have a system property that we need to get to the java
+        systemProperties System.properties
+    }
+
     test {
         // we have a system property that we need to get to the tests
         systemProperties System.properties

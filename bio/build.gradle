@@ -69,6 +69,11 @@ subprojects {
         enabled = false
     }
 
+    main {
+        // we have a system property that we need to get to the java
+        systemProperties System.properties
+    }
+
     test {
         ignoreFailures = true
         // we have a system property that we need to get to the tests
