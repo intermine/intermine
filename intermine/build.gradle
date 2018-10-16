@@ -94,12 +94,6 @@ subprojects {
         test.reports.html.enabled = true
     }
 
-
-    main {
-        // we have a system property that we need to get to the java
-        systemProperties System.properties
-    }
-
     test {
         ignoreFailures = true
 
