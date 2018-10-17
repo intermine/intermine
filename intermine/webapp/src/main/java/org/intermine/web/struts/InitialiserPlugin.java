@@ -140,7 +140,8 @@ public class InitialiserPlugin implements PlugIn
         // webapp to fail to deploy with no error message.
 
         // needed for SOLR dep conflict. See #1889
-        System.setProperty("javax.xml.stream.XMLOutputFactory","com.sun.xml.internal.stream.XMLOutputFactoryImpl");
+        System.setProperty("javax.xml.stream.XMLOutputFactory",
+                "com.sun.xml.internal.stream.XMLOutputFactoryImpl");
 
         final long start = System.currentTimeMillis();
 
