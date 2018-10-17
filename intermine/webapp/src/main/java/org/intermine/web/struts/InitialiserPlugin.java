@@ -139,10 +139,6 @@ public class InitialiserPlugin implements PlugIn
         // NOTE throwing exceptions other than a ServletException from this class causes the
         // webapp to fail to deploy with no error message.
 
-        // needed for SOLR dep conflict. See #1889
-        System.setProperty("javax.xml.stream.XMLOutputFactory",
-                "com.sun.xml.internal.stream.XMLOutputFactoryImpl");
-
         final long start = System.currentTimeMillis();
 
         final ServletContext servletContext = servlet.getServletContext();
@@ -154,14 +150,16 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("webProperties is null");
         }
 
+        // set XML library
+        initXMLLibrary();
+
         // read in additional webapp specific information and put in servletContext
         loadAspectsConfig(servletContext);
         loadClassDescriptions(servletContext);
         loadOpenIDProviders(servletContext);
         loadOAuth2Providers(servletContext, webProperties);
 
-
-            // web properties
+        // web properties
         // set up core InterMine application
         os = getProductionObjectStore(webProperties);
         if (os == null) {
@@ -212,6 +210,15 @@ public class InitialiserPlugin implements PlugIn
         initKeylessClasses(servletContext, webConfig);
 
         LOG.debug("Application initialised in " + (System.currentTimeMillis() - start) + "ms");
+    }
+
+    // needed for SOLR dep conflict. See #1889
+    private void initXMLLibrary() {
+        String xmlLibrary = PropertiesUtil.getProperties().getProperty(
+                "javax.xml.stream.XMLOutputFactory").trim();
+        if (xmlLibrary != null) {
+            System.setProperty("javax.xml.stream.XMLOutputFactory", xmlLibrary);
+        }
     }
 
     private void initSearch(final ServletContext servletContext,
