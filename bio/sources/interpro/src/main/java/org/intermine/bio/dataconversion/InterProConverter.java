@@ -12,12 +12,15 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Stack;
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.xml.full.Item;
@@ -54,7 +57,7 @@ public class InterProConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         InterProHandler handler = new InterProHandler(getItemWriter());
         try {
-            SAXParser.parse(new InputSource(reader), handler);
+            SAXParser.parse(new InputSource(reader), handler, false);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
