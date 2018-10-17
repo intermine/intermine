@@ -151,7 +151,7 @@ public class InitialiserPlugin implements PlugIn
         }
 
         // set XML library
-        initXMLLibrary();
+       // initXMLLibrary();
 
         // read in additional webapp specific information and put in servletContext
         loadAspectsConfig(servletContext);
@@ -210,15 +210,6 @@ public class InitialiserPlugin implements PlugIn
         initKeylessClasses(servletContext, webConfig);
 
         LOG.debug("Application initialised in " + (System.currentTimeMillis() - start) + "ms");
-    }
-
-    // needed for SOLR dep conflict. See #1889
-    private void initXMLLibrary() {
-        String xmlLibrary = PropertiesUtil.getProperties().getProperty(
-                "javax.xml.stream.XMLOutputFactory").trim();
-        if (xmlLibrary != null) {
-            System.setProperty("javax.xml.stream.XMLOutputFactory", xmlLibrary);
-        }
     }
 
     private void initSearch(final ServletContext servletContext,
@@ -602,6 +593,11 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.globalweb", null);
             return webProperties;
         }
+
+        // required for XML conflict with SOLR. see #1889
+        String xmlLibrary = webProperties.getProperty("javax.xml.stream.XMLOutputFactory");
+        System.setProperty("javax.xml.stream.XMLOutputFactory", xmlLibrary);
+
         updateOrigins(lastState, origins, globalPropertiesStreamPath, webProperties);
 
         Pattern pattern = Pattern.compile("/WEB-INF/(?!global)\\w+\\.web\\.properties$");
