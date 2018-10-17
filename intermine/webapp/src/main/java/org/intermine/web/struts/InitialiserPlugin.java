@@ -139,6 +139,9 @@ public class InitialiserPlugin implements PlugIn
         // NOTE throwing exceptions other than a ServletException from this class causes the
         // webapp to fail to deploy with no error message.
 
+        // needed for SOLR dep conflict. See #1889
+        System.setProperty("javax.xml.stream.XMLOutputFactory","com.sun.xml.internal.stream.XMLOutputFactoryImpl");
+
         final long start = System.currentTimeMillis();
 
         final ServletContext servletContext = servlet.getServletContext();
