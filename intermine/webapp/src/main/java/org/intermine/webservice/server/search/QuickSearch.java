@@ -27,9 +27,13 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.searchengine.*;
+import org.intermine.api.searchengine.KeywordSearchFacetData;
+import org.intermine.api.searchengine.KeywordSearchHandler;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.searchengine.KeywordSearchFacet;
+import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
+import org.intermine.api.searchengine.KeywordSearchResults;
 import org.intermine.api.searchengine.solr.SolrKeywordSearchHandler;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.RequestUtil;
@@ -45,7 +49,6 @@ import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.XMLFormatter;
 
-import com.browseengine.bobo.api.BrowseFacet;
 
 /**
  * A service that runs key-word searches.
@@ -85,12 +88,11 @@ public class QuickSearch extends JSONService
         Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
         Map<String, String> facetValues = getFacetValues(facets);
 
-//        ResultsWithFacets results = KeywordSearch.runBrowseWithFacets(
-//                im, input.searchTerm, input.offset, facetValues, input.getListIds());
-
         KeywordSearchHandler keywordSearchHandler = new SolrKeywordSearchHandler();
 
-        KeywordSearchResults results = keywordSearchHandler.doKeywordSearch(im, input.searchTerm, facetValues, input.getListIds(), input.offset);
+        KeywordSearchResults results = keywordSearchHandler
+                .doKeywordSearch(im, input.searchTerm, facetValues,
+                        input.getListIds(), input.offset);
 
         Collection<KeywordSearchResult> searchResultsParsed =
                 SearchUtils.parseResults(im, wc, results.getHits());
@@ -103,7 +105,7 @@ public class QuickSearch extends JSONService
                 List<FacetField.Count> items = kwsf.getItems();
 
                 for ( FacetField.Count key : items) {
-                    sfData.put(key.getName(), (int)key.getCount());
+                    sfData.put(key.getName(), (int) key.getCount());
                 }
 
                 facetData.put(kwsf.getField(), sfData);

@@ -736,9 +736,9 @@ public class SequenceOntology
             parser.processOntology(new FileReader(oboFilename));
             parser.processRelations(oboFilename);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Couldn't find obo file", e);
+            throw new RuntimeException("Couldn't find obo file: '" + oboFilename + "'", e);
         } catch (Exception e) {
-            throw new RuntimeException("Parsing obo file failed", e);
+            throw new RuntimeException("Parsing obo file failed:  '" + oboFilename + "'", e);
         }
 
         // process results of parsing by OBOEdit.  flatten and trim unwanted terms

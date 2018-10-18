@@ -150,12 +150,16 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("webProperties is null");
         }
 
+        // set XML library
+       // initXMLLibrary();
+
         // read in additional webapp specific information and put in servletContext
         loadAspectsConfig(servletContext);
         loadClassDescriptions(servletContext);
         loadOpenIDProviders(servletContext);
         loadOAuth2Providers(servletContext, webProperties);
 
+        // web properties
         // set up core InterMine application
         os = getProductionObjectStore(webProperties);
         if (os == null) {
@@ -343,6 +347,8 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private ObjectStore getProductionObjectStore(Properties webProperties) {
+
+
         String osAlias = (String) webProperties.get("webapp.os.alias");
 
         try {
@@ -587,6 +593,11 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.globalweb", null);
             return webProperties;
         }
+
+        // required for XML conflict with SOLR. see #1889
+        String xmlLibrary = webProperties.getProperty("javax.xml.stream.XMLOutputFactory");
+        System.setProperty("javax.xml.stream.XMLOutputFactory", xmlLibrary);
+
         updateOrigins(lastState, origins, globalPropertiesStreamPath, webProperties);
 
         Pattern pattern = Pattern.compile("/WEB-INF/(?!global)\\w+\\.web\\.properties$");

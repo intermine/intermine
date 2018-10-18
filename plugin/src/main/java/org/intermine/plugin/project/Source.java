@@ -22,6 +22,7 @@ public class Source extends Action
 {
     private String name;
     private String type;
+    private String version;
     private File location;
 
     /**
@@ -55,6 +56,23 @@ public class Source extends Action
     public String getName() {
         return name;
     }
+
+    /**
+     * Set the version of this Source, e.g. 2.0.0
+     * @param version the version
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
+     * Get the version of this object.
+     * @return the version
+     */
+    public String getVersion() {
+        return version;
+    }
+
 
     /**
      * Set the location of this Source directory.

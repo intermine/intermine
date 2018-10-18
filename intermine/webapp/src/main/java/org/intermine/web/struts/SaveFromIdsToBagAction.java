@@ -75,7 +75,9 @@ public class SaveFromIdsToBagAction extends InterMineAction
 
                 KeywordSearchHandler keywordSearchHandler = new SolrKeywordSearchHandler();
 
-                idSet = keywordSearchHandler.getObjectIdsFromSearch(im, searchTerm, offset, facetMap, new ArrayList<Integer>());
+                idSet = keywordSearchHandler.
+                        getObjectIdsFromSearch(im, searchTerm, offset, facetMap,
+                                new ArrayList<Integer>(), listSize);
 
             } else {
                 // ids are comma delimited

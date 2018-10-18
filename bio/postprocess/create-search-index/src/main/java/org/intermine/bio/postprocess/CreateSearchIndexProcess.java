@@ -45,7 +45,7 @@ public class CreateSearchIndexProcess extends PostProcessor
      */
     public void postProcess()
             throws ObjectStoreException {
-        System.out.println("Creating index for keyword search...");
+        System.out .println("Creating index for keyword search...");
 
         //read class keys to figure out what are keyFields during indexing
         Properties classKeyProperties = new Properties();
@@ -62,13 +62,13 @@ public class CreateSearchIndexProcess extends PostProcessor
 
         //index and save. Deleting previous index happens within itself
         try {
-		    IndexHandler indexHandler = new SolrIndexHandler();
+            IndexHandler indexHandler = new SolrIndexHandler();
             indexHandler.createIndex(osw, classKeys);
 
-            System.out.println("Creating index for keyword search ended successfully");
+            System.out .println("Creating index for keyword search ended successfully");
 
         } catch (Exception e) {
-            System.out.println("Creating keyword index failed");
+            System.out .println("Creating keyword index failed");
             e.printStackTrace();
         }
 

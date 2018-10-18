@@ -15,18 +15,23 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
- * A manager class to handle all the configuration properties from objectstoresummary.config.properties file
+ * A manager class to handle all the configuration properties
+ * from objectstoresummary.config.properties file
+ *
  * @author arunans23
  */
-public class PropertiesManager {
+final class PropertiesManager
+{
     private static final Logger LOG = Logger.getLogger(PropertiesManager.class);
 
     private static PropertiesManager propertiesManager;
 
-    private String CONFIG_FILE_NAME = "objectstoresummary.config.properties";
+    private static final String CONFIG_FILE_NAME = "objectstoresummary.config.properties";
 
     private Properties properties = null;
 
@@ -34,7 +39,7 @@ public class PropertiesManager {
 
     private String solrUrl;
 
-    private PropertiesManager(){
+    private PropertiesManager() {
         parseProperties();
     }
 
@@ -43,10 +48,10 @@ public class PropertiesManager {
      *
      * @return Manager instance
      **/
-    public static PropertiesManager getInstance(){
-        if (propertiesManager == null){
-            synchronized (PropertiesManager.class){
-                if (propertiesManager == null){
+    public static PropertiesManager getInstance() {
+        if (propertiesManager == null) {
+            synchronized (PropertiesManager.class) {
+                if (propertiesManager == null) {
                     propertiesManager = new PropertiesManager();
                 }
             }
@@ -89,11 +94,17 @@ public class PropertiesManager {
         }
     }
 
-    public HashMap<String, String> getClassFieldMap() {
+    /**
+    * @return classFieldMap
+    */
+    HashMap<String, String> getClassFieldMap() {
         return classFieldMap;
     }
 
-    public String getSolrUrl() {
+    /**
+     * @return solrUrl
+     */
+    String getSolrUrl() {
         return solrUrl;
     }
 }

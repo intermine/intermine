@@ -13,16 +13,9 @@ package org.intermine.bio.postprocess;
 import java.io.IOException;
 
 
-
-import java.util.Properties;
-
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.modelproduction.MetadataManager;
-import org.intermine.sql.Database;
-import java.sql.SQLException;
 import org.apache.tools.ant.BuildException;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -54,28 +47,21 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
         try {
 
             ObjectStore os = osw.getObjectStore();
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
 
-            try {
-                AutoCompleter ac = new AutoCompleter(os);
-                ac.buildIndex(os);
+            AutoCompleter ac = new AutoCompleter(os);
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            ac.buildIndex(os);
 
-            } catch (ObjectStoreException e) {
-                e.printStackTrace();
-
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                
-            }
-
-        System.out.println("Creating auto complete index has completed");
+            System.out .println("Creating auto complete index has completed");
 
         } catch (NullPointerException e) {
             throw new BuildException("Could not find the class keys");
-        }
 
+        } catch (IOException e) {
+            throw new BuildException("Creating autocomplete index failed", e);
+
+        } catch (ClassNotFoundException e) {
+            throw new BuildException("Creating autocomplete index failed", e);
+        }
     }
 }

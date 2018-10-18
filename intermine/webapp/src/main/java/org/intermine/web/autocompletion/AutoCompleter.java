@@ -11,7 +11,12 @@ package org.intermine.web.autocompletion;
  */
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -52,7 +57,7 @@ public class AutoCompleter
 
     ObjectStore os;
 
-    private final String CLASSNAME_FIELD = "className";
+    private static final String CLASSNAME_FIELD = "className";
 
     /**
      * Autocompleter build index constructor.
@@ -63,7 +68,7 @@ public class AutoCompleter
 
         this.os = os;
 
-        if(propertiesManager == null){
+        if (propertiesManager == null) {
             this.propertiesManager = PropertiesManager.getInstance();
             this.classFieldMap = propertiesManager.getClassFieldMap();
             createFieldIndexMap();
@@ -85,7 +90,9 @@ public class AutoCompleter
         String status = "true";
         String[] stringResults = null;
 
-        SolrClient solrClient = SolrClientHandler.getClientInstance(this.propertiesManager.getSolrUrl());
+        SolrClient solrClient
+                = SolrClientHandler.getClientInstance(this.propertiesManager.getSolrUrl());
+
         QueryResponse resp = null;
 
         if (!"".equals(query) && !query.trim().startsWith("*")) {
@@ -126,7 +133,8 @@ public class AutoCompleter
                     try {
                         SolrDocument document = results.get(i - 1);
 
-                        stringResults[i] = ((ArrayList<String>) document.getFieldValue(field)).get(0);
+                        stringResults[i] = ((ArrayList<String>) document
+                                .getFieldValue(field)).get(0);
 
                     } catch (Exception e) {
                         status = "No results! Please try again.";
@@ -186,7 +194,7 @@ public class AutoCompleter
                 String classAndField = cld.getUnqualifiedName() + "." + fieldName;
                 System.out .println("Indexing " + classAndField);
 
-                if (!fieldList.contains(fieldName)){
+                if (!fieldList.contains(fieldName)) {
                     fieldList.add(fieldName);
                 }
 
@@ -210,18 +218,19 @@ public class AutoCompleter
             }
         }
 
-        SolrClient solrClient = SolrClientHandler.getClientInstance(this.propertiesManager.getSolrUrl());
+        SolrClient solrClient = SolrClientHandler
+                .getClientInstance(this.propertiesManager.getSolrUrl());
 
         try {
             solrClient.deleteByQuery("*:*");
             solrClient.commit();
         } catch (SolrServerException e) {
             LOG.error("Deleting old index failed", e);
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        for(String fieldName: fieldList){
+        for (String fieldName: fieldList) {
             Map<String, Object> fieldAttributes = new HashMap();
             fieldAttributes.put("name", fieldName);
             fieldAttributes.put("type", "text_general");
@@ -230,11 +239,11 @@ public class AutoCompleter
             fieldAttributes.put("multiValued", true);
             fieldAttributes.put("required", false);
 
-            try{
+            try {
                 SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
                 SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
 
-            } catch (SolrServerException e){
+            } catch (SolrServerException e) {
                 LOG.error("Error while adding autocomplete fields to the solrclient.", e);
                 e.printStackTrace();
             }
@@ -246,8 +255,9 @@ public class AutoCompleter
             solrClient.commit();
         } catch (SolrServerException e) {
 
-            LOG.error("Error while commiting the AutoComplete SolrInputdocuments to the Solrclient. " +
-                    "Make sure the Solr instance is up", e);
+            LOG.error("Error while commiting the AutoComplete "
+                    + "SolrInputdocuments to the Solrclient. "
+                    + "Make sure the Solr instance is up", e);
 
             e.printStackTrace();
         }
@@ -262,14 +272,14 @@ public class AutoCompleter
      */
     public boolean hasAutocompleter(String type, String field) {
 
-        if (fieldIndexMap.containsKey(type) && fieldIndexMap.get(type).contains(field)){
+        if (fieldIndexMap.containsKey(type) && fieldIndexMap.get(type).contains(field)) {
             return true;
         }
 
         return false;
     }
 
-    public void createFieldIndexMap(){
+    private void createFieldIndexMap() {
         for (Map.Entry<String, String> entry: classFieldMap.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
