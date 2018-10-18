@@ -36,16 +36,23 @@ public final class GFF3Parser
      */
     public static Iterator<?> parse(final BufferedReader reader) throws IOException {
         String line = null;
+        StringBuffer header = new StringBuffer();
 
         while ((line = reader.readLine()) != null) {
             String trimmedLine = line.trim();
 
-            if (trimmedLine.length() == 0 || trimmedLine.startsWith("#")) {
+            if (trimmedLine.length() == 0) {
+                continue;
+            }
+
+            // gather up the header information.
+            if (trimmedLine.startsWith("#")) {
+                header.append(trimmedLine);
                 continue;
             }
 
             // throws IOException if the first GFF line isn't valid
-            new GFF3Record(trimmedLine);
+            new GFF3Record(header.toString(), trimmedLine);
 
             break;
         }
@@ -66,10 +73,16 @@ public final class GFF3Parser
                 }
                 Object objectToReturn = null;
                 try {
-                    objectToReturn = new GFF3Record(currentLine);
+                    objectToReturn = new GFF3Record(header.toString(), currentLine);
                     while ((currentLine = reader.readLine()) != null) {
                         String trimmedLine = currentLine.trim();
-                        if (trimmedLine.length() == 0 || trimmedLine.startsWith("#")) {
+                        if (trimmedLine.length() == 0) {
+                            continue;
+                        }
+
+                        // gather up the header information.
+                        if (trimmedLine.startsWith("#")) {
+                            header.append(trimmedLine);
                             continue;
                         }
                         break;
