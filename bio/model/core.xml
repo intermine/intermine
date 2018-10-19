@@ -138,7 +138,7 @@
         <attribute name="name" type="java.lang.String"/>
         <attribute name="annotationVersion" type="java.lang.String"/>
         <attribute name="assemblyVersion" type="java.lang.String"/>
-        <collection name="strains" referenced-type="Strain" reverse-reference="organism" />
+        <collection name="strains" referenced-type="Strain"/>
     </class>
 
     <class name="Protein" extends="BioEntity" is-interface="true">
@@ -192,11 +192,10 @@
         <collection name="childFeatures" referenced-type="SequenceFeature" />
     </class>
 
-    <class name="Strain" extends="Bioentity" is-interface="true">
+    <class name="Strain" extends="BioEntity" is-interface="true">
         <attribute name="annotationVersion" type="java.lang.String"/>
         <attribute name="assemblyVersion" type="java.lang.String"/>
-        <reference name="organism" referenced-type="Organism" reverse-reference="strains" />
-        <collection name="features" referenced-type="SequenceFeature" reverse-reference="strains" />
+        <collection name="features" referenced-type="SequenceFeature" reverse-reference="strain" />
     </class>
 
     <class name="Synonym" is-interface="true">
