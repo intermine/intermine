@@ -192,9 +192,7 @@
         <collection name="childFeatures" referenced-type="SequenceFeature" />
     </class>
 
-    <class name="Strain" is-interface="true">
-        <attribute name="identifier" type="java.lang.String" />
-        <attribute name="name" type="java.lang.String" />
+    <class name="Strain" extends="Bioentity" is-interface="true">
         <attribute name="annotationVersion" type="java.lang.String"/>
         <attribute name="assemblyVersion" type="java.lang.String"/>
         <reference name="organism" referenced-type="Organism" reverse-reference="strains" />
