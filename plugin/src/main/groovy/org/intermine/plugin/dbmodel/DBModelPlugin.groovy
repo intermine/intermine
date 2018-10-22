@@ -269,6 +269,10 @@ class DBModelPlugin implements Plugin<Project> {
                 dbUtils.storeMetadata(config.objectStoreName, config.modelName)
                 dbUtils.createIndexes(config.objectStoreName, false)
                 dbUtils.analyse(config.objectStoreName, config.modelName)
+
+                println "************************************************************************************************************************"
+                println "IF YOU CHANGE YOUR DATA MODEL BE SURE TO RUN THE clean TASK BEFORE buildDB ELSE YOU WILL NOT UPDATE THE MINE'S MODEL! :)"
+                println "************************************************************************************************************************"
             }
         }
 
