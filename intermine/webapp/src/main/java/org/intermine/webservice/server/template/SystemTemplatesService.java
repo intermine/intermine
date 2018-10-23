@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.template.TemplateManager;
