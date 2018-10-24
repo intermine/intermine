@@ -14,7 +14,7 @@ buildscript {
 
 subprojects {
     group = 'org.intermine'
-    version '2.1.0'
+    version '2.1.1'
 
     apply plugin: 'net.researchgate.release'
     apply plugin: "java"
@@ -163,9 +163,9 @@ subprojects {
             vcsUrl = 'https://github.com/intermine/intermine.git'
             publicDownloadNumbers = true
             version {
-                name = '2.1.0'
-                desc = 'InterMine 2.1'
-                vcsTag = 'intermine-2.1.0'
+                name = '2.1.1'
+                desc = 'InterMine 2.1.1'
+                vcsTag = 'intermine-2.1.1'
             }
         }
         configurations = ['archives']
