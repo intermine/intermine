@@ -63,10 +63,14 @@ class DBModelPlugin implements Plugin<Project> {
                 parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
                 def projectXml = parser.parse(projectXmlFilePath)
                 projectXml.sources.source.each { source ->
-                    if (source.@type == "intermine-items-xml-file") {
-                        dbUtils.addBioSourceDependency(source.'@name')
+                   String version = System.getProperty("bioVersion")
+                    if (source.'@version' != null) {
+                        version = source.'@version'
                     }
-                    dbUtils.addBioSourceDependency(source.'@type')
+                    if (source.@type == "intermine-items-xml-file") {
+                        dbUtils.addBioSourceDependency(source.'@name', version)
+                    }
+                    dbUtils.addBioSourceDependency(source.'@type', version)
                 }
             }
         }
@@ -148,6 +152,7 @@ class DBModelPlugin implements Plugin<Project> {
                 sourceNames.each { sourceName ->
 
                     Source source = intermineProject.sources.get(sourceName)
+                    String sourceVersion = source.getVersion()
                     String sourceType = source.getType()
                     FileTree dataSourceJar = null
                     File sourceKeysFile = null
@@ -156,6 +161,10 @@ class DBModelPlugin implements Plugin<Project> {
                     // Also versions might be strings, so can't use regular expressions (eg. RC or SNAPSHOT)
                     // have to include the version number at all because go-annotation will match go
                     String bioVersionPrefix = System.getProperty("bioVersion").substring(0, 1)
+                    if (sourceVersion != null && sourceVersion != "") {
+                        bioVersionPrefix = sourceVersion
+                    }
+
 
                     project.configurations.getByName("mergeSource").asFileTree.each {
                         if (it.name.startsWith("bio-source-$sourceName-$bioVersionPrefix")) {
@@ -260,6 +269,10 @@ class DBModelPlugin implements Plugin<Project> {
                 dbUtils.storeMetadata(config.objectStoreName, config.modelName)
                 dbUtils.createIndexes(config.objectStoreName, false)
                 dbUtils.analyse(config.objectStoreName, config.modelName)
+
+                println "************************************************************************************************************************"
+                println "IF YOU CHANGE YOUR DATA MODEL BE SURE TO RUN THE clean TASK BEFORE buildDB ELSE YOU WILL NOT UPDATE THE MINE'S MODEL! :)"
+                println "************************************************************************************************************************"
             }
         }
 

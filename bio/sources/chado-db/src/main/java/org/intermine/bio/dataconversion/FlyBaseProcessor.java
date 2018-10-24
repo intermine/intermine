@@ -735,19 +735,6 @@ public class FlyBaseProcessor extends SequenceProcessor
     private static final Set<String> VALID_CHROMOSOMES = new HashSet<String>();
 
     static {
-        VALID_CHROMOSOMES.add("211000022278279");
-        VALID_CHROMOSOMES.add("211000022278436");
-        VALID_CHROMOSOMES.add("211000022278449");
-        VALID_CHROMOSOMES.add("211000022278760");
-        VALID_CHROMOSOMES.add("211000022279165");
-        VALID_CHROMOSOMES.add("211000022279188");
-        VALID_CHROMOSOMES.add("211000022279264");
-        VALID_CHROMOSOMES.add("211000022279681");
-        VALID_CHROMOSOMES.add("211000022280328");
-        VALID_CHROMOSOMES.add("211000022280341");
-        VALID_CHROMOSOMES.add("211000022280347");
-        VALID_CHROMOSOMES.add("211000022280481");
-        VALID_CHROMOSOMES.add("211000022280494");
         VALID_CHROMOSOMES.add("2L");
         VALID_CHROMOSOMES.add("2R");
         VALID_CHROMOSOMES.add("3L");
@@ -759,7 +746,6 @@ public class FlyBaseProcessor extends SequenceProcessor
         VALID_CHROMOSOMES.add("Y");
         VALID_CHROMOSOMES.add("rDNA");
     }
-
 
     /**
      * {@inheritDoc}
