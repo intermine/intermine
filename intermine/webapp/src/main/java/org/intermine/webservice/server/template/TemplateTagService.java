@@ -76,7 +76,8 @@ public class TemplateTagService extends JSONService
     }
 
     private Set<String> getTagsForSingleTemplate(String name, Profile profile) {
-        Map<String, ApiTemplate> templates = profile.getSavedTemplates();
+        Map<String, ApiTemplate> templates = im.getTemplateManager()
+                .getUserAndGlobalTemplates(profile);
         ApiTemplate template = templates.get(name);
         if (template == null) {
             throw new ResourceNotFoundException(

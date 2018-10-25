@@ -55,7 +55,9 @@ public class TemplateTagAddingService extends TemplateTagService
         Set<String> tags = getTags();
 
         Profile profile = getPermission().getProfile();
-        Map<String, ApiTemplate> templates = profile.getSavedTemplates();
+
+        Map<String, ApiTemplate> templates = im.getTemplateManager()
+                .getUserAndGlobalTemplates(profile);
         ApiTemplate template = templates.get(templateName);
         if (template == null) {
             throw new ResourceNotFoundException(
