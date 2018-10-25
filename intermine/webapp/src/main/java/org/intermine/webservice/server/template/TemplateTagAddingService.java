@@ -19,7 +19,6 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
