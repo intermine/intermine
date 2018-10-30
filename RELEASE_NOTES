@@ -8,6 +8,11 @@
  *
  */
 
+
+InterMine 2.1.1 (late October 2018)
+
+#1916 - Adds versions to postprocesses
+
 InterMine 2.1 (October 2018)
 
 #1583 - Update InterMIne code generation to be Python 3 compatible

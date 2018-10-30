@@ -23,6 +23,7 @@ subprojects {
     group = 'org.intermine'
     version = '3.0.0'
 
+
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'com.jfrog.bintray'
