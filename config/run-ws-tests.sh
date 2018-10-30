@@ -12,11 +12,7 @@ if [ "$CLIENT" = "JS" ]; then
         exit 1
     fi
 
-    #Bower needs to be installed before all other modules
-    npm install -g bower
-    bower install
-    # The next line used to be all we need, but something fails on bower
-    # For inexplicable reasons. Installing bower on its own seems to fix this.
+    npm install acorn
     npm install
 
 elif [ "$CLIENT" = "PY" ]; then
