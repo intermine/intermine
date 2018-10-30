@@ -13,7 +13,7 @@ if [ "$CLIENT" = "JS" ]; then
     fi
 
     #Bower needs to be installed before all other modules
-    npm install bower
+    npm install -g bower
     bower install
     # The next line used to be all we need, but something fails on bower
     # For inexplicable reasons. Installing bower on its own seems to fix this.
