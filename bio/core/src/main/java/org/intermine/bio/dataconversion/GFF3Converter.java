@@ -733,7 +733,7 @@ public class GFF3Converter extends DataConverter
      */
     private Item getSeq(GFF3Record record)
         throws ObjectStoreException {
-        String id = record.getId();
+        String id = record.getSequenceID();
 
         // the seqHandler may have changed the id used, e.g. if using an IdResolver
         String identifier = sequenceHandler.getSeqIdentifier(id);
