@@ -98,13 +98,20 @@ public final class ProjectXmlBinding
                 }
             } else if ("post-process".equals(qName)) {
                 PostProcess postProcess = new PostProcess();
+                String version = attrs.getValue("version");
+                if (version != null && !"".equals(version)) {
+                    postProcess.setVersion(version);
+                }
                 action = postProcess;
                 project.addPostProcess(attrs.getValue("name"), postProcess);
             } else if ("source".equals(qName)) {
                 Source source = new Source();
                 source.setType(attrs.getValue("type"));
                 source.setName(attrs.getValue("name"));
-                source.setPrefix(attrs.getValue("prefix"));
+                String version = attrs.getValue("version");
+                if (version != null && !"".equals(version)) {
+                    source.setVersion(version);
+                }
                 project.addSource(attrs.getValue("name"), source);
                 action = source;
             } else if ("property".equals(qName)) {

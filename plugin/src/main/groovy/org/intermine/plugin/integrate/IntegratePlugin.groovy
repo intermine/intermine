@@ -52,7 +52,10 @@ class IntegratePlugin implements Plugin<Project> {
                     sourceNames = Arrays.asList(sourceInput.split("\\s*,\\s*"))
                 }
 
-                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("imVersion"), transitive: false])
+                project.dependencies.add("bioCore", [group: "org.intermine", name: "bio-core", version: System.getProperty("bioVersion"), transitive: false])
+
+                // keep track of the versions, only take the first one encountered
+                Map<String, String> typesToVersions = new HashMap<String, String>()
 
                 sourceNames.each { sourceName ->
                     Source source = intermineProject.sources.get(sourceName)
@@ -60,7 +63,19 @@ class IntegratePlugin implements Plugin<Project> {
                         throw new InvalidUserDataException("Can't find source " + sourceName + " in gradleProject definition file")
                     }
                     String sourceType = source.type
-                    project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: System.getProperty("bioVersion")])
+
+                    // use default version
+                    String version = System.getProperty("bioVersion")
+                    // check if we have a custom version
+                    if (typesToVersions.get(sourceType) != null) {
+                        // we've seen this type before, use same version
+                        version = typesToVersions.get(sourceType)
+                    } else if (source.version != null) {
+                        version = source.version
+                        typesToVersions.put(sourceType, version)
+                    }
+
+                    project.dependencies.add("integrateSource", [group: "org.intermine", name: "bio-source-" + sourceType, version: version])
 
                     if ("so".equals(sourceType)) {
                         // extract SO.obo file and put on classpath for use by this data source
