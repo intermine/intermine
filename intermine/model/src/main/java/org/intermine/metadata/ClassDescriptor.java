@@ -56,6 +56,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     private Model model;  // set when ClassDescriptor added to DescriptorRespository
     private boolean modelSet = false;
+    private String fairTerm;
 
     /**
      * Construct a ClassDescriptor.
@@ -66,13 +67,14 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * @param atts a Collection of AttributeDescriptors
      * @param refs a Collection of ReferenceDescriptors
      * @param cols a Collection of CollectionDescriptors
+     * @param fairTerm URI for class, points to a ontology term describing this term
      * @throws IllegalArgumentException if fields are null
      */
     public ClassDescriptor(String name, String supers,
             boolean isInterface,
             Collection<AttributeDescriptor> atts,
             Collection<ReferenceDescriptor> refs,
-            Collection<CollectionDescriptor> cols) {
+            Collection<CollectionDescriptor> cols, String fairTerm) {
         if (name == null || "".equals(name) || (!name.equals(name.trim()))) {
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
@@ -131,6 +133,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                                                    + "' has already had ClassDescriptor set");
             }
         }
+
+        this.fairTerm = fairTerm;
     }
 
     /**
@@ -192,6 +196,15 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      */
     public String getUnqualifiedName() {
         return Util.unqualifiedName(className);
+    }
+
+    /**
+     * Returns the URI for this data type. Links to an ontology term that describes this class.
+     *
+     * @return fairTerm for the described Class
+     */
+    public String getFairTerm() {
+        return fairTerm;
     }
 
     /**
@@ -792,7 +805,11 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             }
             sb.append("\"");
         }
-        sb.append(" is-interface=\"" + isInterface + "\">");
+        sb.append(" is-interface=\"" + isInterface + "\"");
+        if (fairTerm != null) {
+            sb.append(" term=\"" + fairTerm + "\"");
+        }
+        sb.append(">");
         Set<FieldDescriptor> l = new LinkedHashSet<FieldDescriptor>();
         l.addAll(getAttributeDescriptors());
         l.addAll(getReferenceDescriptors());
@@ -818,6 +835,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         String name = className.substring(className.lastIndexOf(".") + 1);
         sb.append("{\"name\":\"")
             .append(name)
+            .append("\",\"term\":")
+             .append(fairTerm)
             .append("\",\"extends\":[");
         Iterator<String> supersIter = superClassNames.iterator();
         while (supersIter.hasNext()) {

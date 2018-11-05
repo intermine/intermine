@@ -50,22 +50,22 @@ public class InterMineModelParserTest extends TestCase
     }
 
     private Set getExpectedClds() {
-        ClassDescriptor hasAddress = new ClassDescriptor(PKG + "HasAddress", null, true, new HashSet(), new HashSet(), new HashSet());
-        AttributeDescriptor id = new AttributeDescriptor("id", "java.lang.Integer");
+        ClassDescriptor hasAddress = new ClassDescriptor(PKG + "HasAddress", null, true, new HashSet(), new HashSet(), new HashSet(), null);
+        AttributeDescriptor id = new AttributeDescriptor("id", "java.lang.Integer", null);
         ClassDescriptor intermineObject = new ClassDescriptor("org.intermine.model.InterMineObject", null, true,
-                                                              new HashSet(Collections.singleton(id)), new HashSet(), new HashSet());
-        AttributeDescriptor companyName = new AttributeDescriptor("name", "java.lang.String");
+                                                              new HashSet(Collections.singleton(id)), new HashSet(), new HashSet(), null);
+        AttributeDescriptor companyName = new AttributeDescriptor("name", "java.lang.String", null);
         CollectionDescriptor companyDepartments = new CollectionDescriptor("departments", PKG + "Department", "company");
         ClassDescriptor company = new ClassDescriptor(PKG + "Company", PKG + "HasAddress", true,
                                                       new HashSet(Collections.singleton(companyName)),
                                                       new HashSet(),
-                                                      new HashSet(Collections.singleton(companyDepartments)));
+                                                      new HashSet(Collections.singleton(companyDepartments)), null);
 
         ReferenceDescriptor departmentCompany = new ReferenceDescriptor("company", PKG + "Company", "departments");
         ClassDescriptor department = new ClassDescriptor(PKG + "Department", null, false,
                                                          new HashSet(),
                                                          new HashSet(Collections.singleton(departmentCompany)),
-                                                         new HashSet());;
+                                                         new HashSet(), null);;
 
         return new HashSet(Arrays.asList(new Object[] {intermineObject, hasAddress, company, department}));
     }

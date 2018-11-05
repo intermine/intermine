@@ -20,7 +20,7 @@ public class AttributeDescriptorTest extends TestCase
 
     public void testConstructorNullName() throws Exception {
         try {
-            new AttributeDescriptor(null, "int");
+            new AttributeDescriptor(null, "int", null);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -28,7 +28,7 @@ public class AttributeDescriptorTest extends TestCase
 
     public void testConstructorEmptyName() throws Exception {
         try {
-            new AttributeDescriptor("", "int");
+            new AttributeDescriptor("", "int", null);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -36,7 +36,7 @@ public class AttributeDescriptorTest extends TestCase
 
     public void testConstructorNullType() throws Exception {
         try {
-            new AttributeDescriptor("name", null);
+            new AttributeDescriptor("name", null, null);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -44,22 +44,22 @@ public class AttributeDescriptorTest extends TestCase
 
     public void testConstructorEmptyType() throws Exception {
         try {
-            new AttributeDescriptor("name", "");
+            new AttributeDescriptor("name", "", null);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
     }
 
     public void testRelationType() throws Exception {
-        AttributeDescriptor attr = new AttributeDescriptor("name", "int");
+        AttributeDescriptor attr = new AttributeDescriptor("name", "int", null);
         assertEquals(FieldDescriptor.NOT_RELATION, attr.relationType());
     }
 
     public void testEquals() throws Exception {
-        AttributeDescriptor attr1 = new AttributeDescriptor("name1", "int");
-        AttributeDescriptor attr2 = new AttributeDescriptor("name1", "int");
-        AttributeDescriptor attr3 = new AttributeDescriptor("name2", "int");
-        AttributeDescriptor attr4 = new AttributeDescriptor("name1", "float");
+        AttributeDescriptor attr1 = new AttributeDescriptor("name1", "int", null);
+        AttributeDescriptor attr2 = new AttributeDescriptor("name1", "int", null);
+        AttributeDescriptor attr3 = new AttributeDescriptor("name2", "int", null);
+        AttributeDescriptor attr4 = new AttributeDescriptor("name1", "float", null);
         assertEquals(attr1, attr2);
         assertEquals(attr1.hashCode(), attr2.hashCode());
         assertFalse(attr1.equals(attr3));
@@ -67,7 +67,7 @@ public class AttributeDescriptorTest extends TestCase
     }
 
     public void testToString() throws Exception {
-        AttributeDescriptor attr = new AttributeDescriptor("attr", "int");
+        AttributeDescriptor attr = new AttributeDescriptor("attr", "int", null);
         String expected = "<attribute name=\"attr\" type=\"int\"/>";
         assertEquals(expected, attr.toString());
     }
