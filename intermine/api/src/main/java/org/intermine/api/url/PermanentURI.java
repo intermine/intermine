@@ -11,7 +11,6 @@ package org.intermine.api.url;
  */
 
 import org.apache.log4j.Logger;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 
 import java.util.Set;
@@ -58,8 +57,8 @@ public class PermanentURI
             String classNameFromURI = permanentURI.substring(localIdStartPosition,
                     localIdSeparatorPos);
             className = getSimpleClassName(classNameFromURI);
-            LOGGER.info("Given permanentURI : " + permanentURI +
-                    " the simple class name is " + className);
+            LOGGER.info("Given permanentURI : " + permanentURI
+                    + " the simple class name is " + className);
             if (className == null) {
                 throw new InvalidPermanentURLException();
             }
