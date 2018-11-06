@@ -16,38 +16,38 @@ import org.intermine.metadata.Model;
 import java.util.Set;
 
 /**
- * Class to represent the schema URI pattern adopted in InterMine.
- * Permanent URI pattern: domain/context/PermanentURI where
- * PermanentURI: className:external_local_id
+ * Class to represent the InterMine Local Unique Identifier
+ * InterMineLUI schema: className:identifier  where the identifier is the id
+ * provided by the data source provider, in some cases, adapted with a prefix e.g.RGD:62030
  * Some examples:
- * humanmine.org/humanmine/protein:P31946-> PermanentURI=protein:P31946
- * humanmine.org/humanmine/geneontology:0000186-> PermanentURI=geneontology:0000186
+ * humanmine.org/humanmine/protein:P31946-> InterMineLUI=protein:P31946
+ * humanmine.org/humanmine/gene:RGD:62030-> InterMineLUI=gene:RGD:62030
  *
  * @author danielabutano
  */
-public class PermanentURI
+public class InterMineLUI
 {
     private String className;
     private static final String LOCAL_ID_SEPARATOR = ":";
     private String identifier;
-    private static final Logger LOGGER = Logger.getLogger(PermanentURI.class);
+    private static final Logger LOGGER = Logger.getLogger(InterMineLUI.class);
 
     /**
-     * Constructor. Build a PermanentURI given prefix and LUI
+     * Constructor. Build a InterMineLUI given prefix and LUI
      * @param className the className (e.g. Protein)
-     * @param identifier the LUI (e.g. P31946, 0000186)
+     * @param identifier the identifier (e.g. P31946)
      */
-    public PermanentURI(String className, String identifier) {
+    public InterMineLUI(String className, String identifier) {
         this.className = className;
         this.identifier = identifier;
     }
 
     /**
-     * Constructor. Build a PermanentURI after verifying the className
+     * Constructor. Build a InterMineLUI after verifying the className
      * @param permanentURI URI as humanmine/protein:P31946 OR humanmine/Protein:P31946
      * @throws InvalidPermanentURLException if the permanentURI in input is not an permanent URI
     */
-    public PermanentURI(String permanentURI) throws InvalidPermanentURLException {
+    public InterMineLUI(String permanentURI) throws InvalidPermanentURLException {
         int localIdStartPosition = permanentURI.lastIndexOf("/") + 1;
         int localIdSeparatorPos = permanentURI.indexOf(LOCAL_ID_SEPARATOR, localIdStartPosition);
         if (localIdSeparatorPos == -1) {
@@ -100,22 +100,24 @@ public class PermanentURI
 
     /**
      * Get the identifier
-     * @return the identifier
+     * @return the identifier provided by the data source provider and eventually adapted
+     * by InterMine
      */
     public String getIdentifier() {
         return identifier;
     }
 
     /**
-     * Set the identifier (local unique identifier)
-     * @param identifier the LUI
+     * Set the identifier
+     * @param identifier the identifier provided by the data source provider and eventually adapted
+     * by InterMine
      */
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
 
     /**
-     * Returns the String which represents the PermanentURI -> className:identifier
+     * Returns the String which represents the InterMineLUI -> className:identifier
      * @return the string in the format className:identifier
      */
     public String toString() {

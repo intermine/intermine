@@ -11,8 +11,8 @@ package org.intermine.web.filters;
  */
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.intermine.api.url.PermanentURI;
-import org.intermine.api.url.PermanentURIConverter;
+import org.intermine.api.url.InterMineLUI;
+import org.intermine.api.url.InterMineLUIConverter;
 import org.intermine.api.url.InvalidPermanentURLException;
 
 import org.intermine.objectstore.ObjectStoreException;
@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * Filter applied to all the requests to the InterMine server in order
  * to catch the requests with permanent URL and redirect to the report page.
- * Example: humanmine.org/humanmine/uniprot:P31946 -> humanmine.org/humanmine/report.do?id=1234567
+ * Example: humanmine.org/humanmine/protein:P31946 -> humanmine.org/humanmine/report.do?id=1234567
  *
  * @author danielabutano
  */
@@ -41,8 +41,8 @@ public class PermanentURLFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) res;
 
         try {
-            PermanentURI permanentURL = new PermanentURI(request.getRequestURI());
-            PermanentURIConverter urlConverter = new PermanentURIConverter();
+            InterMineLUI permanentURL = new InterMineLUI(request.getRequestURI());
+            InterMineLUIConverter urlConverter = new InterMineLUIConverter();
             Integer id = urlConverter.getIntermineID(permanentURL);
             if (id == -1) {
                 response.setStatus(HttpStatus.SC_NOT_FOUND);

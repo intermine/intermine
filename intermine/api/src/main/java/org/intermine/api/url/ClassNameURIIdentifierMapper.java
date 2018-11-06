@@ -19,17 +19,20 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Class to map the class name defined in the core.xml with the identifier used by the data source
- * providers (e.g. Protein ->primaryAccession,  Publication ->pubMedId)
+ * Class to map the class name defined in the core.xml with the identifier used to generate the InterMineLUI
+ * (e.g. Protein ->primaryAccession,  Publication ->pubMedId). The map is loaded from class_keys.properties
+ * where we have set e.g.
+ * Protein_URI = primaryAccession
  *
  * @author danielabutano
  */
 public final class ClassNameURIIdentifierMapper
 {
     private static ClassNameURIIdentifierMapper instance = null;
+    private static final String URI_SUFFIX = "_URI";
     private Properties properties = null;
     //map tp cache the identifier associated to a class Name
-    private Map<String, String> classNameIdentifiersMap = null;
+    private final static Map<String, String> classNameIdentifiersMap = new HashMap();
     private static final Logger LOGGER = Logger.getLogger(ClassNameURIIdentifierMapper.class);
 
     /**
@@ -37,20 +40,25 @@ public final class ClassNameURIIdentifierMapper
      */
     private ClassNameURIIdentifierMapper() {
         properties = new Properties();
-        classNameIdentifiersMap = new HashMap();
         try {
             InputStream inputStream = getClass().getClassLoader()
-                    .getResourceAsStream("uri_identifiers.properties");
+                    .getResourceAsStream("class_keys.properties");
             if (inputStream == null) {
-                LOGGER.error("File uri_identifiers.properties not found");
+                LOGGER.error("File class_keys.properties not found");
                 return;
             }
             properties.load(inputStream);
+            String key = null;
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                classNameIdentifiersMap.put((String) entry.getKey(), (String) entry.getValue());
+                key = (String) entry.getKey();
+                if (key.contains(URI_SUFFIX)) {
+                    String className = key.replace(URI_SUFFIX, "");
+                    classNameIdentifiersMap.put(className, (String) entry.getValue());
+                }
+
             }
         } catch (IOException ex) {
-            LOGGER.error("Error loading uri_identifiers.properties file", ex);
+            LOGGER.error("Error loading class_keys.properties file", ex);
             return;
         }
     }
@@ -78,57 +86,4 @@ public final class ClassNameURIIdentifierMapper
         }
         return null;
     }
-
-/*    *//**
-     * This method is used to convert the LUI(local unique identifier) into the value stored
-     * by InterMine which, in some case, might be different. Some example:
-     * go uses 0000186 as LUI which is stored in intermine as GO:0000186
-     * doid(disease ontology) uses 0001816 as LUI which is stored in intermine as DOID:0001816
-     * uniprot uses P81928 which is stored in intermine with no alteration as P81928
-     * @param curie the compact uri
-     * @return the value used by Intermine to represent the localUniqueId
-     *//*
-    public String getInterMineAdaptedLUI(PermanentURI curie) {
-        if (properties != null) {
-            String prefix = curie.getPrefix();
-            String propertyValue = properties.getProperty(prefix);
-            String interMineValue = null;
-            String localUniqueId = curie.getLocalUniqueId();
-            if (propertyValue.startsWith("{")) {
-                interMineValue = localUniqueId;
-            } else {
-                int index = propertyValue.indexOf("{");
-                if (propertyValue.startsWith("+")) {
-                    String prefixToRemove = propertyValue.substring(1, index);
-                    interMineValue = localUniqueId.replace(prefixToRemove, "");
-                } else if (propertyValue.startsWith("-")) {
-                    String prefixToAdd = propertyValue.substring(1, index);
-                    interMineValue = prefixToAdd + localUniqueId;
-                }
-            }
-            return interMineValue;
-        }
-        return null;
-    }
-
-    public String getOriginalLUI(String prefix, String intermineAdaptedLUI) {
-        if (properties != null) {
-            String propertyValue = properties.getProperty(prefix);
-            String originalValue = null;
-            if (propertyValue.startsWith("{")) {
-                originalValue = intermineAdaptedLUI;
-            } else {
-                int index = propertyValue.indexOf("{");
-                if (propertyValue.startsWith("+")) {
-                    String prefixToAdd = propertyValue.substring(1, index);
-                    originalValue = prefixToAdd + intermineAdaptedLUI;
-                } else if (propertyValue.startsWith("-")) {
-                    String prefixToRemove = propertyValue.substring(1, index);
-                    originalValue = intermineAdaptedLUI.replace(prefixToRemove, "");
-                }
-            }
-            return originalValue;
-        }
-        return null;
-    }*/
 }
