@@ -19,7 +19,7 @@
       <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
     </class>
 
-    <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true">
+    <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true" uri="http://purl.obolibrary.org/obo/SO_0000239">
       <attribute name="distance" type="java.lang.String" term="http://purl.obolibrary.org/obo/PATO_0000040"/>
       <attribute name="direction" type="java.lang.String" term="http://purl.obolibrary.org/obo/PATO_0000039"/>
       <attribute name="includeGene" type="java.lang.Boolean"/>
@@ -28,7 +28,7 @@
 
     <class name="IntergenicRegion" extends="SequenceFeature" is-interface="true" uri="http://purl.obolibrary.org/obo/SO_0000605">
       <collection name="adjacentGenes" referenced-type="Gene"/>
-	 </class>
+    </class>
 
     <class name="Intron" extends="SequenceFeature" is-interface="true" uri="http://purl.obolibrary.org/obo/SO_0000188">
       <collection name="genes" referenced-type="Gene" reverse-reference="introns"/>
