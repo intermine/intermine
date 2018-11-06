@@ -67,8 +67,8 @@ public final class OrganismRepository
             Properties props = new Properties();
             String whichPropFile = MINE_PROP_FILE;
             try {
-                InputStream propsResource =
-                        OrganismRepository.class.getClassLoader().getResourceAsStream(MINE_PROP_FILE);
+                InputStream propsResource = OrganismRepository.class.getClassLoader()
+                        .getResourceAsStream(MINE_PROP_FILE);
                 if (propsResource == null) {
                     propsResource = OrganismRepository.class.getClassLoader().getResourceAsStream(
                             DEFAULT_PROP_FILE);
