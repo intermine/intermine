@@ -108,8 +108,8 @@ public class AttributeDescriptor extends FieldDescriptor
     @Override
     public String toString() {
         if (fairTerm != null) {
-            return "<attribute name=\"" + name + "\" type=\"" + type + "\" " +
-                    "term=\"" + fairTerm + "\"/>";
+            return "<attribute name=\"" + name + "\" type=\"" + type + "\" "
+                    + "term=\"" + fairTerm + "\"/>";
         }
         return "<attribute name=\"" + name + "\" type=\"" + type + "\"/>";
     }

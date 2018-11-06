@@ -20,8 +20,8 @@
     </class>
 
     <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true">
-      <attribute name="distance" type="java.lang.String"/>
-      <attribute name="direction" type="java.lang.String"/>
+      <attribute name="distance" type="java.lang.String" term="http://purl.obolibrary.org/obo/PATO_0000040"/>
+      <attribute name="direction" type="java.lang.String" term="http://purl.obolibrary.org/obo/PATO_0000039"/>
       <attribute name="includeGene" type="java.lang.Boolean"/>
       <reference name="gene" referenced-type="Gene" reverse-reference="flankingRegions"/>
     </class>

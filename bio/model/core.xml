@@ -30,7 +30,7 @@
   <class name="Chromosome"  extends="SequenceFeature" is-interface="true" uri="http://purl.obolibrary.org/obo/SO_0000340" />
 
   <class name="Comment" is-interface="true" uri="http://semanticscience.org/resource/SIO_001167">
-    <attribute name="description" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
     <attribute name="type" type="java.lang.String"/>
   </class>
 
@@ -59,14 +59,14 @@
   </class>
 
   <class name="Gene" extends="SequenceFeature" is-interface="true" uri="http://purl.obolibrary.org/obo/SO_0000704">
-    <attribute name="description" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
     <attribute name="briefDescription" type="java.lang.String"/>
     <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
   </class>
 
   <class name="Location" is-interface="true">
-    <attribute name="start" type="java.lang.Integer"/>
-    <attribute name="end" type="java.lang.Integer"/>
+    <attribute name="start" type="java.lang.Integer" term="http://semanticscience.org/resource/SIO_000943"/>
+    <attribute name="end" type="java.lang.Integer" term="http://semanticscience.org/resource/SIO_000953"/>
     <attribute name="strand" type="java.lang.String"/>
     <reference name="feature" referenced-type="BioEntity" reverse-reference="locations"/>
     <reference name="locatedOn" referenced-type="BioEntity" reverse-reference="locatedFeatures"/>
@@ -131,19 +131,19 @@
   </class>
 
   <class name="Organism" is-interface="true" uri="http://semanticscience.org/resource/SIO_010000">
-    <attribute name="genus" type="java.lang.String"/>
-    <attribute name="taxonId" type="java.lang.String"/>
-    <attribute name="species" type="java.lang.String"/>
+    <attribute name="genus" type="java.lang.String" term="http://edamontology.org/data_1870"/>
+    <attribute name="taxonId" type="java.lang.String" term="http://edamontology.org/data_1179"/>
+    <attribute name="species" type="java.lang.String" term="http://edamontology.org/data_1045"/>
     <attribute name="commonName" type="java.lang.String"/>
     <attribute name="shortName" type="java.lang.String"/>
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2909"/>
   </class>
 
   <class name="Protein" extends="BioEntity" is-interface="true" uri="http://semanticscience.org/resource/SIO_010043">
-    <attribute name="md5checksum" type="java.lang.String"/>
-    <attribute name="primaryAccession" type="java.lang.String"/>
-    <attribute name="length" type="java.lang.Integer"/>
-    <attribute name="molecularWeight" type="java.lang.Double"/>
+    <attribute name="md5checksum" type="java.lang.String" term="http://edamontology.org/data_2190"/>
+    <attribute name="primaryAccession" type="java.lang.String" term="http://edamontology.org/data_2907" />
+    <attribute name="length" type="java.lang.Integer" term="http://semanticscience.org/resource/SIO_000041"/>
+    <attribute name="molecularWeight" type="java.lang.Double" term="http://edamontology.org/operation_0398"/>
     <reference name="sequence" referenced-type="Sequence"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="proteins"/>
   </class>
