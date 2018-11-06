@@ -53,11 +53,11 @@ public class ModelTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false,
                 new HashSet<AttributeDescriptor>(),
                 new HashSet<ReferenceDescriptor>(),
-                new HashSet<CollectionDescriptor>());
+                new HashSet<CollectionDescriptor>(), null);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false,
                 new HashSet<AttributeDescriptor>(),
                 new HashSet<ReferenceDescriptor>(),
-                new HashSet<CollectionDescriptor>());
+                new HashSet<CollectionDescriptor>(), null);
         Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>(Arrays.asList(new ClassDescriptor[] {cld1, cld2}));
 
         try {

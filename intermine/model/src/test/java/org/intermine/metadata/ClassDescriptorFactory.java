@@ -45,18 +45,18 @@ public class ClassDescriptorFactory {
     }
 
     public ClassDescriptor makeClass(String name) {
-        return new ClassDescriptor(prefix(name), null, false, NO_ATTRS, NO_REFS, NO_COLLS);
+        return new ClassDescriptor(prefix(name), null, false, NO_ATTRS, NO_REFS, NO_COLLS, null);
     }
 
     public ClassDescriptor makeClass(String name, String... supers) {
-        return new ClassDescriptor(prefix(name), prefixAll(supers), false, NO_ATTRS, NO_REFS, NO_COLLS);
+        return new ClassDescriptor(prefix(name), prefixAll(supers), false, NO_ATTRS, NO_REFS, NO_COLLS, null);
     }
 
     public ClassDescriptor makeInterface(String name) {
-        return new ClassDescriptor(prefix(name), null, true, NO_ATTRS, NO_REFS, NO_COLLS);
+        return new ClassDescriptor(prefix(name), null, true, NO_ATTRS, NO_REFS, NO_COLLS, null);
     }
 
     public ClassDescriptor makeInterface(String name, String... supers) {
-        return new ClassDescriptor(prefix(name), prefixAll(supers), true, NO_ATTRS, NO_REFS, NO_COLLS);
+        return new ClassDescriptor(prefix(name), prefixAll(supers), true, NO_ATTRS, NO_REFS, NO_COLLS, null);
     }
 }

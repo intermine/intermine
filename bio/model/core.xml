@@ -190,7 +190,7 @@
   </class>
 
   <class name="Synonym" is-interface="true" uri="http://semanticscience.org/resource/SIO_000122">
-    <attribute name="value" type="java.lang.String" uri="http://semanticscience.org/resource/SIO_000122">
+    <attribute name="value" type="java.lang.String" uri="http://semanticscience.org/resource/SIO_000122"/>
     <reference name="subject" referenced-type="BioEntity" reverse-reference="synonyms"/>
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
