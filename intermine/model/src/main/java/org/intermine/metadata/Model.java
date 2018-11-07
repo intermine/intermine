@@ -146,8 +146,7 @@ public class Model
         ClassDescriptor intermineObject = new ClassDescriptor(
                 "org.intermine.model.InterMineObject", null, true,
                 Collections.singleton(new AttributeDescriptor("id", "java.lang.Integer",
-                        null)),
-                emptyRefs, emptyCols, null);
+                null)), emptyRefs, emptyCols, null);
         orderedClds.add(intermineObject);
         rootCld = intermineObject;
 

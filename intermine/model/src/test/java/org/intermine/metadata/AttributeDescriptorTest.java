@@ -12,8 +12,7 @@ package org.intermine.metadata;
 
 import junit.framework.TestCase;
 
-public class AttributeDescriptorTest extends TestCase
-{
+public class AttributeDescriptorTest extends TestCase {
     public AttributeDescriptorTest(String arg) {
         super(arg);
     }
@@ -69,6 +68,10 @@ public class AttributeDescriptorTest extends TestCase
     public void testToString() throws Exception {
         AttributeDescriptor attr = new AttributeDescriptor("attr", "int", null);
         String expected = "<attribute name=\"attr\" type=\"int\"/>";
+        assertEquals(expected, attr.toString());
+
+        attr = new AttributeDescriptor("myAttribute", "java.lang.String", "myTerm");
+        expected = "<attribute name=\"myAttribute\" type=\"java.lang.String\" term=\"myTerm\"/>";
         assertEquals(expected, attr.toString());
     }
 }

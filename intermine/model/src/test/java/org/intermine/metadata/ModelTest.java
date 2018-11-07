@@ -188,12 +188,12 @@ public class ModelTest extends TestCase
     public void testToString() throws Exception {
         String packageName = cdMaker.getPackageName();
         ClassDescriptor cld1 = cdMaker.makeClass("Class1");
-        ClassDescriptor cld2 = cdMaker.makeClass("Class2");
+        ClassDescriptor cld2 = cdMaker.makeClassWithTerm("Class2", "myTerm");
         Model model = new Model("model", packageName, Arrays.asList(cld1, cld2));
 
         String expected = "<model name=\"model\" package=\"" + packageName + "\">" + ENDL
             + "<class name=\"Class1\" is-interface=\"false\"></class>" + ENDL
-            + "<class name=\"Class2\" is-interface=\"false\"></class>" + ENDL
+            + "<class name=\"Class2\" is-interface=\"false\" term=\"myTerm\"></class>" + ENDL
             + "</model>";
 
         assertEquals(expected, model.toString());

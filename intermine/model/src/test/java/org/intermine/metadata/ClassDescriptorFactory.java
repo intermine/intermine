@@ -52,11 +52,19 @@ public class ClassDescriptorFactory {
         return new ClassDescriptor(prefix(name), prefixAll(supers), false, NO_ATTRS, NO_REFS, NO_COLLS, null);
     }
 
+    public ClassDescriptor makeClassWithTerm(String name, String fairTerm) {
+        return new ClassDescriptor(prefix(name), null, false, NO_ATTRS, NO_REFS, NO_COLLS, fairTerm);
+    }
+
     public ClassDescriptor makeInterface(String name) {
         return new ClassDescriptor(prefix(name), null, true, NO_ATTRS, NO_REFS, NO_COLLS, null);
     }
 
     public ClassDescriptor makeInterface(String name, String... supers) {
         return new ClassDescriptor(prefix(name), prefixAll(supers), true, NO_ATTRS, NO_REFS, NO_COLLS, null);
+    }
+
+    public ClassDescriptor makeInterfaceWithTerm(String name, String fairTerm) {
+        return new ClassDescriptor(prefix(name), null, true, NO_ATTRS, NO_REFS, NO_COLLS, fairTerm);
     }
 }

@@ -48,6 +48,9 @@ public class ClassDescriptorTest extends TestCase
     private ClassDescriptor makeClass(String name, String supers) {
         return makeClassDescriptor(name, supers, false);
     }
+    private ClassDescriptor makeClass(String name, String supers, String myTerm) {
+        return makeClassDescriptor(name, supers, false, myTerm);
+    }
     private ClassDescriptor makeInterface(String name) {
         return makeClassDescriptor(name, null, true);
     }
@@ -56,6 +59,10 @@ public class ClassDescriptorTest extends TestCase
     }
     private ClassDescriptor makeClassDescriptor(String name, String supers, boolean isInterface) {
         return new ClassDescriptor(name, supers, isInterface, noAttrs, noRefs, noColls, null);
+    }
+
+    private ClassDescriptor makeClassDescriptor(String name, String supers, boolean isInterface, String fairTerm) {
+        return new ClassDescriptor(name, supers, isInterface, noAttrs, noRefs, noColls, fairTerm);
     }
 
     public void testSetModel() throws Exception {
@@ -262,6 +269,17 @@ public class ClassDescriptorTest extends TestCase
         new Model("test", "package.name", Arrays.asList(cld1, cld2));
         assertEquals(expected, cld2.toString());
     }
+
+    public void testToStringWithTerm() throws Exception {
+        ClassDescriptor cld1 = makeInterface("package.name.Interface1");
+        ClassDescriptor cld2 = makeClass("package.name.Class2", "package.name.Interface1", "myTerm");
+        String expected =
+                "<class name=\"Class2\" extends=\"Interface1\" is-interface=\"false\" term=\"myTerm\"></class>" + ENDL;
+        new Model("test", "package.name", Arrays.asList(cld1, cld2));
+        assertEquals(expected, cld2.toString());
+    }
+
+
     // ============================================
 
     private Set<AttributeDescriptor> getAttributes() {

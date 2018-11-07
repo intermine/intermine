@@ -1,31 +1,31 @@
 <model name="testmodel" package="org.intermine.model.basicmodel">
-<class name="Thing" is-interface="true"></class>
+<class name="Thing" is-interface="true" term="http://purl.obolibrary.org/obo/NCIT_C51070"></class>
 <class name="Employable" extends="Thing" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String" term="http://purl.obolibrary.org/obo/NCIT_C42614"/>
 </class>
 <class name="HasAddress" is-interface="true">
 </class>
-<class name="Employee" extends="Employable HasAddress" is-interface="false">
+<class name="Employee" extends="Employable HasAddress" is-interface="false" term="http://purl.obolibrary.org/obo/NCIT_C51823">
     <attribute name="fullTime" type="boolean"/>
     <attribute name="age" type="int"/>
     <attribute name="end" type="java.lang.String"/>
     <reference name="department" referenced-type="Department" reverse-reference="employees"/>
     <collection name="simpleObjects" referenced-type="SimpleObject" reverse-reference="employee"/>
 </class>
-<class name="Manager" extends="Employee" is-interface="false">
+<class name="Manager" extends="Employee" is-interface="false" term="http://purl.obolibrary.org/obo/NCIT_C70652">
 </class>
-<class name="Address" extends="Thing" is-interface="false">
+<class name="Address" extends="Thing" is-interface="false" term="http://purl.obolibrary.org/obo/NCIT_C25407">
 </class>
-<class name="Department" extends="Thing" is-interface="false">
-    <attribute name="name" type="java.lang.String"/>
+<class name="Department" extends="Thing" is-interface="false" term="http://purl.obolibrary.org/obo/NCIT_C42671">
+    <attribute name="name" type="java.lang.String" term="http://purl.obolibrary.org/obo/NCIT_C42614"/>
     <reference name="company" referenced-type="Company" reverse-reference="departments"/>
     <reference name="manager" referenced-type="Manager"/>
     <collection name="employees" referenced-type="Employee" reverse-reference="department"/>
 </class>
-<class name="Company" extends="HasAddress" is-interface="true">
+<class name="Company" extends="HasAddress" is-interface="true" term="http://purl.obolibrary.org/obo/NCIT_C54131">
     <collection name="departments" referenced-type="Department" reverse-reference="company"/>
 </class>
-<class name="Contractor" extends="Employable" is-interface="false">
+<class name="Contractor" extends="Employable" is-interface="false" term="http://purl.obolibrary.org/obo/NCIT_C19461">
 </class>
 <class name="SimpleObject" is-interface="false">
     <attribute name="name" type="java.lang.String"/>
