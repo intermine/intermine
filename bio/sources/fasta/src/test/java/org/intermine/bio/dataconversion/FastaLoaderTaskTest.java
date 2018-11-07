@@ -69,6 +69,7 @@ public class FastaLoaderTaskTest {
         flt.setDataSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
         flt.setSourceName("fasta-test");
+        flt.setLicence("https://data.gov.uk/data/report/licence");
 
         File[] files = new File[2];
         for (int i = 0; i < 2; i++) {

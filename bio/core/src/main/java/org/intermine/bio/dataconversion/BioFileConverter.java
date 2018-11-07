@@ -45,15 +45,37 @@ public abstract class BioFileConverter extends FileConverter
      * @param dataSourceName the DataSource name
      * @param dataSetTitle the DataSet title
      */
-    public BioFileConverter (ItemWriter writer, Model model,
-                             String dataSourceName, String dataSetTitle) {
+    public BioFileConverter (ItemWriter writer, Model model, String dataSourceName,
+                             String dataSetTitle) {
         super(writer, model);
         String dataSource = null;
         String dataSet = null;
         sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
             dataSource = getDataSource(dataSourceName);
-            dataSet = getDataSet(dataSetTitle, dataSource);
+            dataSet = getDataSet(dataSetTitle, dataSource, null);
+        }
+        setStoreHook(new BioStoreHook(model, dataSet, dataSource, sequenceOntologyRefId));
+    }
+
+
+    /**
+     * Create a new BioFileConverter.
+     * @param writer the Writer used to output the resultant items
+     * @param model the data model
+     * @param dataSourceName the DataSource name
+     * @param dataSetTitle the DataSet title
+     * @param licence URL pointing to licence information
+     */
+    public BioFileConverter (ItemWriter writer, Model model, String dataSourceName,
+                             String dataSetTitle, String licence) {
+        super(writer, model);
+        String dataSource = null;
+        String dataSet = null;
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
+        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
+            dataSource = getDataSource(dataSourceName);
+            dataSet = getDataSet(dataSetTitle, dataSource, licence);
         }
         setStoreHook(new BioStoreHook(model, dataSet, dataSource, sequenceOntologyRefId));
     }
@@ -64,18 +86,22 @@ public abstract class BioFileConverter extends FileConverter
      * @param model the data model
      * @param dataSourceName the DataSource name
      * @param dataSetTitle the DataSet title
-     * @param ontology ID of ontology object.  if NULL no SO object will be stored
+     * @param storeOntology if TRUE, store ontology as normal
      */
     public BioFileConverter (ItemWriter writer, Model model, String dataSourceName,
-            String dataSetTitle, String ontology) {
+            String dataSetTitle, String licence, boolean storeOntology) {
         super(writer, model);
         String dataSource = null;
         String dataSet = null;
+        sequenceOntologyRefId = null;
+        if (storeOntology) {
+            sequenceOntologyRefId = BioConverterUtil.getOntology(this);
+        }
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
             dataSource = getDataSource(dataSourceName);
-            dataSet = getDataSet(dataSetTitle, dataSource);
+            dataSet = getDataSet(dataSetTitle, dataSource, licence);
         }
-        setStoreHook(new BioStoreHook(model, dataSet, dataSource, ontology));
+        setStoreHook(new BioStoreHook(model, dataSet, dataSource, sequenceOntologyRefId));
     }
 
     /**
@@ -129,13 +155,17 @@ public abstract class BioFileConverter extends FileConverter
      *
      * @param title the DataSet title
      * @param dataSourceRefId the DataSource referenced by the the DataSet
+     * @param licence URL pointing to the licence for this data set
      * @return the DataSet Item
      */
-    public String getDataSet(String title, String dataSourceRefId) {
+    public String getDataSet(String title, String dataSourceRefId, String licence) {
         String refId = dataSets.get(title);
         if (refId == null) {
             Item dataSet = createItem("DataSet");
             dataSet.setAttribute("name", title);
+            if (licence != null) {
+                dataSet.setAttribute("licence", licence);
+            }
             dataSet.setReference("dataSource", dataSourceRefId);
             try {
                 store(dataSet);

@@ -34,6 +34,7 @@ public class BioStoreHook implements DataConverterStoreHook
     private String dataSourceRefId = null;
     private String ontologyRefId = null;
     private final Model model;
+    private String licence = null;
 
     /**
      * Create a new DataSetStoreHook object.
@@ -49,20 +50,7 @@ public class BioStoreHook implements DataConverterStoreHook
         if (StringUtils.isNotEmpty(ontologyRefId)) {
             this.ontologyRefId = ontologyRefId;
         }
-    }
-
-    /**
-     * Create a new DataSetStoreHook object.
-     * @param model the data model
-     * @param ontologyRefId id representing Ontology (SO) object
-     */
-    public BioStoreHook(Model model, String ontologyRefId) {
-        this.model = model;
-        this.dataSetRefId = null;
-        this.dataSourceRefId = null;
-        if (StringUtils.isNotEmpty(ontologyRefId)) {
-            this.ontologyRefId = ontologyRefId;
-        }
+        this.licence = licence;
     }
 
     /**
