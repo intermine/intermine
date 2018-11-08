@@ -32,6 +32,7 @@ public abstract class BioDBConverter extends DBConverter
 {
     private final Map<String, Item> chromosomes = new HashMap<String, Item>();
     private final Map<String, Item> organisms = new HashMap<String, Item>();
+    private final Map<String, Item> strains = new HashMap<String, Item>();
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
     private String dataSourceName = null;
@@ -59,7 +60,8 @@ public abstract class BioDBConverter extends DBConverter
             setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
                     dataSource.getIdentifier(), sequenceOntologyRefId));
         } else {
-            setStoreHook(new BioStoreHook(tgtModel, null, null, sequenceOntologyRefId));
+            setStoreHook(new BioStoreHook(tgtModel, null, null,
+                    sequenceOntologyRefId));
         }
     }
 
@@ -232,7 +234,7 @@ public abstract class BioDBConverter extends DBConverter
      * @return the Chromsome Item
      */
     protected Item getChromosome(String identifier, String taxonId)
-        throws ObjectStoreException {
+            throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
             chromosome = createItem("Chromosome");
@@ -255,7 +257,7 @@ public abstract class BioDBConverter extends DBConverter
      * @return the synonym item or null if this is a duplicate
      */
     public Item createSynonym(String subjectId, String value, boolean store)
-        throws ObjectStoreException {
+            throws ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
@@ -282,4 +284,25 @@ public abstract class BioDBConverter extends DBConverter
         }
         return sequenceOntologyRefId;
     }
+
+    /**
+     * Provides the strain item for the given strain name.
+     * @param strainName the name of the strain
+     * @return the Strain Item
+     */
+    public Item getStrainItem(String strainName) {
+        Item strain = strains.get(strainName);
+        if (strain == null) {
+            strain = createItem("Strain");
+            strain.setAttribute("primaryIdentifier", strainName);
+            try {
+                store(strain);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Failed to store strain with name: " + strainName, e);
+            }
+            strains.put(strainName, strain);
+        }
+        return strain;
+    }
+
 }

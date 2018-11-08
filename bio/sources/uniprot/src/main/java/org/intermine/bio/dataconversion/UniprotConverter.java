@@ -290,7 +290,7 @@ public class UniprotConverter extends BioDirectoryConverter
     public void setUniprotOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
-        addStrains();
+        addSubspecies();
     }
 
     /**
@@ -306,12 +306,12 @@ public class UniprotConverter extends BioDirectoryConverter
         }
     }
 
-    private void addStrains() {
+    private void addSubspecies() {
         Set<String> originalTaxonIds = new HashSet<String>(taxonIds);
         for (String taxonId : originalTaxonIds) {
-            String strain = CONFIG.getStrain(taxonId);
-            if (StringUtils.isNotEmpty(strain)) {
-                taxonIds.add(strain);
+            String subspecies = CONFIG.getSubspecies(taxonId);
+            if (StringUtils.isNotEmpty(subspecies)) {
+                taxonIds.add(subspecies);
             }
         }
     }
@@ -462,7 +462,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private String parseTaxonId(String taxonId) {
-            String mainTaxonId = CONFIG.getStrain(taxonId);
+            String mainTaxonId = CONFIG.getSubspecies(taxonId);
             if (StringUtils.isNotEmpty(mainTaxonId)) {
                 return mainTaxonId;
             }

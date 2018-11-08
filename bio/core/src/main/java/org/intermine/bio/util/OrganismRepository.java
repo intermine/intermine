@@ -34,8 +34,6 @@ public final class OrganismRepository
     private Map<String, OrganismData> abbreviationMap = new HashMap<String, OrganismData>();
     private Map<String, OrganismData> shortNameMap = new HashMap<String, OrganismData>();
     private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap<MultiKey, OrganismData>();
-    private Map<String, OrganismData> strains = new HashMap<String, OrganismData>();
-    private Map<String, Set<String>> organismsWithStrains = new HashMap<String,  Set<String>>();
     private static Map<String, OrganismData> uniprotToTaxon = new HashMap<String, OrganismData>();
 
     private static final String DEFAULT_PROP_FILE = "default_organism_config.properties";
@@ -45,12 +43,11 @@ public final class OrganismRepository
     private static final String ABBREVIATION = "abbreviation";
     private static final String GENUS = "genus";
     private static final String SPECIES = "species";
-    private static final String STRAINS = "strains";
     private static final String ENSEMBL = "ensemblPrefix";
     private static final String UNIPROT = "uniprot";
 
     private static final String REGULAR_EXPRESSION =
-            PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION + "|" + STRAINS
+            PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION
                     + "|" + ENSEMBL + "|" + UNIPROT + ")";
 
     private OrganismRepository() {
@@ -102,20 +99,6 @@ public final class OrganismRepository
                         if (fieldName.equals(ABBREVIATION)) {
                             od.setAbbreviation(attributeValue);
                             or.abbreviationMap.put(attributeValue.toLowerCase(), od);
-                        } else if (fieldName.equals(STRAINS)) {
-                            String[] strains = attributeValue.split(" ");
-                            for (String strain : strains) {
-                                or.strains.put(strain, od);
-                                Set<String> strainSet
-                                        =  or.organismsWithStrains.get(taxonIdString);
-                                if (strainSet == null) {
-                                    strainSet = new HashSet<String>();
-                                    strainSet.add(strain);
-                                    or.organismsWithStrains.put(taxonIdString, strainSet);
-                                } else {
-                                    strainSet.add(strain);
-                                }
-                            }
                         } else if (fieldName.equals(ENSEMBL)) {
                             od.setEnsemblPrefix(attributeValue);
                         } else if (fieldName.equals(UNIPROT)) {
@@ -172,17 +155,13 @@ public final class OrganismRepository
     }
 
     /**
-     * Look up OrganismData objects by taxon id.  If there is no taxon, look in strains.  Return
-     * null if there is no such organism.
+     * Look up OrganismData objects by taxon id.  Return null if there is no such organism.
      *
      * @param taxonId the taxon id
      * @return the OrganismData
      */
     public OrganismData getOrganismDataByTaxon(String taxonId) {
         OrganismData od = taxonMap.get(taxonId);
-        if (od == null) {
-            od = strains.get(taxonId);
-        }
         return od;
     }
 
@@ -248,14 +227,4 @@ public final class OrganismRepository
         String species = fullName.split(" ", 2)[1];
         return getOrganismDataByGenusSpecies(genus, species);
     }
-
-    /**
-     * Get strains for given taxon ID
-     * @param taxonString taxon ID for organism
-     * @return taxonIds for strains
-     */
-    private Set<String> getStrain(String taxonString) {
-        return organismsWithStrains.get(taxonString);
-    }
-
 }

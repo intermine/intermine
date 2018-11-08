@@ -32,7 +32,7 @@ public class UniprotConfig
     private List<String> featureTypes = new ArrayList<String>();
     private List<String> xrefs = new ArrayList<String>();
     private Map<String, ConfigEntry> entries = new HashMap<String, ConfigEntry>();
-    private Map<String, String> strains = new HashMap<String, String>();
+    private Map<String, String> subspecies = new HashMap<String, String>();
 
     /**
      * read configuration file
@@ -71,11 +71,11 @@ public class UniprotConfig
     }
 
     /**
-     * @param taxonId taxonid of the strain
+     * @param taxonId taxonid of the subspecies
      * @return the taxonId to use
      */
-    public String getStrain(String taxonId) {
-        return strains.get(taxonId);
+    public String getSubspecies(String taxonId) {
+        return subspecies.get(taxonId);
     }
 
     private void readConfig() {
@@ -116,9 +116,9 @@ public class UniprotConfig
                 configEntry.setUniqueIdentifier(value);
             } else if ("gene-designation".equals(attributes[1])) {
                 configEntry.setGeneDesignation(value);
-            } else if ("strain".equals(attributes[1])) {
-                configEntry.setStrain(value);
-                strains.put(value, taxonId);
+            } else if ("subspecies".equals(attributes[1])) {
+                configEntry.setSubspecies(value);
+                subspecies.put(value, taxonId);
             } else if (attributes.length == 3) {
                 configEntry.addIdentifier(attributes[1], attributes[2], value);
             } else {
@@ -197,7 +197,7 @@ public class UniprotConfig
     {
         private String uniqueIdentifier = null;
         private Map<String, IdentifierConfig> identifiers = new HashMap<String, IdentifierConfig>();
-        private String strain = null;
+        private String subspecies = null;
         private String geneDesignation;
 
         /**
@@ -215,16 +215,16 @@ public class UniprotConfig
         }
 
         /**
-         * @return the strain
+         * @return the subspecies
          */
-        public String getStrain() {
-            return strain;
+        public String getSubspecies() {
+            return subspecies;
         }
         /**
-         * @param strain the strain to set
+         * @param subspecies the subspecies to set
          */
-        public void setStrain(String strain) {
-            this.strain = strain;
+        public void setSubspecies(String subspecies) {
+            this.subspecies = subspecies;
         }
 
         /**
