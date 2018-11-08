@@ -35,16 +35,13 @@ import org.intermine.xml.full.Reference;
  * Convert tree of OboTerms into Items.
  *
  * @author Thomas Riley
- * @see DagConverter
  */
 public class OboConverter extends DataConverter
 {
-    private static final Logger LOG = Logger.getLogger(DataConverter.class);
+    private static final Logger LOG = Logger.getLogger(OboConverter.class);
 
     protected String dagFilename;
     protected String termClass;
-    protected int uniqueId = 0;
-    protected int uniqueSynId = 0;
     protected Collection<OboTerm> oboTerms;
     protected List<OboRelation> oboRelations;
     protected Map<String, Item> nameToTerm = new HashMap<String, Item>();

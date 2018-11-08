@@ -46,12 +46,13 @@ public class GFF3ConverterTest extends ItemsTestCase {
     String thaleTaxonId = "3702";
     String dataSourceName = "UCSC";
     String dataSetTitle = "UCSC data set";
+    private final String licence = "myTestLicence";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         converter = new GFF3Converter(writer, seqClsName, flyTaxonId, dataSourceName,
-                                      dataSetTitle, tgtModel,
-                                      new GFF3RecordHandler(tgtModel), null);
+                            dataSetTitle, tgtModel, new GFF3RecordHandler(tgtModel),
+                           null, licence);
     }
 
     public void tearDown() throws Exception {
@@ -65,8 +66,8 @@ public class GFF3ConverterTest extends ItemsTestCase {
      * Test creating items with dontCreateLocations flag false.
      */
     public void testParseLocated() throws Exception {
-        BufferedReader srcReader = new BufferedReader(new
-                                                      InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
+        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().
+                getResourceAsStream("test.gff")));
         converter.parse(srcReader);
         converter.storeAll();
 
@@ -81,12 +82,14 @@ public class GFF3ConverterTest extends ItemsTestCase {
      * Test creating items with dontCreateLocations flag true.
      */
     public void testParseUnLocated() throws Exception {
-        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
+        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader()
+                .getResourceAsStream("test.gff")));
         converter.setDontCreateLocations(true);
         converter.parse(srcReader);
         converter.storeAll();
 
-        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("GFF3ConverterTestUnLocated.xml"));
+        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(
+                readItemSet("GFF3ConverterTestUnLocated.xml"));
 
         // uncomment to write out a new target items file
         //writeItemsFile(writer.getItems(), "gff_unlocated_item_test.xml");
@@ -98,11 +101,13 @@ public class GFF3ConverterTest extends ItemsTestCase {
      * Test creating items with dontCreateLocations flag true.
      */
     public void testParseDiscontinuous() throws Exception {
-        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test-locs.gff")));
+        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().
+                getResourceAsStream("test-locs.gff")));
         converter.parse(srcReader);
         converter.storeAll();
 
-        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("GFF3ConverterTestDiscontinuous.xml"));
+        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(
+                readItemSet("GFF3ConverterTestDiscontinuous.xml"));
 
         // uncomment to write out a new target items file
         //writeItemsFile(writer.getItems(), "gff_unlocated_item_test.xml");
@@ -151,12 +156,14 @@ public class GFF3ConverterTest extends ItemsTestCase {
         Model tgtModel = Model.getInstanceByName("genomic");
         converter = new GFF3Converter(writer, seqClsName, thaleTaxonId, dataSourceName,
                 dataSetTitle, tgtModel,
-                new GFF3RecordHandler(tgtModel), null);
-        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test_excludes.gff")));
+                new GFF3RecordHandler(tgtModel), null, licence);
+        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().
+                getResourceAsStream("test_excludes.gff")));
         converter.parse(srcReader);
         converter.storeAll();
 
-        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("GFF3ConverterTestExcludes.xml"));
+        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(
+                readItemSet("GFF3ConverterTestExcludes.xml"));
 
         // uncomment to write out a new target items file
         //writeItemsFile(writer.getItems(), "gff_excludes_test.xml");
@@ -168,8 +175,8 @@ public class GFF3ConverterTest extends ItemsTestCase {
      * Test chromosome is not created twice.
      */
     public void testChromosome() throws Exception {
-        BufferedReader srcReader = new BufferedReader(new
-                                                      InputStreamReader(getClass().getClassLoader().getResourceAsStream("test_worm_chr.gff")));
+        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().
+                getResourceAsStream("test_worm_chr.gff")));
         converter.parse(srcReader);
         converter.storeAll();
 
