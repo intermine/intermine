@@ -286,15 +286,18 @@ public abstract class BioDBConverter extends DBConverter
     }
 
     /**
-     * Provides the strain item for the given strain name.
+     * Provides the strain item for the given strain name and associated organism.
      * @param strainName the name of the strain
+     * @param taxonId the taxon ID of the organism to which this strain belongs
      * @return the Strain Item
      */
-    public Item getStrainItem(String strainName) {
+    public Item getStrainItem(String strainName, String taxonId) {
+        Item organism = getOrganismItem(taxonId);
         Item strain = strains.get(strainName);
         if (strain == null) {
             strain = createItem("Strain");
             strain.setAttribute("primaryIdentifier", strainName);
+            strain.setReference("organism", organism);
             try {
                 store(strain);
             } catch (ObjectStoreException e) {
@@ -304,5 +307,4 @@ public abstract class BioDBConverter extends DBConverter
         }
         return strain;
     }
-
 }
