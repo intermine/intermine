@@ -1,4 +1,4 @@
-package org.intermine.api.url;
+package org.intermine.api.uri;
 
 /*
  * Copyright (C) 2002-2018 FlyMine

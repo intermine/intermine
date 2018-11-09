@@ -36,8 +36,6 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.api.url.InterMineLUI;
-import org.intermine.api.url.InterMineLUIConverter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -45,7 +43,7 @@ import org.intermine.api.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.displayer.ReportDisplayer;
-import org.intermine.web.logic.PortalHelper;
+import org.intermine.web.logic.PermanentURIHelper;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayReference;
@@ -189,12 +187,10 @@ public class ReportController extends InterMineAction
             /*String stableLink =
                 PortalHelper.generatePortalLink(reportObject.getObject(), im, request);*/
             String idString = request.getParameter("id");
-            LOG.info("ReportContrller: request.getParameter('id'): " + idString);
-            InterMineLUIConverter converter = new InterMineLUIConverter();
-            InterMineLUI interMineLUI = converter.getInterMineLUI(Integer.parseInt(idString));
-            if (interMineLUI != null) {
-                String stableLink = PortalHelper.getBaseUrl(request) + "/" + interMineLUI.toString();
-                request.setAttribute("stableLink", stableLink);
+            LOG.info("ReportController: request.getParameter('id'): " + idString);
+            String permanentLink = PermanentURIHelper.getPermanentURI(request, Integer.parseInt(idString));
+            if (permanentLink != null) {
+                request.setAttribute("stableLink", permanentLink);
             }
 
 

@@ -1,4 +1,4 @@
-package org.intermine.api.url;
+package org.intermine.api.uri;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -12,9 +12,8 @@ package org.intermine.api.url;
 
 /**
  * Thrown to indicate that the url is not a valid intermine permanent URL
- * The valid patters is: domain/context/prefix:lui (lui=local unique identifier)
- * (e.g. humanmine.org/humanmine/uniprot:P31946). The prefix has to be defined
- * in the prefixes.properties file
+ * The valid patters is: domain/context/classname:lui (lui=local unique identifier)
+ * (e.g. humanmine.org/humanmine/protein:P31946).
  *
  * @author danielabutano
  */

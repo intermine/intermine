@@ -11,9 +11,9 @@ package org.intermine.web.filters;
  */
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.intermine.api.url.InterMineLUI;
-import org.intermine.api.url.InterMineLUIConverter;
-import org.intermine.api.url.InvalidPermanentURLException;
+import org.intermine.api.uri.InterMineLUI;
+import org.intermine.api.uri.InterMineLUIConverter;
+import org.intermine.api.uri.InvalidPermanentURLException;
 
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -43,7 +43,7 @@ public class PermanentURLFilter implements Filter
         try {
             InterMineLUI permanentURL = new InterMineLUI(request.getRequestURI());
             InterMineLUIConverter urlConverter = new InterMineLUIConverter();
-            Integer id = urlConverter.getIntermineID(permanentURL);
+            Integer id = urlConverter.getInterMineID(permanentURL);
             if (id == -1) {
                 response.setStatus(HttpStatus.SC_NOT_FOUND);
                 chain.doFilter(req, res);

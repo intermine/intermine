@@ -1,4 +1,4 @@
-package org.intermine.api.url;
+package org.intermine.api.uri;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -11,7 +11,6 @@ package org.intermine.api.url;
  */
 
 import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -19,9 +18,9 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Class to map the class name defined in the core.xml with the identifier used to generate the InterMineLUI
- * (e.g. Protein ->primaryAccession,  Publication ->pubMedId). The map is loaded from class_keys.properties
- * where we have set e.g.
+ * Class to map the class name defined in the core.xml with the identifier used to generate the
+ * InterMineLUI (e.g. Protein ->primaryAccession,  Publication ->pubMedId). The map is loaded
+ * from class_keys.properties where we have set e.g.
  * Protein_URI = primaryAccession
  *
  * @author danielabutano
@@ -32,7 +31,7 @@ public final class ClassNameURIIdentifierMapper
     private static final String URI_SUFFIX = "_URI";
     private Properties properties = null;
     //map tp cache the identifier associated to a class Name
-    private final static Map<String, String> classNameIdentifiersMap = new HashMap();
+    private static Map<String, String> classNameIdentifiersMap = new HashMap();
     private static final Logger LOGGER = Logger.getLogger(ClassNameURIIdentifierMapper.class);
 
     /**
@@ -51,7 +50,7 @@ public final class ClassNameURIIdentifierMapper
             String key = null;
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 key = (String) entry.getKey();
-                if (key.contains(URI_SUFFIX)) {
+                if (key.endsWith(URI_SUFFIX) || key.endsWith(URI_SUFFIX.toLowerCase())) {
                     String className = key.replace(URI_SUFFIX, "");
                     classNameIdentifiersMap.put(className, (String) entry.getValue());
                 }

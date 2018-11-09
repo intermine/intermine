@@ -1,4 +1,4 @@
-package org.intermine.api.url;
+package org.intermine.api.uri;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -46,28 +46,15 @@ public class InterMineLUIConverter
     }
 
     /**
-     * Given a InterMineLUI (compact uri, e.g. uniprot:P27362) returns the internal intermine Id
+     * Given a InterMineLUI (compact uri, e.g. protein:P27362) returns the internal intermine Id
      * @param interMineLUI the interMineLUI
      * @return internal intermine id
      * @throws ObjectStoreException if there are any objectstore issues
      */
-    public Integer getIntermineID(InterMineLUI interMineLUI) throws ObjectStoreException {
+    public Integer getInterMineID(InterMineLUI interMineLUI) throws ObjectStoreException {
         if (interMineLUI == null) {
             throw new RuntimeException("InterMineLUI is null");
         }
-        Integer intermineId = getInterMineId(interMineLUI);
-        if (intermineId != null) {
-            return intermineId;
-        }
-        return INTERMINE_ID_NOT_FOUND;
-    }
-
-    /**
-     * Returns the intermine id, given a InterMineLUI
-     * @param interMineLUI the interMineLUI className:lui
-     * @return the pathquery
-     */
-    private Integer getInterMineId(InterMineLUI interMineLUI) throws ObjectStoreException {
         PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
         String className = interMineLUI.getClassName();
         String viewPath =  className + ".id";
@@ -94,9 +81,10 @@ public class InterMineLUIConverter
         } else {
             LOGGER.info("InterMineLUIConverter: there are not " + className
                     + " with " + contstraintPath + "=" + interMineLUI.getIdentifier());
-            return null;
+            return INTERMINE_ID_NOT_FOUND;
         }
     }
+
     /**
      * Generate the InterMineLUI associated to the internal interMine ID
      * @param interMineID the interMineID
