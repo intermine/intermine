@@ -183,7 +183,6 @@ public class ReportController extends InterMineAction
 
             String type = reportObject.getType();
             request.setAttribute("objectType", type);
-            
             String idString = request.getParameter("id");
             LOG.info("ReportController: request.getParameter('id'): " + idString);
             String permanentLink = PermanentURIHelper.getPermanentURI(request,

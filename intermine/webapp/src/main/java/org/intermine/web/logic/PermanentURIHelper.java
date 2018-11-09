@@ -30,6 +30,8 @@ public final class PermanentURIHelper
 {
     private static final Logger LOGGER = Logger.getLogger(PermanentURIHelper.class);
 
+    private PermanentURIHelper() {
+    }
     /**
      * Returns the permanent URI given the intermine internal id
      *
@@ -37,7 +39,7 @@ public final class PermanentURIHelper
      * @param interMineId the internal interMine ID
      * @return the permantent uri
      */
-    public static String getPermanentURI(HttpServletRequest request, Integer interMineId) {
+    public static final String getPermanentURI(HttpServletRequest request, Integer interMineId) {
         InterMineLUIConverter converter = new InterMineLUIConverter();
         InterMineLUI interMineLUI = null;
         String permanentURI = null;
