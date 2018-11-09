@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,7 +81,7 @@ public class PubMedGeneConverter extends BioFileConverter
             }
 
             String originalTaxonId = line[0];
-            String taxonId = BioUtil.replaceStrain(originalTaxonId).toString();
+            String taxonId = replaceSubspecies(originalTaxonId);
             String geneId = line[1];
             String pubmedId = line[2];
 
@@ -98,6 +99,22 @@ public class PubMedGeneConverter extends BioFileConverter
             store(gene);
         }
     }
+
+    private static final Map<String, String> SUBSPECIES = new HashMap<String, String>();
+
+    // TODO put this in config file
+    static {
+        SUBSPECIES.put("559292", "4932");
+        SUBSPECIES.put("46245", "7237");
+    }
+
+    private String replaceSubspecies(String originalTaxonId) {
+        if (SUBSPECIES.containsKey(originalTaxonId)) {
+            return SUBSPECIES.get(originalTaxonId);
+        }
+        return originalTaxonId;
+    }
+
 
     private String getPublication(String pubMedId) throws ObjectStoreException {
         String refId = publications.get(pubMedId);
