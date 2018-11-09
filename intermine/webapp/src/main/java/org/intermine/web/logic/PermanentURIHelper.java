@@ -21,9 +21,22 @@ import org.intermine.web.util.URLGenerator;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Properties;
 
-public class PermanentURIHelper {
+/**
+ * Utility class used to build the permanent URI
+ *
+ * @author danielabutano
+ */
+public final class PermanentURIHelper
+{
     private static final Logger LOGGER = Logger.getLogger(PermanentURIHelper.class);
 
+    /**
+     * Returns the permanent URI given the intermine internal id
+     *
+     * @param request http request
+     * @param interMineId the internal interMine ID
+     * @return the permantent uri
+     */
     public static String getPermanentURI(HttpServletRequest request, Integer interMineId) {
         InterMineLUIConverter converter = new InterMineLUIConverter();
         InterMineLUI interMineLUI = null;
