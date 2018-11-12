@@ -82,6 +82,7 @@
   <class name="Ontology" is-interface="true" uri="http://semanticscience.org/resource/SIO_001391">
     <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
     <attribute name="url" type="java.lang.String" term="http://edamontology.org/data_1052"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
   <class name="OntologyAnnotationEvidenceCode" is-interface="true" term="http://purl.obolibrary.org/obo/ECO_0000000">
