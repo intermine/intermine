@@ -84,13 +84,11 @@ public class GFF3Converter extends DataConverter
      * @param tgtModel the model to create items in
      * @param handler object to perform optional additional operations per GFF3 line
      * @param sequenceHandler the GFF3SeqHandler use to create sequence Items
-     * @param licence URL to the licence for this data set
      * @throws ObjectStoreException if something goes wrong
      */
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgTaxonId,
             String dataSourceName, String dataSetTitle, Model tgtModel,
-            GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler, String licence)
-        throws ObjectStoreException {
+            GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler) throws ObjectStoreException {
         super(writer, tgtModel);
         this.seqClsName = seqClsName;
         this.orgTaxonId = orgTaxonId;
@@ -100,7 +98,7 @@ public class GFF3Converter extends DataConverter
 
         organism = getOrganism();
         dataSource = getDataSourceItem(dataSourceName);
-        dataSet = getDataSetItem(dataSetTitle, null, null, dataSource, licence);
+        dataSet = getDataSetItem(dataSetTitle, null, null, dataSource);
 
         if (sequenceHandler == null) {
             this.sequenceHandler = new GFF3SeqHandler();
@@ -808,18 +806,13 @@ public class GFF3Converter extends DataConverter
      * @param url the new url field, or null if the url shouldn't be set
      * @param description the new description field, or null if the field shouldn't be set
      * @param dataSourceItem the DataSource referenced by the the DataSet
-     * @param licence URL to the data licence for this data set
      * @return the DataSet Item
      */
-    public Item getDataSetItem(String title, String url, String description, Item dataSourceItem,
-        String licence) {
+    public Item getDataSetItem(String title, String url, String description, Item dataSourceItem) {
         Item item = dataSets.get(title);
         if (item == null) {
             item = createItem("DataSet");
             item.setAttribute("name", title);
-            if (licence != null) {
-                item.setAttribute("licence", licence);
-            }
             item.setReference("dataSource", dataSourceItem);
             if (url != null) {
                 item.setAttribute("url", url);
