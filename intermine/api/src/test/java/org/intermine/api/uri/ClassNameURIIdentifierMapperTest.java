@@ -8,19 +8,19 @@ public class ClassNameURIIdentifierMapperTest {
     @Test
     public void getIdentifier() {
         ClassNameURIIdentifierMapper mapper = ClassNameURIIdentifierMapper.getMapper();
-        Assert.assertEquals("vatNumber", mapper.getIdentifier("Company_URI"));
+        Assert.assertEquals("vatNumber", mapper.getIdentifier("Company"));
     }
 
     @Test
-    public void getIdentifierCaseSensitive() {
+    public void getIdentifierCaseInSensitive() {
         ClassNameURIIdentifierMapper mapper = ClassNameURIIdentifierMapper.getMapper();
-        Assert.assertEquals("address", mapper.getIdentifier("Address_uri"));
+        Assert.assertEquals("address", mapper.getIdentifier("Address"));
     }
 
     @Test
     public void getIdentifierKeyTypo() {
         ClassNameURIIdentifierMapper mapper = ClassNameURIIdentifierMapper.getMapper();
-        Assert.assertNull(mapper.getIdentifier("Bank_URIl"));
+        Assert.assertNull(mapper.getIdentifier("Bank"));
     }
 
     @Test
