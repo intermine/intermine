@@ -44,7 +44,8 @@ public class InterProConverter extends BioFileConverter
      */
     public InterProConverter(ItemWriter writer, Model model)
         throws SAXException {
-        super(writer, model, "InterPro", "InterPro data set", null);
+        super(writer, model, "InterPro", "InterPro data set",
+                "myInterProLicence");
     }
 
     /**

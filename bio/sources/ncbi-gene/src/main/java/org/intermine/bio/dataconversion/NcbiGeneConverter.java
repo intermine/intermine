@@ -53,7 +53,7 @@ public class NcbiGeneConverter extends BioFileConverter
      * @param model the Model
      */
     public NcbiGeneConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, "myNCBILicence");
         readConfig();
     }
 

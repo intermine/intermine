@@ -84,8 +84,9 @@ public class GoConverter extends BioFileConverter
     private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
     protected IdResolver rslv;
     private static Config defaultConfig = null;
-
+    private String datasource, dataset, licence;
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
+    private final String GO_ANNOTATION_NAME = "GO Annotation";
 
     /**
      * Constructor
@@ -100,6 +101,7 @@ public class GoConverter extends BioFileConverter
                 DEFAULT_ANNOTATION_TYPE);
         readConfig();
         loadEvidenceCodes();
+        storeDataset();
     }
 
     /**
@@ -111,6 +113,55 @@ public class GoConverter extends BioFileConverter
         this.gaff = gaff;
     }
 
+    /**
+     * Set the licence, a URL to the licence for this ontology
+     *
+     * @param licence licence for these data. Expects a URL
+     */
+    public void setLicence(String licence) {
+        this.licence = licence;
+    }
+
+    /**
+     * Set the data set for this ontology
+     *
+     * @param dataset data set for this ontology
+     */
+    public void setDataset(String dataset) {
+        this.dataset = dataset;
+    }
+
+    /**
+     * Set the data source for this ontology -- an organisation
+     *
+     * @param datasource the organisation responsible for this ontology
+     */
+    public void setDatasource(String datasource) {
+        this.datasource = datasource;
+    }
+
+    private void storeDataset() throws ObjectStoreException {
+
+        if (datasource == null) {
+            datasource = GO_ANNOTATION_NAME;
+        }
+
+        if (dataset == null) {
+            dataset = GO_ANNOTATION_NAME + " data set";
+        }
+
+        Item datasourceItem = createItem("DataSource");
+        datasourceItem.setAttribute("name", datasource);
+        store(datasourceItem);
+
+        Item datasetItem = createItem("DataSet");
+        datasetItem.setAttribute("name", dataset);
+        if (licence != null) {
+            datasetItem.setAttribute("licence", licence);
+        }
+        datasetItem.setReference("dataSource", datasourceItem);
+        store(datasetItem);
+    }
 
     static {
         WITH_TYPES.put("FB", "Gene");

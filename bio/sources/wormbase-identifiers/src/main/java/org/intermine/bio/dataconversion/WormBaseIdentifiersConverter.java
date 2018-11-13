@@ -36,7 +36,8 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
      * @param model the Model
       */
     public WormBaseIdentifiersConverter(ItemWriter writer, Model model) {
-        super(writer, model, "WormBase", "WormBase genes");
+        super(writer, model, "WormBase", "WormBase genes",
+                "myWormBaseLicence");
     }
 
     /**

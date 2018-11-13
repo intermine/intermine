@@ -67,7 +67,7 @@ public class TreefamConverter extends BioFileConverter
      */
     public TreefamConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, "mytreefamlicence");
         readConfig();
     }
 

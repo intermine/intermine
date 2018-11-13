@@ -86,7 +86,8 @@ public class UniprotConverter extends BioDirectoryConverter
      * @param model the Model
      */
     public UniprotConverter(ItemWriter writer, Model model) {
-        super(writer, model, "UniProt", "Swiss-Prot data set");
+        super(writer, model, "UniProt", "Swiss-Prot data set",
+                "http://creativecommons.org/licenses/by/4.0/");
         OrganismRepository.getOrganismRepository();
     }
 
