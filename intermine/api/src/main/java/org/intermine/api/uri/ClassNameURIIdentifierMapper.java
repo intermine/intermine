@@ -50,7 +50,7 @@ public final class ClassNameURIIdentifierMapper
             String key = null;
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 key = (String) entry.getKey();
-                if (key.endsWith(URI_SUFFIX) || key.endsWith(URI_SUFFIX.toLowerCase())) {
+                if (key.endsWith(URI_SUFFIX)) {
                     String className = key.replace(URI_SUFFIX, "");
                     classNameIdentifiersMap.put(className, (String) entry.getValue());
                 }

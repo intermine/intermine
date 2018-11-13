@@ -2,10 +2,10 @@ package org.intermine.api.uri;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.junit.Test;
 
 public class InterMineLUITest {
-
     @Test
     public void getClassName() {
         InterMineLUI lui = new InterMineLUI("Protein", "P31946");

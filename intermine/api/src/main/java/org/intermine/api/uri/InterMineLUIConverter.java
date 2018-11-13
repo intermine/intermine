@@ -67,7 +67,7 @@ public class InterMineLUIConverter
         pathQuery.addConstraint(Constraints.eq(contstraintPath, interMineLUI.getIdentifier()));
         if (!pathQuery.isValid()) {
             LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid");
-            return null;
+            return INTERMINE_ID_NOT_FOUND;
         }
         LOGGER.info("InterMineLUIConverter: pathQuery to retrieve internal id: "
                 + pathQuery.toString());
@@ -94,10 +94,12 @@ public class InterMineLUIConverter
     public InterMineLUI getInterMineLUI(Integer interMineID) throws ObjectStoreException {
         if (interMineID == null) {
             LOGGER.error("intermineID is null");
+            return null;
         }
         String type = getType(interMineID);
         if (type == null) {
             LOGGER.error("The entity " + interMineID + " has no class");
+            return null;
         }
         String identifier = getIdentifier(type, interMineID);
         if (identifier == null) {
