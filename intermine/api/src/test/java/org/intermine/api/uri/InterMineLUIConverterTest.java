@@ -36,6 +36,7 @@ public class InterMineLUIConverterTest {
         company.setId(1);
         company.setName("Company");
         company.setVatNumber(1234);
+        storeDataWriter.store(company);
     }
 
     @AfterClass
