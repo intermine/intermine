@@ -30,7 +30,7 @@ public class OboConverterTask extends ConverterTask
 {
 //    protected static final Logger LOG = Logger.getLogger(OboConverterTask.class);
 
-    private String file, ontologyName, osName, url, termClass;
+    private String file, ontologyName, osName, url, termClass, licence;
 
     /**
      * Set the input file name
@@ -74,6 +74,8 @@ public class OboConverterTask extends ConverterTask
     public void setTermClass(String termClass) {
         this.termClass = termClass;
     }
+
+
 
     /**
      * Run the task

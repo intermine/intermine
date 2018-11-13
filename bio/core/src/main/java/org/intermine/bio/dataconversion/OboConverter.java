@@ -50,6 +50,8 @@ public class OboConverter extends DataConverter
     protected Item ontology;
     private boolean createRelations = true;
     protected String prefix = null;
+    private String licence, dataset, datasource;
+    private String ontologyName;
 
     /**
      * Constructor for this class.
@@ -66,6 +68,7 @@ public class OboConverter extends DataConverter
         super(writer, model);
         this.dagFilename = dagFilename;
         this.termClass = termClass;
+        ontologyName = dagName;
 
         ontology = createItem("Ontology");
         ontology.addAttribute(new Attribute("name", dagName));
@@ -83,6 +86,33 @@ public class OboConverter extends DataConverter
         } else {
             this.createRelations = false;
         }
+    }
+
+    /**
+     * Set the licence, a URL to the licence for this ontology
+     *
+     * @param licence licence for these data. Expects a URL
+     */
+    public void setLicence(String licence) {
+        this.licence = licence;
+    }
+
+    /**
+     * Set the data set for this ontology
+     *
+     * @param dataset data set for this ontology
+     */
+    public void setDataset(String dataset) {
+        this.dataset = dataset;
+    }
+
+    /**
+     * Set the data source for this ontology -- an organisation
+     *
+     * @param datasource the organisation responsible for this ontology
+     */
+    public void setDatasource(String datasource) {
+        this.datasource = datasource;
     }
 
     /**
@@ -131,6 +161,7 @@ public class OboConverter extends DataConverter
      */
     protected void storeItems() throws ObjectStoreException {
         long startTime = System.currentTimeMillis();
+        storeDataset(ontology);
         store(ontology);
         for (OboTerm term : oboTerms) {
             process(term);
@@ -149,6 +180,29 @@ public class OboConverter extends DataConverter
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Ran storeItems, took: " + timeTaken + " ms");
+    }
+
+    private void storeDataset(Item ontology) throws ObjectStoreException {
+
+        if (datasource == null) {
+            datasource = ontologyName;
+        }
+
+        if (dataset == null) {
+            dataset = ontologyName;
+        }
+
+        Item datasourceItem = createItem("DataSource");
+        datasourceItem.setAttribute("name", datasource);
+        store(datasourceItem);
+
+        Item datasetItem = createItem("DataSet");
+        datasetItem.setAttribute("name", dataset);
+        if (licence != null) {
+            datasetItem.setAttribute("licence", licence);
+        }
+        datasetItem.setReference("dataSource", datasourceItem);
+        store(datasetItem);
     }
 
     /**
