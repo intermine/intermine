@@ -62,7 +62,6 @@ public class GoConverter extends BioFileConverter
     // maps retained across all files
     protected Map<String, String> goTerms = new LinkedHashMap<String, String>();
     private Map<String, String> evidenceCodes = new LinkedHashMap<String, String>();
-    private Map<String, String> dataSets = new LinkedHashMap<String, String>();
     private Map<String, String> publications = new LinkedHashMap<String, String>();
     private Map<String, Item> organisms = new LinkedHashMap<String, Item>();
     protected Map<String, String> productMap = new LinkedHashMap<String, String>();
@@ -373,7 +372,6 @@ public class GoConverter extends BioFileConverter
             goAnnotation.setAttribute("annotationExtension", annotationExtension);
         }
 
-        goAnnotation.addToCollection("dataSets", getDataset(dataSource, dataSourceCode));
         if ("gene".equals(productType)) {
             addProductCollection(productIdentifier, goAnnotation.getIdentifier());
         }
@@ -527,9 +525,6 @@ public class GoConverter extends BioFileConverter
         }
         product.setAttribute(idField, accession);
 
-        String dataSetIdentifier = getDataset(dataSource, dataSourceCode);
-        product.addToCollection("dataSets", dataSetIdentifier);
-
         Integer storedProductId = store(product);
         storedProductIds.put(product.getIdentifier(), storedProductId);
         productMap.put(key, product.getIdentifier());
@@ -578,7 +573,6 @@ public class GoConverter extends BioFileConverter
         if (goTermIdentifier == null) {
             Item item = createItem(termClassName);
             item.setAttribute("identifier", identifier);
-            item.addToCollection("dataSets", getDataset(dataSource, dataSourceCode));
             store(item);
 
             goTermIdentifier = item.getIdentifier();
@@ -612,22 +606,6 @@ public class GoConverter extends BioFileConverter
             title = "PFAM"; // to merge with interpro
         }
         return title;
-    }
-
-    private String getDataset(String dataSource, String code)
-        throws ObjectStoreException {
-        String dataSetIdentifier = dataSets.get(code);
-        if (dataSetIdentifier == null) {
-            String dataSourceName = getDataSourceCodeName(code);
-            String title = "GO Annotation from " + dataSourceName;
-            Item item = createItem("DataSet");
-            item.setAttribute("name", title);
-            item.setReference("dataSource", getDataSource(getDataSourceCodeName(dataSource)));
-            dataSetIdentifier = item.getIdentifier();
-            dataSets.put(code, dataSetIdentifier);
-            store(item);
-        }
-        return dataSetIdentifier;
     }
 
     private String newPublication(String codes) throws ObjectStoreException {

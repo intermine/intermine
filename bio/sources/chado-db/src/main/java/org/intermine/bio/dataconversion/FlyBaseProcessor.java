@@ -955,9 +955,9 @@ public class FlyBaseProcessor extends SequenceProcessor
             Integer pubmedId = new Integer(res.getInt("pubmed_id"));
             FeatureData featureData = getFeatureMap().get(featureId);
             FeatureData otherFeatureData = getFeatureMap().get(otherFeatureId);
-
+            String licence = getChadoDBConverter().getLicence();
             OrganismData od = otherFeatureData.getOrganismData();
-            Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId());
+            Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId(), licence);
             String publicationItemId = makePublication(pubmedId);
             String name = "FlyBase:" + featureData.getChadoFeatureUniqueName() + "_"
                     + otherFeatureData.getChadoFeatureUniqueName();

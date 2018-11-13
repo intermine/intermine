@@ -69,10 +69,10 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      * @param model the data model
      * @param dataSourceName the DataSource name
      * @param dataSetTitle the DataSet title
-     * @param ontology name of Ontology eg. "Sequence Ontology"
+     * @param licence URL for licence for these data
      */
     public BioDirectoryConverter (ItemWriter writer, Model model, String dataSourceName,
-            String dataSetTitle, String ontology) {
+            String dataSetTitle, String licence) {
         super(writer, model);
         String dataSourceRefId = null;
         String dataSetRefId = null;
@@ -80,9 +80,9 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
             dataSourceRefId = getDataSource(dataSourceName);
         }
         if (StringUtils.isNotEmpty(dataSetTitle)) {
-            dataSetRefId = getDataSet(dataSetTitle, dataSourceRefId);
+            dataSetRefId = getDataSet(dataSetTitle, dataSourceRefId, licence);
         }
-        hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId, ontology);
+        hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId, sequenceOntologyRefId);
         setStoreHook(hook);
     }
 
@@ -127,10 +127,22 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      * @return the DataSet Item
      */
     public String getDataSet(String title, String dataSourceRefId) {
+        return getDataSet(title, dataSourceRefId, null);
+    }
+
+    /**
+     * Return a DataSet item with the given details.
+     * @param title the DataSet title
+     * @param dataSourceRefId the DataSource referenced by the the DataSet
+     * @param licence the URI for the licence for these data
+     * @return the DataSet Item
+     */
+    public String getDataSet(String title, String dataSourceRefId, String licence) {
         String refId = dataSets.get(title);
         if (refId == null) {
             Item dataSet = createItem("DataSet");
             dataSet.setAttribute("name", title);
+            dataSet.setAttribute("licence", licence);
             dataSet.setReference("dataSource", dataSourceRefId);
             try {
                 store(dataSet);
