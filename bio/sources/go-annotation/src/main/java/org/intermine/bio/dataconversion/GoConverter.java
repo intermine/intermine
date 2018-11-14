@@ -101,7 +101,6 @@ public class GoConverter extends BioFileConverter
                 DEFAULT_ANNOTATION_TYPE);
         readConfig();
         loadEvidenceCodes();
-        storeDataset();
     }
 
     /**
@@ -141,7 +140,6 @@ public class GoConverter extends BioFileConverter
     }
 
     private void storeDataset() throws ObjectStoreException {
-
         if (datasource == null) {
             datasource = GO_ANNOTATION_NAME;
         }
@@ -150,17 +148,9 @@ public class GoConverter extends BioFileConverter
             dataset = GO_ANNOTATION_NAME + " data set";
         }
 
-        Item datasourceItem = createItem("DataSource");
-        datasourceItem.setAttribute("name", datasource);
-        store(datasourceItem);
+        String datasourceRefId = getDataSource(datasource);
 
-        Item datasetItem = createItem("DataSet");
-        datasetItem.setAttribute("name", dataset);
-        if (licence != null) {
-            datasetItem.setAttribute("licence", licence);
-        }
-        datasetItem.setReference("dataSource", datasourceItem);
-        store(datasetItem);
+        getDataSet(dataset, datasourceRefId, licence);
     }
 
     static {
@@ -248,6 +238,8 @@ public class GoConverter extends BioFileConverter
         if (rslv == null) {
             rslv = IdResolverService.getIdResolverForMOD();
         }
+
+        storeDataset();
 
         initialiseMapsForFile();
 
