@@ -40,7 +40,7 @@ public class MgiIdentifiersConverter extends BioFileConverter
      * @param model the Model
      */
     public MgiIdentifiersConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, "myMGILicence");
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
     }
 
     /**

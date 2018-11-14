@@ -252,6 +252,7 @@
 </item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="Swiss-Prot data set"/>
+<attribute name="licence" value="http://creativecommons.org/licenses/by/4.0/"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
 <item id="19_7" class="Synonym">

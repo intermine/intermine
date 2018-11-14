@@ -25,6 +25,8 @@ public class PantherConverterTest extends ItemsTestCase
     Model model = Model.getInstanceByName("genomic");
     PantherConverter converter;
     MockItemWriter itemWriter;
+    private static final String DATASET_TITLE = "Orthologue and paralogue predictions";
+    private static final String DATA_SOURCE_NAME = "Panther";
 
     public PantherConverterTest(String arg) {
         super(arg);

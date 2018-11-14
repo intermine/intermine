@@ -56,8 +56,7 @@ public class KeggPathwayConverter extends BioFileConverter
      * @param model the Model
      */
     public KeggPathwayConverter(ItemWriter writer, Model model) {
-        super(writer, model, "GenomeNet", "KEGG pathways data set",
-                "myKeggLicence");
+        super(writer, model, "GenomeNet", "KEGG pathways data set");
         readConfig();
     }
 
