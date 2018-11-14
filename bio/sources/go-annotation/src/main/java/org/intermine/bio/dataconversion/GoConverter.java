@@ -86,7 +86,7 @@ public class GoConverter extends BioFileConverter
     private static Config defaultConfig = null;
     private String datasource, dataset, licence;
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
-    private final String GO_ANNOTATION_NAME = "GO Annotation";
+    private static final String GO_ANNOTATION_NAME = "GO Annotation";
 
     /**
      * Constructor

@@ -66,7 +66,8 @@ public class PantherConverter extends BioFileConverter
      */
     public PantherConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, "http://www.gnu.org/licenses/gpl.txt");
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE,
+                "http://www.gnu.org/licenses/gpl.txt");
         readConfig();
         or = OrganismRepository.getOrganismRepository();
     }
