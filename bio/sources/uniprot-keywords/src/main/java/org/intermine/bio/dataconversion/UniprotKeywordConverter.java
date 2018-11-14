@@ -42,7 +42,7 @@ public class UniprotKeywordConverter extends BioFileConverter
      */
     public UniprotKeywordConverter(ItemWriter writer, Model model) {
         super(writer, model, "UniProt", "UniProt keywords data set",
-                "http://creativecommons.org/licenses/by/4.0/");
+                "http://creativecommons.org/licenses/by/4.0/", false);
     }
 
     /**

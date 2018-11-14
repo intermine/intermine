@@ -142,7 +142,9 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
         if (refId == null) {
             Item dataSet = createItem("DataSet");
             dataSet.setAttribute("name", title);
-            dataSet.setAttribute("licence", licence);
+            if (licence != null) {
+                dataSet.setAttribute("licence", licence);
+            }
             dataSet.setReference("dataSource", dataSourceRefId);
             try {
                 store(dataSet);
