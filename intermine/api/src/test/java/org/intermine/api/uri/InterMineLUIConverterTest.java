@@ -11,87 +11,81 @@ package org.intermine.api.uri;
  */
 
 import org.intermine.api.InterMineAPITestCase;
-import org.intermine.model.testmodel.Company;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreTestUtils;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.util.DynamicUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import java.util.Collections;
+import org.intermine.objectstore.*;
 import java.util.Map;
 
-public class InterMineLUIConverterTest {
-    protected static ObjectStoreWriter storeDataWriter;
-    private static Company company;
+public class InterMineLUIConverterTest extends InterMineAPITestCase {
+    private static ObjectStoreWriter osw;
+    private static MockInterMineLUIConverter converter;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        company.setId(1);
-        company.setName("Company");
-        company.setVatNumber(1234);
-        storeDataWriter.store(company);
+    public InterMineLUIConverterTest(String arg) {
+        super(arg);
     }
 
-    @AfterClass
-    public static void tearDown() throws Exception {
-        if (storeDataWriter != null) {
-            storeDataWriter.delete(company);
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        try {
+            //load data into test db
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+            Map data = ObjectStoreTestUtils.getTestData("testmodel", "testmodel_data.xml");
+            ObjectStoreTestUtils.storeData(osw, data);
+
+            //set mock methods
+            converter = new MockInterMineLUIConverter();
+            converter.setObjectStore(os);
+            converter.setSUProfile(im.getProfileManager().getSuperuserProfile());
+        } catch (Exception e) {
+            System.err.println("Error connecting to DB");
+            System.err.println(e);
+            return;
         }
     }
 
-    @Test
-    public void getLUIWithCorrectID() {
-        InterMineLUIConverter converter = new InterMineLUIConverter();
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        if (osw != null) {
+            osw.close();
+        }
+    }
+
+    public void testGetLUIWithCorrectID() {
         try {
-            InterMineLUI lui = converter.getInterMineLUI(new Integer(1));
-            assertEquals("Company", lui.getClassName());
-            assertEquals("1234", lui.getIdentifier());
+            InterMineLUI lui = converter.getInterMineLUI(new Integer(9));
+            assertEquals("Employee", lui.getClassName());
+            assertEquals("EmployeeA2", lui.getIdentifier());
         } catch (ObjectStoreException ex) {
         }
     }
 
-    @Test
-    public void getLUIWithWrongID() {
-        InterMineLUIConverter converter = new InterMineLUIConverter();
+    public void testGetLUIWithWrongID() {
         try {
-            InterMineLUI lui = converter.getInterMineLUI(new Integer(2));
+            InterMineLUI lui = converter.getInterMineLUI(new Integer(100));
             assertNull(lui);
         } catch (ObjectStoreException ex) {
         }
     }
 
-    @Test
-    public void getID() {
-        InterMineLUIConverter converter = new InterMineLUIConverter();
+    public void testGetID() {
         try {
-            InterMineLUI lui = new InterMineLUI("Company", "1234");
+            InterMineLUI lui = new InterMineLUI("Employee", "EmployeeA2");
             Integer id = converter.getInterMineID(lui);
-            assertEquals(1, id.intValue());
+            assertEquals(9, id.intValue());
         } catch (ObjectStoreException ex) {
         }
     }
 
-    @Test
-    public void getIDWithWrongType() {
-        InterMineLUIConverter converter = new InterMineLUIConverter();
+    public void testGetIDWithWrongType() {
         try {
-            InterMineLUI lui = new InterMineLUI("WrongType", "1234");
+            InterMineLUI lui = new InterMineLUI("WrongType", "EmployeeA1");
             Integer id = converter.getInterMineID(lui);
             assertEquals(-1, id.intValue());
         } catch (ObjectStoreException ex) {
         }
     }
 
-    @Test
-    public void getIDWithWrongIdentifierValue() {
-        InterMineLUIConverter converter = new InterMineLUIConverter();
+    public void testGetIDWithWrongIdentifierValue() {
         try {
             InterMineLUI lui = new InterMineLUI("Company", "12345678");
             Integer id = converter.getInterMineID(lui);

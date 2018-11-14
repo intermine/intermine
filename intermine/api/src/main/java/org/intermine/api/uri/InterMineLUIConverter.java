@@ -35,7 +35,6 @@ public class InterMineLUIConverter
     private static final Integer INTERMINE_ID_NOT_FOUND = -1;
     private static final String DEFAULT_IDENTIFIER = "primaryIdentifier";
     private ClassNameURIIdentifierMapper classNameIdentifierMapper = null;
-
     private static final Logger LOGGER = Logger.getLogger(InterMineLUIConverter.class);
 
     /**
@@ -55,7 +54,7 @@ public class InterMineLUIConverter
         if (interMineLUI == null) {
             throw new RuntimeException("InterMineLUI is null");
         }
-        PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
+        PathQuery pathQuery = new PathQuery(getModel());
         String className = interMineLUI.getClassName();
         String viewPath =  className + ".id";
         pathQuery.addView(viewPath);
@@ -67,14 +66,12 @@ public class InterMineLUIConverter
         pathQuery.addConstraint(Constraints.eq(contstraintPath, interMineLUI.getIdentifier()));
         if (!pathQuery.isValid()) {
             LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid");
+            LOGGER.info(pathQuery.getModel().toString());
             return INTERMINE_ID_NOT_FOUND;
         }
         LOGGER.info("InterMineLUIConverter: pathQuery to retrieve internal id: "
                 + pathQuery.toString());
-        PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
-                PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
-        ExportResultsIterator iterator = executor.execute(pathQuery);
-
+        ExportResultsIterator iterator = getPathQueryExecutor().execute(pathQuery);
         if (iterator.hasNext()) {
             ResultElement row = iterator.next().get(0);
             return row.getId();
@@ -98,7 +95,7 @@ public class InterMineLUIConverter
         }
         String type = getType(interMineID);
         if (type == null) {
-            LOGGER.error("The entity " + interMineID + " has no class");
+            LOGGER.error("The entity " + interMineID + " does not exits");
             return null;
         }
         String identifier = getIdentifier(type, interMineID);
@@ -115,11 +112,14 @@ public class InterMineLUIConverter
      * @return the type, e.g. Protein
      */
     private String getType(Integer interMineID) {
-        ObjectStore os = PathQueryAPI.getObjectStore();
         InterMineObject imObj = null;
         String type = null;
         try {
-            Class shadowClass = os.getObjectById(interMineID).getClass();
+            InterMineObject obj = getObjectStore().getObjectById(interMineID);
+            if (obj == null) {
+                return null;
+            }
+            Class shadowClass = obj.getClass();
             try {
                 Field field = shadowClass.getField("shadowOf");
                 Class clazz = (Class) field.get(null);
@@ -127,7 +127,8 @@ public class InterMineLUIConverter
                 LOGGER.info("InterMineLUIConverter: the entity with id " + interMineID
                         + " has type: " + type);
             } catch (NoSuchFieldException e) {
-                LOGGER.error(e);
+                LOGGER.info(e);
+                type = shadowClass.getSimpleName();
             }  catch (IllegalAccessException e) {
                 LOGGER.error(e);
             }
@@ -150,19 +151,18 @@ public class InterMineLUIConverter
         if (identifier == null) {
             identifier = DEFAULT_IDENTIFIER;
         }
-        PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
+        PathQuery pathQuery = new PathQuery(getModel());
         String viewPath = type + "." + identifier;
         pathQuery.addView(viewPath);
         String contstraintPath = type + ".id";
         pathQuery.addConstraint(Constraints.eq(contstraintPath, Integer.toString(interMineId)));
         if (!pathQuery.isValid()) {
             LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid");
+            LOGGER.info(pathQuery.getModel().toString());
             return null;
         }
-        PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
-                PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
-        ExportResultsIterator iterator = executor.execute(pathQuery);
 
+        ExportResultsIterator iterator = getPathQueryExecutor().execute(pathQuery);
         if (iterator.hasNext()) {
             ResultElement cell = iterator.next().get(0);
             return (String) cell.getField();
@@ -170,4 +170,29 @@ public class InterMineLUIConverter
         return null;
     }
 
+    /**
+     * Returns the objects store
+     * @return the object store
+     */
+    public ObjectStore getObjectStore() {
+        LOGGER.info("IntermineLUIConvereter::getObjectStore()");
+        return PathQueryAPI.getObjectStore();
+    }
+
+    /**
+     * Returns the model
+     * @return the model
+     */
+    public Model getModel() {
+        return Model.getInstanceByName("genomic");
+    }
+
+    /**
+     * Returns the PathQueryExecutor
+     * @return the PathQueryExecutor
+     */
+    public PathQueryExecutor getPathQueryExecutor() {
+        return new PathQueryExecutor(getObjectStore(), PathQueryAPI.getProfile(),
+                null, PathQueryAPI.getBagManager());
+    }
 }
