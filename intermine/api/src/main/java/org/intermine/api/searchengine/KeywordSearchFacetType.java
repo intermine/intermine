@@ -1,4 +1,4 @@
-package org.intermine.api.lucene;
+package org.intermine.api.searchengine;
 
 /*
  * Copyright (C) 2002-2018 FlyMine

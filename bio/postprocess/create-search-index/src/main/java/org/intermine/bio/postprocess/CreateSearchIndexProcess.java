@@ -16,21 +16,23 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.api.searchengine.IndexHandler;
+import org.intermine.api.searchengine.solr.SolrIndexHandler;
 
 
 /**
- * Create a the Lucene keyword search index for a mine.
+ * Create the keyword search index for a mine.
  * @author Alex Kalderimis
+ * @author arunans23
  */
 public class CreateSearchIndexProcess extends PostProcessor
 {
     /**
-     * Create a new instance of CreateSearchIdexProcess
+     * Create a new instance of CreateSearchIndexProcess
      *
      * @param osw object store writer
      */
@@ -43,7 +45,7 @@ public class CreateSearchIndexProcess extends PostProcessor
      */
     public void postProcess()
             throws ObjectStoreException {
-        System .out.println("Creating lucene index for keyword search...");
+        System.out .println("Creating index for keyword search...");
 
         //read class keys to figure out what are keyFields during indexing
         Properties classKeyProperties = new Properties();
@@ -58,8 +60,17 @@ public class CreateSearchIndexProcess extends PostProcessor
         Map<String, List<FieldDescriptor>> classKeys =
                 ClassKeyHelper.readKeys(osw.getModel(), classKeyProperties);
 
-        //index and save
-        KeywordSearch.saveIndexToDatabase(osw, classKeys);
-        KeywordSearch.deleteIndexDirectory();
+        //index and save. Deleting previous index happens within itself
+        try {
+            IndexHandler indexHandler = new SolrIndexHandler();
+            indexHandler.createIndex(osw, classKeys);
+
+            System.out .println("Creating index for keyword search ended successfully");
+
+        } catch (Exception e) {
+            System.out .println("Creating keyword index failed");
+            e.printStackTrace();
+        }
+
     }
 }

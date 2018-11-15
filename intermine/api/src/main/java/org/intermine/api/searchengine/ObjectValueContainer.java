@@ -1,4 +1,4 @@
-package org.intermine.api.lucene;
+package org.intermine.api.searchengine;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -16,7 +16,7 @@ package org.intermine.api.lucene;
  * be added as a field to the document
  * @author nils
  */
-class ObjectValueContainer
+public class ObjectValueContainer
 {
     final String className;
     final String name;
