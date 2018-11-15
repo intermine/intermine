@@ -116,10 +116,6 @@ subprojects {
     bintray {
         user = System.getenv('BINTRAY_USER')
         key = System.getenv('BINTRAY_KEY')
-        filesSpec {
-            from 'build/libs'
-            into '.'
-        }
         dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
         publish = true //[Default: false] Whether version should be auto published after an upload
         override = true //[Default: false] Whether to override version artifacts already published
