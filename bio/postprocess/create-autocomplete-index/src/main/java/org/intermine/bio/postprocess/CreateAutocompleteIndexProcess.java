@@ -13,16 +13,9 @@ package org.intermine.bio.postprocess;
 import java.io.IOException;
 
 
-
-import java.util.Properties;
-
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.modelproduction.MetadataManager;
-import org.intermine.sql.Database;
-import java.sql.SQLException;
 import org.apache.tools.ant.BuildException;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -48,27 +41,27 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
      */
     public void postProcess()
             throws ObjectStoreException {
-        System.out .println("create lucene index ...");
-        Properties props = new Properties();
+
+        System.out .println("create autocomplete index ...");
+
         try {
-            props.load(getClass().getClassLoader().getResourceAsStream(
-                "objectstoresummary.config.properties"));
 
             ObjectStore os = osw.getObjectStore();
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
 
-            AutoCompleter ac = new AutoCompleter(os, props);
-            if (ac.getBinaryIndexMap() != null) {
-                MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
-                        ac.getBinaryIndexMap());
-            }
+            AutoCompleter ac = new AutoCompleter(os);
 
-        } catch (IOException e) {
-            throw new BuildException("Could not open the class keys");
+            ac.buildIndex(os);
+
+            System.out .println("Creating auto complete index has completed");
+
         } catch (NullPointerException e) {
             throw new BuildException("Could not find the class keys");
-        } catch (SQLException e) {
-            throw new BuildException("Could not store autocomplete index");
+
+        } catch (IOException e) {
+            throw new BuildException("Creating autocomplete index failed", e);
+
+        } catch (ClassNotFoundException e) {
+            throw new BuildException("Creating autocomplete index failed", e);
         }
     }
 }

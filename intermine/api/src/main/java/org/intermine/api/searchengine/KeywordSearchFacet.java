@@ -1,4 +1,4 @@
-package org.intermine.api.lucene;
+package org.intermine.api.searchengine;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -12,19 +12,22 @@ package org.intermine.api.lucene;
 
 import java.util.List;
 
-import com.browseengine.bobo.api.BrowseFacet;
-
 /**
  * container for one faceting field, the current faceting value and the list of
  * possible items
+ *
+ * @param <E> This is generic type for items variable.
+ *          Currenly it used as a list FacetField.Count in solr.
+ *
  * @author nils
+ * @author arunans23
  */
-public class KeywordSearchFacet
+public class KeywordSearchFacet<E>
 {
     final String field;
     final String name;
     final String value;
-    final List<BrowseFacet> items;
+    final List<E> items;
 
     /**
      * constructor
@@ -37,7 +40,7 @@ public class KeywordSearchFacet
      * @param items
      *            list of possible values and their counts as BrowseFacets
      */
-    public KeywordSearchFacet(String field, String name, String value, List<BrowseFacet> items) {
+    public KeywordSearchFacet(String field, String name, String value, List<E> items) {
         super();
         this.field = field;
         this.name = name;
@@ -73,7 +76,7 @@ public class KeywordSearchFacet
      * list of all values and counts
      * @return items
      */
-    public List<BrowseFacet> getItems() {
+    public List<E> getItems() {
         return items;
     }
 }

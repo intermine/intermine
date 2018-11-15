@@ -107,13 +107,8 @@ public class OboParser
      */
     @SuppressWarnings("unchecked")
     public void processRelations(String dagFileName) throws Exception {
-        File temp = null;
-        File f = new File("build");
-        if (!f.exists()) {
-            temp = File.createTempFile("obo", ".tmp");
-        } else {
-            temp = File.createTempFile("obo", ".tmp", f);
-        }
+        File temp = File.createTempFile("obo", ".tmp");
+
         // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
         // List); OBOEDIT code
         // TODO OBO will soon release the file containing all transitive closures calculated

@@ -1,4 +1,4 @@
-package org.intermine.api.lucene;
+package org.intermine.api.searchengine;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -9,6 +9,7 @@ package org.intermine.api.lucene;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 
 /**
  * container class for a facet field and its settings
