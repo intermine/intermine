@@ -101,7 +101,6 @@ task createUnitTestDatabases {
         // just fail silently if DB is already there. Instead we could read in the list of DBs and only
         // create ones that aren't there
         createDbInternal('notxmltest')
-        createDbInternal('notxmlunittest')
         createDbInternal('truncunittest')
         createDbInternal('flatmodetest')
         createDbInternal('fulldatatest')
