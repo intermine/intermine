@@ -783,9 +783,9 @@ public class GFF3Converter extends DataConverter
     }
 
     /**
-     * Return a DataSet item for the given title
-     * @param name the DataSet name
-     * @return the DataSet Item
+     * Return a DataSource item for the given title
+     * @param name the DataSource name
+     * @return the DataSource Item
      */
     public Item getDataSourceItem(String name) {
         Item item = dataSources.get(name);
