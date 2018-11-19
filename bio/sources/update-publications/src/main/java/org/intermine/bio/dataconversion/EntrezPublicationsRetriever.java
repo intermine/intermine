@@ -89,7 +89,6 @@ public class EntrezPublicationsRetriever
     private String osAlias = null, outputFile = null;
     private Set<Integer> seenPubMeds = new HashSet<Integer>();
     private Map<String, Item> authorMap = new HashMap<String, Item>();
-    private String cacheDirName = "build/";
     private ItemFactory itemFactory;
     private boolean loadFullRecord = false;
     private Map<String, Item> meshTerms = new HashMap<String, Item>();
@@ -123,16 +122,6 @@ public class EntrezPublicationsRetriever
     }
 
     /**
-     * Set the cache file name
-     * @param cacheDirName The cache file
-     */
-    public void setCacheDirName(String cacheDirName) {
-        if (!cacheDirName.startsWith("${")) {
-            this.cacheDirName = cacheDirName;
-        }
-    }
-
-    /**
      * Synchronize publications with pubmed using pmid
      * @throws Exception if an error occurs
      */
@@ -158,8 +147,8 @@ public class EntrezPublicationsRetriever
             envConfig.setTransactional(true);
             envConfig.setAllowCreate(true);
 
-            // Cached as bio/sources/update-publications/build/*.jdb
-            Environment env = new Environment(new File(cacheDirName), envConfig);
+            File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+            Environment env = new Environment(tmpDir, envConfig);
 
             DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setTransactional(true);

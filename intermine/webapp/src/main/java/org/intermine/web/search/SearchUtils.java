@@ -18,7 +18,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
-import org.intermine.api.lucene.KeywordSearchHit;
+import org.intermine.api.searchengine.KeywordSearchResultContainer;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -52,13 +52,13 @@ public final class SearchUtils
     public static Collection<KeywordSearchResult> parseResults(
             InterMineAPI im,
             WebConfig webconfig,
-            Collection<KeywordSearchHit> searchHits) {
+            Collection<KeywordSearchResultContainer> searchHits) {
         long time = System.currentTimeMillis();
         Model model = im.getModel();
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
         LinkRedirectManager redirector = im.getLinkRedirector();
-        for (KeywordSearchHit keywordSearchHit : searchHits) {
+        for (KeywordSearchResultContainer keywordSearchHit : searchHits) {
             Class<?> objectClass = DynamicUtil.getSimpleClass(keywordSearchHit.getObject()
                     .getClass());
             ClassDescriptor classDescriptor = model.getClassDescriptorByName(objectClass.getName());

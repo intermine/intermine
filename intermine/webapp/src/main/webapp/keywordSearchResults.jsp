@@ -146,11 +146,11 @@ input.submit {
                 href="<c:url value="/keywordSearchResults.do">
                                    <c:param name="searchTerm" value="${searchTerm}" />
                                    <c:param name="searchBag" value="${searchBag}" />
-                                   <c:param name="facet_${facet.field}" value="${facetItem.value}" />
+                                   <c:param name="facet_${facet.field}" value="${facetItem.name}" />
                             </c:url>"
-                title="Click to show '<c:out value="${facetItem.value}" />'">
-              <c:out value="${imf:formatPathStr(facetItem.value, INTERMINE_API, WEBCONFIG)}" /> (<c:out
-                value="${facetItem.facetValueHitCount}"></c:out>) </a></li>
+                title="Click to show '<c:out value="${facetItem.name}" />'">
+              <c:out value="${imf:formatPathStr(facetItem.name, INTERMINE_API, WEBCONFIG)}" /> (<c:out
+                value="${facetItem.count}"></c:out>) </a></li>
             </c:forEach>
           </ul>
           </div>
@@ -335,16 +335,16 @@ input.submit {
                       href="<c:url value="/keywordSearchResults.do">
                                                <c:param name="searchTerm" value="${searchTerm}" />
                                                <c:param name="searchBag" value="${searchBag}" />
-                                               <c:param name="facet_${facet.field}" value="${facetItem.value}" />
+                                               <c:param name="facet_${facet.field}" value="${facetItem.name}" />
                                          <c:forEach items="${searchFacets}" var="facetOTHER">
                                              <c:if test="${facetOTHER.field != facet.field && facetOTHER.value != null && facetOTHER.value != ''}">
                                                  <c:param name="facet_${facetOTHER.field}" value="${facetOTHER.value}" />
                                              </c:if>
                                          </c:forEach>
                                         </c:url>"
-                      title="Click to only show '<c:out value="${facetItem.value}" />'">
-                    <c:out value="${imf:formatPathStr(facetItem.value, INTERMINE_API, WEBCONFIG)}" />: <c:out
-                      value="${facetItem.facetValueHitCount}"></c:out> </a></li>
+                      title="Click to only show '<c:out value="${facetItem.name}" />'">
+                    <c:out value="${imf:formatPathStr(facetItem.name, INTERMINE_API, WEBCONFIG)}" />: <c:out
+                      value="${facetItem.count}"></c:out> </a></li>
                   </c:forEach>
                 </ul>
                 </div>

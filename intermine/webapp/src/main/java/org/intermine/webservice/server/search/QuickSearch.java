@@ -24,14 +24,17 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.response.FacetField;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.lucene.KeywordSearch;
-import org.intermine.api.lucene.KeywordSearchFacet;
-import org.intermine.api.lucene.KeywordSearchFacetData;
-import org.intermine.api.lucene.ResultsWithFacets;
+import org.intermine.api.searchengine.KeywordSearchFacetData;
+import org.intermine.api.searchengine.KeywordSearchHandler;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.searchengine.KeywordSearchFacet;
+import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
+import org.intermine.api.searchengine.KeywordSearchResults;
+import org.intermine.api.searchengine.solr.SolrKeywordSearchHandler;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.config.WebConfig;
@@ -46,7 +49,6 @@ import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.XMLFormatter;
 
-import com.browseengine.bobo.api.BrowseFacet;
 
 /**
  * A service that runs key-word searches.
@@ -55,11 +57,10 @@ import com.browseengine.bobo.api.BrowseFacet;
  */
 public class QuickSearch extends JSONService
 {
-
-    private static final Logger LOG = Logger.getLogger(QuickSearch.class);
-
     private static final String FACET_PREFIX = "facet_";
     private static final int PREFIX_LEN = FACET_PREFIX.length();
+
+    private static final Logger LOG = Logger.getLogger(QuickSearch.class);
 
     private Map<String, Map<String, Object>> headerObjs
         = new HashMap<String, Map<String, Object>>();
@@ -78,15 +79,20 @@ public class QuickSearch extends JSONService
     @Override
     protected void execute() throws Exception {
         String contextPath = servletContext.getRealPath("/");
-        KeywordSearch.initKeywordSearch(im, contextPath);
+
+        KeywordSearchPropertiesManager keywordSearchPropertiesManager
+                = KeywordSearchPropertiesManager.getInstance(im.getObjectStore());
         WebConfig wc = InterMineContext.getWebConfig();
 
         QuickSearchRequest input = new QuickSearchRequest();
-        Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
+        Vector<KeywordSearchFacetData> facets = keywordSearchPropertiesManager.getFacets();
         Map<String, String> facetValues = getFacetValues(facets);
 
-        ResultsWithFacets results = KeywordSearch.runBrowseWithFacets(
-                im, input.searchTerm, input.offset, facetValues, input.getListIds());
+        KeywordSearchHandler keywordSearchHandler = new SolrKeywordSearchHandler();
+
+        KeywordSearchResults results = keywordSearchHandler
+                .doKeywordSearch(im, input.searchTerm, facetValues,
+                        input.getListIds(), input.offset);
 
         Collection<KeywordSearchResult> searchResultsParsed =
                 SearchUtils.parseResults(im, wc, results.getHits());
@@ -95,9 +101,13 @@ public class QuickSearch extends JSONService
             Map<String, Object> facetData = new HashMap<String, Object>();
             for (KeywordSearchFacet kwsf: results.getFacets()) {
                 Map<String, Integer> sfData = new HashMap<String, Integer>();
-                for (BrowseFacet bf: kwsf.getItems()) {
-                    sfData.put(bf.getValue(), bf.getFacetValueHitCount());
+
+                List<FacetField.Count> items = kwsf.getItems();
+
+                for ( FacetField.Count key : items) {
+                    sfData.put(key.getName(), (int) key.getCount());
                 }
+
                 facetData.put(kwsf.getField(), sfData);
             }
             headerObjs.put("facets", facetData);
