@@ -1,4 +1,4 @@
-package org.intermine.api.lucene;
+package org.intermine.api.searchengine;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -20,7 +20,7 @@ import org.intermine.objectstore.query.ResultsRow;
  * container to hold results for a reference query and associated iterator
  * @author nils
  */
-class InterMineResultsContainer
+public class InterMineResultsContainer
 {
     final Results results;
     final ListIterator<ResultsRow<InterMineObject>> iterator;

@@ -16,7 +16,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: "com.jfrog.artifactory"
 
 group 'org.intermine'
-version '2.1.1'
+version '3.0.0'
 sourceCompatibility = 1.8
 
 repositories {
@@ -75,10 +75,6 @@ artifactory {
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
-    filesSpec {
-        from 'build/libs'
-        into '.'
-    }
     dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
     publish = true //[Default: false] Whether version should be auto published after an upload
     override = true //[Default: false] Whether to override version artifacts already published
@@ -90,9 +86,9 @@ bintray {
         vcsUrl = 'https://github.com/intermine/intermine.git'
         publicDownloadNumbers = true
         version {
-            name = '2.1.1'
-            desc = 'InterMine 2.1.1'
-            vcsTag = 'intermine-2.1.1'
+            name = '3.0.0'
+            desc = 'InterMine 3.0.0'
+            vcsTag = 'intermine-3.0.0'
         }
     }
 

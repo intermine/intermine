@@ -1,4 +1,4 @@
-package org.intermine.api.lucene;
+package org.intermine.api.searchengine.solr;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -23,9 +23,17 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
+import org.apache.solr.client.solrj.response.schema.SchemaResponse;
+import org.apache.solr.common.SolrInputField;
+import org.apache.solr.common.SolrInputDocument;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.searchengine.ClassAttributes;
+import org.intermine.api.searchengine.InterMineResultsContainer;
+import org.intermine.api.searchengine.KeywordSearchFacetData;
+import org.intermine.api.searchengine.KeywordSearchFacetType;
+import org.intermine.api.searchengine.ObjectValueContainer;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
@@ -51,33 +59,39 @@ import org.intermine.pathquery.PathException;
 import org.intermine.util.ObjectPipe;
 
 /**
- * thread to fetch all intermineobjects (with exceptions) from database, create
- * a lucene document for them, add references (if applicable) and put the final
+ * Thread to fetch all intermineobjects (with exceptions) from database, create
+ * a solr document for them, add references (if applicable) and put the final
  * document in the indexing queue
  * @author nils
+ * @author arunans23
  */
-public class InterMineObjectFetcher extends Thread
+public class SolrObjectHandler extends Thread
 {
-    private static final Logger LOG = Logger.getLogger(InterMineObjectFetcher.class);
+
+    private static final Logger LOG = Logger.getLogger(SolrObjectHandler.class);
+
+    //this field type is analyzed
+    private static final String ANALYZED_FIELD_TYPE_NAME = "analyzed_string";
+
+    //this field type is not analyzed
+    private static final String RAW_FIELD_TYPE_NAME = "raw_string";
 
     final ObjectStore os;
     final Map<String, List<FieldDescriptor>> classKeys;
-    final ObjectPipe<Document> indexingQueue;
+    final ObjectPipe<SolrInputDocument> indexingQueue;
     final Set<Class<? extends InterMineObject>> ignoredClasses;
     final Map<Class<? extends InterMineObject>, Set<String>> ignoredFields;
     final Map<Class<? extends InterMineObject>, String[]> specialReferences;
     final Map<ClassDescriptor, Float> classBoost;
     final Vector<KeywordSearchFacetData> facets;
 
-    final Map<Integer, Document> documents = new HashMap<Integer, Document>();
     final Set<String> fieldNames = new HashSet<String>();
     private Set<String> normFields = new HashSet<String>();
+    private Map<String, String> attributePrefixes = null;
     final Map<Class<?>, Vector<ClassAttributes>> decomposedClassesCache =
             new HashMap<Class<?>, Vector<ClassAttributes>>();
-    private Map<String, String> attributePrefixes = null;
 
-    Field idField = null;
-    Field categoryField = null;
+    private SolrClient solrClient;
 
     private volatile Exception error;
 
@@ -104,14 +118,17 @@ public class InterMineObjectFetcher extends Thread
      *            fields used for faceting - will be indexed untokenized in
      *            addition to the normal indexing
      * @param attributePrefixes prefixes to be ignored
+     * @param solrClient solrClient Instance
      */
-    public InterMineObjectFetcher(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
-            ObjectPipe<Document> indexingQueue,
-            Set<Class<? extends InterMineObject>> ignoredClasses,
-            Map<Class<? extends InterMineObject>, Set<String>> ignoredFields,
-            Map<Class<? extends InterMineObject>, String[]> specialReferences,
-            Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
-            Map<String, String> attributePrefixes) {
+    SolrObjectHandler(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
+                      ObjectPipe<SolrInputDocument> indexingQueue,
+                      Set<Class<? extends InterMineObject>> ignoredClasses,
+                      Map<Class<? extends InterMineObject>, Set<String>> ignoredFields,
+                      Map<Class<? extends InterMineObject>, String[]> specialReferences,
+                      Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
+                      Map<String, String> attributePrefixes,
+                      SolrClient solrClient
+    ) {
         super();
 
         this.os = os;
@@ -123,6 +140,8 @@ public class InterMineObjectFetcher extends Thread
         this.classBoost = classBoost;
         this.facets = facets;
         this.attributePrefixes = attributePrefixes;
+
+        this.solrClient = solrClient;
     }
 
     /**
@@ -142,6 +161,7 @@ public class InterMineObjectFetcher extends Thread
         try {
             long time = System.currentTimeMillis();
             long objectParseTime = 0;
+
             LOG.info("Fetching all InterMineObjects...");
 
             HashSet<Class<? extends InterMineObject>> seenClasses =
@@ -150,6 +170,7 @@ public class InterMineObjectFetcher extends Thread
                     new HashMap<String, InterMineResultsContainer>();
 
             try {
+
                 //query all objects except the ones we are ignoring
                 Query q = new Query();
                 QueryClass qc = new QueryClass(InterMineObject.class);
@@ -165,7 +186,7 @@ public class InterMineObjectFetcher extends Thread
 
                 @SuppressWarnings("rawtypes")
                 ListIterator<ResultsRow<InterMineObject>> it = (ListIterator) results
-                    .listIterator();
+                        .listIterator();
                 int i = iterateOverObjects(time, objectParseTime, seenClasses,
                         referenceResults, results, it);
                 StringBuilder doneMessage = new StringBuilder();
@@ -179,12 +200,14 @@ public class InterMineObjectFetcher extends Thread
                     }
                 }
                 LOG.info("COMPLETED index with " + i + " records.  Fields: " + doneMessage);
+
             } finally {
                 for (InterMineResultsContainer resultsContainer : referenceResults.values()) {
                     ((ObjectStoreInterMineImpl) os).releaseGoFaster(resultsContainer.getResults()
                             .getQuery());
                 }
             }
+
         } catch (Exception e) {
             LOG.warn("Error occurred during processing", e);
             setException(e);
@@ -206,11 +229,12 @@ public class InterMineObjectFetcher extends Thread
         return error;
     }
 
-    private Document handleObject(
+    private SolrInputDocument handleObject(
             InterMineObject object,
             HashSet<Class<? extends InterMineObject>> seenClasses,
             HashMap<String, InterMineResultsContainer> referenceResults)
-        throws PathException, ObjectStoreException, IllegalAccessException {
+            throws PathException, ObjectStoreException, IllegalAccessException {
+
         long objectParseStart = System.currentTimeMillis();
         long objectParseTime = 0L;
         Set<Class<?>> objectClasses = Util.decomposeClass(object.getClass());
@@ -219,7 +243,7 @@ public class InterMineObjectFetcher extends Thread
                 os.getModel().getClassDescriptorByName(objectTopClass.getName());
 
         // create base doc for object
-        Document doc = createDocument(object, classDescriptor);
+        SolrInputDocument doc = createDocument(object, classDescriptor);
         HashSet<String> references = new HashSet<String>();
         HashMap<String, KeywordSearchFacetData> referenceFacetFields =
                 new HashMap<String, KeywordSearchFacetData>();
@@ -242,7 +266,7 @@ public class InterMineObjectFetcher extends Thread
                             for (String field : facet.getFields()) {
                                 if (field.startsWith(reference + ".")
                                         && !field.substring(reference.length() + 1)
-                                                .contains(".")) {
+                                        .contains(".")) {
                                     referenceFacetFields.put(fullReference, facet);
                                 }
                             }
@@ -294,8 +318,8 @@ public class InterMineObjectFetcher extends Thread
             HashSet<String> references,
             HashMap<String, InterMineResultsContainer> referenceResults,
             HashMap<String, KeywordSearchFacetData> referenceFacetFields,
-            Document doc)
-        throws IllegalAccessException {
+            SolrInputDocument doc)
+            throws IllegalAccessException {
 
         // find all references and add them
         for (String reference : references) {
@@ -311,7 +335,7 @@ public class InterMineObjectFetcher extends Thread
                 // https://github.com/intermine/intermine/issues/473
                 while (resultsContainer.getIterator().hasNext()
                         && ((Integer) next.get(0)).compareTo(
-                                object.getId()) == -1) {
+                        object.getId()) == -1) {
                     next = resultsContainer.getIterator().next();
                 }
 
@@ -341,21 +365,21 @@ public class InterMineObjectFetcher extends Thread
                                 String facetAttribute =
                                         field.substring(field.lastIndexOf('.') + 1);
                                 Object facetValue = ((InterMineObject) next.get(1))
-                                    .getFieldValue(facetAttribute);
+                                        .getFieldValue(facetAttribute);
 
                                 if (facetValue instanceof String
                                         && !StringUtils
-                                                .isBlank((String) facetValue)) {
-                                    Field f = doc.getField(virtualPathField);
+                                        .isBlank((String) facetValue)) {
+                                    SolrInputField f = doc.getField(virtualPathField);
 
                                     if (f != null) {
-                                        f.setValue(f.stringValue() + "/"
+                                        f.setValue(f.toString() + "/"
                                                 + facetValue);
                                     } else {
-                                        doc.add(new Field(virtualPathField,
-                                                (String) facetValue,
-                                                Field.Store.NO,
-                                                Field.Index.NOT_ANALYZED_NO_NORMS));
+                                        doc.addField(virtualPathField,
+                                                (String) facetValue);
+                                        addFieldNameToSchema(virtualPathField,
+                                                RAW_FIELD_TYPE_NAME, false, true);
                                     }
                                 }
                             }
@@ -370,13 +394,14 @@ public class InterMineObjectFetcher extends Thread
                                                 referenceFacet.getField()
                                                         .lastIndexOf('.') + 1);
                         Object facetValue = ((InterMineObject) next.get(1))
-                            .getFieldValue(facetAttribute);
+                                .getFieldValue(facetAttribute);
 
                         if (facetValue instanceof String
                                 && !StringUtils.isBlank((String) facetValue)) {
-                            doc.add(new Field(referenceFacet.getField(),
-                                    (String) facetValue, Field.Store.NO,
-                                    Field.Index.NOT_ANALYZED_NO_NORMS));
+                            doc.addField(referenceFacet.getField(),
+                                    (String) facetValue);
+                            addFieldNameToSchema(referenceFacet.getField(),
+                                    RAW_FIELD_TYPE_NAME, false, true);
                         }
                     }
                 }
@@ -385,10 +410,10 @@ public class InterMineObjectFetcher extends Thread
     }
 
     private int iterateOverObjects(long time, long objectParseTime,
-            HashSet<Class<? extends InterMineObject>> seenClasses,
-            HashMap<String, InterMineResultsContainer> referenceResults,
-            Results results, ListIterator<ResultsRow<InterMineObject>> it)
-        throws PathException, ObjectStoreException, IllegalAccessException {
+                                   HashSet<Class<? extends InterMineObject>> seenClasses,
+                                   HashMap<String, InterMineResultsContainer> referenceResults,
+                                   Results results, ListIterator<ResultsRow<InterMineObject>> it)
+            throws PathException, ObjectStoreException, IllegalAccessException {
         int i = 0;
         int size = results.size();
         LOG.info("Query returned " + size + " results");
@@ -404,7 +429,7 @@ public class InterMineObjectFetcher extends Thread
             }
 
             for (InterMineObject object : row) {
-                Document doc = handleObject(object, seenClasses, referenceResults);
+                SolrInputDocument doc = handleObject(object, seenClasses, referenceResults);
 
                 // finally add doc to queue
                 indexingQueue.put(doc);
@@ -416,24 +441,20 @@ public class InterMineObjectFetcher extends Thread
         return i;
     }
 
-    private Document createDocument(InterMineObject object, ClassDescriptor classDescriptor) {
-        Document doc = new Document();
+    private SolrInputDocument createDocument(InterMineObject object,
+                                             ClassDescriptor classDescriptor) {
 
-        Float boost = classBoost.get(classDescriptor);
-        if (boost != null) {
-            doc.setBoost(boost.floatValue());
-        }
+        SolrInputDocument doc = new SolrInputDocument();
+
 
         // id has to be stored so we can fetch the actual objects for the
         // results
-        doc.add(new Field("id", object.getId().toString(), Field.Store.YES,
-                Field.Index.NOT_ANALYZED_NO_NORMS));
+        doc.addField("id", object.getId().toString());
 
         // special case for faceting
-        doc.add(new Field("Category", classDescriptor.getUnqualifiedName(), Field.Store.NO,
-                Field.Index.NOT_ANALYZED_NO_NORMS));
+        doc.addField("Category", classDescriptor.getUnqualifiedName());
 
-        addToDocument(doc, "classname", classDescriptor.getUnqualifiedName(), 1F, false);
+        addToDocument(doc, "classname", classDescriptor.getUnqualifiedName(), false);
 
         addObjectToDocument(object, classDescriptor, doc);
 
@@ -441,7 +462,7 @@ public class InterMineObjectFetcher extends Thread
     }
 
     private void addObjectToDocument(InterMineObject object, ClassDescriptor classDescriptor,
-            Document doc) {
+                                     SolrInputDocument doc) {
         Collection<String> keyFields;
 
         // if we know the class, get a list of key fields
@@ -455,12 +476,12 @@ public class InterMineObjectFetcher extends Thread
 
         Set<ObjectValueContainer> attributes = getAttributeMapForObject(os.getModel(), object);
         for (ObjectValueContainer attribute : attributes) {
-            addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), 1F, false);
+            addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), false);
 
             // index all key fields as raw data with a higher boost, favors
             // "exact matches"
             if (keyFields.contains(attribute.getName())) {
-                addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), 2F, true);
+                addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), true);
             }
         }
     }
@@ -502,8 +523,9 @@ public class InterMineObjectFetcher extends Thread
                                         att.getName(), string));
                             }
 
-                            String prefix =
-                                getAttributePrefix(classAttributes.getClassName(), att.getName());
+                            String prefix = getAttributePrefix(classAttributes.getClassName(),
+                                                                att.getName());
+
                             if (prefix != null) {
                                 String unPrefixedValue = string.substring(prefix.length());
                                 values.add(new ObjectValueContainer(classAttributes.getClassName(),
@@ -539,40 +561,27 @@ public class InterMineObjectFetcher extends Thread
         return null;
     }
 
-    private Field addToDocument(Document doc, String fieldName, String value, float boost,
-            boolean raw) {
+    private SolrInputField addToDocument(SolrInputDocument doc, String fieldName, String value,
+                                         boolean raw) {
         if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value)) {
-            Field f;
+            SolrInputField f;
 
             if (!raw) {
-                f = new Field(fieldName, value.toLowerCase(), Field.Store.NO, Field.Index.ANALYZED);
+                f = new SolrInputField(fieldName);
+                f.setValue(value);
             } else {
-                f = new Field(fieldName + "_raw", value.toLowerCase(), Field.Store.NO,
-                    Field.Index.NOT_ANALYZED);
+                f = new SolrInputField(fieldName + "_raw");
+                f.setValue(value);
             }
 
-            f.setBoost(boost);
+            doc.addField(f.getName(), f.getValue());
 
-            // if we haven't set a boost and this is short field we can switch off norms
-            if (boost == 1F && value.indexOf(' ') == -1) {
-                f.setOmitNorms(true);
-                f.setOmitTermFreqAndPositions(true);
-                if (!normFields.contains(f.name())) {
-                    normFields.add(f.name());
-                }
+            if (raw) {
+                addFieldNameToSchema(f.getName(), RAW_FIELD_TYPE_NAME, false, true);
+            } else {
+                addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true);
             }
-            // if this is a single word then we don't need positional information of terms in the
-            // string.  NOTE - this may affect the boost applied to class keys.
-//            if (raw || value.indexOf(' ') == -1) {
-//                f.setOmitNorms(true);
-//                f.setOmitTermFreqAndPositions(true);
-//                if (!normFields.contains(f.name())) {
-//                    normFields.add(f.name());
-//                }
-//            }
 
-            doc.add(f);
-            fieldNames.add(f.name());
 
             return f;
         }
@@ -664,4 +673,32 @@ public class InterMineObjectFetcher extends Thread
 
         return q;
     }
+
+    private void addFieldNameToSchema(String fieldName, String fieldType,
+                                     boolean stored, boolean indexed) {
+
+        if (!fieldNames.contains(fieldName)) {
+            fieldNames.add(fieldName);
+
+            Map<String, Object> fieldAttributes = new HashMap();
+            fieldAttributes.put("name", fieldName);
+            fieldAttributes.put("type", fieldType);
+            fieldAttributes.put("stored", stored);
+            fieldAttributes.put("indexed", indexed);
+            fieldAttributes.put("multiValued", true);
+            fieldAttributes.put("required", false);
+
+            try {
+                SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
+                SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+
+            } catch (Exception e) {
+                LOG.error("Error while adding fields to the solrclient.", e);
+
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 }

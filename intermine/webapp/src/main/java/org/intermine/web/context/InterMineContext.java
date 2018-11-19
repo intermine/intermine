@@ -18,14 +18,12 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.util.Emailer;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
@@ -192,28 +190,29 @@ public final class InterMineContext implements Shutdownable
         mailQueue = null;
         mailService = null;
         isInitialised = false;
-        KeywordSearch.close();
-        destroyDaemonThreads("com.browseengine.bobo.util.MemoryManager");
     }
 
     private static final String STOPPING_THREAD =
         "Forcibly stopping thread to avoid memory leak: ";
 
-    // forcibly stop threads. Avoids memory leaks in 3rd party libraries we can't control
-    // (e.g. bobo)
-    private static void destroyDaemonThreads(String searchString) {
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        for (Thread t : threadSet) {
-            for (StackTraceElement s : t.getStackTrace()) {
-                if (s.getClassName().contains(searchString)) {
-                    synchronized (t) {
-                        LOG.warn(STOPPING_THREAD + s.getClassName());
-                        t.stop(); //don't complain, it works
-                    }
-                }
-            }
-        }
-    }
+
+    // TODO: commented out the below section for now. Remove once everything is working
+
+//    // forcibly stop threads. Avoids memory leaks in 3rd party libraries we can't control
+//    // (e.g. bobo)
+//    private static void destroyDaemonThreads(String searchString) {
+//        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+//        for (Thread t : threadSet) {
+//            for (StackTraceElement s : t.getStackTrace()) {
+//                if (s.getClassName().contains(searchString)) {
+//                    synchronized (t) {
+//                        LOG.warn(STOPPING_THREAD + s.getClassName());
+//                        t.stop(); //don't complain, it works
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     /**
      * @return A key-store containing the keys we trust.

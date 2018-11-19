@@ -8,6 +8,12 @@
  *
  */
 
+InterMine 3.0.0 (November 2018)
+
+#517 - Improve Lucene search
+#562 - Keyword search - speed up initial search
+#871 - Replace bobo with Lucene facets
+#1632 - Add search facets webservice
 
 InterMine 2.1.1 (late October 2018)
 
