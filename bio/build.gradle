@@ -127,15 +127,9 @@ subprojects {
             vcsUrl = 'https://github.com/intermine/intermine.git'
             publicDownloadNumbers = true
             version {
-<<<<<<< HEAD
                 name = '3.1.0'
                 desc = 'InterMine 3.1.0'
                 vcsTag = 'intermine-3.1.0'
-=======
-                name = '3.0.0'
-                desc = 'InterMine 3.0.0'
-                vcsTag = 'intermine-3.0.0'
->>>>>>> dev
             }
         }
         configurations = ['archives']
