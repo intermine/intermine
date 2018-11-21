@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
+import java.util.LinkedList;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.bio.util.BioConverterUtil;
@@ -35,6 +37,7 @@ public abstract class BioDBConverter extends DBConverter
     private final Map<String, Item> strains = new HashMap<String, Item>();
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
+
     private String dataSourceName = null;
     private Set<String> synonyms = new HashSet<String>();
     private String sequenceOntologyRefId;
@@ -148,11 +151,6 @@ public abstract class BioDBConverter extends DBConverter
         if (organism == null) {
             organism = createItem("Organism");
             organism.setAttribute("taxonId", taxonId);
-            try {
-                store(organism);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
-            }
             organisms.put(taxonId, organism);
         }
         return organism;
@@ -286,7 +284,8 @@ public abstract class BioDBConverter extends DBConverter
     }
 
     /**
-     * Provides the strain item for the given strain name and associated organism.
+     * Provides the strain item for the given strain name and organism taxonId.
+     * NOTE: this assumes that strain names are unique across all organisms!
      * @param strainName the name of the strain
      * @param taxonId the taxon ID of the organism to which this strain belongs
      * @return the Strain Item
@@ -298,14 +297,27 @@ public abstract class BioDBConverter extends DBConverter
             strain = createItem("Strain");
             strain.setAttribute("primaryIdentifier", strainName);
             strain.setReference("organism", organism);
-            try {
-                store(strain);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("Failed to store strain with name: " + strainName, e);
-            }
             strains.put(strainName, strain);
+            organism.addToCollection("strains", strain);
         }
         return strain;
     }
-}
 
+    /**
+     * Store the organisms and strains at the end, since the organisms may have had strains
+     * added to them on the fly.
+     */
+    public void close() {
+        try {
+            store(organisms.values());
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error storing Organism Items.");
+        }
+        try {
+            store(strains.values());
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error storing Strain Items.");
+        }
+    }
+
+}
