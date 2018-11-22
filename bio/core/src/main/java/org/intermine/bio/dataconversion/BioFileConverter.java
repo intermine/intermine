@@ -150,6 +150,16 @@ public abstract class BioFileConverter extends FileConverter
         return refId;
     }
 
+    /**
+     * Return a DataSet ref with the given details.
+     *
+     * @param title the DataSet title
+     * @param dataSourceRefId the DataSource referenced by the the DataSet
+     * @return the DataSet Item
+     */
+    public String getDataSet(String title, String dataSourceRefId) {
+        return getDataSet(title, dataSourceRefId, null);
+    }
 
     /**
      * Return a DataSet ref with the given details.
