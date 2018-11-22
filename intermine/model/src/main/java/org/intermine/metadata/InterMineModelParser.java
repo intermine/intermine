@@ -111,10 +111,7 @@ public class InterMineModelParser implements ModelParser
                 String supers = attrs.getValue("extends");
                 boolean isInterface = Boolean.valueOf(attrs.getValue("is-interface"))
                     .booleanValue();
-                String fairTerm = null;
-                if (attrs.getValue("term") != null) {
-                    fairTerm = attrs.getValue("term");
-                }
+                String fairTerm = attrs.getValue("term");
                 cls = new SkeletonClass(packageName, name, supers, isInterface, fairTerm);
             } else if ("attribute".equals(qName)) {
                 String name = attrs.getValue("name");

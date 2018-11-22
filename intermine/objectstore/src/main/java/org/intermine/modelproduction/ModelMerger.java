@@ -289,7 +289,7 @@ public final class ModelMerger
 
         // use the URI from the new class, if it's there
         String fairUri = merge.getFairTerm();
-        if (fairUri != null && !"".equals(fairUri)) {
+        if (fairUri == null) {
             // if not, use original (still might be null!)
             fairUri = original.getFairTerm();
         }

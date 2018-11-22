@@ -69,7 +69,7 @@ public class AttributeDescriptor extends FieldDescriptor
      * @return term describing this attribute
      */
     public String getFairTerm() {
-        return this.fairTerm;
+        return fairTerm;
     }
 
     /**
