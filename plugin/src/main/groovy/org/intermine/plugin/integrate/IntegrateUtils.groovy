@@ -174,8 +174,16 @@ class IntegrateUtils {
 
     def retrieveFromGFF3 = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
+        //set dynamic properties
+        source.userProperties.each { prop ->
+            if (!"src.data.dir".equals(prop.name)) {
+                ant.project.setProperty(prop.name, prop.value)
+            }
+        }
         String gff3SeqHandlerClassName = (bioSourceProperties.containsKey("gff3.seqHandlerClassName")) ?
                 bioSourceProperties.getProperty("gff3.seqHandlerClassName") : ""
+        String licence = ant.project.getProperty("gff3.licence")
+
         ant.taskdef(name: "convertGFF3File", classname: "org.intermine.bio.task.GFF3ConverterTask") {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
@@ -193,7 +201,8 @@ class IntegrateUtils {
                 dontCreateLocations: BioSourceProperties.getUserProperty(source, "gff3.dontCreateLocations"),
                 model: "genomic",
                 handlerClassName: bioSourceProperties.getProperty("gff3.handlerClassName"),
-                seqHandlerClassName: gff3SeqHandlerClassName) {
+                seqHandlerClassName: gff3SeqHandlerClassName,
+                licence: licence) {
             fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
                     includes: "*.gff,*.gff3")
         }

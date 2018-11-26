@@ -1,4 +1,0 @@
-<project name="uberfly-tasks" default="default" basedir=".">
-  <description>build uberfly tasks</description>
-  <import file="../../../../../imbuild/library.xml"/>
-</project>

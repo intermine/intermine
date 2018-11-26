@@ -52,20 +52,6 @@ public class BioStoreHook implements DataConverterStoreHook
     }
 
     /**
-     * Create a new DataSetStoreHook object.
-     * @param model the data model
-     * @param ontologyRefId id representing Ontology (SO) object
-     */
-    public BioStoreHook(Model model, String ontologyRefId) {
-        this.model = model;
-        this.dataSetRefId = null;
-        this.dataSourceRefId = null;
-        if (StringUtils.isNotEmpty(ontologyRefId)) {
-            this.ontologyRefId = ontologyRefId;
-        }
-    }
-
-    /**
      * Update the dataset reference Id.  Overwrites the one set in the constructor.  Needed for
      * Uniprot which has a few different datasets.
      *

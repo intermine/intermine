@@ -64,6 +64,7 @@
 </item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="BioGRID interaction data set"/>
+<attribute name="licence" value="https://opensource.org/licenses/MIT"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
 <item id="6_1" class="Organism">

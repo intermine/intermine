@@ -55,7 +55,7 @@ public class FieldDescriptorTest extends TestCase
     }
 
     private ClassDescriptor makeClass(String name) {
-        return new ClassDescriptor("Class1", null, false, noAttrs, noRefs, noColls);
+        return new ClassDescriptor("Class1", null, false, noAttrs, noRefs, noColls, null);
     }
 
     public void testSetClassDescriptorValid() throws Exception {

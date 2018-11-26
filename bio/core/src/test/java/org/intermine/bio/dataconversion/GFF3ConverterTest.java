@@ -46,12 +46,13 @@ public class GFF3ConverterTest extends ItemsTestCase {
     String thaleTaxonId = "3702";
     String dataSourceName = "UCSC";
     String dataSetTitle = "UCSC data set";
+    private final String licence = "myTestLicence";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         converter = new GFF3Converter(writer, seqClsName, flyTaxonId, dataSourceName,
                                       dataSetTitle, tgtModel,
-                                      new GFF3RecordHandler(tgtModel), null);
+                                      new GFF3RecordHandler(tgtModel), null, licence);
     }
 
     public void tearDown() throws Exception {
@@ -151,7 +152,7 @@ public class GFF3ConverterTest extends ItemsTestCase {
         Model tgtModel = Model.getInstanceByName("genomic");
         converter = new GFF3Converter(writer, seqClsName, thaleTaxonId, dataSourceName,
                 dataSetTitle, tgtModel,
-                new GFF3RecordHandler(tgtModel), null);
+                new GFF3RecordHandler(tgtModel), null, licence);
         BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test_excludes.gff")));
         converter.parse(srcReader);
         converter.storeAll();

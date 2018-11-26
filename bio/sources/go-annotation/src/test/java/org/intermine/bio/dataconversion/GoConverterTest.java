@@ -46,6 +46,7 @@ public class GoConverterTest extends ItemsTestCase
         writer = new MockItemWriter(new LinkedHashMap<String, org.intermine.model.fulldata.Item>());
         converter = new GoConverter(writer, model);
         converter.setGaff("2.0");
+        converter.setLicence("https://creativecommons.org/licenses/by/4.0/legalcode");
 
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
         converter.rslv.addResolverEntry("7227", "FBgn0004168", Collections.singleton("FBgn0020002"));

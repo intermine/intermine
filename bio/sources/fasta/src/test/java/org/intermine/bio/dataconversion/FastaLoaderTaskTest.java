@@ -70,6 +70,7 @@ public class FastaLoaderTaskTest {
         flt.setDataSetTitle(dataSetTitle);
         flt.setSourceName("fasta-test");
 
+
         File[] files = new File[2];
         for (int i = 0; i < 2; i++) {
             files[i] = File.createTempFile("MAL1_trimed.fasta_" + i, "tmp");
