@@ -131,6 +131,7 @@ public class HtmlHeadController extends TilesAction
                 }
 
                 ReportObject reportObject = reportObjects.get(object);
+                request.setAttribute("semanticMarkup", reportObject.getSemanticMarkup(request));
                 htmlPageTitle = reportObject.getHtmlHeadTitle();
 
             } catch (Exception e) {

@@ -29,19 +29,16 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.util.PathUtil;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.*;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.displayer.ReportDisplayer;
+import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.HeaderConfigLink;
@@ -50,6 +47,9 @@ import org.intermine.web.logic.config.InlineListConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.json.JSONObject;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Object to be displayed on report.do
@@ -360,6 +360,36 @@ public class ReportObject
         return p;
     }
 
+    public String getSemanticMarkup(HttpServletRequest request) {
+        if (objectType.equals("DataSet")) {
+            String name =  (String) getFieldValue("name");
+            Map<String, String> markup = SemanticMarkupUtil.getDataSetMarkup(request, name);
+            return new JSONObject(markup).toString(2);
+        }
+        //check if it's a bioentity
+        Set<String> superClassNames = null;
+        try {
+            superClassNames = ClassDescriptor.findSuperClassNames(
+                    Model.getInstanceByName("genomic"), objectType);
+            for (String name : superClassNames) {
+                LOG.info("Super classs name for " + objectType + " is: " + name);
+            }
+        } catch (MetaDataException ex) {
+            return null;
+        }
+        if (superClassNames != null) {
+            for (String className : superClassNames) {
+                if (className.contains("BioEntity")) {
+                    String primaryIdentifier =  (String) getFieldValue("primaryIdentifier");
+                    Map<String, String> markup = SemanticMarkupUtil.getBioEntityMarkup(request, objectType,
+                            primaryIdentifier);
+                    return new JSONObject(markup).toString(2);
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Setup fieldValues HashMap
      */
@@ -372,6 +402,7 @@ public class ReportObject
             // create a path string
             if (!isCollection(fc.getFieldExpr())) {
                 String pathString = objectType + "." + fc.getFieldExpr();
+                LOG.info("setupFieldValues " + pathString);
                 try {
                     fieldValues.put(fc.getFieldExpr(), resolvePath(pathString));
                 } catch (PathException e) {

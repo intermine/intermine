@@ -3123,6 +3123,33 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ws-semantic-markup</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.SemanticMarkupService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-semantic-markup</servlet-name>
+    <url-pattern>/service/semantic-markup</url-pattern>
+    <metadata>
+        <name>Semantic Markup</name>
+        <minVersion>to complete</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get semantic markup</summary>
+            <description>
+                This service provides semantic markup for the InterMine home page 
+            </description>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>

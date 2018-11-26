@@ -39,8 +39,10 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.userprofile.Tag;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
+import org.json.JSONObject;
 
 /**
  * Prepare templates and news to be rendered on home page
@@ -173,6 +175,10 @@ public class BeginAction extends InterMineAction
         } else {
             request.setAttribute("isNewUser", Boolean.FALSE);
         }
+
+        //semantic markup
+        Map<String, Object> homePageMarkup = SemanticMarkupUtil.getDataCatalogueMarkup(request);
+        request.setAttribute("semanticMarkup", new JSONObject(homePageMarkup).toString(2));
 
         return mapping.findForward("begin");
     }
