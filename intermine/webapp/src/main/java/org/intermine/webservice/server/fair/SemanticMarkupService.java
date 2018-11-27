@@ -10,15 +10,9 @@ package org.intermine.webservice.server.fair;
  *
  */
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.web.fair.SemanticMarkupUtil;
-import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.core.JSONService;
-import org.intermine.webservice.server.webproperties.WebPropertiesService;
-
-import java.util.*;
 
 /**
  * Serve semantic markup so that a client can add it to the home page
@@ -27,9 +21,10 @@ import java.util.*;
  */
 public class SemanticMarkupService extends JSONService
 {
-    private static final Logger LOG = Logger.getLogger(SemanticMarkupService.class);
-
-    /** @param im The InterMine state object. **/
+    /**
+     * Constructor
+     * @param im The InterMine state object.
+     **/
     public SemanticMarkupService(InterMineAPI im) {
         super(im);
     }
