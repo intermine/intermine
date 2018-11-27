@@ -1,20 +1,33 @@
 package org.intermine.web.fair;
 
+/*
+ * Copyright (C) 2002-2018 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.util.URLGenerator;
-import org.omg.CORBA.OBJ_ADAPTER;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
 /**
  * Class providing bioschema markups
+ * @author Daniela Butano
  */
-public final class SemanticMarkupUtil {
+public final class SemanticMarkupUtil
+{
     private static final String SCHEMA = "http://bioschemas.org";
     private static final String DATACATALOGUE_TYPE = "DataCatalogue";
     private static final String DATASET_TYPE = "DataSet";
@@ -28,6 +41,7 @@ public final class SemanticMarkupUtil {
 
     /**
      * Returns schema.org markups to be added to the home page
+     * @param request the HttpServletRequest
      *
      * @return the map containing the markups
      */
@@ -38,9 +52,10 @@ public final class SemanticMarkupUtil {
         semanticMarkup.put("@context", SCHEMA);
         semanticMarkup.put("@type", DATACATALOGUE_TYPE);
         semanticMarkup.put("description", props.getProperty("project.subTitle"));
-        semanticMarkup.put("keywords", "Data warehouse, Data integration, Bioinformatics software, Web Services");
+        semanticMarkup.put("keywords", "Data warehouse, Data integration,"
+                + "Bioinformatics software");
         semanticMarkup.put("name", props.getProperty("project.title"));
-        semanticMarkup.put("provider", "provider");
+        semanticMarkup.put("provider", "addprovider");
         semanticMarkup.put("url", new URLGenerator(request).getPermanentBaseURL());
 
         //recommended properties by bioschema.org
@@ -56,6 +71,8 @@ public final class SemanticMarkupUtil {
 
     /**
      * Returns schema.org markups to be added to the dataset report page
+     * @param request the HttpServletRequest
+     * @param name the dataset name
      *
      * @return the map containing the markups
      */
@@ -66,7 +83,7 @@ public final class SemanticMarkupUtil {
         semanticMarkup.put("@context", SCHEMA);
         semanticMarkup.put("@type", DATASET_TYPE);
         semanticMarkup.put("description", "DataSet " + name);
-        semanticMarkup.put("identifier", "");//identifiers.org
+        semanticMarkup.put("identifier", ""); //identifiers.org
         semanticMarkup.put("keywords", "");
         semanticMarkup.put("name", name);
         semanticMarkup.put("url", new URLGenerator(request).getPermanentBaseURL());
@@ -78,6 +95,9 @@ public final class SemanticMarkupUtil {
 
     /**
      * Returns schema.org markups to be added to the bioentity report page
+     * @param request the HttpServletRequest
+     * @param type the bioentity type
+     * @param primaryidentifier the primary identifier of the bioetntity
      *
      * @return the map containing the markups
      */
@@ -87,7 +107,16 @@ public final class SemanticMarkupUtil {
         //properties for bioschema.org
         semanticMarkup.put("@context", SCHEMA);
         semanticMarkup.put("@type", BIO_ENTITY_TYPE);
-        semanticMarkup.put("additionalType", "add_the_term");
+        String term = null;
+        try {
+            term = ClassDescriptor.findFairTerm(Model.getInstanceByName("genomic"), type);
+            LOG.info("The term for the class " + type + " is: " + term);
+        } catch (MetaDataException ex) {
+            //error has been logged, no need to do more
+        }
+        if (term != null) {
+            semanticMarkup.put("additionalType", term);
+        }
         semanticMarkup.put("description",  type + " " + primaryidentifier);
         semanticMarkup.put("identifier", "add_persistent_URI");
         semanticMarkup.put("name", type + " " + primaryidentifier);

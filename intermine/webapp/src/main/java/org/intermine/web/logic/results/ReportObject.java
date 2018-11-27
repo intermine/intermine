@@ -29,7 +29,13 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.util.PathUtil;
-import org.intermine.metadata.*;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
@@ -360,8 +366,14 @@ public class ReportObject
         return p;
     }
 
+    /**
+     * Get the semantic markup to include in the ld+json section
+     * @param request the HttpServletRequest
+     *
+     * @return a string representing the markup in json format
+     */
     public String getSemanticMarkup(HttpServletRequest request) {
-        if (objectType.equals("DataSet")) {
+        if ("DataSet".equals(objectType)) {
             String name =  (String) getFieldValue("name");
             Map<String, String> markup = SemanticMarkupUtil.getDataSetMarkup(request, name);
             return new JSONObject(markup).toString(2);
@@ -381,8 +393,8 @@ public class ReportObject
             for (String className : superClassNames) {
                 if (className.contains("BioEntity")) {
                     String primaryIdentifier =  (String) getFieldValue("primaryIdentifier");
-                    Map<String, String> markup = SemanticMarkupUtil.getBioEntityMarkup(request, objectType,
-                            primaryIdentifier);
+                    Map<String, String> markup = SemanticMarkupUtil.getBioEntityMarkup(request,
+                            objectType, primaryIdentifier);
                     return new JSONObject(markup).toString(2);
                 }
             }
