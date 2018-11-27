@@ -102,15 +102,6 @@ jQuery && jQuery(function() {
 });
 </script>
 <c:if test="${(pageName == 'begin' || pageName == 'report') && semanticMarkup != null}">
-<!--
-<script type="text/javascript">
-    $(document).ready(function() {
-      $.getJSON("http://localhost:8080/biotestmine/service/semantic-markup", function(data) {
-      document.getElementById('semanticmarkup').innerHTML = JSON.stringify(data.properties)
-      })
-    });
-</script>
--->
 <script type="application/ld+json">
 ${semanticMarkup}
 </script>
