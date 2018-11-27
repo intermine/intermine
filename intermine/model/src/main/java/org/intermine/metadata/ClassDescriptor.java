@@ -985,6 +985,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * @param model the Model
      * @param className the className
      * @throws MetaDataException if className isn't in the model
+     *
+     * return the fair term
      */
     public static String findFairTerm(Model model, String className) throws MetaDataException {
         ClassDescriptor cd = model.getClassDescriptorByName(className);
