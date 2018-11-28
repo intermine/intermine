@@ -378,26 +378,16 @@ public class ReportObject
             Map<String, String> markup = SemanticMarkupUtil.getDataSetMarkup(request, name);
             return new JSONObject(markup).toString(2);
         }
-        //check if it's a bioentity
-        Set<String> superClassNames = null;
         try {
-            superClassNames = ClassDescriptor.findSuperClassNames(
-                    Model.getInstanceByName("genomic"), objectType);
-            for (String name : superClassNames) {
-                LOG.info("Super classs name for " + objectType + " is: " + name);
+            if (ClassDescriptor.findInherithance(
+                    Model.getInstanceByName("genomic"), objectType, "BioEntity")) {
+                String primaryIdentifier =  (String) getFieldValue("primaryIdentifier");
+                Map<String, String> markup = SemanticMarkupUtil.getBioEntityMarkup(request,
+                        objectType, primaryIdentifier);
+                return new JSONObject(markup).toString(2);
             }
         } catch (MetaDataException ex) {
             return null;
-        }
-        if (superClassNames != null) {
-            for (String className : superClassNames) {
-                if (className.contains("BioEntity")) {
-                    String primaryIdentifier =  (String) getFieldValue("primaryIdentifier");
-                    Map<String, String> markup = SemanticMarkupUtil.getBioEntityMarkup(request,
-                            objectType, primaryIdentifier);
-                    return new JSONObject(markup).toString(2);
-                }
-            }
         }
         return null;
     }

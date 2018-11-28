@@ -3123,26 +3123,93 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+   <!-- New in version 28 -->
   <servlet>
-    <servlet-name>ws-semantic-markup</servlet-name>
+    <servlet-name>ws-datacatalogue-markup</servlet-name>
       <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
       <init-param>
           <param-name>GET</param-name>
-          <param-value>org.intermine.webservice.server.fair.SemanticMarkupService</param-value>
+          <param-value>org.intermine.webservice.server.fair.DataCatalogueMarkupService</param-value>
       </init-param>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>ws-semantic-markup</servlet-name>
-    <url-pattern>/service/semantic-markup</url-pattern>
+    <servlet-name>ws-datacatalogue-markup</servlet-name>
+    <url-pattern>/service/semantic-markup/datacatalogue</url-pattern>
     <metadata>
         <name>Semantic Markup</name>
-        <minVersion>to complete</minVersion>
+        <minVersion>28</minVersion>
         <method type="GET" authenticationRequired="false">
-            <summary>Get semantic markup</summary>
+            <summary>Get semantic markup for datacatalogue type</summary>
             <description>
                 This service provides semantic markup for the InterMine home page 
             </description>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-dataset-markup</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.DataSetMarkupService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-dataset-markup</servlet-name>
+    <url-pattern>/service/semantic-markup/dataset</url-pattern>
+    <metadata>
+        <name>Semantic Markup</name>
+        <minVersion>28</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get semantic markup for dataset type</summary>
+            <description>
+                This service provides semantic markup for DataSet type
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The name of the dataset">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-bioentity-markup</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.BioEntityMarkupService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-bioentity-markup</servlet-name>
+    <url-pattern>/service/semantic-markup/bioentity</url-pattern>
+    <metadata>
+        <name>Semantic Markup</name>
+        <minVersion>28</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get semantic markup for bioentity</summary>
+            <description>
+                This service provides semantic markup for BioChemEntity type
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The type of the bioentity">type</param>
+             <param
+                required="true"
+                type="String"
+                description="The primary identifier of the bioentity">primaryIdentifier</param>
             <returns>
                 <format accept="application/json">json</format>
             </returns>

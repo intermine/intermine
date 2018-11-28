@@ -15,17 +15,17 @@ import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.webservice.server.core.JSONService;
 
 /**
- * Serve semantic markup so that a client can add it to the home page
+ * Serve datacatlogue markup to be added to the home page
  * @author Daniela Butano
  *
  */
-public class SemanticMarkupService extends JSONService
+public class DataCatalogueMarkupService extends JSONService
 {
     /**
      * Constructor
      * @param im The InterMine state object.
      **/
-    public SemanticMarkupService(InterMineAPI im) {
+    public DataCatalogueMarkupService(InterMineAPI im) {
         super(im);
     }
 

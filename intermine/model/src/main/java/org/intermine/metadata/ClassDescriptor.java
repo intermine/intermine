@@ -722,6 +722,29 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
+     * Return true if the superClassName given in input is a super class of className
+     *
+     * @param model the Model
+     * @param className the className
+     * @param superClassName the super class name
+     * @return true or false
+     * @throws MetaDataException if className isn't in the model
+     */
+    public static boolean findInherithance(Model model, String className, String superClassName)
+            throws MetaDataException {
+        Set<String> superClassNames = findSuperClassNames(
+                Model.getInstanceByName("genomic"), className);
+        if (superClassNames != null) {
+            for (String tmpSuperClassNames : superClassNames) {
+                if (tmpSuperClassNames.contains(superClassName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return the model this class is a part of.
      *
      * @return the parent Model
