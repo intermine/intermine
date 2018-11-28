@@ -32,8 +32,6 @@ public final class OrganismRepository
     private Map<String, OrganismData> abbreviationMap = new HashMap<String, OrganismData>();
     private Map<String, OrganismData> shortNameMap = new HashMap<String, OrganismData>();
     private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap<MultiKey, OrganismData>();
-    private Map<String, OrganismData> strains = new HashMap<String, OrganismData>();
-    private Map<String, String> organismsWithStrains = new HashMap<String, String>();
     private static Map<String, OrganismData> uniprotToTaxon = new HashMap<String, OrganismData>();
 
     private static final String DEFAULT_PROP_FILE = "default_organism_config.properties";
@@ -43,16 +41,15 @@ public final class OrganismRepository
     private static final String ABBREVIATION = "abbreviation";
     private static final String GENUS = "genus";
     private static final String SPECIES = "species";
-    private static final String STRAINS = "strains";
     private static final String ENSEMBL = "ensemblPrefix";
     private static final String UNIPROT = "uniprot";
 
     private static final String REGULAR_EXPRESSION =
-        PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION + "|" + STRAINS
-        + "|" + ENSEMBL + "|" + UNIPROT + ")";
+            PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION
+                    + "|" + ENSEMBL + "|" + UNIPROT + ")";
 
     private OrganismRepository() {
-      //disable external instantiation
+        //disable external instantiation
     }
 
     /**
@@ -65,15 +62,15 @@ public final class OrganismRepository
             Properties props = new Properties();
             String whichPropFile = MINE_PROP_FILE;
             try {
-                InputStream propsResource =
-                    OrganismRepository.class.getClassLoader().getResourceAsStream(MINE_PROP_FILE);
+                InputStream propsResource = OrganismRepository.class.getClassLoader()
+                        .getResourceAsStream(MINE_PROP_FILE);
                 if (propsResource == null) {
                     propsResource = OrganismRepository.class.getClassLoader().getResourceAsStream(
-                        DEFAULT_PROP_FILE);
+                            DEFAULT_PROP_FILE);
                     whichPropFile = DEFAULT_PROP_FILE;
                     if (propsResource == null) {
                         throw new RuntimeException("can't find " + whichPropFile
-                            + " in class path");
+                                + " in class path");
                     }
                 }
                 props.load(propsResource);
@@ -100,16 +97,6 @@ public final class OrganismRepository
                         if (fieldName.equals(ABBREVIATION)) {
                             od.setAbbreviation(attributeValue);
                             or.abbreviationMap.put(attributeValue.toLowerCase(), od);
-                        } else if (fieldName.equals(STRAINS)) {
-                            String[] strains = attributeValue.split(" ");
-                            for (String strain : strains) {
-                                try {
-                                    or.strains.put(strain, od);
-                                    or.organismsWithStrains.put(taxonIdString, strain);
-                                } catch (NumberFormatException e) {
-                                    throw new NumberFormatException("taxon ID must be a number");
-                                }
-                            }
                         } else if (fieldName.equals(ENSEMBL)) {
                             od.setEnsemblPrefix(attributeValue);
                         } else if (fieldName.equals(UNIPROT)) {
@@ -123,17 +110,17 @@ public final class OrganismRepository
                                     od.setGenus(attributeValue);
                                 } else {
                                     throw new RuntimeException("internal error didn't match: "
-                                                               + fieldName);
+                                            + fieldName);
                                 }
                             }
                         }
                     } else {
                         throw new RuntimeException("unable to parse organism property key: "
-                                                   + name);
+                                + name);
                     }
                 } else {
                     throw new RuntimeException("properties in " + whichPropFile
-                        + " must start with " + PREFIX + ".");
+                            + " must start with " + PREFIX + ".");
                 }
             }
 
@@ -166,17 +153,13 @@ public final class OrganismRepository
     }
 
     /**
-     * Look up OrganismData objects by taxon id.  If there is no taxon, look in strains.  Return
-     * null if there is no such organism.
+     * Look up OrganismData objects by taxon id.  Return null if there is no such organism.
      *
      * @param taxonId the taxon id
      * @return the OrganismData
      */
     public OrganismData getOrganismDataByTaxon(String taxonId) {
         OrganismData od = taxonMap.get(taxonId);
-        if (od == null) {
-            od = strains.get(taxonId);
-        }
         return od;
     }
 
@@ -242,14 +225,4 @@ public final class OrganismRepository
         String species = fullName.split(" ", 2)[1];
         return getOrganismDataByGenusSpecies(genus, species);
     }
-
-    /**
-     * Get strains for given taxon ID
-     * @param taxonString taxon ID for organism
-     * @return taxonId for strain
-     */
-    public String getStrain(String taxonString) {
-        return organismsWithStrains.get(taxonString);
-    }
-
 }

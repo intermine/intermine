@@ -126,21 +126,4 @@ public final class BioUtil
         }
         return orgs;
     }
-
-    /**
-     * Looks in the organism repo for the taxon ID provided.  If the taxon ID is not there, it looks
-     * for strains that use that ID.  Will return NULL if there is no strain and no taxon ID in
-     * the organism data.
-     *
-     * @param taxonId original taxon ID
-     * @return taxonId for organism, not the strain
-     */
-    public static String replaceStrain(String taxonId) {
-        OrganismData od = OR.getOrganismDataByTaxon(taxonId);
-        if (od == null) {
-            return taxonId;
-        }
-        return od.getTaxonId();
-    }
-
 }
