@@ -256,7 +256,7 @@ class IntegrateUtils {
             ant.dataLoad(integrationWriterAlias: "integration.production",
                     sourceName: source.name, sourceType: source.type){
                 fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
-                        includes: BioSourceProperties.getUserProperty(source, source.type + ".includes"))
+                        includes: BioSourceProperties.getUserProperty(source, "src.data.dir.includes"))
             }
         } else {
             ant.dataLoad(integrationWriter: "integration.production",
