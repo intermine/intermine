@@ -11,10 +11,12 @@ package org.intermine.web.fair;
  */
 
 import org.apache.log4j.Logger;
+import org.intermine.api.uri.InterMineLUI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.web.logic.PermanentURIHelper;
 import org.intermine.web.util.URLGenerator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +66,7 @@ public final class SemanticMarkupUtil
         citation.put("identifier", INTERMINE_CITE);
         semanticMarkup.put("citation", citation);
         //semanticMarkup.put("dataset", );
-        semanticMarkup.put("identifier", new URLGenerator(request).getPermanentBaseURL());
+        semanticMarkup.put("identifier", new PermanentURIHelper().getPermanentBaseURI(request));
         //semanticMarkup.put("publication", );
         return semanticMarkup;
     }
@@ -83,7 +85,9 @@ public final class SemanticMarkupUtil
         semanticMarkup.put("@context", SCHEMA);
         semanticMarkup.put("@type", DATASET_TYPE);
         semanticMarkup.put("description", "DataSet " + name);
-        semanticMarkup.put("identifier", ""); //identifiers.org
+        InterMineLUI lui = new InterMineLUI("DataSet", name);
+        PermanentURIHelper helper = new PermanentURIHelper();
+        semanticMarkup.put("identifier", helper.getPermanentURI(request, lui));
         semanticMarkup.put("keywords", "");
         semanticMarkup.put("name", name);
         semanticMarkup.put("url", new URLGenerator(request).getPermanentBaseURL());
@@ -118,9 +122,11 @@ public final class SemanticMarkupUtil
             semanticMarkup.put("additionalType", term);
         }
         semanticMarkup.put("description",  type + " " + primaryidentifier);
-        semanticMarkup.put("identifier", "add_persistent_URI");
+        PermanentURIHelper helper = new PermanentURIHelper();
+        InterMineLUI lui = new InterMineLUI(type, primaryidentifier);
+        semanticMarkup.put("identifier", helper.getPermanentURI(request, lui));
         semanticMarkup.put("name", type + " " + primaryidentifier);
-        semanticMarkup.put("url", "add_persistent_URI");
+        semanticMarkup.put("url", helper.getPermanentURI(request, lui));
 
         return semanticMarkup;
     }
