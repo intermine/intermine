@@ -3123,6 +3123,41 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>ws-permanent-uri</servlet-name>
+    <url-pattern>/service/permanent-uri</url-pattern>
+    <metadata>
+        <name>Permanent URI</name>
+        <minVersion>28</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get permanent URI for data objetct</summary>
+            <description>
+                This service generates permanent URI based on the class type and identifier
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The type of the entity">type</param>
+            <param
+                required="true"
+                type="String"
+                description="The internal intermine ID">id</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-permanent-uri</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.PermanentURIService</param-value>
+      </init-param>
+  </servlet>
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>

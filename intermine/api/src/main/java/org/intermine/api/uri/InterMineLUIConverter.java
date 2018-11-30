@@ -28,7 +28,7 @@ import java.lang.reflect.Field;
  * This class converts an intermineID into a InterMineLUI
  * or a InterMineLUI into an intermineID.
  *
- * @author danielabutano
+ * @author Daniela Butano
  */
 public class InterMineLUIConverter
 {
@@ -47,7 +47,8 @@ public class InterMineLUIConverter
     /**
      * Given a InterMineLUI (compact uri, e.g. protein:P27362) returns the internal intermine Id
      * @param interMineLUI the interMineLUI
-     * @return internal intermine id
+     * @return internal intermine id OR -1 if there is no entity matching with the LUI or if there
+     * is no identifier set in the class_keys.properties file for the class defined in the lui
      * @throws ObjectStoreException if there are any objectstore issues
      */
     public Integer getInterMineID(InterMineLUI interMineLUI) throws ObjectStoreException {
@@ -65,8 +66,8 @@ public class InterMineLUIConverter
         String contstraintPath = className + "." + identifier;
         pathQuery.addConstraint(Constraints.eq(contstraintPath, interMineLUI.getIdentifier()));
         if (!pathQuery.isValid()) {
-            LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid");
-            LOGGER.info(pathQuery.getModel().toString());
+            LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid. No "
+                    + className + "_URI defined in the class_key.properties file");
             return INTERMINE_ID_NOT_FOUND;
         }
         LOGGER.info("InterMineLUIConverter: pathQuery to retrieve internal id: "
@@ -76,7 +77,7 @@ public class InterMineLUIConverter
             ResultElement row = iterator.next().get(0);
             return row.getId();
         } else {
-            LOGGER.info("InterMineLUIConverter: there are not " + className
+            LOGGER.info("InterMineLUIConverter: there are no " + className
                     + " with " + contstraintPath + "=" + interMineLUI.getIdentifier());
             return INTERMINE_ID_NOT_FOUND;
         }
@@ -139,14 +140,44 @@ public class InterMineLUIConverter
     }
 
     /**
+     * Generate the InterMineLUI associated given the type and the internal interMine ID
+     * @param type the class
+     * @param interMineID the interMineID
+     * @return the InterMineLUI
+     * @throws ObjectStoreException if something goes wrong when retrieving the identifier
+     */
+    public InterMineLUI getInterMineLUI(String type, Integer interMineID)
+            throws ObjectStoreException {
+        if (interMineID == null) {
+            LOGGER.error("intermineID is null");
+            return null;
+        }
+        if (type == null) {
+            LOGGER.error("The type is null");
+            return null;
+        }
+        //check first if type is in the model
+        type = InterMineLUI.getSimpleClassName(type);
+        if (type == null) {
+            LOGGER.error("The type is not defined in the model");
+            return null;
+        }
+        String identifier = getIdentifier(type, interMineID);
+        if (identifier == null) {
+            return null;
+        }
+        return new InterMineLUI(type, identifier);
+    }
+
+
+    /**
      * Return the identifier's value of the entity specified by the interMineId given in input
      * @param type the type of the entity,e.g. Protein
      * @param interMineId the interMineId which identifies the entity
      * @return the identifier's value
      * @throws ObjectStoreException if something goes wrong with query retrieving identifier
      */
-    private String getIdentifier(String type, Integer interMineId)
-        throws ObjectStoreException {
+    private String getIdentifier(String type, Integer interMineId) throws ObjectStoreException {
         String identifier = classNameIdentifierMapper.getIdentifier(type);
         if (identifier == null) {
             identifier = DEFAULT_IDENTIFIER;
@@ -158,7 +189,8 @@ public class InterMineLUIConverter
         pathQuery.addConstraint(Constraints.eq(contstraintPath, Integer.toString(interMineId)));
         if (!pathQuery.isValid()) {
             LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid");
-            LOGGER.info(pathQuery.getModel().toString());
+            LOGGER.info("For the entity with type " + type
+                    + " is not possible to generate a permanent URI.");
             return null;
         }
 
@@ -167,6 +199,7 @@ public class InterMineLUIConverter
             ResultElement cell = iterator.next().get(0);
             return (String) cell.getField();
         }
+        LOGGER.info("No entity with type " + type + " and id " + interMineId);
         return null;
     }
 
@@ -174,8 +207,7 @@ public class InterMineLUIConverter
      * Returns the objects store
      * @return the object store
      */
-    public ObjectStore getObjectStore() {
-        LOGGER.info("IntermineLUIConvereter::getObjectStore()");
+    protected ObjectStore getObjectStore() {
         return PathQueryAPI.getObjectStore();
     }
 
@@ -183,7 +215,7 @@ public class InterMineLUIConverter
      * Returns the model
      * @return the model
      */
-    public Model getModel() {
+    protected Model getModel() {
         return Model.getInstanceByName("genomic");
     }
 

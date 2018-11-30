@@ -11,8 +11,8 @@ package org.intermine.api.uri;
  */
 
 /**
- * Thrown to indicate that the url is not a valid intermine permanent URL
- * The valid patters is: domain/context/classname:lui (lui=local unique identifier)
+ * Thrown to indicate that the http request is not a permanent URL
+ * The valid patters is: domain/context/classname:identifier
  * (e.g. humanmine.org/humanmine/protein:P31946).
  *
  * @author danielabutano

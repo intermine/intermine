@@ -57,8 +57,6 @@ public class InterMineLUI
             String classNameFromURI = permanentURI.substring(localIdStartPosition,
                     localIdSeparatorPos);
             className = getSimpleClassName(classNameFromURI);
-            LOGGER.info("Given permanentURI : " + permanentURI
-                    + " the simple class name is " + className);
             if (className == null) {
                 throw new InvalidPermanentURLException();
             }
@@ -69,7 +67,13 @@ public class InterMineLUI
 
     }
 
-    private String getSimpleClassName(String className) {
+    /**
+     * Given a type, which might not contain capital letters, return the class name as it is
+     * defined in the model
+     * @param className which might not contain capital letters (e.g. dataset)
+     * @return he class name as it is defined in the model
+     */
+    protected static String getSimpleClassName(String className) {
         Model model = Model.getInstanceByName("genomic");
         Set<String> fullyQualifiedClassNames = model.getClassNames();
         for (String fullyQualifiedClassName : fullyQualifiedClassNames) {
