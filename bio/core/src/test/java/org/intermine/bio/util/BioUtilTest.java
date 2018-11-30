@@ -95,17 +95,4 @@ public class BioUtilTest extends TestCase
         assertTrue(actualOrganismNames.containsAll(expectedOrganismNames));
 
     }
-
-    public void testReplaceStrain() {
-        String taxonId = "9606";
-        String expectedTaxon = "9606";
-
-        String actualTaxon = BioUtil.replaceStrain(taxonId);
-        assertEquals(expectedTaxon, actualTaxon);
-
-        String strainId = "46245";
-        taxonId = "7237";
-        actualTaxon = BioUtil.replaceStrain("46245");
-        assertEquals(taxonId, actualTaxon);
-    }
 }

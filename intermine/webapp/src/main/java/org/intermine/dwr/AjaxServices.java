@@ -1333,22 +1333,27 @@ public class AjaxServices
     public String[] getContent(String suffix, boolean wholeList, String field, String className) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
-        ac.createRAMIndex(className + "." + field);
 
         // swap "-" for spaces, ticket #2357
         suffix = suffix.replace("-", " ");
 
+        String[] stringList = null;
+
         if (!wholeList && suffix.length() > 0) {
-            String[] shortList = ac.getFastList(suffix, field, 31);
-            return shortList;
+            stringList = ac.getFastList(suffix, field, className, 31);
+
         } else if (suffix.length() > 2 && wholeList) {
             // String[] longList = ac.getList(suffix, field);
             // #451 I don't know what I am doing...
-            String[] longList = ac.getFastList(suffix, field, 500);
-            return longList;
+            stringList = ac.getFastList(suffix, field, className, 500);
         }
-        String[] defaultList = {""};
-        return defaultList;
+
+        if (stringList == null) {
+            String[] defaultList = {""};
+            return defaultList;
+        }
+
+        return stringList;
     }
 
     /**

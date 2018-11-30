@@ -8,6 +8,24 @@
  *
  */
 
+
+InterMine 3.1 (late November 2018)
+
+#1596 - InterMine Core Data model - Annotation, assembly and variety
+#1948 - PSI Complexes - remove bad key
+#1950 - Remove ecnumbers String from Protein, it's an object now.
+
+InterMine 3.0.0 (November 2018)
+
+#517 - Improve Lucene search
+#562 - Keyword search - speed up initial search
+#871 - Replace bobo with Lucene facets
+#1632 - Add search facets webservice
+
+InterMine 2.1.1 (late October 2018)
+
+#1916 - Adds versions to postprocesses
+
 InterMine 2.1 (October 2018)
 
 #1583 - Update InterMIne code generation to be Python 3 compatible

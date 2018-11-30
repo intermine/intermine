@@ -150,14 +150,16 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("webProperties is null");
         }
 
+        // set XML library
+       // initXMLLibrary();
+
         // read in additional webapp specific information and put in servletContext
         loadAspectsConfig(servletContext);
         loadClassDescriptions(servletContext);
         loadOpenIDProviders(servletContext);
         loadOAuth2Providers(servletContext, webProperties);
 
-
-            // web properties
+        // web properties
         // set up core InterMine application
         os = getProductionObjectStore(webProperties);
         if (os == null) {
@@ -411,23 +413,11 @@ public class InitialiserPlugin implements PlugIn
         return false;
     }
 
+    //TODO: Delete this below chunk after Autocompleter is finished
     private void loadAutoCompleter(ServletContext servletContext,
             ObjectStore os) throws ServletException {
         if (os instanceof ObjectStoreInterMineImpl) {
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            try {
-                InputStream is = MetadataManager.retrieveBLOBInputStream(db,
-                        MetadataManager.AUTOCOMPLETE_INDEX);
-
-                if (is != null) {
-                    SessionMethods.setAutoCompleter(servletContext, new AutoCompleter(is));
-                } else {
-                    LOG.warn("No AutoCompleter index found in database.");
-                }
-            } catch (SQLException e) {
-                LOG.error("Problem with database", e);
-                throw new ServletException("Problem with database", e);
-            }
+            SessionMethods.setAutoCompleter(servletContext, new AutoCompleter(os));
         }
     }
 
@@ -603,6 +593,11 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.globalweb", null);
             return webProperties;
         }
+
+        // required for XML conflict with SOLR. see #1889
+        String xmlLibrary = webProperties.getProperty("javax.xml.stream.XMLOutputFactory");
+        System.setProperty("javax.xml.stream.XMLOutputFactory", xmlLibrary);
+
         updateOrigins(lastState, origins, globalPropertiesStreamPath, webProperties);
 
         Pattern pattern = Pattern.compile("/WEB-INF/(?!global)\\w+\\.web\\.properties$");

@@ -1,4 +1,4 @@
-package org.intermine.api.lucene;
+package org.intermine.api.searchengine;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -10,30 +10,40 @@ package org.intermine.api.lucene;
  *
  */
 
-import org.apache.lucene.document.Document;
 import org.intermine.model.InterMineObject;
 
 /**
- * container class to hold a document found in an keyword search together with
- * its object and score
- * @author nils
+ * Container for individual Keyword Search Result
+ *
+ * The document type has been given as generic type.
+ *
+ * @param <E> This is generic type for document.
+ *          Currenly it used as a SolrDocument in solr.
+ *
+ * @author arunans23
  */
-public class KeywordSearchHit
+public class KeywordSearchResultContainer<E>
 {
+
     final float score;
-    final Document document;
+    final E document;
     final InterMineObject object;
 
     /**
      * constructor
-     * @param score lucene score
-     * @param document lucene document
-     * @param object intermine object
+     * @param document
+     *            Individual Document returned from the search
+     * @param object
+     *            Intermine Object associated with the document. Matched by ID
+     * @param score
+     *            score value for that particular document. (Level of relation)
      */
-    public KeywordSearchHit(float score, Document document, InterMineObject object) {
+    public KeywordSearchResultContainer(E document, InterMineObject object, float score) {
+
         this.score = score;
         this.document = document;
         this.object = object;
+
         if (score < 0) {
             throw new IllegalArgumentException("score must be >= 0, got: " + score);
         }
@@ -44,7 +54,6 @@ public class KeywordSearchHit
             throw new NullPointerException("object must not be null.");
         }
     }
-
     /**
      * score
      * @return score
@@ -55,9 +64,11 @@ public class KeywordSearchHit
 
     /**
      * document
+     * Type generic
+     * Eg: SolrInputDocument, Document
      * @return document
      */
-    public Document getDocument() {
+    public E getDocument() {
         return document;
     }
 
@@ -68,5 +79,4 @@ public class KeywordSearchHit
     public InterMineObject getObject() {
         return object;
     }
-
 }
