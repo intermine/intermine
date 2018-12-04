@@ -56,6 +56,11 @@ public final class SAXParser
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(validate);
+            if (!validate) {
+                factory.setFeature(
+                        "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+                        false);
+            }
             factory.newSAXParser().parse(is, handler);
         } catch (ParserConfigurationException e) {
             ParserConfigurationException e2 = new ParserConfigurationException("The underlying "
