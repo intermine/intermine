@@ -28,21 +28,22 @@ import java.util.Properties;
  */
 public class PermanentURIHelper
 {
+    private HttpServletRequest request;
     private static final Logger LOGGER = Logger.getLogger(PermanentURIHelper.class);
 
     /**
      * Constructor
+     * @param request the HttpServletRequest
      */
-    public PermanentURIHelper() {
+    public PermanentURIHelper(HttpServletRequest request) {
+        this.request = request;
     }
 
     /**
      * Returns the permanent URI
-     *
-     * @param request http request
      * @return the permanent uri
      */
-    public String getPermanentBaseURI(HttpServletRequest request) {
+    public String getPermanentBaseURI() {
         final Properties webProperties = InterMineContext.getWebProperties();
         String baseURI = webProperties.getProperty("identifier.uri.base");
         if (baseURI == null || StringUtils.isEmpty(baseURI)) {
@@ -53,13 +54,11 @@ public class PermanentURIHelper
 
     /**
      * Returns the permanent URI given the class name and the primary identifier
-     *
-     * @param request http request
      * @param type the class name
      * @param interMineId the internal id or null if can not generate the url
      * @return the permanent uri
      */
-    public String getPermanentURI(HttpServletRequest request, String type, Integer interMineId) {
+    public String getPermanentURI(String type, Integer interMineId) {
         InterMineLUIConverter converter = new InterMineLUIConverter();
         InterMineLUI interMineLUI = null;
         try {
@@ -68,22 +67,20 @@ public class PermanentURIHelper
             LOGGER.error("Problems retrieving identifier from InterMineObjectStore");
         }
         if (interMineLUI != null) {
-            return getPermanentURI(request, interMineLUI);
+            return getPermanentURI(interMineLUI);
         }
         return null;
     }
 
     /**
      * Returns the permanent URI given the intermine lui, e.g. protein:P31946
-     *
-     * @param request http request
      * @param lui intermine lui
      * @return the permanent uri
      */
 
-    public String getPermanentURI(HttpServletRequest request, InterMineLUI lui) {
+    public String getPermanentURI(InterMineLUI lui) {
         String permanentURI = null;
-        String baseURI = getPermanentBaseURI(request);
+        String baseURI = getPermanentBaseURI();
         if (!baseURI.endsWith("/")) {
             baseURI = baseURI + "/";
         }
@@ -107,7 +104,7 @@ public class PermanentURIHelper
             LOGGER.error("Problems retrieving identifier from InterMineObjectStore");
         }
         if (interMineLUI != null) {
-            return getPermanentURI(request, interMineLUI);
+            return getPermanentURI(interMineLUI);
         }
         return null;
     }

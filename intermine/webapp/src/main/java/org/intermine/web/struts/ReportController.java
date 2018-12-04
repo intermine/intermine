@@ -184,7 +184,7 @@ public class ReportController extends InterMineAction
             String type = reportObject.getType();
             request.setAttribute("objectType", type);
             String idString = request.getParameter("id");
-            String fairPermanentLink = (new PermanentURIHelper()).getPermanentURI(request, type,
+            String fairPermanentLink = (new PermanentURIHelper(request)).getPermanentURI(type,
                     Integer.parseInt(idString));
             if (fairPermanentLink != null) {
                 request.setAttribute("stableLink", fairPermanentLink);

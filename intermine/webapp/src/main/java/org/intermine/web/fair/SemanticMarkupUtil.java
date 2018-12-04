@@ -66,7 +66,7 @@ public final class SemanticMarkupUtil
         citation.put("identifier", INTERMINE_CITE);
         semanticMarkup.put("citation", citation);
         //semanticMarkup.put("dataset", );
-        semanticMarkup.put("identifier", new PermanentURIHelper().getPermanentBaseURI(request));
+        semanticMarkup.put("identifier", new PermanentURIHelper(request).getPermanentBaseURI());
         //semanticMarkup.put("publication", );
         return semanticMarkup;
     }
@@ -86,11 +86,11 @@ public final class SemanticMarkupUtil
         semanticMarkup.put("@type", DATASET_TYPE);
         semanticMarkup.put("description", "DataSet " + name);
         InterMineLUI lui = new InterMineLUI("DataSet", name);
-        PermanentURIHelper helper = new PermanentURIHelper();
-        semanticMarkup.put("identifier", helper.getPermanentURI(request, lui));
+        PermanentURIHelper helper = new PermanentURIHelper(request);
+        semanticMarkup.put("identifier", helper.getPermanentURI(lui));
         semanticMarkup.put("keywords", "");
         semanticMarkup.put("name", name);
-        semanticMarkup.put("url", new URLGenerator(request).getPermanentBaseURL());
+        semanticMarkup.put("url", helper.getPermanentURI(lui));
 
         //recommended properties by bioschema.or
 
@@ -122,11 +122,11 @@ public final class SemanticMarkupUtil
             semanticMarkup.put("additionalType", term);
         }
         semanticMarkup.put("description",  type + " " + primaryidentifier);
-        PermanentURIHelper helper = new PermanentURIHelper();
+        PermanentURIHelper helper = new PermanentURIHelper(request);
         InterMineLUI lui = new InterMineLUI(type, primaryidentifier);
-        semanticMarkup.put("identifier", helper.getPermanentURI(request, lui));
+        semanticMarkup.put("identifier", helper.getPermanentURI(lui));
         semanticMarkup.put("name", type + " " + primaryidentifier);
-        semanticMarkup.put("url", helper.getPermanentURI(request, lui));
+        semanticMarkup.put("url", helper.getPermanentURI(lui));
 
         return semanticMarkup;
     }
