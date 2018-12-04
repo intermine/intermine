@@ -13,6 +13,9 @@ package org.intermine.api.uri;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Set;
 
 /**
@@ -60,7 +63,12 @@ public class InterMineLUI
             if (className == null) {
                 throw new InvalidPermanentURLException();
             }
-            identifier = permanentURI.substring(localIdSeparatorPos + 1);
+            String encodedIdentifier = permanentURI.substring(localIdSeparatorPos + 1);
+            try {
+                identifier = URLDecoder.decode(encodedIdentifier, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                identifier = encodedIdentifier;
+            }
         } catch (IndexOutOfBoundsException ex) {
             throw new InvalidPermanentURLException();
         }
@@ -125,6 +133,11 @@ public class InterMineLUI
      * @return the string in the format className:identifier
      */
     public String toString() {
-        return className.toLowerCase() + LOCAL_ID_SEPARATOR + identifier;
+        try {
+            return className.toLowerCase() + LOCAL_ID_SEPARATOR + URLEncoder.encode(identifier,
+                    "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            return className.toLowerCase() + LOCAL_ID_SEPARATOR + identifier;
+        }
     }
 }
