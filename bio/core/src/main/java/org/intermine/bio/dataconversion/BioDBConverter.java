@@ -32,8 +32,10 @@ public abstract class BioDBConverter extends DBConverter
 {
     private final Map<String, Item> chromosomes = new HashMap<String, Item>();
     private final Map<String, Item> organisms = new HashMap<String, Item>();
+    private final Map<String, Item> strains = new HashMap<String, Item>();
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
+
     private String dataSourceName = null;
     private Set<String> synonyms = new HashSet<String>();
     private String sequenceOntologyRefId;
@@ -59,7 +61,8 @@ public abstract class BioDBConverter extends DBConverter
             setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
                     dataSource.getIdentifier(), sequenceOntologyRefId));
         } else {
-            setStoreHook(new BioStoreHook(tgtModel, null, null, sequenceOntologyRefId));
+            setStoreHook(new BioStoreHook(tgtModel, null, null,
+                    sequenceOntologyRefId));
         }
     }
 
@@ -185,11 +188,6 @@ public abstract class BioDBConverter extends DBConverter
         if (organism == null) {
             organism = createItem("Organism");
             organism.setAttribute("taxonId", taxonId);
-            try {
-                store(organism);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
-            }
             organisms.put(taxonId, organism);
         }
         return organism;
@@ -305,7 +303,7 @@ public abstract class BioDBConverter extends DBConverter
      * @return the Chromsome Item
      */
     protected Item getChromosome(String identifier, String taxonId)
-        throws ObjectStoreException {
+            throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
             chromosome = createItem("Chromosome");
@@ -328,7 +326,7 @@ public abstract class BioDBConverter extends DBConverter
      * @return the synonym item or null if this is a duplicate
      */
     public Item createSynonym(String subjectId, String value, boolean store)
-        throws ObjectStoreException {
+            throws ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
@@ -355,4 +353,42 @@ public abstract class BioDBConverter extends DBConverter
         }
         return sequenceOntologyRefId;
     }
+
+    /**
+     * Provides the strain item for the given strain name and organism taxonId.
+     * NOTE: this assumes that strain names are unique across all organisms!
+     * @param strainName the name of the strain
+     * @param taxonId the taxon ID of the organism to which this strain belongs
+     * @return the Strain Item
+     */
+    public Item getStrainItem(String strainName, String taxonId) {
+        Item organism = getOrganismItem(taxonId);
+        Item strain = strains.get(strainName);
+        if (strain == null) {
+            strain = createItem("Strain");
+            strain.setAttribute("primaryIdentifier", strainName);
+            strain.setReference("organism", organism);
+            strains.put(strainName, strain);
+            organism.addToCollection("strains", strain);
+        }
+        return strain;
+    }
+
+    /**
+     * Store the organisms and strains at the end, since the organisms may have had strains
+     * added to them on the fly.
+     */
+    public void close() {
+        try {
+            store(organisms.values());
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error storing Organism Items.");
+        }
+        try {
+            store(strains.values());
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error storing Strain Items.");
+        }
+    }
+
 }
