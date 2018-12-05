@@ -61,6 +61,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         converter.setProcessors("org.intermine.bio.dataconversion.TestFlyBaseProcessor");
         converter.setDataSourceName("FlyBase");
         converter.process();
+        converter.close();
         itemWriter.close();
         //writeItemsFile(itemWriter.getItems(), "chado-db-test-items-" + orgId + ".xml");
         assertEquals(readItemSet("ChadoDBConverterTest.xml"), itemWriter.getItems());
