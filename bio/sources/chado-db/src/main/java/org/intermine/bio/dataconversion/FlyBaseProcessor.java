@@ -468,14 +468,12 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     /**
      * note: featureId is needed only by modMine
-     * {@inheritDoc}
      */
-    @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
                               FeatureData featureData, String taxonId, int featureId)
         throws ObjectStoreException {
         Item location =
-            super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId, 0);
+            super.makeLocation(start, end, strand, srcFeatureData, featureData, 0);
         processItem(location, taxonId);
         return location;
     }
@@ -1090,7 +1088,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         Item location =
             getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
                                                subjectFeatureData.getItemIdentifier(),
-                                               start, end, strand, taxonId);
+                                               start, end, strand);
         Item dataSetItem = getChadoDBConverter().getDataSetItem(taxonId);
 
         location.addToCollection("dataSets", dataSetItem);
