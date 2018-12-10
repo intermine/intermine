@@ -121,7 +121,7 @@ public abstract class BioDBConverter extends DBConverter
      * @param strand the strand
      * @return the new Location object
      */
-    protected Item makeLocation(String chromosomeId, String locatedSequenceFeatureId, 
+    protected Item makeLocation(String chromosomeId, String locatedSequenceFeatureId,
                                 int start, int end, int strand) {
         Item location = createItem("Location");
         if (start < end) {
