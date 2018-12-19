@@ -130,7 +130,7 @@ public class ObjectStoreDataLoaderTask extends Task
                                                       iw.getSkeletonSource(sourceName, sourceType));
             }
             if (iw.getObjectStore() instanceof ObjectStoreInterMineImpl) {
-                ((ObjectStoreInterMineImpl)(iw.getObjectStore())).getDatabase().shutdown();
+                ((ObjectStoreInterMineImpl) (iw.getObjectStore())).getDatabase().shutdown();
             }
         } catch (Exception e) {
             throw new BuildException(e);
