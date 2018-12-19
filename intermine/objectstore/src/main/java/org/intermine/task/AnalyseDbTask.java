@@ -91,6 +91,7 @@ public class AnalyseDbTask extends Task
             } else {
                 DatabaseUtil.analyse(db, full);
             }
+            db.shutdown();
         } catch (Exception e) {
             throw new BuildException(e);
         }

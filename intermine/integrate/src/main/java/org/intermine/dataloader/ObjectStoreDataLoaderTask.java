@@ -15,6 +15,8 @@ import org.apache.tools.ant.Task;
 
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 /**
  * Uses an IntegrationWriter to load data from another ObjectStore.
@@ -127,6 +129,9 @@ public class ObjectStoreDataLoaderTask extends Task
                 new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),
                                                       iw.getMainSource(sourceName, sourceType),
                                                       iw.getSkeletonSource(sourceName, sourceType));
+                ((ObjectStoreInterMineImpl)(iw.getObjectStore())).getDatabase().shutdown();
+                // TODO: how do I call shutdowm on the source db?
+
             }
         } catch (Exception e) {
             throw new BuildException(e);

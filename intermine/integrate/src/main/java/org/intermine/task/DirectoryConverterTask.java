@@ -20,6 +20,7 @@ import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 /**
  * Initiates retrieval and conversion of data from a source directory.
@@ -129,6 +130,7 @@ public class DirectoryConverterTask extends ConverterTask
         } catch (Exception e) {
             throw new BuildException(e);
         }
+        ((ObjectStoreInterMineImpl)(osw.getObjectStore())).getDatabase().shutdown();
     }
 
 }

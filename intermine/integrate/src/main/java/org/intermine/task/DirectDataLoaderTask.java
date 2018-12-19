@@ -23,6 +23,7 @@ import org.intermine.dataloader.IntegrationWriterFactory;
 import org.intermine.dataloader.ParallelBatchingFetcher;
 import org.intermine.dataloader.Source;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.PropertiesUtil;
 
 /**
@@ -170,6 +171,7 @@ public abstract class DirectDataLoaderTask extends DynamicAttributeTask
 
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().close();
+            ((ObjectStoreInterMineImpl)(getIntegrationWriter().getObjectStore())).getDatabase().shutdown();
         } catch (ObjectStoreException e) {
             throw new BuildException(e);
         }

@@ -280,6 +280,7 @@ public class CreateIndexesTask extends Task
                 }
             }
         }
+        database.shutdown();
     }
 
     private class Worker implements Runnable

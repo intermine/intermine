@@ -283,6 +283,7 @@ public class BuildDbTask extends Task
         } finally {
             database.shutdown();
         }
+        database.shutdown();
     }
 }
 
