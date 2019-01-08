@@ -21,8 +21,10 @@ import java.util.Set;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseUtil;
@@ -114,21 +116,26 @@ public class GenerateUpdateTriggersTask extends Task
             Model model = os.getModel();
             String adderFileName = "add-update-triggers.sql";
             String removerFileName = "remove-update-triggers.sql";
+            String keyCheckFileName = "key-checker.sql";
 
             FileWriter adderW;
             FileWriter removerW;
+            FileWriter keyCheckW;
             try {
                 adderW = new FileWriter(new File(destDir, adderFileName));
                 removerW = new FileWriter(new File(destDir, removerFileName));
+                keyCheckW = new FileWriter(new File(destDir, keyCheckFileName));
             } catch (IOException e) {
                 throw new BuildException("Cannot open SQL file: " + e.getMessage());
             }
 
             PrintWriter adderPW = new PrintWriter(adderW);
             PrintWriter removerPW = new PrintWriter(removerW);
+            PrintWriter keyCheckPW = new PrintWriter(keyCheckW);
 
             adderPW.print(getAddDisclaimer());
             removerPW.print(getRemoveDisclaimer());
+            HashSet<CollectionDescriptor> indirections = new HashSet<CollectionDescriptor>();
 
             adderPW.print(getAddSequence());
             for (ClassDescriptor cld : model.getBottomUpLevelTraversal()) {
@@ -149,6 +156,15 @@ public class GenerateUpdateTriggersTask extends Task
 
                     adderPW.print(getAddIMOActions(cld));
                     removerPW.print(getRemoveIMOActions(cld));
+                    for( ReferenceDescriptor rD: cld.getAllReferenceDescriptors() ) {
+                      keyCheckPW.print(writeForeignKeyCheck(cld,rD,model.getVersion()));
+                    }
+                    for( CollectionDescriptor cD: cld.getAllCollectionDescriptors() ) {
+                      if (!indirections.contains(cD) && cD.relationType() == FieldDescriptor.M_N_RELATION) {
+                        indirections.add(cD);
+                        keyCheckPW.print(writeCollectionKeyCheck(cld,cD,model.getVersion()));
+                      }
+                    }
                 }
             }
 
@@ -157,11 +173,50 @@ public class GenerateUpdateTriggersTask extends Task
             adderPW.close();
             removerPW.print(getRemoveDisclaimer());
             removerPW.close();
+            keyCheckPW.close();
         } catch (Exception e) {
             throw new BuildException("Failed to build SQL triggers: " + e.getMessage());
         }
     }
 
+    /**
+     * Generate SQL that checks for dangling foreign keys.
+     *
+     * @param c
+     *          ClassDescriptor for the base table
+     * @return SQL to generate functions and triggers
+     */
+    private static String writeForeignKeyCheck(final ClassDescriptor c,final ReferenceDescriptor r,int version) {
+      String indirectionColumn = r.getName();
+      String referencedTable = DatabaseUtil.getTableName(r.getReferencedClassDescriptor());
+      return "SELECT CASE WHEN COUNT(*)>0 THEN "
+          + "COUNT(*) || ' "+r.getName()+"(s) missing from "+c.getUnqualifiedName()+"' ELSE "
+          + " 'All "+r.getName()+"s found in "+c.getUnqualifiedName()+"' END FROM "
+          + " "+c.getUnqualifiedName()+" t LEFT OUTER JOIN "
+          + getDBName(r.getReferencedClassDescriptor().getUnqualifiedName())+" r"
+          + " ON r.id=t."+r.getName()+"id WHERE r.id IS NULL AND t."+r.getName()+"id IS NOT NULL"
+          + " AND t.class='"+c.getName()+"';\n";
+      
+    }
+       /**
+     * Generate SQL that checks for dangling foreign keys.
+     *
+     * @param c
+     *          ClassDescriptor for the base table
+     * @return SQL to generate functions and triggers
+     */
+    private static String writeCollectionKeyCheck(final ClassDescriptor c,final CollectionDescriptor cD,int version) {
+
+      String indirectionTable = DatabaseUtil.getIndirectionTableName(cD);
+      String indirectionColumn = DatabaseUtil.getInwardIndirectionColumnName(cD, version);
+      String referencedTable = DatabaseUtil.getTableName(cD.getReferencedClassDescriptor());
+      return "SELECT CASE WHEN COUNT(*)>0 THEN "
+          + "COUNT(*) || ' "+indirectionColumn+"(s) missing from "+indirectionTable+"' ELSE "
+          + " 'All "+indirectionColumn+" found in "+indirectionTable+"' END FROM "
+          + " "+indirectionTable+" t LEFT OUTER JOIN "
+          + referencedTable +" r"
+          + " ON r.id=t."+indirectionColumn+" WHERE r.id IS NULL AND t."+indirectionColumn+" IS NOT NULL;\n\n";
+    }
     /**
      * Generate SQL that propagates actions from a table to InterMineObject.
      *
