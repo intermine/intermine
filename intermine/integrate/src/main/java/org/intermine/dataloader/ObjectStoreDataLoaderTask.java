@@ -15,7 +15,6 @@ import org.apache.tools.ant.Task;
 
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 /**
  * Uses an IntegrationWriter to load data from another ObjectStore.
@@ -128,9 +127,6 @@ public class ObjectStoreDataLoaderTask extends Task
                 new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),
                                                       iw.getMainSource(sourceName, sourceType),
                                                       iw.getSkeletonSource(sourceName, sourceType));
-            }
-            if (iw.getObjectStore() instanceof ObjectStoreInterMineImpl) {
-                ((ObjectStoreInterMineImpl) (iw.getObjectStore())).getDatabase().shutdown();
             }
         } catch (Exception e) {
             throw new BuildException(e);
