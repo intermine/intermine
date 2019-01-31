@@ -26,19 +26,19 @@ import org.intermine.webservice.server.core.JSONService;
  *
  * The uri returned will be empty in the following cases:
  * type is not defined in the model,
- * type is defined in the model but we are not bale to generate a permanet URI
+ * type is defined in the model but we are not able to generate a permanent URI
  * id is wrong
  *
  * @author Daniela Butano
  */
-public class PermanentURIService extends JSONService
+public class PermanentURLService extends JSONService
 {
 
     /**
      * The constructor
      * @param im the intermine api
      */
-    public PermanentURIService(InterMineAPI im) {
+    public PermanentURLService(InterMineAPI im) {
         super(im);
     }
 
@@ -46,12 +46,12 @@ public class PermanentURIService extends JSONService
     protected void execute() throws Exception {
         String type = getRequiredParameter("type");
         String id = getRequiredParameter("id");
-        String uri = (new PermanentURIHelper(request)).getPermanentURI(type,
+        String url = (new PermanentURIHelper(request)).getPermanentURL(type,
                 Integer.parseInt(id));
-        if (uri == null) {
-            addOutputInfo("uri", StringUtils.EMPTY);
+        if (url == null) {
+            addOutputInfo("url", StringUtils.EMPTY);
         } else {
-            addOutputInfo("uri", uri);
+            addOutputInfo("url", url);
         }
     }
 }

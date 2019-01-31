@@ -3123,24 +3123,24 @@ The different token types are:
 
   <!-- New in version 28 -->
   <servlet>
-      <servlet-name>ws-permanent-uri</servlet-name>
+      <servlet-name>ws-permanent-url</servlet-name>
       <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
       <init-param>
           <param-name>GET</param-name>
-          <param-value>org.intermine.webservice.server.fair.PermanentURIService</param-value>
+          <param-value>org.intermine.webservice.server.fair.PermanentURLService</param-value>
       </init-param>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>ws-permanent-uri</servlet-name>
-    <url-pattern>/service/permanent-uri</url-pattern>
+    <servlet-name>ws-permanent-url</servlet-name>
+    <url-pattern>/service/permanent-url</url-pattern>
     <metadata>
-        <name>Permanent URI</name>
+        <name>Permanent URL</name>
         <minVersion>28</minVersion>
         <method type="GET" authenticationRequired="false">
-            <summary>Get permanent URI for data objetct</summary>
+            <summary>Get permanent URL for data objetct</summary>
             <description>
-                This service generates permanent URI based on the class type and identifier
+                This service generates permanent URL based on the class type and identifier
             </description>
             <param
                 required="true"
