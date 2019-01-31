@@ -66,7 +66,7 @@ public final class SemanticMarkupUtil
         citation.put("identifier", INTERMINE_CITE);
         semanticMarkup.put("citation", citation);
         //semanticMarkup.put("dataset", );
-        semanticMarkup.put("identifier", new PermanentURIHelper(request).getPermanentBaseURI());
+        semanticMarkup.put("identifier", "registry.intermine.org/biotestmine");
         //semanticMarkup.put("publication", );
         return semanticMarkup;
     }
@@ -90,7 +90,7 @@ public final class SemanticMarkupUtil
         semanticMarkup.put("identifier", helper.getPermanentURI(lui));
         semanticMarkup.put("keywords", "");
         semanticMarkup.put("name", name);
-        semanticMarkup.put("url", helper.getPermanentURI(lui));
+        semanticMarkup.put("url", helper.getPermanentURL(lui));
 
         //recommended properties by bioschema.or
 
@@ -126,7 +126,7 @@ public final class SemanticMarkupUtil
         InterMineLUI lui = new InterMineLUI(type, primaryidentifier);
         semanticMarkup.put("identifier", helper.getPermanentURI(lui));
         semanticMarkup.put("name", type + " " + primaryidentifier);
-        semanticMarkup.put("url", helper.getPermanentURI(lui));
+        semanticMarkup.put("url", helper.getPermanentURL(lui));
 
         return semanticMarkup;
     }
