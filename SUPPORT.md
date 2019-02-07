@@ -10,7 +10,7 @@ Welcome to InterMine! We use GitHub for tracking bugs and feature requests. See 
 
 ### Real-time Chat
 
-* [Discord](chat.intermine.org)
+* [Discord](https://chat.intermine.org)
 The `#support` channel is where people offer support.
 
 ### Mailing list
