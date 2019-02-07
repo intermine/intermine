@@ -468,6 +468,15 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     /**
      * note: featureId is needed only by modMine
+     * Make a Location between a SequenceFeature and a Chromosome.
+     * @param start the start position
+     * @param end the end position
+     * @param strand the strand
+     * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
+     * @param featureData the FeatureData for the SequenceFeature
+     * @param taxonId the taxon id to use when finding the Chromosome for the Location
+     * @param featureId id of feature
+     * @return the new Location object
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
