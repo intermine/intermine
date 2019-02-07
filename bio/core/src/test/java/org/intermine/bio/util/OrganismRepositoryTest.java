@@ -60,12 +60,6 @@ public class OrganismRepositoryTest extends TestCase
         assertNotNull(or.getOrganismDataByFullName("Drosophila pseudoobscura pseudoobscura"));
     }
 
-    public void testStrains() {
-        OrganismRepository or = OrganismRepository.getOrganismRepository();
-        assertNotNull(or.getOrganismDataByTaxon("4932"));
-        assertNotNull(or.getOrganismDataByTaxon("559292"));
-    }
-
     public void testUniProt() {
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         assertNotNull(or.getOrganismDataByUniprot("DANRE"));

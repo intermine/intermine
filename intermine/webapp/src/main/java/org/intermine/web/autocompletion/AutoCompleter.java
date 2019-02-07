@@ -9,26 +9,27 @@ package org.intermine.web.autocompletion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.RAMDirectory;
+
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.client.solrj.response.schema.SchemaResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrInputDocument;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -43,158 +44,122 @@ import org.intermine.objectstore.query.ResultsRow;
  *
  * @author Dominik Grimm
  * @author Michael Menden
+ * @author arunans23
  */
 public class AutoCompleter
 {
-    private  HashMap<String, String> fieldIndexMap = new HashMap<String, String>();
-    private HashMap<String, LuceneSearchEngine> ramIndexMap =
-                                        new HashMap<String, LuceneSearchEngine>();
-    private HashMap<String, RAMDirectory> blobMap = new HashMap<String, RAMDirectory>();
-    private Properties prob;
-    private LuceneSearchEngine search = null;
-
-    private static final File TEMP_DIR =
-        new File("build" + File.separatorChar + "autocompleteIndexes");
-
     private static final Logger LOG = Logger.getLogger(AutoCompleter.class);
 
-    /**
-     * Autocompleter standard constructor.
-     */
-    public AutoCompleter() {
-        // empty
-    }
+    private PropertiesManager propertiesManager;
+
+    private HashMap<String, String> classFieldMap = new HashMap<String, String>();
+    private HashMap<String, List<String>> fieldIndexMap = new HashMap<String, List<String>>();
+
+    ObjectStore os;
+
+    private static final String CLASSNAME_FIELD = "className";
 
     /**
      * Autocompleter build index constructor.
+     *
      * @param os Objectstore
-     * @param prob Properties
      */
-    public AutoCompleter(ObjectStore os, Properties prob) {
-        this.prob = prob;
-        try {
-            buildIndex(os);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ObjectStoreException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+    public AutoCompleter(ObjectStore os) {
+
+        this.os = os;
+
+        if (propertiesManager == null) {
+            this.propertiesManager = PropertiesManager.getInstance();
+            this.classFieldMap = propertiesManager.getClassFieldMap();
+            createFieldIndexMap();
         }
+
     }
 
-    /**
-     * Autocompleter rebuild constructor.
-     * @param blobInput InputStream from database
-     */
-    @SuppressWarnings("unchecked")
-    public AutoCompleter(InputStream blobInput) {
-        try {
-            ObjectInputStream objectInput = new ObjectInputStream(blobInput);
-
-            Object object = objectInput.readObject();
-
-            blobInput.close();
-
-            if (object instanceof HashMap<?, ?>) {
-                blobMap = (HashMap<String, RAMDirectory>) object;
-
-                for (Iterator<Map.Entry<String, RAMDirectory>> iter = blobMap.entrySet().iterator();
-                        iter.hasNext();) {
-                    Map.Entry<String, RAMDirectory> entry =
-                        iter.next();
-                    String key = entry.getKey();
-                    RAMDirectory value = null;
-                    value = entry.getValue();
-                    search = null;
-                    search = new LuceneSearchEngine(value);
-                    ramIndexMap.put(key, search);
-                    fieldIndexMap.put(key, key);
-                    LOG.info("AutoCompleter read index for: " + key);
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * create the RAMIndex for the search engine
-     * @param classDes String of the class and the field (e.g. GOTerm.name)
-     */
-    public void createRAMIndex(String classDes) {
-        if (ramIndexMap.get(classDes) != null) {
-            search = null;
-            search = ramIndexMap.get(classDes);
-        } else {
-            try {
-                String indexFile = TEMP_DIR.toString() + File.separatorChar + classDes;
-                RAMDirectory ram = new RAMDirectory(FSDirectory.open(new File(indexFile)));
-                search = new LuceneSearchEngine(ram);
-                ramIndexMap.put(classDes, search);
-                blobMap.put(classDes, ram);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * returns a string array with the search results of the query in the field
-     * @param query is the string used for search
-     * @param field is the field in which you like to search (e.g. name)
-     * @return stringList string array with the whole search results including
-     *           an error flag at position 0
-     */
-    public String[] getList(String query, String field) {
-        String[] stringList = null;
-        String status = "true";
-        int counter = 1;
-
-        TopDocs topDocs = null;
-        try {
-            topDocs = search.performSearch(query, field);
-        } catch (IOException e) {
-
-        } catch (ParseException e) {
-            status = "Please type in more characters to get results.";
-        }
-
-        if (topDocs != null) {
-            stringList = new String[topDocs.totalHits + 1];
-
-            for (int i = 0; i < topDocs.totalHits; i++) {
-                ScoreDoc scoreDoc = topDocs.scoreDocs[i];
-                Document doc;
-                try {
-                    doc = search.getIndexSearch().doc(scoreDoc.doc);
-
-                    stringList[counter] = doc.get(field);
-                    counter++;
-                } catch (IOException e) {
-                    //TODO: shouldn't this go outside the for loop?
-                    status = "No results! Please try again.";
-                }
-            }
-        }
-        stringList[0] = status;
-
-        return stringList;
-    }
 
     /**
      * Returns n search results
      * @param query is the string used for search
      * @param field is the field in which you like to search (e.g. name)
+     * @param className is the class in which you like to search (e.g. SOTerm)
      * @param n number of the first n search results
      * @return string array with search results and an error flag at position 0
      */
-    public String[] getFastList(String query, String field, int n) {
-        return search.fastSearch(query, field, n);
+    public String[] getFastList(String query, String field, String className,  int n) {
+
+        String status = "true";
+        String[] stringResults = null;
+
+        SolrClient solrClient
+                = SolrClientHandler.getClientInstance(this.propertiesManager.getSolrUrl());
+
+        QueryResponse resp = null;
+
+        if (!"".equals(query) && !query.trim().startsWith("*")) {
+
+            if (query.endsWith(" ")) {
+                query = query.substring(0, query.length() - 1);
+            }
+
+            String[] tmp;
+            if (query.contains(" ")) {
+                tmp = query.replaceAll(" +", " ").trim().split(" ");
+                query = new String();
+
+                for (int i = 0; i < tmp.length; i++) {
+                    query += tmp[i];
+                    if (i < tmp.length - 1) {
+                        query += "* AND " + field + ":";
+                    }
+                }
+            }
+
+            try {
+
+                SolrQuery newQuery = new SolrQuery();
+                newQuery.setQuery(field + ":" + query + "*"); //adding a wildcard in the end
+                newQuery.setRequestHandler("select");
+                newQuery.setRows(n); // FIXME: hardcoded maximum
+                newQuery.setFilterQueries(CLASSNAME_FIELD + ":" + className);
+
+                resp = solrClient.query(newQuery);
+
+                SolrDocumentList results = resp.getResults();
+
+                stringResults = new String[results.size() + 1];
+
+                for (int i = 1; i < results.size() + 1; i++) {
+
+                    try {
+                        SolrDocument document = results.get(i - 1);
+
+                        stringResults[i] = ((ArrayList<String>) document
+                                .getFieldValue(field)).get(0);
+
+                    } catch (Exception e) {
+                        status = "No results! Please try again.";
+                    }
+                }
+
+                stringResults[0] = status;
+
+
+                return stringResults;
+
+            } catch (SolrServerException e) {
+                e.printStackTrace();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                status = "Please type in more characters to get results.";
+                stringResults = new String[1];
+                stringResults[0] = status;
+            }
+
+            return stringResults;
+        }
+
+        return null;
     }
 
     /**
@@ -207,21 +172,16 @@ public class AutoCompleter
     public void buildIndex(ObjectStore os)
         throws IOException, ObjectStoreException, ClassNotFoundException {
 
-        if (TEMP_DIR.exists()) {
-            if (!TEMP_DIR.isDirectory()) {
-                throw new RuntimeException(TEMP_DIR + " exists but isn't a directory - remove it");
-            }
-        } else {
-            TEMP_DIR.mkdirs();
-        }
+        List<SolrInputDocument> solrDocumentList = new ArrayList<SolrInputDocument>();
+        List<String> fieldList = new ArrayList<String>();
 
-        for (Map.Entry<Object, Object> entry: prob.entrySet()) {
-            String key = (String) entry.getKey();
-            String value = (String) entry.getValue();
-            if (!key.endsWith(".autocomplete")) {
-                continue;
-            }
-            String className = key.substring(0, key.lastIndexOf("."));
+        fieldList.add(CLASSNAME_FIELD);
+
+        for (Map.Entry<String, String> entry: classFieldMap.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            String className = key;
             ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
             if (cld == null) {
                 throw new RuntimeException("a class mentioned in ObjectStore summary properties "
@@ -233,8 +193,10 @@ public class AutoCompleter
                 String fieldName = i.next();
                 String classAndField = cld.getUnqualifiedName() + "." + fieldName;
                 System.out .println("Indexing " + classAndField);
-                fieldIndexMap.put(classAndField, classAndField);
 
+                if (!fieldList.contains(fieldName)) {
+                    fieldList.add(fieldName);
+                }
 
                 Query q = new Query();
                 q.setDistinct(true);
@@ -243,41 +205,65 @@ public class AutoCompleter
                 q.addFrom(qc);
                 Results results = os.execute(q);
 
-                LuceneObjectClass objectClass = new LuceneObjectClass(classAndField);
-                objectClass.addField(fieldName);
-
                 for (Object resRow: results) {
                     @SuppressWarnings("rawtypes")
                     Object fieldValue = ((ResultsRow) resRow).get(0);
                     if (fieldValue != null) {
-                        objectClass.addValueToField(objectClass.getFieldName(0), fieldValue
-                                .toString());
+                        SolrInputDocument solrInputDocument = new SolrInputDocument();
+                        solrInputDocument.addField(fieldName, fieldValue.toString());
+                        solrInputDocument.addField(CLASSNAME_FIELD, cld.getUnqualifiedName());
+                        solrDocumentList.add(solrInputDocument);
                     }
                 }
-
-                String indexFileName = TEMP_DIR.getPath() + File.separatorChar + classAndField;
-                LuceneIndex indexer = new LuceneIndex(indexFileName);
-                indexer.addClass(objectClass);
-                indexer.rebuildClassIndexes();
-
-                createRAMIndex(classAndField);
             }
+        }
+
+        SolrClient solrClient = SolrClientHandler
+                .getClientInstance(this.propertiesManager.getSolrUrl());
+
+        try {
+            solrClient.deleteByQuery("*:*");
+            solrClient.commit();
+        } catch (SolrServerException e) {
+            LOG.error("Deleting old index failed", e);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (String fieldName: fieldList) {
+            Map<String, Object> fieldAttributes = new HashMap();
+            fieldAttributes.put("name", fieldName);
+            fieldAttributes.put("type", "text_general");
+            fieldAttributes.put("stored", true);
+            fieldAttributes.put("indexed", true);
+            fieldAttributes.put("multiValued", true);
+            fieldAttributes.put("required", false);
+
+            try {
+                SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
+                SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+
+            } catch (SolrServerException e) {
+                LOG.error("Error while adding autocomplete fields to the solrclient.", e);
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            if (!solrDocumentList.isEmpty()) {
+                UpdateResponse response = solrClient.add(solrDocumentList);
+                solrClient.commit();
+            }
+        } catch (SolrServerException e) {
+
+            LOG.error("Error while commiting the AutoComplete "
+                    + "SolrInputdocuments to the Solrclient. "
+                    + "Make sure the Solr instance is up", e);
+
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Returns byte array of the RAMIndexMap
-     * @return Returns byte array of the RAMIndexMap
-     * @throws IOException IOException
-     */
-    public byte[] getBinaryIndexMap() throws IOException {
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
-        objectStream.writeObject(blobMap);
-        objectStream.close();
-
-        return byteStream.toByteArray();
-    }
 
     /**
      * checks if an autocompletion exists
@@ -286,10 +272,29 @@ public class AutoCompleter
      * @return whether an autocompletion exists
      */
     public boolean hasAutocompleter(String type, String field) {
-        if (fieldIndexMap.get(type + "." + field) != null) {
+
+        if (fieldIndexMap.containsKey(type) && fieldIndexMap.get(type).contains(field)) {
             return true;
         }
+
         return false;
+    }
+
+    private void createFieldIndexMap() {
+        for (Map.Entry<String, String> entry: classFieldMap.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            String className = key;
+            ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
+            if (cld == null) {
+                throw new RuntimeException("a class mentioned in ObjectStore summary properties "
+                        + "file (" + className + ") is not in the model");
+            }
+            List<String> fieldNames = Arrays.asList(value.split(" "));
+
+            fieldIndexMap.put(cld.getUnqualifiedName(), fieldNames);
+        }
     }
 
 

@@ -54,7 +54,7 @@ public class InterProConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         InterProHandler handler = new InterProHandler(getItemWriter());
         try {
-            SAXParser.parse(new InputSource(reader), handler);
+            SAXParser.parse(new InputSource(reader), handler, false);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

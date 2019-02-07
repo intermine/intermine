@@ -222,7 +222,7 @@ public final class Constants
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "2.1.1";
+    public static final String INTERMINE_VERSION = "3.1.0";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
