@@ -468,6 +468,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     /**
      * note: featureId is needed only by modMine
+     * @throws ObjectStoreException if something goes wrong
      */
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
                               FeatureData featureData, String taxonId, int featureId)
