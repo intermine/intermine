@@ -36,8 +36,7 @@ public final class GFF3Parser
      */
     public static Iterator<?> parse(final BufferedReader reader) throws IOException {
         String line = null;
-        StringBuilder header = new StringBuilder();
-        boolean processHeader = true;
+        StringBuilder headerBuilder = new StringBuilder();
 
         while ((line = reader.readLine()) != null) {
             String trimmedLine = line.trim();
@@ -47,21 +46,19 @@ public final class GFF3Parser
             }
 
             // gather up the header information.
-            if (trimmedLine.startsWith("#") && processHeader) {
-                header.append(trimmedLine);
+            if (trimmedLine.startsWith("#")) {
+                headerBuilder.append(trimmedLine);
                 continue;
             }
 
-            // there are lines that start with # later on in the file. We don't want them!
-            processHeader = false;
-
             // throws IOException if the first GFF line isn't valid
-            new GFF3Record(header.toString(), trimmedLine);
+            new GFF3Record(headerBuilder.toString(), trimmedLine);
 
             break;
         }
 
         final String firstGFFLine = line;
+        final String header =  headerBuilder.toString();
 
         return new Iterator<Object>() {
             String currentLine = firstGFFLine;
@@ -77,16 +74,10 @@ public final class GFF3Parser
                 }
                 Object objectToReturn = null;
                 try {
-                    objectToReturn = new GFF3Record(header.toString(), currentLine);
+                    objectToReturn = new GFF3Record(header, currentLine);
                     while ((currentLine = reader.readLine()) != null) {
                         String trimmedLine = currentLine.trim();
-                        if (trimmedLine.length() == 0) {
-                            continue;
-                        }
-
-                        // gather up the header information.
-                        if (trimmedLine.startsWith("#")) {
-                            header.append(trimmedLine);
+                        if (trimmedLine.length() == 0 || trimmedLine.startsWith("#")) {
                             continue;
                         }
                         break;
