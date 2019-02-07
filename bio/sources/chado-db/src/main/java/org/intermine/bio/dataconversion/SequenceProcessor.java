@@ -630,8 +630,8 @@ public class SequenceProcessor extends ChadoProcessor
                 if (featureMap.containsKey(featureId)) {
                     FeatureData featureData = featureMap.get(featureId);
                     String taxonId = featureData.organismData.getTaxonId();
-                    Item location =
-                            makeLocation(start, end, strand, srcFeatureData, featureData, featureId);
+                    Item location = makeLocation(start, end, strand, srcFeatureData, featureData,
+                            featureId);
                     // location could be null for common features (modmine)
                     if (location != null) {
                         getChadoDBConverter().store(location);
