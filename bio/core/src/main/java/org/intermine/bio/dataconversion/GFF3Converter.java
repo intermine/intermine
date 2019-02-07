@@ -317,7 +317,7 @@ public class GFF3Converter extends DataConverter
         }
         String refId = identifierMap.get(primaryIdentifier);
         handler.clear(); // get rid of previous record Items from handler
-        Item seq = getSeq(record.getSequenceID());
+        Item seq = getSeq(record);
         String className = TypeUtil.javaiseClassName(term);
         String fullClassName = tgtModel.getPackageName() + "." + className;
         ClassDescriptor cd = tgtModel.getClassDescriptorByName(fullClassName);
@@ -731,8 +731,10 @@ public class GFF3Converter extends DataConverter
      * @return return/create item of class seqClsName for given identifier
      * @throws ObjectStoreException if the Item can't be stored
      */
-    private Item getSeq(String id)
+    private Item getSeq(GFF3Record record)
         throws ObjectStoreException {
+        String id = record.getSequenceID();
+
         // the seqHandler may have changed the id used, e.g. if using an IdResolver
         String identifier = sequenceHandler.getSeqIdentifier(id);
 
@@ -746,7 +748,7 @@ public class GFF3Converter extends DataConverter
 
         Item seq = seqs.get(identifier);
         if (seq == null) {
-            seq = sequenceHandler.makeSequenceItem(this, identifier);
+            seq = sequenceHandler.makeSequenceItem(this, identifier, record);
             // sequence handler may choose not to create sequence
             if (seq != null) {
                 seq.addReference(getOrgRef());
