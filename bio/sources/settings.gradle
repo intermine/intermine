@@ -39,10 +39,13 @@ include ':bio-source-biogrid',
 ':bio-source-update-publications',
 ':bio-source-vcf',
 ':bio-source-wormbase-identifiers',
+':bio-source-isa',
 //bio-examples-sources
 //':bio-source-kegg',
 //':bio-source-kegg-identifiers',
 ':bio-source-malaria-gff'
+
+project(':bio-source-isa').projectDir = new File(settingsDir, './isa')
 
 project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
 project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
