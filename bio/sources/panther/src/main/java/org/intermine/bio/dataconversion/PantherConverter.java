@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+
+import com.sun.org.apache.xml.internal.security.utils.IdResolver;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -137,6 +139,11 @@ public class PantherConverter extends BioFileConverter
         }
         String resolvedGenePid = parseIdentifier(geneId);
 
+        if (resolvedGenePid == null) {
+            // parsed the gene string but was protein see #1995
+            return null;
+        }
+
         // only resolve if fish - TODO put in config file
         if ("7955".equals(taxonId) || "9606".equals(taxonId) || "10116".equals(taxonId)) {
             resolvedGenePid = resolveGene(taxonId, resolvedGenePid);
@@ -169,6 +176,10 @@ public class PantherConverter extends BioFileConverter
     private String parseIdentifier(String ident) {
         String[] identifierString = ident.split("=");
         String dbName = identifierString[0];
+        // see https://github.com/intermine/intermine/issues/1995
+        if ("Gene".equalsIgnoreCase(dbName)) {
+            return null;
+        }
         String identifier = identifierString[identifierString.length - 1];
         if (databasesNamesToPrepend.contains(dbName)) {
             identifier = dbName + ":" + identifier;
