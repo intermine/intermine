@@ -31,10 +31,20 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Julie Sullivan
+ * @author sc
  */
 public class ISAConverter extends BioFileConverter {
     private static final Logger LOG = Logger.getLogger(ISAConverter.class);
+    private Map<String, Map> people;
+    private Map<String, Map> publications;
+    private Map<String, Map> comments;  // add field for ref?
+    private Map<String, Map> sdd;       // studyDesignDescriptors
+    private Map<String, Map> osr;
+    private Map<String, Map> protocols;
+    private Map<String, Map> protpars;  // protocol.parameters
+
+
+
     private Set<String> taxonIds;
     private Map<String, Item> pathways = new HashMap<>();
     private Map<String, Item> proteins = new HashMap<>();
@@ -77,26 +87,17 @@ public class ISAConverter extends BioFileConverter {
 
 
         File file = getFiles();
+   // private Map<String, Map> protocols;
 
         JsonNode root = new ObjectMapper().readTree(file);
 
-
-        String invIdentifier = root.get("identifier").textValue();
-        LOG.warn("INV ID " + invIdentifier);
-
-        String osrName = root.get("ontologySourceReferences").get(1).get("name").textValue();
-        LOG.warn("OSR name " + osrName);
+        //otherAccess(root);
 
         JsonNode osr = root.path("ontologySourceReferences");
-        for (JsonNode node : osr) {
-            String name = node.path("name").asText();
-            String description = node.path("description").asText();
-            String filename = node.path("file").asText();
-            String version = node.path("version").asText();
 
-            LOG.warn("OSR " + name);
-            LOG.warn(description + " -- " + filename + " | " + version);
-        }
+        LOG.warn("OSR type is ... " + osr.getNodeType().toString());
+
+        mapOSR(osr);
 
         // do the storing
 
@@ -116,42 +117,78 @@ public class ISAConverter extends BioFileConverter {
             JsonNode protocol = node.path("protocols");
             for (JsonNode n2 : protocol) {
                 String protName = n2.path("name").asText();
+                String pDescr = n2.path("description").asText();
+
                 Integer protPar = n2.path("parameters").size();
 
                 LOG.warn("PROT " + protName + " pars: " + protPar);
+                LOG.warn("PROT " + pDescr);
+
+                JsonNode ppar = n2.path("parameters");
+                LOG.warn("PPAR " + ppar.getNodeType().toString());
+
+                for (JsonNode pnode : ppar) {
+                    LOG.warn("QQ");
+                    String id = pnode.path("@id").asText();
+                    String annotationValue = pnode.path("parameterName").get("annotationValue").asText();
+                    //String annotationValue = pnode.path("annotationValue").asText();
+                    String termAccession = pnode.path("termAccession").asText();
+                    //String termSource = pnode.path("termSource").asText();
+
+                    LOG.info("STUDY DESDES " + annotationValue + "|" + termAccession + "|" + id);
+                }
+
+
             }
         }
 
-        //JsonNode sdd = root.path("studies").path("studyDesignDescriptors");
-        //JsonNode sdd = study.path("studyDesignDescriptors");
-
-        JsonNode sdd = root.path("studies").path("protocols");
-//        Investigation isaInv = new Investigation();
-//        Study isaStudy = new Study();
-//        OntologySourceReference isaOSR = new OntologySourceReference();
-
-        //String desp = root.at("")isa/src/main/java/org/intermine/bio/dataconversion/ISAConverter.java
+        LOG.warn("-----" + study.path("identifier").asText());
 
 
-        // runtime error
-        // JsonNode sdd = root.path("studies").withArray("studyDesignDescriptors");
-
-        LOG.warn(sdd.getNodeType());
-        LOG.warn("-----" + sdd.path("name").asText());
-
-
-        for (JsonNode node : sdd) {
-            LOG.warn("QQ");
-            String annotationValue = node.path("annotationValue").asText();
-            String termAccession = node.path("termAccession").asText();
-            String termSource = node.path("termSource").asText();
-
-            LOG.info("STUDY DESDES " + annotationValue + "|" + termAccession + "|" + termSource);
-        }
 
         //createInvestigationWithPojo(file);
 
 
+    }
+
+    private void mapOSR(JsonNode osr) {
+        for (JsonNode node : osr) {
+            String name = node.path("name").asText();
+            String description = node.path("description").asText();
+            String filename = node.path("file").asText();
+            String version = node.path("version").asText();
+
+            LOG.warn("OSR " + name);
+            LOG.warn(description + " -- " + filename + " | " + version);
+        }
+    }
+
+    private void mapOSRg(JsonNode osr) {
+        osr.getNodeType().toString();
+        //Iterator ontology = osr.elements()
+        /*
+        for ( Iterator element : osr.elements()) {
+
+            String name = node.path("name").asText();
+            String description = node.path("description").asText();
+            String filename = node.path("file").asText();
+            String version = node.path("version").asText();
+
+            LOG.warn("OSR " + name);
+            LOG.warn(description + " -- " + filename + " | " + version);
+        }
+        */
+    }
+
+
+
+
+    private void otherAccess(JsonNode root) {
+        String invIdentifier = root.get("identifier").textValue();
+        LOG.warn("INV ID " + invIdentifier);
+
+        String osrName = root.get("ontologySourceReferences").get(1).get("name").textValue();
+        LOG.warn("OSR name " + osrName);
     }
 
     private File getFiles() throws FileNotFoundException {
