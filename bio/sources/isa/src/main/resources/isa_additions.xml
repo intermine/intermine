@@ -8,10 +8,8 @@
         <attribute name="description" type="java.lang.String"/>
         <attribute name="submissionDate" type="java.util.Date"/>
         <attribute name="publicReleaseDate" type="java.util.Date"/>
-        <!--
         <reference name="publication" referenced-type="Publication"/>
-        <collection name="contacts" referenced-type="Person"/>
-        -->
+        <collection name="contacts" referenced-type="Author"/>
         <collection name="studies" referenced-type="Study" reverse-reference="investigation"/>
     </class>
 
@@ -26,7 +24,7 @@
         <reference name="investigation" referenced-type="Investigation" reverse-reference="studies"/>
         <reference name="publication" referenced-type="Publication"/>
         <reference name="organism" referenced-type="Organism"/>
-        <collection name="contacts" referenced-type="Person"/>
+        <collection name="contacts" referenced-type="Author"/>
         <collection name="factors" referenced-type="Factor" reverse-reference="study"/>
         <collection name="protocols" referenced-type="Protocol" reverse-reference="study"/>
         <collection name="studyData" referenced-type="StudyData" reverse-reference="study"/>
@@ -72,7 +70,7 @@
         <reference name="study" referenced-type="Study" reverse-reference="protocols"/>
         <reference name="studyData" referenced-type="StudyData" reverse-reference="protocols"/>
         <reference name="dataFile" referenced-type="DataFile"/>
-        <collection name="parameters" referenced-type="ProtocolParameters" reverse-reference="protocol"/>
+        <collection name="parameters" referenced-type="ProtocolParameter" reverse-reference="protocol"/>
      </class>
 
     <class name="ProtocolParameter"  is-interface="true">
@@ -89,7 +87,9 @@
         <attribute name="type" type="java.lang.String"/>
         <attribute name="value" type="java.lang.String"/>
 
+        <!--
         <reference name="studyData" referenced-type="StudyData" reverse-reference="file"/>
+        -->
         <reference name="dataAttribute" referenced-type="StudyDataAttribute"/>
         <reference name="protocol" referenced-type="Protocol" />
     </class>

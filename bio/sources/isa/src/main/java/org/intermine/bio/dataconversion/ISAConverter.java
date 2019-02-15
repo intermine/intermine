@@ -16,8 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.isa.Investigation;
-import org.intermine.bio.isa.OntologySourceReference;
-import org.intermine.bio.isa.Study;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -28,7 +26,9 @@ import org.intermine.xml.full.Item;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Reader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Julie Sullivan
@@ -51,24 +51,24 @@ public class ISAConverter extends BioFileConverter {
     }
 
     /*
-    *    json structure:
-    *    ---------------
-    *    investigation
-    *       people
-    *       publications
-    *       comments
-    *       ontologySourceReferences
-    *       studies
-    *           publications
-    *           people
-    *           stusyDesignDescriptors
-    *           protocols
-    *               protocolTypes
-    *               parameters
-    *                   parameterName
-    *           etc TODO
-    *
-    */
+     *    json structure:
+     *    ---------------
+     *    investigation
+     *       people
+     *       publications
+     *       comments
+     *       ontologySourceReferences
+     *       studies
+     *           publications
+     *           people
+     *           studyDesignDescriptors
+     *           protocols
+     *               protocolTypes
+     *               parameters
+     *                   parameterName
+     *           etc TODO
+     *
+     */
 
     /**
      * {@inheritDoc}
@@ -76,17 +76,10 @@ public class ISAConverter extends BioFileConverter {
     public void process(Reader reader) throws Exception {
 
 
-        File file = getCurrentFile();
-        if (file == null) {
-            throw new FileNotFoundException("No valid data files found.");
-        }
-        LOG.info("ISA: Reading " + file.getName());
+        File file = getFiles();
 
         JsonNode root = new ObjectMapper().readTree(file);
 
-        Investigation isaInv = new Investigation();
-        Study isaStudy = new Study();
-        OntologySourceReference isaOSR = new OntologySourceReference();
 
         String invIdentifier = root.get("identifier").textValue();
         LOG.warn("INV ID " + invIdentifier);
@@ -127,20 +120,22 @@ public class ISAConverter extends BioFileConverter {
 
                 LOG.warn("PROT " + protName + " pars: " + protPar);
             }
-
         }
 
         //JsonNode sdd = root.path("studies").path("studyDesignDescriptors");
         //JsonNode sdd = study.path("studyDesignDescriptors");
 
         JsonNode sdd = root.path("studies").path("protocols");
+//        Investigation isaInv = new Investigation();
+//        Study isaStudy = new Study();
+//        OntologySourceReference isaOSR = new OntologySourceReference();
 
-        //String desp = root.at("")
+        //String desp = root.at("")isa/src/main/java/org/intermine/bio/dataconversion/ISAConverter.java
+
 
         // runtime error
         // JsonNode sdd = root.path("studies").withArray("studyDesignDescriptors");
 
-        LOG.warn("CESEMO");
         LOG.warn(sdd.getNodeType());
         LOG.warn("-----" + sdd.path("name").asText());
 
@@ -154,14 +149,35 @@ public class ISAConverter extends BioFileConverter {
             LOG.info("STUDY DESDES " + annotationValue + "|" + termAccession + "|" + termSource);
         }
 
+        //createInvestigationWithPojo(file);
 
+
+    }
+
+    private File getFiles() throws FileNotFoundException {
+        File file = getCurrentFile();
+        if (file == null) {
+            throw new FileNotFoundException("No valid data files found.");
+        }
+
+        LOG.info("ISA: Reading " + file.getName());
+        return file;
+    }
+
+    private void createInvestigationWithPojo(File file) throws java.io.IOException, ObjectStoreException {
+
+        // check if useful...
+//        Investigation isaInv = new Investigation();
+//        Study isaStudy = new Study();
+//        OntologySourceReference isaOSR = new OntologySourceReference();
+
+
+        // item creation here using pojos
         ObjectMapper mapper = new ObjectMapper();
-
         Investigation isaInv1 = mapper.readValue(file, Investigation.class);
 //        Study isaStudy = mapper.readValue(file, Study.class);
 
         LOG.warn("investigation " + isaInv1.identifier);
-
         //String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(isaInv);
         //LOG.info(prettyStaff1);
 
@@ -173,56 +189,6 @@ public class ISAConverter extends BioFileConverter {
             inv.setAttribute("description", isaInv1.description);
         }
         store(inv);
-
-        //    LOG.warn("study " + isaStudy.identifier);
-
-        //      Item study = createItem("Study");
-
-
-        //   Employee emp = objectMapper.readValue(jsonData, Employee.class);
-
-
-//        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-//        while (lineIter.hasNext()) {
-//            String[] line = lineIter.next();
-//            if (line.length != 6) {
-//                throw new RuntimeException("Invalid line length " + line.length);
-//            }
-//
-//            String accession = line[0];
-//            String pathwayIdentifier = line[1];
-//            String uri = line[2];
-//            String pathwayName = line[3];
-//            String evidenceCode = line[4];
-//            String organismName = line[5];
-//
-//            String taxonId = getTaxonId(organismName);
-//            if (taxonId == null) {
-//                // invalid organism
-//                continue;
-//            }
-//            Item pathway = getPathway(pathwayIdentifier, pathwayName);
-//
-//            Item protein = getProtein(accession, taxonId);
-//            protein.addToCollection("pathways", pathway);
-//
-//            pathway.addToCollection("proteins", protein);
-//        }
-//
-
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void close() throws ObjectStoreException {
-        for (Item item : proteins.values()) {
-            store(item);
-        }
-        for (Item item : pathways.values()) {
-            store(item);
-        }
     }
 
 
@@ -238,36 +204,19 @@ public class ISAConverter extends BioFileConverter {
         }
     }
 
+    //
+    // OLDIES
+    //
 
-    private void justTesting2() {
-        Map<String, List<String>> myMap = new HashMap<String, List<String>>();
-        int ord = 0;
-        for (Map.Entry<String, List<String>> entry : myMap.entrySet()) {
-
-            ord++;
-//    System.out.println("[" + ord++ + "] " + entry.getKey() + " : " + entry.getValue());
-
-            System.out.println("[" + ord + "]");
-            System.out.println(entry.getKey());
-
-            if (ord != 6) {
-                System.out.println(entry);
-                System.out.println(entry.getValue());
-
-                if (entry.getValue().toString().startsWith("["
-                )) {
-                    System.out.println(entry.getValue().get(0));
-                }
-
-            } else {
-                System.out.println("...............\n");
-            }
-
-
-            //    System.out.println("[" + ord++ + "] " + entry.getKey() + " : " + entry.getValue());
-            System.out.println("[" + ord++ + "]");
-            System.out.println(entry.getKey());
-            System.out.println((entry));
+    /**
+     * {@inheritDoc}
+     */
+    public void close() throws ObjectStoreException {
+        for (Item item : proteins.values()) {
+            store(item);
+        }
+        for (Item item : pathways.values()) {
+            store(item);
         }
     }
 
