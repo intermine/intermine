@@ -235,14 +235,14 @@ public class AutoCompleter
         try {
             existingFields = getAllExistingFieldsFromSolr(solrClient);
 
-        } catch (SolrServerException e){
+        } catch (SolrServerException e) {
             LOG.error("Retrieving existing Fieldnames in Solr failed");
         }
 
 
         for (String fieldName: fieldList) {
-            if (existingFields != null){
-                if (!existingFields.contains(fieldName)){
+            if (existingFields != null) {
+                if (!existingFields.contains(fieldName)) {
                     Map<String, Object> fieldAttributes = new HashMap();
                     fieldAttributes.put("name", fieldName);
                     fieldAttributes.put("type", "text_general");
@@ -252,7 +252,8 @@ public class AutoCompleter
                     fieldAttributes.put("required", false);
 
                     try {
-                        SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
+                        SchemaRequest.AddField schemaRequest
+                                = new SchemaRequest.AddField(fieldAttributes);
                         SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
 
                     } catch (SolrServerException e) {
@@ -316,8 +317,8 @@ public class AutoCompleter
         List<String> allFields = new ArrayList<String>();
         SchemaRequest.Fields listFields = new SchemaRequest.Fields();
         SchemaResponse.FieldsResponse fieldsResponse = listFields.process(solrClient);
-        List<Map<String,Object>> solrFields = fieldsResponse.getFields();
-        for(Map<String,Object> field : solrFields) {
+        List<Map<String, Object>> solrFields = fieldsResponse.getFields();
+        for (Map<String, Object> field : solrFields) {
             allFields.add((String) field.get("name"));
         }
         return allFields;

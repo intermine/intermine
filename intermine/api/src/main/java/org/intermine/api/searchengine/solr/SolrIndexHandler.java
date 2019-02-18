@@ -87,7 +87,7 @@ public final class SolrIndexHandler implements IndexHandler
             this.existingFieldTypes = getAllExisitingFieldTypesFromSolr(solrClient);
             this.existingCopyFields = getAllExisitingCopyFieldsFromSolr(solrClient);
 
-        } catch (SolrServerException e){
+        } catch (SolrServerException e) {
             LOG.error("Retrieving existing schema Definitions in Solr failed");
         }
 
@@ -213,9 +213,9 @@ public final class SolrIndexHandler implements IndexHandler
     private void addFieldNameToSchema(String fieldName, String fieldType, boolean stored,
                                      boolean indexed, SolrClient solrClient) throws IOException {
 
-        if (!this.indexedFields.contains(fieldName)){
-            if (this.existingFields != null){
-                if (!this.existingFields.contains(fieldName)){
+        if (!this.indexedFields.contains(fieldName)) {
+            if (this.existingFields != null) {
+                if (!this.existingFields.contains(fieldName)) {
                     Map<String, Object> fieldAttributes = new HashMap();
                     fieldAttributes.put("name", fieldName);
                     fieldAttributes.put("type", fieldType);
@@ -225,7 +225,8 @@ public final class SolrIndexHandler implements IndexHandler
                     fieldAttributes.put("required", false);
 
                     try {
-                        SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
+                        SchemaRequest.AddField schemaRequest =
+                                new SchemaRequest.AddField(fieldAttributes);
                         SchemaResponse.UpdateResponse response = schemaRequest.process(solrClient);
 
                         this.indexedFields.add(fieldName);
@@ -244,8 +245,8 @@ public final class SolrIndexHandler implements IndexHandler
             throws IOException {
 
         try {
-            if (this.existingCopyFields != null){
-                if (!this.existingCopyFields.contains(dest)){
+            if (this.existingCopyFields != null) {
+                if (!this.existingCopyFields.contains(dest)) {
 
                     List<String> copyFieldAttributes = new ArrayList<String>();
                     copyFieldAttributes.add(dest);
@@ -293,8 +294,8 @@ public final class SolrIndexHandler implements IndexHandler
 
     private void createFieldTypeDefinitions(SolrClient solrClient) throws IOException {
 
-        if (this.existingFieldTypes != null){
-            if (!this.existingFieldTypes.contains(ANALYZED_FIELD_TYPE_NAME)){
+        if (this.existingFieldTypes != null) {
+            if (!this.existingFieldTypes.contains(ANALYZED_FIELD_TYPE_NAME)) {
                 FieldTypeDefinition analyzedFieldTypeDefinition = new FieldTypeDefinition();
 
                 Map<String, Object> analyzedFieldTypeAttributes = new HashMap();
@@ -309,7 +310,8 @@ public final class SolrIndexHandler implements IndexHandler
                 indexAnalyzerDefinition1.setTokenizer(indexTokenizerAttributes1);
                 Map<String, Object> indexLowerCaseFilterAttributes1 = new HashMap<String, Object>();
                 indexLowerCaseFilterAttributes1.put("class", "solr.LowerCaseFilterFactory");
-                List<Map<String, Object>> indexFilterAttributes1 = new ArrayList<Map<String, Object>>();
+                List<Map<String, Object>> indexFilterAttributes1 =
+                        new ArrayList<Map<String, Object>>();
                 indexFilterAttributes1.add(indexLowerCaseFilterAttributes1);
                 indexAnalyzerDefinition1.setFilters(indexFilterAttributes1);
 
@@ -319,7 +321,8 @@ public final class SolrIndexHandler implements IndexHandler
                 queryAnalyzerDefinition1.setTokenizer(queryTokenizerAttributes1);
                 Map<String, Object> queryLowerCaseFilterAttributes1 = new HashMap<String, Object>();
                 queryLowerCaseFilterAttributes1.put("class", "solr.LowerCaseFilterFactory");
-                List<Map<String, Object>> queryFilterAttributes1 = new ArrayList<Map<String, Object>>();
+                List<Map<String, Object>> queryFilterAttributes1 =
+                        new ArrayList<Map<String, Object>>();
                 queryFilterAttributes1.add(queryLowerCaseFilterAttributes1);
                 queryAnalyzerDefinition1.setFilters(queryFilterAttributes1);
 
@@ -342,8 +345,8 @@ public final class SolrIndexHandler implements IndexHandler
             }
         }
 
-        if (this.existingFieldTypes != null){
-            if (!this.existingFieldTypes.contains(RAW_FIELD_TYPE_NAME)){
+        if (this.existingFieldTypes != null) {
+            if (!this.existingFieldTypes.contains(RAW_FIELD_TYPE_NAME)) {
                 FieldTypeDefinition rawFieldTypeDefinition = new FieldTypeDefinition();
 
                 Map<String, Object> rawFieldTypeAttributes = new HashMap();
@@ -358,7 +361,8 @@ public final class SolrIndexHandler implements IndexHandler
                 indexAnalyzerDefinition2.setTokenizer(indexTokenizerAttributes2);
                 Map<String, Object> indexLowerCaseFilterAttributes2 = new HashMap<String, Object>();
                 indexLowerCaseFilterAttributes2.put("class", "solr.LowerCaseFilterFactory");
-                List<Map<String, Object>> indexFilterAttributes2 = new ArrayList<Map<String, Object>>();
+                List<Map<String, Object>> indexFilterAttributes2 =
+                        new ArrayList<Map<String, Object>>();
                 indexFilterAttributes2.add(indexLowerCaseFilterAttributes2);
                 indexAnalyzerDefinition2.setFilters(indexFilterAttributes2);
 
@@ -368,7 +372,8 @@ public final class SolrIndexHandler implements IndexHandler
                 queryAnalyzerDefinition2.setTokenizer(queryTokenizerAttributes2);
                 Map<String, Object> queryLowerCaseFilterAttributes2 = new HashMap<String, Object>();
                 queryLowerCaseFilterAttributes2.put("class", "solr.LowerCaseFilterFactory");
-                List<Map<String, Object>> queryFilterAttributes2 = new ArrayList<Map<String, Object>>();
+                List<Map<String, Object>> queryFilterAttributes2
+                        = new ArrayList<Map<String, Object>>();
                 queryFilterAttributes2.add(queryLowerCaseFilterAttributes2);
                 queryAnalyzerDefinition2.setFilters(queryFilterAttributes2);
 
@@ -398,8 +403,8 @@ public final class SolrIndexHandler implements IndexHandler
         List<String> allFields = new ArrayList<String>();
         SchemaRequest.Fields listFields = new SchemaRequest.Fields();
         SchemaResponse.FieldsResponse fieldsResponse = listFields.process(solrClient);
-        List<Map<String,Object>> solrFields = fieldsResponse.getFields();
-        for(Map<String,Object> field : solrFields) {
+        List<Map<String, Object>> solrFields = fieldsResponse.getFields();
+        for (Map<String, Object> field : solrFields) {
             allFields.add((String) field.get("name"));
         }
         return allFields;
@@ -411,7 +416,7 @@ public final class SolrIndexHandler implements IndexHandler
         SchemaRequest.FieldTypes listFieldTypes = new SchemaRequest.FieldTypes();
         SchemaResponse.FieldTypesResponse fieldTypesResponse = listFieldTypes.process(solrClient);
         List<FieldTypeRepresentation> solrFieldTypes = fieldTypesResponse.getFieldTypes();
-        for(FieldTypeRepresentation fieldType : solrFieldTypes) {
+        for (FieldTypeRepresentation fieldType : solrFieldTypes) {
             allFieldTypes.add((String) fieldType.getAttributes().get("name"));
         }
         return allFieldTypes;
@@ -423,7 +428,7 @@ public final class SolrIndexHandler implements IndexHandler
         SchemaRequest.CopyFields listCopyFields = new SchemaRequest.CopyFields();
         SchemaResponse.CopyFieldsResponse copyFieldsResponse = listCopyFields.process(solrClient);
         List<Map<String, Object>> solrCopyFields = copyFieldsResponse.getCopyFields();
-        for(Map<String, Object> copyField : solrCopyFields) {
+        for (Map<String, Object> copyField : solrCopyFields) {
             allCopyFields.add((String) copyField.get("dest"));
         }
         return allCopyFields;

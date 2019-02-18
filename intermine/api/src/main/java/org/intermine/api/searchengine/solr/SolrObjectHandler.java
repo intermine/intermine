@@ -122,6 +122,8 @@ public class SolrObjectHandler extends Thread
      *            addition to the normal indexing
      * @param attributePrefixes prefixes to be ignored
      * @param solrClient solrClient Instance
+     * @param indexedFields List of fieldnames that are indexed in the current postprocess
+     * @param existingFields List of fieldnames that are already exisiting
      */
     SolrObjectHandler(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
                       ObjectPipe<SolrInputDocument> indexingQueue,
@@ -687,9 +689,9 @@ public class SolrObjectHandler extends Thread
         if (!fieldNames.contains(fieldName)) {
             fieldNames.add(fieldName);
 
-            if (!indexedFields.contains(fieldName)){
+            if (!indexedFields.contains(fieldName)) {
                 if (existingFields != null) {
-                    if (!existingFields.contains(fieldName)){
+                    if (!existingFields.contains(fieldName)) {
                         Map<String, Object> fieldAttributes = new HashMap();
                         fieldAttributes.put("name", fieldName);
                         fieldAttributes.put("type", fieldType);
@@ -699,8 +701,10 @@ public class SolrObjectHandler extends Thread
                         fieldAttributes.put("required", false);
 
                         try {
-                            SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
-                            SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+                            SchemaRequest.AddField schemaRequest
+                                    = new SchemaRequest.AddField(fieldAttributes);
+                            SchemaResponse.UpdateResponse response
+                                    = schemaRequest.process(solrClient);
 
                             indexedFields.add(fieldName);
 
