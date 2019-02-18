@@ -35,6 +35,7 @@ import java.util.Set;
  */
 public class ISAConverter extends BioFileConverter {
     private static final Logger LOG = Logger.getLogger(ISAConverter.class);
+    private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
     private Map<String, Map> people;
     private Map<String, Map> publications;
     private Map<String, Map> comments;  // add field for ref?
@@ -42,13 +43,9 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Map> osr;
     private Map<String, Map> protocols;
     private Map<String, Map> protpars;  // protocol.parameters
-
-
-
     private Set<String> taxonIds;
     private Map<String, Item> pathways = new HashMap<>();
     private Map<String, Item> proteins = new HashMap<>();
-    private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
     /**
      * Constructor
@@ -87,7 +84,7 @@ public class ISAConverter extends BioFileConverter {
 
 
         File file = getFiles();
-   // private Map<String, Map> protocols;
+        // private Map<String, Map> protocols;
 
         JsonNode root = new ObjectMapper().readTree(file);
 
@@ -101,55 +98,99 @@ public class ISAConverter extends BioFileConverter {
 
         // do the storing
 
-        JsonNode study = root.path("studies");
-        for (JsonNode node : study) {
-            String identifier = node.path("identifier").asText();
-            String title = node.path("title").asText();
-            String description = node.path("description").asText();
-            String filename = node.path("filename").asText();
-            String subDate = node.path("submissiondate").asText();
-            String pubDate = node.path("publicreleasedate").asText();
+        JsonNode studyNode = root.path("studies");
+        for (JsonNode study : studyNode) {
+            String identifier = study.path("identifier").asText();
+            String title = study.path("title").asText();
+            String description = study.path("description").asText();
+            String filename = study.path("filename").asText();
+            String subDate = study.path("submissiondate").asText();
+            String pubDate = study.path("publicreleasedate").asText();
 
             LOG.warn("STUDY " + identifier);
             LOG.warn(title + " -- " + filename + " | " + subDate);
 
+            getProtocols(study);
+            getMaterials(study);
 
-            JsonNode protocol = node.path("protocols");
-            for (JsonNode n2 : protocol) {
-                String protName = n2.path("name").asText();
-                String pDescr = n2.path("description").asText();
-
-                Integer protPar = n2.path("parameters").size();
-
-                LOG.warn("PROT " + protName + " pars: " + protPar);
-                LOG.warn("PROT " + pDescr);
-
-                JsonNode ppar = n2.path("parameters");
-                LOG.warn("PPAR " + ppar.getNodeType().toString());
-
-                for (JsonNode pnode : ppar) {
-                    LOG.warn("QQ");
-                    String id = pnode.path("@id").asText();
-                    String annotationValue = pnode.path("parameterName").get("annotationValue").asText();
-                    //String annotationValue = pnode.path("annotationValue").asText();
-                    String termAccession = pnode.path("termAccession").asText();
-                    //String termSource = pnode.path("termSource").asText();
-
-                    LOG.info("STUDY DESDES " + annotationValue + "|" + termAccession + "|" + id);
-                }
-
-
-            }
         }
 
-        LOG.warn("-----" + study.path("identifier").asText());
-
+        LOG.warn("-----");
 
 
         //createInvestigationWithPojo(file);
 
 
     }
+
+    private void getProtocols(JsonNode study) {
+        JsonNode protocolNode = study.path("protocols");
+        for (JsonNode protocol : protocolNode) {
+            String protName = protocol.path("name").asText();
+            String pDescr = protocol.path("description").asText();
+
+            Integer protPar = protocol.path("parameters").size();
+
+            LOG.warn("PROT " + protName + " pars: " + protPar);
+            LOG.warn("PROT " + pDescr);
+
+            JsonNode parameterNode = protocol.path("parameters");
+
+            for (JsonNode parameter : parameterNode) {
+                String id = parameter.path("@id").asText();
+                String annotationValue = parameter.path("parameterName").get("annotationValue").asText();
+                //String annotationValue = pnode.path("annotationValue").asText();
+                String termAccession = parameter.path("termAccession").asText();
+                //String termSource = pnode.path("termSource").asText();
+
+                LOG.info("PPar " + id + ": " + annotationValue + "|" + termAccession);
+            }
+        }
+    }
+
+    private void getMaterials(JsonNode study) {
+        LOG.warn("IN MATERIALS...");
+        JsonNode sourceNode = study.path("materials").get("sources");
+        for (JsonNode source : sourceNode) {
+            LOG.warn("IN MatSources...");
+
+            getSource(source);
+
+        }
+
+        JsonNode sampleNode = study.path("materials").get("samples");
+        for (JsonNode sample : sampleNode) {
+            LOG.warn("IN MatSamples...");
+
+            getSource(sample);
+
+        }
+
+    }
+
+
+    private void getSource(JsonNode source) { //TODO rename to more generic
+        String sourceName = source.path("name").asText();
+        String sourceId = source.path("@id").asText();
+
+        Integer cSize = source.path("characteristics").size();
+
+        LOG.warn("SOURCE " + sourceId + ": " + sourceName + " with " + cSize + " characteristics");
+
+        JsonNode characteristicNode = source.path("characteristics");
+
+        for (JsonNode characteristic : characteristicNode) {
+            String categoryId = characteristic.path("category").get("@id").asText();
+
+            Term term = new Term(characteristic).invoke();
+            String annotationValue = term.getAnnotationValue();
+            String termAccession = term.getTermAccession();
+            String termSource = term.getTermSource();
+
+            LOG.info("CHAR " + categoryId + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+        }
+    }
+
 
     private void mapOSR(JsonNode osr) {
         for (JsonNode node : osr) {
@@ -179,8 +220,6 @@ public class ISAConverter extends BioFileConverter {
         }
         */
     }
-
-
 
 
     private void otherAccess(JsonNode root) {
@@ -298,5 +337,36 @@ public class ISAConverter extends BioFileConverter {
             proteins.put(accession, item);
         }
         return item;
+    }
+
+    private class Term {
+        private JsonNode characteristic;
+        private String annotationValue;
+        private String termAccession;
+        private String termSource;
+
+        public Term(JsonNode characteristic) {
+            this.characteristic = characteristic;
+        }
+
+        public String getAnnotationValue() {
+            return annotationValue;
+        }
+
+        public String getTermAccession() {
+            return termAccession;
+        }
+
+        public String getTermSource() {
+            return termSource;
+        }
+
+        public Term invoke() {
+            String valueId = characteristic.path("value").get("@id").asText();
+            annotationValue = characteristic.path("value").get("annotationValue").asText();
+            termAccession = characteristic.path("value").get("termAccession").asText();
+            termSource = characteristic.path("value").get("termSource").asText();
+            return this;
+        }
     }
 }
