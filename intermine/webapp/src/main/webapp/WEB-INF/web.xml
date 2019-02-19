@@ -3123,6 +3123,36 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+    <!-- New in version 28 -->
+
+    <servlet>
+        <servlet-name>ws-system-template</servlet-name>
+        <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+        <init-param>
+            <param-name>GET</param-name>
+            <param-value>org.intermine.webservice.server.template.SystemTemplatesService</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ws-system-template</servlet-name>
+        <url-pattern>/service/templates/system</url-pattern>
+        <metadata>
+            <name>Templates (System)</name>
+            <method type="GET" authenticationRequired="false">
+                <summary>Get the list of system templates.</summary>
+                <description format="markdown">
+                    Get a listing of the templates configured in an InterMine instance tagged with
+                    the `im:converter` tag.
+                </description>
+                <returns>
+                    <format>xml</format>
+                    <format key="templates">json</format>
+                </returns>
+            </method>
+        </metadata>
+    </servlet-mapping>
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>

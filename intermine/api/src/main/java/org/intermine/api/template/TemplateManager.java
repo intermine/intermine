@@ -382,6 +382,15 @@ public class TemplateManager
     }
 
     /**
+     * Return template queries used for converting between types in bag upload and lookup queries,
+     * these are Superuser templates that have been tagged with TagNames.IM_CONVERTER.
+     * @return a map of system templates
+     */
+    public Map<String, ApiTemplate> getSystemTemplates() {
+        return getTemplatesWithTag(superProfile, TagNames.IM_CONVERTER);
+    }
+
+    /**
      * Return a map from template name to template query of template in the given profile that are
      * tagged with a particular tag.
      * @param profile a user profile to get templates from
