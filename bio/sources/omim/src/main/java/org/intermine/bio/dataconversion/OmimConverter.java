@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.BufferedReader;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -165,7 +166,8 @@ public class OmimConverter extends BioDirectoryConverter
             // the line isn't space or tab delimited properly, hence this weirdness
             String[] bits = line.split("\\s\\(\\d\\)\\s");
             if (bits.length != 2) {
-                throw new RuntimeException(" bad line: '" + line + "' ");
+                LOG.error(" bad line: '" + line + "' ");
+                continue;
             }
 
             String unformattedDiseaseString = bits[0];

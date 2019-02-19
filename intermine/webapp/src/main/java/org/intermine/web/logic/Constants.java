@@ -219,6 +219,7 @@ public final class Constants
      */
     public static final int WEB_SERVICE_VERSION = 29;
 
+
     /**
      * Current version of the InterMine code
      */
