@@ -540,7 +540,8 @@ public class EntrezPublicationsRetriever
             }
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve pubmed record: " + characters);
-            } else if ("PMID".equals(qName) && "MedlineCitation".equals(stack.peek())) {
+            } else if ("PMID".equals(qName) && ("MedlineCitation".equals(stack.peek())
+                    || "BookDocument".equals(stack.peek()))) {
                 String pubMedId = characters.toString();
                 Integer pubMedIdInteger;
                 try {

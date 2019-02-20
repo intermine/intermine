@@ -1,5 +1,0 @@
-<project name="uberfly" default="default" basedir=".">
-  <description>build, test, package uberfly</description>
-
-  <import file="../../../../imbuild/source.xml"/>
-</project>

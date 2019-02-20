@@ -250,9 +250,10 @@ public class AutoCompleter
         }
 
         try {
-            UpdateResponse response = solrClient.add(solrDocumentList);
-
-            solrClient.commit();
+            if (!solrDocumentList.isEmpty()) {
+                UpdateResponse response = solrClient.add(solrDocumentList);
+                solrClient.commit();
+            }
         } catch (SolrServerException e) {
 
             LOG.error("Error while commiting the AutoComplete "

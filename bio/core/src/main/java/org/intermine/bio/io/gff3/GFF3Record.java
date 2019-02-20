@@ -43,6 +43,7 @@ public class GFF3Record
     private String strand;
     private String phase;
     private Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
+    private String header = null;
 
     /**
      * Create a GFF3Record from a line of a GFF3 file
@@ -50,6 +51,21 @@ public class GFF3Record
      * @throws IOException if there is an error during parsing the line
      */
     public GFF3Record(String line) throws IOException {
+        parseLine(line);
+    }
+
+    /**
+     * Create a GFF3Record from a line of a GFF3 file
+     * @param line the String to parse
+     * @param header the comments at the beginning of the GFF file. Might be null
+     * @throws IOException if there is an error during parsing the line
+     */
+    public GFF3Record(String header, String line) throws IOException {
+        parseLine(line);
+        this.header = header;
+    }
+
+    private void parseLine(String line) throws IOException {
         StringTokenizer st = new StringTokenizer(line, "\t", false);
 
         if (st.countTokens() < 8) {
@@ -71,7 +87,7 @@ public class GFF3Record
             }
         } catch (NumberFormatException nfe) {
             throw new IOException("can not parse integer for start position: " + startString
-                                  + " from line: " + line);
+                    + " from line: " + line);
         }
 
         String endString = st.nextToken().trim();
@@ -83,7 +99,7 @@ public class GFF3Record
             }
         } catch (NumberFormatException nfe) {
             throw new IOException("can not parse integer for end position: " + endString
-                                  + " from line: " + line);
+                    + " from line: " + line);
         }
 
         String scoreString = st.nextToken().trim();
@@ -95,7 +111,7 @@ public class GFF3Record
                 score = new Double(scoreString);
             } catch (NumberFormatException nfe) {
                 throw new IOException("can not parse score: " + scoreString + " from line: "
-                                      + line);
+                        + line);
             }
         }
 
@@ -409,6 +425,15 @@ public class GFF3Record
      */
     public Map<String, List<String>> getAttributes () {
         return attributes;
+    }
+
+    /**
+     * Return the value of the top of the GFF file, any line that starts with #.
+     *
+     * @return the file header -- the comments at the top of the GFF file
+     */
+    public String getHeader () {
+        return header;
     }
 
     /**

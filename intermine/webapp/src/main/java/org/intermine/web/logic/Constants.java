@@ -214,13 +214,14 @@ public final class Constants
      * 25 - Add id to whoami
      * 26 - Add listId to all web services. #1669
      * 27 - Renamed xml parameter to query #1676
+     * 28 - Added system templates #1726
      */
-    public static final int WEB_SERVICE_VERSION = 27;
+    public static final int WEB_SERVICE_VERSION = 28;
 
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "3.1.0";
+    public static final String INTERMINE_VERSION = "3.1.1";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

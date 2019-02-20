@@ -16,7 +16,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: "com.jfrog.artifactory"
 
 group 'org.intermine'
-version '3.1.0'
+version '3.1.1'
 sourceCompatibility = 1.8
 
 repositories {
@@ -86,9 +86,9 @@ bintray {
         vcsUrl = 'https://github.com/intermine/intermine.git'
         publicDownloadNumbers = true
         version {
-            name = '3.1.0'
-            desc = 'InterMine 3.1.0'
-            vcsTag = 'intermine-3.1.0'
+            name = '3.1.1'
+            desc = 'InterMine 3.1.1'
+            vcsTag = 'intermine-3.1.1'
         }
     }
 

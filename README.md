@@ -3,7 +3,7 @@ InterMine
 
 Master: [![Build Status: master][travis-badge-master]][ci]
 Dev: [![Build Status: dev][travis-badge-dev]][ci]
-[![Version](http://img.shields.io/badge/version-3.1.0-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
+[![Version](http://img.shields.io/badge/version-3.1.1-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
 [![Conda](https://anaconda.org/anaconda/conda-build/badges/installer/conda.svg)](https://anaconda.org/bioconda/intermine)
@@ -59,7 +59,7 @@ provided to the setup scripts as `PSQL_USER`.
 Copyright and Licence
 ------------------------
 
-Copyright (C) 2002-2018 FlyMine
+Copyright (C) 2002-2019 FlyMine
 
 See [LICENSE](LICENSE) file for licensing information.
 
