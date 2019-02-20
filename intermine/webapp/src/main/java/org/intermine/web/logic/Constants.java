@@ -215,8 +215,10 @@ public final class Constants
      * 26 - Add listId to all web services. #1669
      * 27 - Renamed xml parameter to query #1676
      * 28 - Added system templates #1726
+     * 29 - Add template tagging
      */
-    public static final int WEB_SERVICE_VERSION = 28;
+    public static final int WEB_SERVICE_VERSION = 29;
+
 
     /**
      * Current version of the InterMine code

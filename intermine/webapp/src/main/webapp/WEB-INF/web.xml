@@ -3123,7 +3123,8 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
-    <!-- New in version 28 -->
+  
+      <!-- New in version 28 -->
 
     <servlet>
         <servlet-name>ws-system-template</servlet-name>
@@ -3134,7 +3135,7 @@ The different token types are:
         </init-param>
     </servlet>
 
-    <servlet-mapping>
+ <servlet-mapping>
         <servlet-name>ws-system-template</servlet-name>
         <url-pattern>/service/templates/system</url-pattern>
         <metadata>
@@ -3148,6 +3149,73 @@ The different token types are:
                 <returns>
                     <format>xml</format>
                     <format key="templates">json</format>
+                </returns>
+            </method>
+        </metadata>
+    </servlet-mapping>
+
+    <!-- new in version 29 -->
+
+    <servlet>
+        <servlet-name>ws-template-tags</servlet-name>
+        <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+        <init-param>
+            <param-name>GET</param-name>
+            <param-value>org.intermine.webservice.server.template.TemplateTagService</param-value>
+        </init-param>
+        <init-param>
+            <param-name>POST</param-name>
+            <param-value>org.intermine.webservice.server.template.TemplateTagAddingService</param-value>
+        </init-param>
+        <init-param>
+            <param-name>DELETE</param-name>
+            <param-value>org.intermine.webservice.server.template.TemplateTagRemovalService</param-value>
+        </init-param>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ws-template-tags</servlet-name>
+        <url-pattern>/service/template/tags/*</url-pattern>
+        <metadata>
+            <name>Template Tags</name>
+            <minVersion>7</minVersion>
+            <method authenticationRequired="false" type="GET" >
+                <summary>Get the tags for a template, or all the tags for a given user</summary>
+                <description>
+                    Fetch an up-to-date list of all tags associated with a template, or all templates.
+                </description>
+                <param type="String" required="false" description="The name of a template whose tags to retrieve. If no template is provided, then all the tags associated with the authenticating user will be returned.">name</param>
+                <returns>
+                    <format key="tags">json</format>
+                    <format>xml</format>
+                    <format>tab</format>
+                    <format>csv</format>
+                </returns>
+            </method>
+            <method authenticationRequired="true" type="POST">
+                <summary>Add one or more tags to a list</summary>
+                <param type="String" required="true" description="The name of a template to add the tag(s) to.">name</param>
+                <param type="String" required="true" description="The name of the tags to add. It should take to from of a semi-colon delimited concatenation of the tag names.">tags</param>
+                <returns>
+                    <format key="tags">json</format>
+                    <format>xml</format>
+                    <format>tab</format>
+                    <format>csv</format>
+                </returns>
+            </method>
+            <method authenticationRequired="true" type="DELETE">
+                <summary>Delete one or more tags from a list</summary>
+                <param type="String" required="true" description="The name of a template to add the tag(s) to.">name</param>
+                <param type="String" required="true" description="The name of the tags to remove. It should take to from of a semi-colon delimited concatenation of the tag names.">tags</param>
+                <returns>
+                    <format key="tags">json</format>
+                    <format>xml</format>
+                    <format>tab</format>
+                    <format>csv</format>
                 </returns>
             </method>
         </metadata>
