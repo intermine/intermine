@@ -16,15 +16,10 @@ import org.intermine.web.logic.PermanentURIHelper;
 import org.intermine.webservice.server.core.JSONService;
 
 /**
- * Generate a permanent URI given a type and internal InterMine ID
- * Examples of permanent URIs
- * 1-If the mine is registered in identifiers.org and you've configured the identifier.uri.base
- * property in the mine properties file:
- * identifiers.org/{mine}/protein:P31946 (if the mine is registered in identifiers.org)
- * 2-If a redirection system is not used the uri generated will be based on
- * {webapp.baseurl}/{webapp.path}/protein:P31946
+ * Generate a permanent URL given a type and internal InterMine ID
+ * Permanent URLs are used in the Share button and to set the attribute 'url' in Schema.org
  *
- * The uri returned will be empty in the following cases:
+ * The url returned will be empty in the following cases:
  * type is not defined in the model,
  * type is defined in the model but we are not able to generate a permanent URI
  * id is wrong

@@ -22,7 +22,18 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Properties;
 
 /**
- * Utility class used to build the permanent URI
+ * Utility class used to build the permanent URI and permanent URL
+ * Permanent URLs are used in the Share button and to set the attribute 'url' in Schema.org
+ * Permanent URIs are used to set the attribute 'identifier' in Schema.org and in RDF
+ * Examples of permanent URIs
+ * 1-If the mine is registered in identifiers.org and you've set in the mine properties file
+ * identifier.uri.base=identifiers.org/biotestmine, the permanent URI will be
+ * identifiers.org/biotestmine/protein:P31946
+ * 2-If you use a redirection system and you've set in the mine properties file
+ * identifier.uri.base=purl.biotestmine.org/biotestmine, the permanent URI will be
+ * purl.biotestmine.org/biotestmine/protein:P31946
+ * 3-If identifier.uri.base is not set, the uri generated will be based on
+ * {webapp.baseurl}/{webapp.path}/protein:P31946
  *
  * @author danielabutano
  */
