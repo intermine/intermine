@@ -112,7 +112,7 @@ public class ISAConverter extends BioFileConverter {
 
             getProtocols(study);
             getMaterials(study);
-
+            getAssays(study);
         }
 
         LOG.warn("-----");
@@ -146,7 +146,8 @@ public class ISAConverter extends BioFileConverter {
                 LOG.info("PPar " + id + ": " + annotationValue + "|" + termAccession);
             }
         }
-    }
+    }           
+
 
     private void getMaterials(JsonNode study) {
         LOG.warn("IN MATERIALS...");
@@ -163,13 +164,115 @@ public class ISAConverter extends BioFileConverter {
             LOG.warn("IN MatSamples...");
 
             getSource(sample);
-
+            //getCategoryValue(sample);
+            getCategoryValue(sample, "factorValues");
         }
 
     }
 
+    private void getAssays(JsonNode study) {
+        JsonNode assayNode = study.path("assays");
+        for (JsonNode assay : assayNode) {
+            String fileName = assay.path("fileName").asText();
+            String technologyPlatform = assay.path("technologyPlatform").asText();
 
-    private void getSource(JsonNode source) { //TODO rename to more generic
+            LOG.warn("ASSAY " + fileName + " on: " + technologyPlatform);
+
+            JsonNode carCatNode = assay.get("characteristicCategories");
+LOG.warn("CARCAT node type is " + carCatNode.getNodeType().toString() + " and size " + carCatNode.size());
+
+            for (JsonNode inode : carCatNode) {
+                LOG.warn("IN characteristicCategory ...");
+                String characteristicCategoryId =  inode.path("@id").asText(); // prob not useful
+                getCategoryValue(inode, "characteristicType");
+            }
+
+            JsonNode mtn = assay.get("measurementType");
+            LOG.warn("MT node type is " + mtn.getNodeType().toString() + " and size " + mtn.size());
+            String measurementTypeId =  mtn.path("@id").asText(); // prob not useful
+            String mtannotationValue = mtn.path("annotationValue").asText();
+            LOG.warn("MATTYPE " + measurementTypeId + "|" + mtannotationValue);
+
+
+//            JsonNode parameterNode = assay.path("parameters");
+//
+//            for (JsonNode parameter : parameterNode) {
+//                String id = parameter.path("@id").asText();
+//                String annotationValue = parameter.path("parameterName").get("annotationValue").asText();
+//                //String annotationValue = pnode.path("annotationValue").asText();
+//                String termAccession = parameter.path("termAccession").asText();
+//                //String termSource = pnode.path("termSource").asText();
+//
+//                LOG.info("PPar " + id + ": " + annotationValue + "|" + termAccession);
+//            }
+        }
+    }
+
+
+    private void getSource(JsonNode source) {
+        String sourceName = source.path("name").asText();
+        String sourceId = source.path("@id").asText();
+
+        getCategoryValue(source, "characteristics");
+
+        Integer cSize = source.path("characteristics").size();
+        LOG.warn("SOURCE " + sourceId + ": " + sourceName + " with " + cSize + " characteristics");
+
+//        JsonNode characteristicNode = source.path("characteristics");
+//
+//        for (JsonNode characteristic : characteristicNode) {
+//            String categoryId = characteristic.path("category").get("@id").asText();
+//
+//            Term term = new Term(characteristic).invoke();
+//            String annotationValue = term.getAnnotationValue();
+//            String termAccession = term.getTermAccession();
+//            String termSource = term.getTermSource();
+//
+//            LOG.info("CHAR " + categoryId + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+//        }
+    }
+
+    private void getCategoryValue(JsonNode source, String innerGroup) {
+        //    String sourceName = source.path("name").asText();
+        //    String sourceId = source.path("@id").asText();
+
+        Integer cSize = source.path(innerGroup).size();
+
+        LOG.warn("-- " + innerGroup + ": " + cSize );
+
+        if (innerGroup.equalsIgnoreCase("characteristicType")) {
+           Term term = new Term(source, "characteristicType").invoke();
+            String annotationValue = term.getAnnotationValue();
+            String termAccession = term.getTermAccession();
+            String termSource = term.getTermSource();
+
+            LOG.info("CHAR: " + annotationValue + "|" + termAccession + "|" + termSource);
+
+            return;
+        }
+
+        JsonNode categoryNode = source.path(innerGroup);
+
+        for (JsonNode characteristic : categoryNode) {
+            String categoryId = null;
+            Term term = null;
+            if (characteristic.has("category")) {
+                categoryId = characteristic.path("category").get("@id").asText();
+            }
+            if (innerGroup.equalsIgnoreCase("characteristicType")) {
+                term = new Term(characteristic, "characteristicType").invoke();
+            } else {
+                term = new Term(characteristic).invoke();
+            }
+            String annotationValue = term.getAnnotationValue();
+            String termAccession = term.getTermAccession();
+            String termSource = term.getTermSource();
+
+            LOG.info("CHAR " + categoryId + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+        }
+    }
+
+    private void getSourceALFA(JsonNode source) { //TODO rename to more generic
         String sourceName = source.path("name").asText();
         String sourceId = source.path("@id").asText();
 
@@ -344,9 +447,16 @@ public class ISAConverter extends BioFileConverter {
         private String annotationValue;
         private String termAccession;
         private String termSource;
+        private String fieldName;
 
         public Term(JsonNode characteristic) {
             this.characteristic = characteristic;
+            this.fieldName = "value"; // default
+        }
+
+        public Term(JsonNode characteristic, String fieldName) {
+            this.characteristic = characteristic;
+            this.fieldName = fieldName;
         }
 
         public String getAnnotationValue() {
@@ -362,11 +472,86 @@ public class ISAConverter extends BioFileConverter {
         }
 
         public Term invoke() {
-            String valueId = characteristic.path("value").get("@id").asText();
-            annotationValue = characteristic.path("value").get("annotationValue").asText();
-            termAccession = characteristic.path("value").get("termAccession").asText();
-            termSource = characteristic.path("value").get("termSource").asText();
+            LOG.warn("TERM " + fieldName + "---" + characteristic.asText());
+            annotationValue = characteristic.path(fieldName).get("annotationValue").asText();
+            String valueId = characteristic.path(fieldName).get("@id").asText();
+            termAccession = characteristic.path(fieldName).get("termAccession").asText();
+            termSource = characteristic.path(fieldName).get("termSource").asText();
             return this;
         }
     }
+
+    // TORM
+    private void getCategoryValueOLD(JsonNode source) { //TODO rename to more generic
+        //    String sourceName = source.path("name").asText();
+        //    String sourceId = source.path("@id").asText();
+
+        Integer cSize = source.path("factorValues").size();
+
+        LOG.warn("FV " + cSize );
+
+        JsonNode characteristicNode = source.path("factorValues");
+
+        for (JsonNode characteristic : characteristicNode) {
+            String categoryId = characteristic.path("category").get("@id").asText();
+
+            Term term = new Term(characteristic).invoke();
+            String annotationValue = term.getAnnotationValue();
+            String termAccession = term.getTermAccession();
+            String termSource = term.getTermSource();
+
+            LOG.info("CHAR " + categoryId + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+        }
+    }
+
+    private void getTerm(JsonNode source) { //TODO rename to more generic
+        //    String sourceName = source.path("name").asText();
+        //    String sourceId = source.path("@id").asText();
+
+        PTerm term = new PTerm(source).invoke();
+        String annotationValue = term.getAnnotationValue();
+        String termAccession = term.getTermAccession();
+        String termSource = term.getTermSource();
+
+        LOG.info("CHAR: " + annotationValue + "|" + termAccession + "|" + termSource);
+
+    }
+
+
+    private class PTerm {
+        private JsonNode node;
+        private String annotationValue;
+        private String termAccession;
+        private String termSource;
+        private String fieldName;
+
+        public PTerm(JsonNode node) {
+            this.node = node;
+        }
+
+
+        public String getAnnotationValue() {
+            return annotationValue;
+        }
+
+        public String getTermAccession() {
+            return termAccession;
+        }
+
+        public String getTermSource() {
+            return termSource;
+        }
+
+        public PTerm invoke() {
+            String valueId = node.path("@id").asText();
+            LOG.warn("TERM..." + valueId);
+            annotationValue = node.path("annotationValue").asText();
+            termAccession = node.path("termAccession").asText();
+            termSource = node.path("termSource").asText();
+            return this;
+        }
+    }
+
+
+
 }
