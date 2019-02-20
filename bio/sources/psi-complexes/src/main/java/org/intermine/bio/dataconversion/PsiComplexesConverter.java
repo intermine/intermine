@@ -378,7 +378,7 @@ public class PsiComplexesConverter extends BioFileConverter
             ChebiWebServiceClient client = new ChebiWebServiceClient();
             Entity entity = client.getCompleteEntity(identifier);
             return entity.getChebiAsciiName();
-        } catch (ChebiWebServiceFault_Exception e) {
+        } catch (Exception e) {
             LOG.warn(e.getMessage());
         }
         return null;
