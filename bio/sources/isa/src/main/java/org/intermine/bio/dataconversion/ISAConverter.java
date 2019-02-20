@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -153,13 +153,13 @@ public class ISAConverter extends BioFileConverter {
         LOG.warn("IN MATERIALS...");
         JsonNode sourceNode = study.path("materials").get("sources");
         for (JsonNode source : sourceNode) {
-            LOG.warn("IN MatSources...");
+            LOG.warn("IN Sources...");
             getSource(source);
         }
 
         JsonNode sampleNode = study.path("materials").get("samples");
         for (JsonNode sample : sampleNode) {
-            LOG.warn("IN MatSamples...");
+            LOG.warn("IN Samples...");
             getSource(sample);
             getFactorValues(sample.path("factorValues"));
         }
@@ -175,9 +175,9 @@ public class ISAConverter extends BioFileConverter {
 
             // GET characteristicCategories
             JsonNode characteristicCategoriesNode = assay.get("characteristicCategories");
-            LOG.warn("characteristicCategories node type is "
-                    + characteristicCategoriesNode.getNodeType().toString()
-                    + " and size " + characteristicCategoriesNode.size());
+//            LOG.warn("characteristicCategories node type is "
+//                    + characteristicCategoriesNode.getNodeType().toString()
+//                    + " and size " + characteristicCategoriesNode.size());
 
             for (JsonNode inode : characteristicCategoriesNode) {
                 LOG.warn("IN characteristicCategory ...");
@@ -185,7 +185,6 @@ public class ISAConverter extends BioFileConverter {
 
                 LOG.warn("--characteristicType: " + inode.path("characteristicType").size());
 
-//                    Term term = new Term(inode, "characteristicType").invoke();
                 Term term = new Term(inode.path("characteristicType")).invoke();
                 String id = term.getId();
                 String annotationValue = term.getAnnotationValue();
@@ -214,48 +213,6 @@ public class ISAConverter extends BioFileConverter {
 
 
 
-/*
-    private void getCategoryValue(JsonNode source, String innerGroup) {
-        //    String sourceName = source.path("name").asText();
-        //    String sourceId = source.path("@id").asText();
-
-        Integer cSize = source.path(innerGroup).size();
-
-        LOG.warn("-- " + innerGroup + ": " + cSize);
-
-        if (innerGroup.equalsIgnoreCase("characteristicType")) {
-            Term term = new Term(source, "characteristicType").invoke();
-            String annotationValue = term.getAnnotationValue();
-            String termAccession = term.getTermAccession();
-            String termSource = term.getTermSource();
-
-            LOG.info("CHAR: " + annotationValue + "|" + termAccession + "|" + termSource);
-
-            return;
-        }
-
-        JsonNode categoryNode = source.path(innerGroup);
-
-        for (JsonNode characteristic : categoryNode) {
-            String categoryId = null;
-            Term term = null;
-            if (characteristic.has("category")) {
-                categoryId = characteristic.path("category").get("@id").asText();
-            }
-            if (innerGroup.equalsIgnoreCase("characteristicType")) {
-                term = new Term(characteristic, "characteristicType").invoke();
-            } else {
-                term = new Term(characteristic).invoke();
-            }
-            String annotationValue = term.getAnnotationValue();
-            String termAccession = term.getTermAccession();
-            String termSource = term.getTermSource();
-
-            LOG.info("CHAR " + categoryId + ": " + annotationValue + "|" + termAccession + "|" + termSource);
-        }
-    }
-*/
-
     private void getSource(JsonNode source) { //TODO rename to more generic
         String sourceName = source.path("name").asText();
         String sourceId = source.path("@id").asText();
@@ -271,11 +228,13 @@ public class ISAConverter extends BioFileConverter {
 
             JsonNode value = characteristic.path("value");
             Term term = new Term(value).invoke();
+            String id = term.getId();
             String annotationValue = term.getAnnotationValue();
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
-            LOG.info("CHAR " + categoryId + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+            LOG.info("CHAR " + categoryId + ": " + id + "|" + annotationValue + "|"
+                    + termAccession + "|" + termSource);
         }
     }
 
@@ -286,11 +245,13 @@ public class ISAConverter extends BioFileConverter {
 
             JsonNode value = characteristic.path("value");
             Term term = new Term(value).invoke();
+            String id = term.getId();
             String annotationValue = term.getAnnotationValue();
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
-            LOG.info("CHAR " + categoryId + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+            LOG.info("CHAR " + categoryId + ": " + "id" + annotationValue + "|"
+                    + termAccession + "|" + termSource);
         }
     }
 
@@ -442,74 +403,6 @@ public class ISAConverter extends BioFileConverter {
         return item;
     }
 
-    /*
-    private class Term {
-        private JsonNode characteristic;
-        private String id;
-        private String annotationValue;
-        private String termAccession;
-        private String termSource;
-        private String fieldName;
-
-        public Term(JsonNode characteristic) {
-            this.characteristic = characteristic;
-            this.fieldName = "value"; // default
-        }
-
-        public Term(JsonNode characteristic, String fieldName) {
-            this.characteristic = characteristic;
-            this.fieldName = fieldName;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getAnnotationValue() {
-            return annotationValue;
-        }
-
-        public String getTermAccession() {
-            return termAccession;
-        }
-
-        public String getTermSource() {
-            return termSource;
-        }
-
-        public Term invoke() {
-            LOG.warn("TERM " + fieldName + "---" + characteristic.asText());
-            id = characteristic.path(fieldName).get("@id").asText();
-            annotationValue = characteristic.path(fieldName).get("annotationValue").asText();
-            termAccession = characteristic.path(fieldName).get("termAccession").asText();
-            termSource = characteristic.path(fieldName).get("termSource").asText();
-            return this;
-        }
-    }
-
-    // TORM
-    private void getCategoryValueOLD(JsonNode source) { //TODO rename to more generic
-        //    String sourceName = source.path("name").asText();
-        //    String sourceId = source.path("@id").asText();
-
-        Integer cSize = source.path("factorValues").size();
-
-        LOG.warn("FV " + cSize);
-
-        JsonNode characteristicNode = source.path("factorValues");
-
-        for (JsonNode characteristic : characteristicNode) {
-            String categoryId = characteristic.path("category").get("@id").asText();
-
-            Term term = new Term(characteristic).invoke();
-            String annotationValue = term.getAnnotationValue();
-            String termAccession = term.getTermAccession();
-            String termSource = term.getTermSource();
-
-            LOG.info("CHAR " + categoryId + ": " + annotationValue + "|" + termAccession + "|" + termSource);
-        }
-    }
-*/
 
     private void getTerm(JsonNode source) { //TODO rename to more generic
         //    String sourceName = source.path("name").asText();
