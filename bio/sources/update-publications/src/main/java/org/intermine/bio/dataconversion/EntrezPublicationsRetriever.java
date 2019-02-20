@@ -92,6 +92,7 @@ public class EntrezPublicationsRetriever
     private ItemFactory itemFactory;
     private boolean loadFullRecord = false;
     private Map<String, Item> meshTerms = new HashMap<String, Item>();
+    private static final int POSTGRES_INDEX_SIZE = 2712;
 
     /**
      * Load summary version of Publication record by default. If this boolean (loadFullRecord)
@@ -413,7 +414,15 @@ public class EntrezPublicationsRetriever
         }
         final String abstractText = (String) map.get("abstractText");
         if (!StringUtils.isEmpty(abstractText)) {
-            publication.setAttribute("abstractText", abstractText);
+            // see https://github.com/intermine/intermine/issues/2009
+            if (abstractText.length() > POSTGRES_INDEX_SIZE) {
+                String ellipses = "...";
+                String choppedAbtract = abstractText.substring(
+                        0, POSTGRES_INDEX_SIZE - ellipses.length());
+                publication.setAttribute("abstractText", choppedAbtract + ellipses);
+            } else {
+                publication.setAttribute("abstractText", abstractText);
+            }
         }
         final String month = (String) map.get("month");
         if (!StringUtils.isEmpty(month)) {
