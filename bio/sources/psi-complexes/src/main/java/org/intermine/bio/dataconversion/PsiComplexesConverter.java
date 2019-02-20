@@ -46,7 +46,6 @@ import psidev.psi.mi.jami.model.Range;
 import psidev.psi.mi.jami.model.Stoichiometry;
 import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.chebi.webapps.chebiWS.client.ChebiWebServiceClient;
-import uk.ac.ebi.chebi.webapps.chebiWS.model.ChebiWebServiceFault_Exception;
 import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
 
 
