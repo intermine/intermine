@@ -230,22 +230,37 @@ public class AutoCompleter
             e.printStackTrace();
         }
 
+        List<String> existingFields = null;
+
+        try {
+            existingFields = getAllExistingFieldsFromSolr(solrClient);
+
+        } catch (SolrServerException e) {
+            LOG.error("Retrieving existing Fieldnames in Solr failed");
+        }
+
+
         for (String fieldName: fieldList) {
-            Map<String, Object> fieldAttributes = new HashMap();
-            fieldAttributes.put("name", fieldName);
-            fieldAttributes.put("type", "text_general");
-            fieldAttributes.put("stored", true);
-            fieldAttributes.put("indexed", true);
-            fieldAttributes.put("multiValued", true);
-            fieldAttributes.put("required", false);
+            if (existingFields != null) {
+                if (!existingFields.contains(fieldName)) {
+                    Map<String, Object> fieldAttributes = new HashMap();
+                    fieldAttributes.put("name", fieldName);
+                    fieldAttributes.put("type", "text_general");
+                    fieldAttributes.put("stored", true);
+                    fieldAttributes.put("indexed", true);
+                    fieldAttributes.put("multiValued", true);
+                    fieldAttributes.put("required", false);
 
-            try {
-                SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
-                SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+                    try {
+                        SchemaRequest.AddField schemaRequest
+                                = new SchemaRequest.AddField(fieldAttributes);
+                        SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
 
-            } catch (SolrServerException e) {
-                LOG.error("Error while adding autocomplete fields to the solrclient.", e);
-                e.printStackTrace();
+                    } catch (SolrServerException e) {
+                        LOG.error("Error while adding autocomplete fields to the solrclient.", e);
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 
@@ -297,5 +312,16 @@ public class AutoCompleter
         }
     }
 
+    private List<String> getAllExistingFieldsFromSolr(SolrClient solrClient)
+            throws IOException, SolrServerException {
+        List<String> allFields = new ArrayList<String>();
+        SchemaRequest.Fields listFields = new SchemaRequest.Fields();
+        SchemaResponse.FieldsResponse fieldsResponse = listFields.process(solrClient);
+        List<Map<String, Object>> solrFields = fieldsResponse.getFields();
+        for (Map<String, Object> field : solrFields) {
+            allFields.add((String) field.get("name"));
+        }
+        return allFields;
+    }
 
 }
