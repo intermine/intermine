@@ -207,6 +207,24 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.info("CHAR " + id + ": " + annotationValue + "|" + termAccession + "|" + termSource);
 
+
+            // GET datafiles
+            JsonNode dataFilesNode = assay.get("dataFiles");
+            LOG.warn("DF node type is " + dataFilesNode.getNodeType().toString()
+                    + " and size " + dataFilesNode.size());
+
+            for (JsonNode inode : dataFilesNode) {
+
+                DataFile file = new DataFile(inode).invoke();
+                String fileId = file.getId();
+                String name = file.getName();
+                String type = file.getType();
+
+                LOG.info("FILE " + fileId + ": " + type + "|" + name);
+            }
+
+
+
         }
     }
 
@@ -450,6 +468,36 @@ public class ISAConverter extends BioFileConverter {
             annotationValue = node.path("annotationValue").asText();
             termAccession = node.path("termAccession").asText();
             termSource = node.path("termSource").asText();
+            return this;
+        }
+    }
+
+    private class DataFile {
+        private JsonNode node;
+        private String id;
+        private String name;
+        private String type;
+
+        public DataFile(JsonNode node) {
+            this.node = node;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public DataFile invoke() {
+            id = node.path("@id").asText();
+            name = node.path("name").asText();
+            type = node.path("type").asText();
             return this;
         }
     }
