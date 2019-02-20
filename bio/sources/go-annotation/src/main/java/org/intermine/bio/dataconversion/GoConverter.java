@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.sun.org.apache.xml.internal.security.utils.IdResolver;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -80,7 +81,6 @@ public class GoConverter extends BioFileConverter
     protected String termClassName = "GOTerm";
     protected String termCollectionName = "goAnnotation";
     protected String annotationClassName = "GOAnnotation";
-    private String gaff = "2.0";
     private static final String DEFAULT_ANNOTATION_TYPE = "gene";
     private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
     protected IdResolver rslv;
@@ -102,16 +102,6 @@ public class GoConverter extends BioFileConverter
         readConfig();
         loadEvidenceCodes();
     }
-
-    /**
-     * Sets the file format for the GAF.  2.0 is the default.
-     *
-     * @param gaff GO annotation file format
-     */
-    public void setGaff(String gaff) {
-        this.gaff = gaff;
-    }
-
 
     static {
         WITH_TYPES.put("FB", "Gene");
@@ -247,10 +237,6 @@ public class GoConverter extends BioFileConverter
             }
 
             String type = config.annotationType;
-            if ("1.0".equals(gaff)) {
-                // type of gene product
-                type = array[11];
-            }
 
             // create unique key for go annotation
             GoTermToGene key = new GoTermToGene(productId, goId, qualifier, withText);
