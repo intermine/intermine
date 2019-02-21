@@ -41,7 +41,9 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Map> comments;  // add field for ref?
     private Map<String, Map> sdd;       // studyDesignDescriptors
     private Map<String, Map> osr;
-    private Map<String, Map> protocols;
+    //private Map<String, Map> protocols;
+    private Map<String, Item> protocols = new HashMap<>();
+    ;
     private Map<String, Map> protpars;  // protocol.parameters
     private Set<String> taxonIds;
     private Map<String, Item> pathways = new HashMap<>();
@@ -117,33 +119,34 @@ public class ISAConverter extends BioFileConverter {
 
         LOG.warn("-----");
 
-
         //createInvestigationWithPojo(file);
 
 
     }
 
-    private void getProtocols(JsonNode study) {
+    private void getProtocols(JsonNode study) throws ObjectStoreException {
         JsonNode protocolNode = study.path("protocols");
         for (JsonNode protocol : protocolNode) {
-            String protName = protocol.path("name").asText();
-            String pDescr = protocol.path("description").asText();
 
-            Integer protPar = protocol.path("parameters").size();
+            String id = blunt(protocol.path("@id").asText());
+            String name = protocol.path("name").asText();
+            String description = protocol.path("description").asText();
+            String uri = protocol.path("uri").asText();
+            String version = protocol.path("version").asText();
 
-            LOG.warn("PROT " + protName + " pars: " + protPar);
-            LOG.warn("PROT " + pDescr);
+            createProtocol(id, name, description, uri, version);
+            LOG.warn("PROT " + name + " pars: " + protocol.path("parameters").size());
 
             JsonNode parameterNode = protocol.path("parameters");
 
             for (JsonNode parameter : parameterNode) {
-                String id = parameter.path("@id").asText();
+                String pid = parameter.path("@id").asText();
                 String annotationValue = parameter.path("parameterName").get("annotationValue").asText();
                 //String annotationValue = pnode.path("annotationValue").asText();
                 String termAccession = parameter.path("termAccession").asText();
                 //String termSource = pnode.path("termSource").asText();
 
-                LOG.info("PPar " + id + ": " + annotationValue + "|" + termAccession);
+                LOG.info("PPar " + pid + ": " + annotationValue + "|" + termAccession);
             }
         }
     }
@@ -223,12 +226,8 @@ public class ISAConverter extends BioFileConverter {
                 LOG.info("FILE " + fileId + ": " + type + "|" + name);
             }
 
-
-
         }
     }
-
-
 
 
     private void getSource(JsonNode source) { //TODO rename to more generic
@@ -370,10 +369,7 @@ public class ISAConverter extends BioFileConverter {
      * {@inheritDoc}
      */
     public void close() throws ObjectStoreException {
-        for (Item item : proteins.values()) {
-            store(item);
-        }
-        for (Item item : pathways.values()) {
+        for (Item item : protocols.values()) {
             store(item);
         }
     }
@@ -409,6 +405,27 @@ public class ISAConverter extends BioFileConverter {
         return item;
     }
 
+    private Item createProtocol(String id, String name, String description, String uri, String version)
+            throws ObjectStoreException {
+        Item item = protocols.get(id);
+        if (item == null) {
+            item = createItem("Protocol");
+            item.setAttribute("name", name);
+            if (!description.isEmpty()) {
+                item.setAttribute("description", description);
+            }
+            if (!uri.isEmpty()) {
+                item.setAttribute("uri", uri);
+            }
+            if (!version.isEmpty()) {
+                item.setAttribute("version", version);
+            }
+            protocols.put(id, item);
+        }
+        return item;
+    }
+
+
     private Item getProtein(String accession, String taxonId)
             throws ObjectStoreException {
         Item item = proteins.get(accession);
@@ -433,6 +450,10 @@ public class ISAConverter extends BioFileConverter {
 
         LOG.info("CHAR: " + annotationValue + "|" + termAccession + "|" + termSource);
 
+    }
+
+    private String blunt(String in) {
+        return in.replaceAll("#", "");
     }
 
 
