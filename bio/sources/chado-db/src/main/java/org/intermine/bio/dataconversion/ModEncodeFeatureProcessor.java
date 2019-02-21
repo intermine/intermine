@@ -198,14 +198,13 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * @param strand the strand
      * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
      * @param featureData the FeatureData for the SequenceFeature
-     * @param taxonId the taxon id to use when finding the Chromosome for the Location
      * @param featureId the chado feature id, key to our commonFeaturesMap
      * @return the new Location object
      * @throws ObjectStoreException if there is a problem while storing
      */
     @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-            FeatureData featureData, String taxonId, int featureId)
+            FeatureData featureData, int featureId)
         throws ObjectStoreException {
         // if a common feature, do it only once..
         if (commonFeaturesMap.containsKey(featureId)) {
@@ -213,7 +212,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.getItemIdentifier(),
                 featureData.getItemIdentifier(),
-                start, end, strand, taxonId);
+                start, end, strand);
         return location;
     }
 
