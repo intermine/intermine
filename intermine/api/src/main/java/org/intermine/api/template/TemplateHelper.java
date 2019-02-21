@@ -173,6 +173,7 @@ public final class TemplateHelper
      * Helper routine for serialising a map of templates to JSON.
      * @param templates The map of templates to serialise.
      * @param im intermine API
+     * @param profile user that owns these templates. Could be NULL
      * @return A JSON string.
      */
     public static String apiTemplateMapToJson(InterMineAPI im,
