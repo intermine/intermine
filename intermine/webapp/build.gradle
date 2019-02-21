@@ -1,5 +1,4 @@
 apply plugin: 'war'
-apply from: 'https://raw.githubusercontent.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
 
 sourceSets {
     main {
