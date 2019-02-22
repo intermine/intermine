@@ -9,7 +9,6 @@ package org.intermine.web.fair;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
 import org.apache.log4j.Logger;
 import org.intermine.api.uri.InterMineLUI;
 import org.intermine.metadata.ClassDescriptor;
@@ -18,8 +17,13 @@ import org.intermine.metadata.Model;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.PermanentURIHelper;
 import org.intermine.web.util.URLGenerator;
+import org.json.JSONObject;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -31,10 +35,12 @@ import java.util.Properties;
 public final class SemanticMarkupUtil
 {
     private static final String SCHEMA = "http://bioschemas.org";
-    private static final String DATACATALOGUE_TYPE = "DataCatalogue";
+    private static final String DATACATALOG_TYPE = "DataCatalog";
     private static final String DATASET_TYPE = "DataSet";
     private static final String BIO_ENTITY_TYPE = "BioChemEntity";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
+    //protected static final String INTERMINE_REGISTRY = "http://test-registry.herokuapp.com/";
+    protected static final String INTERMINE_REGISTRY = "http://localhost:3000/";
     private static final Logger LOG = Logger.getLogger(SemanticMarkupUtil.class);
 
     private SemanticMarkupUtil() {
@@ -47,26 +53,52 @@ public final class SemanticMarkupUtil
      *
      * @return the map containing the markups
      */
-    public static Map<String, Object> getDataCatalogueMarkup(HttpServletRequest request) {
+    public static Map<String, Object> getDataCatalogMarkup(HttpServletRequest request) {
         Properties props = PropertiesUtil.getProperties();
         Map<String, Object> semanticMarkup = new LinkedHashMap<>();
         //minimum  properties for bioschema.org
         semanticMarkup.put("@context", SCHEMA);
-        semanticMarkup.put("@type", DATACATALOGUE_TYPE);
+        semanticMarkup.put("@type", DATACATALOG_TYPE);
         semanticMarkup.put("description", props.getProperty("project.subTitle"));
         semanticMarkup.put("keywords", "Data warehouse, Data integration,"
                 + "Bioinformatics software");
         semanticMarkup.put("name", props.getProperty("project.title"));
         semanticMarkup.put("provider", "addprovider");
         semanticMarkup.put("url", new URLGenerator(request).getPermanentBaseURL());
-
-        //recommended properties by bioschema.org
+        //properties recommended by bioschema.org
         Map<String, String> citation = new LinkedHashMap<>();
         citation.put("@type", "CreativeWork");
         citation.put("identifier", INTERMINE_CITE);
         semanticMarkup.put("citation", citation);
+
         //semanticMarkup.put("dataset", );
-        semanticMarkup.put("identifier", "registry.intermine.org/biotestmine");
+
+        //call the intermine registry to obtain the namespace an build the mine identifier
+        ServletContext context = request.getServletContext();
+        String mineIdentifier = (context.getAttribute("mineIdentifier") != null)
+                                ? (String) context.getAttribute("mineIdentifier")
+                                : null;
+        if (mineIdentifier == null) {
+            String namespace = null;
+            String mineURL = new URLGenerator(request).getPermanentBaseURL();
+            Client client = ClientBuilder.newClient();
+            try {
+                Response response = client.target(INTERMINE_REGISTRY
+                        + "service/namespace?url=" + mineURL).request().get();
+                if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                    JSONObject result = new JSONObject(response.readEntity(String.class));
+                    namespace = result.getString("namespace");
+                }
+            } catch (RuntimeException ex) {
+                LOG.error("Problems connecting to InterMine registry");
+            }
+            mineIdentifier = (namespace != null && !namespace.trim().isEmpty())
+                    ? INTERMINE_REGISTRY + namespace
+                    : mineURL;
+            context.setAttribute("mineIdentifier", mineIdentifier);
+        }
+        semanticMarkup.put("identifier", mineIdentifier);
+
         //semanticMarkup.put("publication", );
         return semanticMarkup;
     }
@@ -79,7 +111,6 @@ public final class SemanticMarkupUtil
      * @return the map containing the markups
      */
     public static Map<String, String> getDataSetMarkup(HttpServletRequest request, String name) {
-        Properties props = PropertiesUtil.getProperties();
         Map<String, String> semanticMarkup = new LinkedHashMap<>();
         //minimum  properties for bioschema.org
         semanticMarkup.put("@context", SCHEMA);

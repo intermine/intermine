@@ -15,23 +15,23 @@ import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.webservice.server.core.JSONService;
 
 /**
- * Serve datacatlogue markup to be added to the home page
+ * Serve datacatalogue markup to be added to the home page
  * @author Daniela Butano
  *
  */
-public class DataCatalogueMarkupService extends JSONService
+public class DataCatalogMarkupService extends JSONService
 {
     /**
      * Constructor
      * @param im The InterMine state object.
      **/
-    public DataCatalogueMarkupService(InterMineAPI im) {
+    public DataCatalogMarkupService(InterMineAPI im) {
         super(im);
     }
 
     @Override
     protected void execute() throws Exception {
-        addResultItem(SemanticMarkupUtil.getDataCatalogueMarkup(request), false);
+        addResultItem(SemanticMarkupUtil.getDataCatalogMarkup(request), false);
     }
 
     @Override

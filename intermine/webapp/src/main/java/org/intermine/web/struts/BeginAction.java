@@ -177,8 +177,7 @@ public class BeginAction extends InterMineAction
         }
 
         //semantic markup
-        Map<String, Object> homePageMarkup = SemanticMarkupUtil.getDataCatalogueMarkup(request);
-        request.setAttribute("semanticMarkup", new JSONObject(homePageMarkup).toString(2));
+        markupHomePage(request);
 
         return mapping.findForward("begin");
     }
@@ -235,5 +234,18 @@ public class BeginAction extends InterMineAction
         cookie.setMaxAge(365 * 24 * 60 * 60);
         response.addCookie(cookie);
         return response;
+    }
+
+    /**
+     * Markup the home page using bioschemas.org
+     * @param request HTTP Servlet Request
+     */
+    private void markupHomePage(HttpServletRequest request) {
+        Properties props = PropertiesUtil.getProperties();
+        if (!props.containsKey("markup.webpages.enable")
+                || "true".equals(props.getProperty("markup.webpages.enable").trim())) {
+            Map<String, Object> homePageMarkup = SemanticMarkupUtil.getDataCatalogMarkup(request);
+            request.setAttribute("semanticMarkup", new JSONObject(homePageMarkup).toString(2));
+        }
     }
 }

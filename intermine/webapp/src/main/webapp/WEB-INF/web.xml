@@ -3121,7 +3121,7 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
-  <!-- New in version 28 -->
+  <!-- New in version 29 -->
   <servlet>
       <servlet-name>ws-permanent-url</servlet-name>
       <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
@@ -3136,7 +3136,7 @@ The different token types are:
     <url-pattern>/service/permanent-url</url-pattern>
     <metadata>
         <name>Permanent URL</name>
-        <minVersion>28</minVersion>
+        <minVersion>29</minVersion>
         <method type="GET" authenticationRequired="false">
             <summary>Get permanent URL for data objetct</summary>
             <description>
@@ -3158,22 +3158,22 @@ The different token types are:
   </servlet-mapping>
 
   <servlet>
-      <servlet-name>ws-datacatalogue-markup</servlet-name>
+      <servlet-name>ws-datacatalog-markup</servlet-name>
       <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
       <init-param>
           <param-name>GET</param-name>
-          <param-value>org.intermine.webservice.server.fair.DataCatalogueMarkupService</param-value>
+          <param-value>org.intermine.webservice.server.fair.DataCatalogMarkupService</param-value>
       </init-param>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>ws-datacatalogue-markup</servlet-name>
-    <url-pattern>/service/semantic-markup/datacatalogue</url-pattern>
+    <servlet-name>ws-datacatalog-markup</servlet-name>
+    <url-pattern>/service/semantic-markup/datacatalog</url-pattern>
     <metadata>
         <name>Semantic Markup</name>
-        <minVersion>28</minVersion>
+        <minVersion>29</minVersion>
         <method type="GET" authenticationRequired="false">
-            <summary>Get semantic markup for datacatalogue type</summary>
+            <summary>Get semantic markup for datacatalog type</summary>
             <description>
                 This service provides semantic markup for the InterMine home page 
             </description>
@@ -3198,7 +3198,7 @@ The different token types are:
     <url-pattern>/service/semantic-markup/dataset</url-pattern>
     <metadata>
         <name>Semantic Markup</name>
-        <minVersion>28</minVersion>
+        <minVersion>29</minVersion>
         <method type="GET" authenticationRequired="false">
             <summary>Get semantic markup for dataset type</summary>
             <description>
@@ -3229,7 +3229,7 @@ The different token types are:
     <url-pattern>/service/semantic-markup/bioentity</url-pattern>
     <metadata>
         <name>Semantic Markup</name>
-        <minVersion>28</minVersion>
+        <minVersion>29</minVersion>
         <method type="GET" authenticationRequired="false">
             <summary>Get semantic markup for bioentity</summary>
             <description>

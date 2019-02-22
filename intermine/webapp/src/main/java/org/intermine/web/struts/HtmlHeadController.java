@@ -29,9 +29,12 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.template.TemplateQuery;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
+
+import java.util.Properties;
 
 /**
  * Controller for the html head tile.  Determines what is shown on the title of the webpage
@@ -131,7 +134,7 @@ public class HtmlHeadController extends TilesAction
                 }
 
                 ReportObject reportObject = reportObjects.get(object);
-                request.setAttribute("semanticMarkup", reportObject.getSemanticMarkup(request));
+                markupReportPage(request, reportObject);
                 htmlPageTitle = reportObject.getHtmlHeadTitle();
 
             } catch (Exception e) {
@@ -173,4 +176,16 @@ public class HtmlHeadController extends TilesAction
         return "2";
     }
 
+    /**
+     * Markup report page using bioschemas.org
+     * @param request HTTP Servlet Request
+     * @param reportObject the reportObject
+     */
+    private void markupReportPage(HttpServletRequest request, ReportObject reportObject) {
+        Properties props = PropertiesUtil.getProperties();
+        if (!props.containsKey("markup.webpages.enable")
+                || "true".equals(props.getProperty("markup.webpages.enable").trim())) {
+            request.setAttribute("semanticMarkup", reportObject.getSemanticMarkup(request));
+        }
+    }
 }
