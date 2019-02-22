@@ -39,8 +39,7 @@ public final class SemanticMarkupUtil
     private static final String DATASET_TYPE = "DataSet";
     private static final String BIO_ENTITY_TYPE = "BioChemEntity";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
-    //protected static final String INTERMINE_REGISTRY = "http://test-registry.herokuapp.com/";
-    protected static final String INTERMINE_REGISTRY = "http://localhost:3000/";
+    protected static final String INTERMINE_REGISTRY = "http://test-registry.herokuapp.com/";
     private static final Logger LOG = Logger.getLogger(SemanticMarkupUtil.class);
 
     private SemanticMarkupUtil() {
