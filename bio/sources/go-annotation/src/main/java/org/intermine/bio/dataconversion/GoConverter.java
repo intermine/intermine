@@ -103,15 +103,6 @@ public class GoConverter extends BioFileConverter
     }
 
     /**
-     * Sets the file format for the GAF.  2.0 is the default.
-     *
-     * @param gaff GO annotation file format
-     */
-    public void setGaff(String gaff) {
-        this.gaff = gaff;
-    }
-
-    /**
      * Set the licence, a URL to the licence for this ontology
      *
      * @param licence licence for these data. Expects a URL
