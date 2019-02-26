@@ -85,18 +85,13 @@ public class ISAConverter extends BioFileConverter {
      */
     public void process(Reader reader) throws Exception {
 
-
         File file = getFiles();
-        // private Map<String, Map> protocols;
 
         JsonNode root = new ObjectMapper().readTree(file);
-
         //otherAccess(root);
 
         JsonNode osr = root.path("ontologySourceReferences");
-
         LOG.warn("OSR type is ... " + osr.getNodeType().toString());
-
         mapOSR(osr);
 
         // do the storing
@@ -121,7 +116,6 @@ public class ISAConverter extends BioFileConverter {
         LOG.warn("-----");
 
         //createInvestigationWithPojo(file);
-
 
     }
 
@@ -185,9 +179,6 @@ public class ISAConverter extends BioFileConverter {
 
             // GET characteristicCategories
             JsonNode characteristicCategoriesNode = assay.get("characteristicCategories");
-//            LOG.warn("characteristicCategories node type is "
-//                    + characteristicCategoriesNode.getNodeType().toString()
-//                    + " and size " + characteristicCategoriesNode.size());
 
             for (JsonNode inode : characteristicCategoriesNode) {
                 LOG.warn("IN characteristicCategory ...");
@@ -292,31 +283,6 @@ public class ISAConverter extends BioFileConverter {
         }
     }
 
-    private void mapOSRg(JsonNode osr) {
-        osr.getNodeType().toString();
-        //Iterator ontology = osr.elements()
-        /*
-        for ( Iterator element : osr.elements()) {
-
-            String name = node.path("name").asText();
-            String description = node.path("description").asText();
-            String filename = node.path("file").asText();
-            String version = node.path("version").asText();
-
-            LOG.warn("OSR " + name);
-            LOG.warn(description + " -- " + filename + " | " + version);
-        }
-        */
-    }
-
-
-    private void otherAccess(JsonNode root) {
-        String invIdentifier = root.get("identifier").textValue();
-        LOG.warn("INV ID " + invIdentifier);
-
-        String osrName = root.get("ontologySourceReferences").get(1).get("name").textValue();
-        LOG.warn("OSR name " + osrName);
-    }
 
     private File getFiles() throws FileNotFoundException {
         File file = getCurrentFile();
@@ -328,49 +294,6 @@ public class ISAConverter extends BioFileConverter {
         return file;
     }
 
-    private void createInvestigationWithPojo(File file) throws java.io.IOException, ObjectStoreException {
-
-        // check if useful...
-//        Investigation isaInv = new Investigation();
-//        Study isaStudy = new Study();
-//        OntologySourceReference isaOSR = new OntologySourceReference();
-
-
-        // item creation here using pojos
-        ObjectMapper mapper = new ObjectMapper();
-        Investigation isaInv1 = mapper.readValue(file, Investigation.class);
-//        Study isaStudy = mapper.readValue(file, Study.class);
-
-        LOG.warn("investigation " + isaInv1.identifier);
-        //String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(isaInv);
-        //LOG.info(prettyStaff1);
-
-        Item inv = createItem("Investigation");
-        if (!StringUtils.isEmpty(isaInv1.identifier)) {
-            inv.setAttribute("identifier", isaInv1.identifier);
-        }
-        if (!StringUtils.isEmpty(isaInv1.description)) {
-            inv.setAttribute("description", isaInv1.description);
-        }
-        store(inv);
-    }
-
-
-    private void justTesting() { //USE_JAVA_ARRAY_FOR_JSON_ARRAY
-        Map<String, String> myMap = new HashMap<String, String>();
-        int ord = 0;
-        for (Map.Entry<String, String> entry : myMap.entrySet()) {
-
-            //    System.out.println("[" + ord++ + "] " + entry.getKey() + " : " + entry.getValue());
-            System.out.println("[" + ord++ + "]");
-            System.out.println(entry.getKey());
-            System.out.println((entry));
-        }
-    }
-
-    //
-    // OLDIES
-    //
 
     /**
      * {@inheritDoc}
@@ -393,17 +316,9 @@ public class ISAConverter extends BioFileConverter {
                 reference.setName("protocol");
                 reference.setRefId(entry.getValue().getIdentifier());
 
-                LOG.warn("before storing " + protocolParameters.get(ppid).getIdentifier());
-                LOG.warn("before storing " + entry.getValue().getIdentifier());
-
-//               store(reference, protocoloid);
-
                 Integer ppoid = store(protocolParameters.get(ppid));
                 store(reference, ppoid);
-
-
             }
-
         }
 
 //        for (Item item : protocols.values()) {
@@ -411,39 +326,8 @@ public class ISAConverter extends BioFileConverter {
 //
 //        }
 
-
     }
 
-
-    private String getTaxonId(String organismName) {
-        String[] bits = organismName.split(" ");
-        if (bits.length != 2) {
-            LOG.warn("Couldn't parse the organism name " + organismName);
-            return null;
-        }
-        OrganismData od = OR.getOrganismDataByGenusSpecies(bits[0], bits[1]);
-        if (od == null) {
-            LOG.warn("Couldn't parse the organism name " + organismName);
-            return null;
-        }
-        String taxonId = String.valueOf(od.getTaxonId());
-        if (!taxonIds.contains(taxonId)) {
-            return null;
-        }
-        return taxonId;
-    }
-
-
-    private Item getPathway(String pathwayId, String pathwayName) throws ObjectStoreException {
-        Item item = pathways.get(pathwayId);
-        if (item == null) {
-            item = createItem("Pathway");
-            item.setAttribute("identifier", pathwayId);
-            item.setAttribute("name", pathwayName);
-            pathways.put(pathwayId, item);
-        }
-        return item;
-    }
 
     private Item createProtocol(String id, String name, String description, String uri, String version)
             throws ObjectStoreException {
@@ -475,19 +359,6 @@ public class ISAConverter extends BioFileConverter {
                 item.setAttribute("name", name);
             }
             protocolParameters.put(id, item);
-        }
-        return item;
-    }
-
-
-    private Item getProtein(String accession, String taxonId)
-            throws ObjectStoreException {
-        Item item = proteins.get(accession);
-        if (item == null) {
-            item = createItem("Protein");
-            item.setAttribute("primaryAccession", accession);
-            item.setReference("organism", getOrganism(taxonId));
-            proteins.put(accession, item);
         }
         return item;
     }
@@ -596,6 +467,120 @@ public class ISAConverter extends BioFileConverter {
             ids.add(value);
             m.put(key, ids);
         }
+    }
+
+
+    //
+    // OLDIES/ATTEMPTS
+    //
+
+    private void createInvestigationWithPojo(File file) throws java.io.IOException, ObjectStoreException {
+
+        // check if useful...
+//        Investigation isaInv = new Investigation();
+//        Study isaStudy = new Study();
+//        OntologySourceReference isaOSR = new OntologySourceReference();
+
+
+        // item creation here using pojos
+        ObjectMapper mapper = new ObjectMapper();
+        Investigation isaInv1 = mapper.readValue(file, Investigation.class);
+//        Study isaStudy = mapper.readValue(file, Study.class);
+
+        LOG.warn("investigation " + isaInv1.identifier);
+        //String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(isaInv);
+        //LOG.info(prettyStaff1);
+
+        Item inv = createItem("Investigation");
+        if (!StringUtils.isEmpty(isaInv1.identifier)) {
+            inv.setAttribute("identifier", isaInv1.identifier);
+        }
+        if (!StringUtils.isEmpty(isaInv1.description)) {
+            inv.setAttribute("description", isaInv1.description);
+        }
+        store(inv);
+    }
+
+
+    private void justTesting() { //USE_JAVA_ARRAY_FOR_JSON_ARRAY
+        Map<String, String> myMap = new HashMap<String, String>();
+        int ord = 0;
+        for (Map.Entry<String, String> entry : myMap.entrySet()) {
+
+            //    System.out.println("[" + ord++ + "] " + entry.getKey() + " : " + entry.getValue());
+            System.out.println("[" + ord++ + "]");
+            System.out.println(entry.getKey());
+            System.out.println((entry));
+        }
+    }
+
+    private void mapOSRg(JsonNode osr) {
+        osr.getNodeType().toString();
+        //Iterator ontology = osr.elements()
+        /*
+        for ( Iterator element : osr.elements()) {
+
+            String name = node.path("name").asText();
+            String description = node.path("description").asText();
+            String filename = node.path("file").asText();
+            String version = node.path("version").asText();
+
+            LOG.warn("OSR " + name);
+            LOG.warn(description + " -- " + filename + " | " + version);
+        }
+        */
+    }
+
+
+    private void otherAccess(JsonNode root) {
+        String invIdentifier = root.get("identifier").textValue();
+        LOG.warn("INV ID " + invIdentifier);
+
+        String osrName = root.get("ontologySourceReferences").get(1).get("name").textValue();
+        LOG.warn("OSR name " + osrName);
+    }
+
+
+    private Item getProtein(String accession, String taxonId)
+            throws ObjectStoreException {
+        Item item = proteins.get(accession);
+        if (item == null) {
+            item = createItem("Protein");
+            item.setAttribute("primaryAccession", accession);
+            item.setReference("organism", getOrganism(taxonId));
+            proteins.put(accession, item);
+        }
+        return item;
+    }
+
+    private String getTaxonId(String organismName) {
+        String[] bits = organismName.split(" ");
+        if (bits.length != 2) {
+            LOG.warn("Couldn't parse the organism name " + organismName);
+            return null;
+        }
+        OrganismData od = OR.getOrganismDataByGenusSpecies(bits[0], bits[1]);
+        if (od == null) {
+            LOG.warn("Couldn't parse the organism name " + organismName);
+            return null;
+        }
+        String taxonId = String.valueOf(od.getTaxonId());
+        if (!taxonIds.contains(taxonId)) {
+            return null;
+        }
+        return taxonId;
+    }
+
+
+    private Item getPathway(String pathwayId, String pathwayName) throws ObjectStoreException {
+        Item item = pathways.get(pathwayId);
+        if (item == null) {
+            item = createItem("Pathway");
+            item.setAttribute("identifier", pathwayId);
+            item.setAttribute("name", pathwayName);
+            pathways.put(pathwayId, item);
+        }
+        return item;
     }
 
 
