@@ -22,13 +22,12 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author sc
@@ -41,9 +40,11 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Map> comments;  // add field for ref?
     private Map<String, Map> sdd;       // studyDesignDescriptors
     private Map<String, Map> osr;
-    //private Map<String, Map> protocols;
+
     private Map<String, Item> protocols = new HashMap<>();
-    ;
+    private Map<String, Item> protocolParameters = new HashMap<>();
+    private Map<String, List<String>> protocolParameterList = new HashMap<>();
+
     private Map<String, Map> protpars;  // protocol.parameters
     private Set<String> taxonIds;
     private Map<String, Item> pathways = new HashMap<>();
@@ -134,19 +135,25 @@ public class ISAConverter extends BioFileConverter {
             String uri = protocol.path("uri").asText();
             String version = protocol.path("version").asText();
 
+            // get also protocolType (term)..
             createProtocol(id, name, description, uri, version);
             LOG.warn("PROT " + name + " pars: " + protocol.path("parameters").size());
 
             JsonNode parameterNode = protocol.path("parameters");
 
             for (JsonNode parameter : parameterNode) {
-                String pid = parameter.path("@id").asText();
-                String annotationValue = parameter.path("parameterName").get("annotationValue").asText();
-                //String annotationValue = pnode.path("annotationValue").asText();
-                String termAccession = parameter.path("termAccession").asText();
-                //String termSource = pnode.path("termSource").asText();
+                String pid = blunt(parameter.path("@id").asText());
 
-                LOG.info("PPar " + pid + ": " + annotationValue + "|" + termAccession);
+                Term term = new Term(parameter.path("parameterName")).invoke();
+                String pnid = term.getId();
+                String annotationValue = term.getAnnotationValue();
+                String termAccession = term.getTermAccession();
+                String termSource = term.getTermSource();
+
+                LOG.info("PPAR " + pnid + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+
+                createProtocolParameter(pid, annotationValue);
+                addToMap(protocolParameterList, id, pid);
             }
         }
     }
@@ -369,9 +376,42 @@ public class ISAConverter extends BioFileConverter {
      * {@inheritDoc}
      */
     public void close() throws ObjectStoreException {
-        for (Item item : protocols.values()) {
-            store(item);
+        for (Map.Entry<String, Item> entry : protocols.entrySet()) {
+
+            Integer protocoloid = store(entry.getValue());
+
+            String pid = entry.getKey();
+
+            LOG.warn("STORING " + pid + " (" + protocoloid);
+
+            List<String> pparid = protocolParameterList.get(pid);
+
+            for (String ppid : pparid) {
+
+                LOG.warn("STORE par " + ppid);
+                Reference reference = new Reference();
+                reference.setName("protocol");
+                reference.setRefId(entry.getValue().getIdentifier());
+
+                LOG.warn("before storing " + protocolParameters.get(ppid).getIdentifier());
+                LOG.warn("before storing " + entry.getValue().getIdentifier());
+
+//               store(reference, protocoloid);
+
+                Integer ppoid = store(protocolParameters.get(ppid));
+                store(reference, ppoid);
+
+
+            }
+
         }
+
+//        for (Item item : protocols.values()) {
+//            Integer protocoloid = store(item);
+//
+//        }
+
+
     }
 
 
@@ -421,6 +461,20 @@ public class ISAConverter extends BioFileConverter {
                 item.setAttribute("version", version);
             }
             protocols.put(id, item);
+        }
+        return item;
+    }
+
+
+    private Item createProtocolParameter(String id, String name)
+            throws ObjectStoreException {
+        Item item = protocolParameters.get(id);
+        if (item == null) {
+            item = createItem("ProtocolParameter");
+            if (!name.isEmpty()) {
+                item.setAttribute("name", name);
+            }
+            protocolParameters.put(id, item);
         }
         return item;
     }
@@ -520,6 +574,27 @@ public class ISAConverter extends BioFileConverter {
             name = node.path("name").asText();
             type = node.path("type").asText();
             return this;
+        }
+    }
+
+
+    /**
+     * adds an element to a list which is the value of a map
+     *
+     * @param m     the map (<String, List<String>>)
+     * @param key   the key for the map
+     * @param value the list
+     */
+    private static void addToMap(Map<String, List<String>> m, String key, String value) {
+
+        List<String> ids = new ArrayList<String>();
+
+        if (m.containsKey(key)) {
+            ids = m.get(key);
+        }
+        if (!ids.contains(value)) {
+            ids.add(value);
+            m.put(key, ids);
         }
     }
 
