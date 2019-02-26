@@ -51,6 +51,7 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Item> proteins = new HashMap<>();
 
     private Integer investigationOID;
+    private Integer studyOID;
 
     /**
      * Constructor
@@ -92,14 +93,14 @@ public class ISAConverter extends BioFileConverter {
         JsonNode root = new ObjectMapper().readTree(file);
         //otherAccess(root);
 
-        getInvestigation(root);
+        processInvestigation(root);
 
         JsonNode osr = root.path("ontologySourceReferences");
         LOG.warn("OSR type is ... " + osr.getNodeType().toString());
         mapOSR(osr);
         // do the storing
 
- 
+
         JsonNode studyNode = root.path("studies");
         for (JsonNode study : studyNode) {
             String identifier = study.path("identifier").asText();
@@ -111,6 +112,9 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.warn("STUDY " + identifier);
             LOG.warn(title + " -- " + filename + " | " + subDate);
+
+            Item studyItem = createIS("Study", identifier, title, description, pubDate, subDate);
+            studyOID = store(studyItem);
 
             getProtocols(study);
             getMaterials(study);
@@ -124,20 +128,21 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    private void getInvestigation(JsonNode investigation) throws ObjectStoreException {
+    private void processInvestigation(JsonNode investigation) throws ObjectStoreException {
 
-            String identifier = investigation.path("identifier").asText();
-            String title = investigation.path("title").asText();
-            String description = investigation.path("description").asText();
-            String pubDate = investigation.path("publicReleaseDate").asText();
-            String subDate = investigation.path("submissionDate").asText();
+        String identifier = investigation.path("identifier").asText();
+        String title = investigation.path("title").asText();
+        String description = investigation.path("description").asText();
+        String pubDate = investigation.path("publicReleaseDate").asText();
+        String subDate = investigation.path("submissionDate").asText();
 
-            Item investigationItem = createInvestigation(identifier, title, description, pubDate, subDate);
+        Item investigationItem = createIS("Investigation", identifier, title, description, pubDate, subDate);
+        //Item investigationItem = createInvestigation(identifier, title, description, pubDate, subDate);
 
-            investigationOID = store(investigationItem);
-        }
+        investigationOID = store(investigationItem);
+    }
 
-            private void getProtocols(JsonNode study) throws ObjectStoreException {
+    private void getProtocols(JsonNode study) throws ObjectStoreException {
         JsonNode protocolNode = study.path("protocols");
         for (JsonNode protocol : protocolNode) {
 
@@ -348,27 +353,27 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    private Item createInvestigation(String id, String title, String description, String subDate, String pubDate)
+
+    private Item createIS(String type, String id, String title, String description, String subDate, String pubDate)
             throws ObjectStoreException {
 
-            Item item = createItem("Investigation");
-            item.setAttribute("identifier", id);
+        Item item = createItem(type);
+        item.setAttribute("identifier", id);
 
         if (!title.isEmpty()) {
             item.setAttribute("title", title);
         }
-            if (!description.isEmpty()) {
-                item.setAttribute("description", description);
-            }
-            if (!subDate.isEmpty()) {
-                item.setAttribute("submissionDate", subDate);
-            }
-            if (!pubDate.isEmpty()) {
-                item.setAttribute("version", pubDate);
-            }
+        if (!description.isEmpty()) {
+            item.setAttribute("description", description);
+        }
+        if (!subDate.isEmpty()) {
+            item.setAttribute("submissionDate", subDate);
+        }
+        if (!pubDate.isEmpty()) {
+            item.setAttribute("publicReleaseDate", pubDate);
+        }
         return item;
     }
-
 
 
     private Item createProtocol(String id, String name, String description, String uri, String version)
