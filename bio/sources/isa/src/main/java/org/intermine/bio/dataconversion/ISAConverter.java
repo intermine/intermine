@@ -50,6 +50,8 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Item> pathways = new HashMap<>();
     private Map<String, Item> proteins = new HashMap<>();
 
+    private Integer investigationOID;
+
     /**
      * Constructor
      *
@@ -90,20 +92,22 @@ public class ISAConverter extends BioFileConverter {
         JsonNode root = new ObjectMapper().readTree(file);
         //otherAccess(root);
 
+        getInvestigation(root);
+
         JsonNode osr = root.path("ontologySourceReferences");
         LOG.warn("OSR type is ... " + osr.getNodeType().toString());
         mapOSR(osr);
-
         // do the storing
 
+ 
         JsonNode studyNode = root.path("studies");
         for (JsonNode study : studyNode) {
             String identifier = study.path("identifier").asText();
             String title = study.path("title").asText();
             String description = study.path("description").asText();
             String filename = study.path("filename").asText();
-            String subDate = study.path("submissiondate").asText();
-            String pubDate = study.path("publicreleasedate").asText();
+            String subDate = study.path("submissionDate").asText();
+            String pubDate = study.path("publicReleaseDate").asText();
 
             LOG.warn("STUDY " + identifier);
             LOG.warn(title + " -- " + filename + " | " + subDate);
@@ -119,7 +123,21 @@ public class ISAConverter extends BioFileConverter {
 
     }
 
-    private void getProtocols(JsonNode study) throws ObjectStoreException {
+
+    private void getInvestigation(JsonNode investigation) throws ObjectStoreException {
+
+            String identifier = investigation.path("identifier").asText();
+            String title = investigation.path("title").asText();
+            String description = investigation.path("description").asText();
+            String pubDate = investigation.path("publicReleaseDate").asText();
+            String subDate = investigation.path("submissionDate").asText();
+
+            Item investigationItem = createInvestigation(identifier, title, description, pubDate, subDate);
+
+            investigationOID = store(investigationItem);
+        }
+
+            private void getProtocols(JsonNode study) throws ObjectStoreException {
         JsonNode protocolNode = study.path("protocols");
         for (JsonNode protocol : protocolNode) {
 
@@ -326,7 +344,31 @@ public class ISAConverter extends BioFileConverter {
 //
 //        }
 
+
     }
+
+
+    private Item createInvestigation(String id, String title, String description, String subDate, String pubDate)
+            throws ObjectStoreException {
+
+            Item item = createItem("Investigation");
+            item.setAttribute("identifier", id);
+
+        if (!title.isEmpty()) {
+            item.setAttribute("title", title);
+        }
+            if (!description.isEmpty()) {
+                item.setAttribute("description", description);
+            }
+            if (!subDate.isEmpty()) {
+                item.setAttribute("submissionDate", subDate);
+            }
+            if (!pubDate.isEmpty()) {
+                item.setAttribute("version", pubDate);
+            }
+        return item;
+    }
+
 
 
     private Item createProtocol(String id, String name, String description, String uri, String version)
