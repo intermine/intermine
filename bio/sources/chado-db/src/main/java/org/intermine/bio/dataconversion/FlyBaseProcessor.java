@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -468,14 +468,22 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     /**
      * note: featureId is needed only by modMine
-     * {@inheritDoc}
+     * Make a Location between a SequenceFeature and a Chromosome.
+     * @param start the start position
+     * @param end the end position
+     * @param strand the strand
+     * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
+     * @param featureData the FeatureData for the SequenceFeature
+     * @param taxonId the taxon id to use when finding the Chromosome for the Location
+     * @param featureId id of feature
+     * @return the new Location object
+     * @throws ObjectStoreException if something goes wrong
      */
-    @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
                               FeatureData featureData, String taxonId, int featureId)
         throws ObjectStoreException {
         Item location =
-            super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId, 0);
+            super.makeLocation(start, end, strand, srcFeatureData, featureData, 0);
         processItem(location, taxonId);
         return location;
     }
@@ -1090,7 +1098,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         Item location =
             getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
                                                subjectFeatureData.getItemIdentifier(),
-                                               start, end, strand, taxonId);
+                                               start, end, strand);
         Item dataSetItem = getChadoDBConverter().getDataSetItem(taxonId);
 
         location.addToCollection("dataSets", dataSetItem);

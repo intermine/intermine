@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -152,19 +152,17 @@ public abstract class BioDBConverter extends DBConverter
     }
 
     /**
-     * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
+     * Make a Location Item locating a SequenceFeature on a Chromosome.
      * @param chromosomeId Chromosome Item identifier
      * @param locatedSequenceFeatureId the Item identifier of the feature
      * @param start the start position
      * @param end the end position
      * @param strand the strand
-     * @param taxonId the taxon id to use when finding the Chromosome for the Location
      * @return the new Location object
      */
     protected Item makeLocation(String chromosomeId, String locatedSequenceFeatureId,
-                                int start, int end, int strand, String taxonId) {
+                                int start, int end, int strand) {
         Item location = createItem("Location");
-
         if (start < end) {
             location.setAttribute("start", String.valueOf(start));
             location.setAttribute("end", String.valueOf(end));

@@ -22,7 +22,7 @@
 <c:choose>
     <c:when test='${webData == "Chromosome location information is missing"}'>
         <div  class="altmessage" align="center" >
-           <br/>Chromsome location information is not available, region search is disabled.</br>
+           <br/>Chromosome location information is not available, region search is disabled.</br>
         </div>
     </c:when>
     <c:otherwise>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -8,6 +8,34 @@
  *
  */
 
+
+InterMine 3.1.1 (Feb 2019)
+
+#1726 - Add system templates end point for converter templates.
+#1732 - Web service bug in /templates?format=json
+#1770 - Default query config should be in json
+#1786 - GFF3: add header to record
+#1796 - GFF3SequenceHandler - add docs and pass in feature object
+#1811 - webservice xml queries failing with greater and less than operators
+#1828 - DNaseI_hypersensitive_site (SO:0000685) misspelled
+#1833 - Data types in NCBI GFF that are not in the sequence ontology
+#1847 - Error parsing DOES NOT CONTAIN constraint
+#1887 - OMIM: fix link outs
+#1902 - Gradle: need /themes directory to merge correctly
+#1906 - Enrichment widget: update link to GO (humanmine and flymine)
+#1914 - InterPro DTD version
+#1956 - Autocomplete fails to build: missing content stream
+#1977 - publication with null title 
+#1982 - Need upgrade path for biojava
+#1983 - Fix log library dependency conflict
+#1989 - Spelling fix on genomicRegionSearchOptionsBase.jsp 
+#1992 - Remove Yahoo login link
+#1994 - HumanMine - gene summaries from NCBI
+#1995 - Panther - Entry only has protein accession and the taxon id in place of the gene identifier.
+#1996 - OMIM - failed on bad line
+#1999 - HPO errors - can't handle "created_by" metadata
+#2000 - Add UniProt xref file to data download script
+#2006 - Updated gretty.plugin URL
 
 InterMine 3.1 (late November 2018)
 

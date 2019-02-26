@@ -1,11 +1,22 @@
-DOCUMENTATION
+## Support for deploying and using InterMine 
 
-http://intermine.readthedocs.io/en/latest/
+Welcome to InterMine! We use GitHub for tracking bugs and feature requests. See below for how to get help using InterMine. 
 
-MAILING LIST
+### Documentation 
 
-http://intermine.readthedocs.io/en/latest/support/mailing-list/
+* [Developer Documentation](http://intermine.readthedocs.io/en/latest/) 
+* [User Documentation](https://flymine.readthedocs.io/en/latest/) 
+* [API clients](https://intermine.readthedocs.io/en/latest/web-services/#api-and-client-libraries)
 
-CHAT
+### Real-time Chat
 
-chat.intermine.org
+* [Discord](https://chat.intermine.org)
+The `#support` channel is where people offer support.
+
+### Mailing list
+
+* [InterMine developer's email list](http://intermine.readthedocs.io/en/latest/support/mailing-list/)
+A friendly, low traffic mailing list 
+
+See http://intermine.org/developers/ for the full list of resources.
+

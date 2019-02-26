@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -54,7 +54,7 @@ public class InterProConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         InterProHandler handler = new InterProHandler(getItemWriter());
         try {
-            SAXParser.parse(new InputSource(reader), handler);
+            SAXParser.parse(new InputSource(reader), handler, false);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

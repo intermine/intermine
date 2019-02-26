@@ -1,5 +1,4 @@
 apply plugin: 'war'
-apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
 
 sourceSets {
     main {
@@ -30,7 +29,8 @@ dependencies {
     providedCompile project(':bio-core')
     providedCompile project(':bio-model')
     providedCompile group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), classifier: "classes"
-        providedCompile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'
+    providedCompile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
 
     compile (project(':bio-tools')) { transitive = false }
     compile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: System.getProperty("imVersion")

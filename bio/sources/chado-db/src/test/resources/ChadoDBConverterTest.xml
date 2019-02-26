@@ -94,14 +94,6 @@
 <reference name="sequenceOntologyTerm" ref_id="3_6"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="18_2" class="Location">
-<attribute name="end" value="102000"/>
-<attribute name="start" value="101001"/>
-<attribute name="strand" value="1"/>
-<reference name="feature" ref_id="1_1"/>
-<reference name="locatedOn" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="3_6" class="SOTerm">
 <attribute name="name" value="transposable_element_insertion_site"/>
 <reference name="ontology" ref_id="0_1"/>
@@ -165,14 +157,6 @@
 <item id="8_1" class="Synonym">
 <attribute name="value" value="CG10000-RA"/>
 <reference name="subject" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="18_4" class="Location">
-<attribute name="end" value="24577107"/>
-<attribute name="start" value="24576947"/>
-<attribute name="strand" value="-1"/>
-<reference name="feature" ref_id="10_2"/>
-<reference name="locatedOn" ref_id="9_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="15_1" class="ChromosomeStructureVariation">
@@ -319,14 +303,6 @@
 <item id="4_1" class="DataSource">
 <attribute name="name" value="FlyBase"/>
 </item>
-<item id="18_1" class="Location">
-<attribute name="end" value="14990594"/>
-<attribute name="start" value="14985572"/>
-<attribute name="strand" value="1"/>
-<reference name="feature" ref_id="1_2"/>
-<reference name="locatedOn" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="19_5" class="PhenotypeAnnotation">
 <attribute name="annotationType" value="phenotype class"/>
 <attribute name="description" value="visible, with ScerGAL4[sd-SG29.1]"/>
@@ -456,22 +432,6 @@
 </item>
 <item id="17_3" class="Publication">
 <attribute name="pubMedId" value="2892759"/>
-</item>
-<item id="18_5" class="Location">
-<attribute name="end" value="24577313"/>
-<attribute name="start" value="24577166"/>
-<attribute name="strand" value="-1"/>
-<reference name="feature" ref_id="10_1"/>
-<reference name="locatedOn" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="18_3" class="Location">
-<attribute name="end" value="24577313"/>
-<attribute name="start" value="24574105"/>
-<attribute name="strand" value="-1"/>
-<reference name="feature" ref_id="7_1"/>
-<reference name="locatedOn" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="17_4" class="Publication">
 <attribute name="pubMedId" value="2612903"/>
@@ -622,5 +582,40 @@
 <item id="6_11" class="Sequence">
 <attribute name="length" value="63"/>
 <attribute name="residues" value="VSFAQVWCSSTTDETNLLQMEKDPHSPSQFRVIGTLSNMKEFAEVFQCKPGKRMNPTEKCEVW"/>
+</item>
+<item id="18_1" class="Location">
+  <attribute name="end" value="14990594"/>
+  <attribute name="start" value="14985572"/>
+  <attribute name="strand" value="1"/>
+  <reference name="feature" ref_id="1_2"/>
+  <reference name="locatedOn" ref_id="9_1"/>
+</item>
+ <item id="18_2" class="Location">
+  <attribute name="end" value="102000"/>
+  <attribute name="start" value="101001"/>
+  <attribute name="strand" value="1"/>
+  <reference name="feature" ref_id="1_1"/>
+  <reference name="locatedOn" ref_id="9_1"/>
+</item>
+ <item id="18_3" class="Location">
+  <attribute name="end" value="24577313"/>
+  <attribute name="start" value="24574105"/>
+  <attribute name="strand" value="-1"/>
+  <reference name="feature" ref_id="7_1"/>
+  <reference name="locatedOn" ref_id="9_2"/>
+</item>
+ <item id="18_4" class="Location">
+  <attribute name="end" value="24577107"/>
+  <attribute name="start" value="24576947"/>
+  <attribute name="strand" value="-1"/>
+  <reference name="feature" ref_id="10_2"/>
+  <reference name="locatedOn" ref_id="9_2"/>
+</item>
+ <item id="18_5" class="Location">
+  <attribute name="end" value="24577313"/>
+  <attribute name="start" value="24577166"/>
+  <attribute name="strand" value="-1"/>
+  <reference name="feature" ref_id="10_1"/>
+  <reference name="locatedOn" ref_id="9_2"/>
 </item>
 </items>
