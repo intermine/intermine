@@ -119,6 +119,18 @@ public class ISAConverter extends BioFileConverter {
             getProtocols(study);
             getMaterials(study);
             getAssays(study);
+
+            getFactors(study, studyItem);
+
+            //TODO
+//            getPublications(study);
+//            getPeople(study);
+//            getDesignDescriptors(study);
+//            getCharacteristicCategories(study);
+//            getUnitCategories(study);
+//            getComments(study);
+
+
         }
 
         LOG.warn("-----");
@@ -174,6 +186,37 @@ public class ISAConverter extends BioFileConverter {
             }
         }
     }
+
+
+    private void getFactors(JsonNode study, Item studyItem) throws ObjectStoreException {
+        JsonNode factorNode = study.path("factors");
+        for (JsonNode factor : factorNode) {
+
+            String id = blunt(factor.path("@id").asText());
+            String name = factor.path("factorName").asText();
+
+            Term term = new Term(factor.path("factorType")).invoke();
+            String termId = term.getId();
+            String annotationValue = term.getAnnotationValue();
+            String termAccession = term.getTermAccession();
+            String termSource = term.getTermSource();
+
+            LOG.warn("FACTOR study " + name + ": " + annotationValue);
+
+            Item factorItem = createFactor(name, annotationValue, null, null);
+
+            Reference reference = new Reference();
+            reference.setName("study");
+            reference.setRefId(studyItem.getIdentifier());
+
+            Integer foid = store(factorItem);
+            store(reference, foid);
+
+
+
+        }
+    }
+
 
 
     private void getMaterials(JsonNode study) {
@@ -372,6 +415,25 @@ public class ISAConverter extends BioFileConverter {
         if (!pubDate.isEmpty()) {
             item.setAttribute("publicReleaseDate", pubDate);
         }
+        return item;
+    }
+
+    private Item createFactor(String name, String value, String unit, String type)
+            throws ObjectStoreException {
+
+        Item item = createItem("Factor");
+        item.setAttribute("name", name);
+
+        if (!value.isEmpty()) {
+            item.setAttribute("value", value);
+        }
+        // gives NPE ! change contract?
+//        if (!unit.isEmpty()) {
+//            item.setAttribute("unit", unit);
+//        }
+//        if (!type.isEmpty()) {
+//            item.setAttribute("type", type);
+//        }
         return item;
     }
 
