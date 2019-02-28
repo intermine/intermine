@@ -45,7 +45,7 @@
     #protein-atlas-displayer div.sidebar p strong.medium { background:#A9CC30; border:1px solid #DDD; }
     #protein-atlas-displayer div.sidebar p.small { font-size:11px; margin-bottom:16px; }
     #protein-atlas-displayer div.sidebar p.small a { background:url('images/icons/external_link.png') no-repeat top right; padding-right:10px; }
-    
+
     #protein-atlas-displayer div.sidebar div.pane { padding:5px; }
 
     #protein-atlas-displayer div.legend { margin-top:10px; }
@@ -83,7 +83,7 @@
 <c:choose>
 <c:when test="${expressions.reliability != null}">
 <h3 class="goog">Protein Atlas Tissue Expression</h3>
-
+<c:out>fffffff${expressions}</c:out>
   <div class="sidebar">
   	<div class="collection-of-collections">
   	  <div class="header">
@@ -91,10 +91,10 @@
 	      <a href="#" title="key" class="active">Key</a> <a href="#" title="halp">Help</a>
 	    </div>
 	  </div>
-	  
+
 	  <div class="pane key">
 		<p>Reliability: <strong class="${fn:toLowerCase(expressions.reliability)}">${expressions.reliability}</strong> (${expressionType.text})</p>
-		
+
 	    <div class="legend">
 	      <strong>Level of antibody staining</strong>*
 	      <ul class="level">
@@ -105,10 +105,10 @@
 	      </ul>
 	    </div>
 	  </div>
-	  
+
 	  <div class="pane halp" style="display:none;">
 	      <p class="small">* A validation score for immunohistochemistry is assigned for all antibodies and reflects the results of immunostaining.</p>
-	
+
 	      <strong>About &amp; Source</strong>
 	      <p class="small">This chart represents a normal tissue &amp; organ summary of the antibody staining or the protein expression in a number of
 	      human tissues and organs. A description of the assay and annotation can be found <a target="new" href="http://www.proteinatlas.org/about/assays+annotation#ih">here</a>.</p>
@@ -199,7 +199,7 @@
         sizeChart();
       }, 500);
     });
-    
+
     // switcher between tables this displayer haz
     jQuery("#protein-atlas-displayer div.sidebar div.collection-of-collections div.switchers a").each(function(i) {
       jQuery(this).bind(
@@ -217,7 +217,7 @@
             jQuery("#protein-atlas-displayer div.sidebar div.collection-of-collections div.switchers a.active").each(function(j) {
               jQuery(this).toggleClass('active');
             });
-            
+
             // we are active
             jQuery(this).toggleClass('active');
 
@@ -225,7 +225,7 @@
             e.preventDefault();
         }
       );
-    });    
+    });
   })();
   </script>
 </c:when>
