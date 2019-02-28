@@ -124,14 +124,14 @@ public class JaccardIndexService extends WebService
         return cs;
     }
 
-    private CharSequence getJaccardIndex(String ids) {
-        String[] idArray = ids.split(", ");
-        CharSequence cs = "";
-        for (String id : idArray) {
-
-        }
-        return cs;
-    }
+//    private CharSequence getJaccardIndex(String ids) {
+//        String[] idArray = ids.split(", ");
+//        CharSequence cs = "";
+//        for (String id : idArray) {
+//
+//        }
+//        return cs;
+//    }
 
     /**
      * Get the lists for this request.
