@@ -1,7 +1,7 @@
 package org.intermine.web.fair;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,8 +26,6 @@ import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.PermanentURIHelper;
-import org.intermine.web.logic.results.ReportObject;
-import org.intermine.web.logic.results.ReportObjectField;
 import org.intermine.web.util.URLGenerator;
 import org.json.JSONObject;
 
@@ -65,7 +63,7 @@ public final class SemanticMarkupUtil
      * @return the identifier
      */
     private static String getMineIdentifier(HttpServletRequest request) {
-        ServletContext context = request.getServletContext();
+        ServletContext context = request.getSession().getServletContext();
         if (context.getAttribute("mineIdentifier") != null) {
             return (String) context.getAttribute("mineIdentifier");
         } else {

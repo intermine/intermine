@@ -1,7 +1,7 @@
 package org.intermine.web.logic;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -214,9 +214,11 @@ public final class Constants
      * 25 - Add id to whoami
      * 26 - Add listId to all web services. #1669
      * 27 - Renamed xml parameter to query #1676
-     * 28 - Add semantic markup endpoints
+     * 28 - Added system templates #1726
+     * 29 - Add template tagging
+     * 30 - Add semantic markup endpoints & permanent URL
      */
-    public static final int WEB_SERVICE_VERSION = 28;
+    public static final int WEB_SERVICE_VERSION = 30;
 
     /**
      * Current version of the InterMine code

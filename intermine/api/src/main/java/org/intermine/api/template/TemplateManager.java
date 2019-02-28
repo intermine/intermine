@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -379,6 +379,15 @@ public class TemplateManager
             conversionTemplates.addAll(templatesMap.values());
         }
         return conversionTemplates;
+    }
+
+    /**
+     * Return template queries used for converting between types in bag upload and lookup queries,
+     * these are Superuser templates that have been tagged with TagNames.IM_CONVERTER.
+     * @return a map of system templates
+     */
+    public Map<String, ApiTemplate> getSystemTemplates() {
+        return getTemplatesWithTag(superProfile, TagNames.IM_CONVERTER);
     }
 
     /**

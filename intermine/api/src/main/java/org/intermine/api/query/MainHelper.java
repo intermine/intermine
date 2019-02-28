@@ -1,7 +1,7 @@
 package org.intermine.api.query;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -922,6 +922,9 @@ public final class MainHelper
             return new SimpleConstraint(qe, ConstraintOp.DOES_NOT_MATCH, new QueryValue(value));
         } else if (ConstraintOp.CONTAINS.equals(op)) {
             return new SimpleConstraint(qe, ConstraintOp.MATCHES,
+                    new QueryValue("%" + value + "%"));
+        } else if (ConstraintOp.DOES_NOT_CONTAIN.equals(op)) {
+            return new SimpleConstraint(qe, ConstraintOp.DOES_NOT_MATCH,
                     new QueryValue("%" + value + "%"));
         } else {
             return new SimpleConstraint(qe, op, new QueryValue(value));

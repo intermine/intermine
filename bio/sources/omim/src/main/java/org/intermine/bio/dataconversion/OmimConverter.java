@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.BufferedReader;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -165,7 +166,8 @@ public class OmimConverter extends BioDirectoryConverter
             // the line isn't space or tab delimited properly, hence this weirdness
             String[] bits = line.split("\\s\\(\\d\\)\\s");
             if (bits.length != 2) {
-                throw new RuntimeException(" bad line: '" + line + "' ");
+                LOG.error(" bad line: '" + line + "' ");
+                continue;
             }
 
             String unformattedDiseaseString = bits[0];
