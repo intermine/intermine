@@ -3314,8 +3314,7 @@ The different token types are:
         </method>
     </metadata>
   </servlet-mapping>
-
-  <!-- MUST BE LISTED BEFORE THE LAST -->
+    
   <servlet>
       <servlet-name>ws-permanent-url</servlet-name>
       <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
