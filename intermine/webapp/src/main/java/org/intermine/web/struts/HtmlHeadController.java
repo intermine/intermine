@@ -182,9 +182,8 @@ public class HtmlHeadController extends TilesAction
      * @param reportObject the reportObject
      */
     private void markupReportPage(HttpServletRequest request, ReportObject reportObject) {
-        Properties props = PropertiesUtil.getProperties();
-        if (!props.containsKey("markup.webpages.enable")
-                || "true".equals(props.getProperty("markup.webpages.enable").trim())) {
+        String semanticMarkup = reportObject.getSemanticMarkup(request);
+        if (semanticMarkup != null) {
             request.setAttribute("semanticMarkup", reportObject.getSemanticMarkup(request));
         }
     }

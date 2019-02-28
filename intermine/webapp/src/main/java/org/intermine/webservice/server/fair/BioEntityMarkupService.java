@@ -13,6 +13,7 @@ package org.intermine.webservice.server.fair;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.webservice.server.core.JSONService;
@@ -37,15 +38,8 @@ public class BioEntityMarkupService extends JSONService
     @Override
     protected void execute() throws Exception {
         String entityType = getRequiredParameter("type");
-        if (ClassDescriptor.findInherithance(
-                Model.getInstanceByName("genomic"), StringUtils.capitalize(entityType),
-                "BioEntity")) {
-            String primaryIdentifier = getRequiredParameter("primaryIdentifier");
-            addResultItem(SemanticMarkupUtil.getBioEntityMarkup(request, entityType,
-                    primaryIdentifier), false);
-        } else {
-            addResultItem(new HashMap<String, String>(), false);
-        }
+        int id = Integer.parseInt(getRequiredParameter("id"));
+        addResultItem(SemanticMarkupUtil.getBioEntityMarkup(request, entityType, id), false);
     }
 
     @Override

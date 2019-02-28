@@ -3123,41 +3123,6 @@ The different token types are:
 
   <!-- New in version 29 -->
   <servlet>
-      <servlet-name>ws-permanent-url</servlet-name>
-      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
-      <init-param>
-          <param-name>GET</param-name>
-          <param-value>org.intermine.webservice.server.fair.PermanentURLService</param-value>
-      </init-param>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>ws-permanent-url</servlet-name>
-    <url-pattern>/service/permanent-url</url-pattern>
-    <metadata>
-        <name>Permanent URL</name>
-        <minVersion>29</minVersion>
-        <method type="GET" authenticationRequired="false">
-            <summary>Get permanent URL for data objetct</summary>
-            <description>
-                This service generates permanent URL based on the class type and identifier
-            </description>
-            <param
-                required="true"
-                type="String"
-                description="The type of the entity">type</param>
-            <param
-                required="true"
-                type="String"
-                description="The internal intermine ID">id</param>
-            <returns>
-                <format accept="application/json">json</format>
-            </returns>
-        </method>
-    </metadata>
-  </servlet-mapping>
-
-  <servlet>
       <servlet-name>ws-datacatalog-markup</servlet-name>
       <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
       <init-param>
@@ -3208,6 +3173,10 @@ The different token types are:
                 required="true"
                 type="String"
                 description="The name of the dataset">name</param>
+            <param
+                    required="false"
+                    type="String"
+                    description="The url of the dataset">url</param>
             <returns>
                 <format accept="application/json">json</format>
             </returns>
@@ -3241,8 +3210,43 @@ The different token types are:
                 description="The type of the bioentity">type</param>
              <param
                 required="true"
+                type="int"
+                description="The primary identifier of the bioentity">id</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>ws-permanent-url</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.PermanentURLService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-permanent-url</servlet-name>
+    <url-pattern>/service/permanent-url</url-pattern>
+    <metadata>
+        <name>Permanent URL</name>
+        <minVersion>29</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get permanent URL for data objetct</summary>
+            <description>
+                This service generates permanent URL based on the class type and identifier
+            </description>
+            <param
+                required="true"
                 type="String"
-                description="The primary identifier of the bioentity">primaryIdentifier</param>
+                description="The type of the entity">type</param>
+            <param
+                required="true"
+                type="String"
+                description="The internal intermine ID">id</param>
             <returns>
                 <format accept="application/json">json</format>
             </returns>

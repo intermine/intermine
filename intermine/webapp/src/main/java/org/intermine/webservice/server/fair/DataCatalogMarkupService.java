@@ -11,11 +11,14 @@ package org.intermine.webservice.server.fair;
  */
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.webservice.server.core.JSONService;
 
+import java.util.Properties;
+
 /**
- * Serve datacatalogue markup to be added to the home page
+ * Serve datacatalog markup to be added to the home page
  * @author Daniela Butano
  *
  */
@@ -31,7 +34,9 @@ public class DataCatalogMarkupService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        addResultItem(SemanticMarkupUtil.getDataCatalogMarkup(request), false);
+        if (SemanticMarkupUtil.isEnabled()) {
+            addResultItem(SemanticMarkupUtil.getDataCatalogMarkup(request), false);
+        }
     }
 
     @Override

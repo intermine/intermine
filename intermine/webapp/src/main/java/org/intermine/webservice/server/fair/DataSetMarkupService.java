@@ -11,8 +11,11 @@ package org.intermine.webservice.server.fair;
  */
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.webservice.server.core.JSONService;
+
+import java.util.Properties;
 
 /**
  * Serve dataset markup to be added to the report page
@@ -32,7 +35,8 @@ public class DataSetMarkupService extends JSONService
     @Override
     protected void execute() throws Exception {
         String dataSetName = getRequiredParameter("name");
-        addResultItem(SemanticMarkupUtil.getDataSetMarkup(request, dataSetName), false);
+        String url = getOptionalParameter("url");
+        addResultItem(SemanticMarkupUtil.getDataSetMarkup(request, dataSetName, url), false);
     }
 
     @Override

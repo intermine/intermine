@@ -373,23 +373,22 @@ public class ReportObject
      * @return a string representing the markup in json format
      */
     public String getSemanticMarkup(HttpServletRequest request) {
+        if (!SemanticMarkupUtil.isEnabled()) {
+            return null;
+        }
         if ("DataSet".equals(objectType)) {
             String name =  (String) getFieldValue("name");
-            Map<String, String> markup = SemanticMarkupUtil.getDataSetMarkup(request, name);
-            return new JSONObject(markup).toString(2);
+            String url =  (String) getFieldValue("url");
+            Map<String, Object> markup = SemanticMarkupUtil.getDataSetMarkup(request, name, url);
+                return new JSONObject(markup).toString(2);
         }
         try {
-            if (ClassDescriptor.findInherithance(
-                    Model.getInstanceByName("genomic"), objectType, "BioEntity")) {
-                String primaryIdentifier =  (String) getFieldValue("primaryIdentifier");
-                Map<String, String> markup = SemanticMarkupUtil.getBioEntityMarkup(request,
-                        objectType, primaryIdentifier);
-                return new JSONObject(markup).toString(2);
-            }
+            Map<String, Object> markup = SemanticMarkupUtil.getBioEntityMarkup(request, objectType,
+                    getId());
+            return new JSONObject(markup).toString(2);
         } catch (MetaDataException ex) {
             return null;
         }
-        return null;
     }
 
     /**

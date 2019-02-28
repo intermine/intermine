@@ -241,10 +241,8 @@ public class BeginAction extends InterMineAction
      * @param request HTTP Servlet Request
      */
     private void markupHomePage(HttpServletRequest request) {
-        Properties props = PropertiesUtil.getProperties();
-        if (!props.containsKey("markup.webpages.enable")
-                || "true".equals(props.getProperty("markup.webpages.enable").trim())) {
-            Map<String, Object> homePageMarkup = SemanticMarkupUtil.getDataCatalogMarkup(request);
+        Map<String, Object> homePageMarkup = SemanticMarkupUtil.getDataCatalogMarkup(request);
+        if (homePageMarkup != null) {
             request.setAttribute("semanticMarkup", new JSONObject(homePageMarkup).toString(2));
         }
     }
