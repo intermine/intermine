@@ -20,16 +20,6 @@ import java.util.TreeMap;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 
-/*
- * Copyright (C) 2002-2019 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
 /**
  * Protein Atlas Expressions
  * @author Fengyuan
@@ -50,7 +40,6 @@ public class ProteinAtlasExpressions
     private ArrayList<String> expressionColumns =  new ArrayList<String>() {
         {
             add("cellType");
-            add("expressionType");
             add("level");
             add("reliability");
             add("tissue");
