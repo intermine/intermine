@@ -84,7 +84,7 @@ public class JaccardIndexService extends WebService
                 // need type if we don't have a list
                 throw new BadRequestException("Type of list is required");
             }
-            bagOfInterest = getJaccardIndex(ids);
+//            bagOfInterest = getJaccardIndex(ids);
         }
 
         Map<String, String> results = new HashMap<String, String>();
