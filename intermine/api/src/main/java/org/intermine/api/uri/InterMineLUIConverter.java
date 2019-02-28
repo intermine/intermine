@@ -63,8 +63,8 @@ public class InterMineLUIConverter
         if (identifier == null) {
             identifier = DEFAULT_IDENTIFIER;
         }
-        String contstraintPath = className + "." + identifier;
-        pathQuery.addConstraint(Constraints.eq(contstraintPath, interMineLUI.getIdentifier()));
+        String constraintPath = className + "." + identifier;
+        pathQuery.addConstraint(Constraints.eq(constraintPath, interMineLUI.getIdentifier()));
         if (!pathQuery.isValid()) {
             LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid. No "
                     + className + "_URI defined in the class_key.properties file");
@@ -78,7 +78,7 @@ public class InterMineLUIConverter
             return row.getId();
         } else {
             LOGGER.info("InterMineLUIConverter: there are no " + className
-                    + " with " + contstraintPath + "=" + interMineLUI.getIdentifier());
+                    + " with " + constraintPath + "=" + interMineLUI.getIdentifier());
             return INTERMINE_ID_NOT_FOUND;
         }
     }
@@ -185,8 +185,8 @@ public class InterMineLUIConverter
         PathQuery pathQuery = new PathQuery(getModel());
         String viewPath = type + "." + identifier;
         pathQuery.addView(viewPath);
-        String contstraintPath = type + ".id";
-        pathQuery.addConstraint(Constraints.eq(contstraintPath, Integer.toString(interMineId)));
+        String constraintPath = type + ".id";
+        pathQuery.addConstraint(Constraints.eq(constraintPath, Integer.toString(interMineId)));
         if (!pathQuery.isValid()) {
             LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid");
             LOGGER.info("For the entity with type " + type
