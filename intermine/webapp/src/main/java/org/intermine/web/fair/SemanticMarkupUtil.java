@@ -34,7 +34,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Properties;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Class providing schema/bioschemas markups
@@ -100,7 +105,7 @@ public final class SemanticMarkupUtil
         pathQuery.addViews("DataSet.name", "DataSet.url");
         pathQuery.addOrderBy("DataSet.name", OrderDirection.ASC);
         PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
-                PathQueryAPI.getProfile(),null, PathQueryAPI.getBagManager());
+                PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
         try {
             ExportResultsIterator iterator = executor.execute(pathQuery);
             Map<String, Object> dataset = null;
@@ -112,7 +117,8 @@ public final class SemanticMarkupUtil
                 dataset.put("name", name);
                 PermanentURIHelper helper = new PermanentURIHelper(request);
                 String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
-                if (elem.get(1).getField() != null && !elem.get(1).getField().toString().equals("")) {
+                if (elem.get(1).getField() != null
+                        && !elem.get(1).getField().toString().equals("")) {
                     dataset.put("url", (String) elem.get(1).getField());
                 } else {
                     dataset.put("url", imUrlPage);
@@ -194,9 +200,12 @@ public final class SemanticMarkupUtil
     /**
      * Returns bioschema.org markups to be added to the report page of bio entities
      * @param request the HttpServletRequest
+     * @param type the of the bioentity
      * @param id intermine internal id
      *
      * @return the map containing the markups
+     *
+     * @throws MetaDataException if the type is wrong
      */
     public static Map<String, Object> getBioEntityMarkup(HttpServletRequest request, String type,
                                                          int id) throws MetaDataException {
@@ -265,7 +274,7 @@ public final class SemanticMarkupUtil
             return null;
         }
         PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
-                PathQueryAPI.getProfile(),null, PathQueryAPI.getBagManager());
+                PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
         try {
             ExportResultsIterator iterator = executor.execute(pathQuery);
             if (iterator.hasNext()) {
@@ -279,6 +288,10 @@ public final class SemanticMarkupUtil
         return null;
     }
 
+    /**
+     * Return true if markup are enabled (disabled by default)
+     * @return true if markup are enabled
+     */
     public static boolean isEnabled() {
         Properties props = PropertiesUtil.getProperties();
         if (props.containsKey("markup.webpages.enable")

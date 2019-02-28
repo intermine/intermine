@@ -10,15 +10,9 @@ package org.intermine.webservice.server.fair;
  *
  */
 
-import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.MetaDataException;
-import org.intermine.metadata.Model;
 import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.webservice.server.core.JSONService;
-
-import java.util.HashMap;
 
 /**
  * Serve bioentity markup to be added to the report page

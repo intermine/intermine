@@ -33,7 +33,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.model.InterMineObject;
@@ -380,7 +379,7 @@ public class ReportObject
             String name =  (String) getFieldValue("name");
             String url =  (String) getFieldValue("url");
             Map<String, Object> markup = SemanticMarkupUtil.getDataSetMarkup(request, name, url);
-                return new JSONObject(markup).toString(2);
+            return new JSONObject(markup).toString(2);
         }
         try {
             Map<String, Object> markup = SemanticMarkupUtil.getBioEntityMarkup(request, objectType,

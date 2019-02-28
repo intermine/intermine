@@ -29,12 +29,9 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
-
-import java.util.Properties;
 
 /**
  * Controller for the html head tile.  Determines what is shown on the title of the webpage

@@ -11,11 +11,8 @@ package org.intermine.webservice.server.fair;
  */
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.webservice.server.core.JSONService;
-
-import java.util.Properties;
 
 /**
  * Serve dataset markup to be added to the report page
