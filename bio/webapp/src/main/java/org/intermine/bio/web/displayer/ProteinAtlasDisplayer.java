@@ -109,7 +109,7 @@ public class ProteinAtlasDisplayer extends ReportDisplayer
         query.addViews(
                 "Gene.proteinAtlasExpression.cellType",
                 "Gene.proteinAtlasExpression.level",
-                "Gene.proteinAtlasExpression.",
+                "Gene.proteinAtlasExpression.reliability",
                 "Gene.proteinAtlasExpression.tissue.name",
                 "Gene.proteinAtlasExpression.tissue.tissueGroup.name",
                 "Gene.primaryIdentifier");
