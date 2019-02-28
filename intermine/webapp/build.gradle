@@ -37,6 +37,8 @@ dependencies {
     compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.2.2'
     compile group: 'commons-httpclient', name: 'commons-httpclient', version: '3.0'
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
+    // used for the jaccard index calcs
+    compile group: 'org.apache.commons', name: 'commons-text', version: '1.6'
     compile group: 'org.everit.json', name: 'org.everit.json.schema', version: '1.5.1'
     compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.1'
 
