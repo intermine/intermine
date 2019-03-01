@@ -25,13 +25,10 @@
       line-height:15px; color:#000; }
 
     #protein-atlas-displayer.staining .high, #protein-atlas-displayer.staining .strong { background:#CD3A32; }
-    #protein-atlas-displayer.ape .high, #protein-atlas-displayer.ape .strong { background:#2B4A7B; }
 
     #protein-atlas-displayer.staining .medium, #protein-atlas-displayer.staining .moderate { background:#FD9B34; }
-    #protein-atlas-displayer.ape .medium, #protein-atlas-displayer.ape .moderate { background:#4B97CE; }
 
     #protein-atlas-displayer.staining .weak, #protein-atlas-displayer.staining .low { background:#FFED8D; }
-    #protein-atlas-displayer.ape .weak, #protein-atlas-displayer.ape .low { background:#BFF1FF; }
 
     #protein-atlas-displayer .none, #protein-atlas-displayer .negative { background:#FFF; }
 
@@ -77,13 +74,12 @@
     #protein-atlas-displayer.scale-6 div.sidebar { width:20%; }
   </style>
 
-<c:set var="expressionType" value="${expressions.type}" />
-<div id="protein-atlas-displayer" class="${expressionType.clazz}">
+<div id="protein-atlas-displayer">
 
 <c:choose>
 <c:when test="${expressions.reliability != null}">
 <h3 class="goog">Protein Atlas Tissue Expression</h3>
-<c:out>fffffff${expressions}</c:out>
+
   <div class="sidebar">
   	<div class="collection-of-collections">
   	  <div class="header">
@@ -93,7 +89,7 @@
 	  </div>
 
 	  <div class="pane key">
-		<p>Reliability: <strong class="${fn:toLowerCase(expressions.reliability)}">${expressions.reliability}</strong> (${expressionType.text})</p>
+		<p>Reliability: <strong class="${fn:toLowerCase(expressions.reliability)}">${expressions.reliability}</strong> </p>
 
 	    <div class="legend">
 	      <strong>Level of antibody staining</strong>*
@@ -124,14 +120,14 @@
     </tiles:insert>
   </div>
 
-  <div class="table byCells inactive ${expressionType.clazz}">
+  <div class="table byCells inactive">
     <c:set var="tableRows" value="${expressions.byCells}" />
     <tiles:insert page="proteinAtlasDisplayerTable.jsp">
       <tiles:put name="rows" beanName="tableRows" />
     </tiles:insert>
   </div>
 
-  <div class="table byLevel inactive ${expressionType.clazz}">
+  <div class="table byLevel inactive">
     <c:set var="tableRows" value="${expressions.byLevel}" />
     <tiles:insert page="proteinAtlasDisplayerTable.jsp">
       <tiles:put name="rows" beanName="tableRows" />
