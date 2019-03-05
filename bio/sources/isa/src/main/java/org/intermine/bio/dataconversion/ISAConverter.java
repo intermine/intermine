@@ -51,7 +51,9 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Item> proteins = new HashMap<>();
 
     private Integer investigationOID;
-    private Integer studyOID;
+    private Integer studyOID;   // TODO: check if it works for >1 study per investigation
+    private Item studyItem;     //       in case use map? or make private object {id, itemId, oId}
+
 
     /**
      * Constructor
@@ -103,6 +105,7 @@ public class ISAConverter extends BioFileConverter {
 
         JsonNode studyNode = root.path("studies");
         for (JsonNode study : studyNode) {
+
             String identifier = study.path("identifier").asText();
             String title = study.path("title").asText();
             String description = study.path("description").asText();
@@ -113,7 +116,7 @@ public class ISAConverter extends BioFileConverter {
             LOG.warn("STUDY " + identifier);
             LOG.warn(title + " -- " + filename + " | " + subDate);
 
-            Item studyItem = createIS("Study", identifier, title, description, pubDate, subDate);
+            studyItem = createIS("Study", identifier, title, description, pubDate, subDate);
             studyOID = store(studyItem);
 
             getProtocols(study);
@@ -125,7 +128,7 @@ public class ISAConverter extends BioFileConverter {
             //TODO
 //            getPublications(study);
 //            getPeople(study);
-//            getDesignDescriptors(study);
+            getDesignDescriptors(study, studyItem);
 //            getCharacteristicCategories(study);
 //            getUnitCategories(study);
 //            getComments(study);
@@ -212,25 +215,51 @@ public class ISAConverter extends BioFileConverter {
             Integer foid = store(factorItem);
             store(reference, foid);
 
+        }
+    }
 
+    private void getDesignDescriptors(JsonNode study, Item studyItem) throws ObjectStoreException {
+        JsonNode sddNode = study.path("studyDesignDescriptors");
+        for (JsonNode sdd : sddNode) {
+
+            // storing in studyData
+            // TODO: - decide if to add collection to study
+            //       - decide what to do of the ontology ref
+
+            Term term = new Term(sdd).invoke();
+            String termId = term.getId();
+            String annotationValue = term.getAnnotationValue();
+            String termAccession = term.getTermAccession();
+            String termSource = term.getTermSource();
+
+            LOG.warn("SDD: " + annotationValue);
+
+            Item sddItem = createStudyData("descriptor", annotationValue, null, null);
+
+            Reference reference = new Reference();
+            reference.setName("study");
+            reference.setRefId(studyItem.getIdentifier());
+
+            Integer sddoid = store(sddItem);
+            store(reference, sddoid);
 
         }
     }
 
 
-
-    private void getMaterials(JsonNode study) {
+    private void getMaterials(JsonNode study) throws ObjectStoreException {
         LOG.warn("IN MATERIALS...");
         JsonNode sourceNode = study.path("materials").get("sources");
         for (JsonNode source : sourceNode) {
             LOG.warn("IN Sources...");
+
             getSource(source);
         }
 
         JsonNode sampleNode = study.path("materials").get("samples");
         for (JsonNode sample : sampleNode) {
             LOG.warn("IN Samples...");
-            getSource(sample);
+            getSample(sample);
             getFactorValues(sample.path("factorValues"));
         }
     }
@@ -294,17 +323,18 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    private void getSource(JsonNode source) { //TODO rename to more generic
+    private void getSource(JsonNode source) throws ObjectStoreException {
         String sourceName = source.path("name").asText();
         String sourceId = source.path("@id").asText();
 
-        Integer cSize = source.path("characteristics").size();
+        LOG.warn("--- " + source.getClass().getName());
+        storeSource(sourceName);
 
+        Integer cSize = source.path("characteristics").size();
         LOG.warn("SOURCE " + sourceId + ": " + sourceName + " with " + cSize + " characteristics");
 
         JsonNode characteristicNode = source.path("characteristics");
-
-        for (JsonNode characteristic : characteristicNode) {
+        for (JsonNode characteristic : characteristicNode) { // TODO: que pasa?
             String categoryId = characteristic.path("category").get("@id").asText();
 
             JsonNode value = characteristic.path("value");
@@ -316,7 +346,46 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.info("CHAR " + categoryId + ": " + id + "|" + annotationValue + "|"
                     + termAccession + "|" + termSource);
+
         }
+    }
+
+
+    private void getSample(JsonNode source) throws ObjectStoreException {
+        String sourceName = source.path("name").asText();
+        String sourceId = source.path("@id").asText();
+
+        Integer cSize = source.path("characteristics").size();
+        LOG.warn("SAMPLE " + sourceId + ": " + sourceName + " with " + cSize + " characteristics");
+
+        JsonNode characteristicNode = source.path("characteristics");
+        for (JsonNode characteristic : characteristicNode) { // TODO: que pasa?
+            String categoryId = characteristic.path("category").get("@id").asText();
+
+            JsonNode value = characteristic.path("value");
+            Term term = new Term(value).invoke();
+            String id = term.getId();
+            String annotationValue = term.getAnnotationValue();
+            String termAccession = term.getTermAccession();
+            String termSource = term.getTermSource();
+
+            LOG.info("CHAR " + categoryId + ": " + id + "|" + annotationValue + "|"
+                    + termAccession + "|" + termSource);
+
+        }
+    }
+
+
+    private void storeSource(String sourceName) throws ObjectStoreException {
+        Item sdItem = createStudyData(sourceName);
+
+        LOG.warn("STORING SOURCE " + sourceName);
+        Reference reference = new Reference();
+        reference.setName("study");
+        reference.setRefId(studyItem.getIdentifier());
+
+        Integer sdoid = store(sdItem);
+        store(reference, sdoid);
     }
 
     private void getFactorValues(JsonNode source) { //TODO rename to more generic
@@ -396,7 +465,6 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-
     private Item createIS(String type, String id, String title, String description, String subDate, String pubDate)
             throws ObjectStoreException {
 
@@ -434,6 +502,34 @@ public class ISAConverter extends BioFileConverter {
 //        if (!type.isEmpty()) {
 //            item.setAttribute("type", type);
 //        }
+        return item;
+    }
+
+    private Item createStudyData(String name, String value, String unit, String type)
+            throws ObjectStoreException {
+
+        Item item = createItem("StudyData");
+        item.setAttribute("name", name);
+
+        if (!value.isEmpty()) {
+            item.setAttribute("value", value);
+        }
+        // gives NPE ! change contract?
+//        if (!unit.isEmpty()) {
+//            item.setAttribute("unit", unit);
+//        }
+//        if (!type.isEmpty()) {
+//            item.setAttribute("type", type);
+//        }
+        return item;
+    }
+
+    private Item createStudyData(String source)
+            throws ObjectStoreException {
+
+        Item item = createItem("StudyData");
+        item.setAttribute("source", source);
+
         return item;
     }
 
