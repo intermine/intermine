@@ -97,11 +97,8 @@ public class ISAConverter extends BioFileConverter {
 
         processInvestigation(root);
 
-        JsonNode osr = root.path("ontologySourceReferences");
-        LOG.warn("OSR type is ... " + osr.getNodeType().toString());
-        mapOSR(osr);
-        // do the storing
-
+        JsonNode ontologyNode = root.path("ontologySourceReferences");
+        getOntologies(ontologyNode);  // TODO: make a map to use for referencing terms?
 
         JsonNode studyNode = root.path("studies");
         for (JsonNode study : studyNode) {
@@ -406,15 +403,16 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    private void mapOSR(JsonNode osr) {
+    private void getOntologies(JsonNode osr) throws ObjectStoreException {
         for (JsonNode node : osr) {
             String name = node.path("name").asText();
             String description = node.path("description").asText();
             String filename = node.path("file").asText();
             String version = node.path("version").asText();
 
+            store(createOntology(description, filename, name, version));
+
             LOG.warn("OSR " + name);
-            LOG.warn(description + " -- " + filename + " | " + version);
         }
     }
 
@@ -532,6 +530,19 @@ public class ISAConverter extends BioFileConverter {
 
         return item;
     }
+
+    private Item createOntology(String name, String url, String shortName, String version)
+            throws ObjectStoreException {
+
+        Item item = createItem("Ontology");
+        item.setAttribute("name", name);
+        item.setAttribute("url", url);
+        item.setAttribute("shortName", shortName);
+        item.setAttribute("version", version);
+
+        return item;
+    }
+
 
 
     private Item createProtocol(String id, String name, String description, String uri, String version)
