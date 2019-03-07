@@ -367,15 +367,16 @@ public class ISAConverter extends BioFileConverter {
 
 
     private void getSample(JsonNode source) throws ObjectStoreException {
-        String sourceName = source.path("name").asText();
+        String name = source.path("name").asText();
         String sourceId = source.path("@id").asText();
 
         Integer cSize = source.path("characteristics").size();
-        LOG.warn("SAMPLE " + sourceId + ": " + sourceName + " with " + cSize + " characteristics");
+        LOG.warn("SAMPLE " + sourceId + ": " + name + " with " + cSize + " characteristics");
 
-        getFactorValues(source.path("factorValues"));
+        getSampleFactors(source.path("factorValues"), name);
 
 
+        store (studyReference, store(createStudyData (name, "","", "sample")));
 
 
         // empty for sample! is it general?
@@ -393,7 +394,6 @@ public class ISAConverter extends BioFileConverter {
             LOG.info("SAMPLECHAR " + categoryId + ": " + id + "|" + annotationValue + "|"
                     + termAccession + "|" + termSource);
 
-            //store (createStudyData (sourceName, annotationValue,"", "sample"));
 
         }
     }
@@ -409,10 +409,19 @@ public class ISAConverter extends BioFileConverter {
         store(studyReference, sdoid);
     }
 
-    private void getFactorValues(JsonNode source) throws ObjectStoreException {
+    private void storeSample(String sourceName) throws ObjectStoreException {
+        Item sdItem = createStudyData(sourceName);
+
+        Integer sdoid = store(sdItem);
+        store(studyReference, sdoid);
+    }
+
+
+    private void getSampleFactors(JsonNode source, String sampleName) throws ObjectStoreException {
 
         for (JsonNode characteristic : source) {
             String categoryId = characteristic.path("category").get("@id").asText();
+
 
             JsonNode value = characteristic.path("value");
             Term term = new Term(value).invoke();
@@ -421,11 +430,19 @@ public class ISAConverter extends BioFileConverter {
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
+            // check if in factors, add if not, get item_id and add ref to createSD
+
+            Item studyFactor = createFactor(categoryId, annotationValue, "sample", "", "", "");
+
+            // check if not stored, store in case
+
             LOG.info("CHAR " + categoryId + ": " + "id" + annotationValue + "|"
                     + termAccession + "|" + termSource);
             // name should come from the study factor
 
-            Item item = createStudyData("Genotype", annotationValue,"","factor");
+            Item item = createStudyData(sampleName, annotationValue,"","factor");
+            Reference factorRef = getReference("factor", item);
+            item.addReference(factorRef);
             store(studyReference, store(item));
         }
     }
