@@ -47,12 +47,16 @@ public class ISAConverter extends BioFileConverter {
 
     private Map<String, Map> protpars;  // protocol.parameters
     private Set<String> taxonIds;
+
     private Map<String, Item> pathways = new HashMap<>();
     private Map<String, Item> proteins = new HashMap<>();
 
+    private Map<String, Item> factors = new HashMap<>();
+
     private Integer investigationOID;
-    private Integer studyOID;   // TODO: check if it works for >1 study per investigation
-    private Item studyItem;     //       in case use map? or make private object {id, itemId, oId}
+    private Integer studyOID;
+    private Item studyItem;
+    private Reference studyReference;
 
 
     /**
@@ -115,6 +119,8 @@ public class ISAConverter extends BioFileConverter {
 
             studyItem = createIS("Study", identifier, title, description, pubDate, subDate);
             studyOID = store(studyItem);
+            studyReference = getStudyReference(studyItem);
+
 
             getProtocols(study);
             getMaterials(study);
@@ -203,17 +209,32 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.warn("FACTOR study " + name + ": " + annotationValue);
 
-            Item factorItem = createFactor(name, annotationValue, null, null);
+//            Item factorItem = createFactor(name, annotationValue, null, null);
+            Item factorItem = createFactor(id, annotationValue, name, annotationValue, "", termAccession);
 
-            Reference reference = new Reference();
-            reference.setName("study");
-            reference.setRefId(studyItem.getIdentifier());
+            //Reference reference = getReference(studyItem);
 
             Integer foid = store(factorItem);
-            store(reference, foid);
+            store(studyReference, foid);
 
         }
     }
+
+    // generic, not used yet
+    private Reference getReference(String name, Item item) {
+        Reference reference = new Reference();
+        reference.setName(name);
+        reference.setRefId(item.getIdentifier());
+        return reference;
+    }
+
+    private Reference getStudyReference(Item studyItem) {
+        Reference reference = new Reference();
+        reference.setName("study");
+        reference.setRefId(studyItem.getIdentifier());
+        return reference;
+    }
+
 
     private void getDesignDescriptors(JsonNode study, Item studyItem) throws ObjectStoreException {
         JsonNode sddNode = study.path("studyDesignDescriptors");
@@ -231,14 +252,12 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.warn("SDD: " + annotationValue);
 
-            Item sddItem = createStudyData("descriptor", annotationValue, null, null);
+            Item sddItem = createStudyData("descriptor", annotationValue, "", "");
 
-            Reference reference = new Reference();
-            reference.setName("study");
-            reference.setRefId(studyItem.getIdentifier());
+            //Reference reference = getReference(studyItem);
 
             Integer sddoid = store(sddItem);
-            store(reference, sddoid);
+            store(studyReference, sddoid);
 
         }
     }
@@ -257,7 +276,6 @@ public class ISAConverter extends BioFileConverter {
         for (JsonNode sample : sampleNode) {
             LOG.warn("IN Samples...");
             getSample(sample);
-            getFactorValues(sample.path("factorValues"));
         }
     }
 
@@ -355,8 +373,14 @@ public class ISAConverter extends BioFileConverter {
         Integer cSize = source.path("characteristics").size();
         LOG.warn("SAMPLE " + sourceId + ": " + sourceName + " with " + cSize + " characteristics");
 
+        getFactorValues(source.path("factorValues"));
+
+
+
+
+        // empty for sample! is it general?
         JsonNode characteristicNode = source.path("characteristics");
-        for (JsonNode characteristic : characteristicNode) { // TODO: que pasa?
+        for (JsonNode characteristic : characteristicNode) {
             String categoryId = characteristic.path("category").get("@id").asText();
 
             JsonNode value = characteristic.path("value");
@@ -366,8 +390,10 @@ public class ISAConverter extends BioFileConverter {
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
-            LOG.info("CHAR " + categoryId + ": " + id + "|" + annotationValue + "|"
+            LOG.info("SAMPLECHAR " + categoryId + ": " + id + "|" + annotationValue + "|"
                     + termAccession + "|" + termSource);
+
+            //store (createStudyData (sourceName, annotationValue,"", "sample"));
 
         }
     }
@@ -377,15 +403,13 @@ public class ISAConverter extends BioFileConverter {
         Item sdItem = createStudyData(sourceName);
 
         LOG.warn("STORING SOURCE " + sourceName);
-        Reference reference = new Reference();
-        reference.setName("study");
-        reference.setRefId(studyItem.getIdentifier());
+        //Reference reference = getReference(studyItem);
 
         Integer sdoid = store(sdItem);
-        store(reference, sdoid);
+        store(studyReference, sdoid);
     }
 
-    private void getFactorValues(JsonNode source) { //TODO rename to more generic
+    private void getFactorValues(JsonNode source) throws ObjectStoreException {
 
         for (JsonNode characteristic : source) {
             String categoryId = characteristic.path("category").get("@id").asText();
@@ -399,6 +423,10 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.info("CHAR " + categoryId + ": " + "id" + annotationValue + "|"
                     + termAccession + "|" + termSource);
+            // name should come from the study factor
+
+            Item item = createStudyData("Genotype", annotationValue,"","factor");
+            store(studyReference, store(item));
         }
     }
 
@@ -484,6 +512,33 @@ public class ISAConverter extends BioFileConverter {
         return item;
     }
 
+
+
+    private Item createFactor(String isaId, String name, String type, String value, String unit, String accession)
+            throws ObjectStoreException {
+        Item item = factors.get(isaId);
+        if (item == null) {
+            item = createItem("Factor");
+            item.setAttribute("name", name);
+            if (!type.isEmpty()) {
+                item.setAttribute("type", type);
+            }
+            if (!value.isEmpty()) {
+                item.setAttribute("value", value);
+            }
+            if (!unit.isEmpty()) {
+                item.setAttribute("unit", unit);
+            }
+            if (!accession.isEmpty()) {
+                item.setAttribute("accession", accession);
+            }
+
+            factors.put(isaId, item);
+        }
+        return item;
+    }
+
+// torm
     private Item createFactor(String name, String value, String unit, String type)
             throws ObjectStoreException {
 
@@ -512,13 +567,13 @@ public class ISAConverter extends BioFileConverter {
         if (!value.isEmpty()) {
             item.setAttribute("value", value);
         }
-        // gives NPE ! change contract?
-//        if (!unit.isEmpty()) {
-//            item.setAttribute("unit", unit);
-//        }
-//        if (!type.isEmpty()) {
-//            item.setAttribute("type", type);
-//        }
+        // gives NPE if i pass null.. change contract?
+        if (!unit.isEmpty()) {
+            item.setAttribute("unit", unit);
+        }
+        if (!type.isEmpty()) {
+            item.setAttribute("type", type);
+        }
         return item;
     }
 
@@ -593,9 +648,6 @@ public class ISAConverter extends BioFileConverter {
 
     }
 
-    private String blunt(String in) {
-        return in.replaceAll("#", "");
-    }
 
 
     private class Term {
@@ -684,6 +736,12 @@ public class ISAConverter extends BioFileConverter {
             m.put(key, ids);
         }
     }
+
+
+    private String blunt(String in) {
+        return in.replaceAll("#", "");
+    }
+
 
 
     //
@@ -788,16 +846,6 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    private Item getPathway(String pathwayId, String pathwayName) throws ObjectStoreException {
-        Item item = pathways.get(pathwayId);
-        if (item == null) {
-            item = createItem("Pathway");
-            item.setAttribute("identifier", pathwayId);
-            item.setAttribute("name", pathwayName);
-            pathways.put(pathwayId, item);
-        }
-        return item;
-    }
 
 
 }
