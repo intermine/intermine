@@ -48,7 +48,6 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Map> protpars;  // protocol.parameters
     private Set<String> taxonIds;
 
-    private Map<String, Item> pathways = new HashMap<>();
     private Map<String, Item> proteins = new HashMap<>();
 
     private Map<String, Item> factors = new HashMap<>();
@@ -117,32 +116,30 @@ public class ISAConverter extends BioFileConverter {
             LOG.warn("STUDY " + identifier);
             LOG.warn(title + " -- " + filename + " | " + subDate);
 
-            studyItem = createIS("Study", identifier, title, description, pubDate, subDate);
+            studyItem = createStudy("Study", identifier, title, description, pubDate, subDate);
             studyOID = store(studyItem);
-            studyReference = getStudyReference(studyItem);
+//            studyReference = getStudyReference(studyItem);
+            studyReference = getReference("study", studyItem);
 
+            getFactors(study);
+            getDesignDescriptors(study);
 
             getProtocols(study);
             getMaterials(study);
             getAssays(study);
 
-            getFactors(study, studyItem);
-
             //TODO
 //            getPublications(study);
 //            getPeople(study);
-            getDesignDescriptors(study, studyItem);
 //            getCharacteristicCategories(study);
 //            getUnitCategories(study);
 //            getComments(study);
 
-
         }
 
-        LOG.warn("-----");
+        LOG.warn("----- parsing over -----------");
 
         //createInvestigationWithPojo(file);
-
     }
 
 
@@ -154,9 +151,7 @@ public class ISAConverter extends BioFileConverter {
         String pubDate = investigation.path("publicReleaseDate").asText();
         String subDate = investigation.path("submissionDate").asText();
 
-        Item investigationItem = createIS("Investigation", identifier, title, description, pubDate, subDate);
-        //Item investigationItem = createInvestigation(identifier, title, description, pubDate, subDate);
-
+        Item investigationItem = createStudy("Investigation", identifier, title, description, pubDate, subDate);
         investigationOID = store(investigationItem);
     }
 
@@ -172,7 +167,7 @@ public class ISAConverter extends BioFileConverter {
 
             // get also protocolType (term)..
             createProtocol(id, name, description, uri, version);
-            LOG.warn("PROT " + name + " pars: " + protocol.path("parameters").size());
+            LOG.warn("PROT " + name + " #pars: " + protocol.path("parameters").size());
 
             JsonNode parameterNode = protocol.path("parameters");
 
@@ -194,7 +189,7 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    private void getFactors(JsonNode study, Item studyItem) throws ObjectStoreException {
+    private void getFactors(JsonNode study) throws ObjectStoreException {
         JsonNode factorNode = study.path("factors");
         for (JsonNode factor : factorNode) {
 
@@ -209,18 +204,13 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.warn("FACTOR study " + name + ": " + annotationValue);
 
-//            Item factorItem = createFactor(name, annotationValue, null, null);
             Item factorItem = createFactor(id, annotationValue, name, annotationValue, "", termAccession);
-
-            //Reference reference = getReference(studyItem);
-
-            Integer foid = store(factorItem);
-            store(studyReference, foid);
-
+            Integer oid = store(factorItem);
+            store(studyReference, oid);
         }
     }
 
-    // generic, not used yet
+    // generic
     private Reference getReference(String name, Item item) {
         Reference reference = new Reference();
         reference.setName(name);
@@ -228,15 +218,7 @@ public class ISAConverter extends BioFileConverter {
         return reference;
     }
 
-    private Reference getStudyReference(Item studyItem) {
-        Reference reference = new Reference();
-        reference.setName("study");
-        reference.setRefId(studyItem.getIdentifier());
-        return reference;
-    }
-
-
-    private void getDesignDescriptors(JsonNode study, Item studyItem) throws ObjectStoreException {
+    private void getDesignDescriptors(JsonNode study) throws ObjectStoreException {
         JsonNode sddNode = study.path("studyDesignDescriptors");
         for (JsonNode sdd : sddNode) {
 
@@ -252,23 +234,17 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.warn("SDD: " + annotationValue);
 
-            Item sddItem = createStudyData("descriptor", annotationValue, "", "");
-
-            //Reference reference = getReference(studyItem);
-
+            Item sddItem = createStudyData("descriptor", annotationValue, "", "study");
             Integer sddoid = store(sddItem);
             store(studyReference, sddoid);
-
         }
     }
 
 
     private void getMaterials(JsonNode study) throws ObjectStoreException {
-        LOG.warn("IN MATERIALS...");
         JsonNode sourceNode = study.path("materials").get("sources");
         for (JsonNode source : sourceNode) {
             LOG.warn("IN Sources...");
-
             getSource(source);
         }
 
@@ -342,7 +318,6 @@ public class ISAConverter extends BioFileConverter {
         String sourceName = source.path("name").asText();
         String sourceId = source.path("@id").asText();
 
-        LOG.warn("--- " + source.getClass().getName());
         storeSource(sourceName);
 
         Integer cSize = source.path("characteristics").size();
@@ -403,8 +378,6 @@ public class ISAConverter extends BioFileConverter {
         Item sdItem = createStudyData(sourceName);
 
         LOG.warn("STORING SOURCE " + sourceName);
-        //Reference reference = getReference(studyItem);
-
         Integer sdoid = store(sdItem);
         store(studyReference, sdoid);
     }
@@ -508,7 +481,7 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    private Item createIS(String type, String id, String title, String description, String subDate, String pubDate)
+    private Item createStudy(String type, String id, String title, String description, String subDate, String pubDate)
             throws ObjectStoreException {
 
         Item item = createItem(type);
