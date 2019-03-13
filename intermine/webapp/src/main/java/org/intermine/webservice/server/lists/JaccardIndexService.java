@@ -24,6 +24,7 @@ import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -115,10 +116,9 @@ public class JaccardIndexService extends WebService
             BigDecimal numerator = new BigDecimal(intersection.size());
             BigDecimal jaccardSimilarity = new BigDecimal(0);
             // don't divide by zero
-            if (numerator.compareTo(jaccardSimilarity) > 0) {
-                jaccardSimilarity = denominator.divide(numerator);
+            if (denominator.compareTo(BigDecimal.ZERO) > 0)
+                jaccardSimilarity = denominator.divide(numerator, RoundingMode.HALF_UP);
             }
-
             if (jaccardSimilarity.compareTo(minimumValue) >= 0) {
                 results.put(name, String.valueOf(jaccardSimilarity) + " ");
                 results.put(" double results ", jaccardSimilarity.toString());
