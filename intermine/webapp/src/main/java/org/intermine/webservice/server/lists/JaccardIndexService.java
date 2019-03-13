@@ -93,15 +93,15 @@ public class JaccardIndexService extends WebService
         output.setHeaderAttributes(getHeaderAttributes());
         for (Map.Entry<String, InterMineBag> entry : lists.entrySet()) {
             String name = entry.getKey();
-            if (listName != null && listName.equals(name)) {
-                // don't compare list to itself
-                continue;
-            }
             InterMineBag bag = entry.getValue();
             if (bag == null) {
                 continue;
             }
-            if (!bag.getType().equals(type)) {
+            if (listName != null && listName.equals(name)) {
+                // don't compare list to itself
+                continue;
+            }
+            if (!bag.getType().equalsIgnoreCase(type)) {
                 // only compare bags of the same type
                 continue;
             }
@@ -111,8 +111,14 @@ public class JaccardIndexService extends WebService
                     comparisonList);
             float jaccardSimilarity = intersection.size() /
                     (bagOfInterest.size() + comparisonList.size() - intersection.size());
-            if (jaccardSimilarity > minimumValue) {
-                results.put(name, String.valueOf(jaccardSimilarity));
+            if (jaccardSimilarity >= minimumValue) {
+                results.put(name, String.valueOf(jaccardSimilarity) + " ");
+                results.put("bagOfInterest.size()", String.valueOf(bagOfInterest.size()));
+                results.put("comparisonList.size()", String.valueOf(comparisonList.size()));
+                results.put("intersection.size()", String.valueOf(intersection.size()));
+                for (String s : intersection) {
+                    results.put("intersection list member", s);
+                }
             }
         }
 
