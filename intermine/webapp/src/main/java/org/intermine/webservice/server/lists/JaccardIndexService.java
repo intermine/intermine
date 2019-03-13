@@ -113,7 +113,12 @@ public class JaccardIndexService extends WebService
             BigDecimal denominator = new BigDecimal(bagOfInterest.size()
                     + comparisonList.size() - intersection.size());
             BigDecimal numerator = new BigDecimal(intersection.size());
-            BigDecimal jaccardSimilarity = denominator.divide(numerator);
+            BigDecimal jaccardSimilarity = new BigDecimal(0);
+            // don't divide by zero
+            if (numerator.compareTo(jaccardSimilarity) > 0) {
+                jaccardSimilarity = denominator.divide(numerator);
+            }
+
             if (jaccardSimilarity.compareTo(minimumValue) >= 0) {
                 results.put(name, String.valueOf(jaccardSimilarity) + " ");
                 results.put(" double results ", jaccardSimilarity.toString());
