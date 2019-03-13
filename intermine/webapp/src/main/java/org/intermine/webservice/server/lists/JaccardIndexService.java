@@ -12,7 +12,6 @@ package org.intermine.webservice.server.lists;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.text.similarity.JaccardSimilarity;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.InterMineBag;
