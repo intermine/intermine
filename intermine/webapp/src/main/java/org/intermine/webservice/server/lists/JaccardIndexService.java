@@ -116,24 +116,25 @@ public class JaccardIndexService extends WebService
             BigDecimal numerator = new BigDecimal(intersection.size());
             BigDecimal jaccardSimilarity = new BigDecimal(0);
             // don't divide by zero
-            if (denominator.compareTo(BigDecimal.ZERO) != 0) {
-                jaccardSimilarity = denominator.divide(numerator, 2, RoundingMode.HALF_UP);
+            if (denominator.compareTo(BigDecimal.ZERO) != 0
+                    && numerator.compareTo(BigDecimal.ZERO) != 0) {
+                jaccardSimilarity = numerator.divide(denominator, 2, RoundingMode.HALF_UP);
             }
             if (jaccardSimilarity.compareTo(minimumValue) >= 0) {
-                results.put(name, String.valueOf(jaccardSimilarity) + " ");
-                results.put(" double results ", jaccardSimilarity.toString());
-
-                String msg = "bagOfInterest.size():" + String.valueOf(bagOfInterest.size())
-                + ",comparisonList.size():" + String.valueOf(comparisonList.size())
-                + ",intersection.size():" + String.valueOf(intersection.size());
+                results.put(name, jaccardSimilarity.toString());
+                  String msg = "bagOfInterest.size():" + String.valueOf(bagOfInterest.size())
+                    + ",comparisonList.size():" + String.valueOf(comparisonList.size())
+                    + ",intersection.size():" + String.valueOf(intersection.size());
 
                 results.put("results for" + name, msg);
 
                 String members = "";
                 for (String s : intersection) {
-                    members = s + ",";
+                    members = members + "," + s;
                 }
-                results.put(name + " intersection list member", members);
+                if (members != "") {
+                    results.put(name + " intersection list member", members);
+                }
             }
         }
 
