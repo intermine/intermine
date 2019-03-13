@@ -11,6 +11,8 @@ package org.intermine.webservice.server.lists;
  */
 
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.text.similarity.JaccardSimilarity;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.InterMineBag;
@@ -22,11 +24,11 @@ import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
 
-import org.apache.commons.text.similarity.JaccardSimilarity;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -69,7 +71,7 @@ public class JaccardIndexService extends WebService
 
         ListManager listManager = new ListManager(im, getPermission().getProfile());
         Map<String, InterMineBag> lists = listManager.getListMap();
-        CharSequence bagOfInterest = null;
+        List<String> bagOfInterest = new ArrayList<>();
 
         if (listName != null) {
             InterMineBag bag = lists.get(listName);
@@ -88,7 +90,6 @@ public class JaccardIndexService extends WebService
         }
 
         Map<String, String> results = new HashMap<String, String>();
-        JaccardSimilarity jaccard = new JaccardSimilarity();
 
         output.setHeaderAttributes(getHeaderAttributes());
         for (Map.Entry<String, InterMineBag> entry : lists.entrySet()) {
@@ -105,10 +106,14 @@ public class JaccardIndexService extends WebService
                 // only compare bags of the same type
                 continue;
             }
-            CharSequence comparisonList = getBagValues(bag);
-            Double result = jaccard.apply(bagOfInterest, comparisonList);
-            if (result > minimumValue) {
-                results.put(name, result.toString());
+
+            List<String> comparisonList = getBagValues(bag);
+            List<String> intersection = (List<String) CollectionUtils.intersection(bagOfInterest,
+                    comparisonList);
+            float jaccardSimilarity = intersection.size() /
+                    (bagOfInterest.size() + comparisonList.size() - intersection.size());
+            if (jaccardSimilarity > minimumValue) {
+                results.put(name, String.valueOf(jaccardSimilarity));
             }
         }
 
@@ -116,22 +121,13 @@ public class JaccardIndexService extends WebService
         output.addResultItem(Collections.singletonList(jo.toString()));
     }
 
-    private CharSequence getBagValues(InterMineBag bag) {
-        CharSequence cs = "";
+    private List<String> getBagValues(InterMineBag bag) {
+        List<String> identifiers = new ArrayList();
         for (BagValue bv: bag.getContents()) {
-            cs = cs + bv.getValue();
+            identifiers.add(bv.getValue());
         }
-        return cs;
+        return identifiers;
     }
-
-//    private CharSequence getJaccardIndex(String ids) {
-//        String[] idArray = ids.split(", ");
-//        CharSequence cs = "";
-//        for (String id : idArray) {
-//
-//        }
-//        return cs;
-//    }
 
     /**
      * Get the lists for this request.
