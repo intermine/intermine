@@ -116,7 +116,7 @@ public class JaccardIndexService extends WebService
             BigDecimal numerator = new BigDecimal(intersection.size());
             BigDecimal jaccardSimilarity = new BigDecimal(0);
             // don't divide by zero
-            if (denominator.compareTo(BigDecimal.ZERO) > 0)
+            if (denominator.compareTo(BigDecimal.ZERO) > 0) {
                 jaccardSimilarity = denominator.divide(numerator, RoundingMode.HALF_UP);
             }
             if (jaccardSimilarity.compareTo(minimumValue) >= 0) {
