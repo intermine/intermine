@@ -23,6 +23,7 @@ import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class JaccardIndexService extends WebService
         String ids = request.getParameter("ids");
         String min = request.getParameter("min");
         String type = request.getParameter("type");
-        Double minimumValue = new Double(0);
+        BigDecimal minimumValue = new BigDecimal(0);
 
         if (listName == null && ids == null) {
             throw new BadRequestException("Provide either name of a list or set of InterMine IDs");
@@ -62,7 +63,7 @@ public class JaccardIndexService extends WebService
 
         if (min != null) {
             try {
-                minimumValue = new Double(min);
+                minimumValue = new BigDecimal(min);
             } catch (NumberFormatException e) {
                 throw new BadRequestException("Min must be a valid number: '" + min + "'");
             }
@@ -109,10 +110,13 @@ public class JaccardIndexService extends WebService
             List<String> comparisonList = getBagValues(bag);
             List<String> intersection = (List<String>) CollectionUtils.intersection(bagOfInterest,
                     comparisonList);
-            float jaccardSimilarity = intersection.size() /
-                    (bagOfInterest.size() + comparisonList.size() - intersection.size());
-            if (jaccardSimilarity >= minimumValue) {
+            BigDecimal denominator = new BigDecimal(bagOfInterest.size()
+                    + comparisonList.size() - intersection.size());
+            BigDecimal numerator = new BigDecimal(intersection.size());
+            BigDecimal jaccardSimilarity = denominator.divide(numerator);
+            if (jaccardSimilarity.compareTo(minimumValue) >= 0) {
                 results.put(name, String.valueOf(jaccardSimilarity) + " ");
+                results.put(" double results ", jaccardSimilarity.toString());
 
                 String msg = "bagOfInterest.size():" + String.valueOf(bagOfInterest.size())
                 + ",comparisonList.size():" + String.valueOf(comparisonList.size())
