@@ -122,19 +122,6 @@ public class JaccardIndexService extends WebService
             }
             if (jaccardSimilarity.compareTo(minimumValue) >= 0) {
                 results.put(name, jaccardSimilarity.toString());
-                  String msg = "bagOfInterest.size():" + String.valueOf(bagOfInterest.size())
-                    + ",comparisonList.size():" + String.valueOf(comparisonList.size())
-                    + ",intersection.size():" + String.valueOf(intersection.size());
-
-                results.put("results for" + name, msg);
-
-                String members = "";
-                for (String s : intersection) {
-                    members = members + "," + s;
-                }
-                if (members != "") {
-                    results.put(name + " intersection list member", members);
-                }
             }
         }
 
