@@ -108,7 +108,7 @@ public class JaccardIndexService extends WebService
             }
 
             List<String> comparisonList = getBagValues(bag);
-            List<String> intersection = (List<String) CollectionUtils.intersection(bagOfInterest,
+            List<String> intersection = (List<String>) CollectionUtils.intersection(bagOfInterest,
                     comparisonList);
             float jaccardSimilarity = intersection.size() /
                     (bagOfInterest.size() + comparisonList.size() - intersection.size());
