@@ -94,6 +94,8 @@ public class ISAConverter extends BioFileConverter {
      */
     public void process(Reader reader) throws Exception {
 
+        // TODO: decide if to use blunt ids or not
+
         File file = getFiles();
 
         JsonNode root = new ObjectMapper().readTree(file);
@@ -119,7 +121,6 @@ public class ISAConverter extends BioFileConverter {
 
             studyItem = createStudy("Study", identifier, title, description, pubDate, subDate);
             studyOID = store(studyItem);
-//            studyReference = getStudyReference(studyItem);
             studyReference = getReference("study", studyItem);
 
             getFactors(study);
@@ -256,7 +257,7 @@ public class ISAConverter extends BioFileConverter {
         }
     }
 
-    private void getAssays(JsonNode study) {
+    private void getAssays(JsonNode study) throws ObjectStoreException {
         JsonNode assayNode = study.path("assays");
         for (JsonNode assay : assayNode) {
             String fileName = assay.path("filename").asText();
@@ -302,8 +303,10 @@ public class ISAConverter extends BioFileConverter {
                 String type = file.getType();
 
                 LOG.info("FILE " + fileId + ": " + type + "|" + name);
-            }
 
+                Item item = createDataFile(type, name);
+                store(studyReference, store(item));
+            }
         }
     }
 
@@ -396,28 +399,13 @@ public class ISAConverter extends BioFileConverter {
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
-            // check if in factors, add if not, get item_id and add ref to createSD
-            //Item studyFactor = createFactor(id, categoryId, annotationValue, "sample", "", "", "");
-
-            //Item sampleFactor = createStudyData(id, categoryId, annotationValue, "sample", "", "", "");
-
-            LOG.info("CHAR " + categoryId + ": " + "id" + annotationValue + "|"
-                    + termAccession + "|" + termSource);
-            LOG.warn("FLIST " + factorRefs.toString() + "|" + factors.size());
-
-            // name should come from the study factor
+            // alt: check if in factors, add if not, get item_id and add ref to createSD
+            // name should come from the study factor?
 
             Item item = createStudyData(sampleName, annotationValue,"","factor");
-            LOG.warn("FV CAT ID " + categoryId);
-            LOG.warn("F ITEM " + factors.get(categoryId).getIdentifier());
             Reference factorRef = getReference("factor", factors.get(categoryId));
             item.addReference(factorRef);
 
-//            Reference factorRef = getReference("factor", studyFactor);
-//            item.addReference(factorRef);
-
-            LOG.warn("REFF " + factorRef.getRefId());
- //           Integer foid = store(item);
             store(studyReference, store(item));
         }
     }
@@ -529,7 +517,23 @@ public class ISAConverter extends BioFileConverter {
         return item;
     }
 
-// torm
+
+    private Item createDataFile(String type, String name)
+            throws ObjectStoreException {
+
+        Item item = createItem("DataFile");
+        item.setAttribute("type", type);
+
+        if (!name.isEmpty()) {
+            item.setAttribute("name", name);
+        }
+        return item;
+    }
+
+
+
+
+    // torm
     private Item createFactor(String name, String value, String unit, String type)
             throws ObjectStoreException {
 
