@@ -51,6 +51,7 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Item> proteins = new HashMap<>();
 
     private Map<String, Item> factors = new HashMap<>();
+    private Map<String, List<String>> factorRefs = new HashMap<>();
 
     private Integer investigationOID;
     private Integer studyOID;
@@ -204,7 +205,7 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.warn("FACTOR study " + name + ": " + annotationValue);
 
-            Item factorItem = createFactor(id, annotationValue, name, annotationValue, "", termAccession);
+            Item factorItem = createFactor(id, "", annotationValue, name, annotationValue, "", termAccession);
             Integer oid = store(factorItem);
             store(studyReference, oid);
         }
@@ -258,7 +259,7 @@ public class ISAConverter extends BioFileConverter {
     private void getAssays(JsonNode study) {
         JsonNode assayNode = study.path("assays");
         for (JsonNode assay : assayNode) {
-            String fileName = assay.path("fileName").asText();
+            String fileName = assay.path("filename").asText();
             String technologyPlatform = assay.path("technologyPlatform").asText();
 
             LOG.warn("ASSAY " + fileName + " on: " + technologyPlatform);
@@ -267,10 +268,7 @@ public class ISAConverter extends BioFileConverter {
             JsonNode characteristicCategoriesNode = assay.get("characteristicCategories");
 
             for (JsonNode inode : characteristicCategoriesNode) {
-                LOG.warn("IN characteristicCategory ...");
                 String characteristicCategoryId = inode.path("@id").asText(); // prob not useful
-
-                LOG.warn("--characteristicType: " + inode.path("characteristicType").size());
 
                 Term term = new Term(inode.path("characteristicType")).invoke();
                 String id = term.getId();
@@ -283,8 +281,6 @@ public class ISAConverter extends BioFileConverter {
 
             // GET measurementType
             JsonNode measurementTypeNode = assay.get("measurementType");
-            LOG.warn("MT node type is " + measurementTypeNode.getNodeType().toString()
-                    + " and size " + measurementTypeNode.size());
 
             Term term = new Term(measurementTypeNode).invoke();
             String id = term.getId();
@@ -292,13 +288,11 @@ public class ISAConverter extends BioFileConverter {
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
-            LOG.info("CHAR " + id + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+            LOG.info("MT " + id + ": " + annotationValue + "|" + termAccession + "|" + termSource);
 
 
             // GET datafiles
             JsonNode dataFilesNode = assay.get("dataFiles");
-            LOG.warn("DF node type is " + dataFilesNode.getNodeType().toString()
-                    + " and size " + dataFilesNode.size());
 
             for (JsonNode inode : dataFilesNode) {
 
@@ -350,9 +344,7 @@ public class ISAConverter extends BioFileConverter {
 
         getSampleFactors(source.path("factorValues"), name);
 
-
         store (studyReference, store(createStudyData (name, "","", "sample")));
-
 
         // empty for sample! is it general?
         JsonNode characteristicNode = source.path("characteristics");
@@ -391,10 +383,11 @@ public class ISAConverter extends BioFileConverter {
 
 
     private void getSampleFactors(JsonNode source, String sampleName) throws ObjectStoreException {
-
+        //
+        // storing these as study data, with reference to factor
+        //
         for (JsonNode characteristic : source) {
-            String categoryId = characteristic.path("category").get("@id").asText();
-
+            String categoryId = blunt(characteristic.path("category").get("@id").asText());
 
             JsonNode value = characteristic.path("value");
             Term term = new Term(value).invoke();
@@ -404,18 +397,27 @@ public class ISAConverter extends BioFileConverter {
             String termSource = term.getTermSource();
 
             // check if in factors, add if not, get item_id and add ref to createSD
+            //Item studyFactor = createFactor(id, categoryId, annotationValue, "sample", "", "", "");
 
-            Item studyFactor = createFactor(categoryId, annotationValue, "sample", "", "", "");
-
-            // check if not stored, store in case
+            //Item sampleFactor = createStudyData(id, categoryId, annotationValue, "sample", "", "", "");
 
             LOG.info("CHAR " + categoryId + ": " + "id" + annotationValue + "|"
                     + termAccession + "|" + termSource);
+            LOG.warn("FLIST " + factorRefs.toString() + "|" + factors.size());
+
             // name should come from the study factor
 
             Item item = createStudyData(sampleName, annotationValue,"","factor");
-            Reference factorRef = getReference("factor", item);
+            LOG.warn("FV CAT ID " + categoryId);
+            LOG.warn("F ITEM " + factors.get(categoryId).getIdentifier());
+            Reference factorRef = getReference("factor", factors.get(categoryId));
             item.addReference(factorRef);
+
+//            Reference factorRef = getReference("factor", studyFactor);
+//            item.addReference(factorRef);
+
+            LOG.warn("REFF " + factorRef.getRefId());
+ //           Integer foid = store(item);
             store(studyReference, store(item));
         }
     }
@@ -504,9 +506,9 @@ public class ISAConverter extends BioFileConverter {
 
 
 
-    private Item createFactor(String isaId, String name, String type, String value, String unit, String accession)
+    private Item createFactor(String fid, String cid, String name, String type, String value, String unit, String accession)
             throws ObjectStoreException {
-        Item item = factors.get(isaId);
+        Item item = factors.get(fid);
         if (item == null) {
             item = createItem("Factor");
             item.setAttribute("name", name);
@@ -522,8 +524,7 @@ public class ISAConverter extends BioFileConverter {
             if (!accession.isEmpty()) {
                 item.setAttribute("accession", accession);
             }
-
-            factors.put(isaId, item);
+            factors.put(fid, item);
         }
         return item;
     }
