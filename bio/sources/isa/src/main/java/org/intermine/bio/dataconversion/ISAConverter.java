@@ -260,24 +260,37 @@ public class ISAConverter extends BioFileConverter {
     private void getAssays(JsonNode study) throws ObjectStoreException {
         JsonNode assayNode = study.path("assays");
         for (JsonNode assay : assayNode) {
+
+            // for the moment (using MTBLS45)
+            // creating a studydata with
+            //
+            // type = "file"
+            // name = filename
+            // value = cc.annotationValue (e.g. label)
+            // technology = technologyPlatform
+            // measurament = mt.annotationValue
+            //
+            // TODO: add ontology ref (measurament)
+
             String fileName = assay.path("filename").asText();
             String technologyPlatform = assay.path("technologyPlatform").asText();
 
             LOG.warn("ASSAY " + fileName + " on: " + technologyPlatform);
-
+            String mtValue = null;
             // GET characteristicCategories
             JsonNode characteristicCategoriesNode = assay.get("characteristicCategories");
 
+            // rm loop?
             for (JsonNode inode : characteristicCategoriesNode) {
                 String characteristicCategoryId = inode.path("@id").asText(); // prob not useful
 
                 Term term = new Term(inode.path("characteristicType")).invoke();
                 String id = term.getId();
-                String annotationValue = term.getAnnotationValue();
+                mtValue = term.getAnnotationValue();
                 String termAccession = term.getTermAccession();
                 String termSource = term.getTermSource();
 
-                LOG.info("CHAR " + id + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+                LOG.info("CHAR " + id + ": " + mtValue + "|" + termAccession + "|" + termSource);
             }
 
             // GET measurementType
@@ -290,6 +303,11 @@ public class ISAConverter extends BioFileConverter {
             String termSource = term.getTermSource();
 
             LOG.info("MT " + id + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+
+
+            Item sdItem = createStudyData("file", fileName, mtValue, annotationValue, technologyPlatform);
+            Reference sdRef = getReference("studyData", sdItem);
+            store(studyReference, store(sdItem));
 
 
             // GET datafiles
@@ -305,6 +323,7 @@ public class ISAConverter extends BioFileConverter {
                 LOG.info("FILE " + fileId + ": " + type + "|" + name);
 
                 Item item = createDataFile(type, name);
+                item.addReference(sdRef);
                 store(studyReference, store(item));
             }
         }
@@ -347,7 +366,7 @@ public class ISAConverter extends BioFileConverter {
 
         getSampleFactors(source.path("factorValues"), name);
 
-        store (studyReference, store(createStudyData (name, "","", "sample")));
+        store(studyReference, store(createStudyData(name, "", "", "sample")));
 
         // empty for sample! is it general?
         JsonNode characteristicNode = source.path("characteristics");
@@ -402,7 +421,7 @@ public class ISAConverter extends BioFileConverter {
             // alt: check if in factors, add if not, get item_id and add ref to createSD
             // name should come from the study factor?
 
-            Item item = createStudyData(sampleName, annotationValue,"","factor");
+            Item item = createStudyData(sampleName, annotationValue, "", "factor");
             Reference factorRef = getReference("factor", factors.get(categoryId));
             item.addReference(factorRef);
 
@@ -493,7 +512,6 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-
     private Item createFactor(String fid, String cid, String name, String type, String value, String unit, String accession)
             throws ObjectStoreException {
         Item item = factors.get(fid);
@@ -529,8 +547,6 @@ public class ISAConverter extends BioFileConverter {
         }
         return item;
     }
-
-
 
 
     // torm
@@ -572,6 +588,28 @@ public class ISAConverter extends BioFileConverter {
         return item;
     }
 
+    private Item createStudyData(String type, String name, String value, String measurement, String technology)
+            throws ObjectStoreException {
+
+        Item item = createItem("StudyData");
+        item.setAttribute("name", name);
+
+        if (!type.isEmpty()) {
+            item.setAttribute("type", type);
+        }
+        if (!value.isEmpty()) {
+            item.setAttribute("value", value);
+        }
+        if (!measurement.isEmpty()) {
+            item.setAttribute("measurement", measurement);
+        }
+        if (!technology.isEmpty()) {
+            item.setAttribute("technology", technology);
+        }
+        return item;
+    }
+
+
     private Item createStudyData(String source)
             throws ObjectStoreException {
 
@@ -592,7 +630,6 @@ public class ISAConverter extends BioFileConverter {
 
         return item;
     }
-
 
 
     private Item createProtocol(String id, String name, String description, String uri, String version)
@@ -642,7 +679,6 @@ public class ISAConverter extends BioFileConverter {
         LOG.info("CHAR: " + annotationValue + "|" + termAccession + "|" + termSource);
 
     }
-
 
 
     private class Term {
@@ -736,7 +772,6 @@ public class ISAConverter extends BioFileConverter {
     private String blunt(String in) {
         return in.replaceAll("#", "");
     }
-
 
 
     //
@@ -839,8 +874,6 @@ public class ISAConverter extends BioFileConverter {
         }
         return taxonId;
     }
-
-
 
 
 }
