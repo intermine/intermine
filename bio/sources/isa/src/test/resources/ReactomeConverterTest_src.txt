@@ -1,0 +1,5 @@
+O49606	REACT_342811	http://www.reactome.org/PathwayBrowser/#REACT_342811	Platelet degranulation 	IEA	Arabidopsis thaliana
+P09606	REACT_327994	http://www.reactome.org/PathwayBrowser/#REACT_327994	Astrocytic Glutamate-Glutamine Uptake And Metabolism	IEA	Rattus norvegicus
+P09606	REACT_292751	http://www.reactome.org/PathwayBrowser/#REACT_292751	Amino acid synthesis and interconversion (transamination)	IEA	Rattus norvegicus
+Q09606	REACT_328043	http://www.reactome.org/PathwayBrowser/#REACT_328043	Platelet degranulation 	IEA	Caenorhabditis elegans
+Q09606	REACT_300989	http://www.reactome.org/PathwayBrowser/#REACT_300989	Cross-presentation of particulate exogenous antigens (phagosomes)	IEA	Caenorhabditis elegans
