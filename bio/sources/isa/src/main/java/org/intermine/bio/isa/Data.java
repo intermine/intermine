@@ -1,16 +1,13 @@
-package ambit2.export.isa.v1_0.objects;
+package org.intermine.bio.isa;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.net.URI;
+import com.fasterxml.jackson.annotation.*;
+
 import javax.annotation.Generated;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.Map;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ISA data schema
@@ -37,6 +34,7 @@ public class Data
 
     @Generated("ambit.json2pojo")
     public static enum Type {
+        METABOLYTE_ASSIGNMENT_FILE("Metabolite Assignment File"),
         RAW_DATA_FILE("Raw Data File"),
         DERIVED_DATA_FILE("Derived Data File"),
         IMAGE_FILE("Image File"),

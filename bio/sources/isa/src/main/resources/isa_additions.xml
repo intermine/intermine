@@ -2,6 +2,14 @@
 <model name="genomic" package="org.intermine.model.bio">
 <classes>
 
+
+    <!-- MODIFICATIONS TO CORE MODEL -->
+    <class name="Ontology"  is-interface="true">
+        <attribute name="shortName" type="java.lang.String"/>
+        <attribute name="version" type="java.lang.String"/>
+    </class>
+
+
     <class name="Investigation"  is-interface="true">
         <attribute name="identifier" type="java.lang.String"/>
         <attribute name="title" type="java.lang.String"/>
@@ -40,11 +48,15 @@
         <attribute name="measurement" type="java.lang.String"/>
         <attribute name="technology" type="java.lang.String"/>
 
+        <reference name="factor" referenced-type="Factor" reverse-reference="studyData"/>
         <reference name="study" referenced-type="Study" reverse-reference="studyData"/>
         <!-- apparently >1 protocols x SD, e.g. assay [animal care and treatment; necropsy] -->
         <collection name="protocols" referenced-type="Protocol" reverse-reference="studyData"/>
+<!-- TOCHECK
         <collection name="factors" referenced-type="Factor" reverse-reference="studyData"/>
+        -->
         <collection name="attributes" referenced-type="StudyDataAttribute" reverse-reference="studyData"/>
+        <collection name="files" referenced-type="DataFile" reverse-reference="studyData"/>
 
     </class>
 
@@ -87,11 +99,11 @@
         <attribute name="type" type="java.lang.String"/>
         <attribute name="value" type="java.lang.String"/>
 
-        <!--
-        <reference name="studyData" referenced-type="StudyData" reverse-reference="file"/>
-        -->
+
+        <reference name="studyData" referenced-type="StudyData" reverse-reference="files"/>
         <reference name="dataAttribute" referenced-type="StudyDataAttribute"/>
         <reference name="protocol" referenced-type="Protocol" />
+        <reference name="study" referenced-type="Study" />
     </class>
 
     <class name="Factor"  is-interface="true">
@@ -99,10 +111,14 @@
         <attribute name="type" type="java.lang.String"/>
         <attribute name="value" type="java.lang.String"/>
         <attribute name="unit" type="java.lang.String"/>
+        <attribute name="accession" type="java.lang.String"/>
 
         <reference name="ontology" referenced-type="OntologyTerm"/>
         <reference name="study" referenced-type="Study" reverse-reference="factors"/>
+        <!--
         <reference name="studyData" referenced-type="StudyData" reverse-reference="factors"/>
+        -->
+        <collection name="studyData" referenced-type="StudyData" reverse-reference="factor"/>
     </class>
 
 
