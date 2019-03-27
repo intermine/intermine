@@ -459,13 +459,15 @@ public class ISAConverter extends BioFileConverter {
      * {@inheritDoc}
      */
     public void close() throws ObjectStoreException {
+        // to move with protocols probably, in line with other cases
         for (Map.Entry<String, Item> entry : protocols.entrySet()) {
 
             Integer protocoloid = store(entry.getValue());
+            store(studyReference, protocoloid);
 
             String pid = entry.getKey();
 
-            LOG.warn("STORING " + pid + " (" + protocoloid);
+            LOG.warn("STORING " + pid + " (" + protocoloid + ")");
 
             List<String> pparid = protocolParameterList.get(pid);
 
@@ -772,6 +774,9 @@ public class ISAConverter extends BioFileConverter {
     private String blunt(String in) {
         return in.replaceAll("#", "");
     }
+
+
+
 
 
     //
