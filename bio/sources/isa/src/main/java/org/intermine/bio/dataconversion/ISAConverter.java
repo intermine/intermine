@@ -123,7 +123,9 @@ public class ISAConverter extends BioFileConverter {
             studyOID = store(studyItem);
             studyReference = getReference("study", studyItem);
 
-            getFactors(study);
+            getFactors(study, "factors");
+            getFactors(study, "characteristicCategories");
+
             getDesignDescriptors(study);
 
             getProtocols(study);
@@ -211,6 +213,43 @@ public class ISAConverter extends BioFileConverter {
             store(studyReference, oid);
         }
     }
+
+    private void getFactors(JsonNode study, String path) throws ObjectStoreException {
+        JsonNode factorNode = study.path(path);
+        for (JsonNode factor : factorNode) {
+            String TYPE;
+
+            if (path.equalsIgnoreCase("factors")) {
+                TYPE = "factor";
+            } else {
+                TYPE = "characteristic";
+            }
+
+            LOG.warn("INN " + path + " -> " + TYPE);
+
+            String id = blunt(factor.path("@id").asText());
+            String name;
+
+            Term term = new Term(factor.path(TYPE.concat("Type"))).invoke();
+            String termId = term.getId();
+            String annotationValue = term.getAnnotationValue();
+            String termAccession = term.getTermAccession();
+            String termSource = term.getTermSource();
+
+            if (TYPE.equalsIgnoreCase("factor")) {
+                name = factor.path("factorName").asText();
+            } else {
+                name = annotationValue;
+            }
+
+            LOG.warn("FACTOR study " + name + ": " + annotationValue);
+
+            Item factorItem = createFactor(id, "", name, TYPE, annotationValue, "", termAccession);
+            Integer oid = store(factorItem);
+            store(studyReference, oid);
+        }
+    }
+
 
     // generic
     private Reference getReference(String name, Item item) {
@@ -774,9 +813,6 @@ public class ISAConverter extends BioFileConverter {
     private String blunt(String in) {
         return in.replaceAll("#", "");
     }
-
-
-
 
 
     //
