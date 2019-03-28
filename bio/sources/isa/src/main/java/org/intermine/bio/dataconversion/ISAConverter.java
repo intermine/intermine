@@ -87,7 +87,8 @@ public class ISAConverter extends BioFileConverter {
      *                   parameterName
      *           etc TODO
      *
-     */
+     *///            getCharacteristicCategories(study);
+
 
     /**
      * {@inheritDoc}
@@ -116,29 +117,28 @@ public class ISAConverter extends BioFileConverter {
             String subDate = study.path("submissionDate").asText();
             String pubDate = study.path("publicReleaseDate").asText();
 
-            LOG.warn("STUDY " + identifier);
-            LOG.warn(title + " -- " + filename + " | " + subDate);
+            LOG.info("STUDY " + identifier);
+            //LOG.warn(title + " -- " + filename + " | " + subDate);
 
             studyItem = createStudy("Study", identifier, title, description, pubDate, subDate);
             studyOID = store(studyItem);
             studyReference = getReference("study", studyItem);
 
+            getDesignDescriptors(study);
+
             getFactors(study, "factors");
             getFactors(study, "characteristicCategories");
-
-            getDesignDescriptors(study);
 
             getProtocols(study);
             getMaterials(study);
             getAssays(study);
 
             //TODO
-//            getPublications(study);
-//            getPeople(study);
-//            getCharacteristicCategories(study);
+//            getPublications(study); investigation?
+//            getPeople(study); inv?
 //            getUnitCategories(study);
 //            getComments(study);
-
+                //getProcess
         }
 
         LOG.warn("----- parsing over -----------");
@@ -225,7 +225,7 @@ public class ISAConverter extends BioFileConverter {
                 TYPE = "characteristic";
             }
 
-            LOG.warn("INN " + path + " -> " + TYPE);
+            //LOG.warn("INN " + path + " -> " + TYPE);
 
             String id = blunt(factor.path("@id").asText());
             String name;
@@ -242,7 +242,7 @@ public class ISAConverter extends BioFileConverter {
                 name = annotationValue;
             }
 
-            LOG.warn("FACTOR study " + name + ": " + annotationValue);
+            LOG.warn("FACTOR " + TYPE + ": " + name + "|" + annotationValue);
 
             Item factorItem = createFactor(id, "", name, TYPE, annotationValue, "", termAccession);
             Integer oid = store(factorItem);
@@ -285,13 +285,13 @@ public class ISAConverter extends BioFileConverter {
     private void getMaterials(JsonNode study) throws ObjectStoreException {
         JsonNode sourceNode = study.path("materials").get("sources");
         for (JsonNode source : sourceNode) {
-            LOG.warn("IN Sources...");
+            //LOG.warn("IN Sources...");
             getSource(source);
         }
 
         JsonNode sampleNode = study.path("materials").get("samples");
         for (JsonNode sample : sampleNode) {
-            LOG.warn("IN Samples...");
+            //LOG.warn("IN Samples...");
             getSample(sample);
         }
     }
@@ -368,18 +368,14 @@ public class ISAConverter extends BioFileConverter {
         }
     }
 
-
+    // TODO? merge with getSample
     private void getSource(JsonNode source) throws ObjectStoreException {
         String name = source.path("name").asText();
         String sourceId = source.path("@id").asText();
 
-String TYPE = "source";
+        String TYPE = "source";
 
         getSampleFactors(source.path("characteristics"), name, TYPE);
-        // only if no storing above?
-        //store(studyReference, store(createStudyData("source", name, "", "", name )));
-
-        //storeSource();
 
         Integer cSize = source.path("characteristics").size();
         LOG.warn("SOURCE " + sourceId + ": " + name + " with " + cSize + " characteristics");
@@ -397,7 +393,6 @@ String TYPE = "source";
 
             LOG.info("CHAR " + categoryId + ": " + id + "|" + annotationValue + "|"
                     + termAccession + "|" + termSource);
-
         }
     }
 
@@ -410,7 +405,6 @@ String TYPE = "source";
         LOG.warn("SAMPLE " + sourceId + ": " + name + " with " + cSize + " characteristics");
 
         getSampleFactors(source.path("factorValues"), name, "sample");
-        //store(studyReference, store(createStudyData("sample", name, "", "")));
 
         // empty for sample! is it general?
         JsonNode characteristicNode = source.path("characteristics");
@@ -426,8 +420,6 @@ String TYPE = "source";
 
             LOG.info("SAMPLECHAR " + categoryId + ": " + id + "|" + annotationValue + "|"
                     + termAccession + "|" + termSource);
-
-
         }
     }
 
@@ -466,11 +458,6 @@ String TYPE = "source";
             // alt: check if in factors, add if not, get item_id and add ref to createSD
             // name should come from the study factor?
 
-            String in = "";
-            if (type.equalsIgnoreCase("source")) {
-                in = type;
-            }
-
             Item item = createStudyData(type, sampleName, annotationValue, "");
             Reference factorRef = getReference("factor", factors.get(categoryId));
             item.addReference(factorRef);
@@ -479,34 +466,10 @@ String TYPE = "source";
             found = true;
         }
         if (!found) {
-            store(studyReference, store(createStudyData("sample", sampleName, "", "")));
+            store(studyReference, store(createStudyData(type, sampleName, "", "")));
         }
     }
 
-    private void getSampleFactorsOR(JsonNode source, String sampleName) throws ObjectStoreException {
-        //
-        // storing these as study data, with reference to factor
-        //
-        for (JsonNode characteristic : source) {
-            String categoryId = blunt(characteristic.path("category").get("@id").asText());
-
-            JsonNode value = characteristic.path("value");
-            Term term = new Term(value).invoke();
-            String id = term.getId();
-            String annotationValue = term.getAnnotationValue();
-            String termAccession = term.getTermAccession();
-            String termSource = term.getTermSource();
-
-            // alt: check if in factors, add if not, get item_id and add ref to createSD
-            // name should come from the study factor?
-
-            Item item = createStudyData("factor", sampleName, annotationValue, "");
-            Reference factorRef = getReference("factor", factors.get(categoryId));
-            item.addReference(factorRef);
-
-            store(studyReference, store(item));
-        }
-    }
 
     private void getOntologies(JsonNode osr) throws ObjectStoreException {
         for (JsonNode node : osr) {
@@ -517,7 +480,7 @@ String TYPE = "source";
 
             store(createOntology(description, filename, name, version));
 
-            LOG.warn("OSR " + name);
+            LOG.info("OSR " + name);
         }
     }
 
@@ -527,7 +490,6 @@ String TYPE = "source";
         if (file == null) {
             throw new FileNotFoundException("No valid data files found.");
         }
-
         LOG.info("ISA: Reading " + file.getName());
         return file;
     }
