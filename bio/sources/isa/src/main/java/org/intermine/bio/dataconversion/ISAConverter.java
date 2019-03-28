@@ -275,7 +275,7 @@ public class ISAConverter extends BioFileConverter {
 
             LOG.warn("SDD: " + annotationValue);
 
-            Item sddItem = createStudyData("descriptor", annotationValue, "", "study");
+            Item sddItem = createStudyData("study", "descriptor", annotationValue, "");
             Integer sddoid = store(sddItem);
             store(studyReference, sddoid);
         }
@@ -370,13 +370,19 @@ public class ISAConverter extends BioFileConverter {
 
 
     private void getSource(JsonNode source) throws ObjectStoreException {
-        String sourceName = source.path("name").asText();
+        String name = source.path("name").asText();
         String sourceId = source.path("@id").asText();
 
-        storeSource(sourceName);
+String TYPE = "source";
+
+        getSampleFactors(source.path("characteristics"), name, TYPE);
+        // only if no storing above?
+        //store(studyReference, store(createStudyData("source", name, "", "", name )));
+
+        //storeSource();
 
         Integer cSize = source.path("characteristics").size();
-        LOG.warn("SOURCE " + sourceId + ": " + sourceName + " with " + cSize + " characteristics");
+        LOG.warn("SOURCE " + sourceId + ": " + name + " with " + cSize + " characteristics");
 
         JsonNode characteristicNode = source.path("characteristics");
         for (JsonNode characteristic : characteristicNode) { // TODO: que pasa?
@@ -403,9 +409,8 @@ public class ISAConverter extends BioFileConverter {
         Integer cSize = source.path("characteristics").size();
         LOG.warn("SAMPLE " + sourceId + ": " + name + " with " + cSize + " characteristics");
 
-        getSampleFactors(source.path("factorValues"), name);
-
-        store(studyReference, store(createStudyData(name, "", "", "sample")));
+        getSampleFactors(source.path("factorValues"), name, "sample");
+        //store(studyReference, store(createStudyData("sample", name, "", "")));
 
         // empty for sample! is it general?
         JsonNode characteristicNode = source.path("characteristics");
@@ -443,7 +448,42 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    private void getSampleFactors(JsonNode source, String sampleName) throws ObjectStoreException {
+    private void getSampleFactors(JsonNode source, String sampleName, String type) throws ObjectStoreException {
+        //
+        // storing these as study data, with reference to factor
+        //
+        boolean found = false;
+        for (JsonNode characteristic : source) {
+            String categoryId = blunt(characteristic.path("category").get("@id").asText());
+
+            JsonNode value = characteristic.path("value");
+            Term term = new Term(value).invoke();
+            String id = term.getId();
+            String annotationValue = term.getAnnotationValue();
+            String termAccession = term.getTermAccession();
+            String termSource = term.getTermSource();
+
+            // alt: check if in factors, add if not, get item_id and add ref to createSD
+            // name should come from the study factor?
+
+            String in = "";
+            if (type.equalsIgnoreCase("source")) {
+                in = type;
+            }
+
+            Item item = createStudyData(type, sampleName, annotationValue, "");
+            Reference factorRef = getReference("factor", factors.get(categoryId));
+            item.addReference(factorRef);
+
+            store(studyReference, store(item));
+            found = true;
+        }
+        if (!found) {
+            store(studyReference, store(createStudyData("sample", sampleName, "", "")));
+        }
+    }
+
+    private void getSampleFactorsOR(JsonNode source, String sampleName) throws ObjectStoreException {
         //
         // storing these as study data, with reference to factor
         //
@@ -460,14 +500,13 @@ public class ISAConverter extends BioFileConverter {
             // alt: check if in factors, add if not, get item_id and add ref to createSD
             // name should come from the study factor?
 
-            Item item = createStudyData(sampleName, annotationValue, "", "factor");
+            Item item = createStudyData("factor", sampleName, annotationValue, "");
             Reference factorRef = getReference("factor", factors.get(categoryId));
             item.addReference(factorRef);
 
             store(studyReference, store(item));
         }
     }
-
 
     private void getOntologies(JsonNode osr) throws ObjectStoreException {
         for (JsonNode node : osr) {
@@ -610,7 +649,7 @@ public class ISAConverter extends BioFileConverter {
         return item;
     }
 
-    private Item createStudyData(String name, String value, String unit, String type)
+    private Item createStudyData(String type, String name, String value, String unit)
             throws ObjectStoreException {
 
         Item item = createItem("StudyData");
