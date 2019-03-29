@@ -51,7 +51,7 @@
         <reference name="factor" referenced-type="Factor" reverse-reference="studyData"/>
         <reference name="study" referenced-type="Study" reverse-reference="studyData"/>
         <!-- apparently >1 protocols x SD, e.g. assay [animal care and treatment; necropsy] -->
-        <collection name="protocols" referenced-type="Protocol" reverse-reference="studyData"/>
+        <collection name="protocols" referenced-type="Protocol"/>
 <!-- TOCHECK
         <collection name="factors" referenced-type="Factor" reverse-reference="studyData"/>
         -->
@@ -83,6 +83,9 @@
         <reference name="studyData" referenced-type="StudyData" reverse-reference="protocols"/>
         <reference name="dataFile" referenced-type="DataFile"/>
         <collection name="parameters" referenced-type="ProtocolParameter" reverse-reference="protocol"/>
+        <collection name="inputs" referenced-type="StudyData" reverse-reference="protocols"/>
+        <collection name="outputs" referenced-type="StudyData" reverse-reference="protocols"/>
+
      </class>
 
     <class name="ProtocolParameter"  is-interface="true">

@@ -38,14 +38,13 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Map> people;
     private Map<String, Map> publications;
     private Map<String, Map> comments;  // add field for ref?
-    private Map<String, Map> sdd;       // studyDesignDescriptors
-    private Map<String, Map> osr;
 
     private Map<String, Item> protocols = new HashMap<>();
     private Map<String, Item> protocolParameters = new HashMap<>();
-    private Map<String, List<String>> protocolParameterList = new HashMap<>();
+    private Map<String, List<String>> protocolParameterList = new HashMap<>(); // prot.id - list of param ids
+    private Map<String, List<String>> protocolIn = new HashMap<>(); // prot.id - list of param ids
+    private Map<String, List<String>> protocolOut = new HashMap<>(); // prot.id - list of param ids
 
-    private Map<String, Map> protpars;  // protocol.parameters
     private Set<String> taxonIds;
 
     private Map<String, Item> proteins = new HashMap<>();
@@ -126,6 +125,8 @@ public class ISAConverter extends BioFileConverter {
 
             getDesignDescriptors(study);
 
+            getProcess(study);
+
             getFactors(study, "factors");
             getFactors(study, "characteristicCategories");
 
@@ -138,7 +139,7 @@ public class ISAConverter extends BioFileConverter {
 //            getPeople(study); inv?
 //            getUnitCategories(study);
 //            getComments(study);
-                //getProcess
+            //getProcess
         }
 
         LOG.warn("----- parsing over -----------");
@@ -190,6 +191,36 @@ public class ISAConverter extends BioFileConverter {
                 addToMap(protocolParameterList, id, pid);
             }
         }
+    }
+
+
+    private void getProcess(JsonNode study) throws ObjectStoreException {
+        JsonNode processNode = study.path("processSequence");
+        for (JsonNode process : processNode) {
+
+            String id = blunt(process.path("@id").asText());
+            String name = process.path("name").asText();
+            String performer = process.path("performer").asText();
+            String date = process.path("date").asText();
+
+            // get also protocolType (term)..
+            String pid = blunt(process.path("executesProtocol").get("@id").textValue());
+
+            JsonNode inputNode = process.path("inputs");
+            for (JsonNode in : inputNode) {
+                String inpid = blunt(in.path("@id").asText());
+                addToMap(protocolIn, pid, inpid);
+            }
+
+            JsonNode outputNode = process.path("outputs");
+            for (JsonNode out : outputNode) {
+                String outpid = blunt(out.path("@id").asText());
+                addToMap(protocolOut, pid, outpid);
+            }
+
+            // TODO? add parameterValues
+        }
+        LOG.info("SP: " + protocolIn.toString() + "->" + protocolOut.toString());
     }
 
 
