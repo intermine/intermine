@@ -25,13 +25,10 @@
       line-height:15px; color:#000; }
 
     #protein-atlas-displayer.staining .high, #protein-atlas-displayer.staining .strong { background:#CD3A32; }
-    #protein-atlas-displayer.ape .high, #protein-atlas-displayer.ape .strong { background:#2B4A7B; }
 
     #protein-atlas-displayer.staining .medium, #protein-atlas-displayer.staining .moderate { background:#FD9B34; }
-    #protein-atlas-displayer.ape .medium, #protein-atlas-displayer.ape .moderate { background:#4B97CE; }
 
     #protein-atlas-displayer.staining .weak, #protein-atlas-displayer.staining .low { background:#FFED8D; }
-    #protein-atlas-displayer.ape .weak, #protein-atlas-displayer.ape .low { background:#BFF1FF; }
 
     #protein-atlas-displayer .none, #protein-atlas-displayer .negative { background:#FFF; }
 
@@ -45,7 +42,7 @@
     #protein-atlas-displayer div.sidebar p strong.medium { background:#A9CC30; border:1px solid #DDD; }
     #protein-atlas-displayer div.sidebar p.small { font-size:11px; margin-bottom:16px; }
     #protein-atlas-displayer div.sidebar p.small a { background:url('images/icons/external_link.png') no-repeat top right; padding-right:10px; }
-    
+
     #protein-atlas-displayer div.sidebar div.pane { padding:5px; }
 
     #protein-atlas-displayer div.legend { margin-top:10px; }
@@ -77,8 +74,7 @@
     #protein-atlas-displayer.scale-6 div.sidebar { width:20%; }
   </style>
 
-<c:set var="expressionType" value="${expressions.type}" />
-<div id="protein-atlas-displayer" class="${expressionType.clazz}">
+<div id="protein-atlas-displayer">
 
 <c:choose>
 <c:when test="${expressions.reliability != null}">
@@ -91,10 +87,10 @@
 	      <a href="#" title="key" class="active">Key</a> <a href="#" title="halp">Help</a>
 	    </div>
 	  </div>
-	  
+
 	  <div class="pane key">
-		<p>Reliability: <strong class="${fn:toLowerCase(expressions.reliability)}">${expressions.reliability}</strong> (${expressionType.text})</p>
-		
+		<p>Reliability: <strong class="${fn:toLowerCase(expressions.reliability)}">${expressions.reliability}</strong> </p>
+
 	    <div class="legend">
 	      <strong>Level of antibody staining</strong>*
 	      <ul class="level">
@@ -105,10 +101,10 @@
 	      </ul>
 	    </div>
 	  </div>
-	  
+
 	  <div class="pane halp" style="display:none;">
 	      <p class="small">* A validation score for immunohistochemistry is assigned for all antibodies and reflects the results of immunostaining.</p>
-	
+
 	      <strong>About &amp; Source</strong>
 	      <p class="small">This chart represents a normal tissue &amp; organ summary of the antibody staining or the protein expression in a number of
 	      human tissues and organs. A description of the assay and annotation can be found <a target="new" href="http://www.proteinatlas.org/about/assays+annotation#ih">here</a>.</p>
@@ -124,14 +120,14 @@
     </tiles:insert>
   </div>
 
-  <div class="table byCells inactive ${expressionType.clazz}">
+  <div class="table byCells inactive">
     <c:set var="tableRows" value="${expressions.byCells}" />
     <tiles:insert page="proteinAtlasDisplayerTable.jsp">
       <tiles:put name="rows" beanName="tableRows" />
     </tiles:insert>
   </div>
 
-  <div class="table byLevel inactive ${expressionType.clazz}">
+  <div class="table byLevel inactive">
     <c:set var="tableRows" value="${expressions.byLevel}" />
     <tiles:insert page="proteinAtlasDisplayerTable.jsp">
       <tiles:put name="rows" beanName="tableRows" />
@@ -199,7 +195,7 @@
         sizeChart();
       }, 500);
     });
-    
+
     // switcher between tables this displayer haz
     jQuery("#protein-atlas-displayer div.sidebar div.collection-of-collections div.switchers a").each(function(i) {
       jQuery(this).bind(
@@ -217,7 +213,7 @@
             jQuery("#protein-atlas-displayer div.sidebar div.collection-of-collections div.switchers a.active").each(function(j) {
               jQuery(this).toggleClass('active');
             });
-            
+
             // we are active
             jQuery(this).toggleClass('active');
 
@@ -225,7 +221,7 @@
             e.preventDefault();
         }
       );
-    });    
+    });
   })();
   </script>
 </c:when>
