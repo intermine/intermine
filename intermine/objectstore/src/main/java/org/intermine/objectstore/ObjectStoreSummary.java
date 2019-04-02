@@ -210,7 +210,7 @@ public class ObjectStoreSummary
                 String fieldName = ref.getName();
                 String clsFieldName = cld.getName() + "." + fieldName;
 
-                if (ignoreFields.contains(fieldName)) {
+                if (ignoreFields.contains(clsFieldName)) {
                     continue;
                 }
 
