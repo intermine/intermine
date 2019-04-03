@@ -13,7 +13,6 @@ package org.intermine.webservice.server.lists;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
@@ -72,7 +71,7 @@ public class JaccardIndexService extends WebService
 
         ListManager listManager = new ListManager(im, getPermission().getProfile());
         Map<String, InterMineBag> lists = listManager.getListMap();
-        List<String> bagOfInterest = new ArrayList<>();
+        List<Integer> bagOfInterest = new ArrayList<>();
 
         if (listName != null) {
             InterMineBag bag = lists.get(listName);
@@ -80,14 +79,18 @@ public class JaccardIndexService extends WebService
                 throw new BadRequestException("User does not have access to list named '"
                     + listName + "'");
             }
-            bagOfInterest = getBagValues(bag);
+            bagOfInterest = bag.getContentsAsIds();
             type = bag.getType();
         } else if (ids != null) {
             if (type == null) {
                 // need type if we don't have a list
                 throw new BadRequestException("Type of list is required");
             }
-//            bagOfInterest = getJaccardIndex(ids);
+
+            String[] idArray = ids.split("[, ]+");
+            for (int i = 0; i < idArray.length; i++) {
+                bagOfInterest.add(Integer.parseInt(idArray[i]));
+            }
         }
 
         Map<String, String> results = new HashMap<String, String>();
@@ -108,8 +111,8 @@ public class JaccardIndexService extends WebService
                 continue;
             }
 
-            List<String> comparisonList = getBagValues(bag);
-            List<String> intersection = (List<String>) CollectionUtils.intersection(bagOfInterest,
+            List<Integer> comparisonList = bag.getContentsAsIds();
+            List<Integer> intersection = (List<Integer>) CollectionUtils.intersection(bagOfInterest,
                     comparisonList);
             BigDecimal denominator = new BigDecimal(bagOfInterest.size()
                     + comparisonList.size() - intersection.size());
@@ -127,14 +130,6 @@ public class JaccardIndexService extends WebService
 
         JSONObject jo = new JSONObject(results);
         output.addResultItem(Collections.singletonList(jo.toString()));
-    }
-
-    private List<String> getBagValues(InterMineBag bag) {
-        List<String> identifiers = new ArrayList();
-        for (BagValue bv: bag.getContents()) {
-            identifiers.add(bv.getValue());
-        }
-        return identifiers;
     }
 
     /**

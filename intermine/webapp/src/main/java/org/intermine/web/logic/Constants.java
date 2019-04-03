@@ -218,13 +218,13 @@ public final class Constants
      * 29 - Add template tagging
      * 30 - Jaccard Index
      */
-    public static final int WEB_SERVICE_VERSION = 29;
+    public static final int WEB_SERVICE_VERSION = 30;
 
 
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "3.1.1";
+    public static final String INTERMINE_VERSION = "3.1.2";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
