@@ -381,13 +381,15 @@ public class ReportObject
             Map<String, Object> markup = SemanticMarkupUtil.getDataSetMarkup(request, name, url);
             return new JSONObject(markup).toString(2);
         }
-        try {
+        return null;
+        //BioChemEntity, Gene and Protein markup temporary disable untile they are more stable
+/*        try {
             Map<String, Object> markup = SemanticMarkupUtil.getBioEntityMarkup(request, objectType,
                     getId());
             return new JSONObject(markup).toString(2);
         } catch (MetaDataException ex) {
             return null;
-        }
+        }*/
     }
 
     /**
