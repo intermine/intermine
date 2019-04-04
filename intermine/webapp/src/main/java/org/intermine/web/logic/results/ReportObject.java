@@ -30,7 +30,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.MetaDataException;
+//import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.StringUtil;
