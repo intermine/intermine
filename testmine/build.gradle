@@ -1,5 +1,7 @@
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Copy
+
 ext {
-    imVersion = "2.0.+"
+    imVersion = "3.1.+"
     taskGroup = "InterMine"
     minePropertyFileName = "testmodel.properties"
     minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
