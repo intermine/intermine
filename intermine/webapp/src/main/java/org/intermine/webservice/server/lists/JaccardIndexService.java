@@ -11,6 +11,9 @@ package org.intermine.webservice.server.lists;
  */
 
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.collections.CollectionUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
@@ -20,7 +23,6 @@ import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
-import com.google.gson.Gson;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -130,10 +132,18 @@ public class JaccardIndexService extends WebService
                 results.put(name, jaccardSimilarity);
             }
         }
-        Map sortedMap = sortByValue(results);
-        Gson gson = new Gson();
-        String json = gson.toJson(sortedMap, LinkedHashMap.class);
-        output.addResultItem(Collections.singletonList(json));
+
+        Map<String, BigDecimal> sortedMap = sortByValue(results);
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode rootNode = mapper.createArrayNode();
+        for (Map.Entry<String, BigDecimal> entry : sortedMap.entrySet()) {
+            JsonNode childNode = mapper.createObjectNode();
+            ((ObjectNode) childNode).put(entry.getKey(), entry.getValue().toString());
+            ((ArrayNode) rootNode).add(childNode);
+        }
+
+        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+        output.addResultItem(Collections.singletonList(jsonString));
     }
 
     /**
@@ -165,10 +175,8 @@ public class JaccardIndexService extends WebService
 
         Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSON()) {
-
             String inputLabel = "\"input\": \"" + listOfInterestLabel + "\",";
-            attributes.put(JSONFormatter.KEY_INTRO, inputLabel + "\"results\":[");
-            attributes.put(JSONFormatter.KEY_OUTRO, "]");
+            attributes.put(JSONFormatter.KEY_INTRO, inputLabel + "\"results\":");
         }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
@@ -179,12 +187,12 @@ public class JaccardIndexService extends WebService
         return attributes;
     }
 
-    private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
+    private static Map<String, BigDecimal> sortByValue(Map<String, BigDecimal> map) {
+        List<Map.Entry<String, BigDecimal>> list = new ArrayList<>(map.entrySet());
         list.sort(Entry.comparingByValue(new ResultsComparator()));
 
-        Map<K, V> result = new LinkedHashMap<>();
-        for (Map.Entry<K, V> entry : list) {
+        Map<String, BigDecimal> result = new LinkedHashMap<>();
+        for (Map.Entry<String, BigDecimal> entry : list) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
