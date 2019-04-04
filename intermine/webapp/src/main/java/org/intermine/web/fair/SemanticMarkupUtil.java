@@ -31,6 +31,7 @@ import org.json.JSONObject;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
@@ -68,30 +69,43 @@ public final class SemanticMarkupUtil
      * @return the identifier
      */
     private static String getMineIdentifier(HttpServletRequest request) {
-        ServletContext context = request.getSession().getServletContext();
-        if (context.getAttribute("mineIdentifier") != null) {
-            return (String) context.getAttribute("mineIdentifier");
-        } else {
-            String mineIdentifier = null;
-            String namespace = null;
-            String mineURL = new URLGenerator(request).getPermanentBaseURL();
-            Client client = ClientBuilder.newClient();
-            try {
-                Response response = client.target(INTERMINE_REGISTRY
-                        + "service/namespace?url=" + mineURL).request().get();
-                if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                    JSONObject result = new JSONObject(response.readEntity(String.class));
-                    namespace = result.getString("namespace");
-                }
-            } catch (RuntimeException ex) {
-                LOG.error("Problems connecting to InterMine registry");
-            }
-            mineIdentifier = (namespace != null && !namespace.trim().isEmpty())
-                    ? INTERMINE_REGISTRY + namespace
-                    : mineURL;
-            context.setAttribute("mineIdentifier", mineIdentifier);
-            return mineIdentifier;
+        HttpSession session = null;
+        ServletContext context = null;
+        try {
+            session = request.getSession();
+        } catch (RuntimeException ex) {
+        //if request.getSession() is call via ws it will throw an exception
+        //in that case we do not cache the mineIdentifier in the context
         }
+        if (session != null) {
+            context = session.getServletContext();
+            if (context != null && context.getAttribute("mineIdentifier") != null) {
+                return (String) context.getAttribute("mineIdentifier");
+            }
+        }
+
+        String mineIdentifier = null;
+        String namespace = null;
+        String mineURL = new URLGenerator(request).getPermanentBaseURL();
+        Client client = ClientBuilder.newClient();
+        try {
+            Response response = client.target(INTERMINE_REGISTRY
+                    + "service/namespace?url=" + mineURL).request().get();
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                JSONObject result = new JSONObject(response.readEntity(String.class));
+                namespace = result.getString("namespace");
+            }
+        } catch (RuntimeException ex) {
+            LOG.error("Problems connecting to InterMine registry");
+        }
+        mineIdentifier = (namespace != null && !namespace.trim().isEmpty())
+                ? INTERMINE_REGISTRY + namespace
+                : mineURL;
+        if (context != null) {
+            context.setAttribute("mineIdentifier", mineIdentifier);
+        }
+        LOG.info("Mine identifier is: " + mineIdentifier);
+        return mineIdentifier;
     }
 
     /**
@@ -156,9 +170,7 @@ public final class SemanticMarkupUtil
         citation.put("@type", "CreativeWork");
         citation.put("identifier", INTERMINE_CITE);
         semanticMarkup.put("citation", citation);
-
         semanticMarkup.put("dataset", getDatSets(request));
-
         return semanticMarkup;
     }
 
