@@ -11,8 +11,9 @@ package org.intermine.webservice.server.lists;
  */
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.collections.CollectionUtils;
 import org.intermine.api.InterMineAPI;
@@ -190,7 +191,6 @@ public class JaccardIndexService extends WebService
     private static Map<String, BigDecimal> sortByValue(Map<String, BigDecimal> map) {
         List<Map.Entry<String, BigDecimal>> list = new ArrayList<>(map.entrySet());
         list.sort(Entry.comparingByValue(new ResultsComparator()));
-
         Map<String, BigDecimal> result = new LinkedHashMap<>();
         for (Map.Entry<String, BigDecimal> entry : list) {
             result.put(entry.getKey(), entry.getValue());
@@ -198,11 +198,11 @@ public class JaccardIndexService extends WebService
         return result;
     }
 
-    static class ResultsComparator implements Comparator{
-        public int compare(Object o1, Object o2){
+    private static class ResultsComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
             BigDecimal d1 = (BigDecimal) o1;
             BigDecimal d2 = (BigDecimal) o2;
-            if(d1.compareTo(d2) == 0) {
+            if (d1.compareTo(d2) == 0) {
                 return 0;
             } else if (d1.compareTo(d2) > 0) {
                 return -1;
