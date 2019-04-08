@@ -447,7 +447,10 @@ public class BagManager
      * @return the bag or null if not found
      */
     public InterMineBag getUserBag(Profile profile, String bagName) {
-        return getUserBags(profile).get(bagName);
+        if (getUserBags(profile) != null) {
+            return getUserBags(profile).get(bagName);
+        }
+        return null;
     }
 
     /**

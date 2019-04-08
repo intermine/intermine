@@ -146,6 +146,20 @@ public class GoConverter extends BioFileConverter
         return getDataSet(dataset, datasourceRefId, licence);
     }
 
+    private void storeDataset() throws ObjectStoreException {
+        if (datasource == null) {
+            datasource = GO_ANNOTATION_NAME;
+        }
+
+        if (dataset == null) {
+            dataset = GO_ANNOTATION_NAME + " data set";
+        }
+
+        String datasourceRefId = getDataSource(datasource);
+
+        getDataSet(dataset, datasourceRefId, licence);
+    }
+
     static {
         WITH_TYPES.put("FB", "Gene");
         WITH_TYPES.put("UniProt", "Protein");
@@ -231,6 +245,8 @@ public class GoConverter extends BioFileConverter
         if (rslv == null) {
             rslv = IdResolverService.getIdResolverForMOD();
         }
+
+        storeDataset();
 
         initialiseMapsForFile();
 
