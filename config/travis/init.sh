@@ -30,12 +30,6 @@ else
 
     if [[ "$TEST_SUITE" = "ws" ]]; then
 
-        # set up solr = setup script populates this
-        wget http://archive.apache.org/dist/lucene/solr/7.2.1/solr-7.2.1.tgz  
-        tar xzf solr-7.2.1.tgz && ./solr-7.2.1/bin/solr start
-        ./solr-7.2.1/bin/solr create -c intermine-search
-        ./solr-7.2.1/bin/solr create -c intermine-autocomplete
-
         # install everything first. we don't want to test what's in maven
         (cd plugin && ./gradlew install)
         (cd intermine && ./gradlew install)    
