@@ -30,18 +30,20 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
+//import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.displayer.ReportDisplayer;
+import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.HeaderConfigLink;
@@ -50,6 +52,9 @@ import org.intermine.web.logic.config.InlineListConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.json.JSONObject;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Object to be displayed on report.do
@@ -361,6 +366,33 @@ public class ReportObject
     }
 
     /**
+     * Get the semantic markup to include in the ld+json section
+     * @param request the HttpServletRequest
+     *
+     * @return a string representing the markup in json format
+     */
+    public String getSemanticMarkup(HttpServletRequest request) {
+        if (!SemanticMarkupUtil.isEnabled()) {
+            return null;
+        }
+        if ("DataSet".equals(objectType)) {
+            String name =  (String) getFieldValue("name");
+            String url =  (String) getFieldValue("url");
+            Map<String, Object> markup = SemanticMarkupUtil.getDataSetMarkup(request, name, url);
+            return new JSONObject(markup).toString(2);
+        }
+        return null;
+        //BioChemEntity, Gene and Protein markup temporary disable untile they are more stable
+/*        try {
+            Map<String, Object> markup = SemanticMarkupUtil.getBioEntityMarkup(request, objectType,
+                    getId());
+            return new JSONObject(markup).toString(2);
+        } catch (MetaDataException ex) {
+            return null;
+        }*/
+    }
+
+    /**
      * Setup fieldValues HashMap
      */
     protected void setupFieldValues() {
@@ -372,6 +404,7 @@ public class ReportObject
             // create a path string
             if (!isCollection(fc.getFieldExpr())) {
                 String pathString = objectType + "." + fc.getFieldExpr();
+                LOG.info("setupFieldValues " + pathString);
                 try {
                     fieldValues.put(fc.getFieldExpr(), resolvePath(pathString));
                 } catch (PathException e) {
