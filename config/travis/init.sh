@@ -36,7 +36,7 @@ else
 
     if [[ "$TEST_SUITE" = "ws" ]]; then
 
-    # install everything first. we don't want to test what's in maven
+        # install everything first. we don't want to test what's in maven
         (cd plugin && ./gradlew install)
         (cd intermine && ./gradlew install)    
         (cd bio && ./gradlew install)
