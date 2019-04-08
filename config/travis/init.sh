@@ -27,14 +27,14 @@ else
     echo '#---> Installing python requirements'
     # Install lib requirements
     pip install -r config/lib/requirements.txt
-    
-#    if [[ "$TEST_SUITE" = "bio" ]]; then
-        # we depend on a flymine data source
-        #$GIT_GET https://github.com/intermine/flymine-bio-sources.git flymine-bio-sources
-        #(cd flymine-bio-sources && ./gradlew bio-source-flymine-static:install)
-#    fi
 
     if [[ "$TEST_SUITE" = "ws" ]]; then
+
+        # set up solr = setup script populates this
+        wget http://archive.apache.org/dist/lucene/solr/7.2.1/solr-7.2.1.tgz  
+        tar xzf solr-7.2.1.tgz && ./solr-7.2.1/bin/solr start
+        ./solr-7.2.1/bin/solr create -c intermine-search
+        ./solr-7.2.1/bin/solr create -c intermine-autocomplete
 
         # install everything first. we don't want to test what's in maven
         (cd plugin && ./gradlew install)
