@@ -722,6 +722,29 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
+     * Return true if the superClassName given in input is a super class of className
+     *
+     * @param model the Model
+     * @param className the className
+     * @param superClassName the super class name
+     * @return true or false
+     * @throws MetaDataException if className isn't in the model
+     */
+    public static boolean findInherithance(Model model, String className, String superClassName)
+            throws MetaDataException {
+        Set<String> superClassNames = findSuperClassNames(
+                Model.getInstanceByName("genomic"), className);
+        if (superClassNames != null) {
+            for (String tmpSuperClassNames : superClassNames) {
+                if (tmpSuperClassNames.contains(superClassName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return the model this class is a part of.
      *
      * @return the parent Model
@@ -979,4 +1002,25 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         }
         return supers;
     }
+    /**
+     * Return the fair term for the given class name defined in the model.
+     *
+     * @param model the Model
+     * @param className the className
+     * @throws MetaDataException if className isn't in the model
+     *
+     * @return the fair term
+     */
+    public static String findFairTerm(Model model, String className) throws MetaDataException {
+        ClassDescriptor cd = model.getClassDescriptorByName(className);
+        if ((cd == null) && (!"java.lang.Object".equals(className))) {
+            throw new MetaDataException("Model construction failed - class: " + className
+                    + " is not in the model.");
+        }
+        if (cd != null) {
+            return cd.fairTerm;
+        }
+        return null;
+    }
+
 }
