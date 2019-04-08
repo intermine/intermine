@@ -112,5 +112,5 @@ echo "------> Loading userprofile..."
 
 echo "------> Running webapp"
 echo "------> Running ./gradlew tomcatstartwar"
-./gradlew tomcatstartwar --no-daemon
+./gradlew tomcatstartwar --no-daemon &
 echo "------> Finished"
