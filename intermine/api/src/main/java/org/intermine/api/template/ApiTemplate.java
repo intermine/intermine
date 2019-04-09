@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.api.profile.Profile;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.search.OriginatingEvent;
 import org.intermine.api.search.PropertyChangeEvent;
@@ -40,7 +41,7 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
 
     /** SavedTemplateQuery object in the UserProfile database, so we can update summaries. */
     protected SavedTemplateQuery savedTemplateQuery = null;
-
+    Profile profile = null;
     TrackerDelegate templateTracker = null;
 
     // so we can include tags
@@ -169,13 +170,25 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
         this.im = im;
     }
 
+    /**
+     * Only used on export so we can get the tags related to this template.
+     *
+     * @param profile user who owns this template
+     */
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
     @Override
     protected Map<String, Object> getHeadAttributes() {
         Map<String, Object> retVal = super.getHeadAttributes();
 
         if (im != null) {
             TemplateManager manager = im.getTemplateManager();
-            List<Tag> tags = manager.getTags(this, im.getProfileManager().getSuperuserProfile());
+            if (profile == null) {
+                profile = im.getProfileManager().getSuperuserProfile();
+            }
+            List<Tag> tags = manager.getTags(this, profile);
             List<String> tagNames = new ArrayList<String>();
             for (Tag t: tags) {
                 tagNames.add(t.getTagName());

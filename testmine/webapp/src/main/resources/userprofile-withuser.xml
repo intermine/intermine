@@ -127,8 +127,8 @@
     <tags>
         <tag name="im:public" objectIdentifier="Everyones-Favourite-Employees" type="bag"/>
         <tag name="im:public" objectIdentifier="Places-I-Have-Worked" type="bag"/>
-    </tags>
-    <tags>
+        <tag name="privateTag" objectIdentifier="Unusual departments" type="bag"/>
+        <tag name="privateTag" objectIdentifier="The great unknowns" type="bag"/>
         <tag name="thisIsAPrivateTag" objectIdentifier="private-template-1" type="template"/>
         <tag name="thisIsAlsoAPrivateTag" objectIdentifier="private-template-1" type="template"/>
     </tags>
