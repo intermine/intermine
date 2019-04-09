@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.pathquery.OrderElement;
@@ -147,13 +148,17 @@ public final class TemplateHelper
      * @param im intermine API
      * @return A JSON string.
      */
-    private static String templateMapToJson(InterMineAPI im, Map<String, ApiTemplate> templates) {
+    private static String templateMapToJson(InterMineAPI im, Map<String, ApiTemplate> templates,
+                                            Profile profile) {
         StringBuilder sb = new StringBuilder("{");
         Iterator<String> keys = templates.keySet().iterator();
         while (keys.hasNext()) {
             String name = keys.next();
             ApiTemplate template = templates.get(name);
             template.setAPI(im);
+            if (profile != null) {
+                template.setProfile(profile);
+            }
             sb.append("\"" + name + "\":" + template.toJson());
             if (keys.hasNext()) {
                 sb.append(",");
@@ -168,11 +173,12 @@ public final class TemplateHelper
      * Helper routine for serialising a map of templates to JSON.
      * @param templates The map of templates to serialise.
      * @param im intermine API
+     * @param profile user that owns these templates. Could be NULL
      * @return A JSON string.
      */
     public static String apiTemplateMapToJson(InterMineAPI im,
-            Map<String, ApiTemplate> templates) {
-        return templateMapToJson(im, templates);
+            Map<String, ApiTemplate> templates, Profile profile) {
+        return templateMapToJson(im, templates, profile);
     }
 
     /**

@@ -85,7 +85,7 @@ public class SystemTemplatesService extends WebService
                 attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
                 output.setHeaderAttributes(attributes);
                 output.addResultItem(Arrays.asList(
-                        TemplateHelper.apiTemplateMapToJson(im, templates)));
+                        TemplateHelper.apiTemplateMapToJson(im, templates, null)));
                 break;
             case TEXT:
                 Set<String> templateNames = new TreeSet<String>(templates.keySet());
