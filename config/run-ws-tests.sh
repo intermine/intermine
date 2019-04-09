@@ -18,7 +18,8 @@ if [ "$CLIENT" = "JS" ]; then
     # bower_components installed, so devs don't usually see the error,
     # but Travis always does.
     npm install acorn
-    npm install # installs deps and runs tests.
+    npm install # installs deps
+    grunt test  # runs tests
 
 elif [ "$CLIENT" = "PY" ]; then
 

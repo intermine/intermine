@@ -125,7 +125,7 @@
         </bag>
     </bags>
     <tags>
-        <tag name="privateTag" objectIdentifier="My-Favourite-Employees" type="bag"/>
+        <tag name="privateTag" objectIdentifier="Unusual departments" type="bag"/>
         <tag name="privateTag" objectIdentifier="The great unknowns" type="bag"/>
         <tag name="thisIsAPrivateTag" objectIdentifier="private-template-1" type="template"/>
         <tag name="thisIsAlsoAPrivateTag" objectIdentifier="private-template-1" type="template"/>
