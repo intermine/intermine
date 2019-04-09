@@ -23,6 +23,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,6 +53,8 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, List<String>> protocolParameterList = new HashMap<>(); // prot.id - list of param ids
     private Map<String, List<String>> protocolIn = new HashMap<>(); // prot.id - list of input ids (sources/study data)
     private Map<String, List<String>> protocolOut = new HashMap<>(); // prot.id - list of output ids (samples/sd)
+
+    private Map<String, String> sdItemId = new HashMap<>();
 
     private Set<String> taxonIds;
 
@@ -141,6 +144,9 @@ public class ISAConverter extends BioFileConverter {
             getProtocols(study);
             getMaterials(study);
             getAssays(study);
+
+
+            storeProtocols();
 
             //TODO
 //            getPublications(study); investigation?
@@ -383,7 +389,7 @@ public class ISAConverter extends BioFileConverter {
 
     private void getMaterials(JsonNode source, String types) throws ObjectStoreException {
         String name = source.path("name").asText();
-        String sourceId = source.path("@id").asText();
+        String id = blunt(source.path("@id").asText()); // -> e.g. sample/140116434162296
 
         // remove the s (plural -> singular..)
         String type = types.substring(0, types.length() - 1);
@@ -395,9 +401,9 @@ public class ISAConverter extends BioFileConverter {
             innerLevel = "factorValues";
         }
 
-        getSampleFactors(source.path(innerLevel), name, type); // characteristics for SOURCES
+        getSampleFactors(source.path(innerLevel), name, id, type); // characteristics for SOURCES
         Integer cSize = source.path(innerLevel).size();
-        LOG.warn(type.toUpperCase() + " " + sourceId + ": " + name + " with " + cSize + " " + innerLevel);
+        LOG.warn(type.toUpperCase() + " " + id + ": " + name + " with " + cSize + " " + innerLevel);
 
         // empty for sample! is it general?
         JsonNode characteristicNode = source.path("characteristics");
@@ -406,12 +412,12 @@ public class ISAConverter extends BioFileConverter {
 
             JsonNode value = characteristic.path("value");
             Term term = new Term(value).invoke();
-            String id = term.getId();
+            String charId = term.getId();
             String annotationValue = term.getAnnotationValue();
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
-            LOG.info("CHAR " + categoryId + ": " + id + "|" + annotationValue + "|"
+            LOG.info("CHAR " + categoryId + ": " + charId + "|" + annotationValue + "|"
                     + termAccession + "|" + termSource);
         }
     }
@@ -433,7 +439,8 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    private void getSampleFactors(JsonNode source, String sampleName, String type) throws ObjectStoreException {
+    private void getSampleFactors(JsonNode source, String sampleName, String id, String type)
+            throws ObjectStoreException {
         //
         // storing these as study data, with reference to factor
         //
@@ -443,7 +450,7 @@ public class ISAConverter extends BioFileConverter {
 
             JsonNode value = characteristic.path("value");
             Term term = new Term(value).invoke();
-            String id = term.getId();
+            String charId = term.getId();
             String annotationValue = term.getAnnotationValue();
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
@@ -454,6 +461,9 @@ public class ISAConverter extends BioFileConverter {
             Item item = createStudyData(type, sampleName, annotationValue, "");
             Reference factorRef = getReference("factor", factors.get(categoryId));
             item.addReference(factorRef);
+
+            // add to map of id-item id for refs
+            sdItemId.put(id, item.getIdentifier());
 
             store(studyReference, store(item));
             found = true;
@@ -488,22 +498,19 @@ public class ISAConverter extends BioFileConverter {
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    public void close() throws ObjectStoreException {
+    public void storeProtocols() throws ObjectStoreException {
         // to move with protocols probably, in line with other cases
         for (Map.Entry<String, Item> entry : protocols.entrySet()) {
 
+            // store protocols
             Integer protocoloid = store(entry.getValue());
             store(studyReference, protocoloid);
 
             String pid = entry.getKey();
-
             LOG.warn("STORING " + pid + " (" + protocoloid + ")");
 
+            // store protocol parameters
             List<String> pparid = protocolParameterList.get(pid);
-
             for (String ppid : pparid) {
 
                 LOG.warn("STORE par " + ppid);
@@ -514,15 +521,49 @@ public class ISAConverter extends BioFileConverter {
                 Integer ppoid = store(protocolParameters.get(ppid));
                 store(reference, ppoid);
             }
+
+            // store references to inputs
+            Iterator<String> pin = protocolIn.keySet().iterator();
+            while (pin.hasNext()) {
+                String thisProtId = pin.next();
+                List<String> ins = protocolIn.get(thisProtId);
+
+                ReferenceList inputCollection = new ReferenceList();
+                inputCollection.setName("inputs");
+                for (String in : ins) {
+                    inputCollection.addRefId(sdItemId.get(in));
+                }
+                store(inputCollection, protocoloid);
+            }
+
+            // store references to outputs
+            Iterator<String> pout = protocolOut.keySet().iterator();
+            while (pout.hasNext()) {
+                String thisProtId = pout.next();
+                List<String> outs = protocolOut.get(thisProtId);
+
+                ReferenceList outputCollection = new ReferenceList();
+                outputCollection.setName("outputs");
+                for (String out : outs) {
+                    outputCollection.addRefId(sdItemId.get(out));
+                }
+                store(outputCollection, protocoloid);
+            }
+
+
         }
 
 //        for (Item item : protocols.values()) {
 //            Integer protocoloid = store(item);
 //
 //        }
-
-
     }
+
+
+//    long bT = System.currentTimeMillis();     // to monitor time spent in the process
+//        LOG.info("TIME setting submission-protocol references: "
+//                + (System.currentTimeMillis() - bT) + " ms");
+
 
 
     private Item createStudy(String type, String id, String title, String description, String subDate, String pubDate)
