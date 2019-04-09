@@ -666,7 +666,49 @@ attribute when using this service.
   </metadata>
   </servlet-mapping>
 
-  <servlet>
+    <servlet>
+        <servlet-name>ws-lists-jaccard-index</servlet-name>
+        <servlet-class>org.intermine.webservice.server.lists.JaccardIndexServlet</servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ws-lists-jaccard-index</servlet-name>
+        <url-pattern>/service/lists/jaccard-index/*</url-pattern>
+        <metadata>
+            <name>Jaccard Index</name>
+            <minVersion>30</minVersion>
+            <method type="GET" authenticationRequired="false" ALSO="POST">
+                <summary>Measure similarity of lists using Jaccard Index</summary>
+                <description>
+                    This service compares the named list with all available lists. (public lists and
+                    private ones if the user is logged in). Its returns the name of each list
+                    compared plus a number representing the Jaccard Index. See https://en.wikipedia.org/wiki/Jaccard_index
+                </description>
+                <param required="false" type="String"
+                       options="/lists|lists{authorized}"
+                       default="{name}"
+                       description="The name of the list">list</param>
+                <param required="false" type="String" description="The list of InterMine IDs">ids</param>
+                <param required="false" type="Float" default="0.05" description="If the Jaccard Index is lower than this value, discard">min</param>
+                <param
+                        type="String"
+                        required="false"
+                        options="/model|model.classes"
+                        default="{name}"
+                        description="The type of InterMine objects (if providing IDs)">type</param>
+                <returns>
+                    <format accept="application/json">json</format>
+                </returns>
+            </method>
+        </metadata>
+    </servlet-mapping>
+
+
+    <servlet>
   <servlet-name>ws-template-upload</servlet-name>
   <servlet-class>org.intermine.webservice.server.template.TemplateUploadServlet</servlet-class>
   <init-param>
@@ -2998,7 +3040,6 @@ The different token types are:
   </servlet-mapping>
 
   <!-- New in version 17 -->
-
     <servlet>
      <servlet-name>ws-jbrowse-config</servlet-name>
      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
@@ -3057,9 +3098,7 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
-
    <!-- New in version 18 -->
-
     <servlet>
      <servlet-name>ws-complexes-export</servlet-name>
      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
@@ -3122,18 +3161,17 @@ The different token types are:
         </method>
     </metadata>
   </servlet-mapping>
-
   
-      <!-- New in version 28 -->
+  <!-- New in version 28 -->
 
-    <servlet>
-        <servlet-name>ws-system-template</servlet-name>
-        <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
-        <init-param>
-            <param-name>GET</param-name>
-            <param-value>org.intermine.webservice.server.template.SystemTemplatesService</param-value>
-        </init-param>
-    </servlet>
+  <servlet>
+      <servlet-name>ws-system-template</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.template.SystemTemplatesService</param-value>
+      </init-param>
+  </servlet>
 
  <servlet-mapping>
         <servlet-name>ws-system-template</servlet-name>
@@ -3221,6 +3259,139 @@ The different token types are:
         </metadata>
     </servlet-mapping>
 
+<!-- new in version 30 -->
+  <servlet>
+      <servlet-name>ws-datacatalog-markup</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.DataCatalogMarkupService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-datacatalog-markup</servlet-name>
+    <url-pattern>/service/semantic-markup/datacatalog</url-pattern>
+    <metadata>
+        <name>Semantic Markup</name>
+        <minVersion>29</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get semantic markup for datacatalog type</summary>
+            <description>
+                This service provides semantic markup for the InterMine home page 
+            </description>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>ws-dataset-markup</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.DataSetMarkupService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-dataset-markup</servlet-name>
+    <url-pattern>/service/semantic-markup/dataset</url-pattern>
+    <metadata>
+        <name>Semantic Markup</name>
+        <minVersion>29</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get semantic markup for dataset type</summary>
+            <description>
+                This service provides semantic markup for DataSet type
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The name of the dataset">name</param>
+            <param
+                    required="false"
+                    type="String"
+                    description="The url of the dataset">url</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>ws-bioentity-markup</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.BioEntityMarkupService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-bioentity-markup</servlet-name>
+    <url-pattern>/service/semantic-markup/bioentity</url-pattern>
+    <metadata>
+        <name>Semantic Markup</name>
+        <minVersion>29</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get semantic markup for bioentity</summary>
+            <description>
+                This service provides semantic markup for BioChemEntity type
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The type of the bioentity">type</param>
+             <param
+                required="true"
+                type="int"
+                description="The primary identifier of the bioentity">id</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+    
+  <servlet>
+      <servlet-name>ws-permanent-url</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.PermanentURLService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-permanent-url</servlet-name>
+    <url-pattern>/service/permanent-url</url-pattern>
+    <metadata>
+        <name>Permanent URL</name>
+        <minVersion>29</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get permanent URL for data objetct</summary>
+            <description>
+                This service generates permanent URL based on the class type and identifier
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The type of the entity">type</param>
+            <param
+                required="true"
+                type="String"
+                description="The internal intermine ID">id</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
@@ -3251,6 +3422,16 @@ The different token types are:
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
+
+  <filter>
+      <filter-name>PermanentURLFilter</filter-name>
+      <filter-class>org.intermine.web.filters.PermanentURLFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+      <filter-name>PermanentURLFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <!-- Interpret POST parameters as UTF-8 by default -->
   <filter>
