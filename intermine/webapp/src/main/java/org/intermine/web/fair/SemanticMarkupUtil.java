@@ -25,6 +25,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.PermanentURIHelper;
 import org.intermine.web.util.URLGenerator;
 import org.json.JSONObject;
@@ -307,7 +308,7 @@ public final class SemanticMarkupUtil
      * @return true if markup are enabled
      */
     public static boolean isEnabled() {
-        Properties props = PropertiesUtil.getProperties();
+        Properties props = InterMineContext.getWebProperties();
         if (props.containsKey("markup.webpages.enable")
                 && "true".equals(props.getProperty("markup.webpages.enable").trim())) {
             return true;
