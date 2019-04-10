@@ -3312,9 +3312,13 @@ The different token types are:
                 type="String"
                 description="The name of the dataset">name</param>
             <param
-                    required="false"
-                    type="String"
-                    description="The url of the dataset">url</param>
+                required="false"
+                type="String"
+                description="The description of the dataset">description</param>
+            <param
+                required="false"
+                type="String"
+                description="The url of the dataset">url</param>
             <returns>
                 <format accept="application/json">json</format>
             </returns>
