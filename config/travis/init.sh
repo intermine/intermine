@@ -27,16 +27,10 @@ else
     echo '#---> Installing python requirements'
     # Install lib requirements
     pip install -r config/lib/requirements.txt
-    
-#    if [[ "$TEST_SUITE" = "bio" ]]; then
-        # we depend on a flymine data source
-        #$GIT_GET https://github.com/intermine/flymine-bio-sources.git flymine-bio-sources
-        #(cd flymine-bio-sources && ./gradlew bio-source-flymine-static:install)
-#    fi
 
     if [[ "$TEST_SUITE" = "ws" ]]; then
 
-    # install everything first. we don't want to test what's in maven
+        # install everything first. we don't want to test what's in maven
         (cd plugin && ./gradlew install)
         (cd intermine && ./gradlew install)    
         (cd bio && ./gradlew install)

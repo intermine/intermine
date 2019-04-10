@@ -82,26 +82,36 @@ for db in $USERPROFILEDB $PRODDB; do
     fi
 done
 
+##########
+## Solr ##
+##########
+
+
+
 # This is the first point at which we need to refer to the InterMine jars previous built
 # So we need to install them to Maven so that the testmine Gradle can fetch them
 echo "------> Installing InterMine Gradle project JARs to local Maven..."
 cd $DIR/../intermine
-(cd ../plugin && ./gradlew install)
-./gradlew install
+(cd ../plugin && ./gradlew install --no-daemon)
+./gradlew install  --no-daemon
 
 echo "------> Loading demo data set..."
 cd $DIR
 
+echo "------> Running ./gradlew clean (just in case you ran this before and made a misbake"
+./gradlew clean --stacktrace --no-daemon
+
 echo "------> Running ./gradlew loadsadata"
-./gradlew loadsadata --stacktrace
+./gradlew loadsadata --stacktrace --no-daemon
 
 echo "------> Building search index..."
-./gradlew createSearchIndex --stacktrace
+echo "------> (this step will fail if indexes not created -- see config/travis/init-solr.sh) "
+./gradlew createSearchIndex --stacktrace --no-daemon
 
 echo "------> Loading userprofile..."
-./gradlew insertUserData --stacktrace
+./gradlew insertUserData --stacktrace --no-daemon
 
 echo "------> Running webapp"
 echo "------> Running ./gradlew tomcatstartwar"
-./gradlew tomcatstartwar & 
+./gradlew tomcatstartwar --no-daemon &
 echo "------> Finished"

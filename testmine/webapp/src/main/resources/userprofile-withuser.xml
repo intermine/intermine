@@ -124,6 +124,14 @@
             <bagValue value="Wendigo" extra="Unknown"/>
         </bag>
     </bags>
+    <tags>
+        <tag name="im:public" objectIdentifier="Everyones-Favourite-Employees" type="bag"/>
+        <tag name="im:public" objectIdentifier="Places-I-Have-Worked" type="bag"/>
+        <tag name="privateTag" objectIdentifier="Unusual departments" type="bag"/>
+        <tag name="privateTag" objectIdentifier="The great unknowns" type="bag"/>
+        <tag name="thisIsAPrivateTag" objectIdentifier="private-template-1" type="template"/>
+        <tag name="thisIsAlsoAPrivateTag" objectIdentifier="private-template-1" type="template"/>
+    </tags>
     <template-queries>
         <template name="private-template-1" title="A private template for testing"
             longDescription="Find all full time basic employees for a certain company, and present them sorted by department name">

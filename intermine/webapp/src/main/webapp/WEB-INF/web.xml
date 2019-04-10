@@ -666,7 +666,49 @@ attribute when using this service.
   </metadata>
   </servlet-mapping>
 
-  <servlet>
+    <servlet>
+        <servlet-name>ws-lists-jaccard-index</servlet-name>
+        <servlet-class>org.intermine.webservice.server.lists.JaccardIndexServlet</servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ws-lists-jaccard-index</servlet-name>
+        <url-pattern>/service/lists/jaccard-index/*</url-pattern>
+        <metadata>
+            <name>Jaccard Index</name>
+            <minVersion>30</minVersion>
+            <method type="GET" authenticationRequired="false" ALSO="POST">
+                <summary>Measure similarity of lists using Jaccard Index</summary>
+                <description>
+                    This service compares the named list with all available lists. (public lists and
+                    private ones if the user is logged in). Its returns the name of each list
+                    compared plus a number representing the Jaccard Index. See https://en.wikipedia.org/wiki/Jaccard_index
+                </description>
+                <param required="false" type="String"
+                       options="/lists|lists{authorized}"
+                       default="{name}"
+                       description="The name of the list">list</param>
+                <param required="false" type="String" description="The list of InterMine IDs">ids</param>
+                <param required="false" type="Float" default="0.05" description="If the Jaccard Index is lower than this value, discard">min</param>
+                <param
+                        type="String"
+                        required="false"
+                        options="/model|model.classes"
+                        default="{name}"
+                        description="The type of InterMine objects (if providing IDs)">type</param>
+                <returns>
+                    <format accept="application/json">json</format>
+                </returns>
+            </method>
+        </metadata>
+    </servlet-mapping>
+
+
+    <servlet>
   <servlet-name>ws-template-upload</servlet-name>
   <servlet-class>org.intermine.webservice.server.template.TemplateUploadServlet</servlet-class>
   <init-param>

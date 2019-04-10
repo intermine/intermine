@@ -20,16 +20,6 @@ import java.util.TreeMap;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 
-/*
- * Copyright (C) 2002-2019 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
 /**
  * Protein Atlas Expressions
  * @author Fengyuan
@@ -43,14 +33,10 @@ public class ProteinAtlasExpressions
     /** @var reliability of expressions */
     private String reliability;
 
-    /** @var expression type for these expressions */
-    private ExpressionType type;
-
     /** @var column keys we have in the results table */
     private ArrayList<String> expressionColumns =  new ArrayList<String>() {
         {
             add("cellType");
-            add("expressionType");
             add("level");
             add("reliability");
             add("tissue");
@@ -97,14 +83,6 @@ public class ProteinAtlasExpressions
     }
 
     /**
-     *
-     * @return the expressions type (Staining vs APE)
-     */
-    public ExpressionType getType() {
-        return type;
-    }
-
-    /**
      * Convert Path results into a List (ProteinAtlasDisplayer.java)
      * @param values values to export
      */
@@ -141,52 +119,11 @@ public class ProteinAtlasExpressions
             // setup reliability, type for this set
             if (reliability == null) {
                 reliability = resultRow.get("reliability");
-                this.type = new ExpressionType(resultRow.get("expressionType"));
             }
         }
 
     }
 
-    /**
-     * Represents the type (APE/Staining)
-     * @author radek
-     *
-     */
-    public class ExpressionType
-    {
-
-        private String text;
-        private String clazz;
-
-        /**
-         * @param dbString type of expression
-         */
-        public ExpressionType(String dbString) {
-            this.text = dbString;
-            this.clazz = (this.text.toLowerCase().indexOf("ape") >= 0) ? "ape" : "staining";
-        }
-
-        /**
-         * @return true of type is ape
-         */
-        public Boolean getIsApe() {
-            return ("ape".equals(this.clazz));
-        }
-
-        /**
-         * @return text
-         */
-        public String getText() {
-            return this.text;
-        }
-
-        /**
-         * @return class
-         */
-        public String getClazz() {
-            return this.clazz;
-        }
-    }
 
     /**
      * Represents a treemap structure of maps of expressions

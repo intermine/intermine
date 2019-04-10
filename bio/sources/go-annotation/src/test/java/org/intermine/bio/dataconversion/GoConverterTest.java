@@ -93,12 +93,12 @@ public class GoConverterTest extends ItemsTestCase
         organism.setAttribute("taxonId", "7227");
 
         Set<String> expected = new HashSet<String>();
-        expected.add("2_1");
-        expected.add("2_2");
+        expected.add("4_1");
+        expected.add("4_2");
         converter.initialiseMapsForFile();
         assertEquals(expected, new HashSet<String>(converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612",
-                organism, "FlyBase", "FlyBase")));
+                organism)));
     }
 
 }
