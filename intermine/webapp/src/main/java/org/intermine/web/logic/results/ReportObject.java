@@ -379,7 +379,8 @@ public class ReportObject
             String name =  (String) getFieldValue("name");
             String description =  (String) getFieldValue("description");
             String url =  (String) getFieldValue("url");
-            Map<String, Object> markup = SemanticMarkupUtil.getDataSetMarkup(request, name, description, url);
+            Map<String, Object> markup = SemanticMarkupUtil.getDataSetMarkup(request, name,
+                    description, url);
             return new JSONObject(markup).toString(2);
         }
         return null;
