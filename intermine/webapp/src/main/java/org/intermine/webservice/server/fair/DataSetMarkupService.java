@@ -32,8 +32,10 @@ public class DataSetMarkupService extends JSONService
     @Override
     protected void execute() throws Exception {
         String dataSetName = getRequiredParameter("name");
+        String description = getOptionalParameter("description");
         String url = getOptionalParameter("url");
-        addResultItem(SemanticMarkupUtil.getDataSetMarkup(request, dataSetName, url), false);
+        addResultItem(SemanticMarkupUtil.getDataSetMarkup(request, dataSetName, description, url),
+                false);
     }
 
     @Override

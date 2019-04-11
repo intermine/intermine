@@ -25,6 +25,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.PermanentURIHelper;
 import org.intermine.web.util.URLGenerator;
 import org.json.JSONObject;
@@ -56,7 +57,7 @@ public final class SemanticMarkupUtil
     private static final String PROTEIN_ENTITY_TYPE = "Protein";
     private static final String GENE_ENTITY_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
-    private static final String INTERMINE_REGISTRY = "http://test-registry.herokuapp.com/";
+    private static final String INTERMINE_REGISTRY = "https://registry.intermine.org/";
     private static final Logger LOG = Logger.getLogger(SemanticMarkupUtil.class);
 
     private SemanticMarkupUtil() {
@@ -178,12 +179,13 @@ public final class SemanticMarkupUtil
      * Returns schema.org markups to be added to the dataset report page
      * @param request the HttpServletRequest
      * @param name the dataset name
+     * @param description the dataset description
      * @param url the dataset url
      *
      * @return the map containing the markups
      */
     public static Map<String, Object> getDataSetMarkup(HttpServletRequest request, String name,
-                                                       String url) {
+                                                       String description, String url) {
         if (!isEnabled()) {
             return null;
         }
@@ -191,15 +193,16 @@ public final class SemanticMarkupUtil
         semanticMarkup.put("@context", SCHEMA);
         semanticMarkup.put("@type", DATASET_TYPE);
         semanticMarkup.put("name", name);
+        semanticMarkup.put("description", description);
 
         PermanentURIHelper helper = new PermanentURIHelper(request);
         String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
         if (url != null && !url.trim().equals("")) {
-            semanticMarkup.put("url", url);
+            semanticMarkup.put("identifier", url);
         } else {
-            semanticMarkup.put("url", imUrlPage);
+            semanticMarkup.put("identifier", imUrlPage);
         }
-        semanticMarkup.put("mainEntityOfPage", imUrlPage);
+        semanticMarkup.put("url", imUrlPage);
 
         Map<String, String> dataCatalog = new LinkedHashMap<>();
         dataCatalog.put("@type", DATACATALOG_TYPE);
@@ -305,7 +308,7 @@ public final class SemanticMarkupUtil
      * @return true if markup are enabled
      */
     public static boolean isEnabled() {
-        Properties props = PropertiesUtil.getProperties();
+        Properties props = InterMineContext.getWebProperties();
         if (props.containsKey("markup.webpages.enable")
                 && "true".equals(props.getProperty("markup.webpages.enable").trim())) {
             return true;
