@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -210,7 +210,7 @@ public class ObjectStoreSummary
                 String fieldName = ref.getName();
                 String clsFieldName = cld.getName() + "." + fieldName;
 
-                if (ignoreFields.contains(fieldName)) {
+                if (ignoreFields.contains(clsFieldName)) {
                     continue;
                 }
 

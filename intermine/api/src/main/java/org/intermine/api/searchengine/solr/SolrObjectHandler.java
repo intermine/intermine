@@ -1,7 +1,7 @@
 package org.intermine.api.searchengine.solr;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -93,6 +93,9 @@ public class SolrObjectHandler extends Thread
 
     private SolrClient solrClient;
 
+    private List<String> indexedFields;
+    private List<String> existingFields;
+
     private volatile Exception error;
 
     /**
@@ -119,6 +122,8 @@ public class SolrObjectHandler extends Thread
      *            addition to the normal indexing
      * @param attributePrefixes prefixes to be ignored
      * @param solrClient solrClient Instance
+     * @param indexedFields List of fieldnames that are indexed in the current postprocess
+     * @param existingFields List of fieldnames that are already exisiting
      */
     SolrObjectHandler(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
                       ObjectPipe<SolrInputDocument> indexingQueue,
@@ -127,7 +132,9 @@ public class SolrObjectHandler extends Thread
                       Map<Class<? extends InterMineObject>, String[]> specialReferences,
                       Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
                       Map<String, String> attributePrefixes,
-                      SolrClient solrClient
+                      SolrClient solrClient,
+                      List<String> indexedFields,
+                      List<String> existingFields
     ) {
         super();
 
@@ -142,6 +149,8 @@ public class SolrObjectHandler extends Thread
         this.attributePrefixes = attributePrefixes;
 
         this.solrClient = solrClient;
+        this.indexedFields = indexedFields;
+        this.existingFields = existingFields;
     }
 
     /**
@@ -680,25 +689,34 @@ public class SolrObjectHandler extends Thread
         if (!fieldNames.contains(fieldName)) {
             fieldNames.add(fieldName);
 
-            Map<String, Object> fieldAttributes = new HashMap();
-            fieldAttributes.put("name", fieldName);
-            fieldAttributes.put("type", fieldType);
-            fieldAttributes.put("stored", stored);
-            fieldAttributes.put("indexed", indexed);
-            fieldAttributes.put("multiValued", true);
-            fieldAttributes.put("required", false);
+            if (!indexedFields.contains(fieldName)) {
+                if (existingFields != null) {
+                    if (!existingFields.contains(fieldName)) {
+                        Map<String, Object> fieldAttributes = new HashMap();
+                        fieldAttributes.put("name", fieldName);
+                        fieldAttributes.put("type", fieldType);
+                        fieldAttributes.put("stored", stored);
+                        fieldAttributes.put("indexed", indexed);
+                        fieldAttributes.put("multiValued", true);
+                        fieldAttributes.put("required", false);
 
-            try {
-                SchemaRequest.AddField schemaRequest = new SchemaRequest.AddField(fieldAttributes);
-                SchemaResponse.UpdateResponse response =  schemaRequest.process(solrClient);
+                        try {
+                            SchemaRequest.AddField schemaRequest
+                                    = new SchemaRequest.AddField(fieldAttributes);
+                            SchemaResponse.UpdateResponse response
+                                    = schemaRequest.process(solrClient);
 
-            } catch (Exception e) {
-                LOG.error("Error while adding fields to the solrclient.", e);
+                            indexedFields.add(fieldName);
 
-                e.printStackTrace();
+                        } catch (Exception e) {
+                            LOG.error("Error while adding fields to the solrclient.", e);
+
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         }
-
     }
 
 }

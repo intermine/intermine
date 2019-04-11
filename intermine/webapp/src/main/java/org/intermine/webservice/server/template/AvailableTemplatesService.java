@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -71,13 +71,13 @@ public class AvailableTemplatesService extends WebService
 
         TemplateManager templateManager = im.getTemplateManager();
         Map<String, ApiTemplate> templates;
+        Profile profile = null;
         boolean includeBroken = Boolean.parseBoolean(request.getParameter("includeBroken"));
         if (isAuthenticated()) {
-            Profile profile = getPermission().getProfile();
+            profile = getPermission().getProfile();
             templates = (includeBroken)
                             ? templateManager.getUserAndGlobalTemplates(profile)
                             : templateManager.getWorkingTemplates(profile);
-
         } else {
             templates = (includeBroken)
                             ? templateManager.getGlobalTemplates()
@@ -97,7 +97,7 @@ public class AvailableTemplatesService extends WebService
                 attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
                 output.setHeaderAttributes(attributes);
                 output.addResultItem(Arrays.asList(
-                        TemplateHelper.apiTemplateMapToJson(im, templates)));
+                        TemplateHelper.apiTemplateMapToJson(im, templates, profile)));
                 break;
             case TEXT:
                 Set<String> templateNames = new TreeSet<String>(templates.keySet());

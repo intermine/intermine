@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2018 FlyMine
+ * Copyright (C) 2002-2019 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -630,9 +630,8 @@ public class SequenceProcessor extends ChadoProcessor
                 if (featureMap.containsKey(featureId)) {
                     FeatureData featureData = featureMap.get(featureId);
                     String taxonId = featureData.organismData.getTaxonId();
-                    Item location =
-                            makeLocation(start, end, strand, srcFeatureData, featureData, taxonId,
-                                    featureId);
+                    Item location = makeLocation(start, end, strand, srcFeatureData, featureData,
+                            featureId);
                     // location could be null for common features (modmine)
                     if (location != null) {
                         getChadoDBConverter().store(location);
@@ -701,18 +700,17 @@ public class SequenceProcessor extends ChadoProcessor
      * @param strand the strand
      * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
      * @param featureData the FeatureData for the SequenceFeature
-     * @param taxonId the taxon id to use when finding the Chromosome for the Location
      * @param featureId id of feature
      * @return the new Location object
      * @throws ObjectStoreException if there is a problem while storing
      */
     // modMine overrides in subclass
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-            FeatureData featureData, String taxonId, int featureId)
+            FeatureData featureData, int featureId)
         throws ObjectStoreException {
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.getItemIdentifier(),
                 featureData.getItemIdentifier(),
-                start, end, strand, taxonId);
+                start, end, strand);
         return location;
     }
 
