@@ -8,6 +8,27 @@
  *
  */
 
+InterMine 3.1.2 (April 2019)
+
+#704 - Keyword search - fail gracefully if there is no search index
+#1497 - Docs: links in search results drop .html extension, only on index pages.
+#1766 - Web services: Add tags to templates
+#1773 - Gradle: when installing bio project, intermine-bio-test.properties SHOULD NOT be mandatory
+#1909 - Gradle: logs need sorting out
+#1952 - GAF 1.0 - remove this code
+#1965 - bio and bio/sources: java.lang.ClassCastException on org.apache.xerces.parsers
+#1980 - Gradle: model isn't merging correctly on postprocess on large InterMine items XML file
+#1984 - Set converter.class in the right place
+#1988 - Fix protein atlas displayer in humanmine
+#2001 - NCBI web services = error with NULL values
+#2002 - modify SolrIndexHandler to support newer Solr versions (thanks @arunans23!!)
+#2007 - Gretty plugin - remove from bio-webapp?
+#2008 - Error using CHEBI web services
+#2009 - Publication abstract is longer than postgres index
+#2013 - Remove Phenotype, it's not in the core model and has conflicting key (thanks @sammyjava)
+#2017 - Gretty plugin - remove from mine-webapp
+#2020 - Fix the protein atlas expression viewer
+#2036 - ObjectStoreSummary does not handle ignored fields consistently. (thanks @JoeCarlson )
 
 InterMine 3.1.1 (Feb 2019)
 
