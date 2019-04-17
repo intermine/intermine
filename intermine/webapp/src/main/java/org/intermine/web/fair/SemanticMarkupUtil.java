@@ -117,7 +117,7 @@ public final class SemanticMarkupUtil
     private static List<Map<String, Object>> getDatSets(HttpServletRequest request) {
         List<Map<String, Object>> dataSets = new ArrayList<>();
         PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
-        pathQuery.addViews("DataSet.name", "DataSet.url");
+        pathQuery.addViews("DataSet.name", "DataSet.description", "DataSet.url");
         pathQuery.addOrderBy("DataSet.name", OrderDirection.ASC);
         PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
                 PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
@@ -127,17 +127,10 @@ public final class SemanticMarkupUtil
             while (iterator.hasNext()) {
                 dataset = new LinkedHashMap<>();
                 List<ResultElement> elem = iterator.next();
-                dataset.put("@type", DATASET_TYPE);
                 String name = (String) elem.get(0).getField();
-                dataset.put("name", name);
-                PermanentURIHelper helper = new PermanentURIHelper(request);
-                String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
-                if (elem.get(1).getField() != null
-                        && !elem.get(1).getField().toString().equals("")) {
-                    dataset.put("url", (String) elem.get(1).getField());
-                } else {
-                    dataset.put("url", imUrlPage);
-                }
+                String description = (String) elem.get(1).getField();
+                String url = (String) elem.get(2).getField();
+                buildDataSetMarkup(dataset, name, description, url, request);
                 dataSets.add(dataset);
             }
         } catch (ObjectStoreException ex) {
@@ -190,19 +183,7 @@ public final class SemanticMarkupUtil
             return null;
         }
         Map<String, Object> semanticMarkup = new LinkedHashMap<>();
-        semanticMarkup.put("@context", SCHEMA);
-        semanticMarkup.put("@type", DATASET_TYPE);
-        semanticMarkup.put("name", name);
-        semanticMarkup.put("description", description);
-
-        PermanentURIHelper helper = new PermanentURIHelper(request);
-        String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
-        if (url != null && !url.trim().equals("")) {
-            semanticMarkup.put("identifier", url);
-        } else {
-            semanticMarkup.put("identifier", imUrlPage);
-        }
-        semanticMarkup.put("url", imUrlPage);
+        buildDataSetMarkup(semanticMarkup, name, description, url, request);
 
         Map<String, String> dataCatalog = new LinkedHashMap<>();
         dataCatalog.put("@type", DATACATALOG_TYPE);
@@ -210,6 +191,34 @@ public final class SemanticMarkupUtil
         semanticMarkup.put("includedInDataCatalog", dataCatalog);
 
         return semanticMarkup;
+    }
+
+    /**
+     * Build the dataset schema.org markups
+     * @param semanticMarkup the map where the markup are added
+     * @param name the dataset name
+     * @param description the dataset description
+     * @param url the dataset url
+     * @param request the HttpServletRequest
+     *
+     */
+    private static void buildDataSetMarkup(Map<String, Object> semanticMarkup, String name,
+                String description, String url, HttpServletRequest request) {
+        semanticMarkup.put("@context", SCHEMA);
+        semanticMarkup.put("@type", DATASET_TYPE);
+        semanticMarkup.put("name", name);
+        semanticMarkup.put("description", description);
+
+        PermanentURIHelper helper = new PermanentURIHelper(request);
+        String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
+        semanticMarkup.put("url", imUrlPage);
+
+        //we use the dataset's url to set the identifier
+        if (url != null && !url.trim().equals("")) {
+            semanticMarkup.put("identifier", url);
+        } else {
+            semanticMarkup.put("identifier", imUrlPage);
+        }
     }
 
     /**
