@@ -134,7 +134,7 @@ public class InterMineLUI
      */
     public String toString() {
         try {
-            String encodedIdentifier = URLEncoder.encode(identifier,"UTF-8");
+            String encodedIdentifier = URLEncoder.encode(identifier, "UTF-8");
             // The URLEncoder class is based on RFC 2396, and there are few differences
             // between the unreserved characters in case of RFC 2396 and RFC 3986
             encodedIdentifier = encodedIdentifier.replaceAll("%3A", ":")
