@@ -79,7 +79,7 @@ public class InterMineLUI
      * Given a type, which might not contain capital letters, return the class name as it is
      * defined in the model
      * @param className which might not contain capital letters (e.g. dataset)
-     * @return he class name as it is defined in the model
+     * @return the class name as it is defined in the model (e.g. DataSet)
      */
     protected static String getSimpleClassName(String className) {
         Model model = Model.getInstanceByName("genomic");
