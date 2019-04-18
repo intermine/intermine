@@ -16,7 +16,11 @@ import org.intermine.metadata.Model;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Class to map the class name defined in the core.xml with the identifier used to generate the
