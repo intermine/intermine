@@ -11,11 +11,12 @@ package org.intermine.api.uri;
  */
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Class to map the class name defined in the core.xml with the identifier used to generate the
@@ -48,13 +49,17 @@ public final class ClassNameURIIdentifierMapper
             }
             properties.load(inputStream);
             String key = null;
+            Set<String> subClassNames = null;
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 key = (String) entry.getKey();
                 if (key.endsWith(URI_SUFFIX)) {
                     String className = key.replace(URI_SUFFIX, "");
                     classNameIdentifiersMap.put(className, (String) entry.getValue());
+                    subClassNames = getSubClassNames(className);
+                    for (String subClassName : subClassNames) {
+                        classNameIdentifiersMap.put(subClassName, (String) entry.getValue());
+                    }
                 }
-
             }
         } catch (IOException ex) {
             LOGGER.error("Error loading class_keys.properties file", ex);
@@ -84,5 +89,18 @@ public final class ClassNameURIIdentifierMapper
             return classNameIdentifiersMap.get(className);
         }
         return null;
+    }
+
+    private Set<String> getSubClassNames(String className) {
+        Set<String> subClassNames = new HashSet<String>();
+        Model model = Model.getInstanceByName("genomic");
+        ClassDescriptor cl = model.getClassDescriptorByName(className);
+        if (cl != null) {
+            Set<ClassDescriptor> subDescriptors = cl.getSubDescriptors();
+            for (ClassDescriptor descriptor : subDescriptors) {
+                subClassNames.add(descriptor.getSimpleName());
+            }
+        }
+        return subClassNames;
     }
 }
