@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.webservice.server.Format;
@@ -118,23 +118,24 @@ public class JaccardIndexService extends WebService
             }
 
             List<Integer> comparisonList = bag.getContentsAsIds();
-            List<Integer> intersection = (List<Integer>) CollectionUtils.intersection(bagOfInterest,
+            List<Integer> intersection = (List<Integer>) ListUtils.intersection(bagOfInterest,
                     comparisonList);
-            List<Integer> union = (List<Integer>) CollectionUtils.union(bagOfInterest,
-                    comparisonList);
-            BigDecimal denominator = new BigDecimal(union.size());
+            // calculate the union
+            BigDecimal denominator = new BigDecimal(bagOfInterest.size()
+                    + comparisonList.size() - intersection.size());
             BigDecimal numerator = new BigDecimal(intersection.size());
             BigDecimal jaccardSimilarity = new BigDecimal(0);
             // don't divide by zero
             if (denominator.compareTo(BigDecimal.ZERO) != 0
                     && numerator.compareTo(BigDecimal.ZERO) != 0) {
-                jaccardSimilarity = numerator.divide(denominator, 2, RoundingMode.HALF_UP);
+                jaccardSimilarity = numerator.divide(denominator, 2, RoundingMode.HALF_EVEN);
             }
             if (jaccardSimilarity.compareTo(minimumValue) >= 0) {
                 results.put(name, jaccardSimilarity);
             }
         }
 
+        // sort results. need to be in this format to preserve sort order in JavaScript
         Map<String, BigDecimal> sortedMap = sortByValue(results);
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode rootNode = mapper.createArrayNode();
