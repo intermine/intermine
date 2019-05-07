@@ -120,8 +120,9 @@ public class JaccardIndexService extends WebService
             List<Integer> comparisonList = bag.getContentsAsIds();
             List<Integer> intersection = (List<Integer>) CollectionUtils.intersection(bagOfInterest,
                     comparisonList);
-            BigDecimal denominator = new BigDecimal(bagOfInterest.size()
-                    + comparisonList.size());
+            List<Integer> union = (List<Integer>) CollectionUtils.union(bagOfInterest,
+                    comparisonList);
+            BigDecimal denominator = new BigDecimal(union.size());
             BigDecimal numerator = new BigDecimal(intersection.size());
             BigDecimal jaccardSimilarity = new BigDecimal(0);
             // don't divide by zero
