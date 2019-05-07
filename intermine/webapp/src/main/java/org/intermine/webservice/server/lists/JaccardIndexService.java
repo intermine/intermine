@@ -128,7 +128,7 @@ public class JaccardIndexService extends WebService
             // don't divide by zero
             if (denominator.compareTo(BigDecimal.ZERO) != 0
                     && numerator.compareTo(BigDecimal.ZERO) != 0) {
-                jaccardSimilarity = numerator.divide(denominator, 2, RoundingMode.HALF_EVEN);
+                jaccardSimilarity = numerator.divide(denominator, 4, RoundingMode.HALF_EVEN);
             }
             if (jaccardSimilarity.compareTo(minimumValue) >= 0) {
                 results.put(name, jaccardSimilarity);
