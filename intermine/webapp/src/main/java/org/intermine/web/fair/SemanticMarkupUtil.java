@@ -160,10 +160,31 @@ public final class SemanticMarkupUtil
         semanticMarkup.put("identifier", getMineIdentifier(request));
         semanticMarkup.put("url", new URLGenerator(request).getPermanentBaseURL());
 
+        //citation
         Map<String, String> citation = new LinkedHashMap<>();
         citation.put("@type", "CreativeWork");
         citation.put("identifier", INTERMINE_CITE);
         semanticMarkup.put("citation", citation);
+        //organization
+        Map<String, String> organization = new LinkedHashMap<>();
+        organization.put("@type", "Organization");
+        organization.put("name", "InterMine");
+        organization.put("url", "http://intermine.org");
+        semanticMarkup.put("provider", organization);
+        //provider
+        Map<String, String> provider = new LinkedHashMap<>();
+        provider.put("@type", "Person");
+        provider.put("name", "InterMine support");
+        provider.put("email", "support@intermine.org");
+        semanticMarkup.put("provider", provider);
+        //sourceOrganization
+        Map<String, String> sourceOrganization = new LinkedHashMap<>();
+        sourceOrganization.put("@type", "Organization");
+        sourceOrganization.put("name", "University of Cambridge");
+        sourceOrganization.put("url", "https://www.gen.cam.ac.uk/");
+        semanticMarkup.put("sourceOrganization", sourceOrganization);
+
+        //datasets
         semanticMarkup.put("dataset", getDatSets(request));
         return semanticMarkup;
     }
