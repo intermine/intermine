@@ -39,8 +39,10 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.userprofile.Tag;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.web.fair.SemanticMarkupUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
+import org.json.JSONObject;
 
 /**
  * Prepare templates and news to be rendered on home page
@@ -174,6 +176,9 @@ public class BeginAction extends InterMineAction
             request.setAttribute("isNewUser", Boolean.FALSE);
         }
 
+        //semantic markup
+        markupHomePage(request);
+
         return mapping.findForward("begin");
     }
 
@@ -229,5 +234,16 @@ public class BeginAction extends InterMineAction
         cookie.setMaxAge(365 * 24 * 60 * 60);
         response.addCookie(cookie);
         return response;
+    }
+
+    /**
+     * Markup the home page using bioschemas.org
+     * @param request HTTP Servlet Request
+     */
+    private void markupHomePage(HttpServletRequest request) {
+        Map<String, Object> homePageMarkup = SemanticMarkupUtil.getDataCatalogMarkup(request);
+        if (homePageMarkup != null) {
+            request.setAttribute("semanticMarkup", new JSONObject(homePageMarkup).toString(2));
+        }
     }
 }

@@ -216,14 +216,14 @@ public final class Constants
      * 27 - Renamed xml parameter to query #1676
      * 28 - Added system templates #1726
      * 29 - Add template tagging
+     * 30 - Jaccard Index,  Add semantic markup endpoints & permanent URL
      */
-    public static final int WEB_SERVICE_VERSION = 29;
-
+    public static final int WEB_SERVICE_VERSION = 30;
 
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "3.1.2";
+    public static final String INTERMINE_VERSION = "4.0.0";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

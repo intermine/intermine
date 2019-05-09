@@ -47,7 +47,7 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testProcess() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet(), null);
         Model processModel = new Model("model", "", new HashSet(Collections.singleton(cld1)));
 
         new JavaModelOutput(processModel, new File("./")).process();
@@ -76,7 +76,7 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorIsClass() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Collections.singleton(cld1)));
 
         String expected = "public class Class1 implements org.intermine.model.InterMineObject" + ENDL + "{" + ENDL
@@ -92,7 +92,7 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorIsInterface() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Collections.singleton(cld1)));
 
         String expected = "package package.name;" + ENDL + ENDL
@@ -103,8 +103,8 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorHasSuperclass() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet(), null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "public class Class2 extends package.name.Class1" + ENDL + "{" + ENDL
@@ -116,8 +116,8 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorHasSubclasses() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet(), null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "public class Class1 implements org.intermine.model.InterMineObject" + ENDL + "{" + ENDL
@@ -133,9 +133,9 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorImplementsInterfaces() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Interface2", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class1", "package.name.Interface1 package.name.Interface2", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet(), null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Interface2", null, true, new HashSet(), new HashSet(), new HashSet(), null);
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class1", "package.name.Interface1 package.name.Interface2", false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
 
         String expected = "public class Class1 implements package.name.Interface1, package.name.Interface2" + ENDL + "{" + ENDL
@@ -151,14 +151,14 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorHasFields() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String", null);
         Set atts = new HashSet(Collections.singleton(atd1));
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null);
         Set refs = new HashSet(Collections.singleton(rfd1));
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
         Set cols = new HashSet(Collections.singleton(cod1));
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, refs, cols);
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, refs, cols, null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "public class Class1 implements org.intermine.model.InterMineObject" + ENDL + "{" + ENDL
@@ -190,9 +190,9 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateAttributeDescriptor() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String", null);
         Set atts = new HashSet(Collections.singleton(atd1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, new HashSet(), new HashSet(), null);
         Model model = new Model("model", "", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "// Attr: Class1.atd1" + ENDL
@@ -206,8 +206,8 @@ public class JavaModelOutputTest extends TestCase
     public void testGenerateReferenceDescriptor() throws Exception {
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class2", null);
         Set refs = new HashSet(Collections.singleton(rfd1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), refs, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), refs, new HashSet(), null);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "// Ref: Class1.rfd1" + ENDL
@@ -223,8 +223,8 @@ public class JavaModelOutputTest extends TestCase
     public void testGenerateCollectionDescriptor() throws Exception {
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null);
         Set cols = new HashSet(Collections.singleton(cod1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols, null);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "// Col: Class1.cod1" + ENDL
@@ -237,9 +237,9 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateGetSet() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String", null);
         Set atts = new HashSet(Collections.singleton(atd1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, new HashSet(), new HashSet(), null);
         Model model = new Model("model", "", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "public java.lang.String getAtd1() { return atd1; }" + ENDL
@@ -249,9 +249,9 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateEquals() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String", null);
         Set atts = new HashSet(Collections.singleton(atd1));
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Collections.singleton(cld1)));
 
         String expected =  INDENT + "@Override public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : this == o; }" + ENDL;
@@ -260,7 +260,7 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateHashCode() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "@Override public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL;
@@ -269,16 +269,16 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateToString() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("inty", "int");
-        AttributeDescriptor atd2 = new AttributeDescriptor("str", "java.lang.String");
-        AttributeDescriptor atd3 = new AttributeDescriptor("integery", "java.lang.Integer");
+        AttributeDescriptor atd1 = new AttributeDescriptor("inty", "int", null);
+        AttributeDescriptor atd2 = new AttributeDescriptor("str", "java.lang.String", null);
+        AttributeDescriptor atd3 = new AttributeDescriptor("integery", "java.lang.Integer", null);
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null);
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
         Set<AttributeDescriptor> atts = new LinkedHashSet(Arrays.asList(atd1, atd2, atd3));
         Set<ReferenceDescriptor> refs = new LinkedHashSet(Arrays.asList(rfd1));
         Set<CollectionDescriptor> cols = new LinkedHashSet(Arrays.asList(cod1));
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, refs, cols);
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, refs, cols, null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new LinkedHashSet(Arrays.asList(cld1, cld2)));
 
         String expected = INDENT + "@Override public String toString() { return \"Class1 [id=\" + id + \", integery=\" + integery + \", inty=\" + inty + \", rfd1=\" + (rfd1 == null ? \"null\" : (rfd1.getId() == null ? \"no id\" : rfd1.getId().toString())) + \", str=\" + (str == null ? \"null\" : \"\\\"\" + str + \"\\\"\") + \"]\"; }" + ENDL;
@@ -287,15 +287,15 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGetType() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String", null);
         assertEquals("java.lang.String", mo.getType(atd1));
 
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null);
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
         Set refs = new HashSet(Collections.singleton(rfd1));
         Set cols = new HashSet(Collections.singleton(cod1));
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs, cols);
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs, cols, null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         assertEquals("package.name.Class2", mo.getType(rfd1));
@@ -303,13 +303,13 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateMultiInheritanceLegal() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "int");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "int", null);
         Set atds1 = new HashSet(Collections.singleton(atd1));
-        AttributeDescriptor atd2 = new AttributeDescriptor("atd1", "int");
+        AttributeDescriptor atd2 = new AttributeDescriptor("atd1", "int", null);
         Set atds2 = new HashSet(Collections.singleton(atd2));
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, atds1, new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, atds2, new HashSet(), new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, atds1, new HashSet(), new HashSet(), null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, atds2, new HashSet(), new HashSet(), null);
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet(), null);
         Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
 
         String expected = "public class Class3 implements package.name.Class1, package.name.Class2" + ENDL + "{" + ENDL

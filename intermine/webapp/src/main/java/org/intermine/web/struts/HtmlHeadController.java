@@ -131,6 +131,7 @@ public class HtmlHeadController extends TilesAction
                 }
 
                 ReportObject reportObject = reportObjects.get(object);
+                markupReportPage(request, reportObject);
                 htmlPageTitle = reportObject.getHtmlHeadTitle();
 
             } catch (Exception e) {
@@ -172,4 +173,15 @@ public class HtmlHeadController extends TilesAction
         return "2";
     }
 
+    /**
+     * Markup report page using bioschemas.org
+     * @param request HTTP Servlet Request
+     * @param reportObject the reportObject
+     */
+    private void markupReportPage(HttpServletRequest request, ReportObject reportObject) {
+        String semanticMarkup = reportObject.getSemanticMarkup(request);
+        if (semanticMarkup != null) {
+            request.setAttribute("semanticMarkup", reportObject.getSemanticMarkup(request));
+        }
+    }
 }

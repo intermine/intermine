@@ -42,13 +42,13 @@ public class WebservicePythonCodeGeneratorTest extends WebserviceJavaCodeGenerat
         List<ClassDescriptor> cds = new ArrayList<ClassDescriptor>();
         List<AttributeDescriptor> ads = new ArrayList<AttributeDescriptor>();
 
-        ads.add(new AttributeDescriptor("testatt", "java.lang.String"));
+        ads.add(new AttributeDescriptor("testatt", "java.lang.String", null));
         cds.add(
             new ClassDescriptor(
                 "testns.testclass", null, false,
                 ads,
                 new HashSet<ReferenceDescriptor>(),
-                new HashSet<CollectionDescriptor>()));
+                new HashSet<CollectionDescriptor>(), null));
 
         Model m = new Model("model1", "testns", cds);
 
@@ -71,16 +71,16 @@ public class WebservicePythonCodeGeneratorTest extends WebserviceJavaCodeGenerat
         List<ClassDescriptor> cds = new ArrayList<ClassDescriptor>();
         List<AttributeDescriptor> ads = new ArrayList<AttributeDescriptor>();
 
-        ads.add(new AttributeDescriptor("testatt", "java.lang.String"));
-        ads.add(new AttributeDescriptor("testatt2", "java.lang.String"));
-        ads.add(new AttributeDescriptor("testatt3", "java.lang.String"));
+        ads.add(new AttributeDescriptor("testatt", "java.lang.String", null));
+        ads.add(new AttributeDescriptor("testatt2", "java.lang.String", null));
+        ads.add(new AttributeDescriptor("testatt3", "java.lang.String", null));
 
         cds.add(
             new ClassDescriptor(
                 "testns.testclass", null, false,
                 ads,
                 new HashSet<ReferenceDescriptor>(),
-                new HashSet<CollectionDescriptor>()));
+                new HashSet<CollectionDescriptor>(), null));
 
         Model m = new Model("model1", "testns", cds);
 

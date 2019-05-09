@@ -192,7 +192,8 @@ public final class ModelMerger
             newSet.put(cd.getName(), new ClassDescriptor(cd.getName(), supersStr, cd.isInterface(),
                                                 cloneAttributeDescriptors(adescs),
                                                 cloneReferenceDescriptors(rdescs),
-                                                cloneCollectionDescriptors(cdescs)));
+                                                cloneCollectionDescriptors(cdescs),
+                                                cd.getFairTerm()));
         }
 
         return newSet;
@@ -285,8 +286,15 @@ public final class ModelMerger
         if (supersStr != null && "".equals(supersStr)) {
             supersStr = null;
         }
+
+        // use the URI from the new class, if it's there
+        String fairUri = merge.getFairTerm();
+        if (fairUri == null) {
+            // if not, use original (still might be null!)
+            fairUri = original.getFairTerm();
+        }
         return new ClassDescriptor(original.getName(), supersStr,
-                merge.isInterface(), attrs, refs, cols);
+                merge.isInterface(), attrs, refs, cols, fairUri);
     }
 
     /**
@@ -489,7 +497,7 @@ public final class ModelMerger
             Set<AttributeDescriptor> refs) {
         Set<AttributeDescriptor> copy = new HashSet<AttributeDescriptor>();
         for (AttributeDescriptor ref : refs) {
-            copy.add(new AttributeDescriptor(ref.getName(), ref.getType()));
+            copy.add(new AttributeDescriptor(ref.getName(), ref.getType(), ref.getFairTerm()));
         }
         return copy;
     }
@@ -510,7 +518,7 @@ public final class ModelMerger
         return new ClassDescriptor(cld.getName(), supers, cld.isInterface(),
                 cloneAttributeDescriptors(cld.getAttributeDescriptors()),
                 cloneReferenceDescriptors(cld.getReferenceDescriptors()),
-                cloneCollectionDescriptors(cld.getCollectionDescriptors()));
+                cloneCollectionDescriptors(cld.getCollectionDescriptors()), cld.getFairTerm());
     }
 
     /**

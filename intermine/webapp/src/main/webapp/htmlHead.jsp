@@ -101,4 +101,9 @@ jQuery && jQuery(function() {
     }
 });
 </script>
+<c:if test="${(pageName == 'begin' || pageName == 'report') && semanticMarkup != null}">
+<script type="application/ld+json">
+${semanticMarkup}
+</script>
+</c:if>
 <!-- /htmlHead.jsp -->
