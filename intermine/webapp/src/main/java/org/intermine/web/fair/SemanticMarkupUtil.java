@@ -165,18 +165,21 @@ public final class SemanticMarkupUtil
         citation.put("@type", "CreativeWork");
         citation.put("identifier", INTERMINE_CITE);
         semanticMarkup.put("citation", citation);
-        //organization
+
+        //providers
+        Map<String, String> support = new LinkedHashMap<>();
+        support.put("@type", "Person");
+        support.put("name", "InterMine support");
+        support.put("email", "support@intermine.org");
         Map<String, String> organization = new LinkedHashMap<>();
         organization.put("@type", "Organization");
         organization.put("name", "InterMine");
         organization.put("url", "http://intermine.org");
-        semanticMarkup.put("provider", organization);
-        //provider
-        Map<String, String> provider = new LinkedHashMap<>();
-        provider.put("@type", "Person");
-        provider.put("name", "InterMine support");
-        provider.put("email", "support@intermine.org");
-        semanticMarkup.put("provider", provider);
+        List<Map<String, String>> providers = new ArrayList<>();
+        providers.add(support);
+        providers.add(organization);
+        semanticMarkup.put("provider", providers);
+
         //sourceOrganization
         Map<String, String> sourceOrganization = new LinkedHashMap<>();
         sourceOrganization.put("@type", "Organization");
