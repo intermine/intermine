@@ -8,38 +8,26 @@
         <attribute name="withText" value="UniProtKB-KW:KW-1003"/>
         <reference name="code" ref_id="1_11"/>
     </item>
-    <item id="4_1" class="DataSet">
-        <attribute name="name" value="GO Annotation from UniProt"/>
-        <reference name="dataSource" ref_id="5_1"/>
-    </item>
-    <item id="6_1" class="GOTerm">
-        <attribute name="identifier" value="GO:0016020"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
-    </item>
-    <item id="7_8" class="GOAnnotation">
-        <reference name="ontologyTerm" ref_id="6_4"/>
-        <reference name="subject" ref_id="3_3"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
-        <collection name="evidence"><reference ref_id="8_8"/></collection>
-    </item>
     <item id="7_7" class="GOAnnotation">
         <reference name="ontologyTerm" ref_id="6_2"/>
-        <reference name="subject" ref_id="3_2"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
+        <reference name="subject" ref_id="5_2"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
         <collection name="evidence"><reference ref_id="8_7"/></collection>
+    </item>
+    <item id="7_9" class="GOAnnotation">
+        <reference name="ontologyTerm" ref_id="6_4"/>
+        <reference name="subject" ref_id="5_3"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
+        <collection name="evidence"><reference ref_id="8_9"/></collection>
+    </item>
+    <item id="4_1" class="Organism">
+        <attribute name="taxonId" value="224308"/>
     </item>
     <item id="7_3" class="GOAnnotation">
         <reference name="ontologyTerm" ref_id="6_3"/>
-        <reference name="subject" ref_id="3_1"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
+        <reference name="subject" ref_id="5_1"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
         <collection name="evidence"><reference ref_id="8_3"/></collection>
-    </item>
-    <item id="2_1" class="Organism">
-        <attribute name="taxonId" value="224308"/>
-    </item>
-    <item id="6_2" class="GOTerm">
-        <attribute name="identifier" value="GO:0016021"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
     </item>
     <item id="8_2" class="GOEvidence">
         <attribute name="withText" value="UniProtKB-KW:KW-0812"/>
@@ -59,11 +47,6 @@
         <attribute name="name" value="Inferred from High Throughput Direct Assay"/>
         <attribute name="url" value="http://wiki.geneontology.org/index.php/Inferred_from_High_Throughput_Direct_Assay_(HDA)"/>
     </item>
-    <item id="3_2" class="Protein">
-        <attribute name="primaryAccession" value="C0H3Q1"/>
-        <reference name="organism" ref_id="2_1"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
-    </item>
     <item id="8_8" class="GOEvidence">
         <attribute name="withText" value="UniProtKB-KW:KW-1003"/>
         <reference name="code" ref_id="1_11"/>
@@ -78,15 +61,10 @@
         <attribute name="name" value="Inferred from Genomic Context"/>
         <attribute name="url" value="http://geneontology.org/page/igc-inferred-genomic-context"/>
     </item>
-    <item id="3_1" class="Protein">
-        <attribute name="primaryAccession" value="C0H3P8"/>
-        <reference name="organism" ref_id="2_1"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
-    </item>
     <item id="7_6" class="GOAnnotation">
         <reference name="ontologyTerm" ref_id="6_1"/>
-        <reference name="subject" ref_id="3_2"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
+        <reference name="subject" ref_id="5_2"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
         <collection name="evidence"><reference ref_id="8_6"/></collection>
     </item>
     <item id="8_7" class="GOEvidence">
@@ -103,13 +81,6 @@
         <attribute name="name" value="Inferred from Mutant Phenotype"/>
         <attribute name="url" value="http://geneontology.org/page/imp-inferred-mutant-phenotype"/>
     </item>
-    <item id="6_3" class="GOTerm">
-        <attribute name="identifier" value="GO:0030435"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
-    </item>
-    <item id="5_1" class="DataSource">
-        <attribute name="name" value="UniProt"/>
-    </item>
     <item id="1_26" class="GOEvidenceCode">
         <attribute name="code" value="TAS"/>
         <attribute name="name" value="Traceable Author Statement"/>
@@ -120,20 +91,28 @@
         <attribute name="name" value="Inferred from Reviewed Computational Analysis"/>
         <attribute name="url" value="http://geneontology.org/page/rca-inferred-reviewed-computational-analysis"/>
     </item>
-    <item id="6_4" class="GOTerm">
-        <attribute name="identifier" value="GO:0005886"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
+    <item id="5_2" class="Protein">
+        <attribute name="primaryAccession" value="C0H3Q1"/>
+        <reference name="organism" ref_id="4_1"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
+    </item>
+    <item id="3_1" class="DataSet">
+        <attribute name="name" value="GO Annotation data set"/>
+        <reference name="dataSource" ref_id="2_1"/>
+    </item>
+    <item id="5_1" class="Protein">
+        <attribute name="primaryAccession" value="C0H3P8"/>
+        <reference name="organism" ref_id="4_1"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
+    </item>
+    <item id="6_1" class="GOTerm">
+        <attribute name="identifier" value="GO:0016020"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
     </item>
     <item id="1_6" class="GOEvidenceCode">
         <attribute name="code" value="HTP"/>
         <attribute name="name" value="Inferred from High Throughput Experiment"/>
         <attribute name="url" value="http://wiki.geneontology.org/index.php/Inferred_from_High_Throughput_Experiment_(HTP)"/>
-    </item>
-    <item id="7_2" class="GOAnnotation">
-        <reference name="ontologyTerm" ref_id="6_2"/>
-        <reference name="subject" ref_id="3_1"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
-        <collection name="evidence"><reference ref_id="8_2"/></collection>
     </item>
     <item id="1_7" class="GOEvidenceCode">
         <attribute name="code" value="IBA"/>
@@ -144,6 +123,22 @@
         <attribute name="code" value="IKR"/>
         <attribute name="name" value="Inferred from Key Residues"/>
         <attribute name="url" value="http://geneontology.org/page/ikr-inferred-key-residues"/>
+    </item>
+    <item id="7_2" class="GOAnnotation">
+        <reference name="ontologyTerm" ref_id="6_2"/>
+        <reference name="subject" ref_id="5_1"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
+        <collection name="evidence"><reference ref_id="8_2"/></collection>
+    </item>
+    <item id="6_2" class="GOTerm">
+        <attribute name="identifier" value="GO:0016021"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
+    </item>
+    <item id="7_8" class="GOAnnotation">
+        <reference name="ontologyTerm" ref_id="6_4"/>
+        <reference name="subject" ref_id="5_3"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
+        <collection name="evidence"><reference ref_id="8_8"/></collection>
     </item>
     <item id="8_1" class="GOEvidence">
         <attribute name="withText" value="UniProtKB-KW:KW-0472"/>
@@ -167,16 +162,16 @@
         <attribute name="name" value="Non-traceable Author Statement"/>
         <attribute name="url" value="http://geneontology.org/page/nas-non-traceable-author-statement"/>
     </item>
+    <item id="7_4" class="GOAnnotation">
+        <reference name="ontologyTerm" ref_id="6_4"/>
+        <reference name="subject" ref_id="5_2"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
+        <collection name="evidence"><reference ref_id="8_4"/></collection>
+    </item>
     <item id="1_12" class="GOEvidenceCode">
         <attribute name="code" value="IEP"/>
         <attribute name="name" value="Inferred from Expression Pattern "/>
         <attribute name="url" value="http://geneontology.org/page/iep-inferred-expression-pattern"/>
-    </item>
-    <item id="7_4" class="GOAnnotation">
-        <reference name="ontologyTerm" ref_id="6_4"/>
-        <reference name="subject" ref_id="3_2"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
-        <collection name="evidence"><reference ref_id="8_4"/></collection>
     </item>
     <item id="8_9" class="GOEvidence">
         <attribute name="withText" value="UniProtKB-SubCell:SL-0039"/>
@@ -184,8 +179,8 @@
     </item>
     <item id="7_1" class="GOAnnotation">
         <reference name="ontologyTerm" ref_id="6_1"/>
-        <reference name="subject" ref_id="3_1"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
+        <reference name="subject" ref_id="5_1"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
         <collection name="evidence"><reference ref_id="8_1"/></collection>
     </item>
     <item id="8_5" class="GOEvidence">
@@ -202,17 +197,6 @@
         <attribute name="name" value="Inferred from Hight Throughput Mutant Phenotype"/>
         <attribute name="url" value="http://wiki.geneontology.org/index.php/Inferred_from_Hight_Throughput_Mutant_Phenotype_(HMP)"/>
     </item>
-    <item id="3_3" class="Protein">
-        <attribute name="primaryAccession" value="C0H3Q4"/>
-        <reference name="organism" ref_id="2_1"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
-    </item>
-    <item id="7_9" class="GOAnnotation">
-        <reference name="ontologyTerm" ref_id="6_4"/>
-        <reference name="subject" ref_id="3_3"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
-        <collection name="evidence"><reference ref_id="8_9"/></collection>
-    </item>
     <item id="1_4" class="GOEvidenceCode">
         <attribute name="code" value="HGI"/>
         <attribute name="name" value="nferred from High Throughput Genetic Interaction"/>
@@ -228,16 +212,28 @@
         <attribute name="name" value="Inferred from Sequence Alignment"/>
         <attribute name="url" value="http://geneontology.org/page/isa-inferred-sequence-alignment"/>
     </item>
+    <item id="2_1" class="DataSource">
+        <attribute name="name" value="GO Annotation"/>
+    </item>
     <item id="7_5" class="GOAnnotation">
         <reference name="ontologyTerm" ref_id="6_4"/>
-        <reference name="subject" ref_id="3_2"/>
-        <collection name="dataSets"><reference ref_id="4_1"/></collection>
+        <reference name="subject" ref_id="5_2"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
         <collection name="evidence"><reference ref_id="8_5"/></collection>
+    </item>
+    <item id="6_4" class="GOTerm">
+        <attribute name="identifier" value="GO:0005886"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
     </item>
     <item id="1_9" class="GOEvidenceCode">
         <attribute name="code" value="IC"/>
         <attribute name="name" value="Inferred by Curator"/>
         <attribute name="url" value="http://geneontology.org/page/ic-inferred-curator"/>
+    </item>
+    <item id="5_3" class="Protein">
+        <attribute name="primaryAccession" value="C0H3Q4"/>
+        <reference name="organism" ref_id="4_1"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
     </item>
     <item id="1_20" class="GOEvidenceCode">
         <attribute name="code" value="ISM"/>
@@ -263,5 +259,9 @@
         <attribute name="code" value="ND"/>
         <attribute name="name" value="No biological Data available "/>
         <attribute name="url" value="http://geneontology.org/page/nd-no-biological-data-available"/>
+    </item>
+    <item id="6_3" class="GOTerm">
+        <attribute name="identifier" value="GO:0030435"/>
+        <collection name="dataSets"><reference ref_id="3_1"/></collection>
     </item>
 </items>

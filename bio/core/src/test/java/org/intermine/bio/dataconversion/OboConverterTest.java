@@ -80,8 +80,10 @@ public class OboConverterTest extends ItemsTestCase {
         converter.setOboRelations(Arrays.asList(new OboRelation[] {r1,r2,r3} ));
         converter.storeItems();
 
+        writeItemsFile(itemWriter.getItems(), "obo-converter-tgt.xml");
+
         // prefix should make sure no terms gets stored, only the ontology is
-        assertEquals(itemWriter.getItems().size(), 1);
+        assertEquals(3, itemWriter.getItems().size());
     }
 
 }

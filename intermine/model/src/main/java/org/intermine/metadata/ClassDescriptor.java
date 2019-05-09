@@ -56,6 +56,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     private Model model;  // set when ClassDescriptor added to DescriptorRespository
     private boolean modelSet = false;
+    private String fairTerm;
 
     /**
      * Construct a ClassDescriptor.
@@ -66,13 +67,14 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * @param atts a Collection of AttributeDescriptors
      * @param refs a Collection of ReferenceDescriptors
      * @param cols a Collection of CollectionDescriptors
+     * @param fairTerm URI for class, points to a ontology term describing this term
      * @throws IllegalArgumentException if fields are null
      */
     public ClassDescriptor(String name, String supers,
             boolean isInterface,
             Collection<AttributeDescriptor> atts,
             Collection<ReferenceDescriptor> refs,
-            Collection<CollectionDescriptor> cols) {
+            Collection<CollectionDescriptor> cols, String fairTerm) {
         if (name == null || "".equals(name) || (!name.equals(name.trim()))) {
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
@@ -131,6 +133,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                                                    + "' has already had ClassDescriptor set");
             }
         }
+
+        this.fairTerm = fairTerm;
     }
 
     /**
@@ -192,6 +196,15 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      */
     public String getUnqualifiedName() {
         return Util.unqualifiedName(className);
+    }
+
+    /**
+     * Returns the URI for this data type. Links to an ontology term that describes this class.
+     *
+     * @return fairTerm for the described Class
+     */
+    public String getFairTerm() {
+        return fairTerm;
     }
 
     /**
@@ -709,6 +722,29 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
+     * Return true if the superClassName given in input is a super class of className
+     *
+     * @param model the Model
+     * @param className the className
+     * @param superClassName the super class name
+     * @return true or false
+     * @throws MetaDataException if className isn't in the model
+     */
+    public static boolean findInherithance(Model model, String className, String superClassName)
+            throws MetaDataException {
+        Set<String> superClassNames = findSuperClassNames(
+                Model.getInstanceByName("genomic"), className);
+        if (superClassNames != null) {
+            for (String tmpSuperClassNames : superClassNames) {
+                if (tmpSuperClassNames.contains(superClassName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return the model this class is a part of.
      *
      * @return the parent Model
@@ -792,7 +828,11 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             }
             sb.append("\"");
         }
-        sb.append(" is-interface=\"" + isInterface + "\">");
+        sb.append(" is-interface=\"" + isInterface + "\"");
+        if (fairTerm != null) {
+            sb.append(" term=\"" + fairTerm + "\"");
+        }
+        sb.append(">");
         Set<FieldDescriptor> l = new LinkedHashSet<FieldDescriptor>();
         l.addAll(getAttributeDescriptors());
         l.addAll(getReferenceDescriptors());
@@ -818,6 +858,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         String name = className.substring(className.lastIndexOf(".") + 1);
         sb.append("{\"name\":\"")
             .append(name)
+            .append("\",\"term\":\"")
+            .append(fairTerm)
             .append("\",\"extends\":[");
         Iterator<String> supersIter = superClassNames.iterator();
         while (supersIter.hasNext()) {
@@ -960,4 +1002,25 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         }
         return supers;
     }
+    /**
+     * Return the fair term for the given class name defined in the model.
+     *
+     * @param model the Model
+     * @param className the className
+     * @throws MetaDataException if className isn't in the model
+     *
+     * @return the fair term
+     */
+    public static String findFairTerm(Model model, String className) throws MetaDataException {
+        ClassDescriptor cd = model.getClassDescriptorByName(className);
+        if ((cd == null) && (!"java.lang.Object".equals(className))) {
+            throw new MetaDataException("Model construction failed - class: " + className
+                    + " is not in the model.");
+        }
+        if (cd != null) {
+            return cd.fairTerm;
+        }
+        return null;
+    }
+
 }

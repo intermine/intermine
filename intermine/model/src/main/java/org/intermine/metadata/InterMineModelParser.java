@@ -111,11 +111,15 @@ public class InterMineModelParser implements ModelParser
                 String supers = attrs.getValue("extends");
                 boolean isInterface = Boolean.valueOf(attrs.getValue("is-interface"))
                     .booleanValue();
-                cls = new SkeletonClass(packageName, name, supers, isInterface);
+                String fairTerm = attrs.getValue("term");
+                cls = new SkeletonClass(packageName, name, supers, isInterface, fairTerm);
             } else if ("attribute".equals(qName)) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("type");
-
+                String fairTerm = null;
+                if (attrs.getValue("term") != null) {
+                    fairTerm = attrs.getValue("term");
+                }
                 if (StringUtils.isEmpty(name)) {
                     throw new IllegalArgumentException("Error - `" + cls.name + "` has an attribute"
                             + " with an empty/null name");
@@ -124,7 +128,7 @@ public class InterMineModelParser implements ModelParser
                     throw new IllegalArgumentException("Error - type of attribute `" + name
                             + "` not defined for `" + cls.name + "`");
                 }
-                cls.attributes.add(new AttributeDescriptor(name, type));
+                cls.attributes.add(new AttributeDescriptor(name, type, fairTerm));
             } else if ("reference".equals(qName)) {
                 String name = attrs.getValue("name");
                 String origType = attrs.getValue("referenced-type");
@@ -191,7 +195,7 @@ public class InterMineModelParser implements ModelParser
             if ("class".equals(qName)) {
                 classes.add(new ClassDescriptor(cls.name, cls.supers,
                                                 cls.isInterface, cls.attributes, cls.references,
-                                                cls.collections));
+                                                cls.collections, cls.fairTerm));
             }
         }
     }
@@ -201,7 +205,7 @@ public class InterMineModelParser implements ModelParser
      */
     static class SkeletonClass
     {
-        String name, supers;
+        String name, supers, fairTerm;
         boolean isInterface;
         Set<AttributeDescriptor> attributes = new LinkedHashSet<AttributeDescriptor>();
         Set<ReferenceDescriptor> references = new LinkedHashSet<ReferenceDescriptor>();
@@ -214,8 +218,10 @@ public class InterMineModelParser implements ModelParser
          * @param name the fully qualified name of the described class
          * @param supers a space string of fully qualified class names
          * @param isInterface true if describing an interface
+         * @param fairTerm URI for class, points to ontology term describing class
          */
-        SkeletonClass(String packageName, String name, String supers, boolean isInterface) {
+        SkeletonClass(String packageName, String name, String supers, boolean isInterface,
+            String fairTerm) {
             this.name = name;
             if (this.name.startsWith(packageName + ".")) {
                 this.name = this.name.substring(packageName.length() + 1);
@@ -257,6 +263,7 @@ public class InterMineModelParser implements ModelParser
                 this.supers = null;
             }
             this.isInterface = isInterface;
+            this.fairTerm = fairTerm;
         }
     }
 

@@ -8,6 +8,17 @@
  *
  */
 
+InterMine 4.0.0 (May 2019)
+
+#1935 - Decorate the model with ontology terms (where possible)
+#1939 - Store data licences for integrated sources
+#1940 - Provide data licences for integrated sources
+#1941 - GO Annotation - data set is where we get the data file
+#1968 - FAIR: add schemas.org (both schemas can be used)
+#1969 - FAIR: add profile Gene and Protein markup to the report page
+#1978 - Check if lists created overlap with other public lists (and user's lists)
+#2030 - Null pointer exception when user doesn't have any lists. 
+
 InterMine 3.1.2 (April 2019)
 
 #704 - Keyword search - fail gracefully if there is no search index

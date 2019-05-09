@@ -685,7 +685,7 @@ public class SequenceOntology
     /**
      *  move terms from (user provided) file to list
      *  only these terms (and dependents) will be processed
-     * @param filename terms file
+     * @param oboFile terms file
      */
     private void processTerms(InputStream oboFile) {
         Set<String> terms = new HashSet<String>();
@@ -865,8 +865,9 @@ public class SequenceOntology
         }
 
         String childName = TypeUtil.generateClassName(NAMESPACE, getName(childIdentifier));
+        String fairTerm = "http://purl.obolibrary.org/obo/" + childIdentifier;
         return new ClassDescriptor(childName, parents, true, fakeAttributes, references,
-                collections);
+                collections, fairTerm);
     }
 
     private static String generateReverseReference(String parent, String child,

@@ -39,11 +39,11 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
             dependsOn 'processResources'
 
             doLast {
-                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets");
-                String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir;
+                SourceSetContainer sourceSets = (SourceSetContainer) project.getProperties().get("sourceSets")
+                String buildResourcesMainDir = sourceSets.getByName("main").getOutput().resourcesDir
                 FileTree fileTree = project.zipTree(project.configurations.getByName("bioModel").singleFile)
-                PatternSet patternSet = new PatternSet();
-                patternSet.include("genomic_model.xml");
+                PatternSet patternSet = new PatternSet()
+                patternSet.include("genomic_model.xml")
                 File file = fileTree.matching(patternSet).singleFile
                 String modelFilePath = buildResourcesMainDir + File.separator + "genomic_model.xml"
                 file.renameTo(modelFilePath)
