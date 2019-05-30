@@ -28,6 +28,9 @@ import org.intermine.xml.full.ReferenceList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Reader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -126,6 +129,7 @@ public class ISAConverter extends BioFileConverter {
             String filename = study.path("filename").asText();
             String subDate = study.path("submissionDate").asText();
             String pubDate = study.path("publicReleaseDate").asText();
+
 
             LOG.info("STUDY " + identifier);
             //LOG.warn(title + " -- " + filename + " | " + subDate);
@@ -508,20 +512,21 @@ public class ISAConverter extends BioFileConverter {
 
             String pid = entry.getKey();
             LOG.warn("STORING " + pid + " (" + protocoloid + ")");
-
             // store protocol parameters
             List<String> pparid = protocolParameterList.get(pid);
-            for (String ppid : pparid) {
+            // sometime no parameters (TO CHECK)
+            if (pparid != null) {
+                for (String ppid : pparid) {
 
-                LOG.warn("STORE par " + ppid);
-                Reference reference = new Reference();
-                reference.setName("protocol");
-                reference.setRefId(entry.getValue().getIdentifier());
+                    LOG.warn("STORE par " + ppid);
+                    Reference reference = new Reference();
+                    reference.setName("protocol");
+                    reference.setRefId(entry.getValue().getIdentifier());
 
-                Integer ppoid = store(protocolParameters.get(ppid));
-                store(reference, ppoid);
+                    Integer ppoid = store(protocolParameters.get(ppid));
+                    store(reference, ppoid);
+                }
             }
-
             // store references to inputs
             Iterator<String> pin = protocolIn.keySet().iterator();
             while (pin.hasNext()) {
@@ -565,7 +570,6 @@ public class ISAConverter extends BioFileConverter {
 //                + (System.currentTimeMillis() - bT) + " ms");
 
 
-
     private Item createStudy(String type, String id, String title, String description, String subDate, String pubDate)
             throws ObjectStoreException {
 
@@ -579,12 +583,38 @@ public class ISAConverter extends BioFileConverter {
             item.setAttribute("description", description);
         }
         if (!subDate.isEmpty()) {
-            item.setAttribute("submissionDate", subDate);
+            setDate(subDate, item);
         }
         if (!pubDate.isEmpty()) {
-            item.setAttribute("publicReleaseDate", pubDate);
+            setDate(pubDate, item);
         }
         return item;
+    }
+
+    private void setDate(String date, Item item) {
+        if (date.contains("/")) {
+            item.setAttribute("submissionDate", reformDate(date));
+        } else {
+            item.setAttribute("submissionDate", date);
+        }
+    }
+
+    private String reformDate(String subDate) {
+        // to change from dd/mm/yyyy to yyyy-mm-dd
+        // which is understood by integration.
+        DateFormat readFormat = new SimpleDateFormat("dd/mm/yyyy");
+        DateFormat writeFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = readFormat.parse(subDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String formattedDate = "";
+        if (date != null) {
+            formattedDate = writeFormat.format(date);
+        }
+        return formattedDate;
     }
 
 
@@ -680,7 +710,9 @@ public class ISAConverter extends BioFileConverter {
 
         Item item = createItem("Ontology");
         item.setAttribute("name", name);
-        item.setAttribute("url", url);
+        if (!url.isEmpty()) {
+            item.setAttribute("url", url);
+        }
         item.setAttribute("shortName", shortName);
         item.setAttribute("version", version);
 
