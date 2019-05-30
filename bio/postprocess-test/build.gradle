@@ -17,11 +17,12 @@ ext {
     // set here to make available to individual bio-postprocesses
     bioVersion = System.getProperty("bioVersion")
     imVersion = System.getProperty("imVersion")
+    flymineVersion = System.getProperty("flymineVersion")
 }
 
 subprojects {
     group = 'org.intermine'
-    version = '4.0.0'
+    version = '4.0.1'
 
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -64,7 +65,7 @@ subprojects {
 
     task copyMineProperties() {
         dependsOn 'processResources'
-    	doLast {
+        doLast {
             copy {
                 from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
                 into sourceSets.main.output.resourcesDir
@@ -132,51 +133,6 @@ subprojects {
     artifacts {
         archives sourcesJar
         archives javadocJar
-    }
-
-    artifactory {
-        contextUrl = 'https://oss.jfrog.org/artifactory/'
-        resolve {
-            repository {
-                repoKey = 'libs-release'
-            }
-        }
-        publish {
-            repository {
-                if (project.version.endsWith("-SNAPSHOT")) {
-                    repoKey = 'oss-snapshot-local'
-                } else {
-                    repoKey = 'oss-release-local'
-                }
-            username = System.getenv('BINTRAY_USER')
-            password = System.getenv('BINTRAY_KEY')
-            }
-            defaults {
-            publishConfigs('archives')
-            }
-        }
-    }
-
-    bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_KEY')
-        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-        publish = true //[Default: false] Whether version should be auto published after an upload
-        override = true //[Default: false] Whether to override version artifacts already published
-        pkg {
-            repo = 'bio'
-            name = project.name
-            userOrg = user
-            licenses = ['LGPL-2.1']
-            vcsUrl = 'https://github.com/intermine/intermine.git'
-            publicDownloadNumbers = true
-            version {
-                name = '4.0.0'
-                desc = 'InterMine 4.0.0'
-                vcsTag = 'intermine-4.0.0'
-            }
-        }
-        configurations = ['archives']
     }
 
     tasks.compileTestJava.dependsOn 'copyMineProperties', 'buildUnitTestDB'
