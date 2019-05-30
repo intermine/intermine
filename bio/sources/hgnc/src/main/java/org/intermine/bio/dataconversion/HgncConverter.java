@@ -42,7 +42,7 @@ public class HgncConverter extends BioFileConverter
      * @param model the Model
      */
     public HgncConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, "myHGNCLicence");
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
     }
 
     /**
