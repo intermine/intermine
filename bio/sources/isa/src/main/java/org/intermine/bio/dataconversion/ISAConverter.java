@@ -123,6 +123,8 @@ public class ISAConverter extends BioFileConverter {
         JsonNode studyNode = root.path("studies");
         for (JsonNode study : studyNode) {
 
+            clearMaps();
+
             String identifier = study.path("identifier").asText();
             String title = study.path("title").asText();
             String description = study.path("description").asText();
@@ -160,9 +162,17 @@ public class ISAConverter extends BioFileConverter {
             //getProcess
         }
 
-        LOG.warn("----- parsing over -----------");
-
         //createInvestigationWithPojo(file);
+    }
+
+    private void clearMaps() {
+        protocols.clear();
+        protocolParameters.clear();
+        protocolParameterList.clear();
+        protocolIn.clear();
+        protocolOut.clear();
+        sdItemId.clear();
+        factors.clear();
     }
 
 
@@ -238,7 +248,7 @@ public class ISAConverter extends BioFileConverter {
 
             // TODO? add parameterValues
         }
-        LOG.info("SP: " + protocolIn.toString() + "->" + protocolOut.toString());
+        LOG.debug("SP: " + protocolIn.toString() + "->" + protocolOut.toString());
     }
 
 
@@ -381,7 +391,7 @@ public class ISAConverter extends BioFileConverter {
                 String name = file.getName();
                 String type = file.getType();
 
-                LOG.info("FILE " + fileId + ": " + type + "|" + name);
+                LOG.info("FILE " + fileId);
 
                 Item item = createDataFile(type, name);
                 item.addReference(sdRef);
@@ -497,7 +507,9 @@ public class ISAConverter extends BioFileConverter {
         if (file == null) {
             throw new FileNotFoundException("No valid data files found.");
         }
-        LOG.info("ISA: Reading " + file.getName());
+        LOG.info("====================================================================");
+        LOG.info("        ISA: Reading " + file.getName());
+        LOG.info("====================================================================");
         return file;
     }
 
@@ -547,15 +559,19 @@ public class ISAConverter extends BioFileConverter {
                 String thisProtId = pout.next();
                 List<String> outs = protocolOut.get(thisProtId);
 
+                //LOG.info("OUTS are " + outs.size());
                 ReferenceList outputCollection = new ReferenceList();
                 outputCollection.setName("outputs");
                 for (String out : outs) {
+                    //LOG.info("REF " + out + " -> " + sdItemId.get(out));
+                    if (sdItemId.get(out) == null) {
+                        // not sure why this should be, TOCHECK
+                        continue;
+                    }
                     outputCollection.addRefId(sdItemId.get(out));
                 }
                 store(outputCollection, protocoloid);
             }
-
-
         }
 
 //        for (Item item : protocols.values()) {
