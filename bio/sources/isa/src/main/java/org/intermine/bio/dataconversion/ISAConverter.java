@@ -66,9 +66,11 @@ public class ISAConverter extends BioFileConverter {
     private Map<String, Item> factors = new HashMap<>();
     private Map<String, List<String>> factorRefs = new HashMap<>();
 
-    private Integer investigationOID;
-    private Integer studyOID;
-    private Item studyItem;
+    //private Integer investigationOID;
+    //private Item investigationItem;
+    //private Integer studyOID;
+    //private Item studyItem;
+    private Reference investigationReference;
     private Reference studyReference;
 
 
@@ -136,8 +138,12 @@ public class ISAConverter extends BioFileConverter {
             LOG.info("STUDY " + identifier);
             //LOG.warn(title + " -- " + filename + " | " + subDate);
 
-            studyItem = createStudy("Study", identifier, title, description, pubDate, subDate);
-            studyOID = store(studyItem);
+            Item studyItem = createStudy("Study", identifier, title, description, pubDate, subDate);
+            // add ref to investigation
+
+            Integer studyOID = store(studyItem);
+            store(investigationReference, studyOID);
+
             studyReference = getReference("study", studyItem);
 
             getDesignDescriptors(study);
@@ -185,7 +191,9 @@ public class ISAConverter extends BioFileConverter {
         String subDate = investigation.path("submissionDate").asText();
 
         Item investigationItem = createStudy("Investigation", identifier, title, description, pubDate, subDate);
-        investigationOID = store(investigationItem);
+        investigationReference = getReference("investigation", investigationItem);
+
+        Integer investigationOID = store(investigationItem);
     }
 
     private void getProtocols(JsonNode study) throws ObjectStoreException {
