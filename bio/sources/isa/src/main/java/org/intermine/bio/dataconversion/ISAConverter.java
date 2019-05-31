@@ -41,7 +41,7 @@ public class ISAConverter extends BioFileConverter {
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
     private static final String SOURCE = "source";
-    private static final String SAMPLE = "sample";
+    //private static final String SAMPLE = "sample";
 
     public static final List<String> MATERIALS =
             Collections.unmodifiableList(Arrays.asList("sources", "samples"));
@@ -61,15 +61,11 @@ public class ISAConverter extends BioFileConverter {
 
     private Set<String> taxonIds;
 
-    private Map<String, Item> proteins = new HashMap<>();
+    private Map<String, Item> proteins = new HashMap<>(); // not used
 
     private Map<String, Item> factors = new HashMap<>();
-    private Map<String, List<String>> factorRefs = new HashMap<>();
+    //private Map<String, List<String>> factorRefs = new HashMap<>();
 
-    //private Integer investigationOID;
-    //private Item investigationItem;
-    //private Integer studyOID;
-    //private Item studyItem;
     private Reference investigationReference;
     private Reference studyReference;
 
@@ -139,11 +135,9 @@ public class ISAConverter extends BioFileConverter {
             //LOG.warn(title + " -- " + filename + " | " + subDate);
 
             Item studyItem = createStudy("Study", identifier, title, description, pubDate, subDate);
-            // add ref to investigation
-
-            Integer studyOID = store(studyItem);
-            store(investigationReference, studyOID);
-
+            // store and add ref to investigation
+            store(investigationReference, store(studyItem));
+            // get study reference, used for collections attached to study
             studyReference = getReference("study", studyItem);
 
             getDesignDescriptors(study);
@@ -156,7 +150,6 @@ public class ISAConverter extends BioFileConverter {
             getProtocols(study);
             getMaterials(study);
             getAssays(study);
-
 
             storeProtocols();
 
