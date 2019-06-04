@@ -47,7 +47,7 @@ public class RgdIdentifiersConverter extends BioFileConverter
      * @param model the Model
      */
     public RgdIdentifiersConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, "myRGDLicence");
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, null);
     }
 
     /**
