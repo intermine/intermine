@@ -11,9 +11,8 @@ sourceSets {
 
 dependencies {
     bioModel group: 'org.intermine', name: 'bio-source-flymine-static', version: flymineVersion, transitive: false
-    compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
-    compile group: 'org.intermine', name: 'bio-postprocess-create-chromosome-locations-and-lengths', version: bioVersion
-    compile group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
+    compile group: 'org.intermine', name: 'bio-source-flymine-static', version: flymineVersion, transitive: false
+    compile group: 'org.intermine', name: 'bio-postprocess-transfer-sequences', version: bioVersion
 }
 
 processResources {
