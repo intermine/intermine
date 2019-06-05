@@ -1,12 +1,4 @@
 sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java']
-        }
-        resources {
-            srcDirs = ['src/main/resources']
-        }
-    }
     test {
         java {
             srcDirs = ['src/test/java']
@@ -21,6 +13,7 @@ dependencies {
     bioModel group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
     compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
     compile group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
+    compile group: 'org.intermine', name: 'bio-postprocess-create-intron-features', version: bioVersion
 }
 
 processResources {
