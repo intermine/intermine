@@ -26,8 +26,6 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'com.jfrog.bintray'
-    apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'dbmodel'
     apply plugin: 'biocore-dbmodel'
     apply plugin: "checkstyle"
@@ -55,6 +53,8 @@ subprojects {
         testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion")
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
+        compile group: 'org.intermine', name: 'bio-postprocess-create-chromosome-locations-and-lengths', version: bioVersion
+
     }
 
     dbModelConfig {
