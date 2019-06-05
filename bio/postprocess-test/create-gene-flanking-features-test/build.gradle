@@ -10,12 +10,9 @@ sourceSets {
 }
 
 dependencies {
-    bioModel group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
-    compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
-    compile group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
     compile group: 'org.intermine', name: 'bio-postprocess-create-gene-flanking-features', version: bioVersion
-
-}
+    bioModel group: 'org.intermine', name: 'bio-source-flymine-static', version: flymineVersion, transitive: false
+    compile group: 'org.intermine', name: 'bio-source-flymine-static', version: flymineVersion, transitive: false}
 
 processResources {
     from('.') { include ("*.properties")}

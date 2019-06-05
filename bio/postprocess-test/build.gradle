@@ -54,7 +54,7 @@ subprojects {
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
         compile group: 'org.intermine', name: 'bio-postprocess-create-chromosome-locations-and-lengths', version: bioVersion
-
+        testCompile group: 'org.intermine', name: 'bio-postprocess-create-chromosome-locations-and-lengths', version: bioVersion
     }
 
     dbModelConfig {
