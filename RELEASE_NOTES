@@ -8,6 +8,11 @@
  *
  */
 
+
+InterMine 4.0.1 (July 2019)
+
+#2060 - Restore Strains to core data model
+
 InterMine 4.0.0 (May 2019)
 
 #1935 - Decorate the model with ontology terms (where possible)

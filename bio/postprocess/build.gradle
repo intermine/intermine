@@ -21,7 +21,7 @@ ext {
 
 subprojects {
     group = 'org.intermine'
-    version = '4.0.0'
+    version = '4.0.1'
 
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -171,9 +171,9 @@ subprojects {
             vcsUrl = 'https://github.com/intermine/intermine.git'
             publicDownloadNumbers = true
             version {
-                name = '4.0.0'
-                desc = 'InterMine 4.0.0'
-                vcsTag = 'intermine-4.0.0'
+                name = '4.0.1'
+                desc = 'InterMine 4.0.1'
+                vcsTag = 'intermine-4.0.1'
             }
         }
         configurations = ['archives']
