@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2018 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,8 +21,10 @@ import java.util.Set;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseUtil;
@@ -40,7 +42,7 @@ import org.intermine.sql.DatabaseUtil;
 
 /**
  * @author Joe Carlson JWCarlson@lbl.gov
- * @version 0.1
+ * @version 0.2
  */
 public class GenerateUpdateTriggersTask extends Task
 {
@@ -114,32 +116,46 @@ public class GenerateUpdateTriggersTask extends Task
             Model model = os.getModel();
             String adderFileName = "add-update-triggers.sql";
             String removerFileName = "remove-update-triggers.sql";
+            String keyCheckFileName = "key-checker.sql";
 
             FileWriter adderW;
             FileWriter removerW;
+            FileWriter keyCheckW;
             try {
                 adderW = new FileWriter(new File(destDir, adderFileName));
                 removerW = new FileWriter(new File(destDir, removerFileName));
+                keyCheckW = new FileWriter(new File(destDir, keyCheckFileName));
             } catch (IOException e) {
                 throw new BuildException("Cannot open SQL file: " + e.getMessage());
             }
 
             PrintWriter adderPW = new PrintWriter(adderW);
             PrintWriter removerPW = new PrintWriter(removerW);
+            PrintWriter keyCheckPW = new PrintWriter(keyCheckW);
+            // set the output to 'tuples_only'. We do not want the heading or row count.
+            // Should we try to capture setting?
+            keyCheckPW.println("\\pset tuples_only ON");
 
             adderPW.print(getAddDisclaimer());
             removerPW.print(getRemoveDisclaimer());
+            // keep track of indirections we generate SQL in the foreign key check
+            // to avoid redundancies
+            HashSet<CollectionDescriptor> indirections = new HashSet<CollectionDescriptor>();
 
             adderPW.print(getAddSequence());
+            adderPW.print(getAddTruncateBlockFunction());
             for (ClassDescriptor cld : model.getBottomUpLevelTraversal()) {
 
                 if (!"InterMineObject".equals(cld.getUnqualifiedName())
                         && cld.getFieldDescriptorByName("id") != null) {
 
                     adderPW.print(getAddDefaultClassConstraint(cld));
+                    adderPW.print(getAddTruncateBlockTrigger(cld));
                     removerPW.print(getRemoveDefaultClassConstraint(cld));
+                    removerPW.print(getRemoveTruncateBlockTrigger(cld));
                     Set<ClassDescriptor> sCDs = cld.getSuperDescriptors();
 
+                    // add/remove actions for a superclass
                     for (ClassDescriptor superCld : sCDs) {
                         if (!"InterMineObject".equals(superCld.getUnqualifiedName()) ) {
                             adderPW.print(getAddSuperClassActions(cld, superCld));
@@ -147,21 +163,300 @@ public class GenerateUpdateTriggersTask extends Task
                         }
                     }
 
+                    // add/remove actions for InterMineObject table
                     adderPW.print(getAddIMOActions(cld));
                     removerPW.print(getRemoveIMOActions(cld));
+
+                    // add/remove actions caused by a referenced record deletion
+                    for ( ReferenceDescriptor rD: cld.getAllReferenceDescriptors() ) {
+                        keyCheckPW.print(getForeignKeyCheck(cld, rD));
+                        adderPW.print(getAddDeleteReferenceAction(cld, rD));
+                        removerPW.print(getRemoveDeleteReferenceAction(cld, rD));
+                    }
+                    // add/remove actions caused by a collection record deletion
+                    for ( CollectionDescriptor cD: cld.getAllCollectionDescriptors() ) {
+                        if (!indirections.contains(cD)
+                                && cD.relationType() == FieldDescriptor.M_N_RELATION) {
+                            indirections.add(cD);
+                            keyCheckPW.print(getCollectionKeyCheck(cld, cD, model.getVersion()));
+                            adderPW.print(getAddDeleteCollectionAction(cld, cD,
+                                    model.getVersion()));
+                            removerPW.print(getRemoveDeleteCollectionAction(cld, cD,
+                                    model.getVersion()));
+                        }
+                    }
                 }
             }
 
             removerPW.print(getRemoveSequence());
+            removerPW.print(getRemoveTruncateBlockFunction());
             adderPW.print(getAddDisclaimer());
             adderPW.close();
             removerPW.print(getRemoveDisclaimer());
             removerPW.close();
+            // turn tuples_only off
+            keyCheckPW.println("\\pset tuples_only OFF");
+            keyCheckPW.close();
         } catch (Exception e) {
             throw new BuildException("Failed to build SQL triggers: " + e.getMessage());
         }
     }
 
+    /**
+     * Generate SQL for a function that prevents truncating a table.
+     * This function will be used in all triggers invoked when we try
+     * to truncate a table.
+     *
+     * @return SQL to generate function
+     */
+    private static String getAddTruncateBlockFunction() {
+
+        StringBuffer body = new StringBuffer("CREATE OR REPLACE FUNCTION ");
+        body.append("im_block_TRN() RETURNS TRIGGER AS $BODY$\n");
+        body.append("  BEGIN\n");
+        body.append("    RAISE EXCEPTION 'Truncating table % not permitted with ");
+        body.append("im triggers installed.', TG_TABLE_NAME;\n");
+        body.append("    RETURN NULL;\n");
+        body.append("  END;\n");
+        body.append("$BODY$ LANGUAGE plpgsql;\n");
+        return body.toString();
+    }
+    /**
+     * Generate SQL that adds the trigger preventing a table getting truncated.
+     * @param c
+     *          ClassDescriptor for the table that gets the trigger
+     *
+     * @return SQL to generate function
+     */
+    private static String getAddTruncateBlockTrigger(final ClassDescriptor c) {
+        String baseTable = getDBName(c.getUnqualifiedName());
+
+        StringBuffer body = new StringBuffer("DROP TRIGGER IF EXISTS ");
+        body.append("im_" + baseTable + "_TRN_tg ON ")
+                .append(baseTable).append(";\n")
+                .append("CREATE TRIGGER im_" + baseTable + "_TRN_tg BEFORE TRUNCATE ON ")
+                .append(baseTable)
+                .append(" EXECUTE PROCEDURE im_block_TRN();\n");
+        return body.toString();
+    }
+    /**
+     * Generate SQL to drop a function that prevents truncating a table.
+     *
+     * @return SQL to generate function
+     */
+    private static String getRemoveTruncateBlockFunction() {
+        return "DROP FUNCTION im_block_TRN();\n";
+    }
+    /**
+     * Generate SQL that drops the trigger preventing TRUNCATEs.
+     * @param c
+     *          ClassDescriptor for the table that gets the trigger
+     * @return SQL to generate function
+     */
+    private static String getRemoveTruncateBlockTrigger(final ClassDescriptor c) {
+        String baseTable = getDBName(c.getUnqualifiedName());
+        return "DROP TRIGGER IF EXISTS im_" + baseTable + "_TRN_tg ON " + baseTable + ";\n";
+    }
+
+
+    /**
+     * Generate SQL that checks for dangling foreign keys in references
+     *
+     * @param c
+     *          ClassDescriptor for the base table
+     * @param rD
+     *          ReferenceDescriptor for the reference
+     * @return SQL to generate functions and triggers
+     */
+    private static String getForeignKeyCheck(final ClassDescriptor c,
+                                             final ReferenceDescriptor rD) {
+        String indirectionColumn = rD.getName();
+        String referencedTable = DatabaseUtil.getTableName(rD.getReferencedClassDescriptor());
+        StringBuffer body = new StringBuffer("SELECT CASE WHEN COUNT(*)>0 THEN ");
+        body.append("COUNT(*) || ' ").append(rD.getName()).append("(s) missing from ")
+                .append(c.getUnqualifiedName())
+                .append("' ELSE ")
+                .append("'All ")
+                .append(rD.getName())
+                .append("s found in ")
+                .append(c.getUnqualifiedName())
+                .append("' END FROM ")
+                .append(c.getUnqualifiedName())
+                .append(" t LEFT OUTER JOIN ")
+                .append(getDBName(rD.getReferencedClassDescriptor().getUnqualifiedName()))
+                .append(" r ")
+                .append("ON r.id=t.")
+                .append(rD.getName())
+                .append("id WHERE r.id IS NULL AND ")
+                .append("t.")
+                .append(rD.getName())
+                .append("id IS NOT NULL ")
+                .append("AND t.class='")
+                .append(c.getName())
+                .append("';\n");
+        return body.toString();
+    }
+    /**
+     * Generate SQL that checks for dangling foreign keys in collections
+     *
+     * @param c
+     *          ClassDescriptor for the base table
+     * @param cD
+     *          CollectionDescriptor for the collection
+     * @param version
+     *        Model version
+     * @return SQL to generate functions and triggers
+     */
+    private static String getCollectionKeyCheck(final ClassDescriptor c,
+                                                final CollectionDescriptor cD,
+                                                int version) {
+        String indirectionTable = DatabaseUtil.getIndirectionTableName(cD);
+        String indirectionColumn = DatabaseUtil.getInwardIndirectionColumnName(cD, version);
+        String referencedTable = DatabaseUtil.getTableName(cD.getReferencedClassDescriptor());
+        StringBuffer body = new StringBuffer("SELECT CASE WHEN COUNT(*)>0 THEN ");
+        body.append("COUNT(*) || ' ")
+                .append(indirectionColumn)
+                .append("(s) missing from ")
+                .append(indirectionTable)
+                .append("' ELSE ")
+                .append(" 'All ")
+                .append(indirectionColumn)
+                .append(" found in ")
+                .append(indirectionTable)
+                .append("' END FROM ")
+                .append(indirectionTable)
+                .append(" t LEFT OUTER JOIN ")
+                .append(referencedTable)
+                .append(" r ")
+                .append("ON r.id=t.")
+                .append(indirectionColumn)
+                .append(" WHERE r.id IS NULL ")
+                .append("AND t.")
+                .append(indirectionColumn)
+                .append(" IS NOT NULL;\n");
+        return body.toString();
+    }
+    /**
+     * Generate SQL that sets a foreign key to null when the pointed-to record is deleted.
+     *
+     * @param c
+     *          ClassDescriptor for the base table
+     * @param rD
+     *          ReferenceDescriptor for the reference
+     * @return SQL to generate functions and triggers
+     */
+    private static String getAddDeleteReferenceAction(final ClassDescriptor c,
+                                                      final ReferenceDescriptor rD) {
+        String indirectionColumn = rD.getName();
+        String referencedTable = DatabaseUtil.getTableName(rD.getReferencedClassDescriptor());
+        String baseTable = getDBName(c.getUnqualifiedName());
+        StringBuffer body = new StringBuffer("DROP TRIGGER IF EXISTS ");
+        body.append(getDeleteKeyTriggerName(baseTable, indirectionColumn))
+                .append(" ON ").append(referencedTable)
+                .append(";\n")
+                .append("CREATE OR REPLACE FUNCTION ")
+                .append(getDeleteKeyFunctionName(baseTable, indirectionColumn))
+                .append(" RETURNS TRIGGER AS $BODY$\n")
+                .append(" BEGIN\n")
+                .append("  UPDATE ")
+                .append(baseTable)
+                .append(" SET ")
+                .append(indirectionColumn)
+                .append("id=null")
+                .append("  WHERE ")
+                .append(indirectionColumn)
+                .append("id = OLD.id;\n")
+                .append("  RETURN OLD;\nEND;\n")
+                .append("$BODY$ LANGUAGE plpgsql;\n")
+                .append("CREATE TRIGGER ")
+                .append(getDeleteKeyTriggerName(baseTable, indirectionColumn))
+                .append(" AFTER DELETE ON ")
+                .append(referencedTable)
+                .append(" FOR EACH ROW EXECUTE PROCEDURE ")
+                .append(getDeleteKeyFunctionName(baseTable, indirectionColumn))
+                .append(";\n");
+        return body.toString();
+    }
+    private static String getRemoveDeleteReferenceAction(final ClassDescriptor c,
+                                                         final ReferenceDescriptor rD) {
+        String indirectionColumn = rD.getName();
+        String referencedTable = DatabaseUtil.getTableName(rD.getReferencedClassDescriptor());
+        String baseTable = getDBName(c.getUnqualifiedName());
+        StringBuffer body = new StringBuffer("DROP TRIGGER IF EXISTS ");
+        body.append(getDeleteKeyTriggerName(baseTable, indirectionColumn))
+                .append(" ON ").append(referencedTable)
+                .append(";\n")
+                .append("DROP FUNCTION ")
+                .append(getDeleteKeyFunctionName(baseTable, indirectionColumn))
+                .append(";\n");
+        return body.toString();
+    }
+
+    /**
+     * Generate SQL that checks for dangling foreign keys in collections
+     *
+     * @param c
+     *          ClassDescriptor for the base table
+     * @param cD
+     *          CollectionDescriptor for the collection
+     * @param version
+     *        Model version
+     * @return SQL to generate functions and triggers
+     */
+    private static String getAddDeleteCollectionAction(final ClassDescriptor c,
+                                                       final CollectionDescriptor cD,
+                                                       int version) {
+        String indirectionTable = DatabaseUtil.getIndirectionTableName(cD);
+        String indirectionColumn = DatabaseUtil.getInwardIndirectionColumnName(cD, version);
+        String referencedTable = DatabaseUtil.getTableName(cD.getReferencedClassDescriptor());
+        StringBuffer body = new StringBuffer("DROP TRIGGER IF EXISTS ");
+        body.append(getDeleteKeyTriggerName(indirectionTable, indirectionColumn))
+                .append(" ON ").append(referencedTable).append(";\n")
+                .append("CREATE OR REPLACE FUNCTION ")
+                .append(getDeleteKeyFunctionName(indirectionTable, indirectionColumn))
+                .append(" RETURNS TRIGGER AS $BODY$\n")
+                .append(" BEGIN\n")
+                .append("  DELETE FROM ")
+                .append(indirectionTable)
+                .append("  WHERE ")
+                .append(indirectionColumn)
+                .append(" = OLD.id;\n")
+                .append("  RETURN OLD;\nEND;\n")
+                .append("$BODY$ LANGUAGE plpgsql;\n")
+                .append("CREATE TRIGGER ")
+                .append(getDeleteKeyTriggerName(indirectionTable, indirectionColumn))
+                .append(" AFTER DELETE ON ")
+                .append(referencedTable)
+                .append(" FOR EACH ROW EXECUTE PROCEDURE ")
+                .append(getDeleteKeyFunctionName(indirectionTable, indirectionColumn))
+                .append(";\n");
+        return body.toString();
+    }
+    /**
+     * Generate SQL that removes the trigger for deleting records pointed at a collection.
+     *
+     * @param c
+     *          ClassDescriptor for the base table
+     * @param cD
+     *          CollectionDescriptor from the base table
+     * @param version
+     *          Model version
+     * @return SQL to generate functions and triggers
+     */
+    private static String getRemoveDeleteCollectionAction(final ClassDescriptor c,
+                                                          final CollectionDescriptor cD,
+                                                          int version) {
+        String indirectionTable = DatabaseUtil.getIndirectionTableName(cD);
+        String indirectionColumn = DatabaseUtil.getInwardIndirectionColumnName(cD, version);
+        String referencedTable = DatabaseUtil.getTableName(cD.getReferencedClassDescriptor());
+        StringBuffer body = new StringBuffer("DROP TRIGGER IF EXISTS ");
+        body.append(getDeleteKeyTriggerName(indirectionTable, indirectionColumn))
+                .append(" ON ").append(referencedTable).append(";\n")
+                .append("DROP FUNCTION ")
+                .append(getDeleteKeyFunctionName(indirectionTable, indirectionColumn))
+                .append(";\n");
+        return body.toString();
+    }
     /**
      * Generate SQL that propagates actions from a table to InterMineObject.
      *
@@ -404,6 +699,11 @@ public class GenerateUpdateTriggersTask extends Task
         return getTriggerName(tn, stn, "DEL");
     }
 
+    private static String getDeleteKeyTriggerName(String tn, String stn) {
+        return getTriggerName(tn, stn, "DELKEY");
+    }
+
+
     private static String getTriggerName(String tn, String stn, String type) {
         return String.format(
             "im_%s_%s_%s_tg",
@@ -432,6 +732,10 @@ public class GenerateUpdateTriggersTask extends Task
 
     private static String getDeleteFunctionName(String tn, String stn) {
         return getFunctionName(tn, stn, "DEL");
+    }
+
+    private static String getDeleteKeyFunctionName(String tn, String stn) {
+        return getFunctionName(tn, stn, "DELKEY");
     }
 
     private static String getFunctionName(String tn, String stn, String type) {
@@ -692,10 +996,13 @@ public class GenerateUpdateTriggersTask extends Task
     private static String getAddSequence() {
         /*
          * create a sequence for newly inserted objects. If there are any.
+         * We're taking pains to check if the intermineobject id has wrapped.
          */
         return "CREATE SEQUENCE im_post_build_insert_serial;\n"
-            + "SELECT setval('im_post_build_insert_serial',(select max(id) from intermineobject));"
-            + "\n";
+                + "SELECT setval('im_post_build_insert_serial',\n"
+                + "(SELECT min(max) FROM \n"
+                + "(SELECT max(id) FROM intermineobject UNION \n"
+                + " SELECT max(id) FROM intermineobject WHERE id < 0) _z));\n";
     }
 
     /**
@@ -706,10 +1013,13 @@ public class GenerateUpdateTriggersTask extends Task
     private static String getRemoveSequence() {
         /*
          * create a sequence for newly inserted objects. We may need to increment
-         * the 'main' serial counter if we've added many things
+         * the 'main' serial counter if we've added many things. As when we created
+         * this sequence, attention must be paid to id's that wrap.
          */
         return "DROP SEQUENCE im_post_build_insert_serial;\n"
-            + "SELECT setval('serial',(select (max(id)-1)/1000000 "
-            + "from intermineobject));\n";
+                + "SELECT setval('serial',\n"
+                + "(select ((max(max)-1)/1000000)::int FROM \n"
+                + "(SELECT max(id) FROM intermineobject UNION \n"
+                + " SELECT max(id)+2::bigint^32 AS max FROM intermineobject WHERE id < 0) _z));\n";
     }
 }
