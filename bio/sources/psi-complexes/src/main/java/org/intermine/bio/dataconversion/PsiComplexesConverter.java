@@ -322,7 +322,7 @@ public class PsiComplexesConverter extends BioFileConverter
         boolean createSynonym = false;
         // Chop off the PRO ontology, we aren't using it yet
         // P00424-PRO0000006097, P00425-PRO0000006098, P00427-PRO_0000006108
-        if (originalAccession.contains("-")) {
+        if (originalAccession.contains("-PRO")) {
             accession = originalAccession.substring(0, originalAccession.indexOf("-PRO"));
             createSynonym = true;
         } else {
