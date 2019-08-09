@@ -65,11 +65,6 @@ public class FastaQueryService extends BioQueryService
     @Override
     protected PathQuery getQuery() {
         PathQuery pq = super.getQuery();
-
-        if (pq.getView().size() > 1) {
-            throw new BadRequestException(TOO_MANY_COLUMNS);
-        }
-
         return pq;
     }
 
@@ -112,9 +107,6 @@ public class FastaQueryService extends BioQueryService
 
     @Override
     protected void checkPathQuery(PathQuery pq) throws Exception {
-        if (pq.getView().size() > 1) {
-            throw new BadRequestException("Queries to this service may only have one view.");
-        }
         Path path = pq.makePath(pq.getView().get(0));
         ClassDescriptor klazz = path.getLastClassDescriptor();
         ClassDescriptor sf = im.getModel().getClassDescriptorByName("SequenceFeature");
