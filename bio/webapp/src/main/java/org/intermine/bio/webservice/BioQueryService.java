@@ -135,11 +135,6 @@ public abstract class BioQueryService extends AbstractQueryService
             }
             seenTypes.add(cd);
         }
-        if (!newView.equals(pq.getView())) {
-            pq.clearView();
-            pq.addViews(newView);
-        }
-
         return pq;
     }
 
