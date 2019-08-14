@@ -72,18 +72,13 @@ public abstract class BioSequenceFactory
 
     public static BioSequence makeWithTranslation(SequenceFeature feature)
             throws CompoundNotFoundException {
-        System.out.println("BSF CDS " + feature.getPrimaryIdentifier());
-
         if (feature.getSequence() == null) {
             return null;
         } else {
             String residues = feature.getSequence().getResidues().toString().toLowerCase();
-            System.out.println("BSF else " + residues.substring(1,100));
-
-            System.out.println("BSF prot " +
-                    new DNASequence(residues).getRNASequence().getProteinSequence().getSequenceAsString());
-
             return new BioSequence(new DNASequence(residues).getRNASequence().getProteinSequence(), feature);
+            // for the moment phase is not considered. if we have it, we can use it in the translation, e.g.:
+            // new DNASequence(residues).getRNASequence(Frame.TWO).getProteinSequence()
         }
     }
 
