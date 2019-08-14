@@ -44,7 +44,7 @@ public class GenomicRegionFastaService extends AbstractRegionExportService
     @Override
     protected Exporter getExporter(PathQuery pq) {
         return new SequenceExporter(im.getObjectStore(), getOutputStream(), 0,
-                im.getClassKeys(), 0);
+                im.getClassKeys(), 0, "n");
     }
 
     @Override

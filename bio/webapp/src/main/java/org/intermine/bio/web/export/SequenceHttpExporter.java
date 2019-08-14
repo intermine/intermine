@@ -123,7 +123,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         }
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex,
-                im.getClassKeys(), 0);
+                im.getClassKeys(), 0, "n");
         ExportResultsIterator iter = null;
         try {
             iter = getResultRows(pt, request);
