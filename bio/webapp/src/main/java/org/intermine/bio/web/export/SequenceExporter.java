@@ -120,7 +120,7 @@ public class SequenceExporter implements Exporter {
         this.classKeys = classKeys;
         this.extension = extension;
         this.paths = paths;
-        this.translate = translate; // TODO
+        this.translate = translate;
     }
 
     /**
@@ -169,28 +169,17 @@ public class SequenceExporter implements Exporter {
                     continue;
                 }
 
-                if (object instanceof CDS) {
-                    System.out.println("SE CDS " + translate);
+                // if a CDS, you can export the translated sequence directly
+                // NB: extension is not supported in this case
+                // NBB: phase not considered!
+                if (object instanceof CDS && translate.equalsIgnoreCase("y")) {
                     if (translate.equalsIgnoreCase("y")) {
-                        System.out.println("SE CDS " + "IN");
                         bioSequence = createSequenceFeatureWithTranslation(
                                 header, object,
                                 row, unionPathCollection, newPathCollection);
-
-                        System.out.println("SE bsan " + bioSequence.getAnnotation());
-                        System.out.println("SE bseq " + bioSequence.getSequenceAsString());
-                        System.out.println("SE bhea " + header.toString());
-
-
                     }
                 } else {
-
-
-                    if (object instanceof SequenceFeature && !(object instanceof CDS)) {
-
-//                    if (object instanceof CDS && translate.equalsIgnoreCase("y")) {
-//                        continue;
-//                    }
+                    if (object instanceof SequenceFeature) {
                         if (extension > 0) {
                             bioSequence = createSequenceFeatureWithExtension(
                                     header, object,
@@ -199,7 +188,6 @@ public class SequenceExporter implements Exporter {
                             bioSequence = createSequenceFeature(header, object,
                                     row, unionPathCollection, newPathCollection);
                         }
-
                     } else if (object instanceof Protein) {
                         bioSequence = createProtein(header, object, row,
                                 unionPathCollection, newPathCollection);
@@ -213,7 +201,6 @@ public class SequenceExporter implements Exporter {
                     // the object doesn't have a sequence
                     header.append(" no sequence attached.");
                     LOG.debug(header);
-                    System.out.println("SE bioseq NULL !! " + header.toString());
                     continue;
                 }
 
@@ -239,8 +226,6 @@ public class SequenceExporter implements Exporter {
 
                 FastaWriterHelper.writeSequence(out, bioSequence);
                 writtenResultsCount++;
-                System.out.println("SE count " + writtenResultsCount);
-
                 exportedIDs.add(objectId);
             }
 
