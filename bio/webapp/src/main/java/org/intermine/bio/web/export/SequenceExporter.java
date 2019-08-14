@@ -150,9 +150,6 @@ public class SequenceExporter implements Exporter {
         try {
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
-
-                System.out.println("SE WHILE " + row.toString());
-
                 StringBuffer header = new StringBuffer();
 
                 ResultElement resultElement = row.get(featureIndex);
