@@ -10,6 +10,7 @@ package org.intermine.bio.web.export;
  *
  */
 
+import org.intermine.model.bio.*;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.bio.util.ClobAccessReverseComplement;
 
@@ -39,17 +40,13 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.StringUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.Location;
-import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.util.IntPresentSet;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
+
 
 /**
  * Export data in FASTA format. Select cell in each row that can be exported as
@@ -58,8 +55,7 @@ import org.intermine.web.logic.export.Exporter;
  * @author Kim Rutherford
  * @author Jakub Kulaviak
  **/
-public class SequenceExporter implements Exporter
-{
+public class SequenceExporter implements Exporter {
 
     private ObjectStore os;
     private OutputStream out;
@@ -68,6 +64,7 @@ public class SequenceExporter implements Exporter
     private final Map<String, List<FieldDescriptor>> classKeys;
     private static final String NEGATIVE_STRAND = "-1";
     private int extension; // must > 0
+    private String translate; // y/n
     // Map to hold DNA sequence of a whole chromosome in memory
     private static Map<MultiKey, String> chromosomeSequenceMap = new HashMap<MultiKey, String>();
     private List<Path> paths = Collections.emptyList();
@@ -77,46 +74,53 @@ public class SequenceExporter implements Exporter
     /**
      * Constructor.
      *
-     * @param os
-     *            object store used for fetching sequence for exported object
-     * @param outputStream
-     *            output stream
-     * @param featureIndex
-     *            index of cell in row that contains object to be exported
-     * @param classKeys for the model
-     * @param extension extension
+     * @param os           object store used for fetching sequence for exported object
+     * @param outputStream output stream
+     * @param featureIndex index of cell in row that contains object to be exported
+     * @param classKeys    for the model
+     * @param extension    extension
      */
+//    public SequenceExporter(ObjectStore os, OutputStream outputStream,
+//                            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension) {
+//        this.os = os;
+//        this.out = outputStream;
+//        this.featureIndex = featureIndex;
+//        this.classKeys = classKeys;
+//        this.extension = extension;
+//    }
+
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
-            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension) {
+                            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension,
+                            String translate) {
         this.os = os;
         this.out = outputStream;
         this.featureIndex = featureIndex;
         this.classKeys = classKeys;
         this.extension = extension;
+        this.translate = translate;
     }
 
     /**
      * Constructor.
      *
-     * @param os
-     *            object store used for fetching sequence for exported object
-     * @param outputStream
-     *            output stream
-     * @param featureIndex
-     *            index of cell in row that contains object to be exported
-     * @param classKeys for the model
-     * @param extension extension
-     * @param paths paths to include
+     * @param os           object store used for fetching sequence for exported object
+     * @param outputStream output stream
+     * @param featureIndex index of cell in row that contains object to be exported
+     * @param classKeys    for the model
+     * @param extension    extension
+     * @param paths        paths to include
      */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
-            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension,
-            List<Path> paths) {
+                            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension,
+                            String translate,
+                            List<Path> paths) {
         this.os = os;
         this.out = outputStream;
         this.featureIndex = featureIndex;
         this.classKeys = classKeys;
         this.extension = extension;
         this.paths = paths;
+        this.translate = translate; // TODO
     }
 
     /**
@@ -138,7 +142,7 @@ public class SequenceExporter implements Exporter
      */
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt,
-            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
+                       Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         // IDs of the features we have successfully output - used to avoid
         // duplicates
         IntPresentSet exportedIDs = new IntPresentSet();
@@ -147,11 +151,13 @@ public class SequenceExporter implements Exporter
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
 
+                System.out.println("SE WHILE " + row.toString());
+
                 StringBuffer header = new StringBuffer();
 
                 ResultElement resultElement = row.get(featureIndex);
 
-                BioSequence bioSequence;
+                BioSequence bioSequence = null;
                 Object object = os.getObjectById(resultElement.getId());
                 if (!(object instanceof InterMineObject)) {
                     continue;
@@ -163,27 +169,51 @@ public class SequenceExporter implements Exporter
                     continue;
                 }
 
-                if (object instanceof SequenceFeature) {
-                    if (extension > 0) {
-                        bioSequence = createSequenceFeatureWithExtension(
+                if (object instanceof CDS) {
+                    System.out.println("SE CDS " + translate);
+                    if (translate.equalsIgnoreCase("y")) {
+                        System.out.println("SE CDS " + "IN");
+                        bioSequence = createSequenceFeatureWithTranslation(
                                 header, object,
                                 row, unionPathCollection, newPathCollection);
-                    } else {
-                        bioSequence = createSequenceFeature(header, object,
-                                row, unionPathCollection, newPathCollection);
+
+                        System.out.println("SE bsan " + bioSequence.getAnnotation());
+                        System.out.println("SE bseq " + bioSequence.getSequenceAsString());
+                        System.out.println("SE bhea " + header.toString());
+
+
                     }
-                } else if (object instanceof Protein) {
-                    bioSequence = createProtein(header, object, row,
-                            unionPathCollection, newPathCollection);
                 } else {
-                    // ignore other objects
-                    continue;
+
+
+                    if (object instanceof SequenceFeature && !(object instanceof CDS)) {
+
+//                    if (object instanceof CDS && translate.equalsIgnoreCase("y")) {
+//                        continue;
+//                    }
+                        if (extension > 0) {
+                            bioSequence = createSequenceFeatureWithExtension(
+                                    header, object,
+                                    row, unionPathCollection, newPathCollection);
+                        } else {
+                            bioSequence = createSequenceFeature(header, object,
+                                    row, unionPathCollection, newPathCollection);
+                        }
+
+                    } else if (object instanceof Protein) {
+                        bioSequence = createProtein(header, object, row,
+                                unionPathCollection, newPathCollection);
+                    } else {
+                        // ignore other objects
+                        continue;
+                    }
                 }
 
                 if (bioSequence == null) {
                     // the object doesn't have a sequence
                     header.append(" no sequence attached.");
                     LOG.debug(header);
+                    System.out.println("SE bioseq NULL !! " + header.toString());
                     continue;
                 }
 
@@ -194,6 +224,9 @@ public class SequenceExporter implements Exporter
                 if (headerString.length() > 0) {
                     annotation.setProperty(PROPERTY_DESCRIPTIONLINE, headerString);
                 } else {
+
+                    System.out.println("SE heaELSE " + header.toString());
+
                     if (object instanceof BioEntity) {
                         annotation.setProperty(PROPERTY_DESCRIPTIONLINE,
                                 ((BioEntity) object).getPrimaryIdentifier());
@@ -206,6 +239,8 @@ public class SequenceExporter implements Exporter
 
                 FastaWriterHelper.writeSequence(out, bioSequence);
                 writtenResultsCount++;
+                System.out.println("SE count " + writtenResultsCount);
+
                 exportedIDs.add(objectId);
             }
 
@@ -220,9 +255,9 @@ public class SequenceExporter implements Exporter
     }
 
     private BioSequence createProtein(StringBuffer header, Object object,
-            List<ResultElement> row, Collection<Path> unionPathCollection,
-            Collection<Path> newPathCollection)
-        throws CompoundNotFoundException {
+                                      List<ResultElement> row, Collection<Path> unionPathCollection,
+                                      Collection<Path> newPathCollection)
+            throws CompoundNotFoundException {
         BioSequence bioSequence;
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
@@ -237,10 +272,24 @@ public class SequenceExporter implements Exporter
             Object object, List<ResultElement> row,
             Collection<Path> unionPathCollection,
             Collection<Path> newPathCollection)
-        throws CompoundNotFoundException {
+            throws CompoundNotFoundException {
         BioSequence bioSequence;
         SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
+
+        makeHeader(header, object, row, unionPathCollection, newPathCollection);
+        return bioSequence;
+    }
+
+    private BioSequence createSequenceFeatureWithTranslation(
+            StringBuffer header,
+            Object object, List<ResultElement> row,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection)
+            throws CompoundNotFoundException {
+        BioSequence bioSequence;
+        SequenceFeature feature = (SequenceFeature) object;
+        bioSequence = BioSequenceFactory.makeWithTranslation(feature);
 
         makeHeader(header, object, row, unionPathCollection, newPathCollection);
         return bioSequence;
@@ -252,7 +301,7 @@ public class SequenceExporter implements Exporter
             Object object, List<ResultElement> row,
             Collection<Path> unionPathCollection,
             Collection<Path> newPathCollection)
-        throws CompoundNotFoundException {
+            throws CompoundNotFoundException {
 
         SequenceFeature feature = (SequenceFeature) object;
 
@@ -298,8 +347,8 @@ public class SequenceExporter implements Exporter
      * Set the header to be the contents of row, separated by spaces.
      */
     private void makeHeader(StringBuffer header, Object object,
-            List<ResultElement> row, Collection<Path> unionPathCollection,
-            Collection<Path> newPathCollection) {
+                            List<ResultElement> row, Collection<Path> unionPathCollection,
+                            Collection<Path> newPathCollection) {
 
         List<String> headerBits = new ArrayList<String>();
 
@@ -307,7 +356,7 @@ public class SequenceExporter implements Exporter
         // primaryIdentifier at the first place
         // in the header
         Object keyFieldValue =
-            ClassKeyHelper.getKeyFieldValue((FastPathObject) object, this.classKeys);
+                ClassKeyHelper.getKeyFieldValue((FastPathObject) object, this.classKeys);
         if (keyFieldValue != null) {
             headerBits.add(keyFieldValue.toString());
         } else {
@@ -420,17 +469,17 @@ public class SequenceExporter implements Exporter
      * Method must have different name than canExport because canExport() method
      * is inherited from Exporter interface
      */
+
     /**
-     * @param clazzes
-     *            classes of result
+     * @param clazzes classes of result
      * @return true if this exporter can export result composed of specified
-     *         classes
+     * classes
      */
     public static boolean canExportStatic(List<Class<?>> clazzes) {
         return (ExportHelper.getClassIndex(clazzes,
                 SequenceFeature.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
 //                || ExportHelper.getClassIndex(clazzes, Sequence.class) >= 0
-                );
+        );
     }
 }

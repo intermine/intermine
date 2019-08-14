@@ -28,6 +28,7 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 public class FastaQueryService extends BioQueryService
 {
     private static final String EXT = "extension";
+    private static final String TRL = "translate";
     private static final String TOO_MANY_COLUMNS =
             "Queries for this webservice may only have one output column";
     private static final int COLUMN = 0;
@@ -53,9 +54,11 @@ public class FastaQueryService extends BioQueryService
     @Override
     protected Exporter getExporter(PathQuery pq) {
         int extension = parseExtension(getOptionalParameter(EXT, "0"));
+        String translate = getOptionalParameter(TRL, "N");
+
         ObjectStore objStore = im.getObjectStore();
         return new SequenceExporter(objStore, getOutputStream(), COLUMN,
-                im.getClassKeys(), extension, getQueryPaths(pq));
+                im.getClassKeys(), extension, translate, getQueryPaths(pq));
     }
 
     /**
