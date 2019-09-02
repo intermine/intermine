@@ -17,6 +17,7 @@ ext {
     // set here to make available to individual bio-postprocesses
     bioVersion = System.getProperty("bioVersion")
     imVersion = System.getProperty("imVersion")
+    flymineVersion = System.getProperty("flymineVersion")
 }
 
 subprojects {
@@ -25,8 +26,6 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'com.jfrog.bintray'
-    apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'dbmodel'
     apply plugin: 'biocore-dbmodel'
     apply plugin: "checkstyle"
@@ -54,6 +53,8 @@ subprojects {
         testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion")
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
+        compile group: 'org.intermine', name: 'bio-postprocess-create-chromosome-locations-and-lengths', version: bioVersion
+        testCompile group: 'org.intermine', name: 'bio-postprocess-create-chromosome-locations-and-lengths', version: bioVersion
     }
 
     dbModelConfig {
@@ -132,51 +133,6 @@ subprojects {
     artifacts {
         archives sourcesJar
         archives javadocJar
-    }
-
-    artifactory {
-        contextUrl = 'https://oss.jfrog.org/artifactory/'
-        resolve {
-            repository {
-                repoKey = 'libs-release'
-            }
-        }
-        publish {
-            repository {
-                if (project.version.endsWith("-SNAPSHOT")) {
-                    repoKey = 'oss-snapshot-local'
-                } else {
-                    repoKey = 'oss-release-local'
-                }
-            username = System.getenv('BINTRAY_USER')
-            password = System.getenv('BINTRAY_KEY')
-            }
-            defaults {
-            publishConfigs('archives')
-            }
-        }
-    }
-
-    bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_KEY')
-        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-        publish = true //[Default: false] Whether version should be auto published after an upload
-        override = true //[Default: false] Whether to override version artifacts already published
-        pkg {
-            repo = 'bio'
-            name = project.name
-            userOrg = user
-            licenses = ['LGPL-2.1']
-            vcsUrl = 'https://github.com/intermine/intermine.git'
-            publicDownloadNumbers = true
-            version {
-                name = '4.0.1'
-                desc = 'InterMine 4.0.1'
-                vcsTag = 'intermine-4.0.1'
-            }
-        }
-        configurations = ['archives']
     }
 
     tasks.compileTestJava.dependsOn 'copyMineProperties', 'buildUnitTestDB'
