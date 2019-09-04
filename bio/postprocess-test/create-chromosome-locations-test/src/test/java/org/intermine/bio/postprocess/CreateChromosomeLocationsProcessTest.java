@@ -36,6 +36,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 import org.intermine.xml.full.ItemFactory;
+import org.intermine.bio.postprocess.CreateChromosomeLocationsProcess;
 
 public class CreateChromosomeLocationsProcessTest extends TestCase
 {
