@@ -10,7 +10,12 @@ package org.intermine.bio.web.export;
  *
  */
 
-import org.intermine.model.bio.*;
+import org.intermine.model.bio.CDS;
+import org.intermine.model.bio.SequenceFeature;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.Location;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.bio.util.ClobAccessReverseComplement;
 
@@ -456,6 +461,6 @@ public class SequenceExporter implements Exporter
         return (ExportHelper.getClassIndex(clazzes,
                 SequenceFeature.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
-        );
+            );
     }
 }
