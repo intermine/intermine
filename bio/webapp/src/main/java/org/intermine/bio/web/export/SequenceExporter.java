@@ -55,7 +55,8 @@ import org.intermine.web.logic.export.Exporter;
  * @author Kim Rutherford
  * @author Jakub Kulaviak
  **/
-public class SequenceExporter implements Exporter {
+public class SequenceExporter implements Exporter
+{
 
     private ObjectStore os;
     private OutputStream out;
@@ -79,19 +80,13 @@ public class SequenceExporter implements Exporter {
      * @param featureIndex index of cell in row that contains object to be exported
      * @param classKeys    for the model
      * @param extension    extension
+     * @param translate    if the translation is wanted (=y)
      */
-//    public SequenceExporter(ObjectStore os, OutputStream outputStream,
-//                            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension) {
-//        this.os = os;
-//        this.out = outputStream;
-//        this.featureIndex = featureIndex;
-//        this.classKeys = classKeys;
-//        this.extension = extension;
-//    }
 
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
-                            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension,
-                            String translate) {
+                            int featureIndex, Map<String,
+                            List<FieldDescriptor>> classKeys,
+                            int extension, String translate) {
         this.os = os;
         this.out = outputStream;
         this.featureIndex = featureIndex;
@@ -109,9 +104,11 @@ public class SequenceExporter implements Exporter {
      * @param classKeys    for the model
      * @param extension    extension
      * @param paths        paths to include
+     * @param translate    if the translation is wanted (=y)
      */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
-                            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension,
+                            int featureIndex, Map<String, List<FieldDescriptor>> classKeys,
+                            int extension,
                             String translate,
                             List<Path> paths) {
         this.os = os;
@@ -169,8 +166,8 @@ public class SequenceExporter implements Exporter {
                 // if a CDS, you can export the translated sequence directly
                 // NB: extension is not supported in this case
                 // NBB: phase not considered!
-                if (object instanceof CDS && translate.equalsIgnoreCase("y")) {
-                    if (translate.equalsIgnoreCase("y")) {
+                if (object instanceof CDS && "y".equalsIgnoreCase(translate)) {
+                    if ("y".equalsIgnoreCase(translate)) {
                         bioSequence = createSequenceFeatureWithTranslation(
                                 header, object,
                                 row, unionPathCollection, newPathCollection);
@@ -208,8 +205,6 @@ public class SequenceExporter implements Exporter {
                 if (headerString.length() > 0) {
                     annotation.setProperty(PROPERTY_DESCRIPTIONLINE, headerString);
                 } else {
-
-                    System.out.println("SE heaELSE " + header.toString());
 
                     if (object instanceof BioEntity) {
                         annotation.setProperty(PROPERTY_DESCRIPTIONLINE,
@@ -461,7 +456,6 @@ public class SequenceExporter implements Exporter {
         return (ExportHelper.getClassIndex(clazzes,
                 SequenceFeature.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
-//                || ExportHelper.getClassIndex(clazzes, Sequence.class) >= 0
         );
     }
 }

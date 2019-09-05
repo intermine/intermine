@@ -75,9 +75,12 @@ public abstract class BioSequenceFactory
         if (feature.getSequence() == null) {
             return null;
         } else {
-            String residues = feature.getSequence().getResidues().toString().toLowerCase();
-            return new BioSequence(new DNASequence(residues).getRNASequence().getProteinSequence(), feature);
-            // for the moment phase is not considered. if we have it, we can use it in the translation, e.g.:
+            String residues = 
+	    feature.getSequence().getResidues().toString().toLowerCase();
+            return new BioSequence(new DNASequence(residues).getRNASequence().getProteinSequence(),
+	    feature);
+            // for the moment phase is not considered.
+	        // if we have it, we can use it in the translation, e.g.:
             // new DNASequence(residues).getRNASequence(Frame.TWO).getProteinSequence()
         }
     }
