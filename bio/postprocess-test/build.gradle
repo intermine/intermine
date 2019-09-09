@@ -22,7 +22,7 @@ ext {
 
 subprojects {
     group = 'org.intermine'
-    version = '4.0.1'
+    version = '4.1.0'
 
     apply plugin: 'java'
     apply plugin: 'maven'
