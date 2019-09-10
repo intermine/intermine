@@ -13,9 +13,10 @@ to integrate diverse data sources with a minimum of effort, providing
 powerful web-services and an elegant web-application with minimal
 configuration. InterMine powers some of the largest data-warehouses in
 the life sciences, including:
-  * [FlyMine](http://www.flymine.org)
+  * [FlyMine](https://www.flymine.org)
+  * [HumanMine](https://www.humanmine.org)
   * [MouseMine](http://www.mousemine.org)
-  * [YeastMine](http://yeastmine.yeastgenome.org)
+  * [YeastMine](https://yeastmine.yeastgenome.org)
   * [ZebrafishMine](http://zebrafishmine.org)
   * [RatMine](http://ratmine.mcw.edu/ratmine/begin.do)
   * [TargetMine](http://targetmine.mizuguchilab.org/)
@@ -33,28 +34,23 @@ Getting Started With InterMine
 -------------------------------
 
 For a guide on getting started with InterMine, please visit:
-[quick start tutorial][tutorial]
+[tutorial][tutorial]
 
 3min bootstrap
 --------------------------------------
 
-As long as you have the prerequisites installed ([Java][java],
-[PostgreSQL][psql]), you can get a working 
-data-warehouse and associated web-application by running an
-automated bootstrap script:
+As long as you have the prerequisites installed ([Java][java], [PostgreSQL][psql]), you can get a working data-warehouse and associated web-application by running an automated bootstrap script:
 
 ```bash
-  # For a genomic application, with test data from Malaria
-./biotestmine/setup.sh
   # For the testmodel
-./testmodel/setup.sh
+./testmine/setup.sh
 ```
+For a genomic application, with test data from Malaria, see [BioTestMine](https://github.com/intermine/biotestmine)
 
-This requires that you have all the software dependencies
-installed and running with the appropriate user permissions
-(PostgreSQL, Java SDK). You will need to have set up usernames
-and passwords for PostgreSQL first, and these can be
-provided to the setup scripts as `PSQL_USER`.
+
+Docker
+--------------------------------------
+You can build InterMine using Docker. See https://github.com/intermine/docker-intermine-gradle
 
 Copyright and Licence
 ------------------------
