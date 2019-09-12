@@ -158,7 +158,9 @@ public final class SemanticMarkupUtil
         semanticMarkup.put("keywords", "Data warehouse, Data integration,"
                 + "Bioinformatics software");
         semanticMarkup.put("identifier", getMineIdentifier(request));
-        semanticMarkup.put("url", new URLGenerator(request).getPermanentBaseURL());
+        String permanentBaseURL = new URLGenerator(request).getPermanentBaseURL();
+        semanticMarkup.put("url", permanentBaseURL);
+        semanticMarkup.put("id", permanentBaseURL);
 
         //citation
         Map<String, String> citation = new LinkedHashMap<>();
@@ -239,6 +241,8 @@ public final class SemanticMarkupUtil
 
         PermanentURIHelper helper = new PermanentURIHelper(request);
         String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
+        semanticMarkup.put("id", imUrlPage);
+        semanticMarkup.put("identifier", imUrlPage);
         semanticMarkup.put("url", imUrlPage);
 
         //we use the dataset's url to set the identifier
