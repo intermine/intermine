@@ -231,7 +231,11 @@ public final class SemanticMarkupUtil
         semanticMarkup.put("@context", SCHEMA);
         semanticMarkup.put("@type", DATASET_TYPE);
         semanticMarkup.put("name", name);
-        semanticMarkup.put("description", description);
+        if (description != null && !description.isEmpty()) {
+            semanticMarkup.put("description", description);
+        } else {
+            semanticMarkup.put("description", name);
+        }
 
         PermanentURIHelper helper = new PermanentURIHelper(request);
         String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
