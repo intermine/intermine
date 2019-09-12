@@ -247,9 +247,7 @@ public final class SemanticMarkupUtil
 
         //we use the dataset's url to set the identifier
         if (url != null && !url.trim().equals("")) {
-            semanticMarkup.put("identifier", url);
-        } else {
-            semanticMarkup.put("identifier", imUrlPage);
+            semanticMarkup.put("sameAs", url);
         }
     }
 
