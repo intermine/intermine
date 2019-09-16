@@ -16,7 +16,6 @@ InterMine 4.1.0 (September 2019)
 #1947 - YeastMine: gradle migration
 #2015 - FASTA query result: CDS translation option
 #2016 - Fasta query results: extra view parameters not showing up in header correctly
-#2022 - CDS features need phase
 #2040 - Can we remove flymine dependencies from core IM?
 #2044 - ONE OF contraint not working in template form
 #2051 - Seems that css path is wrong in keywordSearchResults.jsp
