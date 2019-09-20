@@ -72,13 +72,22 @@
 
     <c:if test="${!empty OAUTH2_PROVIDERS && WEB_PROPERTIES['oauth2.allowed'] != 'false'}">
       <div class="column second oauth2"><im:debug message="${OAUTH2_PROVIDERS}"/>
-        <h3 class="oauth"><fmt:message key="login.oauth2"/></h3>
+      <h3 class="oauth"><fmt:message key="login.oauth2"/></h3>
         <c:forEach var="provider" items="${OAUTH2_PROVIDERS}">
-          <a class="oauth2-button"
+          <c:choose>
+          <c:when test="${fn:toLowerCase(provider) != 'elixir'}">
+            <a class="oauth2-button"
              href="/${WEB_PROPERTIES['webapp.path']}/oauth2authenticator.do?provider=${provider}">
              <i class="fa fa-fw fa-<c:out value="${fn:toLowerCase(provider)}"/>"></i>
              ${provider}
-          </a>
+            </a>
+         </c:when>
+         <c:otherwise>
+         <a href="/${WEB_PROPERTIES['webapp.path']}/oauth2authenticator.do?provider=${provider}">
+           <img src="images/elixir-login.png"/>
+         </a>
+         </c:otherwise>
+         </c:choose>
         </c:forEach>
       </div>
     </c:if>
