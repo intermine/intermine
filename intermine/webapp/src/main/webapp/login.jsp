@@ -84,7 +84,7 @@
          </c:when>
          <c:otherwise>
          <a href="/${WEB_PROPERTIES['webapp.path']}/oauth2authenticator.do?provider=${provider}">
-           <img src="images/elixir-login.png"/>
+           <img src="images/elixir-login.png" alt="Log in with ELIXIR"/>
          </a>
          </c:otherwise>
          </c:choose>
