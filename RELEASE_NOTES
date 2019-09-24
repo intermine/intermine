@@ -26,6 +26,9 @@ InterMine 4.1.0 (September 2019)
 #2070 - NCBI gene data
 #2073 - GO error - obsolete term
 #2074 - Complexes - duplicate protein accessions
+#2102 - add elixir-login image to the login page
+#2103 - Fix google-login button in the login page
+#2108 - Move ELIXIR oauth2 configuration to global.web.properties file
 
 InterMine 4.0.1 (July 2019)
 
