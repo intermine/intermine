@@ -25,7 +25,7 @@
 .column.oauth2 {
     margin-left: 40px;
 }
-oauth2-button {
+.oauth2-button {
   border-radius: 6px;
   background-color: #fff;
   color: #000;
@@ -37,6 +37,7 @@ oauth2-button {
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.03);
   font-weight: bold;
   font-size: larger;
+  margin: 4px 0;
 }
 
 img.icon-oauth {
@@ -49,7 +50,7 @@ img.icon-oauth {
 }
 
 svg.icon-oauth {
-  margin: 0 0.6em 0 0.3em;
+  margin: 0 0.4em 0.1em 0.3em;
 }
 
 a.oauth2-button:hover {
