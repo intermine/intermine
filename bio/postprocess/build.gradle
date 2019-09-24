@@ -21,7 +21,7 @@ ext {
 
 subprojects {
     group = 'org.intermine'
-    version = '4.0.1'
+    version = '4.1.0'
 
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -64,7 +64,7 @@ subprojects {
 
     task copyMineProperties() {
         dependsOn 'processResources'
-    	doLast {
+        doLast {
             copy {
                 from "${System.env.HOME}/.intermine/intermine-bio-test.properties"
                 into sourceSets.main.output.resourcesDir
@@ -171,9 +171,9 @@ subprojects {
             vcsUrl = 'https://github.com/intermine/intermine.git'
             publicDownloadNumbers = true
             version {
-                name = '4.0.1'
-                desc = 'InterMine 4.0.1'
-                vcsTag = 'intermine-4.0.1'
+                name = '4.1.0'
+                desc = 'InterMine 4.1.0'
+                vcsTag = 'intermine-4.1.0'
             }
         }
         configurations = ['archives']

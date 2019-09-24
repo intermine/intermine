@@ -9,7 +9,7 @@
   prefix="str"%>
 <%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
-<link rel="stylesheet" href="model/css/keywordSearch.css"
+<link rel="stylesheet" href="css/keywordSearch.css"
   type="text/css" media="screen" title="no title" charset="utf-8">
 
 <tiles:importAttribute />

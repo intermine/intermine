@@ -46,8 +46,8 @@ class BioSourceDBModelPlugin implements Plugin<Project>{
                 patternSet.include("genomic_model.xml")
                 File file = fileTree.matching(patternSet).singleFile
                 String modelFilePath = buildResourcesMainDir + File.separator + "genomic_model.xml"
-                file.renameTo(modelFilePath)
                 file.createNewFile()
+                file.renameTo(modelFilePath)
             }
         }
 

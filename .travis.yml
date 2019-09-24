@@ -16,6 +16,8 @@ env:
 sudo: true
 jdk:
 - openjdk8
+dist: 
+- trusty
 before_script:
 - "./config/travis/init-solr.sh"
 - "./config/travis/init.sh"

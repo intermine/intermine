@@ -406,7 +406,13 @@ public class TemplateAction extends InterMineAction
                                 String[] attributes = (String[]) tf.getAttributeValues(key);
                                 constraintValue = attributes[0];
                                 String[] extraValues = (String[]) tf.getExtraValues(key);
-                                String extraValue = extraValues == null ? null : extraValues[0];
+                                //String extraValue = extraValues == null ? null : extraValues[0];
+                                String extraValue;
+                                if (extraValues == null) {
+                                    extraValue = "";
+                                } else {
+                                    extraValue = extraValues[0];
+                                }
 
                                 value = new TemplateValue(c, constraintOp, constraintValue,
                                         TemplateValue.ValueType.SIMPLE_VALUE, extraValue,

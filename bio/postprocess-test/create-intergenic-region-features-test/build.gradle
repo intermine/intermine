@@ -1,0 +1,20 @@
+sourceSets {
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+    bioModel group: 'org.intermine', name: 'bio-source-flymine-static', version: flymineVersion, transitive: false
+    compile group: 'org.intermine', name: 'bio-source-flymine-static', version: flymineVersion, transitive: false
+    compile group: 'org.intermine', name: 'bio-postprocess-create-intergenic-region-features', version: bioVersion
+}
+
+processResources {
+    from('.') { include ("*.properties")}
+}

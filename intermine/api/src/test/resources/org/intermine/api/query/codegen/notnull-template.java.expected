@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.webservice.client.core.ServiceFactory;
-import org.intermine.webservice.client.services.TemplateService;
-import org.intermine.webservice.client.template.TemplateParameter;
+import org.intermine.client.core.ServiceFactory;
+import org.intermine.client.services.TemplateService;
+import org.intermine.client.template.TemplateParameter;
 
 /**
  * This is a Java program to run a query from TEST_PROJECT_TITLE.
