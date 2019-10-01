@@ -562,10 +562,12 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
         if ("PathConstraintMultiValue".equals(className)) {
             StringBuffer sb = new StringBuffer();
+            sb.append("[");
             Collection<String> values = ((PathConstraintMultiValue) pc).getValues();
             listFormatUtil(sb, values);
-            return start + "{\"op\": \"" + op + "\", \"values\": [" + sb.toString()
-                + "]}";
+            sb.append("]");
+            return start + "{\"op\": \"" + op + "\", \"values\": " + sb.toString()
+                + "}";
         }
 
         if ("PathConstraintNull".equals(className)) {

@@ -23,7 +23,7 @@ template = service.get_template('TEMP_NAME')
 # A    Employee.name
 
 rows = template.rows(
-    A = {"op": "ONE OF", "values": "["Employee A1", "EmployeeA2"]"}
+    A = {"op": "ONE OF", "values": ["Employee A1", "EmployeeA2"]}
 )
 for row in rows:
     print(row["name"])
