@@ -7,6 +7,7 @@ Dev: [![Build Status: dev][travis-badge-dev]][ci]
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
 [![Conda](https://anaconda.org/anaconda/conda-build/badges/installer/conda.svg)](https://anaconda.org/bioconda/intermine)
+[![Documentation Status](https://readthedocs.org/projects/intermine/badge/?version=latest)](https://intermine.readthedocs.io/en/latest/?badge=latest)
 
 A powerful open source data warehouse system. InterMine allows users
 to integrate diverse data sources with a minimum of effort, providing
