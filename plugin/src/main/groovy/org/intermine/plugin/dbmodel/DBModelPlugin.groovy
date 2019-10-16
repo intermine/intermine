@@ -102,8 +102,8 @@ class DBModelPlugin implements Plugin<Project> {
                 File coreXml = fileTree.matching(patternSet).singleFile
                 String modelFilePath = buildResourcesMainDir + File.separator + config.modelName + "_model.xml"
 
-                coreXml.renameTo(modelFilePath)
                 coreXml.createNewFile()
+                coreXml.renameTo(modelFilePath)
             }
         }
 
@@ -126,8 +126,8 @@ class DBModelPlugin implements Plugin<Project> {
                 File propertiesFile = fileTree.matching(patternSet).singleFile
                 String keysFilePath = buildResourcesMainDir + File.separator + config.modelName + "_keyDefs.properties"
 
-                propertiesFile.renameTo(keysFilePath)
                 propertiesFile.createNewFile()
+                propertiesFile.renameTo(keysFilePath)
             }
         }
 
@@ -296,8 +296,8 @@ class DBModelPlugin implements Plugin<Project> {
                 patternSet.include("userprofile_model.xml")
                 File file = fileTree.matching(patternSet).singleFile
                 String modelFilePath = buildResourcesMainDir + File.separator + config.userProfileModelName + "_model.xml"
-                file.renameTo(modelFilePath)
                 file.createNewFile()
+                file.renameTo(modelFilePath)
             }
         }
 

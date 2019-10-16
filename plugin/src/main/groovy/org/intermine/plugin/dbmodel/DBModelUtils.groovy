@@ -23,8 +23,8 @@ class DBModelUtils {
         patternSet.include(defaultPropertiesFile)
         File file = fileTree.matching(patternSet).singleFile
         String defaultIMProperties = buildResourcesMainDir + File.separator + "default.intermine.properties"
-        file.renameTo(defaultIMProperties)
         file.createNewFile()
+        file.renameTo(defaultIMProperties)
     }
 
     protected addBioSourceDependency = { sourcePostfix, sourceVersion ->
