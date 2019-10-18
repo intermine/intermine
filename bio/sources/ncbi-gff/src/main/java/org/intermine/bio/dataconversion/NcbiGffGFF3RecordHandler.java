@@ -82,13 +82,17 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
             }
         } else if ("exon".equals(type)) {
             feature.setClassName("Exon");
+            String identifier = record.getId();
+            feature.setAttribute("primaryIdentifier", identifier);
+
+            /* removed: should be obsolete, TODO check ncRNA
             if (record.getAttributes().get("transcript_id") != null) {
                 String transcriptId = record.getAttributes().get("transcript_id").iterator().next();
                 feature.setAttribute("primaryIdentifier", transcriptId);
             } else {
                 // TODO ncRNA
             }
-
+            */
             if (record.getAttributes().get("product") != null) {
                 String description = record.getAttributes().get("product").iterator().next();
                 feature.setAttribute("name", description);
