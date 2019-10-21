@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Daniela Butano
  *
  */
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet
+{
     /**
      * {@inheritDoc}
      */
