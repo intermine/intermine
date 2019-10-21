@@ -29,7 +29,7 @@ public class ProfileMergeIssues
      * @param oldName the old (invalid) name
      * @param newName the new (valid) name.
      */
-    void addFailedTemplate(String oldName, String newName) {
+    public void addFailedTemplate(String oldName, String newName) {
         renamedTemplates.put(oldName, newName);
     }
 
@@ -46,7 +46,7 @@ public class ProfileMergeIssues
      * @param oldName The old name for this bag.
      * @param newName The name it now has.
      */
-    void addRenamedBag(String oldName, String newName) {
+    public void addRenamedBag(String oldName, String newName) {
         renamedBags.put(oldName, newName);
     }
 

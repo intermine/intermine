@@ -1,4 +1,4 @@
-package org.intermine.webservice.server;
+package org.intermine.webservice.server.user;
 
 /*
  * Copyright (C) 2002-2019 FlyMine
@@ -17,17 +17,18 @@ import org.intermine.api.profile.*;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.ProfileMergeIssues;
 import org.intermine.webservice.server.core.JSONService;
-import org.intermine.webservice.server.lists.ListFormatter;
+import org.intermine.webservice.server.exceptions.UnauthorizedException;
 
-import java.util.Collection;
+
 import java.util.Collections;
 import java.util.Map;
 
 /**
- * Login service
+ * Login service which authenticates an existing user, given username and password
+ * and attaches the anonymously created lists to it.
+ * It requires token authentication
  * @author Daniela Butano
  *
  */
@@ -54,14 +55,19 @@ public class LoginService extends JSONService
         String username = getRequiredParameter("username");
         String password = getRequiredParameter("password");
 
-        Profile profile = getUser(username, password);
+        Profile profile = null;
+        try {
+            profile = getUser(username, password);
+        } catch (ProfileManager.AuthenticationException ex) {
+            throw new UnauthorizedException(ex.getMessage());
+        }
+        //merge anonymous profile with the logged profile
         ProfileMergeIssues issues = new ProfileMergeIssues();
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
             // The current profile was for an anonymous guest.
             issues = mergeProfiles(currentProfile, profile);
         }
         String token = im.getProfileManager().generate24hrKey(profile);
-        profile.setDayToken(token);
         addResultValue(token, false);
     }
 

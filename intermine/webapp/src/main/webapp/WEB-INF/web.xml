@@ -3396,6 +3396,40 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+<!-- new in version 3? -->
+  <servlet>
+    <servlet-name>ws-login</servlet-name>
+    <servlet-class>org.intermine.webservice.server.user.LoginServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-login</servlet-name>
+    <url-pattern>/login/*</url-pattern>
+    <metadata>
+        <name>Login</name>
+        <method type="POST" authenticationRequired="true">
+            <summary>Login a user</summary>
+            <description>Login a user</description>
+            <param
+                required="true"
+                type="String"
+                description="The username">user</param>
+            <param
+                description="The user's password"
+                required="true"
+                type="String">password</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="text/plain">text</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
