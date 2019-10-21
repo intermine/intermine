@@ -63,6 +63,7 @@ public class WhoAmIService extends JSONService
         String id = (profile.getUserId() != null) ? profile.getUserId().toString() : null;
         data.put("id", id);
         data.put("preferences", profile.getPreferences());
+        data.put("superuser", profile.isSuperuser());
         addResultItem(data, false);
     }
 
