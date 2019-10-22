@@ -3408,7 +3408,7 @@ The different token types are:
 
   <servlet-mapping>
     <servlet-name>ws-login</servlet-name>
-    <url-pattern>/login/*</url-pattern>
+    <url-pattern>/service/login/*</url-pattern>
     <metadata>
         <name>Login</name>
         <method type="POST" authenticationRequired="true">
