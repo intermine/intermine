@@ -88,8 +88,8 @@ class IntegratePlugin implements Plugin<Project> {
                         patternSet.include("so.obo")
                         File file = fileTree.matching(patternSet).singleFile
                         String oboFilePath = buildResourcesMainDir + File.separator + "so.obo"
-                        file.renameTo(oboFilePath)
                         file.createNewFile()
+                        file.renameTo(oboFilePath)
                     }
                 }
 
