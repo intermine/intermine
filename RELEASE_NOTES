@@ -8,6 +8,12 @@
  *
  */
 
+InterMine 4.1.1 (October 2019)
+
+#2128 - ThaleMine: Gradle 4.9 / Java 11 migration.
+#2135 - data change in ncbi-gff 
+#2136 - Add code of conduct
+#2137 - ThaleMine issues
 
 InterMine 4.1.0 (September 2019)
 
