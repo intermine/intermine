@@ -14,6 +14,7 @@ import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 
+
 /**
  * A converter/retriever for the NcbiGff dataset via GFF files.
  * @author julie
@@ -82,15 +83,16 @@ public class NcbiGffGFF3RecordHandler extends GFF3RecordHandler
         } else if ("exon".equals(type)) {
             feature.setClassName("Exon");
             String identifier = record.getId();
-            String[] bits = identifier.split("id");
-            String exonNumber = bits[1];
+            feature.setAttribute("primaryIdentifier", identifier);
+
+            /* removed: should be obsolete, TODO check ncRNA
             if (record.getAttributes().get("transcript_id") != null) {
                 String transcriptId = record.getAttributes().get("transcript_id").iterator().next();
-                feature.setAttribute("primaryIdentifier", transcriptId + "." + exonNumber);
+                feature.setAttribute("primaryIdentifier", transcriptId);
             } else {
                 // TODO ncRNA
             }
-
+            */
             if (record.getAttributes().get("product") != null) {
                 String description = record.getAttributes().get("product").iterator().next();
                 feature.setAttribute("name", description);

@@ -143,6 +143,12 @@ public class PantherConverter extends BioFileConverter
             return null;
         }
 
+        // A. thaliana bug fix for Gene IDs.
+        // Example: At5g04395 is stored as two different genes: At5g04395 and AT5G04395.
+        if ("3702".equals(taxonId)) {
+            resolvedGenePid = resolvedGenePid.toUpperCase();
+        }
+
         // only resolve if fish - TODO put in config file
         if ("7955".equals(taxonId) || "9606".equals(taxonId) || "10116".equals(taxonId)) {
             resolvedGenePid = resolveGene(taxonId, resolvedGenePid);
