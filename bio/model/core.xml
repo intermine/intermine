@@ -28,6 +28,8 @@
 
     <class name="Chromosome"  extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000340" />
 
+    <class name="Supercontig" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000148" />
+
     <class name="Comment" is-interface="true" term="http://semanticscience.org/resource/SIO_001167">
         <attribute name="description" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
         <attribute name="type" type="java.lang.String" term="http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25284"/>
