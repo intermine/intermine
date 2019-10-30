@@ -561,6 +561,8 @@
     <attribute name="score" type="java.lang.Double"/>
     <reference name="chromosome" referenced-type="Chromosome"/>
     <reference name="chromosomeLocation" referenced-type="Location"/>
+    <reference name="supercontig" referenced-type="Supercontig"/>
+    <reference name="supercontigLocation" referenced-type="Location"/>
     <reference name="sequence" referenced-type="Sequence"/>
     <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
     <collection name="overlappingFeatures" referenced-type="SequenceFeature"/>

@@ -188,7 +188,9 @@
         <reference name="sequence" referenced-type="Sequence"/>
         <reference name="chromosome" referenced-type="Chromosome" />
         <reference name="chromosomeLocation" referenced-type="Location" />
-        <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
+        <reference name="supercontig" referenced-type="Supercontig" />
+        <reference name="supercontigLocation" referenced-type="Location" />
+	<reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
         <reference name="strain" referenced-type="Strain"  reverse-reference="features" />
         <collection name="overlappingFeatures" referenced-type="SequenceFeature" />
         <collection name="childFeatures" referenced-type="SequenceFeature" />
