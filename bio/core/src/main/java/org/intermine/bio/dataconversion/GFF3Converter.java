@@ -38,20 +38,25 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 
 /**
- * Class to read a GFF3 source data and produce a data representation
+ * Class to read a GFF3 source data and produce a data representation.
+ * UPDATE: support Strain, and feature.assemblyVersion and feature.annotationVersion.
+ * HACK: if sequence name contains "scaffold", store as Supercontig rather than Chromosome.
  *
  * @author Wenyan Ji
  * @author Richard Smith
  * @author Fengyuan Hu
  * @author Vivek Krishnakumar
+ * @author Sam Hokin
  */
 
 public class GFF3Converter extends DataConverter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
     private Reference orgRef;
-    private String seqClsName, orgTaxonId;
+    private Reference strainRef;
+    private String seqClsName, orgTaxonId, strainName, assemblyVersion, annotationVersion;
     private Item organism, dataSet, dataSource;
+    private Item strain;
     private Model tgtModel;
     private Map<String, Item> seqs = new HashMap<String, Item>();
     private Map<String, String> identifierMap = new HashMap<String, String>();
@@ -76,31 +81,41 @@ public class GFF3Converter extends DataConverter
     /**
      * Constructor
      * @param writer ItemWriter
-     * @param seqClsName The class of the coordinate system for this GFF3 file (generally
-     * Chromosome)
+     * @param seqClsName The class of the coordinate system for this GFF3 file (generally Chromosome)
      * @param orgTaxonId The taxon ID of the organism we are loading
+     * @param strainName the name of the strain for which we are loading data
+     * @param assemblyVersion the version of the assembly for this data
+     * @param annotationVersion the version of the annotation for this data
      * @param dataSourceName name for dataSource
+     * @param dataSourceUrl URL for dataSource
      * @param dataSetTitle title for dataSet
+     * @param dataSetUrl URL for dataSet
+     * @param dataSetVersion version of dataSet
+     * @param dataSetDescription description of dataSet
      * @param tgtModel the model to create items in
      * @param handler object to perform optional additional operations per GFF3 line
      * @param sequenceHandler the GFF3SeqHandler use to create sequence Items
-     * @param licence URL to the licence for this data set
      * @throws ObjectStoreException if something goes wrong
      */
-    public GFF3Converter(ItemWriter writer, String seqClsName, String orgTaxonId,
-            String dataSourceName, String dataSetTitle, Model tgtModel,
-            GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler, String licence)
-            throws ObjectStoreException {
+    public GFF3Converter(ItemWriter writer, String seqClsName,
+			 String orgTaxonId, String strainName, String assemblyVersion, String annotationVersion,
+			 String dataSourceName, String dataSourceUrl,
+			 String dataSetTitle, String dataSetUrl, String dataSetVersion, String dataSetDescription,
+			 Model tgtModel, GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler) throws ObjectStoreException {
         super(writer, tgtModel);
         this.seqClsName = seqClsName;
         this.orgTaxonId = orgTaxonId;
+        this.strainName = strainName;
+	this.assemblyVersion = assemblyVersion;
+	this.annotationVersion = annotationVersion;
         this.tgtModel = tgtModel;
         this.handler = handler;
         this.sequenceHandler = sequenceHandler;
 
         organism = getOrganism();
+        strain = getStrain(organism);
         dataSource = getDataSourceItem(dataSourceName);
-        dataSet = getDataSetItem(dataSetTitle, null, null, dataSource, licence);
+        dataSet = getDataSetItem(dataSetTitle, dataSetUrl, dataSetVersion, dataSetDescription, dataSource);
 
         if (sequenceHandler == null) {
             this.sequenceHandler = new GFF3SeqHandler();
@@ -112,6 +127,7 @@ public class GFF3Converter extends DataConverter
         handler.setConverter(this);
         handler.setIdentifierMap(identifierMap);
         handler.setOrganism(organism);
+        handler.setStrain(strain);
         readConfig();
     }
 
@@ -336,7 +352,7 @@ public class GFF3Converter extends DataConverter
             refId = feature.getIdentifier();
         }
 
-        if (!"chromosome".equals(term) && seq != null) {
+        if (!term.equals("chromosome") && !term.equals("scaffold") && seq!=null) {
             createLocation(record, refId, seq, cd, feature);
         }
 
@@ -378,6 +394,9 @@ public class GFF3Converter extends DataConverter
             setRefsAndCollections(parents, feature);
         }
         feature.addReference(getOrgRef());
+	if (strain!=null) feature.addReference(getStrainRef());
+	if (assemblyVersion!=null) feature.setAttribute("assemblyVersion", assemblyVersion);
+	if (annotationVersion!=null) feature.setAttribute("annotationVersion", annotationVersion);
         feature.addToCollection("dataSets", dataSet);
         handler.addDataSet(dataSet);
         Double score = record.getScore();
@@ -536,11 +555,8 @@ public class GFF3Converter extends DataConverter
         }
     }
 
-    private void createLocation(GFF3Record record, String refId, Item seq,
-            ClassDescriptor cd, Item feature) throws ObjectStoreException {
-        boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
-                && !dontCreateLocations
-                && handler.createLocations(record);
+    private void createLocation(GFF3Record record, String refId, Item seq, ClassDescriptor cd, Item feature) throws ObjectStoreException {
+        boolean makeLocation = (record.getStart()>=1 && record.getEnd()>=1 && !dontCreateLocations && handler.createLocations(record));
         if (makeLocation) {
             Item location = getLocation(record, refId, seq);
             if (feature == null) {
@@ -552,11 +568,16 @@ public class GFF3Converter extends DataConverter
             int length = getLength(record);
             feature.setAttribute("length", String.valueOf(length));
             handler.setLocation(location);
-            if ("Chromosome".equals(seqClsName)
-                    && (cd.getFieldDescriptorByName("chromosome") != null)) {
+            // support for Supercontig as well as Chromosome
+            // DEBUG
+            LOG.info("createLocation:seq.getClassName()="+seq.getClassName());
+            if (seq.getClassName().equals("Chromosome")) {
                 feature.setReference("chromosome", seq.getIdentifier());
                 feature.setReference("chromosomeLocation", location);
-            }
+            } else if (seq.getClassName().equals("Supercontig")) {
+                feature.setReference("supercontig", seq.getIdentifier());
+                feature.setReference("supercontigLocation", location);
+            }                
         }
     }
 
@@ -703,6 +724,23 @@ public class GFF3Converter extends DataConverter
     }
 
     /**
+     * Return the strain Item created for this GFF3Converter from the strain passed
+     * to the constructor.
+     * @param organism the Organism that this Strain references
+     * @return the strain item
+     * @throws ObjectStoreException if the Strain item can't be stored
+     */
+    public Item getStrain(Item organism) throws ObjectStoreException {
+        if (strain==null && strainName!=null) {
+            strain = createItem("Strain");
+            strain.setAttribute("primaryIdentifier", strainName);
+	    strain.setReference("organism", organism);
+            store(strain);
+        }
+        return strain;
+    }
+
+    /**
      * Return the sequence class name that was passed to the constructor.
      * @return the class name
      */
@@ -730,6 +768,17 @@ public class GFF3Converter extends DataConverter
     }
 
     /**
+     * @return strain reference
+     * @throws ObjectStoreException if the Strain Item can't be stored
+     */
+    private Reference getStrainRef() throws ObjectStoreException {
+        if (strainRef == null) {
+            strainRef = new Reference("strain", getStrain(organism).getIdentifier());
+        }	
+        return strainRef;
+    }
+
+    /**
      * @return return/create item of class seqClsName for given identifier
      * @throws ObjectStoreException if the Item can't be stored
      */
@@ -744,16 +793,13 @@ public class GFF3Converter extends DataConverter
             return null;
         }
 
-//        if (identifier.startsWith("chr")) {
-//            identifier = identifier.substring(3);
-//        }
-
         Item seq = seqs.get(identifier);
         if (seq == null) {
             seq = sequenceHandler.makeSequenceItem(this, identifier, record);
             // sequence handler may choose not to create sequence
             if (seq != null) {
                 seq.addReference(getOrgRef());
+		seq.addReference(getStrainRef());
                 store(seq);
                 seqs.put(identifier, seq);
             }
@@ -785,9 +831,9 @@ public class GFF3Converter extends DataConverter
     }
 
     /**
-     * Return a DataSource item for the given title
-     * @param name the DataSource name
-     * @return the DataSource Item
+     * Return a DataSet item for the given title
+     * @param name the DataSet name
+     * @return the DataSet Item
      */
     public Item getDataSourceItem(String name) {
         Item item = dataSources.get(name);
@@ -807,36 +853,36 @@ public class GFF3Converter extends DataConverter
     /**
      * Return a DataSource item with the given details.
      * @param title the DataSet title
-     * @param url the new url field, or null if the url shouldn't be set
-     * @param description the new description field, or null if the field shouldn't be set
+     * @param url the DataSet URL (can be null)
+     * @param version the DataSet version (can be null)
+     * @param description the DataSet description (can be null)
      * @param dataSourceItem the DataSource referenced by the the DataSet
-     * @param licence URL to the data licence for this data set
      * @return the DataSet Item
      */
-    public Item getDataSetItem(String title, String url, String description, Item dataSourceItem,
-                               String licence) {
-        Item item = dataSets.get(title);
-        if (item == null) {
-            item = createItem("DataSet");
+    public Item getDataSetItem(String title, String url, String version, String description, Item dataSourceItem) {
+	if (dataSets.containsKey(title)) {
+	    return dataSets.get(title);
+	} else {
+            Item item = createItem("DataSet");
             item.setAttribute("name", title);
-            if (licence != null) {
-                item.setAttribute("licence", licence);
-            }
-            item.setReference("dataSource", dataSourceItem);
-            if (url != null) {
-                item.setAttribute("url", url);
-            }
-            if (description != null) {
-                item.setAttribute("description", description);
-            }
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("failed to store DataSet with title: " + title, e);
-            }
-            dataSets.put(title, item);
-        }
-        return item;
+	    item.setReference("dataSource", dataSourceItem);
+	    if (url!=null) {
+		item.setAttribute("url", url);
+	    }
+	    if (version!=null) {
+		item.setAttribute("version", version);
+	    }
+	    if (description!=null) {
+		item.setAttribute("description", description);
+	    }
+	    try {
+		store(item);
+	    } catch (ObjectStoreException e) {
+		throw new RuntimeException("Failed to store DataSet with title: " + title, e);
+	    }
+	    dataSets.put(title, item);
+	    return item;
+	}
     }
 
     private static int getLength(GFF3Record record) {
