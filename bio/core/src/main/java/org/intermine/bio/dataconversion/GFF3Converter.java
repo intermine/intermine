@@ -569,8 +569,6 @@ public class GFF3Converter extends DataConverter
             feature.setAttribute("length", String.valueOf(length));
             handler.setLocation(location);
             // support for Supercontig as well as Chromosome
-            // DEBUG
-            LOG.info("createLocation:seq.getClassName()="+seq.getClassName());
             if (seq.getClassName().equals("Chromosome")) {
                 feature.setReference("chromosome", seq.getIdentifier());
                 feature.setReference("chromosomeLocation", location);
