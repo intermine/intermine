@@ -50,7 +50,7 @@ public class GFF3ConverterTask extends Task {
 
     private String dataSourceName, dataSourceDescription, dataSourceUrl;
 
-    private String dataSetTitle, dataSetDescription, dataSetUrl, dataSetVersion;
+    private String dataSetTitle, dataSetDescription, dataSetUrl, dataSetVersion, licence;
 
     private String seqHandlerClassName;
 
@@ -161,6 +161,14 @@ public class GFF3ConverterTask extends Task {
      */
     public void setDataSetTitle(String dataSetTitle) {
 	this.dataSetTitle = dataSetTitle;
+    }
+
+    /**
+     * Set the licence
+     * @param licence URL to the licence for this dataset.
+     */
+    public void setLicence(String licence) {
+        this.licence = licence;
     }
 
     /**
@@ -292,7 +300,7 @@ public class GFF3ConverterTask extends Task {
 							    orgTaxonId, strainName, assemblyVersion, annotationVersion,
 							    dataSourceName, dataSourceUrl,
 							    dataSetTitle, dataSetUrl, dataSetVersion, dataSetDescription,
-							    tgtModel, recordHandler, sequenceHandler);
+							    tgtModel, recordHandler, sequenceHandler, licence);
             if (dontCreateLocations) {
                 gff3converter.setDontCreateLocations(dontCreateLocations);
             }

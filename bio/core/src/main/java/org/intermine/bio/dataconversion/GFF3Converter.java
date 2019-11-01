@@ -95,13 +95,14 @@ public class GFF3Converter extends DataConverter
      * @param tgtModel the model to create items in
      * @param handler object to perform optional additional operations per GFF3 line
      * @param sequenceHandler the GFF3SeqHandler use to create sequence Items
+     * @param licence URL to the licence for this data set
      * @throws ObjectStoreException if something goes wrong
      */
     public GFF3Converter(ItemWriter writer, String seqClsName,
 			 String orgTaxonId, String strainName, String assemblyVersion, String annotationVersion,
 			 String dataSourceName, String dataSourceUrl,
 			 String dataSetTitle, String dataSetUrl, String dataSetVersion, String dataSetDescription,
-			 Model tgtModel, GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler) throws ObjectStoreException {
+			 Model tgtModel, GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler, String licence) throws ObjectStoreException {
         super(writer, tgtModel);
         this.seqClsName = seqClsName;
         this.orgTaxonId = orgTaxonId;
@@ -115,7 +116,7 @@ public class GFF3Converter extends DataConverter
         organism = getOrganism();
         strain = getStrain(organism);
         dataSource = getDataSourceItem(dataSourceName);
-        dataSet = getDataSetItem(dataSetTitle, dataSetUrl, dataSetVersion, dataSetDescription, dataSource);
+        dataSet = getDataSetItem(dataSetTitle, dataSetUrl, dataSetVersion, dataSetDescription, dataSource, licence);
 
         if (sequenceHandler == null) {
             this.sequenceHandler = new GFF3SeqHandler();
@@ -849,20 +850,24 @@ public class GFF3Converter extends DataConverter
     }
 
     /**
-     * Return a DataSource item with the given details.
+     * Return a DataSet item with the given details.
      * @param title the DataSet title
      * @param url the DataSet URL (can be null)
      * @param version the DataSet version (can be null)
      * @param description the DataSet description (can be null)
      * @param dataSourceItem the DataSource referenced by the the DataSet
+     * @param licence URL to the data licence for this data set
      * @return the DataSet Item
      */
-    public Item getDataSetItem(String title, String url, String version, String description, Item dataSourceItem) {
+    public Item getDataSetItem(String title, String url, String version, String description, Item dataSourceItem, String licence) {
 	if (dataSets.containsKey(title)) {
 	    return dataSets.get(title);
 	} else {
             Item item = createItem("DataSet");
             item.setAttribute("name", title);
+            if (licence!=null) {
+                item.setAttribute("licence", licence);
+            }
 	    item.setReference("dataSource", dataSourceItem);
 	    if (url!=null) {
 		item.setAttribute("url", url);
