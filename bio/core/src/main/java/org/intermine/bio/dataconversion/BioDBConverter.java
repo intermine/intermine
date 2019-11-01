@@ -364,7 +364,7 @@ public abstract class BioDBConverter extends DBConverter
         Item strain = strains.get(strainName);
         if (strain == null) {
             strain = createItem("Strain");
-            strain.setAttribute("primaryIdentifier", strainName);
+            strain.setAttribute("name", strainName);
             strain.setReference("organism", organism);
             strains.put(strainName, strain);
             organism.addToCollection("strains", strain);
