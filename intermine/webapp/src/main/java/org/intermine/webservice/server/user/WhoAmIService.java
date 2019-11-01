@@ -58,13 +58,7 @@ public class WhoAmIService extends JSONService
     @Override
     protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("username", profile.getUsername());
-        String id = (profile.getUserId() != null) ? profile.getUserId().toString() : null;
-        data.put("id", id);
-        data.put("preferences", profile.getPreferences());
-        data.put("superuser", profile.isSuperuser());
-        addResultItem(data, false);
+        addResultItem((new JSONUserFormatter(profile)).format(), false);
     }
 
 

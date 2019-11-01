@@ -52,7 +52,7 @@ public class LoginService extends JSONService
 
     @Override
     protected String getResultsKey() {
-        return "user";
+        return "output";
     }
 
     @Override
@@ -67,18 +67,22 @@ public class LoginService extends JSONService
         } catch (ProfileManager.AuthenticationException ex) {
             throw new UnauthorizedException(ex.getMessage());
         }
+
+        Map<String, Object> output = new HashMap<String, Object>();
+        JSONUserFormatter formatter = new JSONUserFormatter(profile);
+        output.put("user", new JSONObject(formatter.format()));
+        output.put("token", im.getProfileManager().generate24hrKey(profile));
+
         //merge anonymous profile with the logged profile
         ProfileMergeIssues issues = new ProfileMergeIssues();
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
             // The current profile was for an anonymous guest.
             issues = mergeProfiles(currentProfile, profile);
         }
-        String token = im.getProfileManager().generate24hrKey(profile);
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("token", token);
-        data.put("renamedLists", new JSONObject(issues.getRenamedBags()));
-        data.put("renamedTemplates", new JSONObject(issues.getRenamedTemplates()));
-        addResultItem(data, false);
+        output.put("renamedLists", new JSONObject(issues.getRenamedBags()));
+        output.put("renamedTemplates", new JSONObject(issues.getRenamedTemplates()));
+
+        addResultItem(output, false);
     }
 
     private Profile getUser(String username, String password) {
