@@ -206,7 +206,7 @@ class IntegrateUtils {
                 model: "genomic",
                 handlerClassName: bioSourceProperties.getProperty("gff3.handlerClassName"),
                 seqHandlerClassName: gff3SeqHandlerClassName,
-                strainName: BioSourceProperties.getUserProperty(source, "gff3.strainName"),
+                strainIdentifier: BioSourceProperties.getUserProperty(source, "gff3.strainIdentifier"),
                 assemblyVersion: BioSourceProperties.getUserProperty(source, "gff3.assemblyVersion"),
                 annotationVersion: BioSourceProperties.getUserProperty(source, "gff3.annotationVersion"),
                 licence: licence) {

@@ -53,7 +53,7 @@ public class GFF3Converter extends DataConverter
     private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
     private Reference orgRef;
     private Reference strainRef;
-    private String seqClsName, orgTaxonId, strainName, assemblyVersion, annotationVersion;
+    private String seqClsName, orgTaxonId, strainIdentifier, assemblyVersion, annotationVersion;
     private Item organism, dataSet, dataSource;
     private Item strain;
     private Model tgtModel;
@@ -82,7 +82,7 @@ public class GFF3Converter extends DataConverter
      * @param writer ItemWriter
      * @param seqClsName The class of the coordinate system for this GFF3 file (generally Chromosome)
      * @param orgTaxonId The taxon ID of the organism we are loading
-     * @param strainName the name of the strain for which we are loading data
+     * @param strainIdentifier the ID of the strain for which we are loading data
      * @param assemblyVersion the version of the assembly for this data
      * @param annotationVersion the version of the annotation for this data
      * @param dataSourceName name for dataSource
@@ -98,14 +98,14 @@ public class GFF3Converter extends DataConverter
      * @throws ObjectStoreException if something goes wrong
      */
     public GFF3Converter(ItemWriter writer, String seqClsName,
-			 String orgTaxonId, String strainName, String assemblyVersion, String annotationVersion,
+			 String orgTaxonId, String strainIdentifier, String assemblyVersion, String annotationVersion,
 			 String dataSourceName, String dataSourceUrl,
 			 String dataSetTitle, String dataSetUrl, String dataSetVersion, String dataSetDescription,
 			 Model tgtModel, GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler, String licence) throws ObjectStoreException {
         super(writer, tgtModel);
         this.seqClsName = seqClsName;
         this.orgTaxonId = orgTaxonId;
-        this.strainName = strainName;
+        this.strainIdentifier = strainIdentifier;
 	this.assemblyVersion = assemblyVersion;
 	this.annotationVersion = annotationVersion;
         this.tgtModel = tgtModel;
@@ -729,9 +729,9 @@ public class GFF3Converter extends DataConverter
      * @throws ObjectStoreException if the Strain item can't be stored
      */
     public Item getStrain(Item organism) throws ObjectStoreException {
-        if (strain==null && strainName!=null) {
+        if (strain==null && strainIdentifier!=null) {
             strain = createItem("Strain");
-            strain.setAttribute("primaryIdentifier", strainName);
+            strain.setAttribute("identifier", strainIdentifier);
 	    strain.setReference("organism", organism);
             store(strain);
         }

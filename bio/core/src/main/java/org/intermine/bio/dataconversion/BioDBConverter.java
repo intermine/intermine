@@ -355,18 +355,18 @@ public abstract class BioDBConverter extends DBConverter
     /**
      * Provides the strain item for the given strain name and organism taxonId.
      * NOTE: this assumes that strain names are unique across all organisms!
-     * @param strainName the name of the strain
+     * @param strainIdentifier the ID of the strain
      * @param taxonId the taxon ID of the organism to which this strain belongs
      * @return the Strain Item
      */
-    public Item getStrainItem(String strainName, String taxonId) {
+    public Item getStrainItem(String strainIdentifier, String taxonId) {
         Item organism = getOrganismItem(taxonId);
-        Item strain = strains.get(strainName);
+        Item strain = strains.get(strainIdentifier);
         if (strain == null) {
             strain = createItem("Strain");
-            strain.setAttribute("name", strainName);
+            strain.setAttribute("identifier", strainIdentifier);
             strain.setReference("organism", organism);
-            strains.put(strainName, strain);
+            strains.put(strainIdentifier, strain);
             organism.addToCollection("strains", strain);
         }
         return strain;

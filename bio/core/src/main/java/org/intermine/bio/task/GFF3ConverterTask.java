@@ -45,7 +45,7 @@ public class GFF3ConverterTask extends Task
     protected static final Logger LOG = Logger.getLogger(GFF3ConverterTask.class);
 
     protected FileSet fileSet;
-    protected String converter, targetAlias, seqClsName, orgTaxonId, strainName, assemblyVersion, annotationVersion;
+    protected String converter, targetAlias, seqClsName, orgTaxonId, strainIdentifier, assemblyVersion, annotationVersion;
     protected String seqDataSourceName, model, handlerClassName;
     protected GFF3Parser parser;
 
@@ -101,11 +101,11 @@ public class GFF3ConverterTask extends Task
     }
 
     /**
-     * Set the strain name
-     * @param strainName the strain name
+     * Set the strain ID
+     * @param strainIdentifier the strain ID
      */
-    public void setStrainName(String strainName) {
-        this.strainName = strainName;
+    public void setStrainName(String strainIdentifier) {
+        this.strainIdentifier = strainIdentifier;
     }
 
     /**
@@ -249,8 +249,8 @@ public class GFF3ConverterTask extends Task
         if (orgTaxonId == null) {
             throw new BuildException("orgTaxonId attribute not set");
         }
-        if (strainName == null) {
-            throw new BuildException("strainName attribute not set");
+        if (strainIdentifier == null) {
+            throw new BuildException("strainIdentifier attribute not set");
         }
         if (dataSourceName == null) {
             throw new BuildException("dataSourceName attribute not set");
@@ -298,7 +298,7 @@ public class GFF3ConverterTask extends Task
             }
 
             GFF3Converter gff3converter = new GFF3Converter(writer, seqClsName,
-							    orgTaxonId, strainName, assemblyVersion, annotationVersion,
+							    orgTaxonId, strainIdentifier, assemblyVersion, annotationVersion,
 							    dataSourceName, dataSourceUrl,
 							    dataSetTitle, dataSetUrl, dataSetVersion, dataSetDescription,
 							    tgtModel, recordHandler, sequenceHandler, licence);
