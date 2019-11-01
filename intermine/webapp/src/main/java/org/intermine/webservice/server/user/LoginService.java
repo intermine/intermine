@@ -24,9 +24,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.profile.ProfileMergeIssues;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.UnauthorizedException;
+import org.json.JSONObject;
 
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -50,7 +52,7 @@ public class LoginService extends JSONService
 
     @Override
     protected String getResultsKey() {
-        return "token";
+        return "user";
     }
 
     @Override
@@ -72,7 +74,11 @@ public class LoginService extends JSONService
             issues = mergeProfiles(currentProfile, profile);
         }
         String token = im.getProfileManager().generate24hrKey(profile);
-        addResultValue(token, false);
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("token", token);
+        data.put("renamedLists", new JSONObject(issues.getRenamedBags()));
+        data.put("renamedTemplates", new JSONObject(issues.getRenamedTemplates()));
+        addResultItem(data, false);
     }
 
     private Profile getUser(String username, String password) {

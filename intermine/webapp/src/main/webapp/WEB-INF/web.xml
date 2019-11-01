@@ -3413,7 +3413,11 @@ The different token types are:
         <name>Login</name>
         <method type="POST" authenticationRequired="true">
             <summary>Login a user</summary>
-            <description>Login a user</description>
+            <description>
+                This service checks user's credential and attach anonymously created lists to
+                the user's account. A new session token is generated, to be used for further
+                requests
+            </description>
             <param
                 required="true"
                 type="String"
@@ -3424,7 +3428,6 @@ The different token types are:
                 type="String">password</param>
             <returns>
                 <format accept="application/json">json</format>
-                <format accept="text/plain">text</format>
             </returns>
         </method>
     </metadata>
