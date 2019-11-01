@@ -40,7 +40,6 @@ import org.intermine.xml.full.Reference;
 /**
  * Class to read a GFF3 source data and produce a data representation.
  * UPDATE: support Strain, and feature.assemblyVersion and feature.annotationVersion.
- * HACK: if sequence name contains "scaffold", store as Supercontig rather than Chromosome.
  *
  * @author Wenyan Ji
  * @author Richard Smith
