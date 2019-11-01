@@ -40,7 +40,8 @@ import org.apache.log4j.Logger;
  * @author Wenyan Ji
  * @author Sam Hokin
  */
-public class GFF3ConverterTask extends Task {
+public class GFF3ConverterTask extends Task
+{
     protected static final Logger LOG = Logger.getLogger(GFF3ConverterTask.class);
 
     protected FileSet fileSet;
@@ -56,7 +57,7 @@ public class GFF3ConverterTask extends Task {
 
     private boolean dontCreateLocations = false;
 
-     /**
+    /**
      * Set the data fileset
      * @param fs the fileset
      */
@@ -82,7 +83,7 @@ public class GFF3ConverterTask extends Task {
     }
 
 
-     /**
+    /**
      * Set the sequenceClassName
      * @param seqClsName the seqClsName;
      */

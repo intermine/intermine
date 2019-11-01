@@ -73,9 +73,9 @@ public class GFF3Converter extends DataConverter
     protected Map<String, Set<String>> configTerm = new HashMap<String, Set<String>>();
     protected Map<String, Set<String>> configExclude = new HashMap<String, Set<String>>();
     protected Map<String, Map<String, String>> configAttr =
-            new HashMap<String, Map<String, String>>();
+        new HashMap<String, Map<String, String>>();
     protected Map<String, Map<String, String>> configAttrClass =
-            new HashMap<String, Map<String, String>>();
+        new HashMap<String, Map<String, String>>();
 
     /**
      * Constructor
@@ -122,7 +122,7 @@ public class GFF3Converter extends DataConverter
         }
 
         setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
-                dataSource.getIdentifier(), BioConverterUtil.getOntology(this)));
+                                      dataSource.getIdentifier(), BioConverterUtil.getOntology(this)));
 
         handler.setConverter(this);
         handler.setIdentifierMap(identifierMap);
@@ -138,7 +138,7 @@ public class GFF3Converter extends DataConverter
         String fullSourceName = handler.getClass().getSimpleName();
         // chop off suffix, e.g. LongOligoGFF3RecordHandler
         String shortenedName = fullSourceName.substring(0, fullSourceName.length()
-                - suffix.length());
+                                                        - suffix.length());
         return StringUtil.getFlattenedSourceName(shortenedName) + "_config.properties";
     }
 
@@ -162,7 +162,7 @@ public class GFF3Converter extends DataConverter
                     gffConfig.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
                 } catch (IOException e2) {
                     throw new RuntimeException("I/O Problem loading properties '"
-                            + PROP_FILE + "'", e2);
+                                               + PROP_FILE + "'", e2);
                 }
             }
         }
@@ -175,8 +175,8 @@ public class GFF3Converter extends DataConverter
                         termArray[i] = termArray[i].trim();
                     }
                     configTerm.put(
-                            entry.getKey().toString().split("\\.")[0],
-                            new HashSet<String>(Arrays.asList(termArray)));
+                                   entry.getKey().toString().split("\\.")[0],
+                                   new HashSet<String>(Arrays.asList(termArray)));
                 }
             } else if (entry.getKey().toString().contains("excludes")) {
                 if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
@@ -185,8 +185,8 @@ public class GFF3Converter extends DataConverter
                         excludeArray[i] = excludeArray[i].trim();
                     }
                     configExclude.put(
-                            entry.getKey().toString().split("\\.")[0],
-                            new HashSet<String>(Arrays.asList(excludeArray)));
+                                      entry.getKey().toString().split("\\.")[0],
+                                      new HashSet<String>(Arrays.asList(excludeArray)));
                 }
             } else if (entry.getKey().toString().contains("attributes")) {
                 if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
@@ -198,8 +198,8 @@ public class GFF3Converter extends DataConverter
                         String attr = entry.getKey().toString().split("\\.")[2];
                         if (keyBits.length > 3) {
                             attr = keyStr.substring(
-                                    keyStr.indexOf("attributes.") + 11,
-                                    keyStr.length());
+                                                    keyStr.indexOf("attributes.") + 11,
+                                                    keyStr.length());
                         }
                         String field = ((String) entry.getValue()).trim();
                         if (configAttr.get(taxonid) == null) {
@@ -219,8 +219,8 @@ public class GFF3Converter extends DataConverter
                         String attr = entry.getKey().toString().split("\\.")[3];
                         if (keyBits.length > 4) {
                             attr = keyStr.substring(
-                                    keyStr.indexOf("attributes.") + 11,
-                                    keyStr.length());
+                                                    keyStr.indexOf("attributes.") + 11,
+                                                    keyStr.length());
                         }
                         String field = ((String) entry.getValue()).trim();
                         if (configAttr.get(taxonid) == null) {
@@ -341,8 +341,8 @@ public class GFF3Converter extends DataConverter
         ClassDescriptor cd = tgtModel.getClassDescriptorByName(fullClassName);
         if (cd == null) {
             throw new IllegalArgumentException("no class found in model for: " + className
-                    + " (original GFF record type: " + term + ") for "
-                    + "record: " + record);
+                                               + " (original GFF record type: " + term + ") for "
+                                               + "record: " + record);
         }
 
         Set<Item> synonymsToAdd = new HashSet<Item>();
@@ -492,13 +492,13 @@ public class GFF3Converter extends DataConverter
             String cls = configAttrClass.get(this.orgTaxonId).get("synonym");
             if ("all".equals(cls) || term.equals(cls)) {
                 String synonymAttr = configAttr.get(this.orgTaxonId).get(
-                        "synonym");
+                                                                         "synonym");
                 if (synonymAttr.contains("Dbxref")
-                        && record.getDbxrefs() != null) {
+                    && record.getDbxrefs() != null) {
                     String synonymAttrPrefix = synonymAttr.split("\\.")[1];
                     Set<String> synSet = new HashSet<String>();
                     for (Iterator<?> i = record.getDbxrefs().iterator(); i
-                            .hasNext();) {
+                             .hasNext();) {
                         String xref = (String) i.next();
                         if (xref.contains(synonymAttrPrefix)) {
                             synSet.add(xref.split(":")[1]);
@@ -514,7 +514,7 @@ public class GFF3Converter extends DataConverter
     }
 
     private void addOtherAttributes(GFF3Record record, String term,
-            Item feature, List<String> primeAttrList) {
+                                    Item feature, List<String> primeAttrList) {
         Map<String, String> attrMapOrg = configAttr.get(this.orgTaxonId);
         Map<String, String> attrMapClone = new HashMap<String, String>();
         // Deep copy of a map
@@ -607,7 +607,7 @@ public class GFF3Converter extends DataConverter
         String clsName = feature.getClassName();
         Map<String, String> refsAndCollections = handler.getRefsAndCollections();
         if (refsAndCollections != null && refsAndCollections.containsKey(clsName)
-                && parents != null && !parents.isEmpty()) {
+            && parents != null && !parents.isEmpty()) {
             ClassDescriptor cld =
                 tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
             String refName = refsAndCollections.get(clsName);
@@ -618,8 +618,8 @@ public class GFF3Converter extends DataConverter
                 if (parentIter.hasNext()) {
                     String primaryIdent  = feature.getAttribute("primaryIdentifier").getValue();
                     throw new RuntimeException("Feature has multiple relations for reference: "
-                            + refName + " for feature: " + feature.getClassName()
-                            + ", " + feature.getIdentifier() + ", " + primaryIdent);
+                                               + refName + " for feature: " + feature.getClassName()
+                                               + ", " + feature.getIdentifier() + ", " + primaryIdent);
                 }
             } else if (cld.getCollectionDescriptorByName(refName, true) != null) {
                 List<String> refIds = new ArrayList<String>();
@@ -629,13 +629,13 @@ public class GFF3Converter extends DataConverter
                 feature.setCollection(refName, refIds);
             } else if (parentIter.hasNext()) {
                 throw new RuntimeException("No '" + refName + "' reference/collection found in "
-                        + "class: " + clsName + " - is map configured correctly?");
+                                           + "class: " + clsName + " - is map configured correctly?");
             }
         }
     }
 
     private void setNames(List<?> names, String symbol, List<String> synonyms,
-            Set<Item> synonymsToAdd, String primaryIdentifier, Item feature, ClassDescriptor cd) {
+                          Set<Item> synonymsToAdd, String primaryIdentifier, Item feature, ClassDescriptor cd) {
         if (cd.getFieldDescriptorByName("symbol") == null) { // if symbol is not in the model
             String name = (String) names.get(0);
             feature.setAttribute("name", name);
@@ -905,7 +905,7 @@ public class GFF3Converter extends DataConverter
                 // parents are usually first in the GFF file but that's not in the specification
                 // parents will not be present if they are ignored in the config file. See #1267
                 throw new RuntimeException("Failed setting setRefsAndCollections() "
-                        + "in GFF3Converter - processing child before parent - " + identifier);
+                                           + "in GFF3Converter - processing child before parent - " + identifier);
             }
         }
         return refId;
