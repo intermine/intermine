@@ -200,6 +200,7 @@
     </class>
 
     <class name="Strain" is-interface="true" term="http://semanticscience.org/resource/SIO_010055">
+      <attribute name="identifier" type="java.lang.String" term="http://edamontology.org/data_2379"/>
       <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_1046"/>
       <attribute name="accession" type="java.lang.String" term="http://edamontology.org/data_2912"/>
       <attribute name="description" type="java.lang.String"/>
