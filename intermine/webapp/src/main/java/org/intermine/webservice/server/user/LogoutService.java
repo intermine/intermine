@@ -10,10 +10,10 @@ package org.intermine.webservice.server.user;
  *
  */
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.*;
 import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.exceptions.UnauthorizedException;
 
 /**
  * Logout service which invalidates the token assigned to the user logging out
@@ -33,7 +33,13 @@ public class LogoutService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        Profile profile = getPermission().getProfile();
+        Profile profile;
+        if (isAuthenticated()) {
+            profile = getPermission().getProfile();
+        } else {
+            throw new UnauthorizedException("The request " +
+                    "must be authenticated");
+        }
         ProfileManager pm = im.getProfileManager();
         pm.removeTokensForProfile(profile);
     }
