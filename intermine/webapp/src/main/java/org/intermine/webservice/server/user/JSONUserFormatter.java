@@ -11,18 +11,30 @@ package org.intermine.webservice.server.user;
  */
 
 import org.intermine.api.profile.Profile;
-
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A formatter that knows how to format a user in JSON
+ *
+ * @author Daniela Butano
+ */
 public class JSONUserFormatter
 {
     private final Profile profile;
 
+    /**
+     * Construct a user formatter.
+     * @param profile The current user.
+     */
     public JSONUserFormatter(Profile profile) {
         this.profile = profile;
     }
 
+    /**
+     * Format a user into a map.
+     * @return A map
+     */
     public Map<String, Object> format() {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("username", profile.getUsername());

@@ -10,9 +10,6 @@ package org.intermine.webservice.server.user;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.core.JSONService;

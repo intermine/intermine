@@ -11,7 +11,8 @@ package org.intermine.webservice.server.user;
  */
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.*;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.UnauthorizedException;
 
@@ -37,8 +38,7 @@ public class LogoutService extends JSONService
         if (isAuthenticated()) {
             profile = getPermission().getProfile();
         } else {
-            throw new UnauthorizedException("The request " +
-                    "must be authenticated");
+            throw new UnauthorizedException("The request must be authenticated");
         }
         ProfileManager pm = im.getProfileManager();
         pm.removeTokensForProfile(profile);

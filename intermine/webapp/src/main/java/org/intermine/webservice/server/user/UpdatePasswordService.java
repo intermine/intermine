@@ -9,12 +9,19 @@ package org.intermine.webservice.server.user;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.UnauthorizedException;
 
+/**
+ * Class for changing the password of an existing user
+ *
+ * @author Daniela Butano
+ *
+ */
 public class UpdatePasswordService extends JSONService
 {
     /**
@@ -33,8 +40,7 @@ public class UpdatePasswordService extends JSONService
         if (isAuthenticated()) {
             profile = getPermission().getProfile();
         } else {
-            throw new UnauthorizedException("The request " +
-                    "must be authenticated");
+            throw new UnauthorizedException("The request must be authenticated");
         }
 
         pm.setPassword(profile.getUsername(), newPassword);
