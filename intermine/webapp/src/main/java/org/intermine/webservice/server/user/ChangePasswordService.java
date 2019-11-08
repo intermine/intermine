@@ -22,13 +22,13 @@ import org.intermine.webservice.server.exceptions.UnauthorizedException;
  * @author Daniela Butano
  *
  */
-public class UpdatePasswordService extends JSONService
+public class ChangePasswordService extends JSONService
 {
     /**
      * Constructor
      * @param im The InterMine API object.
      */
-    public UpdatePasswordService(InterMineAPI im) {
+    public ChangePasswordService(InterMineAPI im) {
         super(im);
     }
 
