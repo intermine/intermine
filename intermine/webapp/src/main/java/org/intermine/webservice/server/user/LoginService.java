@@ -57,10 +57,10 @@ public class LoginService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        Profile currentProfile = getPermission().getProfile();
         String username = getRequiredParameter("username");
         String password = getRequiredParameter("password");
 
+        Profile currentProfile = getPermission().getProfile();
         Profile profile = null;
         try {
             profile = getUser(username, password);
@@ -74,7 +74,7 @@ public class LoginService extends JSONService
         output.put("token", im.getProfileManager().generate24hrKey(profile));
 
         //merge anonymous profile with the logged profile
-        ProfileMergeIssues issues = new ProfileMergeIssues();
+        ProfileMergeIssues issues = null;
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
             // The current profile was for an anonymous guest.
             issues = mergeProfiles(currentProfile, profile);
