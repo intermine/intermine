@@ -46,10 +46,9 @@ public class ListUpdateService extends AuthenticatedListService
 
     @Override
     protected void execute() throws Exception {
-        Profile profile = getPermission().getProfile();
-
         String listName = getRequiredParameter("name");
         String newListDescription = getRequiredParameter("newDescription");
+        Profile profile = getPermission().getProfile();
         try {
             profile.updateBagDescription(listName, newListDescription);
         } catch (BagDoesNotExistException ex) {
@@ -59,38 +58,5 @@ public class ListUpdateService extends AuthenticatedListService
         InterMineBag list = profile.getSavedBags().get(listName);
         addOutputInfo(LIST_NAME_KEY, list.getName());
         addOutputInfo(LIST_DESCRIPTION_KEY, list.getDescription());
-    }
-
-    @Override
-    protected String getRequiredParameter(String name) {
-        if (parameters == null) {
-            loadParameters();
-        }
-        String value = parameters.get(name);
-        if (StringUtils.isBlank(value)) {
-            throw new MissingParameterException(name);
-        }
-        return value;
-    }
-
-    private void loadParameters() {
-        String data;
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
-            data = br.readLine();
-        } catch (Exception ex) {
-            LOG.error("Error reading input data");
-            throw new RuntimeException("Error reading input data");
-        }
-        parameters = new HashMap<>();
-        String[] roughParameters = StringUtils.split(data, "&");
-        for (String roughParameter : roughParameters) {
-            String[] keyValue = StringUtils.split(roughParameter, "=");
-            try {
-                parameters.put(keyValue[0], URLDecoder.decode(keyValue[1], "UTF-8"));
-            } catch (UnsupportedEncodingException ex) {
-                LOG.error("Error decodind input data");
-            }
-        }
     }
 }
