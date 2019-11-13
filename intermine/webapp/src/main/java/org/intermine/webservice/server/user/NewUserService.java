@@ -13,16 +13,19 @@ package org.intermine.webservice.server.user;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
 import org.directwebremoting.util.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.*;
+import org.intermine.api.util.NameUtil;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.Emailer;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.context.MailAction;
+import org.intermine.web.logic.profile.ProfileMergeIssues;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.core.RateLimitHistory;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -80,13 +83,25 @@ public class NewUserService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        ProfileManager pm = im.getProfileManager();
         NewUserInput input = new NewUserInput();
+        Profile currentProfile = getPermission().getProfile();
 
+        ProfileManager pm = im.getProfileManager();
         pm.createNewProfile(input.getUsername(), input.getPassword());
+        Profile newProfile = pm.getProfile(input.getUsername());
+        if (newProfile == null) {
+            throw new ServiceException("Creating a new profile failed");
+        }
+
+        ProfileMergeIssues issues = null;
+        if (currentProfile != null) {
+            //attach the anonymously created lists to the new profile
+            issues = attachAnonSavedBags(currentProfile, newProfile);
+        }
 
         JSONObject user = new JSONObject();
         user.put("username", input.getUsername());
+        user.put("renamedLists", new JSONObject(issues.getRenamedBags()));
 
         MailAction welcomeMessage = new WelcomeAction(input.getUsername());
         if (!InterMineContext.queueMessage(welcomeMessage)) {
@@ -103,12 +118,7 @@ public class NewUserService extends JSONService
         }
         user.put("subscribedToList", mailingList != null);
         user.put("mailingList", mailingList);
-
-        Profile p = pm.getProfile(input.getUsername());
-        if (p == null) {
-            throw new ServiceException("Creating profile failed");
-        }
-        user.put("temporaryToken", pm.generate24hrKey(p));
+        user.put("temporaryToken", pm.generate24hrKey(newProfile));
 
         output.addResultItem(Arrays.asList(user.toString()));
     }
@@ -186,6 +196,40 @@ public class NewUserService extends JSONService
                 throw new BadRequestException(USER_EXISTS_MSG);
             }
         }
+    }
+
+    /**
+     * Attach the  anonymously created list to the new user
+     *
+     * @param fromProfile The profile to take information from.
+     * @param newProfile The new profile to attach into.
+     * @return A map of bags, from old name to new name.
+     */
+    private ProfileMergeIssues attachAnonSavedBags(Profile fromProfile, Profile newProfile) {
+        Map<String, InterMineBag> mergeBags = Collections.emptyMap();
+        ProfileMergeIssues issues = new ProfileMergeIssues();
+        if (fromProfile != null) {
+            mergeBags = fromProfile.getSavedBags();
+        }
+
+        // attach anonymous bags to the new profile
+        for (Map.Entry<String, InterMineBag> entry : mergeBags.entrySet()) {
+            InterMineBag bag = entry.getValue();
+            // Make sure the userId gets set to be the profile one
+            try {
+                bag.setProfileId(newProfile.getUserId());
+                String name = NameUtil.validateName(newProfile.getSavedBags().keySet(),
+                        entry.getKey());
+                if (!entry.getKey().equals(name)) {
+                    issues.addRenamedBag(entry.getKey(), name);
+                }
+                bag.setName(name);
+                newProfile.saveBag(name, bag);
+            } catch (ObjectStoreException iex) {
+                throw new RuntimeException(iex.getMessage());
+            }
+        }
+        return issues;
     }
 
 }
