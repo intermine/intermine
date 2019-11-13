@@ -747,7 +747,7 @@ public class ISAConverter extends BioFileConverter {
                 item.setAttribute("description", description);
             }
             if (!uri.isEmpty()) {
-                item.setAttribute("uri", uri);
+                item.setAttribute("URI", uri);
             }
             if (!version.isEmpty()) {
                 item.setAttribute("version", version);
