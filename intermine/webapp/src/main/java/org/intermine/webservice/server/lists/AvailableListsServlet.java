@@ -28,6 +28,8 @@ public class AvailableListsServlet extends WebServiceServlet
                 return new ListUploadService(api);
             case DELETE:
                 return new ListDeletionService(api);
+            case PUT:
+                return new ListUpdateService(api);
             default:
                 throw new NoServiceException();
         }

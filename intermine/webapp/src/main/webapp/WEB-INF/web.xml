@@ -603,7 +603,7 @@ attribute when using this service.
                 of the ID resolution mechanism and then taking
                 all the good matches.
             </description>
-              <param required="true"
+            <param required="true"
                   type="String"
                   description="The name of the new list">name</param>
             <param required="true"
@@ -629,6 +629,22 @@ attribute when using this service.
             <format accept="application/json">json</format>
             <format accept="text/plain">text</format>
           </returns>
+        </method>
+        <method type="PUT" authenticationRequired="true">
+            <summary>Update the description of an existing list</summary>
+            <description>
+                This service allows users to updated the
+                description of lists belonging to them.
+            </description>
+            <param required="true"
+                   type="String"
+                   description="The name of the list">name</param>
+            <param required="true" type="String"
+            description="The new list's description">newDescription</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="text/plain">text</format>
+            </returns>
         </method>
     </metadata>
   </servlet-mapping>
