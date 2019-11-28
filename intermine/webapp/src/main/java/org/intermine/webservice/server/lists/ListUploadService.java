@@ -217,7 +217,7 @@ public class ListUploadService extends ListMakerService
                     final String token = st.nextToken();
                     ids.add(token);
                 }
-                if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
+                if (ids.size() <= BAG_QUERY_MAX_BATCH_SIZE) {
                     addIdsToList(ids, tempBag, type, input.getExtraValue(),
                             unmatchedIds, addIssues);
                     ids.clear();
