@@ -606,6 +606,9 @@ attribute when using this service.
             <param required="true"
                   type="String"
                   description="The name of the new list">name</param>
+            <param required="false"
+                   type="String"
+                   description="The description of the new list">description</param>
             <param required="true"
                 options="/model|model.classes"
                 default="{name}"
