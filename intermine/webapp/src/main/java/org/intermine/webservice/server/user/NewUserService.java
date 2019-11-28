@@ -19,7 +19,9 @@ import java.util.Properties;
 
 import org.directwebremoting.util.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.*;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.Emailer;

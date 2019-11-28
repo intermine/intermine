@@ -10,20 +10,12 @@ package org.intermine.webservice.server.lists;
  *
  */
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.MissingParameterException;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
