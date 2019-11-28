@@ -47,7 +47,7 @@ public class ListUpdateService extends AuthenticatedListService
     @Override
     protected void execute() throws Exception {
         String listName = getRequiredParameter("name");
-        String newListDescription = getRequiredParameter("newDescription");
+        String newListDescription = request.getParameter("newDescription");
         Profile profile = getPermission().getProfile();
         try {
             profile.updateBagDescription(listName, newListDescription);
