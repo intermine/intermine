@@ -167,7 +167,7 @@ public class AvailableListsService extends WebService
         return attributes;
     }
 
-    protected ListFormatter getFormatter() {
+    private ListFormatter getFormatter() {
         boolean jsDates = Boolean.parseBoolean(request.getParameter("jsDates"));
         if (formatIsJSON()) { // Most common - test this first.
             Profile profile = getPermission().getProfile();
