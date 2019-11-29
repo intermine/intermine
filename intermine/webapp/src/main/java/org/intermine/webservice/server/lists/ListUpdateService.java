@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Daniela Butano
  *
  */
-public class ListUpdateService extends AvailableListsService
+public class ListUpdateService extends AuthenticatedListService
 {
     Map<String, String> parameters = null;
     private static final Logger LOG = Logger.getLogger(ListUpdateService.class);
@@ -48,6 +48,7 @@ public class ListUpdateService extends AvailableListsService
         }
 
         InterMineBag list = profile.getSavedBags().get(listName);
-        output.addResultItem(getFormatter().format(list));
+        addOutputInfo("name", list.getName());
+        addOutputInfo("description", list.getDescription());
     }
 }
