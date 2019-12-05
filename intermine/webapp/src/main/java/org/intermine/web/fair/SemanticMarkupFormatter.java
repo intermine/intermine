@@ -84,8 +84,6 @@ public final class SemanticMarkupFormatter
 
         String mineURL = new URLGenerator(request).getPermanentBaseURL();
         Client client = ClientBuilder.newClient();
-        //totest
-        mineURL="ttps://yeastmine.yeastgenome.org/yeastmine";
         try {
             Response response = client.target(INTERMINE_REGISTRY
                     + "service/namespace?url=" + mineURL).request().get();
@@ -220,7 +218,11 @@ public final class SemanticMarkupFormatter
         semanticMarkup.put("@context", SCHEMA);
         semanticMarkup.put("@type", DATASET_TYPE);
         semanticMarkup.put("name", name);
-        semanticMarkup.put("description", description);
+        if (description != null && !description.isEmpty()) {
+            semanticMarkup.put("description", description);
+        } else {
+            semanticMarkup.put("description", name);
+        }
 
         PermanentURIHelper helper = new PermanentURIHelper(request);
         String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
@@ -229,6 +231,7 @@ public final class SemanticMarkupFormatter
         //we use the dataset's url to set the identifier
         if (url != null && !url.trim().equals("")) {
             semanticMarkup.put("url", url);
+            semanticMarkup.put("sameAs", url);
         } else {
             semanticMarkup.put("url", imUrlPage);
         }
