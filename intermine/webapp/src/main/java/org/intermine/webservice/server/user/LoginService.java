@@ -78,9 +78,12 @@ public class LoginService extends JSONService
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
             // The current profile was for an anonymous guest.
             issues = mergeProfiles(currentProfile, profile);
+            output.put("renamedLists", new JSONObject(issues.getRenamedBags()));
+            output.put("renamedTemplates", new JSONObject(issues.getRenamedTemplates()));
+        } else {
+            output.put("renamedLists", new JSONObject(Collections.emptyMap()));
+            output.put("renamedTemplates", new JSONObject(Collections.emptyMap()));
         }
-        output.put("renamedLists", new JSONObject(issues.getRenamedBags()));
-        output.put("renamedTemplates", new JSONObject(issues.getRenamedTemplates()));
 
         addResultItem(output, false);
     }
