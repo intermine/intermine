@@ -27,7 +27,11 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.PermanentURIHelper;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.registry.model.Instance;
+import org.intermine.web.registry.model.RegistryResponse;
 import org.intermine.web.util.URLGenerator;
+import org.intermine.webservice.server.core.SessionlessRequest;
 import org.json.JSONObject;
 
 import javax.servlet.ServletContext;
@@ -47,20 +51,19 @@ import java.util.Arrays;
  * Class providing schema/bioschemas markups
  * @author Daniela Butano
  */
-public final class SemanticMarkupUtil
+public final class SemanticMarkupFormatter
 {
     private static final String SCHEMA = "http://schema.org";
     private static final String BIO_SCHEMA = "http://bioschemas.org";
-    private static final String DATACATALOG_TYPE = "DataCatalog";
     private static final String DATASET_TYPE = "DataSet";
     private static final String BIO_ENTITY_TYPE = "BioChemEntity";
     private static final String PROTEIN_ENTITY_TYPE = "Protein";
     private static final String GENE_ENTITY_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
     private static final String INTERMINE_REGISTRY = "https://registry.intermine.org/";
-    private static final Logger LOG = Logger.getLogger(SemanticMarkupUtil.class);
+    private static final Logger LOG = Logger.getLogger(SemanticMarkupFormatter.class);
 
-    private SemanticMarkupUtil() {
+    private SemanticMarkupFormatter() {
         // don't instantiate
     }
 
@@ -69,74 +72,43 @@ public final class SemanticMarkupUtil
      * @param request the http request
      * @return the identifier
      */
-    private static String getMineIdentifier(HttpServletRequest request) {
-        HttpSession session = null;
-        ServletContext context = null;
-        try {
-            session = request.getSession();
-        } catch (RuntimeException ex) {
-        //if request.getSession() is call via ws it will throw an exception
-        //in that case we do not cache the mineIdentifier in the context
-        }
-        if (session != null) {
-            context = session.getServletContext();
-            if (context != null && context.getAttribute("mineIdentifier") != null) {
-                return (String) context.getAttribute("mineIdentifier");
+    private static Instance getMineInstance(HttpServletRequest request) {
+        Instance imInstance = null;
+        if (!(request instanceof SessionlessRequest)) {
+            HttpSession session = request.getSession();
+            imInstance = SessionMethods.getBasicInstanceInfo(session);
+            if (imInstance != null) {
+                return imInstance;
             }
         }
 
-        String mineIdentifier = null;
-        String namespace = null;
         String mineURL = new URLGenerator(request).getPermanentBaseURL();
         Client client = ClientBuilder.newClient();
+        //totest
+        mineURL="ttps://yeastmine.yeastgenome.org/yeastmine";
         try {
             Response response = client.target(INTERMINE_REGISTRY
                     + "service/namespace?url=" + mineURL).request().get();
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 JSONObject result = new JSONObject(response.readEntity(String.class));
-                namespace = result.getString("namespace");
+                String namespace = result.getString("namespace");
+                LOG.info("Namespace is: " + namespace);
+                response = client.target(INTERMINE_REGISTRY
+                        + "service/instances/" + namespace).request().get();
+                if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                    RegistryResponse registryRes = response.readEntity(RegistryResponse.class);
+                    imInstance = registryRes.getInstance();
+                }
+                if (!(request instanceof SessionlessRequest)) {
+                    SessionMethods.setBasicInstanceInfo(request.getSession().getServletContext(),
+                            imInstance);
+                }
             }
         } catch (RuntimeException ex) {
             LOG.error("Problems connecting to InterMine registry");
+            return null;
         }
-        mineIdentifier = (namespace != null && !namespace.trim().isEmpty())
-                ? INTERMINE_REGISTRY + namespace
-                : mineURL;
-        if (context != null) {
-            context.setAttribute("mineIdentifier", mineIdentifier);
-        }
-        LOG.info("Mine identifier is: " + mineIdentifier);
-        return mineIdentifier;
-    }
-
-    /**
-     * Return the list of dataset to be added to the datacatalog type
-     * @param request the http request
-     * @return the list of dataset
-     */
-    private static List<Map<String, Object>> getDatSets(HttpServletRequest request) {
-        List<Map<String, Object>> dataSets = new ArrayList<>();
-        PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
-        pathQuery.addViews("DataSet.name", "DataSet.description", "DataSet.url");
-        pathQuery.addOrderBy("DataSet.name", OrderDirection.ASC);
-        PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
-                PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
-        try {
-            ExportResultsIterator iterator = executor.execute(pathQuery);
-            Map<String, Object> dataset = null;
-            while (iterator.hasNext()) {
-                dataset = new LinkedHashMap<>();
-                List<ResultElement> elem = iterator.next();
-                String name = (String) elem.get(0).getField();
-                String description = (String) elem.get(1).getField();
-                String url = (String) elem.get(2).getField();
-                buildDataSetMarkup(dataset, name, description, url, request);
-                dataSets.add(dataset);
-            }
-        } catch (ObjectStoreException ex) {
-            //
-        }
-        return dataSets;
+        return imInstance;
     }
 
     /**
@@ -145,89 +117,106 @@ public final class SemanticMarkupUtil
      *
      * @return the map containing the markups
      */
-    public static Map<String, Object> getDataCatalogMarkup(HttpServletRequest request) {
+    public static Map<String, Object> formatInstance(HttpServletRequest request) {
         if (!isEnabled()) {
             return null;
         }
+        Instance instance = getMineInstance(request);
+
         Properties props = PropertiesUtil.getProperties();
         Map<String, Object> semanticMarkup = new LinkedHashMap<>();
         semanticMarkup.put("@context", SCHEMA);
-        semanticMarkup.put("@type", DATACATALOG_TYPE);
+        semanticMarkup.put("@type", DATASET_TYPE);
         semanticMarkup.put("name", props.getProperty("project.title"));
         semanticMarkup.put("description", props.getProperty("project.subTitle"));
         semanticMarkup.put("keywords", "Data warehouse, Data integration,"
                 + "Bioinformatics software");
-        semanticMarkup.put("identifier", getMineIdentifier(request));
-        semanticMarkup.put("url", new URLGenerator(request).getPermanentBaseURL());
+        String url = new URLGenerator(request).getPermanentBaseURL();
+        String identifier = (instance != null)
+                ? INTERMINE_REGISTRY + instance.getNamespace()
+                : url;
+        semanticMarkup.put("@id", identifier);
+        semanticMarkup.put("url", url);
 
         //citation
         Map<String, String> citation = new LinkedHashMap<>();
         citation.put("@type", "CreativeWork");
-        citation.put("identifier", INTERMINE_CITE);
+        citation.put("@id", INTERMINE_CITE);
         semanticMarkup.put("citation", citation);
 
-        //providers
-        Map<String, String> support = new LinkedHashMap<>();
-        support.put("@type", "Person");
-        support.put("name", "InterMine support");
-        support.put("email", "support@intermine.org");
-        Map<String, String> organization = new LinkedHashMap<>();
-        organization.put("@type", "Organization");
-        organization.put("name", "InterMine");
-        organization.put("url", "http://intermine.org");
-        List<Map<String, String>> providers = new ArrayList<>();
-        providers.add(support);
-        providers.add(organization);
-        semanticMarkup.put("provider", providers);
+        //contactPoint/support
+        Map<String, String> contactPoint = new LinkedHashMap<>();
+        contactPoint.put("@type", "Person");
+        contactPoint.put("name", "Support");
+        if (instance != null && !StringUtils.isEmpty(instance.getMaintainerEmail())) {
+            contactPoint.put("email", instance.getMaintainerEmail());
+        } else {
+            contactPoint.put("email", "support@intermine.org");
+        }
+        semanticMarkup.put("contactPoint", contactPoint);
 
-        //sourceOrganization
-        Map<String, String> sourceOrganization = new LinkedHashMap<>();
-        sourceOrganization.put("@type", "Organization");
-        sourceOrganization.put("name", "University of Cambridge");
-        sourceOrganization.put("url", "https://www.gen.cam.ac.uk/");
-        semanticMarkup.put("sourceOrganization", sourceOrganization);
+        //Provider
+        Map<String, String> provider = new LinkedHashMap<>();
+        provider.put("@type", "Organization");
+        if (instance != null && !StringUtils.isEmpty(instance.getMaintainerOrgName())) {
+            provider.put("name", instance.getMaintainerOrgName());
+        } else {
+            provider.put("name", "InterMine");
+        }
+        if (instance != null && !StringUtils.isEmpty(instance.getMaintainerUrl())) {
+            provider.put("name", instance.getMaintainerUrl());
+        } else {
+            provider.put("@id", "http://intermine.org");
+            provider.put("url", "http://intermine.org");
+        }
+        semanticMarkup.put("provider", provider);
 
         //datasets
-        semanticMarkup.put("dataset", getDatSets(request));
+        semanticMarkup.put("isBasedOn", formatDataSets(request));
         return semanticMarkup;
     }
 
     /**
-     * Returns schema.org markups to be added to the dataset report page
-     * @param request the HttpServletRequest
-     * @param name the dataset name
-     * @param description the dataset description
-     * @param url the dataset url
-     *
-     * @return the map containing the markups
+     * Return the list of dataset to be added to the main dataset type
+     * @param request the http request
+     * @return the list of dataset
      */
-    public static Map<String, Object> getDataSetMarkup(HttpServletRequest request, String name,
-                                                       String description, String url) {
-        if (!isEnabled()) {
-            return null;
+    private static List<Map<String, Object>> formatDataSets(HttpServletRequest request) {
+        List<Map<String, Object>> dataSets = new ArrayList<>();
+        PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
+        pathQuery.addViews("DataSet.name", "DataSet.description", "DataSet.url");
+        pathQuery.addOrderBy("DataSet.name", OrderDirection.ASC);
+        PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
+                PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
+        try {
+            ExportResultsIterator iterator = executor.execute(pathQuery);
+            while (iterator.hasNext()) {
+                List<ResultElement> elem = iterator.next();
+                String name = (String) elem.get(0).getField();
+                String description = (String) elem.get(1).getField();
+                String url = (String) elem.get(2).getField();
+                dataSets.add(formatDataSet(name, description, url, request));
+            }
+        } catch (ObjectStoreException ex) {
+            //
         }
-        Map<String, Object> semanticMarkup = new LinkedHashMap<>();
-        buildDataSetMarkup(semanticMarkup, name, description, url, request);
-
-        Map<String, String> dataCatalog = new LinkedHashMap<>();
-        dataCatalog.put("@type", DATACATALOG_TYPE);
-        dataCatalog.put("identifier", getMineIdentifier(request));
-        semanticMarkup.put("includedInDataCatalog", dataCatalog);
-
-        return semanticMarkup;
+        return dataSets;
     }
 
     /**
      * Build the dataset schema.org markups
-     * @param semanticMarkup the map where the markup are added
      * @param name the dataset name
      * @param description the dataset description
      * @param url the dataset url
      * @param request the HttpServletRequest
      *
      */
-    private static void buildDataSetMarkup(Map<String, Object> semanticMarkup, String name,
-                String description, String url, HttpServletRequest request) {
+    public static Map<String, Object> formatDataSet(String name, String description, String url,
+                                      HttpServletRequest request) {
+        if (!isEnabled()) {
+            return null;
+        }
+        Map<String, Object> semanticMarkup = new LinkedHashMap<>();
         semanticMarkup.put("@context", SCHEMA);
         semanticMarkup.put("@type", DATASET_TYPE);
         semanticMarkup.put("name", name);
@@ -235,14 +224,15 @@ public final class SemanticMarkupUtil
 
         PermanentURIHelper helper = new PermanentURIHelper(request);
         String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
-        semanticMarkup.put("url", imUrlPage);
+        semanticMarkup.put("@id", imUrlPage);
 
         //we use the dataset's url to set the identifier
         if (url != null && !url.trim().equals("")) {
-            semanticMarkup.put("identifier", url);
+            semanticMarkup.put("url", url);
         } else {
-            semanticMarkup.put("identifier", imUrlPage);
+            semanticMarkup.put("url", imUrlPage);
         }
+        return semanticMarkup;
     }
 
     /**
@@ -255,8 +245,8 @@ public final class SemanticMarkupUtil
      *
      * @throws MetaDataException if the type is wrong
      */
-    public static Map<String, Object> getBioEntityMarkup(HttpServletRequest request, String type,
-                                                         int id) throws MetaDataException {
+    public static Map<String, Object> formatBioEntity(HttpServletRequest request, String type,
+                                                      int id) throws MetaDataException {
         if (!isEnabled()) {
             return null;
         }
@@ -277,25 +267,13 @@ public final class SemanticMarkupUtil
             try {
                 InterMineLUI lui = (new InterMineLUIConverter()).getInterMineLUI(type, id);
                 if (lui != null) {
-                    semanticMarkup.put("identifier", lui.getIdentifier());
+                    semanticMarkup.put("@id", lui.getIdentifier());
                     PermanentURIHelper helper = new PermanentURIHelper(request);
                     semanticMarkup.put("url", helper.getPermanentURL(lui));
                 }
             } catch (ObjectStoreException ex) {
                 LOG.error("Problem retrieving the identifier for the entity with ID: " + id);
             }
-
-            /* bioschems suggested to remove it, need to be discussed
-            String term = null;
-            try {
-                term = ClassDescriptor.findFairTerm(Model.getInstanceByName("genomic"), type);
-                LOG.info("The term for the class " + type + " is: " + term);
-            } catch (MetaDataException ex) {
-                //error has been logged, no need to do more
-            }
-            if (term != null) {
-                semanticMarkup.put("additionalType", term);
-            }*/
         }
         return semanticMarkup;
     }
