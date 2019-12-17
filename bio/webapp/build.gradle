@@ -37,7 +37,7 @@ dependencies {
     compile group: 'psidev.psi.mi.jami.bridges', name: 'bridges-core', version: '1.1.0'
     compile group: 'psidev.psi.mi.jami.bridges', name: 'jami-ols', version: '1.1.0'
     compile group: 'psidev.psi.mi.jami', name: 'jami-core', version: '1.2.3'
-    compile group: 'psidev.psi.mi.jami', name: 'jami-interactionviewer-json', version: '2.0.2'
+    compile group: 'psidev.psi.mi.jami', name: 'jami-interactionviewer-json', version: '2.0.4'
     compile group: "org.biojava", name: "biojava-core", version: "4.2.0"
     compile group: "org.biojava", name: "biojava-genome", version: "4.2.0"
     compile group: "org.biojava", name: "biojava-ontology", version: "4.2.0"
