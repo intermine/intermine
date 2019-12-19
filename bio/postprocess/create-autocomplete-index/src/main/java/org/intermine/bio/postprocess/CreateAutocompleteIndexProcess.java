@@ -12,8 +12,6 @@ package org.intermine.bio.postprocess;
 
 import java.io.IOException;
 
-
-import org.apache.solr.client.solrj.SolrServerException;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.apache.tools.ant.BuildException;
 import org.intermine.objectstore.ObjectStore;
