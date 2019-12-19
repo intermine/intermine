@@ -168,6 +168,7 @@ public class AutoCompleter
      * @throws IOException IOException
      * @throws ObjectStoreException ObjectStoreException
      * @throws ClassNotFoundException ClassNotFoundException
+     * @throws SolrServerException solr exception
      */
     public void buildIndex(ObjectStore os)
         throws IOException, ObjectStoreException, ClassNotFoundException, SolrServerException {

@@ -11,7 +11,6 @@ package org.intermine.api.searchengine;
  */
 
 import org.apache.solr.client.solrj.SolrServerException;
-import org.intermine.api.searchengine.solr.SolrIndexHandler;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 
@@ -36,6 +35,7 @@ public interface IndexHandler
      *                  classKeys from InterMineAPI, map of classname to all key field
      *                  descriptors
      * @throws IOException IOException is thrown from Objectstore
+     * @throws SolrServerException is thrown from solr
      */
     void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys)
             throws IOException, SolrServerException;
