@@ -46,6 +46,6 @@ public abstract class PostProcessor
      * @throws  ObjectStoreException if there is a problem with the object store.
      * @throws  IllegalAccessException if setting a field value fails
      * */
-    public abstract void postProcess() throws ObjectStoreException, IllegalAccessException;
+    public abstract void postProcess() throws Exception;
 
 }

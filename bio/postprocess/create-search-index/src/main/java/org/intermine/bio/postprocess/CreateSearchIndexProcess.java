@@ -43,10 +43,7 @@ public class CreateSearchIndexProcess extends PostProcessor
     /**
      * {@inheritDoc}
      */
-    public void postProcess()
-            throws ObjectStoreException {
-        System.out.println("Creating index for keyword search...");
-
+    public void postProcess() throws Exception {
         //read class keys to figure out what are keyFields during indexing
         Properties classKeyProperties = new Properties();
         try {
@@ -64,13 +61,8 @@ public class CreateSearchIndexProcess extends PostProcessor
         try {
             IndexHandler indexHandler = new SolrIndexHandler();
             indexHandler.createIndex(osw, classKeys);
-            System.out.println("Creating index for keyword search ended successfully");
-
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Creating keyword index failed");
-            System.out.println("NO NEED TO RE-RUN THE BUILD BUT ONLY THE POSTPROCESS create-search-index");
-            System.out.println("./gradlew postprocess -Pprocess=create-search-index");
+            throw e;
         }
 
     }

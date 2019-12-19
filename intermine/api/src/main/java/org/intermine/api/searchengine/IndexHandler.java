@@ -10,6 +10,8 @@ package org.intermine.api.searchengine;
  *
  */
 
+import org.apache.solr.client.solrj.SolrServerException;
+import org.intermine.api.searchengine.solr.SolrIndexHandler;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 
@@ -36,6 +38,6 @@ public interface IndexHandler
      * @throws IOException IOException is thrown from Objectstore
      */
     void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys)
-            throws IOException;
+            throws IOException, SolrServerException;
 
 }

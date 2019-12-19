@@ -13,6 +13,7 @@ package org.intermine.bio.postprocess;
 import java.io.IOException;
 
 
+import org.apache.solr.client.solrj.SolrServerException;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.apache.tools.ant.BuildException;
 import org.intermine.objectstore.ObjectStore;
@@ -41,19 +42,10 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
      */
     public void postProcess()
             throws ObjectStoreException {
-
-        System.out .println("create autocomplete index ...");
-
         try {
-
             ObjectStore os = osw.getObjectStore();
-
             AutoCompleter ac = new AutoCompleter(os);
-
             ac.buildIndex(os);
-
-            System.out .println("Creating auto complete index has completed");
-
         } catch (NullPointerException e) {
             throw new BuildException("Could not find the class keys");
 
@@ -62,6 +54,10 @@ public class CreateAutocompleteIndexProcess extends PostProcessor
 
         } catch (ClassNotFoundException e) {
             throw new BuildException("Creating autocomplete index failed", e);
+
+        } catch (Exception e) {
+            throw new BuildException("Creating autocomplete index failed", e);
         }
+
     }
 }

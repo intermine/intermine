@@ -60,7 +60,7 @@ public final class SolrIndexHandler implements IndexHandler
 
     @Override
     public void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys)
-            throws IOException {
+            throws IOException, SolrServerException {
         long time = System.currentTimeMillis();
         LOG.debug("Creating keyword search index...");
 
@@ -190,7 +190,7 @@ public final class SolrIndexHandler implements IndexHandler
 
 
     private void addSolrDocuments(SolrClient solrClient, List<SolrInputDocument> solrDocumentList)
-            throws IOException {
+            throws IOException, SolrServerException {
 
         if (solrDocumentList.size() != 0) {
 
@@ -204,7 +204,7 @@ public final class SolrIndexHandler implements IndexHandler
                 LOG.error("Error while commiting the SolrInputdocuments to the Solrclient. "
                         + "Make sure the Solr instance is up", e);
 
-                e.printStackTrace();
+                throw e;
             }
         }
 
