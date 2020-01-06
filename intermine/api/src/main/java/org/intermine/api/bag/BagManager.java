@@ -390,8 +390,13 @@ public class BagManager
 
         allBags.putAll(getGlobalBags());
         if (profile != null) {
-            Map<String, InterMineBag> sharedBags = sharedBagManager.getSharedBags(profile);
-            allBags.putAll(sharedBags);
+            try {
+                Map<String, InterMineBag> sharedBags = sharedBagManager.getSharedBags(profile);
+                allBags.putAll(sharedBags);
+            } catch (RuntimeException ex) {
+                LOG.error("Error retrieving the shared bags "
+                        + "for the user : " + profile.getUserId());
+            }
             // A user's own lists take precedence over everything else.
             Map<String, InterMineBag> savedBags = profile.getSavedBags();
             allBags.putAll(savedBags);
