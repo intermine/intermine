@@ -34,7 +34,6 @@ import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.core.SessionlessRequest;
 import org.json.JSONObject;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Client;
@@ -60,7 +59,7 @@ public final class SemanticMarkupFormatter
     private static final String PROTEIN_ENTITY_TYPE = "Protein";
     private static final String GENE_ENTITY_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
-    private static final String INTERMINE_REGISTRY = "https://registry.intermine.orgtest/";
+    private static final String INTERMINE_REGISTRY = "https://registry.intermine.org/";
     private static final Logger LOG = Logger.getLogger(SemanticMarkupFormatter.class);
 
     private SemanticMarkupFormatter() {
@@ -206,7 +205,7 @@ public final class SemanticMarkupFormatter
      * @param description the dataset description
      * @param url the dataset url
      * @param request the HttpServletRequest
-     *
+     * @return the map representing the dataset
      */
     public static Map<String, Object> formatDataSet(String name, String description, String url,
                                       HttpServletRequest request) {
