@@ -386,7 +386,7 @@ public class ReportObject
         return null;
         //BioChemEntity, Gene and Protein markup temporary disable untile they are more stable
 /*        try {
-            Map<String, Object> markup = SemanticMarkupFormatter.formatBioEntity(request, objectType,
+          Map<String, Object> markup = SemanticMarkupFormatter.formatBioEntity(request, objectType,
                     getId());
             return new JSONObject(markup).toString(2);
         } catch (MetaDataException ex) {

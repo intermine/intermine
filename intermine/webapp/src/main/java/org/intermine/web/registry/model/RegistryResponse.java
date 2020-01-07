@@ -1,17 +1,37 @@
 package org.intermine.web.registry.model;
 
-import com.fasterxml.jackson.annotation.*;
+/*
+ * Copyright (C) 2002-2019 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Pojo class to map the response from the intermine registry
+ * @author Daniela Butano
+ *
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "instance",
     "statusCode",
     "executionTime"
 })
-public class RegistryResponse {
+public class RegistryResponse
+{
 
     @JsonProperty("instance")
     private Instance instance = null;
