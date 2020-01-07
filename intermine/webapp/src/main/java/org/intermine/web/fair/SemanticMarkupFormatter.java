@@ -60,7 +60,7 @@ public final class SemanticMarkupFormatter
     private static final String PROTEIN_ENTITY_TYPE = "Protein";
     private static final String GENE_ENTITY_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
-    private static final String INTERMINE_REGISTRY = "https://registry.intermine.org/";
+    private static final String INTERMINE_REGISTRY = "https://registry.intermine.orgtest/";
     private static final Logger LOG = Logger.getLogger(SemanticMarkupFormatter.class);
 
     private SemanticMarkupFormatter() {
@@ -162,9 +162,8 @@ public final class SemanticMarkupFormatter
             provider.put("name", "InterMine");
         }
         if (instance != null && !StringUtils.isEmpty(instance.getMaintainerUrl())) {
-            provider.put("name", instance.getMaintainerUrl());
+            provider.put("url", instance.getMaintainerUrl());
         } else {
-            provider.put("@id", "http://intermine.org");
             provider.put("url", "http://intermine.org");
         }
         semanticMarkup.put("provider", provider);
