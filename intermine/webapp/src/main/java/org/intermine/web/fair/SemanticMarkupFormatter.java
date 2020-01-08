@@ -139,6 +139,7 @@ public final class SemanticMarkupFormatter
         Map<String, String> citation = new LinkedHashMap<>();
         citation.put("@type", "CreativeWork");
         citation.put("@id", INTERMINE_CITE);
+        citation.put("url", INTERMINE_CITE);
         semanticMarkup.put("citation", citation);
 
         //contactPoint/support
