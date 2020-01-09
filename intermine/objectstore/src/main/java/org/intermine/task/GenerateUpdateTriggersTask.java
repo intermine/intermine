@@ -1018,7 +1018,7 @@ public class GenerateUpdateTriggersTask extends Task
          */
         return "DROP SEQUENCE im_post_build_insert_serial;\n"
                 + "SELECT setval('serial',\n"
-                + "(select ((max(max)-1)/1000000)::int FROM \n"
+                + "(select floor((max(max)-1)/1000000)::int FROM \n"
                 + "(SELECT max(id) FROM intermineobject UNION \n"
                 + " SELECT max(id)+2::bigint^32 AS max FROM intermineobject WHERE id < 0) _z));\n";
     }
