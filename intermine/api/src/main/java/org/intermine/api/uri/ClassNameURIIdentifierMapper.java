@@ -44,30 +44,44 @@ public final class ClassNameURIIdentifierMapper
      */
     private ClassNameURIIdentifierMapper() {
         properties = new Properties();
-        try {
-            InputStream inputStream = getClass().getClassLoader()
-                    .getResourceAsStream("class_keys.properties");
-            if (inputStream == null) {
-                LOGGER.error("File class_keys.properties not found");
-                return;
-            }
-            properties.load(inputStream);
-            String key = null;
-            Set<String> subClassNames = null;
-            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                key = (String) entry.getKey();
-                if (key.endsWith(URI_SUFFIX)) {
-                    String className = key.replace(URI_SUFFIX, "");
-                    classNameIdentifiersMap.put(className, (String) entry.getValue());
-                    subClassNames = getSubClassNames(className);
-                    for (String subClassName : subClassNames) {
-                        classNameIdentifiersMap.put(subClassName, (String) entry.getValue());
+        try{
+            InputStream inputStream = null;
+            try {
+                inputStream = getClass().getClassLoader()
+                        .getResourceAsStream("uri_keys.properties");
+                if (inputStream == null) {
+                    LOGGER.error("File uri_keys.properties not found");
+                    return;
+                }
+                properties.load(inputStream);
+                inputStream = getClass().getClassLoader()
+                        .getResourceAsStream("class_keys.properties");
+                if (inputStream == null) {
+                    LOGGER.error("File class_keys.properties not found");
+                    return;
+                }
+                properties.load(inputStream);
+                String key = null;
+                Set<String> subClassNames = null;
+                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                    key = (String) entry.getKey();
+                    if (key.endsWith(URI_SUFFIX)) {
+                        String className = key.replace(URI_SUFFIX, "");
+                        classNameIdentifiersMap.put(className, (String) entry.getValue());
+                        subClassNames = getSubClassNames(className);
+                        for (String subClassName : subClassNames) {
+                            classNameIdentifiersMap.put(subClassName, (String) entry.getValue());
+                        }
                     }
+                }
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
                 }
             }
         } catch (IOException ex) {
-            LOGGER.error("Error loading class_keys.properties file", ex);
-            return;
+                LOGGER.error("Error loading uri_keys.properties/class_keys.properties file", ex);
+                return;
         }
     }
 
