@@ -38,4 +38,4 @@ query.add_constraint("Gene", "LOOKUP", "eve", code="B")
 
 for row in query.rows():
     print(row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], \
-          row["organism.shortName"])
+        row["organism.shortName"])

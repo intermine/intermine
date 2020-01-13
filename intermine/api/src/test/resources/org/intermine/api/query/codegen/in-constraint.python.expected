@@ -37,4 +37,4 @@ query.add_constraint("Gene", "IN", "aList", code="A")
 
 for row in query.rows():
     print(row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], \
-          row["organism.shortName"])
+        row["organism.shortName"])

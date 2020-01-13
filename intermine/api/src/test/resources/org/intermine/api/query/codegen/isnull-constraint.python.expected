@@ -15,7 +15,6 @@ from __future__ import print_function
 
 # The following two lines will be needed in every python script:
 from intermine.webservice import Service
-
 service = Service("TEST_SERVICE_ROOT/service")
 
 # Get a new query on the class (table) you will be querying:
@@ -38,4 +37,4 @@ query.add_constraint("primaryIdentifier", "IS NULL", code="A")
 
 for row in query.rows():
     print(row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], \
-          row["organism.shortName"])
+        row["organism.shortName"])
