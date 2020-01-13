@@ -226,14 +226,13 @@ public final class SemanticMarkupFormatter
         PermanentURIHelper helper = new PermanentURIHelper(request);
         String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
         semanticMarkup.put("@id", imUrlPage);
+        semanticMarkup.put("url", imUrlPage);
 
         //we use the dataset's url to set the identifier
         if (url != null && !url.trim().equals("")) {
-            semanticMarkup.put("url", url);
             semanticMarkup.put("sameAs", url);
-        } else {
-            semanticMarkup.put("url", imUrlPage);
         }
+
         return semanticMarkup;
     }
 
