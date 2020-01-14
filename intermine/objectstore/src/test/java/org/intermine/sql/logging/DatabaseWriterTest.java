@@ -31,7 +31,7 @@ public class DatabaseWriterTest extends TestCase
     protected void setUp() throws Exception {
         con = DatabaseFactory.getDatabase("db.unittest").getConnection();
         con.setAutoCommit(false);
-        writer = new DatabaseWriter(con, "table1");
+        //writer = new DatabaseWriter(con, "table1");
     }
 
     protected void tearDown() throws Exception {
@@ -57,13 +57,14 @@ public class DatabaseWriterTest extends TestCase
     }
 
     public void testCompleteRows() throws Exception {
-        synchronized (writer) {
-            try {
-/*                try {
+        synchronized (con) {
+/*            try {
+                try {
                     dropTable();
                 } catch (Exception e) {
                     con.rollback();
                 }*/
+                writer = new DatabaseWriter(con, "table1");
                 createTable();
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                              + "fourth\tfifth\tsixth" + System.getProperty("line.separator"));
@@ -78,20 +79,18 @@ public class DatabaseWriterTest extends TestCase
                 assertEquals("fifth", res.getString(2));
                 assertEquals("sixth", res.getString(3));
                 assertTrue(!(res.next()));
-            }
-            finally {
                 dropTable();
-            }
         }
     }
 
     public void testShortRow() throws Exception {
-        synchronized (writer) {
+        synchronized (con) {
 /*            try {
                 dropTable();
             } catch (Exception e) {
                 con.rollback();
             }*/
+            writer = new DatabaseWriter(con, "table1");
             createTable();
             try {
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
@@ -100,19 +99,18 @@ public class DatabaseWriterTest extends TestCase
             }
             catch (IOException e) {
             }
-            finally {
-                dropTable();
-            }
+            dropTable();
         }
     }
 
     public void testLongRow() throws Exception {
-        synchronized (writer) {
+        synchronized (con) {
 /*            try {
                 dropTable();
             } catch (Exception e) {
                 con.rollback();
             }*/
+            writer = new DatabaseWriter(con, "table1");
             createTable();
             try {
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
@@ -121,19 +119,18 @@ public class DatabaseWriterTest extends TestCase
             }
             catch (IOException e) {
             }
-            finally {
-                dropTable();
-            }
+            dropTable();
         }
     }
 
     public void testPartialRows() throws Exception {
-        synchronized (writer) {
+        synchronized (con) {
 /*            try {
                 dropTable();
             } catch (Exception e) {
                 con.rollback();
             }*/
+            writer = new DatabaseWriter(con, "table1");
             createTable();
             writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                          + "fourth\tfif");
@@ -149,13 +146,14 @@ public class DatabaseWriterTest extends TestCase
     }
 
     public void testPartialRowsWithRestOnSecondWrite() throws Exception {
-        synchronized (writer) {
-            try {
-/*                try {
+        synchronized (con) {
+/*            try {
+                try {
                     dropTable();
                 } catch (Exception e) {
                     con.rollback();
                 }*/
+                writer = new DatabaseWriter(con, "table1");
                 createTable();
                 con.createStatement().execute("SELECT * FROM table1");
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
@@ -174,11 +172,7 @@ public class DatabaseWriterTest extends TestCase
                 assertEquals("fifth", res.getString(2));
                 assertEquals("sixth", res.getString(3));
                 assertTrue(!(res.next()));
-            }
-            finally {
                 dropTable();
-            }
         }
-   }
-
+    }
 }
