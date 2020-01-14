@@ -55,14 +55,12 @@ public class DatabaseWriterSQLStatementsTest extends TestCase
     }
 
     public void testWriteNull() throws Exception {
-        synchronized (writer) {
-            try {
-                writer.write((String) null);
-                fail("Expected: NullPointerException");
-            }
-            catch (NullPointerException e) {
-            }
+        writer = new DatabaseWriter();
+        try {
+            writer.write((String) null);
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
         }
     }
-
 }
