@@ -56,42 +56,14 @@ public class DatabaseWriterTest extends TestCase
         return stmt.executeQuery("SELECT * FROM table1");
     }
 
-    public void testSQLStatement() throws Exception {
-        writer = new DatabaseWriter();
-
-        assertEquals("INSERT INTO table VALUES(?)", writer.createSQLStatement("table", "value1"));
-        assertEquals("INSERT INTO table VALUES(?, ?)", writer.createSQLStatement("table", "value1\tvalue2"));
-        assertEquals("INSERT INTO table VALUES(?, ?, ?)", writer.createSQLStatement("table", "value1\t\tvalue3"));
-    }
-
-    public void testSQLStatementWithNullTable() throws Exception {
-        writer = new DatabaseWriter();
-        try {
-            writer.createSQLStatement(null, "value1");
-            fail("Expected: NullPointerException");
-        }
-        catch (NullPointerException e) {
-        }
-    }
-
-    public void testSQLStatementWithNullRow() throws Exception {
-        writer = new DatabaseWriter();
-        try {
-            writer.createSQLStatement("table", null);
-            fail("Expected: NullPointerException");
-        }
-        catch (NullPointerException e) {
-        }
-    }
-
     public void testCompleteRows() throws Exception {
         synchronized (writer) {
             try {
-                try {
+/*                try {
                     dropTable();
                 } catch (Exception e) {
-                    //con.rollback();
-                }
+                    con.rollback();
+                }*/
                 createTable();
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                              + "fourth\tfifth\tsixth" + System.getProperty("line.separator"));
@@ -115,11 +87,11 @@ public class DatabaseWriterTest extends TestCase
 
     public void testShortRow() throws Exception {
         synchronized (writer) {
-            try {
+/*            try {
                 dropTable();
             } catch (Exception e) {
-                //con.rollback();
-            }
+                con.rollback();
+            }*/
             createTable();
             try {
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
@@ -136,11 +108,11 @@ public class DatabaseWriterTest extends TestCase
 
     public void testLongRow() throws Exception {
         synchronized (writer) {
-            try {
+/*            try {
                 dropTable();
             } catch (Exception e) {
                 con.rollback();
-            }
+            }*/
             createTable();
             try {
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
@@ -157,11 +129,11 @@ public class DatabaseWriterTest extends TestCase
 
     public void testPartialRows() throws Exception {
         synchronized (writer) {
-            try {
+/*            try {
                 dropTable();
             } catch (Exception e) {
                 con.rollback();
-            }
+            }*/
             createTable();
             writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                          + "fourth\tfif");
@@ -179,11 +151,11 @@ public class DatabaseWriterTest extends TestCase
     public void testPartialRowsWithRestOnSecondWrite() throws Exception {
         synchronized (writer) {
             try {
-                try {
+/*                try {
                     dropTable();
                 } catch (Exception e) {
                     con.rollback();
-                }
+                }*/
                 createTable();
                 con.createStatement().execute("SELECT * FROM table1");
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
@@ -208,16 +180,5 @@ public class DatabaseWriterTest extends TestCase
             }
         }
    }
-
-    public void testWriteNull() throws Exception {
-        synchronized (writer) {
-            try {
-                writer.write((String) null);
-                fail("Expected: NullPointerException");
-            }
-            catch (NullPointerException e) {
-            }
-        }
-    }
 
 }
