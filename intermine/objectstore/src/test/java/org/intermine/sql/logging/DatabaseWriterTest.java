@@ -87,11 +87,11 @@ public class DatabaseWriterTest extends TestCase
     public void testCompleteRows() throws Exception {
         synchronized (writer) {
             try {
-                try {
+/*                try {
                     dropTable();
                 } catch (Exception e) {
                     con.rollback();
-                }
+                }*/
                 createTable();
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                              + "fourth\tfifth\tsixth" + System.getProperty("line.separator"));
@@ -115,11 +115,11 @@ public class DatabaseWriterTest extends TestCase
 
     public void testShortRow() throws Exception {
         synchronized (writer) {
-            try {
+/*            try {
                 dropTable();
             } catch (Exception e) {
                 con.rollback();
-            }
+            }*/
             createTable();
             try {
                 writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
