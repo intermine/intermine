@@ -43,7 +43,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.displayer.ReportDisplayer;
-import org.intermine.web.fair.SemanticMarkupUtil;
+import org.intermine.web.fair.SemanticMarkupFormatter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.HeaderConfigLink;
@@ -372,21 +372,21 @@ public class ReportObject
      * @return a string representing the markup in json format
      */
     public String getSemanticMarkup(HttpServletRequest request) {
-        if (!SemanticMarkupUtil.isEnabled()) {
+        if (!SemanticMarkupFormatter.isEnabled()) {
             return null;
         }
         if ("DataSet".equals(objectType)) {
             String name =  (String) getFieldValue("name");
             String description =  (String) getFieldValue("description");
             String url =  (String) getFieldValue("url");
-            Map<String, Object> markup = SemanticMarkupUtil.getDataSetMarkup(request, name,
-                    description, url);
+            Map<String, Object> markup = SemanticMarkupFormatter.formatDataSet(name,
+                    description, url, request);
             return new JSONObject(markup).toString(2);
         }
         return null;
         //BioChemEntity, Gene and Protein markup temporary disable untile they are more stable
 /*        try {
-            Map<String, Object> markup = SemanticMarkupUtil.getBioEntityMarkup(request, objectType,
+          Map<String, Object> markup = SemanticMarkupFormatter.formatBioEntity(request, objectType,
                     getId());
             return new JSONObject(markup).toString(2);
         } catch (MetaDataException ex) {

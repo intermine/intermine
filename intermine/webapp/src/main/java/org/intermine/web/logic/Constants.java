@@ -270,4 +270,7 @@ public final class Constants
 
     /** The key under which OAuth2 providers are stored **/
     public static final String OAUTH2_PROVIDERS = "OAUTH2_PROVIDERS";
+
+    /** The key under which basic instance info (from the registry) are stored **/
+    public static final String INSTANCE_INFO = "INSTANCE_INFO";
 }

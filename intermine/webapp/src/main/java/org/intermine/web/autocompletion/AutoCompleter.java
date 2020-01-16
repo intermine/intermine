@@ -168,9 +168,10 @@ public class AutoCompleter
      * @throws IOException IOException
      * @throws ObjectStoreException ObjectStoreException
      * @throws ClassNotFoundException ClassNotFoundException
+     * @throws SolrServerException solr exception
      */
     public void buildIndex(ObjectStore os)
-        throws IOException, ObjectStoreException, ClassNotFoundException {
+        throws IOException, ObjectStoreException, ClassNotFoundException, SolrServerException {
 
         List<SolrInputDocument> solrDocumentList = new ArrayList<SolrInputDocument>();
         List<String> fieldList = new ArrayList<String>();
@@ -226,8 +227,10 @@ public class AutoCompleter
             solrClient.commit();
         } catch (SolrServerException e) {
             LOG.error("Deleting old index failed", e);
+            throw e;
         } catch (IOException e) {
             e.printStackTrace();
+            throw e;
         }
 
         List<String> existingFields = null;

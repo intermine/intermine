@@ -11,7 +11,7 @@ package org.intermine.webservice.server.fair;
  */
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.fair.SemanticMarkupUtil;
+import org.intermine.web.fair.SemanticMarkupFormatter;
 import org.intermine.webservice.server.core.JSONService;
 
 /**
@@ -33,7 +33,7 @@ public class BioEntityMarkupService extends JSONService
     protected void execute() throws Exception {
         String entityType = getRequiredParameter("type");
         int id = Integer.parseInt(getRequiredParameter("id"));
-        addResultItem(SemanticMarkupUtil.getBioEntityMarkup(request, entityType, id), false);
+        addResultItem(SemanticMarkupFormatter.formatBioEntity(request, entityType, id), false);
     }
 
     @Override
