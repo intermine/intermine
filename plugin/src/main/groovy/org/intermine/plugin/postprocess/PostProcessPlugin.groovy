@@ -134,8 +134,9 @@ class PostProcessPlugin implements Plugin<Project> {
                             println e.message
                             if(CREATE_SEARCH_INDEX.equals(processName)
                                     || CREATE_AUTO_INDEX.equals(processName)) {
-                                println "NO NEED TO RE-RUN THE BUILD BUT ONLY THE POSTPROCESS " + processName
+                                println "Please correct the error and run again ONLY THE POSTPROCESS"
                                 println "./gradlew postprocess -Pprocess=" + processName
+                                println "NO NEED TO RE-RUN THE ENTIRE BUILD"
                             }
                             return
                         }
