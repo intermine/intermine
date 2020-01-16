@@ -64,7 +64,18 @@ public class ReportObjectField
             boolean doNotTruncate,
             boolean escapeXml) {
         this.fieldName = fieldName;
-        this.fieldValue = fieldValue;
+        if (fieldValue instanceof String) {
+            if (fieldValue != null && fieldValue.equals("null")) {
+                this.fieldValue = "";
+            }
+        } else {
+            this.fieldValue = fieldValue;
+        }
+        //temporary workaround if you do not rebuild the db (for licence = 'null') see #2161
+        //remove it in the next release
+        this.fieldValue =
+                (fieldValue instanceof String && fieldValue != null && fieldValue.equals("null"))
+                        ? "" : fieldValue;
         this.fieldDisplayerPage = fieldDisplayerPage;
         this.fieldDoNotTruncate = doNotTruncate;
         this.fieldEscapeXml = escapeXml;
