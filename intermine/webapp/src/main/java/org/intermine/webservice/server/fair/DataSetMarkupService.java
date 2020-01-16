@@ -11,7 +11,7 @@ package org.intermine.webservice.server.fair;
  */
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.fair.SemanticMarkupUtil;
+import org.intermine.web.fair.SemanticMarkupFormatter;
 import org.intermine.webservice.server.core.JSONService;
 
 /**
@@ -34,7 +34,7 @@ public class DataSetMarkupService extends JSONService
         String dataSetName = getRequiredParameter("name");
         String description = getOptionalParameter("description");
         String url = getOptionalParameter("url");
-        addResultItem(SemanticMarkupUtil.getDataSetMarkup(request, dataSetName, description, url),
+        addResultItem(SemanticMarkupFormatter.formatDataSet(dataSetName, description, url, request),
                 false);
     }
 
