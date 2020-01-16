@@ -510,7 +510,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         }
 
         if (code != null) {
-            sb.append(", code = \"" + code + "\""); // kwargs
+            sb.append(", code=\"" + code + "\""); // kwargs
         }
         sb.append(")" + endl);
         return sb.toString();
