@@ -113,7 +113,7 @@
               <c:set var="tableCount" value="${tableCount+1}" scope="page" />
             </c:when>
             <c:otherwise>
-              <c:if test="${!field.doNotTruncate && !empty field.value && field.value != 'null'}">
+              <c:if test="${!field.doNotTruncate && !empty field.value}">
                 <td class="label">${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
                 <td><strong><c:out escapeXml="${field.escapeXml}" value="${field.value}" /></strong></td>
                 <c:set var="tableCount" value="${tableCount+1}" scope="page" />
