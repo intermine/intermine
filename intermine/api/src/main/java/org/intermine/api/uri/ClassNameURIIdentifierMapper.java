@@ -25,9 +25,9 @@ import java.util.HashMap;
 /**
  * Class to map the class name defined in the core.xml with the identifier used to generate the
  * InterMineLUI (e.g. Protein ->primaryAccession,  Publication ->pubMedId). The map is loaded
- * from class_keys.properties where we have set e.g.
- * Protein_URI = primaryAccession
- *
+ * from uri_keys.properties where the identifiers for the core model classes
+ * (e.g. Protein_URI = primaryAccession) have been set and from class_keys.properties where the
+ * admninistrator can override or add new identifiers
  * @author danielabutano
  */
 public final class ClassNameURIIdentifierMapper
