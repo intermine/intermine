@@ -44,7 +44,7 @@ public final class ClassNameURIIdentifierMapper
      */
     private ClassNameURIIdentifierMapper() {
         properties = new Properties();
-        try{
+        try {
             InputStream inputStream = null;
             try {
                 inputStream = getClass().getClassLoader()
@@ -80,8 +80,8 @@ public final class ClassNameURIIdentifierMapper
                 }
             }
         } catch (IOException ex) {
-                LOGGER.error("Error loading uri_keys.properties/class_keys.properties file", ex);
-                return;
+            LOGGER.error("Error loading uri_keys.properties/class_keys.properties file", ex);
+            return;
         }
     }
 
