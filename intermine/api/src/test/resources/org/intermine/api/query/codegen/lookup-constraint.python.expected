@@ -30,8 +30,8 @@ query.add_view(
 # query.add_sort_order("Gene.primaryIdentifier", "ASC")
 
 # You can edit the constraint values below
-query.add_constraint("Gene", "LOOKUP", "zen", "C. elegans", code = "A")
-query.add_constraint("Gene", "LOOKUP", "eve", code = "B")
+query.add_constraint("Gene", "LOOKUP", "zen", "C. elegans", code="A")
+query.add_constraint("Gene", "LOOKUP", "eve", code="B")
 
 # Uncomment and edit the code below to specify your own custom logic:
 # query.set_logic("A and B")
