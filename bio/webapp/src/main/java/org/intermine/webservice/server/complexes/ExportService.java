@@ -189,7 +189,7 @@ public class ExportService extends JSONService
             // organism
             DefaultOrganism organism = null;
             if (row.get(6) != null && row.get(6).getField() != null) {
-                Integer taxonId = (Integer) row.get(6).getField();
+                Integer taxonId = Integer.parseInt((String) row.get(6).getField());
                 organism = new DefaultOrganism(taxonId);
             }
 
