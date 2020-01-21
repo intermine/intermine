@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,6 +7,29 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+InterMine 4.1.2 (January 2020)
+
+#2045 - DataSet URLs do not appear in tables; do show in report heading
+#2053 - LOOP query in webapp does not work!
+#2107 - Remove "upload to GenomeSpace" export
+#2112 - Remove im.js, imtables.js, imtables-dep.js from intermine-webapp
+#2120 - The operation was a success, but the patient died: creating solr index fails but gradlew reports success.
+#2127 - Update to Java11
+#2129 - Catch runtime exception in BagManager.getBags
+#2145 - Complex Displayer fixed
+#2151 - ThaleMine Updates to psi BioSource
+#2152 - ThaleMine Updates to BioGrid
+#2154 - Update json-ld home page
+#2158 - Use info stored in the registry to set provider/support in the home page markup
+#2159 - Travis fails - could not GET jami-interactionviewer-json
+#2160 - Update chebiWS-client (psi-complexes bio-source)
+#2161 - Licence dataset display null 
+#2164 - Add gff source to the bio/source multi gradle project
+#2172 - WebservicePythonCodeGenerator updated according to Python's code styling PEP8
+#2178 - Improve permanet URI configuration
+#2184 - Minor bug fix
+Update copyright notice with 2002-2020
 
 InterMine 4.1.1 (October 2019)
 
