@@ -30,12 +30,8 @@
     <attribute name="name" type="java.lang.String" />
     <reference name="protein" referenced-type="Protein" reverse-reference="components" />
   </class>
-<class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true"/>
-<class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
-<class name="GOEvidence" extends="OntologyEvidence" is-interface="true" />
-<class name="GOEvidenceCode" extends="OntologyAnnotationEvidenceCode" is-interface="true"/>
 <class name="Gene" is-interface="true">
-  <collection name="goAnnotation" referenced-type="GOAnnotation"/>
+  <collection name="goAnnotation" referenced-type="OntologyAnnotation"/>
 </class>
 <class name="Comment" is-interface="true">
   <collection name="publications" referenced-type="Publication"/>

@@ -400,8 +400,8 @@ public class PsiComplexesConverter extends BioFileConverter
             CvTerm qualifierTerm = xref.getQualifier();
             // String version = xref.getVersion(); -- always null
             if (GENE_ONTOLOGY.equalsIgnoreCase(dbTerm.getShortName())) {
-                String goterm = getTerm("GOTerm", xrefId);
-                Item goAnnotation = createItem("GOAnnotation");
+                String goterm = getTerm("OntologyTerm", xrefId);
+                Item goAnnotation = createItem("OntologyAnnotation");
                 if (qualifierTerm != null) {
                     goAnnotation.setAttribute("qualifier", qualifierTerm.getShortName());
                 }

@@ -81,15 +81,15 @@ public class InterproGoConverter extends BioFileConverter
             // create go term
             String goTermRefId = getGoTerm(goTermIdentifier.trim());
 
-            // create Go annotation
-            Item goAnnotation = createItem("GOAnnotation");
-            goAnnotation.setReference("subject", proteinDomain);
-            goAnnotation.setReference("ontologyTerm", goTermRefId);
+            // create a GO annotation
+            Item ontologyAnnotation = createItem("OntologyAnnotation");
+            ontologyAnnotation.setReference("subject", proteinDomain);
+            ontologyAnnotation.setReference("ontologyTerm", goTermRefId);
 
-            proteinDomain.addToCollection("goAnnotation", goAnnotation);
+            proteinDomain.addToCollection("ontologyAnnotations", ontologyAnnotation);
 
             try {
-                store(goAnnotation);
+                store(ontologyAnnotation);
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
@@ -118,7 +118,7 @@ public class InterproGoConverter extends BioFileConverter
         throws SAXException {
         String refId = goTerms.get(identifier);
         if (refId == null) {
-            Item item = createItem("GOTerm");
+            Item item = createItem("OntologyTerm");
             item.setAttribute("identifier", identifier);
             refId = item.getIdentifier();
             goTerms.put(identifier, refId);

@@ -101,15 +101,15 @@ public class GFF3ConverterTask extends Task
     }
 
     /**
-     * Set the strain ID
-     * @param strainIdentifier the strain ID
+     * Set the strain identifier
+     * @param strainIdentifier the strain.identifier
      */
-    public void setStrainName(String strainIdentifier) {
+    public void setStrainIdentifier(String strainIdentifier) {
         this.strainIdentifier = strainIdentifier;
     }
 
     /**
-     * Set the strain assembly version
+     * Set the assembly version
      * @param assemblyVersion the assembly version
      */
     public void setAssemblyVersion(String assemblyVersion) {
@@ -117,7 +117,7 @@ public class GFF3ConverterTask extends Task
     }
 
     /**
-     * Set the strain annotation version
+     * Set the annotation version
      * @param annotationVersion the annotation version
      */
     public void setAnnotationVersion(String annotationVersion) {
