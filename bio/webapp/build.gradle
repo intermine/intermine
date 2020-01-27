@@ -1,0 +1,72 @@
+apply plugin: 'war'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+def explodedWebAppDir = "$buildDir/explodedWebApp"
+
+configurations {
+    imWebApp
+}
+
+dependencies {
+    providedCompile project(':bio-core')
+    providedCompile project(':bio-model')
+    providedCompile group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), classifier: "classes"
+    providedCompile group: 'org.apache.struts', name: 'struts-tiles', version: '1.3.10'
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+
+    compile (project(':bio-tools')) { transitive = false }
+    compile group: "org.intermine", name: "intermine-jbrowse-endpoint", version: System.getProperty("imVersion")
+    compile group: 'psidev.psi.mi.jami.bridges', name: 'bridges-core', version: '1.1.0'
+    compile group: 'psidev.psi.mi.jami.bridges', name: 'jami-ols', version: '1.1.0'
+    compile group: 'psidev.psi.mi.jami', name: 'jami-core', version: '1.2.3'
+    compile group: 'psidev.psi.mi.jami', name: 'jami-interactionviewer-json', version: '2.0.4'
+    compile group: "org.biojava", name: "biojava-core", version: "4.2.0"
+    compile group: "org.biojava", name: "biojava-genome", version: "4.2.0"
+    compile group: "org.biojava", name: "biojava-ontology", version: "4.2.0"
+
+    imWebApp group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), transitive: false
+}
+
+task unwarIMWebApp(type: Copy) {
+    description "Unwar intermine-webapp under the build/explodedWebAppDir directory"
+    from { zipTree(configurations.imWebApp.singleFile) }
+    destinationDir = new File("$explodedWebAppDir")
+}
+
+task warBioWebApp(type: War) {
+    description "Create the war from the build/explodedWebAppDir directory"
+    from "${explodedWebAppDir}"
+}
+
+war {
+    dependsOn 'unwarIMWebApp'
+    finalizedBy 'warBioWebApp'
+}
+
+task classesJar(type: Jar) {
+    classifier = 'classes'
+    from sourceSets.main.output
+}
+
+artifacts {
+    archives classesJar
+}
+

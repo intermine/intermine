@@ -1,0 +1,34 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/gen']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+    compile group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
+    compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
+    compile group: 'uk.ac.ebi.chebi.webapps.chebiWS.client', name: 'chebiWS-client', version: '2.4'
+    compile group: 'psidev.psi.mi.jami', name: 'jami-commons', version: '1.1.3'
+    compile group: 'psidev.psi.mi.jami', name: 'jami-core', version: '1.2.2'
+    compile group: 'psidev.psi.mi.jami', name: 'jami-mitab', version: '1.1.2'
+    compile group: 'psidev.psi.mi.jami', name: 'jami-xml', version: '1.1.3'
+    bioModel group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+}
+
+processResources {
+    from('.') { include ("*.properties")}
+}
