@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -1018,7 +1018,7 @@ public class GenerateUpdateTriggersTask extends Task
          */
         return "DROP SEQUENCE im_post_build_insert_serial;\n"
                 + "SELECT setval('serial',\n"
-                + "(select ((max(max)-1)/1000000)::int FROM \n"
+                + "(select floor((max(max)-1)/1000000)::int FROM \n"
                 + "(SELECT max(id) FROM intermineobject UNION \n"
                 + " SELECT max(id)+2::bigint^32 AS max FROM intermineobject WHERE id < 0) _z));\n";
     }

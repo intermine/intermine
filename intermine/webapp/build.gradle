@@ -40,6 +40,7 @@ dependencies {
     compile group: 'org.everit.json', name: 'org.everit.json.schema', version: '1.5.1'
     compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.2.3'
+    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.25'
     compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
     compile group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.25'
 

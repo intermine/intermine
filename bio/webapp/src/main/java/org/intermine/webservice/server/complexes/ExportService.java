@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.complexes;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -189,7 +189,7 @@ public class ExportService extends JSONService
             // organism
             DefaultOrganism organism = null;
             if (row.get(6) != null && row.get(6).getField() != null) {
-                Integer taxonId = (Integer) row.get(6).getField();
+                Integer taxonId = Integer.parseInt((String) row.get(6).getField());
                 organism = new DefaultOrganism(taxonId);
             }
 
