@@ -1,7 +1,7 @@
 package org.intermine.web.logic.session;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -63,6 +63,7 @@ import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.results.WebState;
+import org.intermine.web.registry.model.Instance;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
 
@@ -1214,5 +1215,25 @@ public final class SessionMethods
     public static Set<String> getOAuth2Providers(HttpSession session) {
         ServletContext ctx = session.getServletContext();
         return (Set<String>) ctx.getAttribute(Constants.OAUTH2_PROVIDERS);
+    }
+
+    /**
+     * Set the instance to use.
+     * @param ctx The Servlet-Context
+     * @param instance The instance
+     */
+    public static void setBasicInstanceInfo(ServletContext ctx, Instance instance) {
+        ctx.setAttribute(Constants.INSTANCE_INFO, instance);
+    }
+
+    /**
+     * Get the instance to use
+     * @param session The session to use for lookups
+     * @return The instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static Instance getBasicInstanceInfo(HttpSession session) {
+        ServletContext ctx = session.getServletContext();
+        return (Instance) ctx.getAttribute(Constants.INSTANCE_INFO);
     }
 }

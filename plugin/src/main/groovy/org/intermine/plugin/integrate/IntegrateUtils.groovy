@@ -182,7 +182,9 @@ class IntegrateUtils {
         }
         String gff3SeqHandlerClassName = (bioSourceProperties.containsKey("gff3.seqHandlerClassName")) ?
                 bioSourceProperties.getProperty("gff3.seqHandlerClassName") : ""
-        String licence = ant.project.getProperty("gff3.licence")
+        String licence = (ant.project.getProperty("gff3.licence") != null) ?
+                ant.project.getProperty("gff3.licence") : ""
+
 
         ant.taskdef(name: "convertGFF3File", classname: "org.intermine.bio.task.GFF3ConverterTask") {
             classpath {

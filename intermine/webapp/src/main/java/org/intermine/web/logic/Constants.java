@@ -1,7 +1,7 @@
 package org.intermine.web.logic;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -270,4 +270,7 @@ public final class Constants
 
     /** The key under which OAuth2 providers are stored **/
     public static final String OAUTH2_PROVIDERS = "OAUTH2_PROVIDERS";
+
+    /** The key under which basic instance info (from the registry) are stored **/
+    public static final String INSTANCE_INFO = "INSTANCE_INFO";
 }

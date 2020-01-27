@@ -3261,33 +3261,6 @@ The different token types are:
 
 <!-- new in version 30 -->
   <servlet>
-      <servlet-name>ws-datacatalog-markup</servlet-name>
-      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
-      <init-param>
-          <param-name>GET</param-name>
-          <param-value>org.intermine.webservice.server.fair.DataCatalogMarkupService</param-value>
-      </init-param>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>ws-datacatalog-markup</servlet-name>
-    <url-pattern>/service/semantic-markup/datacatalog</url-pattern>
-    <metadata>
-        <name>Semantic Markup</name>
-        <minVersion>29</minVersion>
-        <method type="GET" authenticationRequired="false">
-            <summary>Get semantic markup for datacatalog type</summary>
-            <description>
-                This service provides semantic markup for the InterMine home page 
-            </description>
-            <returns>
-                <format accept="application/json">json</format>
-            </returns>
-        </method>
-    </metadata>
-  </servlet-mapping>
-
-  <servlet>
       <servlet-name>ws-dataset-markup</servlet-name>
       <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
       <init-param>
@@ -3389,6 +3362,34 @@ The different token types are:
                 required="true"
                 type="String"
                 description="The internal intermine ID">id</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <!-- new in version 31 -->
+  <servlet>
+      <servlet-name>ws-homepage-markup</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.fair.HomePageMarkupService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-homepage-markup</servlet-name>
+    <url-pattern>/service/semantic-markup/homepage</url-pattern>
+    <metadata>
+        <name>Semantic Markup</name>
+        <minVersion>29</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get semantic markup for the home page</summary>
+            <description>
+                This service provides semantic markup for the InterMine home page
+            </description>
             <returns>
                 <format accept="application/json">json</format>
             </returns>
