@@ -10,7 +10,7 @@ buildscript {
 
 subprojects {
     group = 'org.intermine'
-    version = '4.1.1'
+    version = '4.1.2'
 
     apply plugin: "java"
     apply plugin: "maven"
@@ -127,9 +127,9 @@ subprojects {
             vcsUrl = 'https://github.com/intermine/intermine.git'
             publicDownloadNumbers = true
             version {
-                name = '4.1.1'
-                desc = 'InterMine 4.1.1'
-                vcsTag = 'intermine-4.1.1'
+                name = '4.1.2'
+                desc = 'InterMine 4.1.2'
+                vcsTag = 'intermine-4.1.2'
             }
         }
         configurations = ['archives']
