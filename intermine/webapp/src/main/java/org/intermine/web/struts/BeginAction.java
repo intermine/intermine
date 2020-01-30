@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -39,7 +39,7 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.userprofile.Tag;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.metadata.TypeUtil;
-import org.intermine.web.fair.SemanticMarkupUtil;
+import org.intermine.web.fair.SemanticMarkupFormatter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONObject;
@@ -241,7 +241,7 @@ public class BeginAction extends InterMineAction
      * @param request HTTP Servlet Request
      */
     private void markupHomePage(HttpServletRequest request) {
-        Map<String, Object> homePageMarkup = SemanticMarkupUtil.getDataCatalogMarkup(request);
+        Map<String, Object> homePageMarkup = SemanticMarkupFormatter.formatInstance(request);
         if (homePageMarkup != null) {
             request.setAttribute("semanticMarkup", new JSONObject(homePageMarkup).toString(2));
         }

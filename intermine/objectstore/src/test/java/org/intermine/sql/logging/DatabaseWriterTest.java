@@ -1,7 +1,7 @@
 package org.intermine.sql.logging;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,7 +31,6 @@ public class DatabaseWriterTest extends TestCase
     protected void setUp() throws Exception {
         con = DatabaseFactory.getDatabase("db.unittest").getConnection();
         con.setAutoCommit(false);
-        writer = new DatabaseWriter(con, "table1");
     }
 
     protected void tearDown() throws Exception {
@@ -56,168 +55,89 @@ public class DatabaseWriterTest extends TestCase
         return stmt.executeQuery("SELECT * FROM table1");
     }
 
-    public void testSQLStatement() throws Exception {
-        writer = new DatabaseWriter();
-
-        assertEquals("INSERT INTO table VALUES(?)", writer.createSQLStatement("table", "value1"));
-        assertEquals("INSERT INTO table VALUES(?, ?)", writer.createSQLStatement("table", "value1\tvalue2"));
-        assertEquals("INSERT INTO table VALUES(?, ?, ?)", writer.createSQLStatement("table", "value1\t\tvalue3"));
-    }
-
-    public void testSQLStatementWithNullTable() throws Exception {
-        writer = new DatabaseWriter();
-        try {
-            writer.createSQLStatement(null, "value1");
-            fail("Expected: NullPointerException");
-        }
-        catch (NullPointerException e) {
-        }
-    }
-
-    public void testSQLStatementWithNullRow() throws Exception {
-        writer = new DatabaseWriter();
-        try {
-            writer.createSQLStatement("table", null);
-            fail("Expected: NullPointerException");
-        }
-        catch (NullPointerException e) {
-        }
-    }
-
     public void testCompleteRows() throws Exception {
-        synchronized (writer) {
-            try {
-                try {
-                    dropTable();
-                } catch (Exception e) {
-                    con.rollback();
-                }
-                createTable();
-                writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
-                             + "fourth\tfifth\tsixth" + System.getProperty("line.separator"));
-
-                ResultSet res = getResults();
-                assertTrue(res.next());
-                assertEquals("first", res.getString(1));
-                assertEquals("second", res.getString(2));
-                assertEquals("third", res.getString(3));
-                assertTrue(res.next());
-                assertEquals("fourth", res.getString(1));
-                assertEquals("fifth", res.getString(2));
-                assertEquals("sixth", res.getString(3));
-                assertTrue(!(res.next()));
-            }
-            finally {
-                dropTable();
-            }
-        }
-    }
-
-    public void testShortRow() throws Exception {
-        synchronized (writer) {
-            try {
-                dropTable();
-            } catch (Exception e) {
-                con.rollback();
-            }
-            createTable();
-            try {
-                writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
-                             + "fourth\tfifth" + System.getProperty("line.separator"));
-                fail("Expected: IOException");
-            }
-            catch (IOException e) {
-            }
-            finally {
-                dropTable();
-            }
-        }
-    }
-
-    public void testLongRow() throws Exception {
-        synchronized (writer) {
-            try {
-                dropTable();
-            } catch (Exception e) {
-                con.rollback();
-            }
-            createTable();
-            try {
-                writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
-                             + "fourth\tfifth\tsixth\tseventh" + System.getProperty("line.separator"));
-                fail("Expected: IOException");
-            }
-            catch (IOException e) {
-            }
-            finally {
-                dropTable();
-            }
-        }
-    }
-
-    public void testPartialRows() throws Exception {
-        synchronized (writer) {
-            try {
-                dropTable();
-            } catch (Exception e) {
-                con.rollback();
-            }
+        try {
+            writer = new DatabaseWriter(con, "table1");
             createTable();
             writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
-                         + "fourth\tfif");
+                    + "fourth\tfifth\tsixth" + System.getProperty("line.separator"));
 
             ResultSet res = getResults();
             assertTrue(res.next());
             assertEquals("first", res.getString(1));
             assertEquals("second", res.getString(2));
             assertEquals("third", res.getString(3));
+            assertTrue(res.next());
+            assertEquals("fourth", res.getString(1));
+            assertEquals("fifth", res.getString(2));
+            assertEquals("sixth", res.getString(3));
             assertTrue(!(res.next()));
+        } finally {
             dropTable();
         }
     }
 
-    public void testPartialRowsWithRestOnSecondWrite() throws Exception {
-        synchronized (writer) {
-            try {
-                try {
-                    dropTable();
-                } catch (Exception e) {
-                    con.rollback();
-                }
-                createTable();
-                con.createStatement().execute("SELECT * FROM table1");
-                writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
-                             + "fourth\tfif");
-                con.createStatement().execute("SELECT * FROM table1");
-                writer.write("th\tsixth" + System.getProperty("line.separator"));
-                con.createStatement().execute("SELECT * FROM table1");
-
-                ResultSet res = getResults();
-                assertTrue(res.next());
-                assertEquals("first", res.getString(1));
-                assertEquals("second", res.getString(2));
-                assertEquals("third", res.getString(3));
-                assertTrue(res.next());
-                assertEquals("fourth", res.getString(1));
-                assertEquals("fifth", res.getString(2));
-                assertEquals("sixth", res.getString(3));
-                assertTrue(!(res.next()));
-            }
-            finally {
-                dropTable();
-            }
+    public void testShortRow() throws Exception {
+        writer = new DatabaseWriter(con, "table1");
+        createTable();
+        try {
+            writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
+                         + "fourth\tfifth" + System.getProperty("line.separator"));
+            fail("Expected: IOException");
         }
-   }
-
-    public void testWriteNull() throws Exception {
-        synchronized (writer) {
-            try {
-                writer.write((String) null);
-                fail("Expected: NullPointerException");
-            }
-            catch (NullPointerException e) {
-            }
+        catch (IOException e) {
         }
+        dropTable();
     }
 
+    public void testLongRow() throws Exception {
+        writer = new DatabaseWriter(con, "table1");
+        createTable();
+        try {
+            writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
+                         + "fourth\tfifth\tsixth\tseventh" + System.getProperty("line.separator"));
+            fail("Expected: IOException");
+        }
+        catch (IOException e) {
+        }
+        dropTable();
+    }
+
+    public void testPartialRows() throws Exception {
+        writer = new DatabaseWriter(con, "table1");
+        createTable();
+        writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
+                     + "fourth\tfif");
+
+        ResultSet res = getResults();
+        assertTrue(res.next());
+        assertEquals("first", res.getString(1));
+        assertEquals("second", res.getString(2));
+        assertEquals("third", res.getString(3));
+        assertTrue(!(res.next()));
+        dropTable();
+    }
+
+    public void testPartialRowsWithRestOnSecondWrite() throws Exception {
+        writer = new DatabaseWriter(con, "table1");
+        createTable();
+        con.createStatement().execute("SELECT * FROM table1");
+        writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
+                     + "fourth\tfif");
+        con.createStatement().execute("SELECT * FROM table1");
+        writer.write("th\tsixth" + System.getProperty("line.separator"));
+        con.createStatement().execute("SELECT * FROM table1");
+
+        ResultSet res = getResults();
+        assertTrue(res.next());
+        assertEquals("first", res.getString(1));
+        assertEquals("second", res.getString(2));
+        assertEquals("third", res.getString(3));
+        assertTrue(res.next());
+        assertEquals("fourth", res.getString(1));
+        assertEquals("fifth", res.getString(2));
+        assertEquals("sixth", res.getString(3));
+        assertTrue(!(res.next()));
+        dropTable();
+    }
 }

@@ -1,5 +1,9 @@
-# Contributing to InterMine
+# Contributing to InterMine projects
 
-InterMine is an open source project that welcomes contributions from the community. We have detailed instructions here for how to get involved:
+Welcome, we're happy to have you here! 🎉 
 
-http://intermine.org/contributing/
+Everyone is welcome to participate and work in issues on all InterMine repos. 
+
+Please visit our [contributing guidelines](http://intermine.org/contributing/) for more info. 
+
+InterMine has a [Code of Conduct](http://intermine.org/code-of-conduct/), which we expect all participants to abide by. Generally, be nice and respectful to one another!

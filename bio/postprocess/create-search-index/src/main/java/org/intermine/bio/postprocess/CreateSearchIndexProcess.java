@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,7 +18,6 @@ import org.apache.tools.ant.BuildException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.postprocess.PostProcessor;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.api.searchengine.IndexHandler;
 import org.intermine.api.searchengine.solr.SolrIndexHandler;
@@ -43,10 +42,7 @@ public class CreateSearchIndexProcess extends PostProcessor
     /**
      * {@inheritDoc}
      */
-    public void postProcess()
-            throws ObjectStoreException {
-        System.out .println("Creating index for keyword search...");
-
+    public void postProcess() throws Exception {
         //read class keys to figure out what are keyFields during indexing
         Properties classKeyProperties = new Properties();
         try {
@@ -64,12 +60,8 @@ public class CreateSearchIndexProcess extends PostProcessor
         try {
             IndexHandler indexHandler = new SolrIndexHandler();
             indexHandler.createIndex(osw, classKeys);
-
-            System.out .println("Creating index for keyword search ended successfully");
-
         } catch (Exception e) {
-            System.out .println("Creating keyword index failed");
-            e.printStackTrace();
+            throw e;
         }
 
     }

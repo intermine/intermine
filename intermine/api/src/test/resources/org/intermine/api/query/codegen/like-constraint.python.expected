@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+  #!/usr/bin/env python
 
 # This is an automatically generated script to run your query
 # to use it you will require the intermine python client.
@@ -30,7 +30,7 @@ query.add_view(
 # query.add_sort_order("Gene.primaryIdentifier", "ASC")
 
 # You can edit the constraint values below
-query.add_constraint("organism.commonName", "LIKE", "D.*", code = "A")
+query.add_constraint("organism.commonName", "LIKE", "D.*", code="A")
 
 # Uncomment and edit the code below to specify your own custom logic:
 # query.set_logic("A")

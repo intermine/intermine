@@ -1,7 +1,7 @@
 package org.intermine.api.uri;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,9 +25,9 @@ import java.util.HashMap;
 /**
  * Class to map the class name defined in the core.xml with the identifier used to generate the
  * InterMineLUI (e.g. Protein ->primaryAccession,  Publication ->pubMedId). The map is loaded
- * from class_keys.properties where we have set e.g.
- * Protein_URI = primaryAccession
- *
+ * from uri_keys.properties where the identifiers for the core model classes
+ * (e.g. Protein_URI = primaryAccession) have been set and from class_keys.properties where the
+ * admninistrator can override or add new identifiers
  * @author danielabutano
  */
 public final class ClassNameURIIdentifierMapper
@@ -45,28 +45,42 @@ public final class ClassNameURIIdentifierMapper
     private ClassNameURIIdentifierMapper() {
         properties = new Properties();
         try {
-            InputStream inputStream = getClass().getClassLoader()
-                    .getResourceAsStream("class_keys.properties");
-            if (inputStream == null) {
-                LOGGER.error("File class_keys.properties not found");
-                return;
-            }
-            properties.load(inputStream);
-            String key = null;
-            Set<String> subClassNames = null;
-            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                key = (String) entry.getKey();
-                if (key.endsWith(URI_SUFFIX)) {
-                    String className = key.replace(URI_SUFFIX, "");
-                    classNameIdentifiersMap.put(className, (String) entry.getValue());
-                    subClassNames = getSubClassNames(className);
-                    for (String subClassName : subClassNames) {
-                        classNameIdentifiersMap.put(subClassName, (String) entry.getValue());
+            InputStream inputStream = null;
+            try {
+                inputStream = getClass().getClassLoader()
+                        .getResourceAsStream("uri_keys.properties");
+                if (inputStream == null) {
+                    LOGGER.error("File uri_keys.properties not found");
+                    return;
+                }
+                properties.load(inputStream);
+                inputStream = getClass().getClassLoader()
+                        .getResourceAsStream("class_keys.properties");
+                if (inputStream == null) {
+                    LOGGER.error("File class_keys.properties not found");
+                    return;
+                }
+                properties.load(inputStream);
+                String key = null;
+                Set<String> subClassNames = null;
+                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                    key = (String) entry.getKey();
+                    if (key.endsWith(URI_SUFFIX)) {
+                        String className = key.replace(URI_SUFFIX, "");
+                        classNameIdentifiersMap.put(className, (String) entry.getValue());
+                        subClassNames = getSubClassNames(className);
+                        for (String subClassName : subClassNames) {
+                            classNameIdentifiersMap.put(subClassName, (String) entry.getValue());
+                        }
                     }
+                }
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
                 }
             }
         } catch (IOException ex) {
-            LOGGER.error("Error loading class_keys.properties file", ex);
+            LOGGER.error("Error loading uri_keys.properties/class_keys.properties file", ex);
             return;
         }
     }

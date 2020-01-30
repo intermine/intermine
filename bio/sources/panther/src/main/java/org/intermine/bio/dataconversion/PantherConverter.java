@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -141,6 +141,12 @@ public class PantherConverter extends BioFileConverter
         if (resolvedGenePid == null) {
             // parsed the gene string but was protein see #1995
             return null;
+        }
+
+        // A. thaliana bug fix for Gene IDs.
+        // Example: At5g04395 is stored as two different genes: At5g04395 and AT5G04395.
+        if ("3702".equals(taxonId)) {
+            resolvedGenePid = resolvedGenePid.toUpperCase();
         }
 
         // only resolve if fish - TODO put in config file

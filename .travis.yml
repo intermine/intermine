@@ -15,7 +15,7 @@ env:
   - TEST_SUITE=ws CLIENT=PY  
 sudo: true
 jdk:
-- openjdk8
+- openjdk11
 dist: 
 - trusty
 before_script:

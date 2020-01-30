@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -819,7 +820,7 @@ public class GFF3Converter extends DataConverter
         if (item == null) {
             item = createItem("DataSet");
             item.setAttribute("name", title);
-            if (licence != null) {
+            if (licence != null && !StringUtils.isEmpty(licence)) {
                 item.setAttribute("licence", licence);
             }
             item.setReference("dataSource", dataSourceItem);

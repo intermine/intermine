@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -61,12 +61,13 @@ public class PsiConverter extends BioFileConverter
     private Set<String> taxonIds = null;
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
-    private static final String ALIAS_TYPE = "gene name";
+    private static String aliasType = "gene name";
     private static final String SPOKE_MODEL = "prey";   // don't store if all roles prey
     private static final String DEFAULT_IDENTIFIER = "symbol";
     private static final String DEFAULT_DATASOURCE = "";
     private static final String BINDING_SITE = "MI:0117";
     private static final Set<String> INTERESTING_COMMENTS = new HashSet<String>();
+    private static final String ATH_TAXONID = "3702";  // A. thaliana taxon ID. (ThaleMine)
 
     protected IdResolver rslv;
 
@@ -104,9 +105,14 @@ public class PsiConverter extends BioFileConverter
     @Override
     public void process(Reader reader) throws Exception {
 
-        // init reslover
-        if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
+        // A. thaliana does not use ID resolver, and the alias type is locus name.
+        if (taxonIds.size() == 1 && taxonIds.contains(ATH_TAXONID)) {
+            aliasType = "locus name";
+        } else {
+            // init reslover
+            if (rslv == null) {
+                rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
+            }
         }
 
         PsiHandler handler = new PsiHandler();
@@ -277,7 +283,7 @@ public class PsiConverter extends BioFileConverter
             } else if ("alias".equals(qName) && "names".equals(stack.peek())
                             && stack.search("interactor") == 2) {
                 String type = attrs.getValue("type");
-                if (ALIAS_TYPE.equals(type)) {
+                if (aliasType.equals(type)) {
                     attName = type;
                 }
             // <interactorList><interactor id="4"><sequence>
@@ -689,6 +695,11 @@ public class PsiConverter extends BioFileConverter
                 }
                 identifier = rslv.resolveId(taxonId, identifier).iterator().next();
                 return identifier;
+            }
+
+            // If this is A. thaliana, make ids uppercase.
+            if (taxonId.equals(ATH_TAXONID)) {
+                return id.toUpperCase();
             }
 
             return id;
