@@ -241,7 +241,8 @@ public class BeginAction extends InterMineAction
      * @param request HTTP Servlet Request
      */
     private void markupHomePage(HttpServletRequest request, Profile profile) {
-        Map<String, Object> homePageMarkup = SemanticMarkupFormatter.formatInstance(request, profile);
+        Map<String, Object> homePageMarkup = SemanticMarkupFormatter.formatInstance(request,
+                profile);
         if (homePageMarkup != null) {
             request.setAttribute("semanticMarkup", new JSONObject(homePageMarkup).toString(2));
         }
