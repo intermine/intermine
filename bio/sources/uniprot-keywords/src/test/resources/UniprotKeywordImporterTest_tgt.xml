@@ -16,7 +16,7 @@
 <collection name="synonyms"><reference ref_id="3_4"/></collection>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="name" value="UniProt keywords data set"/>
+<attribute name="name" value="UniProt data set"/>
 <attribute name="licence" value="http://creativecommons.org/licenses/by/4.0/"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
