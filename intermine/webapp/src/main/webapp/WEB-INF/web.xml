@@ -2613,6 +2613,9 @@ query could be used:
              </description>
              <param type="String"
                     required="true"
+                    description="The current password associated with the account.">oldPassword</param>
+             <param type="String"
+                    required="true"
                     description="The new password to associate with the account.">newPassword</param>
              <returns>
                 <format accept="application/json">json</format>

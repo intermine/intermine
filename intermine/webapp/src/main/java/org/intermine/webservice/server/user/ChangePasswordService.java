@@ -14,7 +14,10 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.exceptions.MissingParameterException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.UnauthorizedException;
+import org.intermine.webservice.server.output.Output;
 
 /**
  * Class for changing the password of an existing user
@@ -34,6 +37,7 @@ public class ChangePasswordService extends JSONService
 
     @Override
     protected void execute() throws Exception {
+        String oldPassword = getRequiredParameter("oldPassword");
         String newPassword = getRequiredParameter("newPassword");
         ProfileManager pm = im.getProfileManager();
         Profile profile;
@@ -41,6 +45,9 @@ public class ChangePasswordService extends JSONService
             profile = getPermission().getProfile();
         } else {
             throw new UnauthorizedException("The request must be authenticated");
+        }
+        if (!pm.validPassword(profile.getUsername(), oldPassword)) {
+            throw new ServiceException("Old password wrong", Output.SC_FORBIDDEN);
         }
 
         pm.setPassword(profile.getUsername(), newPassword);
