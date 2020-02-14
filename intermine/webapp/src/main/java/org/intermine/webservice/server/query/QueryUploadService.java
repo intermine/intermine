@@ -106,7 +106,7 @@ public class QueryUploadService extends WebService
         switch (getFormat()) {
             case JSON:
                 headerAttributes.put(JSONFormatter.KEY_INTRO, "\"queries\":{");
-                headerAttributes.put(JSONFormatter.KEY_OUTRO, "},");
+                headerAttributes.put(JSONFormatter.KEY_OUTRO, "}");
                 break;
             default:
                 break;
