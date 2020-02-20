@@ -113,6 +113,7 @@ public final class SemanticMarkupFormatter
     /**
      * Returns schema.org markups to be added to the home page
      * @param request the HttpServletRequest
+     * @param profile the profile
      *
      * @return the map containing the markups
      */
@@ -188,7 +189,7 @@ public final class SemanticMarkupFormatter
         pathQuery.addOrderBy("DataSet.name", OrderDirection.ASC);
         InterMineAPI im = InterMineContext.getInterMineAPI();
         PathQueryExecutor executor = new PathQueryExecutor(im.getObjectStore(),
-                profile,null, im.getBagManager());
+                profile, null, im.getBagManager());
         try {
             ExportResultsIterator iterator = executor.execute(pathQuery);
             while (iterator.hasNext()) {
