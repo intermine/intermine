@@ -30,7 +30,7 @@ import org.intermine.xml.full.Item;
 public class MgiIdentifiersConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(MgiIdentifiersConverter.class);
-    private static final String DATASET_TITLE = "MGI identifiers";
+    private static final String DATASET_TITLE = "Mouse gene identifiers";
     private static final String DATA_SOURCE_NAME = "MGI";
     private static final String NULL_STRING = "null";
 

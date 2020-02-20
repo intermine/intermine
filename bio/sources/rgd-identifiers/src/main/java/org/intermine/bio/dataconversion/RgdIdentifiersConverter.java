@@ -34,7 +34,7 @@ import org.intermine.xml.full.Item;
 public class RgdIdentifiersConverter extends BioFileConverter
 {
     //
-    private static final String DATASET_TITLE = "RGD gene identifiers";
+    private static final String DATASET_TITLE = "Rat gene identifiers";
     private static final String DATA_SOURCE_NAME = "Rat Genome Database";
 
     private static final String RAT_TAXON = "10116";
