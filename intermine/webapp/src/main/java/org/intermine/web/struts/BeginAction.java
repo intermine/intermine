@@ -177,7 +177,7 @@ public class BeginAction extends InterMineAction
         }
 
         //semantic markup
-        markupHomePage(request);
+        markupHomePage(request, SessionMethods.getProfile(session));
 
         return mapping.findForward("begin");
     }
@@ -240,8 +240,9 @@ public class BeginAction extends InterMineAction
      * Markup the home page using bioschemas.org
      * @param request HTTP Servlet Request
      */
-    private void markupHomePage(HttpServletRequest request) {
-        Map<String, Object> homePageMarkup = SemanticMarkupFormatter.formatInstance(request);
+    private void markupHomePage(HttpServletRequest request, Profile profile) {
+        Map<String, Object> homePageMarkup = SemanticMarkupFormatter.formatInstance(request,
+                profile);
         if (homePageMarkup != null) {
             request.setAttribute("semanticMarkup", new JSONObject(homePageMarkup).toString(2));
         }

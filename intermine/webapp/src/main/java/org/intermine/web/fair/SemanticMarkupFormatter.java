@@ -11,6 +11,8 @@ package org.intermine.web.fair;
  */
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
@@ -111,10 +113,11 @@ public final class SemanticMarkupFormatter
     /**
      * Returns schema.org markups to be added to the home page
      * @param request the HttpServletRequest
+     * @param profile the profile
      *
      * @return the map containing the markups
      */
-    public static Map<String, Object> formatInstance(HttpServletRequest request) {
+    public static Map<String, Object> formatInstance(HttpServletRequest request, Profile profile) {
         if (!isEnabled()) {
             return null;
         }
@@ -169,7 +172,7 @@ public final class SemanticMarkupFormatter
         semanticMarkup.put("provider", provider);
 
         //datasets
-        semanticMarkup.put("isBasedOn", formatDataSets(request));
+        semanticMarkup.put("isBasedOn", formatDataSets(request, profile));
         return semanticMarkup;
     }
 
@@ -178,13 +181,15 @@ public final class SemanticMarkupFormatter
      * @param request the http request
      * @return the list of dataset
      */
-    private static List<Map<String, Object>> formatDataSets(HttpServletRequest request) {
+    private static List<Map<String, Object>> formatDataSets(HttpServletRequest request,
+                                                            Profile profile) {
         List<Map<String, Object>> dataSets = new ArrayList<>();
         PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
         pathQuery.addViews("DataSet.name", "DataSet.description", "DataSet.url");
         pathQuery.addOrderBy("DataSet.name", OrderDirection.ASC);
-        PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
-                PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
+        InterMineAPI im = InterMineContext.getInterMineAPI();
+        PathQueryExecutor executor = new PathQueryExecutor(im.getObjectStore(),
+                profile, null, im.getBagManager());
         try {
             ExportResultsIterator iterator = executor.execute(pathQuery);
             while (iterator.hasNext()) {
