@@ -229,7 +229,7 @@ public class InterMineLUIConverter
      * @return the PathQueryExecutor
      */
     public PathQueryExecutor getPathQueryExecutor() {
-        InterMineAPI im = InterMineContext.getInterMineAPI();
+        InterMineAPI im = getInterMineAPI();
         return new PathQueryExecutor(im.getObjectStore(), profile, null, im.getBagManager());
     }
 }
