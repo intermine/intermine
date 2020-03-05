@@ -910,4 +910,18 @@ public class GFF3Converter extends DataConverter
         }
         return refId;
     }
+
+    /**
+     * Return the taxonId, since it can be needed elsewhere like in GFFSeqHandler implementations.
+     */
+    public String getTaxonId() {
+	return orgTaxonId;
+    }
+    
+    /**
+     * Return the strain identifier, since it can be needed elsewhere like in GFFSeqHandler implementations.
+     */
+    public String getStrainIdentifier() {
+	return strainIdentifier;
+    }
 }
