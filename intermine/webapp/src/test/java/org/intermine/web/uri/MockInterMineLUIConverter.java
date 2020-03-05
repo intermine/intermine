@@ -19,7 +19,7 @@ import org.intermine.objectstore.ObjectStore;
 public class MockInterMineLUIConverter extends InterMineLUIConverter {
     private ObjectStore os = null;
 
-    public MockInterMineLUIConverter(Profile profile, Profile suProfile) {
+    public MockInterMineLUIConverter(Profile profile) {
         super(profile);
     }
 
