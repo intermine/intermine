@@ -120,7 +120,7 @@ public class InterMineLUIConverter
         InterMineObject imObj = null;
         String type = null;
         try {
-            InterMineAPI im = InterMineContext.getInterMineAPI();
+            InterMineAPI im = getInterMineAPI();
             InterMineObject obj = im.getObjectStore().getObjectById(interMineID);
             if (obj == null) {
                 return null;
@@ -214,6 +214,14 @@ public class InterMineLUIConverter
      */
     protected Model getModel() {
         return Model.getInstanceByName("genomic");
+    }
+
+    /**
+     * Returns the InterMineAPI
+     * @return the InterMineAPI
+     */
+    protected InterMineAPI getInterMineAPI() {
+        return InterMineContext.getInterMineAPI();
     }
 
     /**

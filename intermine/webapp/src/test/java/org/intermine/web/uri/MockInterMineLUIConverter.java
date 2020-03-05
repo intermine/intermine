@@ -10,6 +10,7 @@ package org.intermine.web.uri;
  *
  */
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -18,6 +19,7 @@ import org.intermine.objectstore.ObjectStore;
 
 public class MockInterMineLUIConverter extends InterMineLUIConverter {
     private ObjectStore os = null;
+    private InterMineAPI im = null;
 
     public MockInterMineLUIConverter(Profile profile) {
         super(profile);
@@ -28,14 +30,10 @@ public class MockInterMineLUIConverter extends InterMineLUIConverter {
         return Model.getInstanceByName("testmodel");
     }
 
-    /**
-     * Set the object store for testing
-     * @param os th eobject store
-     */
-    public void setObjectStore(ObjectStore os) {
-        this.os = os;
+    @Override
+    public InterMineAPI getInterMineAPI() {
+        return im;
     }
-
 
     @Override
     public PathQueryExecutor getPathQueryExecutor() {
@@ -43,4 +41,11 @@ public class MockInterMineLUIConverter extends InterMineLUIConverter {
                 new BagManager(profile, Model.getInstanceByName("testmodel")));
     }
 
+    /**
+     * Set the getInterMineAPI for testing
+     * @param im the getInterMineAPI
+     */
+    public void setInterMineAPI(InterMineAPI im) {
+        this.im = im;
+    }
 }

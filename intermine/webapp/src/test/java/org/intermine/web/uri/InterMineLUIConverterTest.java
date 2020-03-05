@@ -33,6 +33,7 @@ public class InterMineLUIConverterTest extends InterMineAPITestCase {
 
             //set mock methods
             converter = new MockInterMineLUIConverter(im.getProfileManager().getSuperuserProfile());
+            converter.setInterMineAPI(im);
 
         } catch (Exception e) {
             System.err.println("Error connecting to DB");

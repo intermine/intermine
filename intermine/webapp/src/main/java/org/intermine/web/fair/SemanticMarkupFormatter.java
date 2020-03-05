@@ -246,13 +246,14 @@ public final class SemanticMarkupFormatter
      * @param request the HttpServletRequest
      * @param type the of the bioentity
      * @param id intermine internal id
+     * @param profile the profile
      *
      * @return the map containing the markups
      *
      * @throws MetaDataException if the type is wrong
      */
     public static Map<String, Object> formatBioEntity(HttpServletRequest request, String type,
-                                                      int id) throws MetaDataException {
+                                                  int id, Profile profile) throws MetaDataException {
         if (!isEnabled()) {
             return null;
         }
@@ -270,9 +271,8 @@ public final class SemanticMarkupFormatter
                 semanticMarkup.put("@type", BIO_ENTITY_TYPE);
             }
             semanticMarkup.put("name", getNameAttribute(type, id));
-            HttpSession session = request.getSession();
             try {
-                InterMineLUI lui = (new InterMineLUIConverter(SessionMethods.getProfile(session)))
+                InterMineLUI lui = (new InterMineLUIConverter(profile))
                         .getInterMineLUI(type, id);
                 if (lui != null) {
                     semanticMarkup.put("@id", lui.getIdentifier());

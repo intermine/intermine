@@ -33,7 +33,8 @@ public class BioEntityMarkupService extends JSONService
     protected void execute() throws Exception {
         String entityType = getRequiredParameter("type");
         int id = Integer.parseInt(getRequiredParameter("id"));
-        addResultItem(SemanticMarkupFormatter.formatBioEntity(request, entityType, id), false);
+        addResultItem(SemanticMarkupFormatter.
+                formatBioEntity(request, entityType, id, getPermission().getProfile()), false);
     }
 
     @Override
