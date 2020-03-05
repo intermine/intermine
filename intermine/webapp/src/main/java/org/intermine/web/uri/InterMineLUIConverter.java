@@ -1,4 +1,4 @@
-package org.intermine.api.uri;
+package org.intermine.web.uri;
 
 /*
  * Copyright (C) 2002-2020 FlyMine
@@ -11,16 +11,17 @@ package org.intermine.api.uri;
  */
 
 import org.apache.log4j.Logger;
-import org.intermine.api.query.PathQueryAPI;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.context.InterMineContext;
 
 import java.lang.reflect.Field;
 
@@ -36,11 +37,14 @@ public class InterMineLUIConverter
     private static final String DEFAULT_IDENTIFIER = "primaryIdentifier";
     private ClassNameURIIdentifierMapper classNameIdentifierMapper = null;
     private static final Logger LOGGER = Logger.getLogger(InterMineLUIConverter.class);
+    private Profile profile = null;
 
     /**
      * Constructor
+     * @param profile th eprofile
      */
-    public InterMineLUIConverter() {
+    public InterMineLUIConverter(Profile profile) {
+        this.profile = profile;
         classNameIdentifierMapper = ClassNameURIIdentifierMapper.getMapper();
     }
 
@@ -116,7 +120,8 @@ public class InterMineLUIConverter
         InterMineObject imObj = null;
         String type = null;
         try {
-            InterMineObject obj = getObjectStore().getObjectById(interMineID);
+            InterMineAPI im = InterMineContext.getInterMineAPI();
+            InterMineObject obj = im.getObjectStore().getObjectById(interMineID);
             if (obj == null) {
                 return null;
             }
@@ -204,14 +209,6 @@ public class InterMineLUIConverter
     }
 
     /**
-     * Returns the objects store
-     * @return the object store
-     */
-    protected ObjectStore getObjectStore() {
-        return PathQueryAPI.getObjectStore();
-    }
-
-    /**
      * Returns the model
      * @return the model
      */
@@ -224,7 +221,7 @@ public class InterMineLUIConverter
      * @return the PathQueryExecutor
      */
     public PathQueryExecutor getPathQueryExecutor() {
-        return new PathQueryExecutor(getObjectStore(), PathQueryAPI.getProfile(),
-                null, PathQueryAPI.getBagManager());
+        InterMineAPI im = InterMineContext.getInterMineAPI();
+        return new PathQueryExecutor(im.getObjectStore(), profile, null, im.getBagManager());
     }
 }

@@ -17,8 +17,8 @@ import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.api.uri.InterMineLUI;
-import org.intermine.api.uri.InterMineLUIConverter;
+import org.intermine.web.uri.InterMineLUI;
+import org.intermine.web.uri.InterMineLUIConverter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -270,8 +270,10 @@ public final class SemanticMarkupFormatter
                 semanticMarkup.put("@type", BIO_ENTITY_TYPE);
             }
             semanticMarkup.put("name", getNameAttribute(type, id));
+            HttpSession session = request.getSession();
             try {
-                InterMineLUI lui = (new InterMineLUIConverter()).getInterMineLUI(type, id);
+                InterMineLUI lui = (new InterMineLUIConverter(SessionMethods.getProfile(session)))
+                        .getInterMineLUI(type, id);
                 if (lui != null) {
                     semanticMarkup.put("@id", lui.getIdentifier());
                     PermanentURIHelper helper = new PermanentURIHelper(request);
@@ -305,8 +307,9 @@ public final class SemanticMarkupFormatter
             LOG.info("The PathQuery :" + pathQuery.toString() + " is not valid");
             return null;
         }
-        PathQueryExecutor executor = new PathQueryExecutor(PathQueryAPI.getObjectStore(),
-                PathQueryAPI.getProfile(), null, PathQueryAPI.getBagManager());
+        InterMineAPI im = InterMineContext.getInterMineAPI();
+        PathQueryExecutor executor = new PathQueryExecutor(im.getObjectStore(),
+                PathQueryAPI.getProfile(), null, im.getBagManager());
         try {
             ExportResultsIterator iterator = executor.execute(pathQuery);
             if (iterator.hasNext()) {
