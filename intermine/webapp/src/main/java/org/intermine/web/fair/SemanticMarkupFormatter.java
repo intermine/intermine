@@ -253,7 +253,7 @@ public final class SemanticMarkupFormatter
      * @throws MetaDataException if the type is wrong
      */
     public static Map<String, Object> formatBioEntity(HttpServletRequest request, String type,
-                                                  int id, Profile profile) throws MetaDataException {
+                                              int id, Profile profile) throws MetaDataException {
         if (!isEnabled()) {
             return null;
         }
