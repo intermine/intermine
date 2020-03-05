@@ -37,7 +37,7 @@ public class InterMineLUIConverter
     private static final String DEFAULT_IDENTIFIER = "primaryIdentifier";
     private ClassNameURIIdentifierMapper classNameIdentifierMapper = null;
     private static final Logger LOGGER = Logger.getLogger(InterMineLUIConverter.class);
-    private Profile profile = null;
+    protected Profile profile = null;
 
     /**
      * Constructor

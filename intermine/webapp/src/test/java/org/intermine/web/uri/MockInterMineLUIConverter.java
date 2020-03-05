@@ -18,11 +18,9 @@ import org.intermine.objectstore.ObjectStore;
 
 public class MockInterMineLUIConverter extends InterMineLUIConverter {
     private ObjectStore os = null;
-    private Profile suProfile = null;
 
-    @Override
-    public ObjectStore getObjectStore() {
-        return os;
+    public MockInterMineLUIConverter(Profile profile, Profile suProfile) {
+        super(profile);
     }
 
     @Override
@@ -38,18 +36,11 @@ public class MockInterMineLUIConverter extends InterMineLUIConverter {
         this.os = os;
     }
 
-    /**
-     * Set the user profile
-     * @param suProfile
-     */
-    public void setSUProfile(Profile suProfile) {
-        this.suProfile = suProfile;
-    }
 
     @Override
     public PathQueryExecutor getPathQueryExecutor() {
-        return new PathQueryExecutor(os, suProfile,null,
-                new BagManager(suProfile, Model.getInstanceByName("testmodel")));
+        return new PathQueryExecutor(os, profile,null,
+                new BagManager(profile, Model.getInstanceByName("testmodel")));
     }
 
 }

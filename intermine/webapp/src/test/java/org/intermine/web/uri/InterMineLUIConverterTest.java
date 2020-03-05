@@ -32,9 +32,8 @@ public class InterMineLUIConverterTest extends InterMineAPITestCase {
             ObjectStoreTestUtils.storeData(osw, data);
 
             //set mock methods
-            converter = new MockInterMineLUIConverter();
-            converter.setObjectStore(os);
-            converter.setSUProfile(im.getProfileManager().getSuperuserProfile());
+            converter = new MockInterMineLUIConverter(im.getProfileManager().getSuperuserProfile());
+
         } catch (Exception e) {
             System.err.println("Error connecting to DB");
             System.err.println(e);
