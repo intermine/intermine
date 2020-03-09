@@ -1,4 +1,4 @@
-package org.intermine.api.uri;
+package org.intermine.web.uri;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -10,6 +10,7 @@ package org.intermine.api.uri;
  *
  */
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -18,11 +19,10 @@ import org.intermine.objectstore.ObjectStore;
 
 public class MockInterMineLUIConverter extends InterMineLUIConverter {
     private ObjectStore os = null;
-    private Profile suProfile = null;
+    private InterMineAPI im = null;
 
-    @Override
-    public ObjectStore getObjectStore() {
-        return os;
+    public MockInterMineLUIConverter(Profile profile) {
+        super(profile);
     }
 
     @Override
@@ -30,26 +30,30 @@ public class MockInterMineLUIConverter extends InterMineLUIConverter {
         return Model.getInstanceByName("testmodel");
     }
 
+    @Override
+    public InterMineAPI getInterMineAPI() {
+        return im;
+    }
+
+    @Override
+    public PathQueryExecutor getPathQueryExecutor() {
+        return new PathQueryExecutor(os, profile,null,
+                new BagManager(profile, Model.getInstanceByName("testmodel")));
+    }
+
     /**
-     * Set the object store for testing
-     * @param os th eobject store
+     * Set the os for testing
+     * @param os the objectstore
      */
     public void setObjectStore(ObjectStore os) {
         this.os = os;
     }
 
     /**
-     * Set the user profile
-     * @param suProfile
+     * Set the InterMineAPI for testing
+     * @param im the interMineAPI
      */
-    public void setSUProfile(Profile suProfile) {
-        this.suProfile = suProfile;
+    public void setInterMineAPI(InterMineAPI im) {
+        this.im = im;
     }
-
-    @Override
-    public PathQueryExecutor getPathQueryExecutor() {
-        return new PathQueryExecutor(os, suProfile,null,
-                new BagManager(suProfile, Model.getInstanceByName("testmodel")));
-    }
-
 }

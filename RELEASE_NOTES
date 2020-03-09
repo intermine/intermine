@@ -7,7 +7,15 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 4.1.3 (March 2020)
 
+#2208 Delete a template -> it's still displayed on the Templates tab
+#2203 Public template creation broken
+#2204 vcf bio source does not work
+#2190 Fix invalid response to /service/web-properties
+#2212 In the report page, links to HumanMine/FlyMine are empty 
+
+ 
 InterMine 4.1.2 (January 2020)
 
 #2045 - DataSet URLs do not appear in tables; do show in report heading
