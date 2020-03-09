@@ -42,8 +42,16 @@ public class MockInterMineLUIConverter extends InterMineLUIConverter {
     }
 
     /**
-     * Set the getInterMineAPI for testing
-     * @param im the getInterMineAPI
+     * Set the os for testing
+     * @param os the objectstore
+     */
+    public void setObjectStore(ObjectStore os) {
+        this.os = os;
+    }
+
+    /**
+     * Set the InterMineAPI for testing
+     * @param im the interMineAPI
      */
     public void setInterMineAPI(InterMineAPI im) {
         this.im = im;
