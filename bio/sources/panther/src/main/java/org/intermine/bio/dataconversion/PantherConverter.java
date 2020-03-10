@@ -40,7 +40,7 @@ public class PantherConverter extends BioFileConverter
 {
     private Properties props = new Properties();
     private static final String PROP_FILE = "panther_config.properties";
-    private static final String DATASET_TITLE = "Orthologue and paralogue predictions";
+    private static final String DATASET_TITLE = "Panther orthologue and paralogue predictions";
     private static final String DATA_SOURCE_NAME = "Panther";
     private static final Logger LOG = Logger.getLogger(PantherConverter.class);
     private Set<String> taxonIds = new HashSet<String>();

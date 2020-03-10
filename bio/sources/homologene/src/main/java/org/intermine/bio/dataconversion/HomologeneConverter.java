@@ -40,7 +40,7 @@ public class HomologeneConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(HomologeneConverter.class);
     private IdResolver rslv;
-    private static final String DATASET_TITLE = "HomoloGene data set";
+    private static final String DATASET_TITLE = "HomoloGene homology predictions";
     private static final String DATA_SOURCE_NAME = "HomoloGene";
 
     private static final String PROP_FILE = "homologene_config.properties";

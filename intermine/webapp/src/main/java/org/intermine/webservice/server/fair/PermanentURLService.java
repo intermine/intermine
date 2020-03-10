@@ -42,7 +42,7 @@ public class PermanentURLService extends JSONService
         String type = getRequiredParameter("type");
         String id = getRequiredParameter("id");
         String url = (new PermanentURIHelper(request)).getPermanentURL(type,
-                Integer.parseInt(id));
+                Integer.parseInt(id), getPermission().getProfile());
         if (url == null) {
             addOutputInfo("url", StringUtils.EMPTY);
         } else {
