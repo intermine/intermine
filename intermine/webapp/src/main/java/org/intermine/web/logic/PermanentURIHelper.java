@@ -12,10 +12,11 @@ package org.intermine.web.logic;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.api.uri.InterMineLUI;
-import org.intermine.api.uri.InterMineLUIConverter;
+import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.uri.InterMineLUI;
+import org.intermine.web.uri.InterMineLUIConverter;
 import org.intermine.web.util.URLGenerator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,10 +85,11 @@ public class PermanentURIHelper
      * The permanent URL is used in the Share button, to set the url in Schema.org
      * @param type the class name
      * @param interMineId the internal id or null if can not generate the url
+     * @param profile the profile
      * @return the permanent url
      */
-    public String getPermanentURL(String type, Integer interMineId) {
-        InterMineLUIConverter converter = new InterMineLUIConverter();
+    public String getPermanentURL(String type, Integer interMineId, Profile profile) {
+        InterMineLUIConverter converter = new InterMineLUIConverter(profile);
         InterMineLUI interMineLUI = null;
         try {
             interMineLUI = converter.getInterMineLUI(type, interMineId);

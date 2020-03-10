@@ -11,11 +11,12 @@ package org.intermine.web.filters;
  */
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.intermine.api.uri.InterMineLUI;
-import org.intermine.api.uri.InterMineLUIConverter;
-import org.intermine.api.uri.InvalidPermanentURLException;
 
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.uri.InterMineLUI;
+import org.intermine.web.uri.InterMineLUIConverter;
+import org.intermine.web.uri.InvalidPermanentURLException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -25,6 +26,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -44,10 +46,12 @@ public class PermanentURLFilter implements Filter
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
+        HttpSession session = request.getSession();
 
         try {
             InterMineLUI permanentURL = new InterMineLUI(request.getRequestURI());
-            InterMineLUIConverter urlConverter = new InterMineLUIConverter();
+            InterMineLUIConverter urlConverter =
+                    new InterMineLUIConverter(SessionMethods.getProfile(session));
             Integer id = urlConverter.getInterMineID(permanentURL);
             if (id == -1) {
                 response.setStatus(HttpStatus.SC_NOT_FOUND);

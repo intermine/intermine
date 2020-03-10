@@ -1,6 +1,6 @@
 <items>
 <item id="2_1" class="DataSet">
-<attribute name="name" value="WormBase genes"/>
+<attribute name="name" value="WormBase gene identifiers"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
 <item id="4_1" class="Organism">
