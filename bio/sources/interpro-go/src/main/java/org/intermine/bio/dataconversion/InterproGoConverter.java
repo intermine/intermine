@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,7 +32,7 @@ public class InterproGoConverter extends BioFileConverter
 {
 
     protected static final Logger LOG = Logger.getLogger(InterproGoConverter.class);
-    private static final String DATASET_TITLE = "InterPro GO Annotation data set";
+    private static final String DATASET_TITLE = "InterPro domain GO annotations";
     private static final String DATA_SOURCE_NAME = "InterPro";
     private static final String INTERPRO_PREFIX = "InterPro:";
     private Map<String, Item> proteinDomains = new HashMap<String, Item>();
@@ -45,7 +45,7 @@ public class InterproGoConverter extends BioFileConverter
      * @param model the Model
      */
     public InterproGoConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, null);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, null, false);
     }
 
     /**

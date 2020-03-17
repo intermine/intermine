@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,7 +55,7 @@ public class FieldDescriptorTest extends TestCase
     }
 
     private ClassDescriptor makeClass(String name) {
-        return new ClassDescriptor("Class1", null, false, noAttrs, noRefs, noColls);
+        return new ClassDescriptor("Class1", null, false, noAttrs, noRefs, noColls, null);
     }
 
     public void testSetClassDescriptorValid() throws Exception {

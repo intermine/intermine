@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.webproperties;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,9 @@ package org.intermine.webservice.server.webproperties;
  */
 
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -71,9 +74,14 @@ public class WebPropertiesService extends JSONService
     private void appendProperties(final Map<String, Object> webPropertiesMap,
             final String startingPath) {
         Properties props = PropertiesUtil.getPropertiesStartingWith(startingPath, webProperties);
+        //reverse the keys so genomicRegionSearch.liftOver.url is
+        //loaded before genomicRegionSearch.liftOver and the propertyMap
+        //is built properly
+        List<String> keys = new ArrayList<String>(props.stringPropertyNames());
+        Collections.sort(keys, Collections.reverseOrder());
+
         Map<String, Object> thisPropertyMap = new HashMap<String, Object>();
-        for (Object key: props.keySet()) {
-            String keyString = String.valueOf(key);
+        for (String keyString: keys) {
             String[] keyParts = keyString.split("\\.");
             Queue<String> path = new LinkedList<String>();
             for (int i = 1; i < keyParts.length; i++) {

@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,6 +28,7 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 public class FastaQueryService extends BioQueryService
 {
     private static final String EXT = "extension";
+    private static final String TRL = "translate";
     private static final String TOO_MANY_COLUMNS =
             "Queries for this webservice may only have one output column";
     private static final int COLUMN = 0;
@@ -53,9 +54,11 @@ public class FastaQueryService extends BioQueryService
     @Override
     protected Exporter getExporter(PathQuery pq) {
         int extension = parseExtension(getOptionalParameter(EXT, "0"));
+        String translate = getOptionalParameter(TRL, "N");
+
         ObjectStore objStore = im.getObjectStore();
         return new SequenceExporter(objStore, getOutputStream(), COLUMN,
-                im.getClassKeys(), extension, getQueryPaths(pq));
+                im.getClassKeys(), extension, translate, getQueryPaths(pq));
     }
 
     /**
@@ -65,11 +68,6 @@ public class FastaQueryService extends BioQueryService
     @Override
     protected PathQuery getQuery() {
         PathQuery pq = super.getQuery();
-
-        if (pq.getView().size() > 1) {
-            throw new BadRequestException(TOO_MANY_COLUMNS);
-        }
-
         return pq;
     }
 
@@ -112,9 +110,6 @@ public class FastaQueryService extends BioQueryService
 
     @Override
     protected void checkPathQuery(PathQuery pq) throws Exception {
-        if (pq.getView().size() > 1) {
-            throw new BadRequestException("Queries to this service may only have one view.");
-        }
         Path path = pq.makePath(pq.getView().get(0));
         ClassDescriptor klazz = path.getLastClassDescriptor();
         ClassDescriptor sf = im.getModel().getClassDescriptorByName("SequenceFeature");

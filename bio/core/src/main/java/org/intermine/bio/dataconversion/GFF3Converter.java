@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -84,11 +85,13 @@ public class GFF3Converter extends DataConverter
      * @param tgtModel the model to create items in
      * @param handler object to perform optional additional operations per GFF3 line
      * @param sequenceHandler the GFF3SeqHandler use to create sequence Items
+     * @param licence URL to the licence for this data set
      * @throws ObjectStoreException if something goes wrong
      */
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgTaxonId,
             String dataSourceName, String dataSetTitle, Model tgtModel,
-            GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler) throws ObjectStoreException {
+            GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler, String licence)
+            throws ObjectStoreException {
         super(writer, tgtModel);
         this.seqClsName = seqClsName;
         this.orgTaxonId = orgTaxonId;
@@ -98,7 +101,7 @@ public class GFF3Converter extends DataConverter
 
         organism = getOrganism();
         dataSource = getDataSourceItem(dataSourceName);
-        dataSet = getDataSetItem(dataSetTitle, null, null, dataSource);
+        dataSet = getDataSetItem(dataSetTitle, null, null, dataSource, licence);
 
         if (sequenceHandler == null) {
             this.sequenceHandler = new GFF3SeqHandler();
@@ -783,9 +786,9 @@ public class GFF3Converter extends DataConverter
     }
 
     /**
-     * Return a DataSet item for the given title
-     * @param name the DataSet name
-     * @return the DataSet Item
+     * Return a DataSource item for the given title
+     * @param name the DataSource name
+     * @return the DataSource Item
      */
     public Item getDataSourceItem(String name) {
         Item item = dataSources.get(name);
@@ -808,13 +811,18 @@ public class GFF3Converter extends DataConverter
      * @param url the new url field, or null if the url shouldn't be set
      * @param description the new description field, or null if the field shouldn't be set
      * @param dataSourceItem the DataSource referenced by the the DataSet
+     * @param licence URL to the data licence for this data set
      * @return the DataSet Item
      */
-    public Item getDataSetItem(String title, String url, String description, Item dataSourceItem) {
+    public Item getDataSetItem(String title, String url, String description, Item dataSourceItem,
+                               String licence) {
         Item item = dataSets.get(title);
         if (item == null) {
             item = createItem("DataSet");
             item.setAttribute("name", title);
+            if (licence != null && !StringUtils.isEmpty(licence)) {
+                item.setAttribute("licence", licence);
+            }
             item.setReference("dataSource", dataSourceItem);
             if (url != null) {
                 item.setAttribute("url", url);

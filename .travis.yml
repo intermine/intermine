@@ -1,4 +1,5 @@
 language: python
+python: 2.7
 addons:
   postgresql: 9.6
 env:
@@ -14,8 +15,11 @@ env:
   - TEST_SUITE=ws CLIENT=PY  
 sudo: true
 jdk:
-- openjdk8
+- openjdk11
+dist: 
+- trusty
 before_script:
+- "./config/travis/init-solr.sh"
 - "./config/travis/init.sh"
 script:
 - "./config/travis/run.sh"

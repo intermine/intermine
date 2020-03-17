@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,6 +35,11 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
         String header = ((DNASequence) bioJavaSequence).getOriginalHeader();
         // >ref|NC_000001.11| Homo sapiens chromosome 1, GRCh38.p12 Primary Assembly
         // >ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
+
+        // new header:
+        // >NC_000024.10 Homo sapiens chromosome Y, GRCh38.p13 Primary Assembly
+
+
         for (String headerString : header.split("\\|")) {
             if (headerString.contains("mitochondrion")) {
                 return "MT";
@@ -44,9 +49,9 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
                 // chop off the part after the comma
                 String[] headerSubStrings = headerString.split(",");
                 // chop off everything but the chromosome number
-                String identifier = headerSubStrings[0].substring(ORG_HEADER.length()
-                        + CHROMOSOME_HEADER.length());
-                return identifier.trim();
+
+                String[] lastHeader = headerSubStrings[0].split(CHROMOSOME_HEADER);
+                return lastHeader[1].trim();
             }
         }
         // nothing found

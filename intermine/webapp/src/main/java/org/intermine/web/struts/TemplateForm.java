@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,7 +28,7 @@ public class TemplateForm extends ActionForm
     private Map<String, Object> attributeOps;
     private Map<String, Object> attributeValues;
     private Map<String, String[]> multiValues;
-    private Map<String, String[]> multiValueAttribute;
+    private Map<String, String> multiValueAttributes;
     private Map<String, Boolean> useBagConstraint;
     private Map<String, Object> extraValues, selectedBags;
     private Map<String, Object> nullConstraint;
@@ -189,29 +189,12 @@ public class TemplateForm extends ActionForm
     }
 
     /**
-     * Set the multivalueattribute
-     * @param multiValueAttribute the map containing the multiVAlueAttribute
-     */
-    public void setMultiValueAttribute(Map<String, String[]> multiValueAttribute) {
-        this.multiValueAttribute = multiValueAttribute;
-    }
-
-    /**
-     * Returns the multivalueattribute
-     * @return the map containing the multiVAlueAttribute
-     */
-    public Map<String, String[]> getMultiValueAttribute() {
-        return this.multiValueAttribute;
-    }
-
-    /**
      * Returns the multivalueattribute given a key
      * @param key the key
      * @return multiVAlueAttribute
      */
     public String getMultiValueAttribute(String key) {
-        String[] valueArray = multiValueAttribute.get(key);
-        return valueArray == null ? null : valueArray[0];
+        return multiValueAttributes.get(key);
     }
 
     /**
@@ -220,7 +203,7 @@ public class TemplateForm extends ActionForm
      * @param value the value
      */
     public void setMultiValueAttribute(String key, String value) {
-        multiValueAttribute.put(key, new String[] {value});
+        multiValueAttributes.put(key, value);
     }
 
     /**
@@ -392,7 +375,7 @@ public class TemplateForm extends ActionForm
         attributeOps = new HashMap<String, Object>();
         attributeValues = new HashMap<String, Object>();
         multiValues = new HashMap<String, String[]>();
-        multiValueAttribute = new HashMap<String, String[]>();
+        multiValueAttributes = new HashMap<String, String>();
         useBagConstraint = new HashMap<String, Boolean>();
         selectedBags = new HashMap<String, Object>();
         bagOps = new HashMap<String, String>();

@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -145,8 +145,8 @@ public class Model
         Set<CollectionDescriptor> emptyCols = Collections.emptySet();
         ClassDescriptor intermineObject = new ClassDescriptor(
                 "org.intermine.model.InterMineObject", null, true,
-                Collections.singleton(new AttributeDescriptor("id", "java.lang.Integer")),
-                emptyRefs, emptyCols);
+                Collections.singleton(new AttributeDescriptor("id", "java.lang.Integer",
+                null)), emptyRefs, emptyCols, null);
         orderedClds.add(intermineObject);
         rootCld = intermineObject;
 
@@ -354,6 +354,7 @@ public class Model
 
                 classes.put(cld.getUnqualifiedName(), classData);
                 classData.put("name", cld.getUnqualifiedName());
+                classData.put("term", cld.getFairTerm());
                 classData.put("extends", parents);
                 for (String parent: cld.getSuperclassNames()) {
                     parents.add(parent.substring(parent.lastIndexOf(".") + 1));

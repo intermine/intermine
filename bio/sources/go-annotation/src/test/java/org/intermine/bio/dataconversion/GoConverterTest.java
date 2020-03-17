@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,6 +45,7 @@ public class GoConverterTest extends ItemsTestCase
         writeTempFile(goOboFile, goOboReader);
         writer = new MockItemWriter(new LinkedHashMap<String, org.intermine.model.fulldata.Item>());
         converter = new GoConverter(writer, model);
+        converter.setLicence("https://creativecommons.org/licenses/by/4.0/legalcode");
 
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
         converter.rslv.addResolverEntry("7227", "FBgn0004168", Collections.singleton("FBgn0020002"));
@@ -92,12 +93,12 @@ public class GoConverterTest extends ItemsTestCase
         organism.setAttribute("taxonId", "7227");
 
         Set<String> expected = new HashSet<String>();
-        expected.add("2_1");
-        expected.add("2_2");
+        expected.add("4_1");
+        expected.add("4_2");
         converter.initialiseMapsForFile();
         assertEquals(expected, new HashSet<String>(converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612",
-                organism, "FlyBase", "FlyBase")));
+                organism)));
     }
 
 }

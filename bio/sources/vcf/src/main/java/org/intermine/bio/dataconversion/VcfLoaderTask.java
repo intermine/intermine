@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,6 +30,7 @@ import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceAlteration;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.util.FormattedTextParser;
@@ -87,9 +88,14 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
     @Override
     public void process() {
         try {
-            getIntegrationWriter().beginTransaction();
+            ObjectStoreWriter osw = getIntegrationWriter();
+            if (!osw.isInTransaction()) {
+                osw.beginTransaction();
+            }
             super.process();
-            getIntegrationWriter().commitTransaction();
+            if (!osw.isInTransaction()) {
+                osw.commitTransaction();
+            }
             getDirectDataLoader().close();
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store object", e);

@@ -3,6 +3,7 @@ package org.intermine.plugin.postprocess
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.tooling.BuildException
 import org.intermine.plugin.BioSourceProperties
 import org.intermine.plugin.TaskConstants
 import org.intermine.plugin.project.PostProcess
@@ -16,6 +17,8 @@ class PostProcessPlugin implements Plugin<Project> {
      * tasks and some other tasks afterwards.
      * */
     public static final String DO_SOURCES = "do-sources"
+    public static final String CREATE_SEARCH_INDEX = "create-search-index"
+    public static final String CREATE_AUTO_INDEX = "create-autocomplete-index"
 
     void apply(Project project) {
         String projectXml = project.getParent().getProjectDir().getAbsolutePath() + File.separator + "project.xml"
@@ -115,17 +118,30 @@ class PostProcessPlugin implements Plugin<Project> {
                             }
                         }
                     } else {
-                        def ant = new AntBuilder()
-                        String postprocessorClassName = bioSourceProperties.getPostProcesserClassName(processName)
-                        ant.taskdef(name: "corePostProcess", classname: "org.intermine.task.PostProcessorTask") {
-                            classpath {
+                        try {
+                            def ant = new AntBuilder()
+                            String postprocessorClassName = bioSourceProperties.getPostProcesserClassName(processName)
+                            ant.taskdef(name: "corePostProcess", classname: "org.intermine.task.PostProcessorTask") {
+                                classpath {
                                 dirset(dir: project.getBuildDir().getAbsolutePath())
                                 pathelement(path: project.configurations.getByName("compile").asPath)
                                 pathelement(path: project.configurations.getByName("postProcesses").asPath)
+                                }
                             }
+                            ant.corePostProcess(clsName: postprocessorClassName, osName: "osw.production")
+                        } catch(Exception | BuildException e) {
+                            println "POSTPROCESS " + processName + " FAILED."
+                            println e.message
+                            if(CREATE_SEARCH_INDEX.equals(processName)
+                                    || CREATE_AUTO_INDEX.equals(processName)) {
+                                println "Please correct the error and run again ONLY THE POSTPROCESS"
+                                println "./gradlew postprocess -Pprocess=" + processName
+                                println "NO NEED TO RE-RUN THE ENTIRE BUILD"
+                            }
+                            return
                         }
-                        ant.corePostProcess(clsName: postprocessorClassName, osName: "osw.production")
                     }
+                    println "Postprocess " + processName + " completed."
                 }
             }
         }

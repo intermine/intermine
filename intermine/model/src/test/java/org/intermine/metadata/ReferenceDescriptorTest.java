@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -71,9 +71,9 @@ public class ReferenceDescriptorTest extends TestCase
         Set<ReferenceDescriptor> references = Collections.singleton(rfd1);
         // cld1 has a ReferenceDescriptor that points to Class2
         new ClassDescriptor("Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, references, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, references, ClassDescriptorFactory.NO_COLLS, null);
         new ClassDescriptor("Class2", null, false,
-                ClassDescriptorFactory.NO_ATTRS, ClassDescriptorFactory.NO_REFS, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, ClassDescriptorFactory.NO_REFS, ClassDescriptorFactory.NO_COLLS, null);
         try {
             rfd1.getReferencedClassDescriptor();
             fail("Expected IllegalStateException, model has not yet been set");
@@ -86,7 +86,7 @@ public class ReferenceDescriptorTest extends TestCase
         Set<ReferenceDescriptor> references = Collections.singleton(rfd1);        
         // cld1 has a ReferenceDescriptor that points to Class2
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, references, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, references, ClassDescriptorFactory.NO_COLLS, null);
         ClassDescriptor cld2 = cldFac.makeClass("Class2");
         new Model("model", "package.name", Arrays.asList(cld1, cld2));
         try {
@@ -105,9 +105,9 @@ public class ReferenceDescriptorTest extends TestCase
         Set<ReferenceDescriptor> refs1 = Collections.singleton(rfd1);
         Set<ReferenceDescriptor> refs2 = Collections.singleton(rfd2);
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS, null);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS, null);
         new Model("model", "package.name", Arrays.asList(cld1, cld2));
         try {
             ReferenceDescriptor rfdReverse = rfd1.getReverseReferenceDescriptor();
@@ -126,9 +126,9 @@ public class ReferenceDescriptorTest extends TestCase
         Set<ReferenceDescriptor> refs1 = Collections.singleton(rfd1);
         Set<ReferenceDescriptor> refs2 = Collections.singleton(rfd2);
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS, null);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS, null);
         try {
             new Model("model", "package.name", Arrays.asList(cld1, cld2));
             fail("Expected a MetaDataException to be thrown");
@@ -145,9 +145,9 @@ public class ReferenceDescriptorTest extends TestCase
         Set<ReferenceDescriptor> refs1 = new HashSet<ReferenceDescriptor>(Arrays.asList(rfd1, rfdOther1));
         Set<ReferenceDescriptor> refs2 = Collections.singleton(rfd2);
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS, null);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS, null);
         Model model = new Model("model", "package.name", Arrays.asList(cld1, cld2));
         // this no longer throws an exception , instead creates the model but adds a problem
         assertEquals(1, model.getProblems().size());
@@ -157,13 +157,13 @@ public class ReferenceDescriptorTest extends TestCase
     public void testRevereseReferenceIsAttribute() throws Exception {
         // rfd1 points to Class2.atd2 which is an attribute
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", "atd2");
-        AttributeDescriptor atd2 = new AttributeDescriptor("atd2", "java.lang.String");
+        AttributeDescriptor atd2 = new AttributeDescriptor("atd2", "java.lang.String", null);
         Set<ReferenceDescriptor> refs1 = Collections.singleton(rfd1);
         Set<AttributeDescriptor> atts = Collections.singleton(atd2);
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS, null);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, atts,
-                ClassDescriptorFactory.NO_REFS, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_REFS, ClassDescriptorFactory.NO_COLLS, null);
         try {
             new Model("model", "package.name", Arrays.asList(cld1, cld2));
             fail("Expected a MetaDataException to be thrown");
@@ -183,11 +183,11 @@ public class ReferenceDescriptorTest extends TestCase
         Set<ReferenceDescriptor> refs2 = Collections.singleton(rfd2);
         Set<ReferenceDescriptor> refs3 = Collections.singleton(rfd3);
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS, null);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS, null);
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs3, ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, refs3, ClassDescriptorFactory.NO_COLLS, null);
 
         Model model = new Model("model", "package.name", Arrays.asList(cld1, cld2, cld3));
         assertEquals(1, model.getProblems().size());
@@ -197,7 +197,7 @@ public class ReferenceDescriptorTest extends TestCase
         ReferenceDescriptor ref1  = new ReferenceDescriptor("ref1", "package.name.Class1", "ref2");
         ReferenceDescriptor ref2  = new ReferenceDescriptor("ref2", "package.name.Class1", null);
         ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, Arrays.asList(ref1, ref2), ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, Arrays.asList(ref1, ref2), ClassDescriptorFactory.NO_COLLS, null);
         new Model("model1", "package.name", Collections.singleton(cld));
         assertEquals(FieldDescriptor.ONE_ONE_RELATION, ref1.relationType());
     }
@@ -208,7 +208,7 @@ public class ReferenceDescriptorTest extends TestCase
         Set<CollectionDescriptor> cols = Collections.singleton(col);
         Set<ReferenceDescriptor> refs = Collections.singleton(ref);
         ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, refs, cols);
+                ClassDescriptorFactory.NO_ATTRS, refs, cols, null);
         new Model("model1", "package.name", Collections.singleton(cld));
         assertEquals(FieldDescriptor.N_ONE_RELATION, ref.relationType());
     }
@@ -216,7 +216,7 @@ public class ReferenceDescriptorTest extends TestCase
     public void testRelationTypeUnidirectional() throws Exception {
         ReferenceDescriptor ref = new ReferenceDescriptor("ref1", "package.name.Class1", null);
         ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false,
-                ClassDescriptorFactory.NO_ATTRS, Collections.singleton(ref), ClassDescriptorFactory.NO_COLLS);
+                ClassDescriptorFactory.NO_ATTRS, Collections.singleton(ref), ClassDescriptorFactory.NO_COLLS, null);
         new Model("model1", "package.name", Collections.singleton(cld));
         assertEquals(FieldDescriptor.N_ONE_RELATION, ref.relationType());
     }

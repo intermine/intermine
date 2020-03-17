@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,7 +7,103 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 4.1.3 (March 2020)
 
+#2208 Delete a template -> it's still displayed on the Templates tab
+#2203 Public template creation broken
+#2204 vcf bio source does not work
+#2190 Fix invalid response to /service/web-properties
+#2212 In the report page, links to HumanMine/FlyMine are empty 
+
+ 
+InterMine 4.1.2 (January 2020)
+
+#2045 - DataSet URLs do not appear in tables; do show in report heading
+#2053 - LOOP query in webapp does not work!
+#2107 - Remove "upload to GenomeSpace" export
+#2112 - Remove im.js, imtables.js, imtables-dep.js from intermine-webapp
+#2120 - The operation was a success, but the patient died: creating solr index fails but gradlew reports success.
+#2127 - Update to Java11
+#2129 - Catch runtime exception in BagManager.getBags
+#2145 - Complex Displayer fixed
+#2151 - ThaleMine Updates to psi BioSource
+#2152 - ThaleMine Updates to BioGrid
+#2154 - Update json-ld home page
+#2158 - Use info stored in the registry to set provider/support in the home page markup
+#2159 - Travis fails - could not GET jami-interactionviewer-json
+#2160 - Update chebiWS-client (psi-complexes bio-source)
+#2161 - Licence dataset display null 
+#2164 - Add gff source to the bio/source multi gradle project
+#2172 - WebservicePythonCodeGenerator updated according to Python's code styling PEP8
+#2178 - Improve permanet URI configuration
+#2184 - Minor bug fix
+Update copyright notice with 2002-2020
+
+InterMine 4.1.1 (October 2019)
+
+#2128 - ThaleMine: Gradle 4.9 / Java 11 migration.
+#2135 - data change in ncbi-gff 
+#2136 - Add code of conduct
+#2137 - ThaleMine issues
+
+InterMine 4.1.0 (September 2019)
+
+#1770 - Default query config should be in json
+#1819 - Galaxy plugin - InterMine
+#1915 - Gradle 4.1 is to old for Java 11
+#1947 - YeastMine: gradle migration
+#2015 - FASTA query result: CDS translation option
+#2016 - Fasta query results: extra view parameters not showing up in header correctly
+#2040 - Can we remove flymine dependencies from core IM?
+#2044 - ONE OF contraint not working in template form
+#2051 - Seems that css path is wrong in keywordSearchResults.jsp
+#2052 - apply fix to TemplateAction to im 4.0?
+#2054 - Docs: Add instructions on how to make a Mine.
+#2055 - Put galaxy URL in global properties
+#2056 - Project script: update to handle release param correctly
+#2070 - NCBI gene data
+#2073 - GO error - obsolete term
+#2074 - Complexes - duplicate protein accessions
+#2102 - add elixir-login image to the login page
+#2103 - Fix google-login button in the login page
+#2108 - Move ELIXIR oauth2 configuration to global.web.properties file
+
+InterMine 4.0.1 (July 2019)
+
+#2060 - Restore Strains to core data model
+
+InterMine 4.0.0 (May 2019)
+
+#1935 - Decorate the model with ontology terms (where possible)
+#1939 - Store data licences for integrated sources
+#1940 - Provide data licences for integrated sources
+#1941 - GO Annotation - data set is where we get the data file
+#1968 - FAIR: add schemas.org (both schemas can be used)
+#1969 - FAIR: add profile Gene and Protein markup to the report page
+#1978 - Check if lists created overlap with other public lists (and user's lists)
+#2030 - Null pointer exception when user doesn't have any lists. 
+
+InterMine 3.1.2 (April 2019)
+
+#704 - Keyword search - fail gracefully if there is no search index
+#1497 - Docs: links in search results drop .html extension, only on index pages.
+#1766 - Web services: Add tags to templates
+#1773 - Gradle: when installing bio project, intermine-bio-test.properties SHOULD NOT be mandatory
+#1909 - Gradle: logs need sorting out
+#1952 - GAF 1.0 - remove this code
+#1965 - bio and bio/sources: java.lang.ClassCastException on org.apache.xerces.parsers
+#1980 - Gradle: model isn't merging correctly on postprocess on large InterMine items XML file
+#1984 - Set converter.class in the right place
+#1988 - Fix protein atlas displayer in humanmine
+#2001 - NCBI web services = error with NULL values
+#2002 - modify SolrIndexHandler to support newer Solr versions (thanks @arunans23!!)
+#2007 - Gretty plugin - remove from bio-webapp?
+#2008 - Error using CHEBI web services
+#2009 - Publication abstract is longer than postgres index
+#2013 - Remove Phenotype, it's not in the core model and has conflicting key (thanks @sammyjava)
+#2017 - Gretty plugin - remove from mine-webapp
+#2020 - Fix the protein atlas expression viewer
+#2036 - ObjectStoreSummary does not handle ignored fields consistently. (thanks @JoeCarlson )
 
 InterMine 3.1.1 (Feb 2019)
 

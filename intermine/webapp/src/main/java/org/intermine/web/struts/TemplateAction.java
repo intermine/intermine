@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -406,7 +406,13 @@ public class TemplateAction extends InterMineAction
                                 String[] attributes = (String[]) tf.getAttributeValues(key);
                                 constraintValue = attributes[0];
                                 String[] extraValues = (String[]) tf.getExtraValues(key);
-                                String extraValue = extraValues == null ? null : extraValues[0];
+                                //String extraValue = extraValues == null ? null : extraValues[0];
+                                String extraValue;
+                                if (extraValues == null) {
+                                    extraValue = "";
+                                } else {
+                                    extraValue = extraValues[0];
+                                }
 
                                 value = new TemplateValue(c, constraintOp, constraintValue,
                                         TemplateValue.ValueType.SIMPLE_VALUE, extraValue,

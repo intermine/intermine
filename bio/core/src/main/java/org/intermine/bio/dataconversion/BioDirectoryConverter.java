@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -69,20 +69,21 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      * @param model the data model
      * @param dataSourceName the DataSource name
      * @param dataSetTitle the DataSet title
-     * @param ontology name of Ontology eg. "Sequence Ontology"
+     * @param licence URL for licence for these data
      */
     public BioDirectoryConverter (ItemWriter writer, Model model, String dataSourceName,
-            String dataSetTitle, String ontology) {
+            String dataSetTitle, String licence) {
         super(writer, model);
         String dataSourceRefId = null;
         String dataSetRefId = null;
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         if (StringUtils.isNotEmpty(dataSourceName)) {
             dataSourceRefId = getDataSource(dataSourceName);
         }
         if (StringUtils.isNotEmpty(dataSetTitle)) {
-            dataSetRefId = getDataSet(dataSetTitle, dataSourceRefId);
+            dataSetRefId = getDataSet(dataSetTitle, dataSourceRefId, licence);
         }
-        hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId, ontology);
+        hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId, sequenceOntologyRefId);
         setStoreHook(hook);
     }
 
@@ -127,10 +128,24 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      * @return the DataSet Item
      */
     public String getDataSet(String title, String dataSourceRefId) {
+        return getDataSet(title, dataSourceRefId, null);
+    }
+
+    /**
+     * Return a DataSet item with the given details.
+     * @param title the DataSet title
+     * @param dataSourceRefId the DataSource referenced by the the DataSet
+     * @param licence the URI for the licence for these data
+     * @return the DataSet Item
+     */
+    public String getDataSet(String title, String dataSourceRefId, String licence) {
         String refId = dataSets.get(title);
         if (refId == null) {
             Item dataSet = createItem("DataSet");
             dataSet.setAttribute("name", title);
+            if (licence != null) {
+                dataSet.setAttribute("licence", licence);
+            }
             dataSet.setReference("dataSource", dataSourceRefId);
             try {
                 store(dataSet);

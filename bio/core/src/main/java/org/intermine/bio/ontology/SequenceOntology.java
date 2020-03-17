@@ -1,7 +1,7 @@
 package org.intermine.bio.ontology;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -685,7 +685,7 @@ public class SequenceOntology
     /**
      *  move terms from (user provided) file to list
      *  only these terms (and dependents) will be processed
-     * @param filename terms file
+     * @param oboFile terms file
      */
     private void processTerms(InputStream oboFile) {
         Set<String> terms = new HashSet<String>();
@@ -865,8 +865,9 @@ public class SequenceOntology
         }
 
         String childName = TypeUtil.generateClassName(NAMESPACE, getName(childIdentifier));
+        String fairTerm = "http://purl.obolibrary.org/obo/" + childIdentifier;
         return new ClassDescriptor(childName, parents, true, fakeAttributes, references,
-                collections);
+                collections, fairTerm);
     }
 
     private static String generateReverseReference(String parent, String child,

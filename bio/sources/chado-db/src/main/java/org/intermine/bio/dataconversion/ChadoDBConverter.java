@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -50,6 +50,7 @@ public class ChadoDBConverter extends BioDBConverter
     private final List<ChadoProcessor> completedProcessors = new ArrayList<ChadoProcessor>();
 
     private Connection connection;
+    private String licence;
 
 
     /**
@@ -103,6 +104,24 @@ public class ChadoDBConverter extends BioDBConverter
      */
     public void setProcessors(String processors) {
         this.processors = processors;
+    }
+
+    /**
+     * Set the data licence for these data.
+     *
+     * @param licence should be URI to data licence.
+     */
+    public void setLicence(String licence) {
+        this.licence = licence;
+    }
+
+    /**
+     * Get the data licence for these data.
+     *
+     * @return URI to data licence.
+     */
+    public String getLicence() {
+        return licence;
     }
 
     /**

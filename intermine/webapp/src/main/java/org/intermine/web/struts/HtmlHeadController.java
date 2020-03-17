@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -110,7 +110,7 @@ public class HtmlHeadController extends TilesAction
         } else if ("report".equals(pageName) && objectId != null) {
             if (!StringUtils.isNumeric(objectId)) {
                 LOG.warn("object ID not a number! " + objectId);
-                htmlPageTitle = "invalid id - " + objectId;
+                htmlPageTitle = "invalid id";
                 request.setAttribute("htmlPageTitle", htmlPageTitle);
                 return null;
             }
@@ -131,6 +131,7 @@ public class HtmlHeadController extends TilesAction
                 }
 
                 ReportObject reportObject = reportObjects.get(object);
+                markupReportPage(request, reportObject);
                 htmlPageTitle = reportObject.getHtmlHeadTitle();
 
             } catch (Exception e) {
@@ -172,4 +173,15 @@ public class HtmlHeadController extends TilesAction
         return "2";
     }
 
+    /**
+     * Markup report page using bioschemas.org
+     * @param request HTTP Servlet Request
+     * @param reportObject the reportObject
+     */
+    private void markupReportPage(HttpServletRequest request, ReportObject reportObject) {
+        String semanticMarkup = reportObject.getSemanticMarkup(request);
+        if (semanticMarkup != null) {
+            request.setAttribute("semanticMarkup", reportObject.getSemanticMarkup(request));
+        }
+    }
 }

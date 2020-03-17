@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,7 +40,7 @@ public class HomologeneConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(HomologeneConverter.class);
     private IdResolver rslv;
-    private static final String DATASET_TITLE = "HomoloGene data set";
+    private static final String DATASET_TITLE = "HomoloGene homology predictions";
     private static final String DATA_SOURCE_NAME = "HomoloGene";
 
     private static final String PROP_FILE = "homologene_config.properties";

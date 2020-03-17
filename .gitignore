@@ -195,6 +195,10 @@ productionLog
 # /intermine/webservice/client/javascript/imbedding/0.2/style/
 /intermine/webservice/client/javascript/imbedding/0.2/style/*min.*
 
+# test environments
+
+config/travis/solr*
+
 # mines
 malariamine/
 

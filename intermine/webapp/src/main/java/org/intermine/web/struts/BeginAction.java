@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -39,8 +39,10 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.userprofile.Tag;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.web.fair.SemanticMarkupFormatter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
+import org.json.JSONObject;
 
 /**
  * Prepare templates and news to be rendered on home page
@@ -174,6 +176,9 @@ public class BeginAction extends InterMineAction
             request.setAttribute("isNewUser", Boolean.FALSE);
         }
 
+        //semantic markup
+        markupHomePage(request, SessionMethods.getProfile(session));
+
         return mapping.findForward("begin");
     }
 
@@ -229,5 +234,17 @@ public class BeginAction extends InterMineAction
         cookie.setMaxAge(365 * 24 * 60 * 60);
         response.addCookie(cookie);
         return response;
+    }
+
+    /**
+     * Markup the home page using bioschemas.org
+     * @param request HTTP Servlet Request
+     */
+    private void markupHomePage(HttpServletRequest request, Profile profile) {
+        Map<String, Object> homePageMarkup = SemanticMarkupFormatter.formatInstance(request,
+                profile);
+        if (homePageMarkup != null) {
+            request.setAttribute("semanticMarkup", new JSONObject(homePageMarkup).toString(2));
+        }
     }
 }

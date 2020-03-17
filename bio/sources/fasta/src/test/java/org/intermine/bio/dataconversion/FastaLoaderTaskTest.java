@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -69,6 +69,7 @@ public class FastaLoaderTaskTest {
         flt.setDataSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
         flt.setSourceName("fasta-test");
+
 
         File[] files = new File[2];
         for (int i = 0; i < 2; i++) {

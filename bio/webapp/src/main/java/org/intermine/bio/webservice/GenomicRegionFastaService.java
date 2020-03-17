@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -44,7 +44,7 @@ public class GenomicRegionFastaService extends AbstractRegionExportService
     @Override
     protected Exporter getExporter(PathQuery pq) {
         return new SequenceExporter(im.getObjectStore(), getOutputStream(), 0,
-                im.getClassKeys(), 0);
+                im.getClassKeys(), 0, "n");
     }
 
     @Override

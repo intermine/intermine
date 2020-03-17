@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -76,7 +76,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private File[] files = null;
 
     private String dataSetTitle;
-
+    private String licence = null;
     private Map<String, DataSet> dataSets = new HashMap<String, DataSet>();
 
     /**
@@ -149,6 +149,15 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     public void setDataSetTitle(String dataSetTitle) {
         this.dataSetTitle = dataSetTitle;
+    }
+
+    /**
+     * If a value is specified this title will used when a DataSet is created.
+     *
+     * @param licence URI pointing to data licence for these data. Can be null.
+     */
+    public void setLicence(String licence) {
+        this.licence = licence;
     }
 
     /**
@@ -373,6 +382,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         DataSet dataSet = getDirectDataLoader().createObject(DataSet.class);
         dataSet.setName(dataSetTitle);
+        if (licence != null) {
+            dataSet.setLicence(licence);
+        }
         if (dataSourceName != null) {
             dataSet.setDataSource(getDataSource());
         }

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,7 +40,7 @@ public class PantherConverter extends BioFileConverter
 {
     private Properties props = new Properties();
     private static final String PROP_FILE = "panther_config.properties";
-    private static final String DATASET_TITLE = "Orthologue and paralogue predictions";
+    private static final String DATASET_TITLE = "Panther orthologue and paralogue predictions";
     private static final String DATA_SOURCE_NAME = "Panther";
     private static final Logger LOG = Logger.getLogger(PantherConverter.class);
     private Set<String> taxonIds = new HashSet<String>();
@@ -66,7 +66,8 @@ public class PantherConverter extends BioFileConverter
      */
     public PantherConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE,
+                "http://www.gnu.org/licenses/gpl.txt");
         readConfig();
         or = OrganismRepository.getOrganismRepository();
     }
@@ -140,6 +141,12 @@ public class PantherConverter extends BioFileConverter
         if (resolvedGenePid == null) {
             // parsed the gene string but was protein see #1995
             return null;
+        }
+
+        // A. thaliana bug fix for Gene IDs.
+        // Example: At5g04395 is stored as two different genes: At5g04395 and AT5G04395.
+        if ("3702".equals(taxonId)) {
+            resolvedGenePid = resolvedGenePid.toUpperCase();
         }
 
         // only resolve if fish - TODO put in config file

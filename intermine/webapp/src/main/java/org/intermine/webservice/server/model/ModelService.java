@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.model;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -174,6 +174,7 @@ public class ModelService extends WebService
                 ClassDescriptor cd = model.getClassDescriptorByName(className);
                 // Add the display name for this class.
                 classData.put("displayName", WebUtil.formatClass(cd, config));
+                classData.put("term", cd.getFairTerm());
                 String fullyQualifiedClassName = cd.getName();
                 try {
                     // Add the count for this class.
@@ -202,6 +203,7 @@ public class ModelService extends WebService
                     FieldDescriptor fd = cd.getAttributeDescriptorByName(attributeName, true);
                     String displayName = getDisplayName(cd, attributeName, fd);
                     attribute.put("displayName", displayName);
+                    attribute.put("term", cd.getFairTerm());
                 }
 
                 // Get the refs for this class.

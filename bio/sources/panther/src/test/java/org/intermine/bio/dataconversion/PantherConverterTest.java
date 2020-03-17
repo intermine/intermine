@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,6 +25,8 @@ public class PantherConverterTest extends ItemsTestCase
     Model model = Model.getInstanceByName("genomic");
     PantherConverter converter;
     MockItemWriter itemWriter;
+    private static final String DATASET_TITLE = "Orthologue and paralogue predictions";
+    private static final String DATA_SOURCE_NAME = "Panther";
 
     public PantherConverterTest(String arg) {
         super(arg);

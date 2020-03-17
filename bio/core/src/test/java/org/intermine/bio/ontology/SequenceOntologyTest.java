@@ -1,7 +1,7 @@
 package org.intermine.bio.ontology;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,8 +10,11 @@ package org.intermine.bio.ontology;
  *
  */
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.Set;
 
@@ -19,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
 import org.xml.sax.SAXException;
 
@@ -39,7 +41,6 @@ public class SequenceOntologyTest extends XMLTestCase
         String targetXML = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("so-target.xml"));
         SequenceOntologyFactory.reset();
         SequenceOntology so = SequenceOntologyFactory.getSequenceOntology(oboFile, terms);
-
         Model model = so.getModel();
         assertXMLEqual(targetXML, model.toString());
     }
@@ -51,18 +52,18 @@ public class SequenceOntologyTest extends XMLTestCase
         Model model = so.getModel();
         String targetXML = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("so-target-default.xml"));
 
-        // the failure looks like some XML reordering issue that doesn't appear to be an actual
-        // failure, so disabling test for now
-        // FIXME
-        // assertXMLEqual(targetXML, model.toString());
-        assertNotNull(targetXML);
+//        PrintWriter writer = new PrintWriter("so-target-default-ACTUAL.xml", "UTF-8");
+//        writer.println(model.toString());
+//        writer.close();
+
+        assertXMLEqual(targetXML, model.toString());
     }
 
     public void testParents() {
         SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
         String className = "exon";
         Set<String> parents = so.getAllPartOfs(className);
-        System.out.print(parents);
+
         assertEquals(2, parents.size());
         assertTrue(parents.contains("transcript"));
     }

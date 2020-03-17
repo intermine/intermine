@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -322,8 +322,8 @@ public class PsiComplexesConverter extends BioFileConverter
         boolean createSynonym = false;
         // Chop off the PRO ontology, we aren't using it yet
         // P00424-PRO0000006097, P00425-PRO0000006098, P00427-PRO_0000006108
-        if (originalAccession.contains("-")) {
-            accession = originalAccession.substring(0, originalAccession.indexOf("-"));
+        if (originalAccession.contains("-PRO")) {
+            accession = originalAccession.substring(0, originalAccession.indexOf("-PRO"));
             createSynonym = true;
         } else {
             accession = originalAccession;

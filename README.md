@@ -3,19 +3,21 @@ InterMine
 
 Master: [![Build Status: master][travis-badge-master]][ci]
 Dev: [![Build Status: dev][travis-badge-dev]][ci]
-[![Version](http://img.shields.io/badge/version-3.1.1-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
+[![Version](http://img.shields.io/badge/version-4.1.3-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
 [![Conda](https://anaconda.org/anaconda/conda-build/badges/installer/conda.svg)](https://anaconda.org/bioconda/intermine)
+[![Documentation Status](https://readthedocs.org/projects/intermine/badge/?version=latest)](https://intermine.readthedocs.io/en/latest/?badge=latest)
 
 A powerful open source data warehouse system. InterMine allows users
 to integrate diverse data sources with a minimum of effort, providing
 powerful web-services and an elegant web-application with minimal
 configuration. InterMine powers some of the largest data-warehouses in
 the life sciences, including:
-  * [FlyMine](http://www.flymine.org)
+  * [FlyMine](https://www.flymine.org)
+  * [HumanMine](https://www.humanmine.org)
   * [MouseMine](http://www.mousemine.org)
-  * [YeastMine](http://yeastmine.yeastgenome.org)
+  * [YeastMine](https://yeastmine.yeastgenome.org)
   * [ZebrafishMine](http://zebrafishmine.org)
   * [RatMine](http://ratmine.mcw.edu/ratmine/begin.do)
   * [TargetMine](http://targetmine.mizuguchilab.org/)
@@ -33,33 +35,28 @@ Getting Started With InterMine
 -------------------------------
 
 For a guide on getting started with InterMine, please visit:
-[quick start tutorial][tutorial]
+[tutorial][tutorial]
 
 3min bootstrap
 --------------------------------------
 
-As long as you have the prerequisites installed ([Java][java],
-[PostgreSQL][psql]), you can get a working 
-data-warehouse and associated web-application by running an
-automated bootstrap script:
+As long as you have the prerequisites installed ([Java][java], [PostgreSQL][psql]), you can get a working data-warehouse and associated web-application by running an automated bootstrap script:
 
 ```bash
-  # For a genomic application, with test data from Malaria
-./biotestmine/setup.sh
   # For the testmodel
-./testmodel/setup.sh
+./testmine/setup.sh
 ```
+For a genomic application, with test data from Malaria, see [BioTestMine](https://github.com/intermine/biotestmine)
 
-This requires that you have all the software dependencies
-installed and running with the appropriate user permissions
-(PostgreSQL, Java SDK). You will need to have set up usernames
-and passwords for PostgreSQL first, and these can be
-provided to the setup scripts as `PSQL_USER`.
+
+Docker
+--------------------------------------
+You can build InterMine using Docker. See https://github.com/intermine/docker-intermine-gradle
 
 Copyright and Licence
 ------------------------
 
-Copyright (C) 2002-2019 FlyMine
+Copyright (C) 2002-2020 FlyMine
 
 See [LICENSE](LICENSE) file for licensing information.
 

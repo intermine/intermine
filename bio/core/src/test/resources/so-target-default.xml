@@ -1,141 +1,142 @@
 <model name="so" package="org.intermine.model.bio">
-<class name="BindingSite" extends="SequenceFeature" is-interface="true"></class>
-<class name="CDNA" is-interface="true"></class>
-<class name="CDNAClone" extends="Clone" is-interface="true"></class>
-<class name="CDNAMatch" extends="SequenceFeature" is-interface="true"></class>
-<class name="CDS" extends="SequenceFeature" is-interface="true">
+<class name="BindingSite" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000409"></class>
+<class name="CDNA" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000756"></class>
+<class name="CDNAClone" extends="Clone" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000317"></class>
+<class name="CDNAMatch" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000689"></class>
+<class name="CDS" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000316">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="CDSs"/>
 	<collection name="codons" referenced-type="Codon" reverse-reference="CDS"/>
 </class>
-<class name="ChromosomalDeletion" extends="ChromosomeStructureVariation" is-interface="true"></class>
-<class name="ChromosomalDuplication" extends="ChromosomeStructureVariation" is-interface="true"></class>
-<class name="ChromosomalInversion" extends="ChromosomeStructureVariation" is-interface="true"></class>
-<class name="ChromosomalStructuralElement" extends="SequenceFeature" is-interface="true">
+<class name="ChromosomalDeletion" extends="ChromosomeStructureVariation" is-interface="true" term="http://purl.obolibrary.org/obo/SO:1000029"></class>
+<class name="ChromosomalDuplication" extends="ChromosomeStructureVariation" is-interface="true" term="http://purl.obolibrary.org/obo/SO:1000037"></class>
+<class name="ChromosomalInversion" extends="ChromosomeStructureVariation" is-interface="true" term="http://purl.obolibrary.org/obo/SO:1000030"></class>
+<class name="ChromosomalStructuralElement" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000628">
 	<reference name="chromosome" referenced-type="Chromosome"/>
 </class>
-<class name="ChromosomalTranslocation" extends="ChromosomeStructureVariation" is-interface="true"></class>
-<class name="ChromosomalTransposition" extends="ChromosomeStructureVariation" is-interface="true"></class>
-<class name="Chromosome" extends="SequenceFeature" is-interface="true"></class>
-<class name="ChromosomeArm" extends="SequenceFeature" is-interface="true">
+<class name="ChromosomalTranslocation" extends="SequenceFeature ChromosomeStructureVariation" is-interface="true" term="http://purl.obolibrary.org/obo/SO:1000044"></class>
+<class name="ChromosomalTransposition" extends="ChromosomeStructureVariation" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000453"></class>
+<class name="Chromosome" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000340"></class>
+<class name="ChromosomeArm" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000105">
 	<reference name="chromosome" referenced-type="Chromosome"/>
 </class>
-<class name="ChromosomeBand" extends="SequenceFeature" is-interface="true">
+<class name="ChromosomeBand" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000341">
 	<reference name="chromosome" referenced-type="Chromosome"/>
 </class>
-<class name="ChromosomeStructureVariation" extends="SequenceCollection" is-interface="true"></class>
-<class name="Clone" extends="Reagent" is-interface="true"></class>
-<class name="Codon" extends="SequenceFeature" is-interface="true">
-	<reference name="CDS" referenced-type="CDS" reverse-reference="codons"/>
+<class name="ChromosomeStructureVariation" extends="SequenceCollection" is-interface="true" term="http://purl.obolibrary.org/obo/SO:1000183"></class>
+<class name="Clone" extends="Reagent" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000151"></class>
+<class name="Codon" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000360">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="codons"/>
+	<reference name="CDS" referenced-type="CDS" reverse-reference="codons"/>
 </class>
-<class name="CopyNumberVariation" extends="SequenceFeature" is-interface="true"></class>
-<class name="Enhancer" extends="RegulatoryRegion" is-interface="true"></class>
-<class name="EST" extends="Reagent" is-interface="true">
+<class name="CopyNumberVariation" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001019"></class>
+<class name="Enhancer" extends="RegulatoryRegion" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000165"></class>
+<class name="EST" extends="Reagent" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000345">
 	<reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="ESTs"/>
 </class>
-<class name="Exon" extends="SequenceFeature" is-interface="true">
+<class name="Exon" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000147">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="exons"/>
 	<collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="exon"/>
 </class>
-<class name="ExonRegion" extends="SequenceFeature" is-interface="true">
+<class name="ExonRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000852">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="exonRegions"/>
 	<reference name="exon" referenced-type="Exon" reverse-reference="exonRegions"/>
 </class>
-<class name="FivePrimeUTR" extends="UTR" is-interface="true"></class>
-<class name="FlankingRegion" extends="SequenceFeature" is-interface="true"></class>
-<class name="Gene" extends="SequenceFeature" is-interface="true">
-	<collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
+<class name="FivePrimeUTR" extends="UTR" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000204"></class>
+<class name="FlankingRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000239"></class>
+<class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000704">
 	<collection name="transcripts" referenced-type="Transcript" reverse-reference="gene"/>
+	<collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
 </class>
-<class name="GoldenPathFragment" extends="SequenceFeature" is-interface="true"></class>
-<class name="HistoneBindingSite" extends="ProteinBindingSite" is-interface="true"></class>
-<class name="Insertion" extends="SequenceFeature" is-interface="true"></class>
-<class name="InsertionSite" extends="Junction" is-interface="true"></class>
-<class name="InsulatorBindingSite" extends="ProteinBindingSite" is-interface="true"></class>
-<class name="IntergenicRegion" extends="SequenceFeature" is-interface="true"></class>
-<class name="Intron" extends="SequenceFeature" is-interface="true">
+<class name="GoldenPathFragment" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000468"></class>
+<class name="HistoneBindingSite" extends="ProteinBindingSite" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001383"></class>
+<class name="Insertion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000667"></class>
+<class name="InsertionSite" extends="Junction" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000366"></class>
+<class name="InsulatorBindingSite" extends="ProteinBindingSite" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001460"></class>
+<class name="IntergenicRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000605"></class>
+<class name="Intron" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000188">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="introns"/>
 </class>
-<class name="Junction" extends="SequenceFeature" is-interface="true"></class>
-<class name="MatureTranscript" extends="Transcript" is-interface="true">
+<class name="Junction" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000699"></class>
+<class name="MatureTranscript" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000233">
 	<collection name="polyASites" referenced-type="PolyASite" reverse-reference="matureTranscript"/>
 </class>
-<class name="MiRNA" extends="SmallRegulatoryNcRNA" is-interface="true"></class>
-<class name="MRNA" extends="MatureTranscript" is-interface="true"></class>
-<class name="NaturalTransposableElement" extends="TransposableElement" is-interface="true"></class>
-<class name="NcRNA" extends="MatureTranscript" is-interface="true"></class>
-<class name="OriginOfReplication" extends="SequenceFeature" is-interface="true"></class>
-<class name="OverlappingESTSet" extends="SequenceFeature" is-interface="true">
+<class name="MiRNA" extends="SmallRegulatoryNcRNA" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000276"></class>
+<class name="MobileGeneticElement" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001037"></class>
+<class name="MRNA" extends="MatureTranscript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000234"></class>
+<class name="NaturalTransposableElement" extends="TransposableElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000797"></class>
+<class name="NcRNA" extends="MatureTranscript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000655"></class>
+<class name="OriginOfReplication" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000296"></class>
+<class name="OverlappingESTSet" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001262">
 	<collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSet"/>
 </class>
-<class name="PCRProduct" extends="Reagent" is-interface="true"></class>
-<class name="PeptideCollection" extends="SequenceCollection" is-interface="true"></class>
-<class name="PointMutation" extends="Substitution" is-interface="true"></class>
-<class name="PolyASequence" extends="SequenceFeature" is-interface="true"></class>
-<class name="PolyASignalSequence" extends="RegulatoryRegion" is-interface="true"></class>
-<class name="PolyASite" extends="Junction" is-interface="true">
+<class name="PCRProduct" extends="Reagent" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000006"></class>
+<class name="PeptideCollection" extends="SequenceCollection" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001501"></class>
+<class name="PointMutation" extends="Substitution" is-interface="true" term="http://purl.obolibrary.org/obo/SO:1000008"></class>
+<class name="PolyASequence" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000610"></class>
+<class name="PolyASignalSequence" extends="RegulatoryRegion" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000551"></class>
+<class name="PolyASite" extends="Junction" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000553">
 	<reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="polyASites"/>
 	<reference name="matureTranscript" referenced-type="MatureTranscript" reverse-reference="polyASites"/>
 </class>
-<class name="PolypeptideRegion" extends="SequenceFeature" is-interface="true"></class>
-<class name="ProcessedTranscript" extends="Transcript" is-interface="true"></class>
-<class name="ProteinBindingSite" extends="BindingSite" is-interface="true"></class>
-<class name="Reagent" extends="SequenceFeature" is-interface="true"></class>
-<class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true">
+<class name="PolypeptideRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000839"></class>
+<class name="ProcessedTranscript" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001503"></class>
+<class name="ProteinBindingSite" extends="BindingSite" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000410"></class>
+<class name="Reagent" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000695"></class>
+<class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0005836">
 	<reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions"/>
 </class>
-<class name="RepeatRegion" extends="SequenceFeature" is-interface="true"></class>
-<class name="RRNA" extends="NcRNA" is-interface="true"></class>
-<class name="SequenceCollection" is-interface="true"></class>
-<class name="SequenceFeature" is-interface="true"></class>
-<class name="SequenceVariant" is-interface="true"></class>
-<class name="SL1AcceptorSite" extends="SequenceFeature" is-interface="true">
+<class name="RepeatRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000657"></class>
+<class name="RRNA" extends="NcRNA" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000252"></class>
+<class name="SequenceCollection" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001260"></class>
+<class name="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000110"></class>
+<class name="SequenceVariant" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001060"></class>
+<class name="SL1AcceptorSite" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000708">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="SL1AcceptorSites"/>
 </class>
-<class name="SL2AcceptorSite" extends="SequenceFeature" is-interface="true">
+<class name="SL2AcceptorSite" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000709">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="SL2AcceptorSites"/>
 </class>
-<class name="SmallRegulatoryNcRNA" extends="NcRNA" is-interface="true"></class>
-<class name="SnoRNA" extends="NcRNA" is-interface="true"></class>
-<class name="SnRNA" extends="NcRNA" is-interface="true"></class>
-<class name="StartCodon" extends="Codon" is-interface="true"></class>
-<class name="StopCodon" extends="Codon" is-interface="true"></class>
-<class name="Substitution" extends="SequenceFeature" is-interface="true"></class>
-<class name="TFBindingSite" extends="ProteinBindingSite RegulatoryRegion" is-interface="true"></class>
-<class name="ThreePrimeRACEClone" extends="CDNAClone" is-interface="true"></class>
-<class name="ThreePrimeRST" extends="EST" is-interface="true"></class>
-<class name="ThreePrimeUST" extends="EST" is-interface="true"></class>
-<class name="ThreePrimeUTR" extends="UTR" is-interface="true">
+<class name="SmallRegulatoryNcRNA" extends="NcRNA" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000370"></class>
+<class name="SnoRNA" extends="NcRNA" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000275"></class>
+<class name="SnRNA" extends="NcRNA" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000274"></class>
+<class name="StartCodon" extends="Codon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000318"></class>
+<class name="StopCodon" extends="Codon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000319"></class>
+<class name="Substitution" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:1000002"></class>
+<class name="TFBindingSite" extends="ProteinBindingSite RegulatoryRegion" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000235"></class>
+<class name="ThreePrimeRACEClone" extends="CDNAClone" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001433"></class>
+<class name="ThreePrimeRST" extends="EST" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001468"></class>
+<class name="ThreePrimeUST" extends="EST" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001465"></class>
+<class name="ThreePrimeUTR" extends="UTR" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000205">
 	<collection name="polyASites" referenced-type="PolyASite" reverse-reference="threePrimeUTR"/>
 </class>
-<class name="Transcript" extends="SequenceFeature" is-interface="true">
+<class name="Transcript" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000673">
 	<reference name="gene" referenced-type="Gene" reverse-reference="transcripts"/>
-	<collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="transcript"/>
-	<collection name="transcriptionEndSites" referenced-type="TranscriptionEndSite" reverse-reference="transcript"/>
 	<collection name="codons" referenced-type="Codon" reverse-reference="transcript"/>
-	<collection name="TSSs" referenced-type="TSS" reverse-reference="transcript"/>
-	<collection name="CDSs" referenced-type="CDS" reverse-reference="transcript"/>
-	<collection name="introns" referenced-type="Intron" reverse-reference="transcript"/>
-	<collection name="exons" referenced-type="Exon" reverse-reference="transcript"/>
-	<collection name="UTRs" referenced-type="UTR" reverse-reference="transcript"/>
-	<collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcript"/>
 	<collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcript"/>
+	<collection name="exons" referenced-type="Exon" reverse-reference="transcript"/>
+	<collection name="TSSs" referenced-type="TSS" reverse-reference="transcript"/>
+	<collection name="introns" referenced-type="Intron" reverse-reference="transcript"/>
+	<collection name="CDSs" referenced-type="CDS" reverse-reference="transcript"/>
+	<collection name="UTRs" referenced-type="UTR" reverse-reference="transcript"/>
+	<collection name="transcriptionEndSites" referenced-type="TranscriptionEndSite" reverse-reference="transcript"/>
+	<collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcript"/>
+	<collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="transcript"/>
 </class>
-<class name="TranscriptionEndSite" extends="SequenceFeature" is-interface="true">
+<class name="TranscriptionEndSite" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000616">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="transcriptionEndSites"/>
 </class>
-<class name="TransposableElement" extends="SequenceFeature" is-interface="true">
+<class name="TransposableElement" extends="MobileGeneticElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000101">
 	<collection name="transposableElementGenes" referenced-type="TransposableElementGene" reverse-reference="transposableElement"/>
 </class>
-<class name="TransposableElementGene" extends="Gene" is-interface="true">
+<class name="TransposableElementGene" extends="Gene" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000111">
 	<reference name="transposableElement" referenced-type="TransposableElement" reverse-reference="transposableElementGenes"/>
 </class>
-<class name="TransposableElementInsertionSite" extends="InsertionSite" is-interface="true"></class>
-<class name="TRNA" extends="NcRNA" is-interface="true"></class>
-<class name="TSS" extends="SequenceFeature" is-interface="true">
+<class name="TransposableElementInsertionSite" extends="InsertionSite" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000368"></class>
+<class name="TRNA" extends="NcRNA" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000253"></class>
+<class name="TSS" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000315">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="TSSs"/>
 </class>
-<class name="UTR" extends="SequenceFeature" is-interface="true">
+<class name="UTR" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000203">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="UTRs"/>
 </class>
 </model>

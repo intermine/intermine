@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,7 +41,8 @@ public class UniprotKeywordConverter extends BioFileConverter
      * @param model the Model
      */
     public UniprotKeywordConverter(ItemWriter writer, Model model) {
-        super(writer, model, "UniProt", "UniProt keywords data set", null);
+        super(writer, model, "UniProt", "UniProt data set",
+                "http://creativecommons.org/licenses/by/4.0/", false);
     }
 
     /**

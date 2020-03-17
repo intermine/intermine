@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -59,7 +59,7 @@ public class CollectionDescriptorTest extends TestCase
 
     public void testSetClassDescriptor() throws Exception {
 
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, false, noAttrs, noRefs, noColls);
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, false, noAttrs, noRefs, noColls, null);
 
         CollectionDescriptor cod = new CollectionDescriptor("name", "String", null);
         try {
@@ -79,8 +79,8 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null);
         Set<CollectionDescriptor> collections = Collections.singleton(cod1);
         // cld1 has a CollectionDescriptor that contains objects of type Class2
-        new ClassDescriptor("Class1", null, false, noAttrs, noRefs, collections);
-        new ClassDescriptor("Class2", null, false, noAttrs, noRefs, noColls);
+        new ClassDescriptor("Class1", null, false, noAttrs, noRefs, collections, null);
+        new ClassDescriptor("Class2", null, false, noAttrs, noRefs, noColls, null);
         try {
             cod1.getReferencedClassDescriptor();
             fail("Expected IllegalStateException, model has not yet been set");
@@ -92,8 +92,8 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
         Set<CollectionDescriptor> collections = Collections.singleton(cod1);
         // cld1 has a ReferenceDescriptor that points to Class2
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, collections);
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, noAttrs, noRefs, noColls);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, collections, null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, noAttrs, noRefs, noColls, null);
         new Model("model", "package.name", Arrays.asList(cld1, cld2));
         try {
             ClassDescriptor refCld = cod1.getReferencedClassDescriptor();
@@ -110,8 +110,8 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor cod2 = new CollectionDescriptor("cod2", "package.name.Class1", "cod1");
         Set<CollectionDescriptor> cols1 = Collections.singleton(cod1);
         Set<CollectionDescriptor> cols2 = Collections.singleton(cod2);
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, cols1);
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, noAttrs, noRefs, cols2);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, cols1, null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, noAttrs, noRefs, cols2, null);
         new Model("model", "package.name", Arrays.asList(cld1, cld2));
         try {
             ReferenceDescriptor rfdReverse = cod1.getReverseReferenceDescriptor();
@@ -128,8 +128,8 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor cod2 = new CollectionDescriptor("cod2", "package.name.Class1", "cod1");
         Set<CollectionDescriptor> cols1 = Collections.singleton(cod1);
         Set<CollectionDescriptor> cols2 = Collections.singleton(cod2);
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, cols1);
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, noAttrs, noRefs, cols2);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, cols1, null);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, noAttrs, noRefs, cols2, null);
 
         try {
             new Model("model", "package.name", Arrays.asList(cld1, cld2));
@@ -143,7 +143,7 @@ public class CollectionDescriptorTest extends TestCase
         ReferenceDescriptor ref  = new ReferenceDescriptor("ref1", "package.name.Class1", null);
         Set<CollectionDescriptor> cols = Collections.singleton(col);
         Set<ReferenceDescriptor> refs = Collections.singleton(ref);
-        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, noAttrs, refs, cols);
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, noAttrs, refs, cols, null);
         new Model("model1", "package.name", Collections.singleton(cld));
         assertEquals(FieldDescriptor.ONE_N_RELATION, col.relationType());
     }
@@ -152,7 +152,7 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor col1 = new CollectionDescriptor("col1", "package.name.Class1", "col2");
         CollectionDescriptor col2 = new CollectionDescriptor("col2", "package.name.Class1", null);
         Set<CollectionDescriptor> cols = new HashSet<CollectionDescriptor>(Arrays.asList(col1, col2));
-        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, cols);
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, cols, null);
         new Model("model1", "package.name", Collections.singleton(cld));
         assertEquals(FieldDescriptor.M_N_RELATION, col1.relationType());
     }
@@ -160,7 +160,7 @@ public class CollectionDescriptorTest extends TestCase
     public void testRelationTypeUnidirectional() throws Exception {
         CollectionDescriptor col = new CollectionDescriptor("col1", "package.name.Class1", null);
         Set<CollectionDescriptor> cols = Collections.singleton(col);
-        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, cols);
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, cols, null);
         new Model("model1", "package.name", Collections.singleton(cld));
         assertEquals(FieldDescriptor.M_N_RELATION, col.relationType());
     }

@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
 <classes>
-
-    <class name="CDS" extends="SequenceFeature" is-interface="true">
+    <class name="CDS" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000316">
       <reference name="gene" referenced-type="Gene" reverse-reference="CDSs"/>
       <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
     </class>
 
-    <class name="Exon" extends="SequenceFeature" is-interface="true">
+    <class name="Exon" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000147">
       <reference name="gene" referenced-type="Gene" reverse-reference="exons"/>
     </class>
 
-    <class name="Gene" extends="SequenceFeature" is-interface="true">
+    <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000704">
       <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
       <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
       <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
@@ -20,35 +19,35 @@
       <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
     </class>
 
-    <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true">
-      <attribute name="distance" type="java.lang.String"/>
-      <attribute name="direction" type="java.lang.String"/>
+    <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000239">
+      <attribute name="distance" type="java.lang.String" term="http://purl.obolibrary.org/obo/PATO_0000040"/>
+      <attribute name="direction" type="java.lang.String" term="http://purl.obolibrary.org/obo/PATO_0000039"/>
       <attribute name="includeGene" type="java.lang.Boolean"/>
       <reference name="gene" referenced-type="Gene" reverse-reference="flankingRegions"/>
     </class>
 
-    <class name="IntergenicRegion" extends="SequenceFeature" is-interface="true">
+    <class name="IntergenicRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000605">
       <collection name="adjacentGenes" referenced-type="Gene"/>
-	 </class>
+    </class>
 
-    <class name="Intron" extends="SequenceFeature" is-interface="true">
+    <class name="Intron" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000188">
       <collection name="genes" referenced-type="Gene" reverse-reference="introns"/>
     </class>
 
-    <class name="Protein" is-interface="true">
+    <class name="Protein" is-interface="true" term="http://semanticscience.org/resource/SIO_010043">
       <collection name="CDSs" referenced-type="CDS" reverse-reference="protein"/>
       <collection name="transcripts" referenced-type="Transcript" reverse-reference="protein"/>
     </class>
 
-    <class name="SequenceVariant" is-interface="true">
+    <class name="SequenceVariant" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0001060">
       <collection name="genes" referenced-type="Gene"/>
     </class>
         
-    <class name="Transcript" extends="SequenceFeature" is-interface="true">
+    <class name="Transcript" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000673">
       <reference name="protein" referenced-type="Protein" reverse-reference="transcripts"/>
     </class>
     
-    <class name="UTR" extends="SequenceFeature" is-interface="true">
+    <class name="UTR" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000203">
       <reference name="gene" referenced-type="Gene" reverse-reference="UTRs"/>
     </class>
 </classes>

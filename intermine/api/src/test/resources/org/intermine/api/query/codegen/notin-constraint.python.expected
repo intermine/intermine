@@ -30,7 +30,7 @@ query.add_view(
 # query.add_sort_order("Gene.primaryIdentifier", "ASC")
 
 # You can edit the constraint values below
-query.add_constraint("Gene", "NOT IN", "aList", code = "A")
+query.add_constraint("Gene", "NOT IN", "aList", code="A")
 
 # Uncomment and edit the code below to specify your own custom logic:
 # query.set_logic("A")

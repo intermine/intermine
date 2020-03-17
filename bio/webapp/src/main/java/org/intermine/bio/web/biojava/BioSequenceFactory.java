@@ -1,7 +1,7 @@
 package org.intermine.bio.web.biojava;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -68,6 +68,31 @@ public abstract class BioSequenceFactory
             return new BioSequence(new DNASequence(residues), feature);
         }
     }
+
+
+    /**
+     * Create a new BioSequence from a SequenceFeature
+     * @param feature the SequenceFeature
+     * @return a new BioSequence object or null if the SequenceFeature doesn't have a
+     * Sequence. The sequence is the translated AA sequence of the dna one provided.
+     * @throws CompoundNotFoundException if any of the residues of the SequenceFeature can't be
+     * turned into DNA symbols.
+     */
+    public static BioSequence makeWithTranslation(SequenceFeature feature)
+            throws CompoundNotFoundException {
+        if (feature.getSequence() == null) {
+            return null;
+        } else {
+            String residues =
+                    feature.getSequence().getResidues().toString().toLowerCase();
+            return new BioSequence(new DNASequence(residues).getRNASequence().getProteinSequence(),
+                    feature);
+            // for the moment phase is not considered.
+            // if we have it, we can use it in the translation, e.g.:
+            // new DNASequence(residues).getRNASequence(Frame.TWO).getProteinSequence()
+        }
+    }
+
 
     /**
      * Create a new BioSequence from a Protein

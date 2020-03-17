@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,7 +43,7 @@ import org.intermine.api.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.displayer.ReportDisplayer;
-import org.intermine.web.logic.PortalHelper;
+import org.intermine.web.logic.PermanentURIHelper;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayReference;
@@ -183,12 +183,13 @@ public class ReportController extends InterMineAction
 
             String type = reportObject.getType();
             request.setAttribute("objectType", type);
-
-            String stableLink =
-                PortalHelper.generatePortalLink(reportObject.getObject(), im, request);
-            if (stableLink != null) {
-                request.setAttribute("stableLink", stableLink);
+            String idString = request.getParameter("id");
+            String fairPermanentLink = (new PermanentURIHelper(request)).getPermanentURL(type,
+                    Integer.parseInt(idString), SessionMethods.getProfile(session));
+            if (fairPermanentLink != null) {
+                request.setAttribute("stableLink", fairPermanentLink);
             }
+
 
             stepTime = System.currentTimeMillis();
             startTime = stepTime;

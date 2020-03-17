@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -46,20 +46,6 @@ public class BioStoreHook implements DataConverterStoreHook
         this.model = model;
         this.dataSetRefId = dataSet;
         this.dataSourceRefId = dataSource;
-        if (StringUtils.isNotEmpty(ontologyRefId)) {
-            this.ontologyRefId = ontologyRefId;
-        }
-    }
-
-    /**
-     * Create a new DataSetStoreHook object.
-     * @param model the data model
-     * @param ontologyRefId id representing Ontology (SO) object
-     */
-    public BioStoreHook(Model model, String ontologyRefId) {
-        this.model = model;
-        this.dataSetRefId = null;
-        this.dataSourceRefId = null;
         if (StringUtils.isNotEmpty(ontologyRefId)) {
             this.ontologyRefId = ontologyRefId;
         }

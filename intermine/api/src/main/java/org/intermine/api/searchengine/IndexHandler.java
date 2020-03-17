@@ -1,7 +1,7 @@
 package org.intermine.api.searchengine;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,6 +10,7 @@ package org.intermine.api.searchengine;
  *
  */
 
+import org.apache.solr.client.solrj.SolrServerException;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 
@@ -34,8 +35,9 @@ public interface IndexHandler
      *                  classKeys from InterMineAPI, map of classname to all key field
      *                  descriptors
      * @throws IOException IOException is thrown from Objectstore
+     * @throws SolrServerException is thrown from solr
      */
     void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys)
-            throws IOException;
+            throws IOException, SolrServerException;
 
 }

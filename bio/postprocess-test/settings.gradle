@@ -1,0 +1,19 @@
+rootProject.name = 'bio-postprocess-test'
+
+include ':bio-postprocess-create-chromosome-locations-and-lengths-test',
+        ':bio-postprocess-create-gene-flanking-features-test',
+        ':bio-postprocess-create-intergenic-region-features-test',
+        ':bio-postprocess-create-intron-features-test',
+        ':bio-postprocess-create-references-test',
+        ':bio-postprocess-create-utr-references-test',
+        ':bio-postprocess-make-spanning-locations-test',
+        ':bio-postprocess-transfer-sequences-test'
+
+project(':bio-postprocess-create-chromosome-locations-and-lengths-test').projectDir = new File(settingsDir, './create-chromosome-locations-test')
+project(':bio-postprocess-create-gene-flanking-features-test').projectDir = new File(settingsDir, './create-gene-flanking-features-test')
+project(':bio-postprocess-create-intergenic-region-features-test').projectDir = new File(settingsDir, './create-intergenic-region-features-test')
+project(':bio-postprocess-create-intron-features-test').projectDir = new File(settingsDir, './create-intron-features-test')
+project(':bio-postprocess-create-utr-references-test').projectDir = new File(settingsDir, './create-utr-references-test')
+project(':bio-postprocess-create-references-test').projectDir = new File(settingsDir, './create-references-test')
+project(':bio-postprocess-make-spanning-locations-test').projectDir = new File(settingsDir, './make-spanning-locations-test')
+project(':bio-postprocess-transfer-sequences-test').projectDir = new File(settingsDir, './transfer-sequences-test')

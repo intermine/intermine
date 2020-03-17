@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -123,7 +123,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         }
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex,
-                im.getClassKeys(), 0);
+                im.getClassKeys(), 0, "n");
         ExportResultsIterator iter = null;
         try {
             iter = getResultRows(pt, request);

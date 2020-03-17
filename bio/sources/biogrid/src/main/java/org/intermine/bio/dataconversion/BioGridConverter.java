@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -93,7 +93,8 @@ public class BioGridConverter extends BioFileConverter
      * @param model the Model
      */
     public BioGridConverter(ItemWriter writer, Model model) {
-        super(writer, model, "BioGRID", "BioGRID interaction data set");
+        super(writer, model, "BioGRID", "BioGRID interaction data set",
+        "https://opensource.org/licenses/MIT");
         readConfig();
     }
 

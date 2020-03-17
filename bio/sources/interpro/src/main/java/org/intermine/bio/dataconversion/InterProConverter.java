@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -44,7 +44,7 @@ public class InterProConverter extends BioFileConverter
      */
     public InterProConverter(ItemWriter writer, Model model)
         throws SAXException {
-        super(writer, model, "InterPro", "InterPro data set", null);
+        super(writer, model, "InterPro", "InterPro data set", null, false);
     }
 
     /**

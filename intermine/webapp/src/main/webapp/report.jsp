@@ -154,6 +154,7 @@
 
     <%-- permalink --%>
     <%-- <p class="share">Share this page: <a href="${stableLink}">${stableLink}</a></p> --%>
+    <c:if test="${stableLink != null}">
     <div id="share">
       <a></a>
       <div class="popup">
@@ -175,8 +176,8 @@
         });
         //]]>
       </script>
-  </div>
-
+    </div>
+    </c:if>
   </div>
 </div>
 

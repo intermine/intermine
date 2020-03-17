@@ -13,13 +13,10 @@ package org.intermine.bio.dataconversion;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.StringReader;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -53,7 +50,7 @@ public class NcbiGffGFF3RecordHandlerTest extends ItemsTestCase
         NcbiGffGFF3SeqHandler seqHandler = new NcbiGffGFF3SeqHandler();
 
         converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
-                          dataSetTitle, tgtModel, handler, seqHandler);
+                          dataSetTitle, tgtModel, handler, seqHandler, null);
     }
 
     public void tearDown() throws Exception {

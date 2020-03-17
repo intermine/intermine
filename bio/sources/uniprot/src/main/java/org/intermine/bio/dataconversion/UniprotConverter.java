@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -79,6 +79,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private static final String FLY = "7227";
     private String datasourceRefId = null;
     private static final Map<String, String> GENE_PREFIXES = new HashMap<String, String>();
+    private static final String LICENCE = "http://creativecommons.org/licenses/by/4.0/";
 
     /**
      * Constructor
@@ -86,7 +87,7 @@ public class UniprotConverter extends BioDirectoryConverter
      * @param model the Model
      */
     public UniprotConverter(ItemWriter writer, Model model) {
-        super(writer, model, "UniProt", "Swiss-Prot data set");
+        super(writer, model, "UniProt", "Swiss-Prot data set", LICENCE);
         OrganismRepository.getOrganismRepository();
     }
 
@@ -341,7 +342,7 @@ public class UniprotConverter extends BioDirectoryConverter
             if ("entry".equals(qName)) {
                 entry = new UniprotEntry();
                 String dataSetTitle = getAttrValue(attrs, "dataset") + " data set";
-                entry.setDatasetRefId(getDataSet(dataSetTitle, datasourceRefId));
+                entry.setDatasetRefId(getDataSet(dataSetTitle, datasourceRefId, LICENCE));
             } else if ("fullName".equals(qName) && stack.search("protein") == 2
                     &&  ("recommendedName".equals(previousQName)
                             || "submittedName".equals(previousQName))) {

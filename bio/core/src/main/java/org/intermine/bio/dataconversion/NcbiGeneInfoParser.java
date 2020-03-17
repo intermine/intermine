@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.metadata.Util;
@@ -36,6 +37,13 @@ public class NcbiGeneInfoParser
     private Map<String, Set<GeneInfoRecord>> recordMap = new HashMap<String, Set<GeneInfoRecord>>();
     private Map<String, Set<String>> duplicateEnsemblIds = new HashMap<String, Set<String>>();
     private Map<String, Set<String>> duplicateSymbols = new HashMap<String, Set<String>>();
+    private static final Set<String> TYPES_TO_IGNORE = new HashSet<>();
+
+    static {
+        TYPES_TO_IGNORE.add("other");
+        TYPES_TO_IGNORE.add("biological-region");
+        TYPES_TO_IGNORE.add("unknown");
+    }
 
     /**
      * Construct the parser with the file to read, the input file can be for a single taxon or for
@@ -69,6 +77,10 @@ public class NcbiGeneInfoParser
             String geneType = line[9].trim();
             String officialSymbol = line[10].trim();
             String officialName = line[11].trim();
+
+            if (StringUtils.isEmpty(geneType) || TYPES_TO_IGNORE.contains(geneType)) {
+                continue;
+            }
 
             GeneInfoRecord record = new GeneInfoRecord(taxonId, entrez, officialSymbol,
                     defaultSymbol, officialName, defaultName, mapLocation, geneType, locusTag);

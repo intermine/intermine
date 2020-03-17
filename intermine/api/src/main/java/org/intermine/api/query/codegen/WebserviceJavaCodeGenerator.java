@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -298,7 +298,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
         intermineImports.addAll(Arrays.asList(
                 "org.intermine.metadata.Model",
-                "org.intermine.webservice.client.core.ServiceFactory",
+                "org.intermine.client.core.ServiceFactory",
                 "org.intermine.pathquery.PathQuery"));
 
 
@@ -427,7 +427,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         javaImports.add("java.util.Iterator");
         javaImports.add("java.io.PrintStream");
 
-        intermineImports.add("org.intermine.webservice.client.services.QueryService");
+        intermineImports.add("org.intermine.client.services.QueryService");
 
         codeBody.append(INDENT2 + "QueryService service = factory.getQueryService();" + endl);
         codeBody.append(INDENT2 + INIT_OUT + endl);
@@ -500,8 +500,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         codeBody.append(getIntro(info));
         codeBody.append(generateStartOfClass(info, "TemplateQuery" + srcClassName));
 
-        intermineImports.add("org.intermine.webservice.client.core.ServiceFactory");
-        intermineImports.add("org.intermine.webservice.client.template.TemplateParameter");
+        intermineImports.add("org.intermine.client.core.ServiceFactory");
+        intermineImports.add("org.intermine.client.template.TemplateParameter");
         javaImports.addAll(Arrays.asList("java.util.List", "java.util.ArrayList",
                 "java.io.IOException"));
 
@@ -531,7 +531,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
 
         codeBody.append(endl);
-        intermineImports.add("org.intermine.webservice.client.services.TemplateService");
+        intermineImports.add("org.intermine.client.services.TemplateService");
         javaImports.add("java.util.Iterator");
 
         // Add display results code

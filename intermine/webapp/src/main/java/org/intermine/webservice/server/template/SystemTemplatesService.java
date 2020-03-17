@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -85,7 +85,7 @@ public class SystemTemplatesService extends WebService
                 attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
                 output.setHeaderAttributes(attributes);
                 output.addResultItem(Arrays.asList(
-                        TemplateHelper.apiTemplateMapToJson(im, templates)));
+                        TemplateHelper.apiTemplateMapToJson(im, templates, null)));
                 break;
             case TEXT:
                 Set<String> templateNames = new TreeSet<String>(templates.keySet());

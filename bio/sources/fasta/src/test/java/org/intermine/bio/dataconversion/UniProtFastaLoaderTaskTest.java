@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -51,6 +51,7 @@ public class UniProtFastaLoaderTaskTest {
     private static final Logger LOG = Logger.getLogger(UniProtFastaLoaderTaskTest.class);
     private String dataSetTitle = "uniprot fasta test title";
     private final String dataSourceName = "test-source";
+    private final String LICENCE = "https://data.gov.uk/data/report/licence";
 
     @Before
     public void setUp() throws Exception {
@@ -70,6 +71,7 @@ public class UniProtFastaLoaderTaskTest {
         flt.setDataSetTitle(dataSetTitle);
         flt.setDataSourceName(dataSourceName);
         flt.setClassAttribute("primaryAccession");
+        flt.setLicence(LICENCE);
 
         File[] files = new File[1];
         files[0] = File.createTempFile("UniProtFastaLoaderTaskTest", "tmp");
@@ -118,6 +120,7 @@ public class UniProtFastaLoaderTaskTest {
         DataSet dataSet = protein.getDataSets().iterator().next();
         assertEquals(dataSetTitle, dataSet.getName());
         assertEquals(dataSourceName, dataSet.getDataSource().getName());
+        assertEquals(LICENCE, dataSet.getLicence());
 
         /*
         >sp|Q9V8R9-2|41_DROME Isoform 2 of Protein 4.1 homolog OS=Drosophila melanogaster GN=cora
