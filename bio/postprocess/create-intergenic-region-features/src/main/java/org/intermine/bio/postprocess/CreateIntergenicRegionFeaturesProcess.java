@@ -271,6 +271,7 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
                 intergenicRegion.setChromosomeLocation(location);
                 intergenicRegion.setChromosome(chr);
                 intergenicRegion.setOrganism(chr.getOrganism());
+                intergenicRegion.setStrain(chr.getStrain());
                 intergenicRegion.addDataSets(dataSet);
 
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
