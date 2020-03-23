@@ -762,9 +762,7 @@ public class Profile
         }
 
         InterMineBag bagToUpdate = savedBags.get(name);
-        if (isLoggedIn()) {
-            bagToUpdate.setDescription(newDescription);
-        }
+        bagToUpdate.setDescription(newDescription);
     }
 
 
