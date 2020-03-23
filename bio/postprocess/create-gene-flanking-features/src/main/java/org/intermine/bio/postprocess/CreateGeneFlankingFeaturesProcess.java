@@ -185,6 +185,7 @@ public class CreateGeneFlankingFeaturesProcess extends PostProcessor
                     region.setChromosome(chr);
                     region.setChromosomeLocation(location);
                     region.setOrganism(gene.getOrganism());
+                    region.setStrain(gene.getStrain());
                     region.setPrimaryIdentifier(gene.getPrimaryIdentifier() + " " + distance + "kb "
                             + direction);
 
