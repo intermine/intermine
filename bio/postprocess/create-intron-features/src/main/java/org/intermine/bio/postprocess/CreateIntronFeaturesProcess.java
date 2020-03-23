@@ -334,6 +334,7 @@ public class CreateIntronFeaturesProcess extends PostProcessor
 
                 intron.setChromosome(chr);
                 intron.setOrganism(chr.getOrganism());
+                intron.setStrain(chr.getStrain());
                 intron.addDataSets(dataSet);
                 intron.setPrimaryIdentifier(identifier);
                 intron.setGenes(Collections.singleton(gene));
