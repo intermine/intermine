@@ -10,12 +10,10 @@ package org.intermine.webservice.server.output;
  *
  */
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.intermine.api.results.ResultElement;
+import org.intermine.pathquery.ConstraintValueParser;
 import org.json.JSONObject;
 
 /**
@@ -61,7 +59,11 @@ public class JSONSummaryProcessor extends JSONResultProcessor
                 dict.put("count", row.get(6).getField());
             }
             if (row.size() == 2) {
-                dict.put("item", row.get(0).getField());
+                if (row.get(0).getField() instanceof Date) {
+                    dict.put("item", ConstraintValueParser.ISO_DATE_FORMAT.format(row.get(0).getField()));
+                } else {
+                    dict.put("item", row.get(0).getField());
+                }
                 dict.put("count", row.get(1).getField());
             }
             return new JSONObject(dict);
