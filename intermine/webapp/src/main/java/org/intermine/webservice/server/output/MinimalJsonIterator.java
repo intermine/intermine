@@ -11,10 +11,12 @@ package org.intermine.webservice.server.output;
  */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.api.results.ResultElement;
+import org.intermine.pathquery.ConstraintValueParser;
 import org.json.JSONArray;
 
 /**
@@ -47,6 +49,8 @@ public class MinimalJsonIterator implements Iterator<JSONArray>
                 // Stringify all char-sequences, (ie. force Clob evaluation)
                 if (field instanceof CharSequence) {
                     field = field.toString();
+                } else if (field instanceof Date) {
+                    field = ConstraintValueParser.ISO_DATE_FORMAT.format(field);
                 }
                 jsonRow.add(field);
             }
