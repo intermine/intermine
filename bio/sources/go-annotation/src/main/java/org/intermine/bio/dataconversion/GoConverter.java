@@ -143,7 +143,7 @@ public class GoConverter extends BioFileConverter
 
         String datasourceRefId = getDataSource(datasource);
 
-        return getDataSet(dataset, datasourceRefId, licence);
+        return getDataSet(dataset, datasourceRefId, null, licence);
     }
 
     private void storeDataset() throws ObjectStoreException {
@@ -157,7 +157,7 @@ public class GoConverter extends BioFileConverter
 
         String datasourceRefId = getDataSource(datasource);
 
-        getDataSet(dataset, datasourceRefId, licence);
+        getDataSet(dataset, datasourceRefId, null, licence);
     }
 
     static {

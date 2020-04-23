@@ -42,6 +42,7 @@ public class TreefamConverter extends BioFileConverter
     private Properties props = new Properties();
     private static final String PROP_FILE = "treefam_config.properties";
     private static final String DATASET_TITLE = "TreeFam data set";
+    private static final String DATASET_DESCRIPTION = "TreeFam data set";
     private static final String DATA_SOURCE_NAME = "TreeFam";
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
@@ -67,7 +68,7 @@ public class TreefamConverter extends BioFileConverter
      */
     public TreefamConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, DATASET_DESCRIPTION);
         readConfig();
     }
 

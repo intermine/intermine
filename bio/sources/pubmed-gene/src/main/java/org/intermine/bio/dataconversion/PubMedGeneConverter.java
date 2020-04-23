@@ -45,7 +45,7 @@ public class PubMedGeneConverter extends BioFileConverter
      * @throws ObjectStoreException if can't store the datasource/dataset
      */
     public PubMedGeneConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model, "NCBI", "PubMed to gene mapping");
+        super(writer, model, "NCBI", "PubMed to gene mapping", "PubMed to gene mapping");
     }
 
     /**

@@ -32,8 +32,9 @@ public class InterproGoConverter extends BioFileConverter
 {
 
     protected static final Logger LOG = Logger.getLogger(InterproGoConverter.class);
-    private static final String DATASET_TITLE = "InterPro domain GO annotations";
     private static final String DATA_SOURCE_NAME = "InterPro";
+    private static final String DATASET_NAME = "InterPro domain GO annotations";
+    private static final String DATASET_DESCRIPTION = "Mapping of GO terms to InterPro entries.";
     private static final String INTERPRO_PREFIX = "InterPro:";
     private Map<String, Item> proteinDomains = new HashMap<String, Item>();
     private Map<String, String> goTerms = new HashMap<String, String>();
@@ -45,7 +46,7 @@ public class InterproGoConverter extends BioFileConverter
      * @param model the Model
      */
     public InterproGoConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, null, false);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_NAME, DATASET_DESCRIPTION);
     }
 
     /**
