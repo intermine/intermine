@@ -51,6 +51,8 @@ public class OboConverter extends DataConverter
     private boolean createRelations = true;
     protected String prefix = null;
     private String licence, dataset, datasource;
+    private String url;
+    private String description;
     private String ontologyName;
 
     /**
@@ -61,14 +63,17 @@ public class OboConverter extends DataConverter
      * @param dagFilename the name of the DAG file
      * @param dagName the title of the dag, as present in any static data
      * @param url the URL of the source of this ontology
+     * @param description the description of this ontology
      * @param termClass the class of the Term
      */
     public OboConverter(ItemWriter writer, Model model, String dagFilename, String dagName,
-                        String url, String termClass) {
+                        String url, String description, String termClass) {
         super(writer, model);
         this.dagFilename = dagFilename;
         this.termClass = termClass;
         ontologyName = dagName;
+	this.url = url;
+	this.description = description;
 
         ontology = createItem("Ontology");
         ontology.addAttribute(new Attribute("name", dagName));
@@ -194,13 +199,21 @@ public class OboConverter extends DataConverter
 
         Item datasourceItem = createItem("DataSource");
         datasourceItem.setAttribute("name", datasource);
+	datasourceItem.setAttribute("url", url);
+	if (description != null) {
+	    datasourceItem.setAttribute("description", description);
+	}
         store(datasourceItem);
 
         Item datasetItem = createItem("DataSet");
         datasetItem.setAttribute("name", dataset);
+	datasetItem.setAttribute("url", url);
         if (licence != null) {
             datasetItem.setAttribute("licence", licence);
         }
+	if (description != null) {
+	    datasetItem.setAttribute("description", description);
+	}
         datasetItem.setReference("dataSource", datasourceItem);
         store(datasetItem);
     }
