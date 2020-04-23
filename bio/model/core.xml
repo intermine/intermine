@@ -17,13 +17,10 @@
         <attribute name="secondaryIdentifier" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000675"/>
         <attribute name="symbol" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000105"/>
         <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
-        <attribute name="annotationVersion" type="java.lang.String"/>
-        <attribute name="assemblyVersion" type="java.lang.String"/>
 	<reference name="organism" referenced-type="Organism"/>
         <reference name="strain" referenced-type="Strain" />
 	<collection name="locatedFeatures" referenced-type="Location" reverse-reference="locatedOn"/>
         <collection name="locations" referenced-type="Location" reverse-reference="feature" />
-        <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
         <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
         <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
         <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
