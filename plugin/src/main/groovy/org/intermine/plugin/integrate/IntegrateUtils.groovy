@@ -238,6 +238,7 @@ class IntegrateUtils {
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
                 ontologyName: bioSourceProperties.getProperty("obo.ontology.name"),
                 url: bioSourceProperties.getProperty("obo.ontology.url"),
+		description: bioSourceProperties.getProperty("obo.ontology.description"),
                 termClass: bioSourceProperties.getProperty("obo.term.class"))
     }
 
