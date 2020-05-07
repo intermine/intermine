@@ -2268,6 +2268,13 @@ public final class SqlGenerator
                     queryEvaluableToString(buffer, arg3, q, state);
                 }
                 buffer.append(")");
+	    } else if (nodeE.getOperation() == QueryExpression.CONCAT) {
+		QueryEvaluable arg1 = nodeE.getArg1();
+		QueryEvaluable arg2 = nodeE.getArg2();
+
+		queryEvaluableToString(buffer, arg1, q, state);
+		buffer.append("||");
+		queryEvaluableToString(buffer, arg2, q, state);
             } else if (nodeE.getOperation() == QueryExpression.INDEX_OF) {
                 QueryEvaluable arg1 = nodeE.getArg1();
                 QueryEvaluable arg2 = nodeE.getArg2();
@@ -2283,6 +2290,10 @@ public final class SqlGenerator
                 buffer.append(")");
             } else if (nodeE.getOperation() == QueryExpression.UPPER) {
                 buffer.append("UPPER(");
+                queryEvaluableToString(buffer, nodeE.getArg1(), q, state);
+                buffer.append(")");
+	    } else if (nodeE.getOperation() == QueryExpression.LENGTH) {
+		buffer.append("LENGTH(");
                 queryEvaluableToString(buffer, nodeE.getArg1(), q, state);
                 buffer.append(")");
             } else if (nodeE.getOperation() == QueryExpression.GREATEST) {

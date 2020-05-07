@@ -546,6 +546,9 @@ public class IqlQuery
                 + nodeToString(q, qe.getArg2(), parameters, null)
                 + (qe.getArg3() == null ? "" : ", "
                         + nodeToString(q, qe.getArg3(), parameters, null)) + ")";
+	} else if (qe.getOperation() == QueryExpression.CONCAT) {
+	    return nodeToString(q, qe.getArg1(), parameters, null) + "||"
+		+ nodeToString(q, qe.getArg2(), parameters, null);
         } else if (qe.getOperation() == QueryExpression.INDEX_OF) {
             return "INDEXOF(" + nodeToString(q, qe.getArg1(), parameters, null) + ", "
                 + nodeToString(q, qe.getArg2(), parameters, null) + ")";
@@ -559,6 +562,8 @@ public class IqlQuery
         } else if (qe.getOperation() == QueryExpression.LEAST) {
             return "LEAST(" + nodeToString(q, qe.getArg1(), parameters, null) + ","
                 + nodeToString(q, qe.getArg2(), parameters, null) + ")";
+	} else if (qe.getOperation() == QueryExpression.LENGTH) {
+	    return "LENGTH(" + nodeToString(q, qe.getArg1(), parameters, null) + ")";
         } else {
             String retval = nodeToString(q, qe.getArg1(), parameters, null);
             switch (qe.getOperation()) {
