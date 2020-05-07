@@ -17,16 +17,18 @@
         <attribute name="secondaryIdentifier" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000675"/>
         <attribute name="symbol" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000105"/>
         <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
-        <reference name="organism" referenced-type="Organism"/>
-        <collection name="locatedFeatures" referenced-type="Location" reverse-reference="locatedOn"/>
+	<reference name="organism" referenced-type="Organism"/>
+        <reference name="strain" referenced-type="Strain" />
+	<collection name="locatedFeatures" referenced-type="Location" reverse-reference="locatedOn"/>
         <collection name="locations" referenced-type="Location" reverse-reference="feature" />
-        <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
         <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
         <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
         <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
     </class>
 
     <class name="Chromosome"  extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000340" />
+
+    <class name="Supercontig" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000148" />
 
     <class name="Comment" is-interface="true" term="http://semanticscience.org/resource/SIO_001167">
         <attribute name="description" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
@@ -137,8 +139,9 @@
         <attribute name="species" type="java.lang.String" term="http://edamontology.org/data_1045"/>
         <attribute name="commonName" type="java.lang.String" term="http://edamontology.org/data_2909"/>
         <attribute name="shortName" type="java.lang.String" term="http://edamontology.org/data_2909"/>
-        <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2909"/>
-        <collection name="strains" referenced-type="Strain"/>
+	<attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2909"/>
+	<attribute name="description" type="java.lang.String"/>
+        <collection name="strains" referenced-type="Strain" reverse-reference="organism"/>
     </class>
 
     <class name="Protein" extends="BioEntity" is-interface="true" term="http://semanticscience.org/resource/SIO_010043">
@@ -186,16 +189,19 @@
         <reference name="sequence" referenced-type="Sequence"/>
         <reference name="chromosome" referenced-type="Chromosome" />
         <reference name="chromosomeLocation" referenced-type="Location" />
-        <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
-        <reference name="strain" referenced-type="Strain"  reverse-reference="features" />
+        <reference name="supercontig" referenced-type="Supercontig" />
+        <reference name="supercontigLocation" referenced-type="Location" />
+	<reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
         <collection name="overlappingFeatures" referenced-type="SequenceFeature" />
         <collection name="childFeatures" referenced-type="SequenceFeature" />
     </class>
 
-    <class name="Strain" extends="BioEntity" is-interface="true">
-        <attribute name="annotationVersion" type="java.lang.String"/>
-        <attribute name="assemblyVersion" type="java.lang.String"/>
-        <collection name="features" referenced-type="SequenceFeature" reverse-reference="strain" />
+    <class name="Strain" is-interface="true" term="http://semanticscience.org/resource/SIO_010055">
+      <attribute name="identifier" type="java.lang.String" term="http://edamontology.org/data_2379"/>
+      <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_1046"/>
+      <attribute name="accession" type="java.lang.String" term="http://edamontology.org/data_2912"/>
+      <attribute name="description" type="java.lang.String"/>
+      <reference name="organism" referenced-type="Organism" reverse-reference="strains"/>
     </class>
 
     <class name="Synonym" is-interface="true" term="http://semanticscience.org/resource/SIO_000122">
