@@ -69,6 +69,16 @@ public class QueryExpression implements QueryEvaluable
      */
     public static final int MODULO = 10;
 
+    /**
+     * Return the length of the given string
+     */
+    public static final int LENGTH = 11;
+
+    /**
+     * Concatenate the two given strings
+     */
+    public static final int CONCAT = 12;
+
     private QueryEvaluable arg1;
     private int op;
     private QueryEvaluable arg2;
@@ -99,6 +109,10 @@ public class QueryExpression implements QueryEvaluable
                 return "LEAST";
             case MODULO:
                 return "MOD";
+	    case LENGTH:
+	        return "LENGTH";
+	    case CONCAT:
+	        return "CONCAT";
             default:
                 throw new IllegalStateException("Unknown operator: " + op);
         }
@@ -172,6 +186,20 @@ public class QueryExpression implements QueryEvaluable
                             + " zero for substring"));
             }
             this.type = String.class;
+        } else if (op == CONCAT) {
+            if (arg1.getType().equals(UnknownTypeValue.class)) {
+                arg1.youAreType(String.class);
+            } else if (!arg1.getType().equals(String.class)) {
+                throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
+                        + arg2.getType() + ") for concat operation");
+            }
+            if (arg2.getType().equals(UnknownTypeValue.class)) {
+                arg2.youAreType(String.class);
+            } else if (!arg2.getType().equals(String.class)) {
+                throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
+                        + arg2.getType() + ") for concat operation");
+            }
+            this.type = String.class;
         } else {
             throw new IllegalArgumentException("Invalid operation for specified arguments");
         }
@@ -227,26 +255,37 @@ public class QueryExpression implements QueryEvaluable
     }
 
     /**
-     * Constructs a String QueryExpression to perform upper and lowercase conversions.
+     * Constructs a String QueryExpression to perform upper and lowercase conversions or length of a string.
      *
      * @param op the required operation
      * @param arg the String argument
      * @throws IllegalArgumentException if there is a mismatch between the argument and operation
      */
     public QueryExpression(int op, QueryEvaluable arg) {
-        if (!(op == UPPER || op == LOWER)) {
-            throw new IllegalArgumentException("Invalid operation for specified arguments");
-        }
-        if (arg.getType().equals(UnknownTypeValue.class)) {
-            arg.youAreType(String.class);
-        } else if (!arg.getType().equals(String.class)
-                && !arg.getType().equals(org.intermine.objectstore.query.ClobAccess.class)) {
-            throw new ClassCastException("Invalid argument (" + arg.getType() + ") for "
-                    + (op == UPPER ? "UPPER()" : "LOWER()") + " operation");
-        }
-        arg1 = arg;
-        this.op = op;
-        type = String.class;
+        if (op == UPPER || op == LOWER) {
+	    if (arg.getType().equals(UnknownTypeValue.class)) {
+		arg.youAreType(String.class);
+	    } else if (!arg.getType().equals(String.class)
+		       && !arg.getType().equals(org.intermine.objectstore.query.ClobAccess.class)) {
+		throw new ClassCastException("Invalid argument (" + arg.getType() + ") for "
+					     + (op == UPPER ? "UPPER()" : "LOWER()") + " operation");
+	    }
+	    arg1 = arg;
+	    this.op = op;
+	    type = String.class;
+	} else if (op == LENGTH) {
+	    if (arg.getType().equals(UnknownTypeValue.class)) {
+		arg.youAreType(String.class);
+	    } else if (!arg.getType().equals(String.class)
+		       && !arg.getType().equals(org.intermine.objectstore.query.ClobAccess.class)) {
+		throw new ClassCastException("Invalid argument (" + arg.getType() + ") for LENGTH() operation");
+	    }
+	    arg1 = arg;
+	    this.op = op;
+	    type = Integer.class;
+	} else {
+	    throw new IllegalArgumentException("Invalid operation for specified arguments");
+	}
     }
 
     /**
