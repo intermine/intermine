@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
@@ -22,11 +21,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.uri.InterMineLUI;
 import org.intermine.web.uri.InterMineLUIConverter;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.PropertiesUtil;
@@ -49,7 +45,6 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Class providing schema/bioschemas markups
@@ -268,7 +263,7 @@ public final class SemanticMarkupFormatter
         try {
             entity = os.getObjectById(id);
             type = DynamicUtil.getSimpleClass(entity).getSimpleName();
-            if (type.equalsIgnoreCase("DataSet")) {
+            if ("DataSet".equalsIgnoreCase(type)) {
                 String name = (String) entity.getFieldValue("name");
                 String description = (String) entity.getFieldValue("description");
                 String url = (String) entity.getFieldValue("url");
