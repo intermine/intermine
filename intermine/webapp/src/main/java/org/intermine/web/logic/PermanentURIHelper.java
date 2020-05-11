@@ -83,19 +83,14 @@ public class PermanentURIHelper
     /**
      * Returns the permanent URL given the class name and the primary identifier
      * The permanent URL is used in the Share button, to set the url in Schema.org
-     * @param type the class name
-     * @param interMineId the internal id or null if can not generate the url
+     * @param interMineId the internal id
      * @param profile the profile
-     * @return the permanent url
+     * @return the permanent url or null if can not generate the url
      */
-    public String getPermanentURL(String type, Integer interMineId, Profile profile) {
+    public String getPermanentURL(Integer interMineId, Profile profile) {
         InterMineLUIConverter converter = new InterMineLUIConverter(profile);
         InterMineLUI interMineLUI = null;
-        try {
-            interMineLUI = converter.getInterMineLUI(type, interMineId);
-        } catch (ObjectStoreException ex) {
-            LOGGER.error("Problems retrieving identifier from InterMineObjectStore");
-        }
+        interMineLUI = converter.getInterMineLUI(interMineId);
         return getPermanentURL(interMineLUI);
     }
 

@@ -249,14 +249,10 @@ public final class SemanticMarkupFormatter
      * Returns bioschema.org markups to be added to the report page of bio entities
      * @param request the HttpServletRequest
      * @param id intermine internal id
-     * @param profile the profile
      *
      * @return the map containing the markups
-     *
-     * @throws MetaDataException if the type is wrong
      */
-    public static Map<String, Object> formatBioEntity(HttpServletRequest request,
-                                              int id, Profile profile) throws MetaDataException {
+    public static Map<String, Object> formatBioEntity(HttpServletRequest request, int id) {
         if (!isEnabled()) {
             return null;
         }
@@ -270,9 +266,16 @@ public final class SemanticMarkupFormatter
         String primaryIdentifier = null;
         try {
             entity = os.getObjectById(id);
+            type = DynamicUtil.getSimpleClass(entity).getSimpleName();
+            if (type.equalsIgnoreCase("DataSet")) {
+                String name = (String) entity.getFieldValue("name");
+                String description = (String) entity.getFieldValue("description");
+                String url = (String) entity.getFieldValue("url");
+                return formatDataSet(name, description, url, request);
+            }
             symbol = (String) entity.getFieldValue("symbol");
             primaryIdentifier = (String) entity.getFieldValue("primaryIdentifier");
-            type = DynamicUtil.getSimpleClass(entity).getSimpleName();
+
         } catch (ObjectStoreException ose) {
             LOG.warn("Failed to find object with id: " + id, ose);
         }  catch (IllegalAccessException iae) {
@@ -286,16 +289,13 @@ public final class SemanticMarkupFormatter
             return null;
         }
         semanticMarkup.put("name", (!StringUtils.isEmpty(symbol)) ? symbol : primaryIdentifier);
-        try {
-            InterMineLUI lui = (new InterMineLUIConverter(profile)).getInterMineLUI(id);
-            if (lui != null) {
-                PermanentURIHelper helper = new PermanentURIHelper(request);
-                String permanentURL = helper.getPermanentURL(lui);
-                semanticMarkup.put("@id", permanentURL);
-                semanticMarkup.put("url", permanentURL);
-            }
-        } catch (ObjectStoreException ex) {
-            LOG.error("Problem retrieving the identifier for the entity with ID: " + id);
+
+        InterMineLUI lui = (new InterMineLUIConverter()).getInterMineLUI(id);
+        if (lui != null) {
+            PermanentURIHelper helper = new PermanentURIHelper(request);
+            String permanentURL = helper.getPermanentURL(lui);
+            semanticMarkup.put("@id", permanentURL);
+            semanticMarkup.put("url", permanentURL);
         }
 
         return semanticMarkup;

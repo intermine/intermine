@@ -18,9 +18,11 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.context.InterMineContext;
 
 import java.lang.reflect.Field;
@@ -41,10 +43,17 @@ public class InterMineLUIConverter
 
     /**
      * Constructor
-     * @param profile th eprofile
+     * @param profile the profile
      */
     public InterMineLUIConverter(Profile profile) {
         this.profile = profile;
+        classNameIdentifierMapper = ClassNameURIIdentifierMapper.getMapper();
+    }
+
+    /**
+     * Constructor
+     */
+    public InterMineLUIConverter() {
         classNameIdentifierMapper = ClassNameURIIdentifierMapper.getMapper();
     }
 
@@ -63,10 +72,7 @@ public class InterMineLUIConverter
         String className = interMineLUI.getClassName();
         String viewPath =  className + ".id";
         pathQuery.addView(viewPath);
-        String identifier = classNameIdentifierMapper.getIdentifier(className);
-        if (identifier == null) {
-            identifier = DEFAULT_IDENTIFIER;
-        }
+        String identifier = getIdentifier(className);
         String constraintPath = className + "." + identifier;
         pathQuery.addConstraint(Constraints.eq(constraintPath, interMineLUI.getIdentifier()));
         if (!pathQuery.isValid()) {
@@ -91,121 +97,39 @@ public class InterMineLUIConverter
      * Generate the InterMineLUI associated to the internal interMine ID
      * @param interMineID the interMineID
      * @return the InterMineLUI
-     * @throws ObjectStoreException if something goes wrong when retrieving the identifier
      */
-    public InterMineLUI getInterMineLUI(Integer interMineID) throws ObjectStoreException {
+    public InterMineLUI getInterMineLUI(Integer interMineID) {
         if (interMineID == null) {
             LOGGER.error("intermineID is null");
             return null;
         }
-        String type = getType(interMineID);
-        if (type == null) {
-            LOGGER.error("The entity " + interMineID + " does not exits");
-            return null;
-        }
-        String identifier = getIdentifier(type, interMineID);
-        if (identifier == null) {
-            LOGGER.info("The identifier's value for the entity " + interMineID + " is null");
-            return null;
-        }
-        return new InterMineLUI(type, identifier);
-    }
-
-    /**
-     * Return the type of the entity with the id given in input
-     * @param interMineID the interMineID
-     * @return the type, e.g. Protein
-     */
-    private String getType(Integer interMineID) {
-        InterMineObject imObj = null;
         String type = null;
+        String identifier = null;
         try {
             InterMineAPI im = getInterMineAPI();
-            InterMineObject obj = im.getObjectStore().getObjectById(interMineID);
-            if (obj == null) {
-                return null;
-            }
-            Class shadowClass = obj.getClass();
-            try {
-                Field field = shadowClass.getField("shadowOf");
-                Class clazz = (Class) field.get(null);
-                type = clazz.getSimpleName();
-                LOGGER.info("InterMineLUIConverter: the entity with id " + interMineID
-                        + " has type: " + type);
-            } catch (NoSuchFieldException e) {
-                LOGGER.info(e);
-                type = shadowClass.getSimpleName();
-            }  catch (IllegalAccessException e) {
-                LOGGER.error(e);
-            }
-        } catch (ObjectStoreException e) {
-            LOGGER.error("Failed to find the object with id: " + interMineID, e);
+            InterMineObject entity = im.getObjectStore().getObjectById(interMineID);
+            type = DynamicUtil.getSimpleClass(entity).getSimpleName();
+            String identifierField = getIdentifier(type);
+            identifier = (String) entity.getFieldValue(identifierField);
+        } catch (ObjectStoreException ose) {
+            LOGGER.error("Failed to find object with id: " + interMineID, ose);
+            return null;
+        }  catch (IllegalAccessException iae) {
+            LOGGER.error("Failed to get identifier fot the entity with id: " + interMineID, iae);
+            return null;
         }
-        return type;
-    }
 
-    /**
-     * Generate the InterMineLUI associated given the type and the internal interMine ID
-     * @param type the class
-     * @param interMineID the interMineID
-     * @return the InterMineLUI
-     * @throws ObjectStoreException if something goes wrong when retrieving the identifier
-     */
-    public InterMineLUI getInterMineLUI(String type, Integer interMineID)
-            throws ObjectStoreException {
-        if (interMineID == null) {
-            LOGGER.error("intermineID is null");
-            return null;
-        }
-        if (type == null) {
-            LOGGER.error("The type is null");
-            return null;
-        }
-        //check first if type is in the model
-        type = InterMineLUI.getSimpleClassName(type);
-        if (type == null) {
-            LOGGER.error("The type is not defined in the model");
-            return null;
-        }
-        String identifier = getIdentifier(type, interMineID);
-        if (identifier == null) {
-            return null;
-        }
         return new InterMineLUI(type, identifier);
     }
 
-
     /**
-     * Return the identifier's value of the entity specified by the interMineId given in input
+     * Return the identifier's field of the entity with type given in input
      * @param type the type of the entity,e.g. Protein
-     * @param interMineId the interMineId which identifies the entity
-     * @return the identifier's value
-     * @throws ObjectStoreException if something goes wrong with query retrieving identifier
+     * @return the identifier's field if specified or primaryIdentifier
      */
-    private String getIdentifier(String type, Integer interMineId) throws ObjectStoreException {
+    private String getIdentifier(String type) {
         String identifier = classNameIdentifierMapper.getIdentifier(type);
-        if (identifier == null) {
-            identifier = DEFAULT_IDENTIFIER;
-        }
-        PathQuery pathQuery = new PathQuery(getModel());
-        String viewPath = type + "." + identifier;
-        pathQuery.addView(viewPath);
-        String constraintPath = type + ".id";
-        pathQuery.addConstraint(Constraints.eq(constraintPath, Integer.toString(interMineId)));
-        if (!pathQuery.isValid()) {
-            LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid");
-            LOGGER.info("For the entity with type " + type
-                    + " is not possible to generate a permanent URI.");
-            return null;
-        }
-
-        ExportResultsIterator iterator = getPathQueryExecutor().execute(pathQuery);
-        if (iterator.hasNext()) {
-            ResultElement cell = iterator.next().get(0);
-            return (String) cell.getField();
-        }
-        LOGGER.info("No entity with type " + type + " and id " + interMineId);
-        return null;
+        return ( identifier != null) ? identifier : DEFAULT_IDENTIFIER;
     }
 
     /**
