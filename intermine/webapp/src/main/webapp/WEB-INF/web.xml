@@ -3357,14 +3357,10 @@ The different token types are:
             <description>
                 This service provides semantic markup for BioChemEntity type
             </description>
-            <param
-                required="true"
-                type="String"
-                description="The type of the bioentity">type</param>
              <param
                 required="true"
                 type="int"
-                description="The primary identifier of the bioentity">id</param>
+                description="The bioentity internal id">id</param>
             <returns>
                 <format accept="application/json">json</format>
             </returns>
