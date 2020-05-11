@@ -105,6 +105,9 @@ public class InterMineLUIConverter
         try {
             InterMineAPI im = getInterMineAPI();
             InterMineObject entity = im.getObjectStore().getObjectById(interMineID);
+            if (entity == null) {
+                return null;
+            }
             type = DynamicUtil.getSimpleClass(entity).getSimpleName();
             String identifierField = getIdentifier(type);
             identifier = (String) entity.getFieldValue(identifierField);
