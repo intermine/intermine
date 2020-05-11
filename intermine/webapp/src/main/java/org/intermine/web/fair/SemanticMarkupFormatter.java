@@ -13,17 +13,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.uri.InterMineLUI;
 import org.intermine.web.uri.InterMineLUIConverter;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.PropertiesUtil;
@@ -46,7 +45,6 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Class providing schema/bioschemas markups
@@ -57,7 +55,8 @@ public final class SemanticMarkupFormatter
     private static final String SCHEMA = "http://schema.org";
     private static final String BIO_SCHEMA = "http://bioschemas.org";
     private static final String DATASET_TYPE = "DataSet";
-    private static final String BIO_ENTITY_TYPE = "BioChemEntity";
+    private static final String DATA_RECORD_TYPE = "DataRecord";
+    private static final String DATA_RECORD_SUFFIX = "#DR";
     private static final String PROTEIN_ENTITY_TYPE = "Protein";
     private static final String GENE_ENTITY_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
@@ -245,83 +244,63 @@ public final class SemanticMarkupFormatter
     /**
      * Returns bioschema.org markups to be added to the report page of bio entities
      * @param request the HttpServletRequest
-     * @param type the of the bioentity
      * @param id intermine internal id
-     * @param profile the profile
      *
      * @return the map containing the markups
-     *
-     * @throws MetaDataException if the type is wrong
      */
-    public static Map<String, Object> formatBioEntity(HttpServletRequest request, String type,
-                                              int id, Profile profile) throws MetaDataException {
+    public static Map<String, Object> formatBioEntity(HttpServletRequest request, int id) {
         if (!isEnabled()) {
             return null;
         }
         Map<String, Object> semanticMarkup = new LinkedHashMap<>();
-
-        if (ClassDescriptor.findInherithance(
-                Model.getInstanceByName("genomic"), StringUtils.capitalize(type),
-                "BioEntity")) {
-            semanticMarkup.put("@context", BIO_SCHEMA);
-            if ("Gene".equalsIgnoreCase(type)) {
-                semanticMarkup.put("@type", Arrays.asList(GENE_ENTITY_TYPE, BIO_ENTITY_TYPE));
-            } else if ("Protein".equalsIgnoreCase(type)) {
-                semanticMarkup.put("@type", Arrays.asList(PROTEIN_ENTITY_TYPE, BIO_ENTITY_TYPE));
-            } else {
-                semanticMarkup.put("@type", BIO_ENTITY_TYPE);
-            }
-            semanticMarkup.put("name", getNameAttribute(type, id));
-            try {
-                InterMineLUI lui = (new InterMineLUIConverter(profile))
-                        .getInterMineLUI(type, id);
-                if (lui != null) {
-                    semanticMarkup.put("@id", lui.getIdentifier());
-                    PermanentURIHelper helper = new PermanentURIHelper(request);
-                    semanticMarkup.put("url", helper.getPermanentURL(lui));
-                }
-            } catch (ObjectStoreException ex) {
-                LOG.error("Problem retrieving the identifier for the entity with ID: " + id);
-            }
-        }
-        return semanticMarkup;
-    }
-
-    /**
-     * Return the value which will be assigned to the property name on the BioChemEntity type
-     * @param type the type of the entity:Protein, Gene, BioEntity
-     * @param id the interMineId which identifies the entity
-     * @return the value of the property name in schema.org markup
-     */
-    private static String getNameAttribute(String type, int id) {
-        PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
-        String constraintPath;
-        if ("Gene".equalsIgnoreCase(type)) {
-            pathQuery.addView("Gene.symbol");
-            constraintPath = "Gene.id";
-        } else {
-            pathQuery.addView("BioEntity.name");
-            constraintPath = "BioEntity.id";
-        }
-        pathQuery.addConstraint(Constraints.eq(constraintPath, Integer.toString(id)));
-        if (!pathQuery.isValid()) {
-            LOG.info("The PathQuery :" + pathQuery.toString() + " is not valid");
-            return null;
-        }
+        semanticMarkup.put("@context", BIO_SCHEMA);
         InterMineAPI im = InterMineContext.getInterMineAPI();
-        PathQueryExecutor executor = new PathQueryExecutor(im.getObjectStore(),
-                PathQueryAPI.getProfile(), null, im.getBagManager());
+        ObjectStore os = im.getObjectStore();
+        InterMineObject entity = null;
+        String type = null;
+        String symbol = null;
+        String primaryIdentifier = null;
         try {
-            ExportResultsIterator iterator = executor.execute(pathQuery);
-            if (iterator.hasNext()) {
-                ResultElement cell = iterator.next().get(0);
-                return (String) cell.getField();
+            entity = os.getObjectById(id);
+            type = DynamicUtil.getSimpleClass(entity).getSimpleName();
+            if ("DataSet".equalsIgnoreCase(type)) {
+                String name = (String) entity.getFieldValue("name");
+                String description = (String) entity.getFieldValue("description");
+                String url = (String) entity.getFieldValue("url");
+                return formatDataSet(name, description, url, request);
             }
-        } catch (ObjectStoreException ex) {
-            LOG.info("Problem retrieving entity with type " + type + " and id " + id);
+            symbol = (String) entity.getFieldValue("symbol");
+            primaryIdentifier = (String) entity.getFieldValue("primaryIdentifier");
+
+        } catch (ObjectStoreException ose) {
+            LOG.warn("Failed to find object with id: " + id, ose);
+        }  catch (IllegalAccessException iae) {
+            LOG.warn("Failed to find object with id: " + id, iae);
+        }
+        String markupType = null;
+        if ("Gene".equalsIgnoreCase(type)) {
+            markupType = GENE_ENTITY_TYPE;
+        } else if ("Protein".equalsIgnoreCase(type)) {
+            markupType = PROTEIN_ENTITY_TYPE;
+        } else {
             return null;
         }
-        return null;
+        semanticMarkup.put("@type", DATA_RECORD_TYPE);
+        Map<String, String> mainEntity = new LinkedHashMap<>();
+        mainEntity.put("type", markupType);
+        mainEntity.put("name", (!StringUtils.isEmpty(symbol)) ? symbol : primaryIdentifier);
+
+        InterMineLUI lui = (new InterMineLUIConverter()).getInterMineLUI(id);
+
+        if (lui != null) {
+            PermanentURIHelper helper = new PermanentURIHelper(request);
+            String permanentURL = helper.getPermanentURL(lui);
+            mainEntity.put("@id", permanentURL);
+            mainEntity.put("url", permanentURL);
+            semanticMarkup.put("@id", permanentURL + DATA_RECORD_SUFFIX);
+        }
+        semanticMarkup.put("mainEntity", mainEntity);
+        return semanticMarkup;
     }
 
     /**
