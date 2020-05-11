@@ -60,7 +60,8 @@ public final class SemanticMarkupFormatter
     private static final String SCHEMA = "http://schema.org";
     private static final String BIO_SCHEMA = "http://bioschemas.org";
     private static final String DATASET_TYPE = "DataSet";
-    private static final String BIO_ENTITY_TYPE = "BioChemEntity";
+    private static final String DATA_RECORD_TYPE = "DataRecord";
+    private static final String DATA_RECORD_SUFFIX = "#DR";
     private static final String PROTEIN_ENTITY_TYPE = "Protein";
     private static final String GENE_ENTITY_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
@@ -281,23 +282,29 @@ public final class SemanticMarkupFormatter
         }  catch (IllegalAccessException iae) {
             LOG.warn("Failed to find object with id: " + id, iae);
         }
+        String markupType = null;
         if ("Gene".equalsIgnoreCase(type)) {
-            semanticMarkup.put("@type", GENE_ENTITY_TYPE);
+            markupType = GENE_ENTITY_TYPE;
         } else if ("Protein".equalsIgnoreCase(type)) {
-            semanticMarkup.put("@type", PROTEIN_ENTITY_TYPE);
+            markupType = PROTEIN_ENTITY_TYPE;
         } else {
             return null;
         }
-        semanticMarkup.put("name", (!StringUtils.isEmpty(symbol)) ? symbol : primaryIdentifier);
+        semanticMarkup.put("@type", DATA_RECORD_TYPE);
+        Map<String, String> mainEntity = new LinkedHashMap<>();
+        mainEntity.put("type", markupType);
+        mainEntity.put("name", (!StringUtils.isEmpty(symbol)) ? symbol : primaryIdentifier);
 
         InterMineLUI lui = (new InterMineLUIConverter()).getInterMineLUI(id);
+
         if (lui != null) {
             PermanentURIHelper helper = new PermanentURIHelper(request);
             String permanentURL = helper.getPermanentURL(lui);
-            semanticMarkup.put("@id", permanentURL);
-            semanticMarkup.put("url", permanentURL);
+            mainEntity.put("@id", permanentURL);
+            mainEntity.put("url", permanentURL);
+            semanticMarkup.put("@id", permanentURL + DATA_RECORD_SUFFIX);
         }
-
+        semanticMarkup.put("mainEntity", mainEntity);
         return semanticMarkup;
     }
 
