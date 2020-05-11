@@ -40,6 +40,6 @@ public class DataSetMarkupService extends JSONService
 
     @Override
     public String getResultsKey() {
-        return "properties";
+        return "semantic-markups";
     }
 }

@@ -38,6 +38,6 @@ public class BioEntityMarkupService extends JSONService
 
     @Override
     public String getResultsKey() {
-        return "properties";
+        return "semantic-markups";
     }
 }
