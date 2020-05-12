@@ -375,18 +375,8 @@ public class ReportObject
         if (!SemanticMarkupFormatter.isEnabled()) {
             return null;
         }
-        if ("DataSet".equals(objectType)) {
-            String name =  (String) getFieldValue("name");
-            String description =  (String) getFieldValue("description");
-            String url =  (String) getFieldValue("url");
-            Map<String, Object> markup = SemanticMarkupFormatter.formatDataSet(name,
-                    description, url, request);
-            return new JSONObject(markup).toString(2);
-        }
-
         Map<String, Object> markup = SemanticMarkupFormatter.formatBioEntity(request, getId());
         return new JSONObject(markup).toString(2);
-
     }
 
     /**
