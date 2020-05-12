@@ -19,7 +19,6 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.uri.InterMineLUI;
 import org.intermine.web.uri.InterMineLUIConverter;
 import org.intermine.metadata.Model;
@@ -244,7 +243,8 @@ public final class SemanticMarkupFormatter
      * @param entity InterMine ID
      * @return the map representing the dataset
      */
-    private static Map<String, Object> formatDataSet(HttpServletRequest request, InterMineObject entity) {
+    private static Map<String, Object> formatDataSet(HttpServletRequest request,
+                                                     InterMineObject entity) {
         try {
             String name = (String) entity.getFieldValue("name");
             String description = (String) entity.getFieldValue("description");
