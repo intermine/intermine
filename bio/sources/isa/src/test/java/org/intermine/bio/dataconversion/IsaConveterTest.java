@@ -20,34 +20,34 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.model.fulldata.Item;
 
-public class ReactomeConverterTest extends ItemsTestCase
+public class IsaConverterTest extends ItemsTestCase
 {
     Model model = Model.getInstanceByName("genomic");
-    ReactomeConverter converter;
+    IsaConverter converter;
     MockItemWriter itemWriter;
 
-    public ReactomeConverterTest(String arg) {
+    public IsaConverterTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
-        converter = new ReactomeConverter(itemWriter, model);
+        converter = new IsaConverter(itemWriter, model);
     }
 
     public void testProcess() throws Exception {
-        final String currentFile = "ReactomeConverterTest_src.txt";
+        final String currentFile = "IsaConverterTest_src.json";
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                 .getResourceAsStream(currentFile));
-        converter.setReactomeOrganisms("10116");
+        //converter.setReactomeOrganisms("10116");
         converter.process(reader);
         converter.close();
 
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "reactome-tgt-items.xml");
 
-        Set<org.intermine.xml.full.Item> expected = readItemSet("ReactomeConverterTest_tgt.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("IsaConverterTest_tgt.xml");
 
         assertEquals(expected, itemWriter.getItems());
     }
