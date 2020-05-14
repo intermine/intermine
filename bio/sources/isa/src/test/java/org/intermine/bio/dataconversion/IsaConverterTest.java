@@ -10,15 +10,16 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Set;
-
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.model.fulldata.Item;
+
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.Set;
 
 public class IsaConverterTest extends ItemsTestCase
 {
@@ -40,7 +41,7 @@ public class IsaConverterTest extends ItemsTestCase
         final String currentFile = "IsaConverterTest_src.json";
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                 .getResourceAsStream(currentFile));
-        //converter.setReactomeOrganisms("10116");
+        converter.setCurrentFile(new File(currentFile));
         converter.process(reader);
         converter.close();
 
