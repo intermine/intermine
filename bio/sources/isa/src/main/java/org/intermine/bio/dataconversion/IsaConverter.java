@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.isa.Investigation;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -877,108 +876,5 @@ public class IsaConverter extends BioFileConverter {
     private String blunt(String in) {
         return in.replaceAll("#", "");
     }
-
-
-    //
-    // OLDIES/ATTEMPTS
-    //
-
-    private void createInvestigationWithPojo(File file) throws java.io.IOException, ObjectStoreException {
-
-        // check if useful...
-//        Investigation isaInv = new Investigation();
-//        Study isaStudy = new Study();
-//        OntologySourceReference isaOSR = new OntologySourceReference();
-
-
-        // item creation here using pojos
-        ObjectMapper mapper = new ObjectMapper();
-        Investigation isaInv1 = mapper.readValue(file, Investigation.class);
-//        Study isaStudy = mapper.readValue(file, Study.class);
-
-        LOG.warn("investigation " + isaInv1.identifier);
-        //String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(isaInv);
-        //LOG.info(prettyStaff1);
-
-        Item inv = createItem("Investigation");
-        if (!StringUtils.isEmpty(isaInv1.identifier)) {
-            inv.setAttribute("identifier", isaInv1.identifier);
-        }
-        if (!StringUtils.isEmpty(isaInv1.description)) {
-            inv.setAttribute("description", isaInv1.description);
-        }
-        store(inv);
-    }
-
-
-    private void justTesting() { //USE_JAVA_ARRAY_FOR_JSON_ARRAY
-        Map<String, String> myMap = new HashMap<String, String>();
-        int ord = 0;
-        for (Map.Entry<String, String> entry : myMap.entrySet()) {
-
-            //    System.out.println("[" + ord++ + "] " + entry.getKey() + " : " + entry.getValue());
-            System.out.println("[" + ord++ + "]");
-            System.out.println(entry.getKey());
-            System.out.println((entry));
-        }
-    }
-
-    private void mapOSRg(JsonNode osr) {
-        osr.getNodeType().toString();
-        //Iterator ontology = osr.elements()
-        /*
-        for ( Iterator element : osr.elements()) {
-
-            String name = node.path("name").asText();
-            String description = node.path("description").asText();
-            String filename = node.path("file").asText();
-            String version = node.path("version").asText();
-
-            LOG.warn("OSR " + name);
-            LOG.warn(description + " -- " + filename + " | " + version);
-        }
-        */
-    }
-
-
-    private void otherAccess(JsonNode root) {
-        String invIdentifier = root.get("identifier").textValue();
-        LOG.warn("INV ID " + invIdentifier);
-
-        String osrName = root.get("ontologySourceReferences").get(1).get("name").textValue();
-        LOG.warn("OSR name " + osrName);
-    }
-
-
-    private Item getProtein(String accession, String taxonId)
-            throws ObjectStoreException {
-        Item item = proteins.get(accession);
-        if (item == null) {
-            item = createItem("Protein");
-            item.setAttribute("primaryAccession", accession);
-            item.setReference("organism", getOrganism(taxonId));
-            proteins.put(accession, item);
-        }
-        return item;
-    }
-
-    private String getTaxonId(String organismName) {
-        String[] bits = organismName.split(" ");
-        if (bits.length != 2) {
-            LOG.warn("Couldn't parse the organism name " + organismName);
-            return null;
-        }
-        OrganismData od = OR.getOrganismDataByGenusSpecies(bits[0], bits[1]);
-        if (od == null) {
-            LOG.warn("Couldn't parse the organism name " + organismName);
-            return null;
-        }
-        String taxonId = String.valueOf(od.getTaxonId());
-        if (!taxonIds.contains(taxonId)) {
-            return null;
-        }
-        return taxonId;
-    }
-
-
+    
 }
