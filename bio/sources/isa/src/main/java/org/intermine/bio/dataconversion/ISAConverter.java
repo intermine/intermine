@@ -36,8 +36,8 @@ import java.util.*;
 /**
  * @author sc
  */
-public class ISAConverter extends BioFileConverter {
-    private static final Logger LOG = Logger.getLogger(ISAConverter.class);
+public class IsaConverter extends BioFileConverter {
+    private static final Logger LOG = Logger.getLogger(IsaConverter.class);
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
     private static final String SOURCE = "source";
@@ -76,7 +76,7 @@ public class ISAConverter extends BioFileConverter {
      * @param writer the ItemWriter used to handle the resultant items
      * @param model  the Model
      */
-    public ISAConverter(ItemWriter writer, Model model) {
+    public IsaConverter(ItemWriter writer, Model model) {
         super(writer, model, "ISA", "ISA data");
     }
 
