@@ -20,7 +20,6 @@
         <reference name="organism" referenced-type="Organism"/>
         <collection name="locatedFeatures" referenced-type="Location" reverse-reference="locatedOn"/>
         <collection name="locations" referenced-type="Location" reverse-reference="feature" />
-        <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
         <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
         <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
         <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
