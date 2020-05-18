@@ -295,8 +295,14 @@ Example
                                 text.substring(0, spaceIndex));
                         organism.setAttribute("species",
                                 text.substring(spaceIndex + 1));
-                        organism.setAttribute("shortName", text.charAt(0)
-                                + ". " + text.substring(spaceIndex + 1));
+                        // Organism name could have [] in it , as a result the short name will start with [.
+                        // toFix : check if it does not start with [
+                        String shortName = text.charAt(0)
+                                + ". " + text.substring(spaceIndex + 1);
+                        if (text.startsWith("[") ) {
+                            shortName = text.charAt(1) + ". " + text.substring(spaceIndex + 1) ;
+                        }
+                        organism.setAttribute("shortName", shortName);
                     }
                 }
             } else if ("CommonName".equals(name)) {
