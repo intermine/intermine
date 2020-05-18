@@ -126,10 +126,12 @@
     <%-- summary long fields --%>
     <table>
       <c:forEach var="field" items="${object.objectSummaryFields}">
+        <c:set var="fieldDisplayText"
+          value="${imf:formatFieldChain(field.pathString, INTERMINE_API, WEBCONFIG)}"/>
         <c:if test="${field.doNotTruncate}">
           <tr>
             <c:if test="${!empty field.value}">
-              <td class="label">${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+              <td class="label">${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
               <td><strong><c:out escapeXml="${field.escapeXml}" value="${field.value}" /></strong></td>
             </c:if>
           </tr>
