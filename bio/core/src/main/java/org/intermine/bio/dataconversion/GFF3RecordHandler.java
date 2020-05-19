@@ -175,7 +175,8 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Remove the feature item that was set with setFeature() and associated synonyms
+     * Remove the feature item that was set with setFeature() and associated synonyms,
+     * as well as the associated Location.
      */
     protected void removeFeature() {
         items.remove("_feature");
@@ -183,6 +184,7 @@ public class GFF3RecordHandler
             items.remove(synonym.getIdentifier());
         }
         synonyms.clear();
+        clearLocation();
     }
 
     /**
