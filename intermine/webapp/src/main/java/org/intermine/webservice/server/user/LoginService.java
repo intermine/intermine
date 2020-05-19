@@ -79,10 +79,8 @@ public class LoginService extends JSONService
             // The current profile was for an anonymous guest.
             issues = mergeProfiles(currentProfile, profile);
             output.put("renamedLists", new JSONObject(issues.getRenamedBags()));
-            output.put("renamedTemplates", new JSONObject(issues.getRenamedTemplates()));
         } else {
             output.put("renamedLists", new JSONObject(Collections.emptyMap()));
-            output.put("renamedTemplates", new JSONObject(Collections.emptyMap()));
         }
 
         addResultItem(output, false);
@@ -103,8 +101,8 @@ public class LoginService extends JSONService
     }
 
     /**
-     * Merge two profiles together. This is mainly of use when a new user registers and we need
-     * to save their current anonymous session into their new profile.
+     * Merge two profiles together. This is mainly of use when a new user login
+     *  and we need to save their current anonymous session into their new profile.
      * @param fromProfile The profile to take information from.
      * @param toProfile The profile to merge into.
      * @return A map of bags, from old name to new name.
@@ -112,7 +110,6 @@ public class LoginService extends JSONService
     public static ProfileMergeIssues mergeProfiles(Profile fromProfile, Profile toProfile) {
         Map<String, SavedQuery> mergeQueries = Collections.emptyMap();
         Map<String, InterMineBag> mergeBags = Collections.emptyMap();
-        Map<String, ApiTemplate> mergeTemplates = Collections.emptyMap();
         ProfileMergeIssues issues = new ProfileMergeIssues();
         if (!fromProfile.getPreferences().isEmpty()) {
             toProfile.getPreferences().putAll(fromProfile.getPreferences());
@@ -120,32 +117,13 @@ public class LoginService extends JSONService
         if (fromProfile != null) {
             mergeQueries = fromProfile.getHistory();
             mergeBags = fromProfile.getSavedBags();
-            mergeTemplates = fromProfile.getSavedTemplates();
         }
 
         // Merge in anonymous query history
         for (SavedQuery savedQuery : mergeQueries.values()) {
             toProfile.saveHistory(savedQuery);
         }
-        // Merge in saved templates.
-        for (ApiTemplate t: mergeTemplates.values()) {
-            try {
-                toProfile.saveTemplate(t.getName(), t);
-            } catch (BadTemplateException e) {
-                // Could be because the name is invalid - fix it.
-                String oldName = t.getName();
-                String newName = NameUtil.validateName(toProfile.getSavedBags().keySet(), oldName);
-                try {
-                    toProfile.saveTemplate(newName, t);
-                    issues.addFailedTemplate(oldName, newName);
-                } catch (BadTemplateException e1) {
-                    // Template is bad for some other reason - should not happen.
-                    // Currently the only reason we refuse to save templates is their name
-                    // when/if other reasons are added, then we should record them on the issues.
-                    LOG.error("Could not save template due to BadTemplateException", e1);
-                }
-            }
-        }
+
         // Merge anonymous bags
         for (Map.Entry<String, InterMineBag> entry : mergeBags.entrySet()) {
             InterMineBag bag = entry.getValue();
