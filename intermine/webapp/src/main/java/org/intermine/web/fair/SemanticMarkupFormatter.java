@@ -40,11 +40,12 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-import java.util.Properties;
-import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Properties;
+import java.util.Map;
+import java.util.Arrays;
 
 /**
  * Class providing schema/bioschemas markups
@@ -57,8 +58,9 @@ public final class SemanticMarkupFormatter
     private static final String DATASET_TYPE = "DataSet";
     private static final String DATA_RECORD_TYPE = "DataRecord";
     private static final String DATA_RECORD_SUFFIX = "#DR";
-    private static final String PROTEIN_ENTITY_TYPE = "Protein";
-    private static final String GENE_ENTITY_TYPE = "Gene";
+    private static final String BIOCHEMENTITY_TYPE = "BioChemEntity";
+    private static final String PROTEIN_TYPE = "Protein";
+    private static final String GENE_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
     private static final String INTERMINE_REGISTRY = "https://registry.intermine.org/";
     private static final Logger LOG = Logger.getLogger(SemanticMarkupFormatter.class);
@@ -321,12 +323,22 @@ public final class SemanticMarkupFormatter
         try {
             String markupType = null;
             if ("Gene".equalsIgnoreCase(type)) {
-                markupType = GENE_ENTITY_TYPE;
+                markupType = GENE_TYPE;
                 mainEntity.put("description", (String) entity.getFieldValue("description"));
             } else if ("Protein".equalsIgnoreCase(type)) {
-                markupType = PROTEIN_ENTITY_TYPE;
+                markupType = PROTEIN_TYPE;
             } else {
-                return null;
+                List<String> bioChemEntityTypes = getBioChemEntityTypes();
+                if (bioChemEntityTypes.isEmpty()) {
+                    return null;
+                }
+                for (String bioChemEntityType : bioChemEntityTypes) {
+                    if (bioChemEntityType.equalsIgnoreCase(type)) {
+                        markupType = BIOCHEMENTITY_TYPE;
+                        continue;
+                    }
+                    return null;
+                }
             }
             mainEntity.put("type", markupType);
             String symbol = (String) entity.getFieldValue("symbol");
@@ -350,5 +362,18 @@ public final class SemanticMarkupFormatter
             return true;
         }
         return false;
+    }
+
+    /**
+     * Return a list of types configured to be markup using BioChemEntity
+     * @return the list of types
+     */
+    private static List<String> getBioChemEntityTypes() {
+        Properties props = InterMineContext.getWebProperties();
+        String typesConfigures = props.getProperty("BioChemEntity");
+        if (typesConfigures != null) {
+            return Arrays.asList(StringUtils.split(typesConfigures, ","));
+        }
+        return new ArrayList<String>();
     }
 }
