@@ -16,6 +16,8 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
@@ -327,18 +329,10 @@ public final class SemanticMarkupFormatter
                 mainEntity.put("description", (String) entity.getFieldValue("description"));
             } else if ("Protein".equalsIgnoreCase(type)) {
                 markupType = PROTEIN_TYPE;
+            } else if (isBioChemEntityType(type)) {
+                markupType = BIOCHEMENTITY_TYPE;
             } else {
-                List<String> bioChemEntityTypes = getBioChemEntityTypes();
-                if (bioChemEntityTypes.isEmpty()) {
-                    return null;
-                }
-                for (String bioChemEntityType : bioChemEntityTypes) {
-                    if (bioChemEntityType.equalsIgnoreCase(type)) {
-                        markupType = BIOCHEMENTITY_TYPE;
-                        continue;
-                    }
-                    return null;
-                }
+                return null;
             }
             mainEntity.put("type", markupType);
             String symbol = (String) entity.getFieldValue("symbol");
@@ -365,15 +359,29 @@ public final class SemanticMarkupFormatter
     }
 
     /**
-     * Return a list of types configured to be markup using BioChemEntity
-     * @return the list of types
+     * Check if the inputType can be markup with BioChemEntity
+     * @return true if can be markup (because it's configured and xtend BioEntity)
      */
-    private static List<String> getBioChemEntityTypes() {
+    private static boolean isBioChemEntityType(String inputType) {
         Properties props = InterMineContext.getWebProperties();
         String typesConfigures = props.getProperty("BioChemEntity");
-        if (typesConfigures != null) {
-            return Arrays.asList(StringUtils.split(typesConfigures, ","));
+        if (typesConfigures == null) {
+            return false;
+        } else {
+            List<String> types = Arrays.asList(StringUtils.split(typesConfigures, ","));
+            for (String type : types) {
+                try {
+                    if (inputType.equalsIgnoreCase(type)
+                            && ClassDescriptor.findInherithance(Model.getInstanceByName("genomic"),
+                                inputType, "BioEntity")) {
+                        return true;
+                    }
+                } catch (MetaDataException mde) {
+                    LOG.warn("Type " + inputType + " is not in the model");
+                    return false;
+                }
+            }
+            return false;
         }
-        return new ArrayList<String>();
     }
 }
