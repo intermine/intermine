@@ -16,6 +16,8 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
@@ -40,11 +42,12 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-import java.util.Properties;
-import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Properties;
+import java.util.Map;
+import java.util.Arrays;
 
 /**
  * Class providing schema/bioschemas markups
@@ -57,8 +60,9 @@ public final class SemanticMarkupFormatter
     private static final String DATASET_TYPE = "DataSet";
     private static final String DATA_RECORD_TYPE = "DataRecord";
     private static final String DATA_RECORD_SUFFIX = "#DR";
-    private static final String PROTEIN_ENTITY_TYPE = "Protein";
-    private static final String GENE_ENTITY_TYPE = "Gene";
+    private static final String BIOCHEMENTITY_TYPE = "BioChemEntity";
+    private static final String PROTEIN_TYPE = "Protein";
+    private static final String GENE_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
     private static final String INTERMINE_REGISTRY = "https://registry.intermine.org/";
     private static final Logger LOG = Logger.getLogger(SemanticMarkupFormatter.class);
@@ -321,10 +325,12 @@ public final class SemanticMarkupFormatter
         try {
             String markupType = null;
             if ("Gene".equalsIgnoreCase(type)) {
-                markupType = GENE_ENTITY_TYPE;
+                markupType = GENE_TYPE;
                 mainEntity.put("description", (String) entity.getFieldValue("description"));
             } else if ("Protein".equalsIgnoreCase(type)) {
-                markupType = PROTEIN_ENTITY_TYPE;
+                markupType = PROTEIN_TYPE;
+            } else if (isBioChemEntityType(type)) {
+                markupType = BIOCHEMENTITY_TYPE;
             } else {
                 return null;
             }
@@ -350,5 +356,32 @@ public final class SemanticMarkupFormatter
             return true;
         }
         return false;
+    }
+
+    /**
+     * Check if the inputType can be markup with BioChemEntity
+     * @return true if can be markup (because it's configured and xtend BioEntity)
+     */
+    private static boolean isBioChemEntityType(String inputType) {
+        Properties props = InterMineContext.getWebProperties();
+        String typesConfigures = props.getProperty("BioChemEntity");
+        if (typesConfigures == null) {
+            return false;
+        } else {
+            List<String> types = Arrays.asList(StringUtils.split(typesConfigures, ","));
+            for (String type : types) {
+                try {
+                    if (inputType.equalsIgnoreCase(type)
+                            && ClassDescriptor.findInherithance(Model.getInstanceByName("genomic"),
+                                inputType, "BioEntity")) {
+                        return true;
+                    }
+                } catch (MetaDataException mde) {
+                    LOG.warn("Type " + inputType + " is not in the model");
+                    return false;
+                }
+            }
+            return false;
+        }
     }
 }
