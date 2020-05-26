@@ -13,9 +13,7 @@ package org.intermine.bio.dataconversion;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -30,7 +28,6 @@ import java.io.Reader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * @author sc
@@ -217,8 +214,8 @@ public class IsaConverter extends BioFileConverter {
                 String termAccession = term.getTermAccession();
                 String termSource = term.getTermSource();
 
-                LOG.info("PPAR " + pnid + ": " + annotationValue +
-                        "|" + termAccession + "|" + termSource);
+                LOG.info("PPAR " + pnid + ": " + annotationValue
+                        + "|" + termAccession + "|" + termSource);
 
                 createProtocolParameter(pid, annotationValue);
                 addToMap(protocolParameterList, id, pid);
@@ -284,7 +281,8 @@ public class IsaConverter extends BioFileConverter {
             }
 
             LOG.info("FACTOR " + nodeType + ": " + name + "|" + annotationValue);
-            Item factorItem = createFactor(id, "", name, nodeType, annotationValue, "", termAccession);
+            Item factorItem = createFactor(id, "", name, nodeType, annotationValue,
+                    "", termAccession);
             Integer oid = store(factorItem);
             store(studyReference, oid);
         }
@@ -698,7 +696,8 @@ public class IsaConverter extends BioFileConverter {
         return item;
     }
 
-    private Item createStudyData(String type, String name, String value, String measurement, String technology)
+    private Item createStudyData(String type, String name, String value, String measurement,
+                                 String technology)
             throws ObjectStoreException {
 
         Item item = createItem("StudyData");
