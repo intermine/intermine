@@ -33,22 +33,18 @@ import java.util.*;
 //import java.util.List;
 //import java.util.Set;
 
-
-
-
-
-
 /**
  * @author sc
  */
-public class IsaConverter extends BioFileConverter {
+public class IsaConverter extends BioFileConverter
+    {
     private static final Logger LOG = Logger.getLogger(IsaConverter.class);
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
     private static final String SOURCE = "source";
     //private static final String SAMPLE = "sample";
 
-    public static final List<String> MATERIALS =
+    private static final List<String> MATERIALS =
             Collections.unmodifiableList(Arrays.asList("sources", "samples"));
 
 
@@ -268,7 +264,7 @@ public class IsaConverter extends BioFileConverter {
         for (JsonNode factor : factorNode) {
             String nodeType;
 
-            if (path.equalsIgnoreCase("factors")) {
+            if ("factors".equalsIgnoreCase(path)) {
                 nodeType = "factor";
             } else {
                 nodeType = "characteristic";
@@ -283,7 +279,7 @@ public class IsaConverter extends BioFileConverter {
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
-            if (nodeType.equalsIgnoreCase("factor")) {
+            if ("factor".equalsIgnoreCase(nodeType)) {
                 name = factor.path("factorName").asText();
             } else {
                 name = annotationValue;
@@ -527,7 +523,10 @@ public class IsaConverter extends BioFileConverter {
     }
 
 
-    public void storeProtocols() throws ObjectStoreException {
+        /**
+         * {@inheritDoc}
+         */
+        public void storeProtocols() throws ObjectStoreException {
         // to move with protocols probably, in line with other cases
         for (Map.Entry<String, Item> entry : protocols.entrySet()) {
 
@@ -802,7 +801,8 @@ public class IsaConverter extends BioFileConverter {
     }
 
 
-    private class Term {
+    private class Term
+    {
         private JsonNode node;
         private String id;
         private String annotationValue;
@@ -838,7 +838,8 @@ public class IsaConverter extends BioFileConverter {
         }
     }
 
-    private class DataFile {
+    private class DataFile
+    {
         private JsonNode node;
         private String id;
         private String name;
@@ -889,9 +890,7 @@ public class IsaConverter extends BioFileConverter {
         }
     }
 
-
     private String blunt(String in) {
         return in.replaceAll("#", "");
     }
-    
 }
