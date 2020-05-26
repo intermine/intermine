@@ -37,7 +37,7 @@ import java.util.*;
  * @author sc
  */
 public class IsaConverter extends BioFileConverter
-    {
+{
     private static final Logger LOG = Logger.getLogger(IsaConverter.class);
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
@@ -523,10 +523,10 @@ public class IsaConverter extends BioFileConverter
     }
 
 
-        /**
-         * {@inheritDoc}
-         */
-        public void storeProtocols() throws ObjectStoreException {
+    /**
+     * {@inheritDoc}
+     */
+    public void storeProtocols() throws ObjectStoreException {
         // to move with protocols probably, in line with other cases
         for (Map.Entry<String, Item> entry : protocols.entrySet()) {
 
