@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2019 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -52,9 +52,12 @@ public class IsaConverter extends BioFileConverter {
 
     private Map<String, Item> protocols = new HashMap<>();
     private Map<String, Item> protocolParameters = new HashMap<>();
-    private Map<String, List<String>> protocolParameterList = new HashMap<>(); // prot.id - list of param ids
-    private Map<String, List<String>> protocolIn = new HashMap<>(); // prot.id - list of input ids (sources/study data)
-    private Map<String, List<String>> protocolOut = new HashMap<>(); // prot.id - list of output ids (samples/sd)
+    // prot.id - list of param ids
+    private Map<String, List<String>> protocolParameterList = new HashMap<>();
+    // prot.id - list of input ids (sources/study data)
+    private Map<String, List<String>> protocolIn = new HashMap<>();
+    // prot.id - list of output ids (samples/sd)
+    private Map<String, List<String>> protocolOut = new HashMap<>();
 
     private Map<String, String> sdItemId = new HashMap<>();
 
@@ -182,7 +185,8 @@ public class IsaConverter extends BioFileConverter {
         String pubDate = investigation.path("publicReleaseDate").asText();
         String subDate = investigation.path("submissionDate").asText();
 
-        Item investigationItem = createStudy("Investigation", identifier, title, description, pubDate, subDate);
+        Item investigationItem = createStudy("Investigation", identifier, title,
+                description, pubDate, subDate);
         investigationReference = getReference("investigation", investigationItem);
 
         Integer investigationOID = store(investigationItem);
@@ -213,7 +217,8 @@ public class IsaConverter extends BioFileConverter {
                 String termAccession = term.getTermAccession();
                 String termSource = term.getTermSource();
 
-                LOG.info("PPAR " + pnid + ": " + annotationValue + "|" + termAccession + "|" + termSource);
+                LOG.info("PPAR " + pnid + ": " + annotationValue +
+                        "|" + termAccession + "|" + termSource);
 
                 createProtocolParameter(pid, annotationValue);
                 addToMap(protocolParameterList, id, pid);
@@ -255,31 +260,31 @@ public class IsaConverter extends BioFileConverter {
     private void getFactors(JsonNode study, String path) throws ObjectStoreException {
         JsonNode factorNode = study.path(path);
         for (JsonNode factor : factorNode) {
-            String TYPE;
+            String nodeType;
 
             if (path.equalsIgnoreCase("factors")) {
-                TYPE = "factor";
+                nodeType = "factor";
             } else {
-                TYPE = "characteristic";
+                nodeType = "characteristic";
             }
 
             String id = blunt(factor.path("@id").asText());
             String name;
 
-            Term term = new Term(factor.path(TYPE.concat("Type"))).invoke();
+            Term term = new Term(factor.path(nodeType.concat("Type"))).invoke();
             String termId = term.getId();
             String annotationValue = term.getAnnotationValue();
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
-            if (TYPE.equalsIgnoreCase("factor")) {
+            if (nodeType.equalsIgnoreCase("factor")) {
                 name = factor.path("factorName").asText();
             } else {
                 name = annotationValue;
             }
 
-            LOG.info("FACTOR " + TYPE + ": " + name + "|" + annotationValue);
-            Item factorItem = createFactor(id, "", name, TYPE, annotationValue, "", termAccession);
+            LOG.info("FACTOR " + nodeType + ": " + name + "|" + annotationValue);
+            Item factorItem = createFactor(id, "", name, nodeType, annotationValue, "", termAccession);
             Integer oid = store(factorItem);
             store(studyReference, oid);
         }
@@ -376,7 +381,8 @@ public class IsaConverter extends BioFileConverter {
             LOG.info("MT " + id + ": " + annotationValue + "|" + termAccession + "|" + termSource);
 
 
-            Item sdItem = createStudyData("file", fileName, mtValue, annotationValue, technologyPlatform);
+            Item sdItem = createStudyData("file", fileName, mtValue, annotationValue,
+                    technologyPlatform);
             Reference sdRef = getReference("studyData", sdItem);
             store(studyReference, store(sdItem));
 
@@ -586,7 +592,8 @@ public class IsaConverter extends BioFileConverter {
 //                + (System.currentTimeMillis() - bT) + " ms");
 
 
-    private Item createStudy(String type, String id, String title, String description, String subDate, String pubDate)
+    private Item createStudy(String type, String id, String title, String description,
+                             String subDate, String pubDate)
             throws ObjectStoreException {
 
         Item item = createItem(type);
@@ -634,7 +641,8 @@ public class IsaConverter extends BioFileConverter {
     }
 
 
-    private Item createFactor(String fid, String cid, String name, String type, String value, String unit, String accession)
+    private Item createFactor(String fid, String cid, String name, String type, String value,
+                              String unit, String accession)
             throws ObjectStoreException {
         Item item = factors.get(fid);
         if (item == null) {
@@ -736,7 +744,8 @@ public class IsaConverter extends BioFileConverter {
     }
 
 
-    private Item createProtocol(String id, String name, String description, String uri, String version)
+    private Item createProtocol(String id, String name, String description, String uri,
+                                String version)
             throws ObjectStoreException {
         Item item = protocols.get(id);
         if (item == null) {
