@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import org.biojava.nbio.core.sequence.ProteinSequence;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStoreException;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Code for loading fasta for uniprot proteins.
@@ -31,11 +32,12 @@ public class UniProtFastaLoaderTask extends FastaLoaderTask
     @Override
     protected Organism getOrganism(ProteinSequence bioJavaSequence) throws ObjectStoreException {
         String header = bioJavaSequence.getOriginalHeader();
-        final String regexp = "OS\\=\\w+\\s\\w+";
+        final String regexp = "OS\\=(\\w+(\\s)*)*";
         Pattern p = Pattern.compile(regexp);
         Matcher m = p.matcher(header);
         if (m.find()) {
             header = m.group();
+            header = StringUtils.removeEnd(header, " OX");
             String[] bits = header.split("=");
             if (bits.length != 2) {
                 return null;
