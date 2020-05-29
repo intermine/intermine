@@ -184,7 +184,7 @@ public class ReportController extends InterMineAction
             String type = reportObject.getType();
             request.setAttribute("objectType", type);
             String idString = request.getParameter("id");
-            String fairPermanentLink = (new PermanentURIHelper(request)).getPermanentURL(type,
+            String fairPermanentLink = (new PermanentURIHelper(request)).getPermanentURL(
                     Integer.parseInt(idString), SessionMethods.getProfile(session));
             if (fairPermanentLink != null) {
                 request.setAttribute("stableLink", fairPermanentLink);
@@ -340,6 +340,4 @@ public class ReportController extends InterMineAction
             entry.getValue().remove(name);
         }
     }
-
-
 }

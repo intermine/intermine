@@ -39,6 +39,6 @@ public class HomePageMarkupService extends JSONService
 
     @Override
     public String getResultsKey() {
-        return "properties";
+        return "semantic-markups";
     }
 }

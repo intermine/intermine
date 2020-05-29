@@ -159,7 +159,7 @@ public final class TemplateHelper
             if (profile != null) {
                 template.setProfile(profile);
             }
-            sb.append("\"" + name + "\":" + template.toJson());
+            sb.append("\"" + name + "\":" + template.toJson(false));
             if (keys.hasNext()) {
                 sb.append(",");
             }
