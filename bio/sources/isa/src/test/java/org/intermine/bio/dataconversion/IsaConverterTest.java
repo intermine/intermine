@@ -21,12 +21,15 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Set;
 
+//import static org.intermine.metadata.TypeUtil.getClass;
+
 public class IsaConverterTest extends ItemsTestCase
 {
     Model model = Model.getInstanceByName("genomic");
     IsaConverter converter;
     MockItemWriter itemWriter;
 
+    private final String currentFile = "IsaConverterTest_src.json";
     public IsaConverterTest(String arg) {
         super(arg);
     }
@@ -38,7 +41,7 @@ public class IsaConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        final String currentFile = "IsaConverterTest_src.json";
+        //final String currentFile = "IsaConverterTest_src.json";
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                 .getResourceAsStream(currentFile));
         converter.setCurrentFile(new File(currentFile));
