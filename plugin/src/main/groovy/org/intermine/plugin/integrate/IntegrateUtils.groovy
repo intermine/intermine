@@ -198,12 +198,19 @@ class IntegrateUtils {
                 seqClsName: BioSourceProperties.getUserProperty(source, "gff3.seqClsName"),
                 orgTaxonId: BioSourceProperties.getUserProperty(source, "gff3.taxonId"),
                 dataSourceName: BioSourceProperties.getUserProperty(source, "gff3.dataSourceName"),
+                dataSourceDescription: BioSourceProperties.getUserProperty(source, "gff3.dataSourceDescription"),
+                dataSourceUrl: BioSourceProperties.getUserProperty(source, "gff3.dataSourceUrl"),
                 seqDataSourceName: BioSourceProperties.getUserProperty(source, "gff3.seqDataSourceName"),
                 dataSetTitle: BioSourceProperties.getUserProperty(source, "gff3.dataSetTitle"),
+                dataSetDescription: BioSourceProperties.getUserProperty(source, "gff3.dataSetDescription"),
+                dataSetUrl: BioSourceProperties.getUserProperty(source, "gff3.dataSetUrl"),
                 dontCreateLocations: BioSourceProperties.getUserProperty(source, "gff3.dontCreateLocations"),
                 model: "genomic",
                 handlerClassName: bioSourceProperties.getProperty("gff3.handlerClassName"),
                 seqHandlerClassName: gff3SeqHandlerClassName,
+                strainIdentifier: BioSourceProperties.getUserProperty(source, "gff3.strainIdentifier"),
+                assemblyVersion: BioSourceProperties.getUserProperty(source, "gff3.assemblyVersion"),
+                annotationVersion: BioSourceProperties.getUserProperty(source, "gff3.annotationVersion"),
                 licence: licence) {
             fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
                     includes: "*.gff,*.gff3")
@@ -231,6 +238,7 @@ class IntegrateUtils {
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
                 ontologyName: bioSourceProperties.getProperty("obo.ontology.name"),
                 url: bioSourceProperties.getProperty("obo.ontology.url"),
+		description: bioSourceProperties.getProperty("obo.ontology.description"),
                 termClass: bioSourceProperties.getProperty("obo.term.class"))
     }
 

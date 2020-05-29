@@ -76,30 +76,29 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
 
         this.os = osw.getObjectStore();
         this.model = os.getModel();
-        dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
-        dataSource.setName("FlyMine");
+	dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
+        dataSource.setName("InterMine post-processor");
         try {
-            dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
+            DataSource existingDataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
+	    if (existingDataSource==null) {
+		// store new DataSource
+		osw.store(dataSource);
+	    } else {
+		// use existing DataSource
+		dataSource = existingDataSource;
+	    }
         } catch (ObjectStoreException e) {
-            throw new RuntimeException("unable to fetch InterMine DataSource object", e);
-        }
-
-        try {
-            String message = "Not performing IntergenicRegionUtil.createIntergenicRegionFeatures ";
-            PostProcessUtil.checkFieldExists(model, "IntergenicRegion", "adjacentGenes", message);
-            PostProcessUtil.checkFieldExists(model, "Gene", "upstreamIntergenicRegion", message);
-            PostProcessUtil.checkFieldExists(model, "Gene", "downstreamIntergenicRegion", message);
-        } catch (MetaDataException e) {
-            return;
+	    System.err.println(e);
+	    System.exit(1);
         }
 
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class, Gene.class, false,
                 false, false, 1000);
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        dataSet.setName("FlyMine intergenic regions");
-        dataSet.setDescription("Intergenic regions created by FlyMine");
+        dataSet.setName("InterMine intergenic regions");
+        dataSet.setDescription("Intergenic regions created by the InterMine core post-processor");
         dataSet.setVersion("" + new Date()); // current time and date
-        dataSet.setUrl("http://www.flymine.org");
+        dataSet.setUrl("http://www.intermine.org");
         dataSet.setDataSource(dataSource);
 
         Iterator<?> resIter = results.iterator();
@@ -271,6 +270,7 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
                 intergenicRegion.setChromosomeLocation(location);
                 intergenicRegion.setChromosome(chr);
                 intergenicRegion.setOrganism(chr.getOrganism());
+		intergenicRegion.setStrain(chr.getStrain());
                 intergenicRegion.addDataSets(dataSet);
 
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;

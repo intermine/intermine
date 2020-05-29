@@ -44,6 +44,7 @@ public class GFF3RecordHandler
     private Model tgtModel;
     protected GFF3Converter converter;
     private Item organism;
+    private Item strain;
     private ReferenceList dataSetReferenceList = new ReferenceList("dataSets");
     private ReferenceList publicationReferenceList = new ReferenceList("publications");
     private Item tgtOrganism;
@@ -116,6 +117,22 @@ public class GFF3RecordHandler
      */
     protected Item getOrganism() {
         return organism;
+    }
+
+    /**
+     * Set strain item, this is global across record handler and final
+     * @param strain the strain item
+     */
+    public void setStrain(final Item strain) {
+	this.strain = strain;
+    }
+
+    /**
+     * Return the strain Item set by setStrain()
+     * @return the strain Item
+     */
+    public Item getStrain() {
+	return strain;
     }
 
     /**
