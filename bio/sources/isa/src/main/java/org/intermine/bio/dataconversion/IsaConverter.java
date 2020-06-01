@@ -118,9 +118,9 @@ public class IsaConverter extends BioFileConverter
 
         // TODO: decide if to use blunt ids or not
 
-        File file = getFiles();
+        //File file = getFiles();
 
-        JsonNode root = new ObjectMapper().readTree(file);
+        JsonNode root = new ObjectMapper().readTree(reader);
         //otherAccess(root);
 
         processInvestigation(root);

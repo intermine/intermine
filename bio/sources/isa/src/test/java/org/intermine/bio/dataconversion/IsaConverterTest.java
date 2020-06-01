@@ -15,13 +15,9 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.model.fulldata.Item;
 
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
-import java.util.Set;
-
-//import static org.intermine.metadata.TypeUtil.getClass;
 
 public class IsaConverterTest extends ItemsTestCase
 {
@@ -41,18 +37,16 @@ public class IsaConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        //final String currentFile = "IsaConverterTest_src.json";
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                 .getResourceAsStream(currentFile));
-        converter.setCurrentFile(new File(currentFile));
         converter.process(reader);
         converter.close();
 
-        // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "reactome-tgt-items.xml");
+        // very rough test if the number of items is correct.
+        // using a simple experiment.
+        // TODO add some other test
+        assertEquals(271, itemWriter.getItems().size());
 
-        Set<org.intermine.xml.full.Item> expected = readItemSet("IsaConverterTest_tgt.xml");
-
-        assertEquals(expected, itemWriter.getItems());
     }
+
 }
