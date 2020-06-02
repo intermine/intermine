@@ -199,7 +199,7 @@ public class OboConverter extends DataConverter
         Item datasetItem = createItem("DataSet");
         datasetItem.setAttribute("name", dataset);
         if (licence != null) {
-            datasetItem.setAttribute("licence", licence);
+            datasetItem.setAttributeIfNotNull("licence", licence);
         }
         datasetItem.setReference("dataSource", datasourceItem);
         store(datasetItem);
