@@ -11,6 +11,9 @@ package org.intermine.web.logic.results;
  */
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.pathquery.ConstraintValueParser;
+
+import java.util.Date;
 
 /**
  * Object field, used in header the summary of ReportObject
@@ -65,17 +68,12 @@ public class ReportObjectField
             boolean escapeXml) {
         this.fieldName = fieldName;
         if (fieldValue instanceof String) {
-            if (fieldValue != null && fieldValue.equals("null")) {
-                this.fieldValue = "";
-            }
+            this.fieldValue = (fieldValue != null && fieldValue.equals("null")) ? "" : fieldValue;
+        } else if (fieldValue instanceof Date) {
+            this.fieldValue = ConstraintValueParser.ISO_DATE_FORMAT.format(fieldValue);
         } else {
             this.fieldValue = fieldValue;
         }
-        //temporary workaround if you do not rebuild the db (for licence = 'null') see #2161
-        //remove it in the next release
-        this.fieldValue =
-                (fieldValue instanceof String && fieldValue != null && fieldValue.equals("null"))
-                        ? "" : fieldValue;
         this.fieldDisplayerPage = fieldDisplayerPage;
         this.fieldDoNotTruncate = doNotTruncate;
         this.fieldEscapeXml = escapeXml;

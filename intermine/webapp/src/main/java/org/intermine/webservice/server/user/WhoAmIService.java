@@ -10,9 +10,6 @@ package org.intermine.webservice.server.user;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.core.JSONService;
@@ -58,12 +55,7 @@ public class WhoAmIService extends JSONService
     @Override
     protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("username", profile.getUsername());
-        String id = (profile.getUserId() != null) ? profile.getUserId().toString() : null;
-        data.put("id", id);
-        data.put("preferences", profile.getPreferences());
-        addResultItem(data, false);
+        addResultItem((new JSONUserFormatter(profile)).format(), false);
     }
 
 
