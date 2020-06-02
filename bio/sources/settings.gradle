@@ -39,7 +39,8 @@ include ':bio-source-biogrid',
 ':bio-source-vcf',
 ':bio-source-plant-ontology',
 ':bio-source-plant-trait-ontology',
-':bio-source-soybean-ontology'
+':bio-source-soybean-ontology',
+':bio-source-cowpea-crop-ontology'
 
 project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
 project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
@@ -81,4 +82,4 @@ project(':bio-source-vcf').projectDir = new File(settingsDir, './vcf')
 project(':bio-source-plant-ontology').projectDir = new File(settingsDir, './plant-ontology')
 project(':bio-source-plant-trait-ontology').projectDir = new File(settingsDir, './plant-trait-ontology')
 project(':bio-source-soybean-ontology').projectDir = new File(settingsDir, './soybean-ontology')
-
+project(':bio-source-cowpea-crop-ontology').projectDir = new File(settingsDir, './cowpea-crop-ontology')
