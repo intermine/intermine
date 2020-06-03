@@ -12,7 +12,11 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
