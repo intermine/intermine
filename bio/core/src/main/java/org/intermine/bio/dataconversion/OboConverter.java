@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -199,10 +200,11 @@ public class OboConverter extends DataConverter
         Item datasetItem = createItem("DataSet");
         datasetItem.setAttribute("name", dataset);
         if (licence != null) {
-            datasetItem.setAttribute("licence", licence);
+            datasetItem.setAttributeIfNotNull("licence", licence);
         }
         datasetItem.setReference("dataSource", datasourceItem);
         store(datasetItem);
+        ontology.setCollection("dataSets", Arrays.asList(datasetItem.getIdentifier()));
     }
 
     /**
