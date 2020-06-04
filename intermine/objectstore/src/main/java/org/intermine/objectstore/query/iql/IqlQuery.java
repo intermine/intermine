@@ -141,9 +141,9 @@ public class IqlQuery
             needComma = true;
             String nodeAlias = q.getAliases().get(qn);
             if ((qn instanceof QueryClass) || (qn instanceof ObjectStoreBag)
-                    || (qn instanceof ObjectStoreBagCombination)
-                    || (qn instanceof ObjectStoreBagsForObject)
-                    || (qn instanceof Clob)) {
+                || (qn instanceof ObjectStoreBagCombination)
+                || (qn instanceof ObjectStoreBagsForObject)
+                || (qn instanceof Clob)) {
                 retval.append(nodeToString(q, qn, newParameters, null));
             } else {
                 retval.append(nodeToString(q, qn, newParameters, pathList))
@@ -219,7 +219,7 @@ public class IqlQuery
      * @return a String
      */
     public static String nodeToString(Query q, Object qn, List<Object> parameters,
-            Set<QueryObjectPathExpression> pathList) {
+                                      Set<QueryObjectPathExpression> pathList) {
         if (qn instanceof QueryClass) {
             String nodeAlias = q.getAliases().get(qn);
             return escapeReservedWord(nodeAlias);
@@ -227,7 +227,7 @@ public class IqlQuery
             QueryField qf = (QueryField) qn;
             return escapeReservedWord(q.getAliases().get(qf.getFromElement())) + "."
                 + escapeReservedWord(qf.getFieldName()) + (qf.getSecondFieldName() == null ? ""
-                        : "." + escapeReservedWord(qf.getSecondFieldName()));
+                                                           : "." + escapeReservedWord(qf.getSecondFieldName()));
         } else if (qn instanceof QueryValue) {
             Object obj = ((QueryValue) qn).getValue();
             if (obj instanceof String) {
@@ -249,45 +249,45 @@ public class IqlQuery
             } else {
                 String retval = null;
                 switch (qf.getOperation()) {
-                    case QueryFunction.SUM:
-                        retval = "SUM(";
-                        break;
-                    case QueryFunction.AVERAGE:
-                        retval = "AVG(";
-                        break;
-                    case QueryFunction.MIN:
-                        retval = "MIN(";
-                        break;
-                    case QueryFunction.MAX:
-                        retval = "MAX(";
-                        break;
-                    case QueryFunction.STDDEV:
-                        retval = "STDDEV(";
-                        break;
-                    case QueryFunction.CEIL:
-                        retval = "CEIL(";
-                        break;
-                    case QueryFunction.FLOOR:
-                        retval = "FLOOR(";
-                        break;
-                    case QueryFunction.ROUND:
-                        retval = "ROUND(";
-                        retval += nodeToString(q, qf.getParam(), parameters, null);
-                        retval += ", ";
-                        retval += nodeToString(q, qf.getParam2(), parameters, null);
-                        retval += ")";
-                        return retval;
-                    case QueryFunction.WIDTH_BUCKET:
-                        WidthBucketFunction wbf = (WidthBucketFunction) qf;
-                        retval = "WIDTH_BUCKET(";
-                        retval += nodeToString(q, wbf.getParam(), parameters, null) + ", ";
-                        retval += nodeToString(q, wbf.getMaxParam(), parameters, null) + ", ";
-                        retval += nodeToString(q, wbf.getMinParam(), parameters, null) + ", ";
-                        retval += nodeToString(q, wbf.getBinsParam(), parameters, null) + ")";
-                        return retval;
-                    default:
-                        throw (new IllegalArgumentException("Invalid QueryFunction operation: "
-                                    + qf.getOperation()));
+                case QueryFunction.SUM:
+                    retval = "SUM(";
+                    break;
+                case QueryFunction.AVERAGE:
+                    retval = "AVG(";
+                    break;
+                case QueryFunction.MIN:
+                    retval = "MIN(";
+                    break;
+                case QueryFunction.MAX:
+                    retval = "MAX(";
+                    break;
+                case QueryFunction.STDDEV:
+                    retval = "STDDEV(";
+                    break;
+                case QueryFunction.CEIL:
+                    retval = "CEIL(";
+                    break;
+                case QueryFunction.FLOOR:
+                    retval = "FLOOR(";
+                    break;
+                case QueryFunction.ROUND:
+                    retval = "ROUND(";
+                    retval += nodeToString(q, qf.getParam(), parameters, null);
+                    retval += ", ";
+                    retval += nodeToString(q, qf.getParam2(), parameters, null);
+                    retval += ")";
+                    return retval;
+                case QueryFunction.WIDTH_BUCKET:
+                    WidthBucketFunction wbf = (WidthBucketFunction) qf;
+                    retval = "WIDTH_BUCKET(";
+                    retval += nodeToString(q, wbf.getParam(), parameters, null) + ", ";
+                    retval += nodeToString(q, wbf.getMaxParam(), parameters, null) + ", ";
+                    retval += nodeToString(q, wbf.getMinParam(), parameters, null) + ", ";
+                    retval += nodeToString(q, wbf.getBinsParam(), parameters, null) + ")";
+                    return retval;
+                default:
+                    throw (new IllegalArgumentException("Invalid QueryFunction operation: "
+                                                        + qf.getOperation()));
                 }
                 retval += nodeToString(q, qf.getParam(), parameters, null) + ")";
                 return retval;
@@ -307,7 +307,7 @@ public class IqlQuery
             return queryObjectPathExpressionToString(q, parameters, (QueryObjectPathExpression) qn);
         } else if (qn instanceof QueryCollectionPathExpression) {
             return queryCollectionPathExpressionToString(q, parameters,
-                    (QueryCollectionPathExpression) qn);
+                                                         (QueryCollectionPathExpression) qn);
         } else if (qn instanceof PathExpressionField) {
             QueryObjectPathExpression qope = ((PathExpressionField) qn).getQope();
             pathList.add(qope);
@@ -321,20 +321,20 @@ public class IqlQuery
             for (QuerySelectable osb : osbc.getBags()) {
                 if (needComma) {
                     switch(osbc.getOp()) {
-                        case ObjectStoreBagCombination.UNION:
-                            retval.append(" UNION ");
-                            break;
-                        case ObjectStoreBagCombination.INTERSECT:
-                            retval.append(" INTERSECT ");
-                            break;
-                        case ObjectStoreBagCombination.EXCEPT:
-                            retval.append(" EXCEPT ");
-                            break;
-                        case ObjectStoreBagCombination.ALLBUTINTERSECT:
-                            retval.append(" ALLBUTINTERSECT ");
-                            break;
-                        default:
-                            throw new IllegalStateException("Illegal op: " + osbc.getOp());
+                    case ObjectStoreBagCombination.UNION:
+                        retval.append(" UNION ");
+                        break;
+                    case ObjectStoreBagCombination.INTERSECT:
+                        retval.append(" INTERSECT ");
+                        break;
+                    case ObjectStoreBagCombination.EXCEPT:
+                        retval.append(" EXCEPT ");
+                        break;
+                    case ObjectStoreBagCombination.ALLBUTINTERSECT:
+                        retval.append(" ALLBUTINTERSECT ");
+                        break;
+                    default:
+                        throw new IllegalStateException("Illegal op: " + osbc.getOp());
                     }
                 }
                 needComma = true;
@@ -370,7 +370,7 @@ public class IqlQuery
      * @return a String
      */
     public static String queryCollectionPathExpressionToString(Query q, List<Object> parameters,
-            QueryCollectionPathExpression col) {
+                                                               QueryCollectionPathExpression col) {
         StringBuffer retval = new StringBuffer();
         retval.append(q.getAliases().get(col.getQueryClass()))
             .append(".")
@@ -392,7 +392,7 @@ public class IqlQuery
             }
         }
         if ((!col.getSelect().isEmpty()) || (!col.getFrom().isEmpty())
-                || (col.getConstraint() != null)) {
+            || (col.getConstraint() != null)) {
             Set<InterMineObject> empty = Collections.emptySet();
             Query subQ = col.getQuery(empty);
             retval.append("(");
@@ -470,7 +470,7 @@ public class IqlQuery
      * @return a String
      */
     public static String queryObjectPathExpressionToString(Query q, List<Object> parameters,
-            QueryObjectPathExpression ref) {
+                                                           QueryObjectPathExpression ref) {
         StringBuffer retval = new StringBuffer();
         retval.append(q.getAliases().get(ref.getQueryClass()))
             .append(".")
@@ -540,15 +540,15 @@ public class IqlQuery
      * @return a String
      */
     public static String queryExpressionToString(Query q, QueryExpression qe,
-            List<Object> parameters) {
+                                                 List<Object> parameters) {
         if (qe.getOperation() == QueryExpression.SUBSTRING) {
             return "SUBSTR(" + nodeToString(q, qe.getArg1(), parameters, null) + ", "
                 + nodeToString(q, qe.getArg2(), parameters, null)
                 + (qe.getArg3() == null ? "" : ", "
-                        + nodeToString(q, qe.getArg3(), parameters, null)) + ")";
-	} else if (qe.getOperation() == QueryExpression.CONCAT) {
-	    return nodeToString(q, qe.getArg1(), parameters, null) + "||"
-		+ nodeToString(q, qe.getArg2(), parameters, null);
+                   + nodeToString(q, qe.getArg3(), parameters, null)) + ")";
+        } else if (qe.getOperation() == QueryExpression.CONCAT) {
+            return nodeToString(q, qe.getArg1(), parameters, null) + "||"
+                + nodeToString(q, qe.getArg2(), parameters, null);
         } else if (qe.getOperation() == QueryExpression.INDEX_OF) {
             return "INDEXOF(" + nodeToString(q, qe.getArg1(), parameters, null) + ", "
                 + nodeToString(q, qe.getArg2(), parameters, null) + ")";
@@ -562,29 +562,29 @@ public class IqlQuery
         } else if (qe.getOperation() == QueryExpression.LEAST) {
             return "LEAST(" + nodeToString(q, qe.getArg1(), parameters, null) + ","
                 + nodeToString(q, qe.getArg2(), parameters, null) + ")";
-	} else if (qe.getOperation() == QueryExpression.LENGTH) {
-	    return "LENGTH(" + nodeToString(q, qe.getArg1(), parameters, null) + ")";
+        } else if (qe.getOperation() == QueryExpression.LENGTH) {
+            return "LENGTH(" + nodeToString(q, qe.getArg1(), parameters, null) + ")";
         } else {
             String retval = nodeToString(q, qe.getArg1(), parameters, null);
             switch (qe.getOperation()) {
-                case QueryExpression.ADD:
-                    retval += " + ";
-                    break;
-                case QueryExpression.SUBTRACT:
-                    retval += " - ";
-                    break;
-                case QueryExpression.MULTIPLY:
-                    retval += " * ";
-                    break;
-                case QueryExpression.DIVIDE:
-                    retval += " / ";
-                    break;
-                case QueryExpression.MODULO:
-                    retval += " % ";
-                    break;
-                default:
-                    throw (new IllegalArgumentException("Invalid QueryExpression operation: "
-                                + qe.getOperation()));
+            case QueryExpression.ADD:
+                retval += " + ";
+                break;
+            case QueryExpression.SUBTRACT:
+                retval += " - ";
+                break;
+            case QueryExpression.MULTIPLY:
+                retval += " * ";
+                break;
+            case QueryExpression.DIVIDE:
+                retval += " / ";
+                break;
+            case QueryExpression.MODULO:
+                retval += " % ";
+                break;
+            default:
+                throw (new IllegalArgumentException("Invalid QueryExpression operation: "
+                                                    + qe.getOperation()));
             }
             retval += nodeToString(q, qe.getArg2(), parameters, null);
             return retval;
@@ -615,7 +615,7 @@ public class IqlQuery
             // Add the parameters of the subquery to this query
             parameters.addAll(subquery.getParameters());
             return (c.getQueryEvaluable() == null ? nodeToString(q, c.getQueryClass(), parameters,
-                        null) : nodeToString(q, c.getQueryEvaluable(), parameters, null))
+                                                                 null) : nodeToString(q, c.getQueryEvaluable(), parameters, null))
                 + " " + c.getOp().toString() + " ("
                 + subquery.getQueryString() + ")";
         } else if (cc instanceof ClassConstraint) {
@@ -715,7 +715,7 @@ public class IqlQuery
      * @return a String
      */
     public static String queryReferenceToString(Query q, QueryReference ref,
-            List<Object> parameters) {
+                                                List<Object> parameters) {
         if (ref.getQueryClass() != null) {
             return q.getAliases().get(ref.getQueryClass());
         } else if (((QueryCollectionReference) ref).getQcb() != null) {
@@ -932,7 +932,7 @@ public class IqlQuery
     public static String escapeReservedWord(String word) {
         if (word != null) {
             if (isReservedWord(word) || (word.charAt(0) == '"')
-                    || (word.charAt(word.length() - 1) == '"')) {
+                || (word.charAt(word.length() - 1) == '"')) {
                 return "\"" + word + "\"";
             }
         }
