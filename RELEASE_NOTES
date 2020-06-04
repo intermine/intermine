@@ -7,6 +7,33 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 4.2.0 (June 2020)
+
+#1650 - Need way to upgrade anonymous sessions via web service
+#1969 - FAIR: add profile Gene and Protein markup to the report page
+#2099 - Need webservice endpoint that identifies if superuser
+#2142 - Create a new logout service
+#2144 - Update the /user endpoint to allow to change password
+#2148 - Add PUT method to the /lists webservice to update the description
+#2149 - Update the /users endpoint to attach to the user just created the lists created anonymously
+#2155 - FAIR: adopt DataRecord type in the report page
+#2199 - Invalid JSON response to POST /user/queries
+#2205 - Update change password webservice to require current password
+#2207 - Add clearLocation() to removeFeature() (thanks @sammyjava)
+#2215 - Fix organism short name formation (thanks @ahmedihafez)
+#2236 - Remove BioEntity.ontologyAnnotations because redundant (thanks @sammyjava)
+#2237 - Editing  a Date filter on the results table shows Service failed message
+#2239 - BAR ThaleMine - 6: Fixed a minor bug in reports page long fields (thanks @asherpasha)
+#2240 - BAR ThaleMine - 7: go-annotation loader (thanks @asherpasha)
+#2242 - /service/templates is missing optional constraint if format=json
+#2246 - Issues related to fields with type Date
+#2248 - Added QueryExpression.LENGTH and QueryExpression.CONCAT operators (thanks @sammyjava)
+#2253 - src.data.dir.includes and src.data.dir in project.xml not always work as expected
+#2255 - Added BioChemEntity (via configuration) markup
+#2257 - List widgets aren't loading properly
+#2259 - UniProtFastaLoader doesn't extract the organism name composed by more than 2 words
+#2264 - Add licence to the OboConverter
+
 InterMine 4.1.3 (March 2020)
 
 #2208 Delete a template -> it's still displayed on the Templates tab
