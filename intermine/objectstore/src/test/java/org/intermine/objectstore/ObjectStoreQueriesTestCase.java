@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2020 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,8 +12,17 @@ package org.intermine.objectstore;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import junit.framework.AssertionFailedError;
 
@@ -21,11 +30,52 @@ import org.intermine.SummaryAssertionFailedError;
 import org.intermine.SummaryException;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.query.*;
-import org.intermine.util.DynamicUtil;
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Bank;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employable;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.HasAddress;
+import org.intermine.model.testmodel.ImportantPerson;
+import org.intermine.model.testmodel.Manager;
+import org.intermine.model.testmodel.RandomInterface;
+import org.intermine.model.testmodel.Range;
+import org.intermine.model.testmodel.Secretary;
+import org.intermine.model.testmodel.Types;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.MultipleInBagConstraint;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.ObjectStoreBagCombination;
+import org.intermine.objectstore.query.ObjectStoreBagsForObject;
+import org.intermine.objectstore.query.OrderDescending;
+import org.intermine.objectstore.query.OverlapConstraint;
+import org.intermine.objectstore.query.OverlapRange;
+import org.intermine.objectstore.query.PathExpressionField;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCast;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryClassBag;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryForeignKey;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QueryTestCase;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SubqueryConstraint;
+import org.intermine.objectstore.query.SubqueryExistsConstraint;
 
 /**
  * TestCase for testing InterMine Queries
@@ -34,59 +84,58 @@ import org.junit.Test;
  * override executeTest to run query and assert that the result is what is expected
  */
 
-public abstract class ObjectStoreQueryTestCase {
+public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
+{
     public static final Object NO_RESULT = new Object() {
-        public String toString() {
-            return "NO RESULT";
-        }
-    };
+        public String toString() { return "NO RESULT"; } };
 
-    protected static ObjectStore os;
-    protected static ObjectStoreWriter storeDataWriter;
-
-    protected static Map data;
     protected static Map<String, Query> queries = new HashMap<String, Query>();
     protected static Map<String, Object> results = new LinkedHashMap<String, Object>();
     protected boolean strictTestQueries = true;
 
-    public static void oneTimeSetUp(
-            String osName, String osWriterName, String modelName, String itemsXmlFilename) throws Exception {
+    /**
+     * Constructor
+     */
+    public ObjectStoreQueriesTestCase(String arg) {
+        super(arg);
+    }
 
-        os = ObjectStoreFactory.getObjectStore(osName);
-        storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter(osWriterName);
-
-        // As required clean up any junk other tests have left behind
-        // TODO: Really we should just wipe the objectstore between tests or at least test classes, if this is
-        // performance feasible
-
-        System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(storeDataWriter, Contractor.class) + " " + Contractor.class);
-        //System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(os, storeDataWriter, Employable.class) + " " + Employable.class);
-        System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(storeDataWriter, Employee.class) + " " + Employee.class);
-        System.out.println("Deleted " + ObjectStoreTestUtils.deleteAllObjectsInClass(storeDataWriter, Secretary.class) + " " + Employee.class);
-
-        data = ObjectStoreTestUtils.getTestData(modelName, itemsXmlFilename);
-        ObjectStoreTestUtils.storeData(storeDataWriter, data);
-
+    public static void oneTimeSetUp() throws Exception {
+        QueryTestCase.oneTimeSetUp();
         setUpQueries();
         setUpResults();
     }
 
-    @AfterClass
-    public static void oneTimeShutdown() throws Exception {
-        storeDataWriter.close();
+    /**
+     * Set up all the results expected for a given subset of queries
+     *
+     * @throws Exception if an error occurs
+     */
+    public static void setUpResults() throws Exception {
     }
 
     /**
-     * Test the queries produce the appropriate result
+     * Execute a test for a query. This should run the query and
+     * contain an assert call to assert that the returned results are
+     * those expected.
+     *
+     * @param type the type of query we are testing (ie. the key in the queries Map)
+     * @throws Exception if type does not appear in the queries mapItemsToNames
      */
-    @Test
+    public abstract void executeTest(String type) throws Exception;
+
+    /**
+     * Test the queries produce the appropriate result
+     *
+     * @throws Exception if an error occurs
+     */
     public void testQueries() throws Throwable {
         StringWriter errorMessage = new StringWriter();
         PrintWriter writer = new PrintWriter(errorMessage);
         int failureCount = 0;
         int errorCount = 0;
-        for (String type : results.keySet()) {
-            // Does this appear in the queries mapItemsToNames;
+        for (String type: results.keySet()) {
+                        // Does this appear in the queries mapItemsToNames;
             if (!(queries.containsKey(type))) {
                 writer.println("\n" + type + " does not appear in the queries mapItemsToNames");
                 failureCount++;
@@ -110,7 +159,7 @@ public abstract class ObjectStoreQueryTestCase {
                 }
             }
         }
-        for (String type : queries.keySet()) {
+        for (String type: queries.keySet()) {
             Object result = results.get(type);
             if (result == null) {
                 if (strictTestQueries) {
@@ -208,8 +257,6 @@ public abstract class ObjectStoreQueryTestCase {
         queries.put("Upper", upper());
         queries.put("Greatest", greatest());
         queries.put("Least", least());
-	queries.put("Length", length());
-	queries.put("Concat", concat());
 
         // test 'foo' IN bag
         queries.put("LargeBagConstraint", largeBagConstraint(false));
@@ -273,664 +320,8 @@ public abstract class ObjectStoreQueryTestCase {
         queries.put("ConstrainClass2", constrainClass2());
         queries.put("MultipleInBagConstraint1", multipleInBagConstraint1());
 
-        // These queries require objects with IDs
-        queries.put("WhereClassObject", whereClassObject());
-        queries.put("SelectClassObjectSubquery", selectClassObjectSubquery());
-        queries.put("BagConstraint2", bagConstraint2());
-        queries.put("InterfaceReference", interfaceReference());
-        queries.put("InterfaceCollection", interfaceCollection());
-        queries.put("ContainsConstraintObjectRefObject", containsConstraintObjectRefObject());
-        queries.put("ContainsConstraintNotObjectRefObject", containsConstraintNotObjectRefObject());
-        queries.put("ContainsConstraintCollectionRefObject", containsConstraintCollectionRefObject());
-        queries.put("ContainsConstraintNotCollectionRefObject", containsConstraintNotCollectionRefObject());
-        queries.put("ContainsConstraintMMCollectionRefObject", containsConstraintMMCollectionRefObject());
-        queries.put("ContainsConstraintNotMMCollectionRefObject", containsConstraintNotMMCollectionRefObject());
-        queries.put("CollectionQueryOneMany", collectionQueryOneMany());
-        queries.put("CollectionQueryManyMany", collectionQueryManyMany());
-        queries.put("QueryClassBag", queryClassBag());
-        queries.put("QueryClassBagMM", queryClassBagMM());
-        queries.put("QueryClassBagNot", queryClassBagNot());
-        queries.put("QueryClassBagNotMM", queryClassBagNotMM());
-        queries.put("QueryClassBagDynamic", queryClassBagDynamic());
-        //queries.put("DynamicBagConstraint", dynamicBagConstraint()); // See ticket #469
-        queries.put("DynamicBagConstraint2", dynamicBagConstraint2());
-        queries.put("QueryClassBagDouble", queryClassBagDouble());
-        queries.put("QueryClassBagContainsObject", queryClassBagContainsObject());
-        queries.put("QueryClassBagContainsObjectDouble", queryClassBagContainsObjectDouble());
-        queries.put("QueryClassBagNotContainsObject", queryClassBagNotContainsObject());
-        queries.put("ObjectContainsObject", objectContainsObject());
-        queries.put("ObjectContainsObject2", objectContainsObject2());
-        queries.put("ObjectNotContainsObject", objectNotContainsObject());
-        queries.put("QueryClassBagNotViaNand", queryClassBagNotViaNand());
-        queries.put("QueryClassBagNotViaNor", queryClassBagNotViaNor());
+        // null or not null collections
     }
-
-    /**
-     * Set up all the results expected for a given subset of queries
-     *
-     * @throws Exception if an error occurs
-     */
-    public static void setUpResults() throws Exception {
-        Object[][] r;
-
-        r = new Object[][]{{data.get("CompanyA")},
-                {data.get("CompanyB")}};
-        results.put("SelectSimpleObject", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"CompanyA", new Integer(5)},
-                {"CompanyB", new Integer(5)}};
-        results.put("SubQuery", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"CompanyA"}};
-        results.put("WhereSimpleEquals", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"CompanyB"}};
-        results.put("WhereSimpleNotEquals", ObjectStoreTestUtils.toList(r));
-        results.put("WhereSimpleNegEquals", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"CompanyA"},
-                {"CompanyB"}};
-        results.put("WhereSimpleLike", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"CompanyA"}};
-        results.put("WhereEqualsString", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"CompanyB"}};
-        results.put("WhereAndSet", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"CompanyA"},
-                {"CompanyB"}};
-        results.put("WhereOrSet", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"CompanyA"}};
-        results.put("WhereNotSet", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("DepartmentA1")},
-                {data.get("DepartmentB1")},
-                {data.get("DepartmentB2")}};
-        results.put("WhereSubQueryField", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA")}};
-        results.put("WhereSubQueryClass", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyB")}};
-        results.put("WhereNotSubQueryClass", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyB")}};
-        results.put("WhereNegSubQueryClass", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA"), data.get("CompanyA")},
-                {data.get("CompanyB"), data.get("CompanyB")}};
-        results.put("WhereClassClass", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA"), data.get("CompanyB")},
-                {data.get("CompanyB"), data.get("CompanyA")}};
-        results.put("WhereNotClassClass", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA"), data.get("CompanyB")},
-                {data.get("CompanyB"), data.get("CompanyA")}};
-        results.put("WhereNegClassClass", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA")}};
-        results.put("WhereClassObject", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("DepartmentA1"), data.get("EmployeeA1")}};
-        results.put("Contains11", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("DepartmentA1"), data.get("EmployeeB1")},
-                {data.get("DepartmentA1"), data.get("EmployeeB3")}};
-        results.put("ContainsNot11", ObjectStoreTestUtils.toList(r));
-        results.put("ContainsNeg11", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA"), data.get("DepartmentA1")}};
-        results.put("Contains1N", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA"), data.get("DepartmentB1")},
-                {data.get("CompanyA"), data.get("DepartmentB2")}};
-        results.put("ContainsNot1N", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("DepartmentA1"), data.get("CompanyA")}};
-        results.put("ContainsN1", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("ContractorA"), data.get("CompanyA")},
-                {data.get("ContractorA"), data.get("CompanyB")}};
-        results.put("ContainsMN", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("ContractorA"), data.get("CompanyA")},
-                {data.get("ContractorA"), data.get("CompanyB")},
-                {data.get("ContractorB"), data.get("CompanyA")},
-                {data.get("ContractorB"), data.get("CompanyB")}};
-        results.put("ContainsDuplicatesMN", ObjectStoreTestUtils.toList(r));
-
-        results.put("ContainsNotMN", NO_RESULT); //TODO: Fix this (ticket #445)
-        //results.put("ContainsNotMN", Collections.EMPTY_LIST);
-
-        r = new Object[][]{{data.get("CompanyA"), new Long(1)},
-                {data.get("CompanyB"), new Long(2)}};
-        results.put("SimpleGroupBy", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA"), data.get("DepartmentA1"), data.get("EmployeeA1"), ((Employee) data.get("EmployeeA1")).getAddress()}};
-        results.put("MultiJoin", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{new BigDecimal("3476.0000000000000000"), new BigDecimal("3142.382535593017"), "DepartmentA1", data.get("DepartmentA1")},
-                {new BigDecimal("3476.0000000000000000"), new BigDecimal("3142.382535593017"), "DepartmentB1", data.get("DepartmentB1")},
-                {new BigDecimal("3476.0000000000000000"), new BigDecimal("3142.382535593017"), "DepartmentB2", data.get("DepartmentB2")}};
-        results.put("SelectComplex", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA3")},
-                {data.get("EmployeeB1")},
-                {data.get("EmployeeB2")},
-                {data.get("EmployeeB3")}};
-        results.put("SelectClassAndSubClasses", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("ContractorA")},
-                {data.get("ContractorB")},
-                {data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA3")},
-                {data.get("EmployeeB1")},
-                {data.get("EmployeeB2")},
-                {data.get("EmployeeB3")}};
-        results.put("SelectInterfaceAndSubClasses", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA")},
-                {data.get("CompanyB")},
-                {data.get("DepartmentA1")},
-                {data.get("DepartmentB1")},
-                {data.get("DepartmentB2")}};
-        results.put("SelectInterfaceAndSubClasses2", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("ContractorA")},
-                {data.get("ContractorB")},
-                {data.get("EmployeeA1")},
-                {data.get("EmployeeB1")},
-                {data.get("EmployeeB3")}};
-        results.put("SelectInterfaceAndSubClasses3", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{new Integer(5), "CompanyA"},
-                {new Integer(5), "CompanyB"}};
-        results.put("OrderByAnomaly", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("Secretary1")},
-                {data.get("Secretary2")},
-                {data.get("Secretary3")}};
-        results.put("SelectUnidirectionalCollection", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA")}};
-        results.put("SelectClassObjectSubquery", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA")},
-                {data.get("CompanyB")}};
-        results.put("EmptyAndConstraintSet", ObjectStoreTestUtils.toList(r));
-
-        results.put("EmptyOrConstraintSet", Collections.EMPTY_LIST);
-
-        results.put("EmptyNandConstraintSet", Collections.EMPTY_LIST);
-
-        results.put("EmptyNorConstraintSet", ObjectStoreTestUtils.toList(r));
-
-        results.put("BagConstraint", Collections.singletonList(Collections.singletonList(data.get("CompanyA"))));
-
-        results.put("BagConstraint2", Collections.singletonList(Collections.singletonList(data.get("CompanyA"))));
-
-        r = new Object[][]{{data.get("EmployeeA1")}};
-        results.put("InterfaceField", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA3")}};
-        results.put("InterfaceReference", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA")},
-                {data.get("CompanyB")}};
-        results.put("InterfaceCollection", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeB1"), new Integer(340), new Integer(40)}};
-        results.put("DynamicInterfacesAttribute", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("ContractorA")},
-                {data.get("EmployeeB1")}};
-        results.put("DynamicClassInterface", ObjectStoreTestUtils.toList(r));
-
-        results.put("DynamicClassRef1", Collections.EMPTY_LIST);
-        results.put("DynamicClassRef2", Collections.EMPTY_LIST);
-        results.put("DynamicClassRef3", Collections.EMPTY_LIST);
-        results.put("DynamicClassRef4", Collections.EMPTY_LIST);
-
-        r = new Object[][]{{data.get("EmployeeB1")}};
-        results.put("DynamicClassConstraint", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeB1")}};
-        results.put("ContainsConstraintNull", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA3")},
-                {data.get("EmployeeB2")},
-                {data.get("EmployeeB3")}};
-        results.put("ContainsConstraintNotNull", ObjectStoreTestUtils.toList(r));
-
-        results.put("ContainsConstraintNullCollection1N", Collections.EMPTY_LIST);
-
-        r = new Object[][]{{data.get("DepartmentA1")},
-                {data.get("DepartmentB1")},
-                {data.get("DepartmentB2")}};
-        results.put("ContainsConstraintNotNullCollection1N", ObjectStoreTestUtils.toList(r));
-
-        results.put("ContainsConstraintNullCollectionMN", Collections.EMPTY_LIST);
-
-        r = new Object[][]{{data.get("CompanyA")},
-                {data.get("CompanyB")}};
-        results.put("ContainsConstraintNotNullCollectionMN", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA3")}};
-        results.put("ContainsConstraintObjectRefObject", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeB1")},
-                {data.get("EmployeeB2")},
-                {data.get("EmployeeB3")}};
-        results.put("ContainsConstraintNotObjectRefObject", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("DepartmentB1")}};
-        results.put("ContainsConstraintCollectionRefObject", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("DepartmentA1")},
-                {data.get("DepartmentB2")}};
-        results.put("ContainsConstraintNotCollectionRefObject", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("CompanyA")},
-                {data.get("CompanyB")}};
-        results.put("ContainsConstraintMMCollectionRefObject", ObjectStoreTestUtils.toList(r));
-
-        results.put("ContainsConstraintNotMMCollectionRefObject", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)")); //TODO: Fix this (ticket #445)
-        //results.put("ContainsConstraintNotMMCollectionRefObject", Collections.EMPTY_LIST);
-
-        r = new Object[][]{{data.get("EmployeeA1")}};
-        results.put("SimpleConstraintNull", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeB1")},
-                {data.get("EmployeeB3")}};
-        results.put("SimpleConstraintNotNull", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"10"},
-                {"20"},
-                {"30"},
-                {"40"},
-                {"50"},
-                {"60"}};
-        results.put("TypeCast", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{new Integer(5)},
-                {new Integer(5)},
-                {new Integer(5)},
-                {new Integer(5)},
-                {new Integer(5)},
-                {new Integer(5)}};
-        results.put("IndexOf", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"mp"},
-                {"mp"},
-                {"mp"},
-                {"mp"},
-                {"mp"},
-                {"mp"}};
-        results.put("Substring", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"mployeeA1"},
-                {"mployeeA2"},
-                {"mployeeA3"},
-                {"mployeeB1"},
-                {"mployeeB2"},
-                {"mployeeB3"}};
-        results.put("Substring2", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA3")},
-                {data.get("EmployeeB1")},
-                {data.get("EmployeeB2")},
-                {data.get("EmployeeB3")}};
-        results.put("OrderByReference", ObjectStoreTestUtils.toList(r));
-
-        results.put("FailDistinctOrder", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
-        results.put("FailDistinctOrder2", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
-
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeB2")}};
-        results.put("LargeBagConstraint", NO_RESULT);
-        results.put("LargeBagConstraintUsingTable", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeA2")},
-                {data.get("EmployeeA3")},
-                {data.get("EmployeeB1")},
-                {data.get("EmployeeB3")}};
-        results.put("LargeBagNotConstraint", NO_RESULT);
-        results.put("LargeBagNotConstraintUsingTable", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA3")},
-                {data.get("EmployeeB1")},
-                {data.get("EmployeeB2")},
-                {data.get("EmployeeB3")}};
-        results.put("NegativeNumbers", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"employeea1"},
-                {"employeea2"},
-                {"employeea3"},
-                {"employeeb1"},
-                {"employeeb2"},
-                {"employeeb3"}};
-        results.put("Lower", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{"EMPLOYEEA1"},
-                {"EMPLOYEEA2"},
-                {"EMPLOYEEA3"},
-                {"EMPLOYEEB1"},
-                {"EMPLOYEEB2"},
-                {"EMPLOYEEB3"}};
-        results.put("Upper", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{2000},
-                {5678}};
-        results.put("Greatest", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{1234},
-                {2000}};
-        results.put("Least", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA3")}};
-        results.put("CollectionQueryOneMany", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("Secretary1")},
-                {data.get("Secretary2")}};
-        results.put("CollectionQueryManyMany", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA2")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA3")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB1")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB2")}};
-        results.put("QueryClassBag", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{((HasSecretarys) data.get("CompanyA")).getId(), data.get("Secretary1")},
-                {((HasSecretarys) data.get("CompanyA")).getId(), data.get("Secretary2")},
-                {((HasSecretarys) data.get("CompanyA")).getId(), data.get("Secretary3")},
-                {((HasSecretarys) data.get("CompanyB")).getId(), data.get("Secretary1")},
-                {((HasSecretarys) data.get("CompanyB")).getId(), data.get("Secretary2")}};
-        results.put("QueryClassBagMM", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeB1")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeB2")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeB3")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeA1")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeA2")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeA3")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB3")}};
-        results.put("QueryClassBagNot", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
-
-        results.put("QueryClassBagNotMM", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
-
-        results.put("QueryClassBagDynamic", Collections.EMPTY_LIST);
-
-        // results.put("DynamicBagConstraint", Collections.singletonList(Collections.singletonList(data.get("EmployeeB1")))); // See ticket #469
-        results.put("DynamicBagConstraint2", Collections.singletonList(Collections.singletonList(data.get("EmployeeB1"))));
-
-        r = new Object[][]{{((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1"), data.get("EmployeeA1")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1"), data.get("EmployeeA2")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1"), data.get("EmployeeA3")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA2"), data.get("EmployeeA1")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA2"), data.get("EmployeeA2")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA2"), data.get("EmployeeA3")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA3"), data.get("EmployeeA1")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA3"), data.get("EmployeeA2")},
-                {((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA3"), data.get("EmployeeA3")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB1"), data.get("EmployeeB1")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB1"), data.get("EmployeeB2")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB2"), data.get("EmployeeB1")},
-                {((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB2"), data.get("EmployeeB2")}};
-        results.put("QueryClassBagDouble", ObjectStoreTestUtils.toList(r));
-        results.put("QueryClassBagContainsObject", Collections.singletonList(Collections.singletonList(((Department) data.get("DepartmentA1")).getId())));
-        results.put("QueryClassBagContainsObjectDouble", Collections.singletonList(Collections.singletonList(((Department) data.get("DepartmentA1")).getId())));
-        results.put("QueryClassBagNotContainsObject", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
-        results.put("ObjectContainsObject", Collections.singletonList(Collections.singletonList("hello")));
-        results.put("ObjectContainsObject2", Collections.EMPTY_LIST);
-        results.put("ObjectNotContainsObject", Collections.EMPTY_LIST);
-        results.put("QueryClassBagNotViaNand", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
-        results.put("QueryClassBagNotViaNor", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
-        results.put("SubqueryExistsConstraint", Collections.singletonList(Collections.singletonList("hello")));
-        results.put("NotSubqueryExistsConstraint", Collections.EMPTY_LIST);
-        results.put("SubqueryExistsConstraintNeg", Collections.EMPTY_LIST);
-
-        r = new Object[][]{{data.get("EmployeeA1"), data.get("DepartmentA1")},
-                {data.get("EmployeeA2"), data.get("DepartmentA1")},
-                {data.get("EmployeeA3"), data.get("DepartmentA1")},
-                {data.get("EmployeeB1"), data.get("DepartmentB1")},
-                {data.get("EmployeeB2"), data.get("DepartmentB1")},
-                {data.get("EmployeeB3"), data.get("DepartmentB2")}};
-        results.put("ObjectPathExpression", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("EmployeeA1"), data.get("Employee Street, AVille")},
-                {data.get("EmployeeA2"), data.get("Employee Street, AVille")},
-                {data.get("EmployeeA3"), data.get("Employee Street, AVille")},
-                {data.get("EmployeeB1"), null},
-                {data.get("EmployeeB2"), data.get("Employee Street, BVille")},
-                {data.get("EmployeeB3"), data.get("Employee Street, BVille")}};
-        results.put("ObjectPathExpression2", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("EmployeeA1"), data.get("CompanyA")},
-                {data.get("EmployeeA2"), data.get("CompanyA")},
-                {data.get("EmployeeA3"), data.get("CompanyA")},
-                {data.get("EmployeeB1"), data.get("CompanyB")},
-                {data.get("EmployeeB2"), data.get("CompanyB")},
-                {data.get("EmployeeB3"), data.get("CompanyB")}};
-        results.put("ObjectPathExpression3", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("EmployeeA1"), data.get("Company Street, AVille")},
-                {data.get("EmployeeA2"), data.get("Company Street, AVille")},
-                {data.get("EmployeeA3"), data.get("Company Street, AVille")},
-                {data.get("EmployeeB1"), data.get("Company Street, BVille")},
-                {data.get("EmployeeB2"), data.get("Company Street, BVille")},
-                {data.get("EmployeeB3"), data.get("Company Street, BVille")}};
-        results.put("ObjectPathExpression4", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("EmployeeA1"), data.get("DepartmentA1"), data.get("CompanyA"), data.get("Company Street, AVille")},
-                {data.get("EmployeeA2"), data.get("DepartmentA1"), data.get("CompanyA"), data.get("Company Street, AVille")},
-                {data.get("EmployeeA3"), data.get("DepartmentA1"), data.get("CompanyA"), data.get("Company Street, AVille")},
-                {data.get("EmployeeB1"), data.get("DepartmentB1"), data.get("CompanyB"), data.get("Company Street, BVille")},
-                {data.get("EmployeeB2"), data.get("DepartmentB1"), data.get("CompanyB"), data.get("Company Street, BVille")},
-                {data.get("EmployeeB3"), data.get("DepartmentB2"), data.get("CompanyB"), data.get("Company Street, BVille")}};
-        results.put("ObjectPathExpression5", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("CompanyA"), null},
-                {data.get("CompanyB"), "EmployeeB1"}};
-        results.put("FieldPathExpression", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("EmployeeA1"), "Company Street, AVille"},
-                {data.get("EmployeeA2"), "Company Street, AVille"},
-                {data.get("EmployeeA3"), "Company Street, AVille"},
-                {data.get("EmployeeB1"), "Company Street, BVille"},
-                {data.get("EmployeeB2"), "Company Street, BVille"},
-                {data.get("EmployeeB3"), "Company Street, BVille"}};
-        results.put("FieldPathExpression2", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("DepartmentA1"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))},
-                {data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"))},
-                {data.get("DepartmentB2"), Collections.singletonList(data.get("EmployeeB3"))}};
-        results.put("CollectionPathExpression", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("EmployeeA1"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))},
-                {data.get("EmployeeA2"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))},
-                {data.get("EmployeeA3"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))},
-                {data.get("EmployeeB1"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"))},
-                {data.get("EmployeeB2"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"))},
-                {data.get("EmployeeB3"), Collections.singletonList(data.get("EmployeeB3"))}};
-        results.put("CollectionPathExpression2", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("CompanyA"), Collections.singletonList(Arrays.asList(data.get("DepartmentA1"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))))},
-                {data.get("CompanyB"), Arrays.asList(Arrays.asList(data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"))), Arrays.asList(data.get("DepartmentB2"), Collections.singletonList(data.get("EmployeeB3"))))}};
-        results.put("CollectionPathExpression3", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("CompanyA"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))},
-                {data.get("CompanyB"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"), data.get("EmployeeB3"))}};
-        results.put("CollectionPathExpression4", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("CompanyA"), Collections.singletonList(data.get("DepartmentA1"))},
-                {data.get("CompanyB"), Collections.singletonList(data.get("DepartmentB1"))}};
-        results.put("CollectionPathExpression5", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("DepartmentA1"), data.get("CompanyA"), Arrays.asList(data.get("DepartmentA1"))},
-                {data.get("DepartmentB1"), data.get("CompanyB"), Arrays.asList(data.get("DepartmentB1"), data.get("DepartmentB2"))},
-                {data.get("DepartmentB2"), data.get("CompanyB"), Arrays.asList(data.get("DepartmentB1"), data.get("DepartmentB2"))}};
-        results.put("CollectionPathExpression6", ObjectStoreTestUtils.toList(r));
-        results.put("CollectionPathExpression7", Arrays.asList(
-                Arrays.asList(data.get("EmployeeA1"), Arrays.asList(Arrays.asList(data.get("DepartmentA1"), data.get("CompanyA")))),
-                Arrays.asList(data.get("EmployeeA2"), Arrays.asList(Arrays.asList(data.get("DepartmentA1"), data.get("CompanyA")))),
-                Arrays.asList(data.get("EmployeeA3"), Arrays.asList(Arrays.asList(data.get("DepartmentA1"), data.get("CompanyA")))),
-                Arrays.asList(data.get("EmployeeB1"), Arrays.asList(Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB")))),
-                Arrays.asList(data.get("EmployeeB2"), Arrays.asList(Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB")))),
-                Arrays.asList(data.get("EmployeeB3"), Arrays.asList(Arrays.asList(data.get("DepartmentB2"), data.get("CompanyB"))))));
-
-        r = new Object[][]{{data.get("CompanyA")},
-                {data.get("CompanyB")},
-                {data.get("ContractorA")},
-                {data.get("EmployeeB1")}};
-        results.put("OrSubquery", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("Types1")}};
-        results.put("ScientificNumber", ObjectStoreTestUtils.toList(r));
-
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeB1")}};
-        results.put("LowerBag", ObjectStoreTestUtils.toList(r));
-        results.put("FetchBag", Collections.EMPTY_LIST);
-        results.put("ObjectStoreBag", Collections.EMPTY_LIST);
-        results.put("ObjectStoreBagQueryClass", Collections.EMPTY_LIST);
-        r = new Object[][]{{data.get("EmployeeB3")},
-                {data.get("EmployeeB2")},
-                {data.get("EmployeeB1")},
-                {data.get("EmployeeA3")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA1")}};
-        results.put("OrderDescending", ObjectStoreTestUtils.toList(r));
-        results.put("ObjectStoreBagCombination", Collections.EMPTY_LIST);
-        results.put("ObjectStoreBagCombination2", Collections.EMPTY_LIST);
-        results.put("ObjectStoreBagsForObject", Collections.EMPTY_LIST);
-        results.put("ObjectStoreBagsForObject2", Collections.EMPTY_LIST);
-
-        r = new Object[][]{{((Employee) data.get("EmployeeA1")).getDepartment().getId()},
-                {((Employee) data.get("EmployeeA2")).getDepartment().getId()},
-                {((Employee) data.get("EmployeeA3")).getDepartment().getId()},
-                {((Employee) data.get("EmployeeB1")).getDepartment().getId()},
-                {((Employee) data.get("EmployeeB2")).getDepartment().getId()},
-                {((Employee) data.get("EmployeeB3")).getDepartment().getId()}};
-        results.put("SelectForeignKey", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("DepartmentA1"), new Long(3)},
-                {data.get("DepartmentB1"), new Long(2)}};
-        results.put("WhereCount", ObjectStoreTestUtils.toList(r));
-        //r = new Object[][] { { "EmployeeA1" },
-        //                     { "EmployeeA2" },
-        //                     { "EmployeeA3" } };
-        //results.put("LimitedSubquery", ObjectStoreTestUtils.toList(r));
-        results.put("LimitedSubquery", NO_RESULT); // Gives a random selection of the Employees
-        results.put("ObjectStoreBagCombination3", Collections.EMPTY_LIST);
-
-        results.put("TotallyFalse", Collections.EMPTY_LIST);
-        r = new Object[][]{{data.get("EmployeeA1")},
-                {data.get("EmployeeA2")},
-                {data.get("EmployeeA3")},
-                {data.get("EmployeeB1")},
-                {data.get("EmployeeB2")},
-                {data.get("EmployeeB3")}};
-        results.put("TotallyTrue", ObjectStoreTestUtils.toList(r));
-        results.put("MergeFalse", ObjectStoreTestUtils.toList(r));
-        results.put("MergeTrue", ObjectStoreTestUtils.toList(r));
-        results.put("EmptyBagConstraint", Collections.EMPTY_LIST);
-        int minId = ((Employee) data.get("EmployeeA1")).getId().intValue();
-        minId = Math.min(minId, ((Employee) data.get("EmployeeA2")).getId().intValue());
-        minId = Math.min(minId, ((Employee) data.get("EmployeeA3")).getId().intValue());
-        minId = Math.min(minId, ((Employee) data.get("EmployeeB1")).getId().intValue());
-        minId = Math.min(minId, ((Employee) data.get("EmployeeB2")).getId().intValue());
-        minId = Math.min(minId, ((Employee) data.get("EmployeeB3")).getId().intValue());
-        r = new Object[][]{{new Integer(minId)}};
-        results.put("SelectFunctionNoGroup", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{Address.class, new Long(8)},
-                {DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1)},
-                {DynamicUtil.composeClass(Broke.class, Company.class), new Long(1)},
-                {DynamicUtil.composeClass(Broke.class, Contractor.class), new Long(1)},
-                {Company.class, new Long(1)},
-                {Contractor.class, new Long(1)},
-                {Department.class, new Long(3)},
-                {Employee.class, new Long(3)},
-                {Manager.class, new Long(2)},
-                {Range.class, new Long(4)},
-                {Secretary.class, new Long(3)},
-                {Types.class, new Long(1)}};
-        results.put("SelectClassFromInterMineObject", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1)},
-                {Employee.class, new Long(3)},
-                {Manager.class, new Long(2)}};
-        results.put("SelectClassFromEmployee", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1)},
-                {DynamicUtil.composeClass(Broke.class, Contractor.class), new Long(1)}};
-        results.put("SelectClassFromBrokeEmployable", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("DepartmentA1"), Arrays.asList(data.get("EmployeeA1"))},
-                {data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1"))},
-                {data.get("DepartmentB2"), Collections.singletonList(data.get("EmployeeB3"))}};
-        results.put("SubclassCollection", ObjectStoreTestUtils.toList(r));
-        r = new Object[][]{{data.get("DepartmentA1"), Collections.EMPTY_LIST},
-                {data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1"))},
-                {data.get("DepartmentB2"), Collections.EMPTY_LIST}};
-        results.put("SubclassCollection2", ObjectStoreTestUtils.toList(r));
-        results.put("SelectWhereBackslash", Collections.emptyList());
-        results.put("MultiColumnObjectInCollection", Arrays.asList(
-                Arrays.asList(data.get("CompanyA"), Arrays.asList(
-                        Arrays.asList(data.get("DepartmentA1"), data.get("CompanyA"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB"))))),
-                Arrays.asList(data.get("CompanyB"), Arrays.asList(
-                        Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB"))),
-                        Arrays.asList(data.get("DepartmentB2"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB")))))));
-        results.put("RangeOverlaps", Arrays.asList(
-                Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range1")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range2")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range4")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range2")).getId(), ((InterMineObject) data.get("Range1")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range2")).getId(), ((InterMineObject) data.get("Range2")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range2")).getId(), ((InterMineObject) data.get("Range3")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range2")).getId(), ((InterMineObject) data.get("Range4")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range3")).getId(), ((InterMineObject) data.get("Range2")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range3")).getId(), ((InterMineObject) data.get("Range3")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range3")).getId(), ((InterMineObject) data.get("Range4")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range1")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range2")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range3")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range4")).getId())));
-        results.put("RangeDoesNotOverlap", Arrays.asList(
-                Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range3")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range3")).getId(), ((InterMineObject) data.get("Range1")).getId())));
-        results.put("RangeOverlapsValues", Arrays.asList(
-                Arrays.asList(((InterMineObject) data.get("Range3")).getId()),
-                Arrays.asList(((InterMineObject) data.get("Range4")).getId())));
-
-        results.put("ConstrainClass1", Arrays.asList(
-                Arrays.asList(data.get("EmployeeA2")),
-                Arrays.asList(data.get("EmployeeA3")),
-                Arrays.asList(data.get("EmployeeB2"))));
-
-        results.put("ConstrainClass2", Arrays.asList(
-                Arrays.asList(data.get("CompanyB")),
-                Arrays.asList(data.get("EmployeeA2")),
-                Arrays.asList(data.get("EmployeeA3")),
-                Arrays.asList(data.get("EmployeeB2"))));
-        results.put("MultipleInBagConstraint1", Arrays.asList(
-                Arrays.asList(data.get("EmployeeA1")),
-                Arrays.asList(data.get("EmployeeA2")),
-                Arrays.asList(data.get("EmployeeB1"))));
-    }
-
-    /**
-     * Execute a test for a query. This should run the query and
-     * contain an assert call to assert that the returned results are
-     * those expected.
-     *
-     * @param type the type of query we are testing (ie. the key in the queries Map)
-     * @throws Exception if type does not appear in the queries map
-     */
-    public abstract void executeTest(String type) throws Exception;
 
     /*
       select Alias
@@ -1285,7 +676,7 @@ public abstract class ObjectStoreQueryTestCase {
       and department.name = "DepartmentA1"
     */
 
-    public static Query contains11() throws Exception {
+      public static Query contains11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
@@ -1303,7 +694,7 @@ public abstract class ObjectStoreQueryTestCase {
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-    }
+      }
 
     /*
       select department, manager
@@ -1312,7 +703,7 @@ public abstract class ObjectStoreQueryTestCase {
       and department.name = "DepartmentA1"
     */
 
-    public static Query containsNot11() throws Exception {
+      public static Query containsNot11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
@@ -1330,7 +721,7 @@ public abstract class ObjectStoreQueryTestCase {
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-    }
+      }
 
     /*
       select department, manager
@@ -1339,7 +730,7 @@ public abstract class ObjectStoreQueryTestCase {
       and department.name = "DepartmentA1"
     */
 
-    public static Query containsNeg11() throws Exception {
+      public static Query containsNeg11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
@@ -1358,7 +749,7 @@ public abstract class ObjectStoreQueryTestCase {
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-    }
+      }
 
     /*
       select company, department
@@ -1366,7 +757,7 @@ public abstract class ObjectStoreQueryTestCase {
       where company.departments contains department
       and company.name = "CompanyA"
     */
-    public static Query contains1N() throws Exception {
+      public static Query contains1N() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
@@ -1384,7 +775,7 @@ public abstract class ObjectStoreQueryTestCase {
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-    }
+      }
 
     /*
       select company, department
@@ -1392,7 +783,7 @@ public abstract class ObjectStoreQueryTestCase {
       where company.departments DOES NOT contain department
       and company.name = "CompanyA"
     */
-    public static Query containsNot1N() throws Exception {
+      public static Query containsNot1N() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
@@ -1410,7 +801,7 @@ public abstract class ObjectStoreQueryTestCase {
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-    }
+      }
 
     /*
       select department, company
@@ -1418,7 +809,7 @@ public abstract class ObjectStoreQueryTestCase {
       where department.company CONTAINS company
       and company.name = "CompanyA"
     */
-    public static Query containsN1() throws Exception {
+      public static Query containsN1() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "company");
@@ -1436,7 +827,7 @@ public abstract class ObjectStoreQueryTestCase {
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-    }
+      }
 
     /*
       select contractor, company
@@ -1519,7 +910,7 @@ public abstract class ObjectStoreQueryTestCase {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS,  qc2);
         Query q1 = new Query();
         q1.addToSelect(qc1);
         q1.addToSelect(new QueryFunction());
@@ -2128,34 +1519,6 @@ public abstract class ObjectStoreQueryTestCase {
     }
 
     /*
-     * SELECT GREATEST(2000, a1_.vatNumber) AS a2_ FROM Company AS a1_;
-     */
-    public static Query greatest() throws Exception {
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qc = new QueryClass(Company.class);
-        q.addFrom(qc);
-        QueryField f = new QueryField(qc, "vatNumber");
-        QueryExpression e = new QueryExpression(new QueryValue(2000), QueryExpression.GREATEST, f);
-        q.addToSelect(e);
-        return q;
-    }
-
-    /*
-     * SELECT LEAST(2000, a1_.vatNumber) AS a2_ FROM Company AS a1_;
-     */
-    public static Query least() throws Exception {
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qc = new QueryClass(Company.class);
-        q.addFrom(qc);
-        QueryField f = new QueryField(qc, "vatNumber");
-        QueryExpression e = new QueryExpression(new QueryValue(2000), QueryExpression.LEAST, f);
-        q.addToSelect(e);
-        return q;
-    }
-
-    /*
      * SELECT LENGTH(a1_.name) AS a2_ FROM Employee AS a1_;
      */
     public static Query length() throws Exception {
@@ -2180,6 +1543,34 @@ public abstract class ObjectStoreQueryTestCase {
         QueryField f = new QueryField(qc, "name");
 	QueryValue isAnEmployee = new QueryValue(" is an employee");
         QueryExpression e = new QueryExpression(f, QueryExpression.CONCAT, isAnEmployee);
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT GREATEST(2000, a1_.vatNumber) AS a2_ FROM Company AS a1_;
+     */
+    public static Query greatest() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "vatNumber");
+        QueryExpression e = new QueryExpression(new QueryValue(2000), QueryExpression.GREATEST, f);
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT LEAST(2000, a1_.vatNumber) AS a2_ FROM Company AS a1_;
+     */
+    public static Query least() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "vatNumber");
+        QueryExpression e = new QueryExpression(new QueryValue(2000), QueryExpression.LEAST, f);
         q.addToSelect(e);
         return q;
     }
@@ -2593,7 +1984,7 @@ public abstract class ObjectStoreQueryTestCase {
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setDistinct(false);
-        q.setConstraint(new BagConstraint(new QueryExpression(QueryExpression.LOWER, new QueryField(qc, "name")), ConstraintOp.IN, Arrays.asList(new String[]{"employeea1", "employeea2", "employeeb1"})));
+        q.setConstraint(new BagConstraint(new QueryExpression(QueryExpression.LOWER, new QueryField(qc, "name")), ConstraintOp.IN, Arrays.asList(new String[] {"employeea1", "employeea2", "employeeb1"})));
         return q;
     }
 
@@ -2683,18 +2074,18 @@ public abstract class ObjectStoreQueryTestCase {
     }
 
     /*
-     * SELECT BAGS FOR 999
+     * SELECT BAGS FOR 6
      */
     public static Query objectStoreBagsForObject() throws Exception {
         Query q = new Query();
-        ObjectStoreBagsForObject osbfo = new ObjectStoreBagsForObject(new Integer(999));
+        ObjectStoreBagsForObject osbfo = new ObjectStoreBagsForObject(new Integer(6));
         q.addToSelect(osbfo);
         q.setDistinct(false);
         return q;
     }
 
     /*
-     * SELECT BAGS FOR 999 IN BAGS(10, 11, 12)
+     * SELECT BAGS FOR 6 IN BAGS(10, 11, 12)
      */
     public static Query objectStoreBagsForObject2() throws Exception {
         Query q = new Query();
@@ -2702,7 +2093,7 @@ public abstract class ObjectStoreQueryTestCase {
         bags.add(new ObjectStoreBag(10));
         bags.add(new ObjectStoreBag(11));
         bags.add(new ObjectStoreBag(12));
-        ObjectStoreBagsForObject osbfo = new ObjectStoreBagsForObject(new Integer(999), bags);
+        ObjectStoreBagsForObject osbfo = new ObjectStoreBagsForObject(new Integer(6), bags);
         q.addToSelect(osbfo);
         q.setDistinct(false);
         return q;
@@ -3056,462 +2447,6 @@ public abstract class ObjectStoreQueryTestCase {
         fields.add(new QueryField(qc1, "name"));
         Collection<String> bag = Arrays.asList("1", "2", "EmployeeA1", "EmployeeB1");
         q.setConstraint(new MultipleInBagConstraint(bag, fields));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-      select company,
-      from Company
-      where c1 = <company object>
-    */
-    public static Query whereClassObject() throws Exception {
-        QueryClass qc1 = new QueryClass(Company.class);
-        Company obj = (Company) data.get("CompanyA");
-        ClassConstraint cc1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, obj);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addToSelect(qc1);
-        q1.setConstraint(cc1);
-        return q1;
-    }
-
-    /*
-      select company,
-      from Company, Department
-      where c1 = <company object>
-      and Company.departments = Department
-      and Department CONTAINS (select department
-                               from Department
-                               where department = <department object>)
-    */
-    public static Query selectClassObjectSubquery() throws Exception {
-        QueryClass qc1 = new QueryClass(Company.class);
-        QueryClass qc2 = new QueryClass(Department.class);
-        Company obj1 = (Company) data.get("CompanyA");
-        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addFrom(qc2);
-        q1.addToSelect(qc1);
-        ClassConstraint cc1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, obj1);
-        cs1.addConstraint(cc1);
-        QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
-        ContainsConstraint con1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
-        cs1.addConstraint(con1);
-
-        Query subquery = new Query();
-        QueryClass qc3 = new QueryClass(Department.class);
-        Department obj2 = (Department) data.get("DepartmentA1");
-        ClassConstraint cc2 = new ClassConstraint(qc3, ConstraintOp.EQUALS, obj2);
-        subquery.addFrom(qc3);
-        subquery.addToSelect(qc3);
-        subquery.setConstraint(cc2);
-        SubqueryConstraint sc1 = new SubqueryConstraint(qc2, ConstraintOp.IN, subquery);
-        cs1.addConstraint(sc1);
-        q1.setConstraint(cs1);
-        return q1;
-    }
-
-    /*
-      select Company
-      from Company
-      where Company in ("hello", "goodbye")
-    */
-    public static Query bagConstraint2() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        Query q1 = new Query();
-        q1.alias(c1, "Company");
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        Set set = new LinkedHashSet();
-        set.add(data.get("CompanyA"));
-        q1.setConstraint(new BagConstraint(c1, ConstraintOp.IN, set));
-        return q1;
-    }
-
-    /*
-     * select HasAddress from HasAddress, Address where HasAddress.address CONTAINS Address AND Address = <address>
-     */
-    public static Query interfaceReference() throws Exception {
-        QueryClass qc1 = new QueryClass(HasAddress.class);
-        QueryClass qc2 = new QueryClass(Address.class);
-        Query q1 = new Query();
-        q1.addToSelect(qc1);
-        q1.addFrom(qc1);
-        q1.addFrom(qc2);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc1, "address"), ConstraintOp.CONTAINS, qc2));
-        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, (Address) data.get("Employee Street, AVille")));
-        q1.setConstraint(cs);
-        return q1;
-    }
-
-    /*
-     * select HasSecretarys from HasSecretarys, Secretary where HasSecretarys.secretarys CONTAINS Secretary AND Secretary = <secretary>
-     */
-    public static Query interfaceCollection() throws Exception {
-        QueryClass qc1 = new QueryClass(HasSecretarys.class);
-        QueryClass qc2 = new QueryClass(Secretary.class);
-        Query q1 = new Query();
-        q1.addToSelect(qc1);
-        q1.addFrom(qc1);
-        q1.addFrom(qc2);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "secretarys"), ConstraintOp.CONTAINS, qc2));
-        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, (Secretary) data.get("Secretary1")));
-        q1.setConstraint(cs);
-        return q1;
-    }
-
-    /*
-     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.department CONTAINS <deptA>
-     */
-    public static Query containsConstraintObjectRefObject() throws Exception {
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Employee.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        q1.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "department"),
-                ConstraintOp.CONTAINS, (InterMineObject) data.get("DepartmentA1")));
-        q1.setDistinct(false);
-        return q1;
-    }
-
-    /*
-     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.department DOES NOT CONTAIN <deptA>
-     */
-    public static Query containsConstraintNotObjectRefObject() throws Exception {
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Employee.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        q1.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "department"),
-                ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("DepartmentA1")));
-        q1.setDistinct(false);
-        return q1;
-    }
-
-    /*
-     * SELECT a1_ FROM Department AS a1_ WHERE a1_.employees CONTAINS <empB1>
-     */
-    public static Query containsConstraintCollectionRefObject() throws Exception {
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Department.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc, "employees"),
-                ConstraintOp.CONTAINS, (InterMineObject) data.get("EmployeeB1")));
-        q1.setDistinct(false);
-        return q1;
-    }
-
-    /*
-     * SELECT a1_ FROM Department AS a1_ WHERE a1_.employees DOES NOT CONTAIN <empB1>
-     */
-    public static Query containsConstraintNotCollectionRefObject() throws Exception {
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Department.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc, "employees"),
-                ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("EmployeeB1")));
-        q1.setDistinct(false);
-        return q1;
-    }
-
-    /*
-     * SELECT a1_ FROM Company AS a1_ WHERE a1_.contractors CONTAINS <cont1>
-     */
-    public static Query containsConstraintMMCollectionRefObject() throws Exception {
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Company.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc, "contractors"),
-                ConstraintOp.CONTAINS, (InterMineObject) data.get("ContractorA")));
-        q1.setDistinct(false);
-        return q1;
-    }
-
-    /*
-     * SELECT a1_ FROM Company AS a1_ WHERE a1_.contractors DOES NOT CONTAIN <cont1>
-     */
-    public static Query containsConstraintNotMMCollectionRefObject() throws Exception {
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Company.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc, "contractors"),
-                ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("ContractorA")));
-        q1.setDistinct(false);
-        return q1;
-    }
-
-    /*
-     * SELECT a1_ FROM Employee AS a1_ WHERE <deptA1>.employees CONTAINS a1_
-     */
-    public static Query collectionQueryOneMany() throws Exception {
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Employee.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.CONTAINS, qc));
-        q1.setDistinct(false);
-        return q1;
-    }
-
-    /*
-     * SELECT a1_ FROM Secretary AS a1_ WHERE <CompanyB>.secretarys CONTAINS a1_
-     */
-    public static Query collectionQueryManyMany() throws Exception {
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Secretary.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        q1.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("CompanyB"), "secretarys"), ConstraintOp.CONTAINS, qc));
-        q1.setDistinct(false);
-        return q1;
-    }
-
-    /*
-     * SELECT a1_.id, a2_ FROM ?::Department AS a1_, Employee AS a2_ WHERE a1_.employees CONTAINS a2_
-     */
-    public static Query queryClassBag() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[]{data.get("DepartmentA1"), data.get("DepartmentB1")}));
-        QueryClass qc = new QueryClass(Employee.class);
-        q.addFrom(qcb);
-        q.addFrom(qc);
-        q.addToSelect(new QueryField(qcb));
-        q.addToSelect(qc);
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id, a2_ FROM ?::HasSecretarys AS a1_, Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_
-     */
-    public static Query queryClassBagMM() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(HasSecretarys.class, Arrays.asList(new Object[]{data.get("CompanyA"), data.get("CompanyB"), data.get("EmployeeB1")}));
-        QueryClass qc = new QueryClass(Secretary.class);
-        q.addFrom(qcb);
-        q.addFrom(qc);
-        q.addToSelect(new QueryField(qcb));
-        q.addToSelect(qc);
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "secretarys"), ConstraintOp.CONTAINS, qc));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id, a2_ FROM ?::Department AS a1_, Employee AS a2_ WHERE a1_.employees DOES NOT CONTAIN a2_
-     */
-    public static Query queryClassBagNot() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[]{data.get("DepartmentA1"), data.get("DepartmentB1")}));
-        QueryClass qc = new QueryClass(Employee.class);
-        q.addFrom(qcb);
-        q.addFrom(qc);
-        q.addToSelect(new QueryField(qcb));
-        q.addToSelect(qc);
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.DOES_NOT_CONTAIN, qc));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id, a2_ FROM ?::HasSecretarys AS a1_, Secretary AS a2_ WHERE a1_.secretarys DOES NOT CONTAIN a2_
-     */
-    public static Query queryClassBagNotMM() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(HasSecretarys.class, Arrays.asList(new Object[]{data.get("CompanyA"), data.get("CompanyB"), data.get("EmployeeB1")}));
-        QueryClass qc = new QueryClass(Secretary.class);
-        q.addFrom(qcb);
-        q.addFrom(qc);
-        q.addToSelect(new QueryField(qcb));
-        q.addToSelect(qc);
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "secretarys"), ConstraintOp.DOES_NOT_CONTAIN, qc));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id, a2_ FROM ?::(CEO, Broke) AS a1_, Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_
-     */
-    public static Query queryClassBagDynamic() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(new HashSet(Arrays.asList(new Class[]{CEO.class, Broke.class})), Collections.singletonList(data.get("EmployeeB1")));
-        QueryClass qc = new QueryClass(Secretary.class);
-        q.addFrom(qcb);
-        q.addFrom(qc);
-        q.addToSelect(new QueryField(qcb));
-        q.addToSelect(qc);
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "secretarys"), ConstraintOp.CONTAINS, qc));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_ FROM (Broke, Employable) AS a1_ WHERE a1_ IN ?
-     */
-    /* See ticket #469
-    public static Query dynamicBagConstraint() throws Exception {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(new HashSet(Arrays.asList(new Class[] {Broke.class, Employable.class})));
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, new HashSet(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("CompanyA"), new Integer(5), data.get("EmployeeB1")}))));
-        q.setDistinct(false);
-        return q;
-    }*/
-
-    /*
-     * SELECT a1_ FROM (Broke, CEO) AS a1_ WHERE a1_ IN ?
-     */
-    public static Query dynamicBagConstraint2() throws Exception {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(new HashSet(Arrays.asList(new Class[]{Broke.class, CEO.class})));
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, new HashSet(Arrays.asList(new Object[]{data.get("EmployeeB1")}))));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id, a2_, a3_ FROM ?::Department AS a1_, Employee AS a2_, Employee AS a3_ WHERE a1_.employees CONTAINS a2_ AND a1_.employee CONTAINS a3_
-     */
-    public static Query queryClassBagDouble() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[]{data.get("DepartmentA1"), data.get("DepartmentB1")}));
-        QueryClass qc1 = new QueryClass(Employee.class);
-        QueryClass qc2 = new QueryClass(Employee.class);
-        q.addFrom(qcb);
-        q.addFrom(qc1);
-        q.addFrom(qc2);
-        q.addToSelect(new QueryField(qcb));
-        q.addToSelect(qc1);
-        q.addToSelect(qc2);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc1));
-        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc2));
-        q.setConstraint(cs);
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id FROM ?::Department AS a1_ WHERE a1_.employees CONTAINS ?
-     */
-    public static Query queryClassBagContainsObject() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[]{data.get("DepartmentA1"), data.get("DepartmentB1")}));
-        q.addFrom(qcb);
-        q.addToSelect(new QueryField(qcb));
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, (Employee) data.get("EmployeeA1")));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id FROM ?::Department AS a1_ WHERE a1_.employees CONTAINS ? AND a1_.employees CONTAINS ?
-     */
-    public static Query queryClassBagContainsObjectDouble() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[]{data.get("DepartmentA1"), data.get("DepartmentB1")}));
-        q.addFrom(qcb);
-        q.addToSelect(new QueryField(qcb));
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, (Employee) data.get("EmployeeA1")));
-        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, (Employee) data.get("EmployeeA2")));
-        q.setConstraint(cs);
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id FROM ?::Department AS a1_ WHERE a1_.employees DOES NOT CONTAIN ?
-     */
-    public static Query queryClassBagNotContainsObject() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[]{data.get("DepartmentA1"), data.get("DepartmentB1")}));
-        q.addFrom(qcb);
-        q.addToSelect(new QueryField(qcb));
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.DOES_NOT_CONTAIN, (Employee) data.get("EmployeeA1")));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT 'hello' AS a1_ WHERE ?.employees CONTAINS ?
-     */
-    public static Query objectContainsObject() throws Exception {
-        Query q = new Query();
-        q.addToSelect(new QueryValue("hello"));
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.CONTAINS, (InterMineObject) data.get("EmployeeA1")));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT 'hello' AS a1_ WHERE ?.employees CONTAINS ?
-     */
-    public static Query objectContainsObject2() throws Exception {
-        Query q = new Query();
-        q.addToSelect(new QueryValue("hello"));
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.CONTAINS, (InterMineObject) data.get("EmployeeB1")));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT 'hello' AS a1_ WHERE ?.employees DOES NOT CONTAIN ?
-     */
-    public static Query objectNotContainsObject() throws Exception {
-        Query q = new Query();
-        q.addToSelect(new QueryValue("hello"));
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference((InterMineObject) data.get("DepartmentA1"), "employees"), ConstraintOp.DOES_NOT_CONTAIN, (InterMineObject) data.get("EmployeeA1")));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id, a2_ FROM ?::Department AS a1_, Employee AS a2_ WHERE NOT (a1_.employees CONTAINS a2_ AND 1 = 1)
-     */
-    public static Query queryClassBagNotViaNand() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[]{data.get("DepartmentA1"), data.get("DepartmentB1")}));
-        QueryClass qc = new QueryClass(Employee.class);
-        q.addFrom(qcb);
-        q.addFrom(qc);
-        q.addToSelect(new QueryField(qcb));
-        q.addToSelect(qc);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.NAND);
-        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc));
-        cs.addConstraint(new SimpleConstraint(new QueryValue(new Integer(1)), ConstraintOp.EQUALS, new QueryValue(new Integer(1))));
-        q.setConstraint(cs);
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id, a2_ FROM ?::Department AS a1_, Employee AS a2_ WHERE NOT (a1_.employees CONTAINS a2_ OR 1 = 1)
-     */
-    public static Query queryClassBagNotViaNor() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(Department.class, Arrays.asList(new Object[]{data.get("DepartmentA1"), data.get("DepartmentB1")}));
-        QueryClass qc = new QueryClass(Employee.class);
-        q.addFrom(qcb);
-        q.addFrom(qc);
-        q.addToSelect(new QueryField(qcb));
-        q.addToSelect(qc);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.NOR);
-        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc));
-        cs.addConstraint(new SimpleConstraint(new QueryValue(new Integer(1)), ConstraintOp.EQUALS, new QueryValue(new Integer(1))));
-        q.setConstraint(cs);
         q.setDistinct(false);
         return q;
     }
