@@ -63,6 +63,11 @@ See [LICENSE](LICENSE) file for licensing information.
 This product includes software developed by the
 [Apache Software Foundation][apache]
 
+InterMine Development Roadmap
+-----------------------------
+
+For more information about the upcoming releases, please visit the [InterMine Development Roadmap](https://intermine.readthedocs.io/en/latest/intermine/roadmap/#intermine-development-roadmap). For the roadmap, please see [here](https://github.com/intermine/intermine/projects/7).
+
 Please cite
 ------------------------
 
