@@ -27,10 +27,8 @@ InterMine 4.2.0 (June 2020)
 #2240 - BAR ThaleMine - 7: go-annotation loader (thanks @asherpasha)
 #2242 - /service/templates is missing optional constraint if format=json
 #2246 - Issues related to fields with type Date
-#2248 - Added QueryExpression.LENGTH and QueryExpression.CONCAT operators (thanks @sammyjava)
 #2253 - src.data.dir.includes and src.data.dir in project.xml not always work as expected
 #2255 - Added BioChemEntity (via configuration) markup
-#2257 - List widgets aren't loading properly
 #2259 - UniProtFastaLoader doesn't extract the organism name composed by more than 2 words
 #2264 - Add licence to the OboConverter
 
