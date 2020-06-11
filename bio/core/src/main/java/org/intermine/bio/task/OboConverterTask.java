@@ -75,7 +75,14 @@ public class OboConverterTask extends ConverterTask
         this.termClass = termClass;
     }
 
-
+    /**
+     * Set the licence retrieved from the {bio-source}.properties file
+     *
+     * @param licence the licence
+     */
+    public void setLicence(String licence) {
+        this.licence = licence;
+    }
 
     /**
      * Run the task
@@ -106,6 +113,9 @@ public class OboConverterTask extends ConverterTask
             OboConverter converter;
             if (file.endsWith(".obo")) {
                 converter = new OboConverter(writer, model, file, ontologyName, url, termClass);
+                if (licence != null) {
+                    converter.setLicence(licence);
+                }
             } else {
                 throw new IllegalArgumentException("Don't know how to deal with file " + file);
             }
