@@ -418,8 +418,10 @@ public class PsiComplexesConverter extends BioFileConverter
     private void processType(Complex interactionEvidence,
             DetailHolder detail) throws ObjectStoreException {
         CvTerm cvterm = interactionEvidence.getInteractionType();
-        String termName = cvterm.getFullName();
-        detail.setRelationshipType(termName);
+        if (cvterm != null) {
+            String termName = cvterm.getFullName();
+            detail.setRelationshipType(termName);
+        }
     }
 
     private void processAnnotations(ModelledParticipant modelledParticipant, Item interactor) {

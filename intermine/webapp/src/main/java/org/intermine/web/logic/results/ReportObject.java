@@ -375,23 +375,8 @@ public class ReportObject
         if (!SemanticMarkupFormatter.isEnabled()) {
             return null;
         }
-        if ("DataSet".equals(objectType)) {
-            String name =  (String) getFieldValue("name");
-            String description =  (String) getFieldValue("description");
-            String url =  (String) getFieldValue("url");
-            Map<String, Object> markup = SemanticMarkupFormatter.formatDataSet(name,
-                    description, url, request);
-            return new JSONObject(markup).toString(2);
-        }
-        return null;
-        //BioChemEntity, Gene and Protein markup temporary disable untile they are more stable
-/*        try {
-          Map<String, Object> markup = SemanticMarkupFormatter.formatBioEntity(request, objectType,
-                    getId());
-            return new JSONObject(markup).toString(2);
-        } catch (MetaDataException ex) {
-            return null;
-        }*/
+        Map<String, Object> markup = SemanticMarkupFormatter.formatBioEntity(request, getId());
+        return new JSONObject(markup).toString(2);
     }
 
     /**

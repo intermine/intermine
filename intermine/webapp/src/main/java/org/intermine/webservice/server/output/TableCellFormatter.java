@@ -10,6 +10,7 @@ package org.intermine.webservice.server.output;
  *
  */
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.results.ResultCell;
 import org.intermine.model.InterMineObject;
+import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.PortalHelper;
 import org.json.JSONObject;
@@ -95,6 +97,8 @@ public class TableCellFormatter
                 } else {
                     cooked = cs.subSequence(0, maxCellLength) + "...";
                 }
+            } else if (raw != null && raw instanceof Date) {
+                cooked = ConstraintValueParser.ISO_DATE_FORMAT.format(raw);
             } else {
                 cooked = raw;
             }

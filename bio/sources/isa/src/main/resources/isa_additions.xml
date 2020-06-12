@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<model name="genomic" package="org.intermine.model.bio">
+<classes>
+
+
+    <!-- MODIFICATIONS TO CORE MODEL -->
+    <class name="Ontology"  is-interface="true">
+        <attribute name="shortName" type="java.lang.String"/>
+        <attribute name="version" type="java.lang.String"/>
+    </class>
+
+
+    <class name="Investigation"  is-interface="true">
+        <attribute name="identifier" type="java.lang.String"/>
+        <attribute name="title" type="java.lang.String"/>
+        <attribute name="description" type="java.lang.String"/>
+        <attribute name="submissionDate" type="java.util.Date"/>
+        <attribute name="publicReleaseDate" type="java.util.Date"/>
+        <reference name="publication" referenced-type="Publication"/>
+        <collection name="contacts" referenced-type="Author"/>
+        <collection name="studies" referenced-type="Study" reverse-reference="investigation"/>
+    </class>
+
+    <class name="Study"  is-interface="true">
+        <attribute name="identifier" type="java.lang.String"/>
+        <attribute name="title" type="java.lang.String"/>
+        <attribute name="description" type="java.lang.String"/>
+        <attribute name="design" type="java.lang.String"/>
+        <attribute name="submissionDate" type="java.util.Date"/>
+        <attribute name="publicReleaseDate" type="java.util.Date"/>
+
+        <reference name="investigation" referenced-type="Investigation" reverse-reference="studies"/>
+        <reference name="publication" referenced-type="Publication"/>
+        <reference name="organism" referenced-type="Organism"/>
+        <collection name="contacts" referenced-type="Author"/>
+        <collection name="factors" referenced-type="Factor" reverse-reference="study"/>
+        <collection name="protocols" referenced-type="Protocol" reverse-reference="study"/>
+        <collection name="studyData" referenced-type="StudyData" reverse-reference="study"/>
+    </class>
+
+    <class name="StudyData"  is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <attribute name="value" type="java.lang.String"/>
+
+        <!-- to be filled when dealing with assays; nb: source filled when doing a sample, if more than one assay-->
+        <attribute name="source" type="java.lang.String"/>
+        <attribute name="measurement" type="java.lang.String"/>
+        <attribute name="technology" type="java.lang.String"/>
+
+        <reference name="factor" referenced-type="Factor" reverse-reference="studyData"/>
+        <reference name="study" referenced-type="Study" reverse-reference="studyData"/>
+        <!-- apparently >1 protocols x SD, e.g. assay [animal care and treatment; necropsy] -->
+        <collection name="protocols" referenced-type="Protocol"/>
+<!-- TOCHECK
+        <collection name="factors" referenced-type="Factor" reverse-reference="studyData"/>
+        -->
+        <collection name="attributes" referenced-type="StudyDataAttribute" reverse-reference="studyData"/>
+        <collection name="files" referenced-type="DataFile" reverse-reference="studyData"/>
+
+    </class>
+
+    <class name="StudyDataAttribute"  is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <attribute name="value" type="java.lang.String"/>
+
+        <reference name="studyData" referenced-type="StudyData" reverse-reference="attributes"/>
+        <reference name="ontology" referenced-type="OntologyTerm"/>
+        <reference name="protocol" referenced-type="Protocol"/>
+    </class>
+
+    <class name="Protocol"  is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <attribute name="description" type="java.lang.String"/>
+        <attribute name="URI" type="java.lang.String"/>
+        <attribute name="version" type="java.lang.String"/>
+        <attribute name="step" type="java.lang.Integer"/>
+
+        <reference name="ontology" referenced-type="OntologyTerm"/>
+        <reference name="study" referenced-type="Study" reverse-reference="protocols"/>
+        <reference name="studyData" referenced-type="StudyData" reverse-reference="protocols"/>
+        <reference name="dataFile" referenced-type="DataFile"/>
+        <collection name="parameters" referenced-type="ProtocolParameter" reverse-reference="protocol"/>
+        <collection name="inputs" referenced-type="StudyData" reverse-reference="protocols"/>
+        <collection name="outputs" referenced-type="StudyData" reverse-reference="protocols"/>
+
+     </class>
+
+    <class name="ProtocolParameter"  is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="value" type="java.lang.String"/>
+        <attribute name="unit" type="java.lang.String"/>
+
+        <reference name="ontology" referenced-type="OntologyTerm"/>
+        <reference name="protocol" referenced-type="Protocol" reverse-reference="parameters"/>
+    </class>
+
+    <class name="DataFile"  is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <attribute name="value" type="java.lang.String"/>
+
+
+        <reference name="studyData" referenced-type="StudyData" reverse-reference="files"/>
+        <reference name="dataAttribute" referenced-type="StudyDataAttribute"/>
+        <reference name="protocol" referenced-type="Protocol" />
+        <reference name="study" referenced-type="Study" />
+    </class>
+
+    <class name="Factor"  is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <attribute name="value" type="java.lang.String"/>
+        <attribute name="unit" type="java.lang.String"/>
+        <attribute name="accession" type="java.lang.String"/>
+
+        <reference name="ontology" referenced-type="OntologyTerm"/>
+        <reference name="study" referenced-type="Study" reverse-reference="factors"/>
+        <!--
+        <reference name="studyData" referenced-type="StudyData" reverse-reference="factors"/>
+        -->
+        <collection name="studyData" referenced-type="StudyData" reverse-reference="factor"/>
+    </class>
+
+
+</classes>
+</model>
