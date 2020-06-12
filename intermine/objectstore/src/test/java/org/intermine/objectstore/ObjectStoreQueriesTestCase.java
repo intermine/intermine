@@ -87,7 +87,7 @@ import org.intermine.objectstore.query.SubqueryExistsConstraint;
 public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
 {
     public static final Object NO_RESULT = new Object() {
-        public String toString() { return "NO RESULT"; } };
+            public String toString() { return "NO RESULT"; } };
 
     protected static Map<String, Query> queries = new HashMap<String, Query>();
     protected static Map<String, Object> results = new LinkedHashMap<String, Object>();
@@ -135,7 +135,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         int failureCount = 0;
         int errorCount = 0;
         for (String type: results.keySet()) {
-                        // Does this appear in the queries mapItemsToNames;
+            // Does this appear in the queries mapItemsToNames;
             if (!(queries.containsKey(type))) {
                 writer.println("\n" + type + " does not appear in the queries mapItemsToNames");
                 failureCount++;
@@ -676,7 +676,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       and department.name = "DepartmentA1"
     */
 
-      public static Query contains11() throws Exception {
+    public static Query contains11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
@@ -694,7 +694,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-      }
+    }
 
     /*
       select department, manager
@@ -703,7 +703,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       and department.name = "DepartmentA1"
     */
 
-      public static Query containsNot11() throws Exception {
+    public static Query containsNot11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
@@ -721,7 +721,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-      }
+    }
 
     /*
       select department, manager
@@ -730,7 +730,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       and department.name = "DepartmentA1"
     */
 
-      public static Query containsNeg11() throws Exception {
+    public static Query containsNeg11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
@@ -749,7 +749,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-      }
+    }
 
     /*
       select company, department
@@ -757,7 +757,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where company.departments contains department
       and company.name = "CompanyA"
     */
-      public static Query contains1N() throws Exception {
+    public static Query contains1N() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
@@ -775,7 +775,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-      }
+    }
 
     /*
       select company, department
@@ -783,7 +783,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where company.departments DOES NOT contain department
       and company.name = "CompanyA"
     */
-      public static Query containsNot1N() throws Exception {
+    public static Query containsNot1N() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
@@ -801,7 +801,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-      }
+    }
 
     /*
       select department, company
@@ -809,7 +809,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
       where department.company CONTAINS company
       and company.name = "CompanyA"
     */
-      public static Query containsN1() throws Exception {
+    public static Query containsN1() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "company");
@@ -827,7 +827,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-      }
+    }
 
     /*
       select contractor, company
@@ -973,7 +973,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(c1);
         q1.addFrom(c2);
         QueryExpression e1 = new QueryExpression(new QueryFunction(f2, QueryFunction.AVERAGE),
-                QueryExpression.ADD, new QueryValue(new Integer(20)));
+                                                 QueryExpression.ADD, new QueryValue(new Integer(20)));
         QueryFunction e2 = new QueryFunction(f2, QueryFunction.STDDEV);
         q1.addToSelect(e1);
         q1.addToSelect(e2);
@@ -1045,19 +1045,19 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     */
     /*
      * TODO: this currently cannot be done.
-    public static Query selectClassFromSubQuery() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryClass c2 = new QueryClass(Company.class);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        Query q2 = new Query();
-        q2.addFrom(q1);
-        q2.addFrom(c2);
-        q2.addToSelect(c2);
-        q2.setConstraint(new ClassConstraint(c1, ConstraintOp.EQUALS, c2));
-        return q2;
-    }
+     public static Query selectClassFromSubQuery() throws Exception {
+     QueryClass c1 = new QueryClass(Company.class);
+     QueryClass c2 = new QueryClass(Company.class);
+     Query q1 = new Query();
+     q1.addFrom(c1);
+     q1.addToSelect(c1);
+     Query q2 = new Query();
+     q2.addFrom(q1);
+     q2.addFrom(c2);
+     q2.addToSelect(c2);
+     q2.setConstraint(new ClassConstraint(c1, ConstraintOp.EQUALS, c2));
+     return q2;
+     }
     */
 
     /*
@@ -1329,7 +1329,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc);
         q1.addToSelect(qc);
         ContainsConstraint c = new ContainsConstraint(new QueryObjectReference(qc, "address"),
-                ConstraintOp.IS_NULL);
+                                                      ConstraintOp.IS_NULL);
         q1.setConstraint(c);
         return q1;
     }
@@ -1343,7 +1343,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc);
         q1.addToSelect(qc);
         ContainsConstraint c = new ContainsConstraint(new QueryObjectReference(qc, "address"),
-                ConstraintOp.IS_NOT_NULL);
+                                                      ConstraintOp.IS_NOT_NULL);
         q1.setConstraint(c);
         return q1;
     }
@@ -1358,7 +1358,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc);
         q1.addToSelect(qc);
         ContainsConstraint c = new ContainsConstraint(
-                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NULL);
+                                                      new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NULL);
         q1.setConstraint(c);
         return q1;
     }
@@ -1373,7 +1373,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc);
         q1.addToSelect(qc);
         ContainsConstraint c = new ContainsConstraint(
-                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NOT_NULL);
+                                                      new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NOT_NULL);
         q1.setConstraint(c);
         return q1;
     }
@@ -1389,7 +1389,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc);
         q1.addToSelect(qc);
         ContainsConstraint c = new ContainsConstraint(
-                new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NULL);
+                                                      new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NULL);
         q1.setConstraint(c);
         return q1;
     }
@@ -1404,7 +1404,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc);
         q1.addToSelect(qc);
         ContainsConstraint c = new ContainsConstraint(
-                new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NOT_NULL);
+                                                      new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NOT_NULL);
         q1.setConstraint(c);
         return q1;
     }
@@ -1514,6 +1514,35 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc);
         QueryField f = new QueryField(qc, "name");
         QueryExpression e = new QueryExpression(QueryExpression.UPPER, f);
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT LENGTH(a1_.name) AS a2_ FROM Employee AS a1_;
+     */
+    public static Query length() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        QueryExpression e = new QueryExpression(QueryExpression.LENGTH, f);
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT CONCAT(a1_.name, " is an employee") AS a2_ FROM Employee AS a1_;
+     */
+    public static Query concat() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        QueryValue isAnEmployee = new QueryValue(" is an employee");
+        QueryExpression e = new QueryExpression(f, QueryExpression.CONCAT, isAnEmployee);
         q.addToSelect(e);
         return q;
     }

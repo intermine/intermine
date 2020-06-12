@@ -457,17 +457,17 @@ public class SqlGeneratorTest extends SetupDataTestCase
     // expected SQL for overlap queries depends on capabilities of the database,
     // each variant is also tested in testOverlapQueries below.
     private static String getOverlapQuery(String method, String queryName) {
-       if (rangeQueries == null) {
-           rangeQueries = new HashMap<String, Map<String, String>>();
+        if (rangeQueries == null) {
+            rangeQueries = new HashMap<String, Map<String, String>>();
 
-           // int4range
-           rangeQueries.put("int4range", new HashMap<String, String>());
-           rangeQueries.get("int4range").put("RangeOverlaps", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd, '[]') && int4range(a2_.rangeStart, a2_.rangeEnd, '[]') ORDER BY a1_.id, a2_.id");
-           rangeQueries.get("int4range").put("RangeDoesNotOverlap", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd, '[]') && int4range(a2_.rangeStart, a2_.rangeEnd, '[]'))) ORDER BY a1_.id, a2_.id");
-           rangeQueries.get("int4range").put("RangeOverlapsValues", "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd, '[]') && int4range(35, 45, '[]') ORDER BY a1_.id");
-       }
+            // int4range
+            rangeQueries.put("int4range", new HashMap<String, String>());
+            rangeQueries.get("int4range").put("RangeOverlaps", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd, '[]') && int4range(a2_.rangeStart, a2_.rangeEnd, '[]') ORDER BY a1_.id, a2_.id");
+            rangeQueries.get("int4range").put("RangeDoesNotOverlap", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd, '[]') && int4range(a2_.rangeStart, a2_.rangeEnd, '[]'))) ORDER BY a1_.id, a2_.id");
+            rangeQueries.get("int4range").put("RangeOverlapsValues", "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd, '[]') && int4range(35, 45, '[]') ORDER BY a1_.id");
+        }
 
-       return rangeQueries.get(method).get(queryName);
+        return rangeQueries.get(method).get(queryName);
     }
 
     public void executeTest(String type) throws Exception {
@@ -516,16 +516,16 @@ public class SqlGeneratorTest extends SetupDataTestCase
             // we don't want to test precomputing for these.
 
             if (!("SubqueryExistsConstraint".equals(type)
-                    || "NotSubqueryExistsConstraint".equals(type)
-                    || "SubqueryExistsConstraintNeg".equals(type)
-                    || "ObjectStoreBagCombination2".equals(type)
-                    || "ContainsConstraintNullCollection1N".equals(type)
-                    || "ContainsConstraintNotNullCollection1N".equals(type)
-                    || "ContainsConstraintNullCollectionMN".equals(type)
-                    || "ContainsConstraintNotNullCollectionMN".equals(type)
-                    || "RangeDoesNotOverlap".equals(type)
-                    || "RangeOverlapsValues".equals(type)
-                    || "RangeOverlaps".equals(type))) {
+                  || "NotSubqueryExistsConstraint".equals(type)
+                  || "SubqueryExistsConstraintNeg".equals(type)
+                  || "ObjectStoreBagCombination2".equals(type)
+                  || "ContainsConstraintNullCollection1N".equals(type)
+                  || "ContainsConstraintNotNullCollection1N".equals(type)
+                  || "ContainsConstraintNullCollectionMN".equals(type)
+                  || "ContainsConstraintNotNullCollectionMN".equals(type)
+                  || "RangeDoesNotOverlap".equals(type)
+                  || "RangeOverlapsValues".equals(type)
+                  || "RangeOverlaps".equals(type))) {
 
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser.
@@ -637,6 +637,27 @@ public class SqlGeneratorTest extends SetupDataTestCase
         assertEquals("SUBSTR('Hello', 3, 5)", buffer.toString());
     }
 
+    public void testSelectQueryConcatExpression() throws Exception {
+        QueryValue v1 = new QueryValue("Hello");
+        QueryValue v2 = new QueryValue("world");
+        QueryExpression e1 = new QueryExpression(v1, QueryExpression.CONCAT, v2);
+        StringBuffer buffer = new StringBuffer();
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
+        assertEquals("'Hello'||'world'", buffer.toString());
+    }
+
+    public void testSelectQueryLengthExpression() throws Exception {
+        QueryValue v1 = new QueryValue("Hello");
+        QueryExpression e1 = new QueryExpression(QueryExpression.LENGTH, v1);
+        StringBuffer buffer = new StringBuffer();
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
+        assertEquals("LENGTH('Hello')", buffer.toString());
+    }
+
     public void testSelectQueryExpressionGreatestLeast() throws Exception {
         QueryValue v1 = new QueryValue(new Integer(5));
         QueryValue v2 = new QueryValue(new Integer(7));
@@ -652,35 +673,35 @@ public class SqlGeneratorTest extends SetupDataTestCase
     }
 
     /* TODO
-    public void testSelectQueryField() throws Exception {
-        QueryClass c1 = new QueryClass(Department.class);
-        QueryField f1 = new QueryField(c1, "name");
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        StringBuffer buffer = new StringBuffer();
-        SqlGenerator.queryEvaluableToString(buffer, f1, q1);
-        assertEquals("a1_.name", buffer.toString());
-    }
+       public void testSelectQueryField() throws Exception {
+       QueryClass c1 = new QueryClass(Department.class);
+       QueryField f1 = new QueryField(c1, "name");
+       Query q1 = new Query();
+       q1.addFrom(c1);
+       StringBuffer buffer = new StringBuffer();
+       SqlGenerator.queryEvaluableToString(buffer, f1, q1);
+       assertEquals("a1_.name", buffer.toString());
+       }
 
-    public void testSelectQueryFunction() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryField v1 = new QueryField(c1, "vatNumber");
-        QueryFunction f1 = new QueryFunction();
-        QueryFunction f2 = new QueryFunction(v1, QueryFunction.SUM);
-        QueryFunction f3 = new QueryFunction(v1, QueryFunction.AVERAGE);
-        QueryFunction f4 = new QueryFunction(v1, QueryFunction.MIN);
-        QueryFunction f5 = new QueryFunction(v1, QueryFunction.MAX);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        StringBuffer buffer = new StringBuffer();
-        SqlGenerator.queryEvaluableToString(buffer, f1, q1);
-        SqlGenerator.queryEvaluableToString(buffer, f2, q1);
-        SqlGenerator.queryEvaluableToString(buffer, f3, q1);
-        SqlGenerator.queryEvaluableToString(buffer, f4, q1);
-        SqlGenerator.queryEvaluableToString(buffer, f5, q1);
-        assertEquals("COUNT(*)SUM(a1_.vatNumber)AVG(a1_.vatNumber)MIN(a1_.vatNumber)MAX(a1_.vatNumber)", buffer.toString());
-    }
-*/
+       public void testSelectQueryFunction() throws Exception {
+       QueryClass c1 = new QueryClass(Company.class);
+       QueryField v1 = new QueryField(c1, "vatNumber");
+       QueryFunction f1 = new QueryFunction();
+       QueryFunction f2 = new QueryFunction(v1, QueryFunction.SUM);
+       QueryFunction f3 = new QueryFunction(v1, QueryFunction.AVERAGE);
+       QueryFunction f4 = new QueryFunction(v1, QueryFunction.MIN);
+       QueryFunction f5 = new QueryFunction(v1, QueryFunction.MAX);
+       Query q1 = new Query();
+       q1.addFrom(c1);
+       StringBuffer buffer = new StringBuffer();
+       SqlGenerator.queryEvaluableToString(buffer, f1, q1);
+       SqlGenerator.queryEvaluableToString(buffer, f2, q1);
+       SqlGenerator.queryEvaluableToString(buffer, f3, q1);
+       SqlGenerator.queryEvaluableToString(buffer, f4, q1);
+       SqlGenerator.queryEvaluableToString(buffer, f5, q1);
+       assertEquals("COUNT(*)SUM(a1_.vatNumber)AVG(a1_.vatNumber)MIN(a1_.vatNumber)MAX(a1_.vatNumber)", buffer.toString());
+       }
+    */
 
     public void testInvalidClass() throws Exception {
         Query q = new Query();
@@ -760,17 +781,17 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
     public void testInvalidClassInContainsConstraint() throws Exception {
         Employee emp = new Employee() {
-            private Set extras;
-            public Set getExtras() {
-                return extras;
-            }
-            public void setExtras(Set extras) {
-                this.extras = extras;
-            }
-            public void addExtras(Employee e) {
-                extras.add(e);
-            }
-        };
+                private Set extras;
+                public Set getExtras() {
+                    return extras;
+                }
+                public void setExtras(Set extras) {
+                    this.extras = extras;
+                }
+                public void addExtras(Employee e) {
+                    extras.add(e);
+                }
+            };
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
