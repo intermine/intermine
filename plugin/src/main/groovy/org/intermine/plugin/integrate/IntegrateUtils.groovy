@@ -87,7 +87,6 @@ class IntegrateUtils {
                     excludes: BioSourceProperties.getUserProperty(source, "src.data.dir.excludes"))
         }
     }
-
     def retrieveTgtFromDB = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
         source.userProperties.each { prop ->
@@ -107,7 +106,6 @@ class IntegrateUtils {
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
                 dbAlias: "db." + BioSourceProperties.getUserProperty(source, "source.db.name"))
     }
-
     def retrieveTgtFromCustomDir = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
         //set dynamic properties
@@ -160,7 +158,6 @@ class IntegrateUtils {
             }
         }
     }
-
     def retrieveTgtFromLargeXMLFile = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
         def includes = BioSourceProperties.getUserProperty(source, "src.data.dir.includes")
@@ -218,12 +215,19 @@ class IntegrateUtils {
                 seqClsName: BioSourceProperties.getUserProperty(source, "gff3.seqClsName"),
                 orgTaxonId: BioSourceProperties.getUserProperty(source, "gff3.taxonId"),
                 dataSourceName: BioSourceProperties.getUserProperty(source, "gff3.dataSourceName"),
+                dataSourceDescription: BioSourceProperties.getUserProperty(source, "gff3.dataSourceDescription"),
+                dataSourceUrl: BioSourceProperties.getUserProperty(source, "gff3.dataSourceUrl"),
                 seqDataSourceName: BioSourceProperties.getUserProperty(source, "gff3.seqDataSourceName"),
                 dataSetTitle: BioSourceProperties.getUserProperty(source, "gff3.dataSetTitle"),
+                dataSetDescription: BioSourceProperties.getUserProperty(source, "gff3.dataSetDescription"),
+                dataSetUrl: BioSourceProperties.getUserProperty(source, "gff3.dataSetUrl"),
                 dontCreateLocations: BioSourceProperties.getUserProperty(source, "gff3.dontCreateLocations"),
                 model: "genomic",
                 handlerClassName: bioSourceProperties.getProperty("gff3.handlerClassName"),
                 seqHandlerClassName: gff3SeqHandlerClassName,
+                strainIdentifier: BioSourceProperties.getUserProperty(source, "gff3.strainIdentifier"),
+                assemblyVersion: BioSourceProperties.getUserProperty(source, "gff3.assemblyVersion"),
+                annotationVersion: BioSourceProperties.getUserProperty(source, "gff3.annotationVersion"),
                 licence: licence) {
             fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
                     includes: includes)
@@ -242,7 +246,6 @@ class IntegrateUtils {
 
         String licence = (bioSourceProperties.getProperty("obo.ontology.licence") != null) ?
                 bioSourceProperties.getProperty("obo.ontology.licence") : ""
-
         ant.taskdef(name: "convertOBO", classname: "org.intermine.bio.task.OboConverterTask") {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
@@ -255,6 +258,7 @@ class IntegrateUtils {
                 ontologyName: bioSourceProperties.getProperty("obo.ontology.name"),
                 url: bioSourceProperties.getProperty("obo.ontology.url"),
                 termClass: bioSourceProperties.getProperty("obo.term.class"),
+                description: bioSourceProperties.getProperty("obo.ontology.description"),
                 licence: licence)
     }
 
