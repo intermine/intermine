@@ -10,6 +10,7 @@
 <item id="0_1" class="Ontology">
 <attribute name="name" value="SO"/>
 <attribute name="url" value="http://www.flymine.org"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_2" class="OntologyRelation">
 <attribute name="direct" value="false"/>

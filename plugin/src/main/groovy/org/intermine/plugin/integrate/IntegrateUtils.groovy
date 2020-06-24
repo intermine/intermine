@@ -88,7 +88,7 @@ class IntegrateUtils {
         }
     }
 
-    def retrieveTgtFromDB = { Source source, Properties bioSourceProperties ->
+    def retrieveTgtFromDB = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
         source.userProperties.each { prop ->
             if (!"src.data.dir".equals(prop.name)) {
@@ -108,7 +108,7 @@ class IntegrateUtils {
                 dbAlias: "db." + BioSourceProperties.getUserProperty(source, "source.db.name"))
     }
 
-    def retrieveTgtFromCustomDir = {Source source, Properties bioSourceProperties  ->
+    def retrieveTgtFromCustomDir = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
         //set dynamic properties
         source.userProperties.each { prop ->
@@ -128,8 +128,12 @@ class IntegrateUtils {
                 dataDir: BioSourceProperties.getUserProperty(source, "src.data.dir"))
     }
 
-    def retrieveTgtFromXMLFile = {Source source, Properties bioSourceProperties  ->
+    def retrieveTgtFromXMLFile = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
+        def includes = BioSourceProperties.getUserProperty(source, "src.data.dir.includes")
+        if (includes == null || includes == "") {
+            includes = "*.xml"
+        }
         ant.taskdef(name: "insertXMLData", classname: "org.intermine.dataloader.XmlDataLoaderTask") {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
@@ -137,19 +141,32 @@ class IntegrateUtils {
                 pathelement(path: gradleProject.configurations.getByName("integrateSource").asPath)
             }
         }
-        ant.insertXMLData(integrationWriter: "integration.production",
-                sourceName: source.name,
-                sourceType: source.type,
-                file: BioSourceProperties.getUserProperty(source, "src.data.file"),
-                ignoreDuplicates: BioSourceProperties.getUserProperty(source, "ignoreDuplicates")) {
-            fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
-                    includes: "*.xml",
-                    excludes: BioSourceProperties.getUserProperty(source, "src.data.dir.excludes"))
+        boolean hasFile = BioSourceProperties.getUserProperty(source, "src.data.file")
+        if (hasFile) {
+            ant.insertXMLData(integrationWriter: "integration.production",
+                    sourceName: source.name,
+                    sourceType: source.type,
+                    file: BioSourceProperties.getUserProperty(source, "src.data.file"),
+                    ignoreDuplicates: BioSourceProperties.getUserProperty(source, "ignoreDuplicates"))
+        } else {
+            ant.insertXMLData(integrationWriter: "integration.production",
+                    sourceName: source.name,
+                    sourceType: source.type,
+                    //file: BioSourceProperties.getUserProperty(source, "src.data.file"),
+                    ignoreDuplicates: BioSourceProperties.getUserProperty(source, "ignoreDuplicates")) {
+                fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
+                        includes: includes,
+                        excludes: BioSourceProperties.getUserProperty(source, "src.data.dir.excludes"))
+            }
         }
     }
 
-    def retrieveTgtFromLargeXMLFile = {Source source, Properties bioSourceProperties  ->
+    def retrieveTgtFromLargeXMLFile = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
+        def includes = BioSourceProperties.getUserProperty(source, "src.data.dir.includes")
+        if (includes == null || includes == "") {
+            includes = "*.xml"
+        }
         ant.taskdef(name: "convertFullXMLFile", classname: "org.intermine.task.FullXmlConverterTask") {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
@@ -166,7 +183,7 @@ class IntegrateUtils {
                     modelName: "genomic")
                     {
                         fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
-                                includes: "*.xml",
+                                includes: includes,
                                 excludes: BioSourceProperties.getUserProperty(source, "src.data.dir.excludes"))
                     }
         }
@@ -184,7 +201,10 @@ class IntegrateUtils {
                 bioSourceProperties.getProperty("gff3.seqHandlerClassName") : ""
         String licence = (ant.project.getProperty("gff3.licence") != null) ?
                 ant.project.getProperty("gff3.licence") : ""
-
+        def includes = BioSourceProperties.getUserProperty(source, "src.data.dir.includes")
+        if (includes == null || includes == "") {
+            includes = "*.gff,*.gff3"
+        }
 
         ant.taskdef(name: "convertGFF3File", classname: "org.intermine.bio.task.GFF3ConverterTask") {
             classpath {
@@ -206,7 +226,7 @@ class IntegrateUtils {
                 seqHandlerClassName: gff3SeqHandlerClassName,
                 licence: licence) {
             fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
-                    includes: "*.gff,*.gff3")
+                    includes: includes)
         }
     }
 
@@ -220,6 +240,9 @@ class IntegrateUtils {
             }
         }
 
+        String licence = (bioSourceProperties.getProperty("obo.ontology.licence") != null) ?
+                bioSourceProperties.getProperty("obo.ontology.licence") : ""
+
         ant.taskdef(name: "convertOBO", classname: "org.intermine.bio.task.OboConverterTask") {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
@@ -231,7 +254,8 @@ class IntegrateUtils {
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
                 ontologyName: bioSourceProperties.getProperty("obo.ontology.name"),
                 url: bioSourceProperties.getProperty("obo.ontology.url"),
-                termClass: bioSourceProperties.getProperty("obo.term.class"))
+                termClass: bioSourceProperties.getProperty("obo.term.class"),
+                licence: licence)
     }
 
     def loadSingleSource = { source ->

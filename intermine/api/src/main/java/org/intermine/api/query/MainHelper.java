@@ -1368,7 +1368,7 @@ public final class MainHelper
                 || (summaryType == Long.class) || (summaryType == Integer.class)
                 || (summaryType == Short.class) || (summaryType == Byte.class)
                 || (summaryType == Float.class) || (summaryType == Double.class)
-                || (summaryType == BigDecimal.class)) {
+                || (summaryType == BigDecimal.class) || (summaryType == Date.class)) {
             q.addToSelect(qf);
             q.addToGroupBy(qf);
             QueryNode count = new QueryFunction();
@@ -1377,7 +1377,6 @@ public final class MainHelper
             pathToQueryNode.put("Occurrences", count);
             q.addToOrderBy(new OrderDescending(count));
         } else {
-            // Probably Date
             throw new IllegalArgumentException("Cannot summarise this column");
         }
         return q;

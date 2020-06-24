@@ -1,0 +1,34 @@
+<items>
+<item id="4_1" class="Protein">
+<attribute name="primaryAccession" value="P09606"/>
+<reference name="organism" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Reactome"/>
+</item>
+<item id="3_2" class="Pathway">
+<attribute name="identifier" value="REACT_292751"/>
+<attribute name="name" value="Amino acid synthesis and interconversion (transamination)"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="proteins"><reference ref_id="4_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="Reactome pathways data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="5_1" class="Organism">
+<attribute name="taxonId" value="10116"/>
+</item>
+<item id="3_1" class="Pathway">
+<attribute name="identifier" value="REACT_327994"/>
+<attribute name="name" value="Astrocytic Glutamate-Glutamine Uptake And Metabolism"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="proteins"><reference ref_id="4_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+</items>

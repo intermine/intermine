@@ -166,6 +166,10 @@ public class JSONFormatter extends Formatter
         if (val == null) {
             return "null";
         }
+        //we do the check here because StringUtils.isNumeric returns true for empty string
+        if (StringUtils.isEmpty(val)) {
+            return "\"" + val + "\"";
+        }
         if ("null".equals(val) || "true".equals(val) || "false".equals(val)
                 || StringUtils.isNumeric(val)) {
             return val;
