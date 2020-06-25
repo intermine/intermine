@@ -241,7 +241,19 @@ class IntegrateUtils {
         }
 
         String licence = (bioSourceProperties.getProperty("obo.ontology.licence") != null) ?
-                bioSourceProperties.getProperty("obo.ontology.licence") : ""
+            bioSourceProperties.getProperty("obo.ontology.licence") : ""
+        licence = (ant.project.getProperty("obo.ontology.licence") != null) ?
+            ant.project.getProperty("obo.ontology.licence") : licence
+
+        String ontologyName = (bioSourceProperties.getProperty("obo.ontology.name") != null) ?
+            bioSourceProperties.getProperty("obo.ontology.name") : ""
+        ontologyName = (ant.project.getProperty("obo.ontology.name") != null) ?
+            ant.project.getProperty("obo.ontology.name") : ontologyName
+
+        String url = (bioSourceProperties.getProperty("obo.ontology.url") != null) ?
+            bioSourceProperties.getProperty("obo.ontology.url") : ""
+        url = (ant.project.getProperty("obo.ontology.url") != null) ?
+            ant.project.getProperty("obo.ontology.url") : url
 
         ant.taskdef(name: "convertOBO", classname: "org.intermine.bio.task.OboConverterTask") {
             classpath {
@@ -251,11 +263,11 @@ class IntegrateUtils {
             }
         }
         ant.convertOBO(file: BioSourceProperties.getUserProperty(source, "src.data.file"),
-                osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
-                ontologyName: bioSourceProperties.getProperty("obo.ontology.name"),
-                url: bioSourceProperties.getProperty("obo.ontology.url"),
-                termClass: bioSourceProperties.getProperty("obo.term.class"),
-                licence: licence)
+                       osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
+                       ontologyName: ontologyName,
+                       url: url,
+                       termClass: bioSourceProperties.getProperty("obo.term.class"),
+                       licence: licence)
     }
 
     def loadSingleSource = { source ->
