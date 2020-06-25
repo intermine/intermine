@@ -39,7 +39,7 @@ include ':bio-source-biogrid',
 ':bio-source-update-data-sources',
 ':bio-source-update-publications',
 ':bio-source-vcf',
-':bio-source-wormbase-identifiers',
+//':bio-source-wormbase-identifiers',
 ':bio-source-isa',
 ':bio-source-obo',
 //bio-examples-sources
@@ -88,7 +88,7 @@ project(':bio-source-uniprot-keywords').projectDir = new File(settingsDir, './un
 project(':bio-source-update-data-sources').projectDir = new File(settingsDir, './update-data-sources')
 project(':bio-source-update-publications').projectDir = new File(settingsDir, './update-publications')
 project(':bio-source-vcf').projectDir = new File(settingsDir, './vcf')
-project(':bio-source-wormbase-identifiers').projectDir = new File(settingsDir, './wormbase-identifiers')
+//project(':bio-source-wormbase-identifiers').projectDir = new File(settingsDir, './wormbase-identifiers')
 //project(':bio-source-kegg').projectDir = new File(settingsDir, './example-sources/kegg-example')
 //project(':bio-source-kegg-identifiers').projectDir = new File(settingsDir, './example-sources/kegg-identifiers')
 project(':bio-source-malaria-gff').projectDir = new File(settingsDir, './example-sources/malaria-gff')

@@ -259,6 +259,11 @@ class IntegrateUtils {
         url = (ant.project.getProperty("obo.ontology.url") != null) ?
             ant.project.getProperty("obo.ontology.url") : url
 
+        String description = (bioSourceProperties.getProperty("obo.ontology.description") != null) ?
+            bioSourceProperties.getProperty("obo.ontology.description") : ""
+        description = (ant.project.getProperty("obo.ontology.description") != null) ?
+            ant.project.getProperty("obo.ontology.description") : description
+
         ant.taskdef(name: "convertOBO", classname: "org.intermine.bio.task.OboConverterTask") {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
@@ -270,6 +275,7 @@ class IntegrateUtils {
                        osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
                        ontologyName: ontologyName,
                        url: url,
+                       description: description,
                        termClass: bioSourceProperties.getProperty("obo.term.class"),
                        licence: licence)
     }
