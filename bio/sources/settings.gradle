@@ -37,16 +37,8 @@ include ':bio-source-biogrid',
 ':bio-source-update-data-sources',
 ':bio-source-update-publications',
 ':bio-source-vcf',
-':bio-source-isa',
-':bio-source-plant-ontology',
-':bio-source-plant-trait-ontology',
-':bio-source-soybean-ontology',
-':bio-source-cowpea-crop-ontology'
+':bio-source-isa'
 
-project(':bio-source-cowpea-crop-ontology').projectDir = new File(settingsDir, './cowpea-crop-ontology')
-project(':bio-source-soybean-ontology').projectDir = new File(settingsDir, './soybean-ontology')
-project(':bio-source-plant-trait-ontology').projectDir = new File(settingsDir, './plant-trait-ontology')
-project(':bio-source-plant-ontology').projectDir = new File(settingsDir, './plant-ontology')
 project(':bio-source-isa').projectDir = new File(settingsDir, './isa')
 project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
 project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
