@@ -19,6 +19,13 @@ jdk:
 dist: 
 - trusty
 before_script:
+- java -version
+- javac -version
+- echo $PATH
+- echo $JAVA_HOME
+- jdk_switcher use openjdk11
+- java -version
+- javac -version
 - "./config/travis/init-solr.sh"
 - "./config/travis/init.sh"
 script:
