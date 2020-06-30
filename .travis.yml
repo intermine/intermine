@@ -3,6 +3,7 @@ python: 2.7
 dist: bionic
 addons:
   postgresql: 11
+services: postgresql
 env:
   global:
   - TESTMODEL_URL=http://localhost:8080/intermine-demo
@@ -17,8 +18,6 @@ env:
 sudo: true
 jdk:
 - openjdk11
-dist: 
-- trusty
 before_script:
 - java -version
 - javac -version
