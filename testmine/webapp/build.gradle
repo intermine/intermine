@@ -1,5 +1,15 @@
 apply plugin: "war"
-apply from: "https://raw.githubusercontent.com/intermine/gretty/master/pluginScripts/gretty.plugin"
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-cargo-plugin:2.7.1'
+    }
+}
+apply plugin: "com.bmuschko.cargo"
 
 def explodedWebAppDir = "$buildDir/explodedWebApp"
 def mergePropsDir = "$buildDir/props"
@@ -13,6 +23,7 @@ ext {
 
 configurations {
     imWebApp
+    tomcat
 }
 
 dependencies { 
@@ -33,6 +44,7 @@ dependencies {
     runtime group: 'commons-httpclient', name: 'commons-httpclient', version: '3.0'
     runtime group: 'commons-fileupload', name: 'commons-fileupload', version: '1.2.2' 
     imWebApp group: "org.intermine", name: "intermine-webapp", version: imVersion, transitive: false
+    tomcat "org.apache.tomcat:tomcat:8.5.31@zip"
 }
 
 processResources {
@@ -98,15 +110,27 @@ task warTestModelWebApp(type: War) {
     webInf { from "${mergePropsDir}" }
 }
 
-gretty {
-    // needed for Tomcat 8.0.x, Maybe remove for Tomcat 9? Still needed for Tomcat 8.5.x?
-    jvmArgs = ['-Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true']
+cargo {
+    // change this to match your Tomcat major version (keep the x)
+    containerId = 'tomcat8x'
 
-    // read in intermine.properties to get the contextPath
     def props = new Properties()
     file(minePropertyFile).withInputStream { props.load(it) }
 
-    // needed to deploy the webapp
-    contextPath = props.getProperty("webapp.path")
+    // change this to the Tomcat root of your choice
+    deployable {
+        context = props.getProperty("webapp.path")
+    }
+
+    local {
+        installer {
+            installConfiguration = configurations.tomcat
+            downloadDir= file("$buildDir/downloads")
+            extractDir = file("$buildDir/extracts")
+        }
+        jvmArgs = '-Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true'
+    }
 }
+
+cargoRunLocal.dependsOn war
 
