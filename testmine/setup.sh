@@ -112,6 +112,6 @@ echo "------> Loading userprofile..."
 ./gradlew insertUserData --stacktrace --no-daemon
 
 echo "------> Running webapp"
-echo "------> Running ./gradlew tomcatstartwar"
-./gradlew tomcatstartwar --no-daemon &
+echo "------> Running ./gradlew cargoRunLocal"
+./gradlew cargoRunLocal --no-daemon &
 echo "------> Finished"
