@@ -497,7 +497,7 @@ public final class ModelMerger
             Set<AttributeDescriptor> refs) {
         Set<AttributeDescriptor> copy = new HashSet<AttributeDescriptor>();
         for (AttributeDescriptor ref : refs) {
-            copy.add(new AttributeDescriptor(ref.getName(), ref.getType(), ref.getFairTerm()));
+            copy.add(new AttributeDescriptor(ref.getName(), ref.getType(), ref.getOntologyTerm()));
         }
         return copy;
     }

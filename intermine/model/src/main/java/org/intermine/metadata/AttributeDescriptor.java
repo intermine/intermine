@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class AttributeDescriptor extends FieldDescriptor
 {
-    protected final String type, fairTerm;
+    protected final String type, ontologyTerm;
     /**
      * This is a list of the valid type strings.
      */
@@ -37,10 +37,10 @@ public class AttributeDescriptor extends FieldDescriptor
      * Construct, name and type cannot be null.
      * @param name name of field in the class
      * @param type name of primitive or a fully qualified class name
-     * @param fairTerm URI pointing to an ontology term describing this attribute. can be null.
+     * @param ontologyTerm URI pointing to an ontology term describing this attribute. can be null.
      * @throws IllegalArgumentException if arguments are null
      */
-    public AttributeDescriptor(String name, String type, String fairTerm) {
+    public AttributeDescriptor(String name, String type, String ontologyTerm) {
         super(name);
         if (type == null || "".equals(type)) {
             throw new IllegalArgumentException("Type cannot be null or empty");
@@ -50,7 +50,7 @@ public class AttributeDescriptor extends FieldDescriptor
                     + " of " + VALID_TYPES);
         }
         this.type = type;
-        this.fairTerm = fairTerm;
+        this.ontologyTerm = ontologyTerm;
     }
 
     /**
@@ -68,8 +68,8 @@ public class AttributeDescriptor extends FieldDescriptor
      *
      * @return term describing this attribute
      */
-    public String getFairTerm() {
-        return fairTerm;
+    public String getOntologyTerm() {
+        return ontologyTerm;
     }
 
     /**
@@ -107,9 +107,9 @@ public class AttributeDescriptor extends FieldDescriptor
      */
     @Override
     public String toString() {
-        if (fairTerm != null) {
+        if (ontologyTerm != null) {
             return "<attribute name=\"" + name + "\" type=\"" + type + "\" "
-                    + "term=\"" + fairTerm + "\"/>";
+                    + "term=\"" + ontologyTerm + "\"/>";
         }
         return "<attribute name=\"" + name + "\" type=\"" + type + "\"/>";
     }
@@ -119,9 +119,9 @@ public class AttributeDescriptor extends FieldDescriptor
      */
     @Override
     public String toJSONString() {
-        if (fairTerm != null) {
-            return "{\"name\":\"" + name + "\",\"type\":\"" + type + "\",\"term\":\"" + fairTerm
-                    + "\"}";
+        if (ontologyTerm != null) {
+            return "{\"name\":\"" + name + "\",\"type\":\"" + type + "\",\"term\":\""
+                    + ontologyTerm + "\"}";
         }
         return "{\"name\":\"" + name + "\",\"type\":\"" + type + "\"}";
     }
