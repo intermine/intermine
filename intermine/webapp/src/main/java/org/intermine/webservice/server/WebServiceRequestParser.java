@@ -128,6 +128,9 @@ public class WebServiceRequestParser
      **/
     public static final String FORMAT_PARAMETER_JSONP_COUNT = "jsonpcount";
 
+    /** Value of parameter when user wants rdf output to be returned. **/
+    public static final String FORMAT_PARAMETER_RDF = "rdf";
+
     /**Name of format parameter that specifies format of returned results. */
     public static final String OUTPUT_PARAMETER = "format";
 
@@ -204,6 +207,7 @@ public class WebServiceRequestParser
             put(FORMAT_PARAMETER_JSON, Format.JSON);
             put(FORMAT_PARAMETER_JSONP_COUNT, Format.JSON);
             put(FORMAT_PARAMETER_JSON_COUNT, Format.JSON);
+            put(FORMAT_PARAMETER_RDF, Format.RDF);
         }
     };
 

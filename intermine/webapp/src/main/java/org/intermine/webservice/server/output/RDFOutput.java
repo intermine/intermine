@@ -10,6 +10,12 @@ package org.intermine.webservice.server.output;
  *
  */
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+
+
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -26,8 +32,15 @@ public class RDFOutput extends Output {
      * **/
     @Override
     public void addResultItem(List<String> item) {
+        //do nothing, we need itemModel to print triples
+    }
+
+    /** Forwards data to associated writer
+     * @param itemModel data
+     * **/
+    public void addResultItem(Model itemModel) {
         //generate ntriples
-        RDF rdf = new SimpleRD();
+        itemModel.write(writer, "N-TRIPLE");
         resultsCount++;
     }
 

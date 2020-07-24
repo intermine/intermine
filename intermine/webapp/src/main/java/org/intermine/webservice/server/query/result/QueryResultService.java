@@ -47,19 +47,10 @@ import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
-import org.intermine.webservice.server.output.FlatFileFormatter;
-import org.intermine.webservice.server.output.HTMLTableFormatter;
-import org.intermine.webservice.server.output.JSONCountFormatter;
-import org.intermine.webservice.server.output.JSONObjResultProcessor;
-import org.intermine.webservice.server.output.JSONResultFormatter;
-import org.intermine.webservice.server.output.JSONRowResultProcessor;
-import org.intermine.webservice.server.output.JSONSummaryProcessor;
-import org.intermine.webservice.server.output.JSONTableFormatter;
-import org.intermine.webservice.server.output.JSONTableResultProcessor;
-import org.intermine.webservice.server.output.Output;
-import org.intermine.webservice.server.output.FilteringResultIterator;
-import org.intermine.webservice.server.output.StreamedOutput;
+import org.intermine.webservice.server.output.*;
 import org.intermine.webservice.server.query.AbstractQueryService;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -86,7 +77,7 @@ public class QueryResultService extends AbstractQueryService
     private boolean wantsCount = false;
     private PathQueryExecutor executor;
 
-    /**
+    /**serviceservi
      * Constructor
      * @param im The InterMineAPI settings bundle for this webservice
      */
@@ -377,6 +368,9 @@ public class QueryResultService extends AbstractQueryService
                 } else {
                     processor = new JSONRowResultProcessor(im);
                 }
+                break;
+            case RDF:
+                processor = new RDFProcessor(request, getPermission().getProfile());
                 break;
             default:
                 processor = new ResultProcessor();
