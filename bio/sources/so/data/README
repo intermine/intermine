@@ -1,5 +1,7 @@
-Date downloaded: 2018 Jan 25
+Date downloaded: 2020 Jul 23
 
-https://github.com/The-Sequence-Ontology/SO-Ontologies/blob/master/so.obo
+https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/Ontology_Files/so.obo
 
-There is no version information in the file or in the repo.
+format-version: 1.2
+data-version: 2020-07-08
+
