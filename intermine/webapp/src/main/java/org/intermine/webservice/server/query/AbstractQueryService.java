@@ -85,7 +85,7 @@ public abstract class AbstractQueryService extends WebService
         if (!input.startsWith("<query")) {
             queryFormat = "JSON";
         }
-        if (formatIsJsonObj()) {
+        if (formatIsJsonObj() || formatIsRDF()) {
             return new PathQueryBuilderForJSONObj(input, getSchemaUrl(queryFormat), listManager);
         } else {
             return new PathQueryBuilder(im, input, getSchemaUrl(queryFormat), listManager);
@@ -97,6 +97,13 @@ public abstract class AbstractQueryService extends WebService
      */
     protected boolean formatIsJsonObj() {
         return getFormat() == Format.OBJECTS;
+    }
+
+    /**
+     * @return Whether or not the format is for JSON-Objects
+     */
+    protected boolean formatIsRDF() {
+        return getFormat() == Format.RDF;
     }
 
 }
