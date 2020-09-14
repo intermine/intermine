@@ -193,7 +193,7 @@ public final class ModelMerger
                                                 cloneAttributeDescriptors(adescs),
                                                 cloneReferenceDescriptors(rdescs),
                                                 cloneCollectionDescriptors(cdescs),
-                                                cd.getFairTerm()));
+                                                cd.getOntologyTerm()));
         }
 
         return newSet;
@@ -288,10 +288,10 @@ public final class ModelMerger
         }
 
         // use the URI from the new class, if it's there
-        String fairUri = merge.getFairTerm();
+        String fairUri = merge.getOntologyTerm();
         if (fairUri == null) {
             // if not, use original (still might be null!)
-            fairUri = original.getFairTerm();
+            fairUri = original.getOntologyTerm();
         }
         return new ClassDescriptor(original.getName(), supersStr,
                 merge.isInterface(), attrs, refs, cols, fairUri);
@@ -518,7 +518,7 @@ public final class ModelMerger
         return new ClassDescriptor(cld.getName(), supers, cld.isInterface(),
                 cloneAttributeDescriptors(cld.getAttributeDescriptors()),
                 cloneReferenceDescriptors(cld.getReferenceDescriptors()),
-                cloneCollectionDescriptors(cld.getCollectionDescriptors()), cld.getFairTerm());
+                cloneCollectionDescriptors(cld.getCollectionDescriptors()), cld.getOntologyTerm());
     }
 
     /**

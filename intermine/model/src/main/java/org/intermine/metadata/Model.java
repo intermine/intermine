@@ -354,7 +354,7 @@ public class Model
 
                 classes.put(cld.getUnqualifiedName(), classData);
                 classData.put("name", cld.getUnqualifiedName());
-                classData.put("term", cld.getFairTerm());
+                classData.put("term", cld.getOntologyTerm());
                 classData.put("extends", parents);
                 for (String parent: cld.getSuperclassNames()) {
                     parents.add(parent.substring(parent.lastIndexOf(".") + 1));
