@@ -11,18 +11,23 @@ package org.intermine.webservice.server.output;
  */
 
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
-
-
 import java.io.PrintWriter;
 import java.util.List;
 
-public class RDFOutput extends Output {
+/**
+ * RDF output of a web service.
+ *
+ * @author Daniela Butano
+ */
+public class RDFOutput extends Output
+{
     private PrintWriter writer;
     private int resultsCount;
 
+    /**
+     * Constructor.
+     * @param writer The response's PrintWriter
+     */
     public RDFOutput(PrintWriter writer) {
         this.writer = writer;
     }
