@@ -102,7 +102,7 @@ public final class ListServiceUtils
         try {
             profile.deleteBag(name);
         } catch (BagDoesNotExistException e) {
-            // Ignore.
+            throw new BadRequestException(e.getMessage());
         }
     }
 
