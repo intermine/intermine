@@ -25,6 +25,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.lists.ListInput;
 
 /**
  * Append items to a list from the results of a query.
@@ -44,9 +45,9 @@ public class QueryListAppendService extends QueryToListService
 
     @Override
     protected void generateListFromQuery(PathQuery pq,
-        String name, String description, Collection<String> tags,
-        Profile profile) throws ObjectStoreException, PathException {
+        ListInput input, Profile profile) throws ObjectStoreException, PathException {
 
+        String name = input.getListName();
         InterMineBag list = getList(profile, name);
         checkQueryMatchesListType(pq, list);
 
