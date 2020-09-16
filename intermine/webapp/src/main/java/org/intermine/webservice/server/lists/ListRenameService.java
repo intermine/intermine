@@ -13,6 +13,8 @@ package org.intermine.webservice.server.lists;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileAlreadyExistsException;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * A service for renaming lists.
@@ -50,7 +52,11 @@ public class ListRenameService extends AuthenticatedListService
 
         output.setHeaderAttributes(getHeaderAttributes());
 
-        profile.renameBag(input.getOldName(), input.getNewName());
+        try {
+            profile.renameBag(input.getOldName(), input.getNewName());
+        } catch (ProfileAlreadyExistsException ex) {
+            throw new BadRequestException(ex.getMessage());
+        }
         InterMineBag list = profile.getSavedBags().get(input.getNewName());
 
         addOutputInfo(LIST_NAME_KEY, list.getName());
