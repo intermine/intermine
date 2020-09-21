@@ -3297,7 +3297,7 @@ The different token types are:
         </metadata>
     </servlet-mapping>
 
-<!-- new in version 30 -->
+<!-- new in version 30-->
   <servlet>
       <servlet-name>ws-bioentity-markup</servlet-name>
       <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
@@ -3312,11 +3312,11 @@ The different token types are:
     <url-pattern>/service/semantic-markup/reportpage</url-pattern>
     <metadata>
         <name>Semantic Markup</name>
-        <minVersion>29</minVersion>
+        <minVersion>30</minVersion>
         <method type="GET" authenticationRequired="false">
             <summary>Get semantic markup for bioentity</summary>
             <description>
-                This service provides semantic markup for Gene, Protein, DataSet types
+                This service provides semantic markup for Gene, Protein, DataSet types and BioChemEntity (if configured in the web.properties file)
             </description>
              <param
                 required="true"
@@ -3343,7 +3343,7 @@ The different token types are:
     <url-pattern>/service/permanent-url</url-pattern>
     <metadata>
         <name>Permanent URL</name>
-        <minVersion>29</minVersion>
+        <minVersion>30</minVersion>
         <method type="GET" authenticationRequired="false">
             <summary>Get permanent URL for data objetct</summary>
             <description>
@@ -3360,7 +3360,6 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
-  <!-- new in version 31 -->
   <servlet>
       <servlet-name>ws-homepage-markup</servlet-name>
       <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
@@ -3375,7 +3374,7 @@ The different token types are:
     <url-pattern>/service/semantic-markup/homepage</url-pattern>
     <metadata>
         <name>Semantic Markup</name>
-        <minVersion>29</minVersion>
+        <minVersion>30</minVersion>
         <method type="GET" authenticationRequired="false">
             <summary>Get semantic markup for the home page</summary>
             <description>
@@ -3388,7 +3387,7 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
-<!-- new in version 32 maybe? -->
+<!-- new in version 31 -->
   <servlet>
     <servlet-name>ws-login</servlet-name>
     <servlet-class>org.intermine.webservice.server.user.LoginServlet</servlet-class>
@@ -3403,6 +3402,7 @@ The different token types are:
     <url-pattern>/service/login/*</url-pattern>
     <metadata>
         <name>Login</name>
+        <minVersion>31</minVersion>
         <method type="POST" authenticationRequired="true">
             <summary>Login a user</summary>
             <description>
@@ -3439,6 +3439,7 @@ The different token types are:
     <url-pattern>/service/logout</url-pattern>
     <metadata>
         <name>Logout</name>
+        <minVersion>31</minVersion>
         <method type="GET" authenticationRequired="true">
             <summary>Login a user</summary>
             <description>

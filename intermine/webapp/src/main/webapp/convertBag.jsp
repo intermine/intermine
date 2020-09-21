@@ -38,10 +38,6 @@
     <input type="text" name="convertToThing" value="Convert" style="display:none;" />
 
     <script type="text/javascript" charset="utf-8">
-        Object.prototype.hasOwnProperty = function(property) {
-            return typeof(this[property]) !== 'undefined'
-        };
-
         function convertBagCallBag(datei) {
           var _i, _len, _ref, _target, _ref1, _ref2;
           _json = jQuery.parseJSON(datei);
@@ -50,7 +46,7 @@
           _ref2 = "count";
           for (_i = 0, _len = _json.length; _i < _len; _i++) {
             _entry = _json[_i];
-            if (_entry.hasOwnProperty(_ref1) && _entry.hasOwnProperty(_ref2)) {
+            if (typeof(_entry[_ref1]) !== 'undefined' && typeof(_entry[_ref2]) !== 'undefined') {
               var _text, _count;
               _name = _entry[_ref1];
               _count = _entry[_ref2];

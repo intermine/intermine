@@ -3,7 +3,7 @@ InterMine
 
 Master: [![Build Status: master][travis-badge-master]][ci]
 Dev: [![Build Status: dev][travis-badge-dev]][ci]
-[![Version](http://img.shields.io/badge/version-4.1.3-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
+[![Version](http://img.shields.io/badge/version-4.2.0-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
 [![Conda](https://anaconda.org/anaconda/conda-build/badges/installer/conda.svg)](https://anaconda.org/bioconda/intermine)
@@ -62,6 +62,11 @@ See [LICENSE](LICENSE) file for licensing information.
 
 This product includes software developed by the
 [Apache Software Foundation][apache]
+
+InterMine Development Roadmap
+-----------------------------
+
+For more information about the upcoming releases, please visit the [InterMine Development Roadmap](https://intermine.readthedocs.io/en/latest/intermine/roadmap/#intermine-development-roadmap). For the roadmap, please see [here](https://github.com/intermine/intermine/projects/7).
 
 Please cite
 ------------------------

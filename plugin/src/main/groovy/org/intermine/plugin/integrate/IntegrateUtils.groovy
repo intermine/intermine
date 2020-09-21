@@ -240,6 +240,9 @@ class IntegrateUtils {
             }
         }
 
+        String licence = (bioSourceProperties.getProperty("obo.ontology.licence") != null) ?
+                bioSourceProperties.getProperty("obo.ontology.licence") : ""
+
         ant.taskdef(name: "convertOBO", classname: "org.intermine.bio.task.OboConverterTask") {
             classpath {
                 dirset(dir: gradleProject.getBuildDir().getAbsolutePath())
@@ -251,7 +254,8 @@ class IntegrateUtils {
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
                 ontologyName: bioSourceProperties.getProperty("obo.ontology.name"),
                 url: bioSourceProperties.getProperty("obo.ontology.url"),
-                termClass: bioSourceProperties.getProperty("obo.term.class"))
+                termClass: bioSourceProperties.getProperty("obo.term.class"),
+                licence: licence)
     }
 
     def loadSingleSource = { source ->
