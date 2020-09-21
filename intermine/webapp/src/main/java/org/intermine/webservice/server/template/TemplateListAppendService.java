@@ -11,7 +11,6 @@ package org.intermine.webservice.server.template;
  */
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 
 import org.intermine.api.InterMineAPI;
