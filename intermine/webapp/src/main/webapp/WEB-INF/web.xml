@@ -3452,6 +3452,43 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+<!-- new in version 32 -->
+  <servlet>
+    <servlet-name>ws-feedback</servlet-name>
+    <servlet-class>org.intermine.webservice.server.FeedbackServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-feedback</servlet-name>
+    <url-pattern>/service/feedback/*</url-pattern>
+    <metadata>
+        <name>Feedback</name>
+        <minVersion>32</minVersion>
+        <method type="POST" authenticationRequired="false">
+            <summary>Send feedback</summary>
+            <description>
+                This service allows users to send feedback
+            </description>
+            <param
+                required="false"
+                type="Email"
+                description="The user email">email</param>
+            <param
+                description="The feedback"
+                required="true"
+                type="String">feedback</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
