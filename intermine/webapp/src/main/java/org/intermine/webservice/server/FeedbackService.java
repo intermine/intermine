@@ -25,8 +25,10 @@ import java.text.MessageFormat;
 public class FeedbackService extends JSONService
 {
     private static final Logger LOG = Logger.getLogger(FeedbackService.class);
+
     /**
      * Constructor
+     * @param im A reference to the InterMine API settings bundle
      */
     public FeedbackService(InterMineAPI im) {
         super(im);

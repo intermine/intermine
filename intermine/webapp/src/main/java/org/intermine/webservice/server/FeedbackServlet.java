@@ -12,7 +12,6 @@ package org.intermine.webservice.server;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
-import org.intermine.webservice.server.user.LogoutService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
