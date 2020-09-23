@@ -13,12 +13,9 @@ package org.intermine.webservice.server;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.MailUtils;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ServiceException;
-
 import java.text.MessageFormat;
-import java.util.Properties;
 
 /**
  * Send feedback from users
@@ -39,17 +36,17 @@ public class FeedbackService extends JSONService
     protected void execute() throws Exception {
         String from = getOptionalParameter("email");
         String feedback = getRequiredParameter("feedback");
-        Properties props = PropertiesUtil.getProperties();
-        String destination = props.getProperty("feedback.destination");
+        String destination = webProperties.getProperty("feedback.destination");
 
         String body = null;
         if (from != null) {
-            body = MessageFormat.format("Email: {1}\\n\\n{2}", new Object[] {from, feedback});
+            String feedbackMailText = "Email: {0}\n\n{1}";
+            body = MessageFormat.format(feedbackMailText, new Object[] {from, feedback});
         } else {
-            body = MessageFormat.format("{1}", new Object[] {feedback});
+            body = feedback;
         }
         try {
-            MailUtils.email(destination, "Feedback", body, from, props);
+            MailUtils.email(destination, "Feedback", body, from, webProperties);
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
             throw new ServiceException("Error sending feedback.");
