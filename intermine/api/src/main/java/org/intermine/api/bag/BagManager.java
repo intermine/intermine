@@ -205,10 +205,12 @@ public class BagManager
      * @return A list of Tag objects
      */
     public List<Tag> getTagsForBag(InterMineBag bag, Profile profile) {
-        // Add on the public tag, if this bag is tagged with it.
-        //Set<Tag> tags = new HashSet<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(),
-        //    TagTypes.BAG, null));
-        return new ArrayList<Tag>(tagManager.getObjectTags(bag, profile));
+        // Add on the bluegenes tag, if this bag is tagged with it.
+        if (!profile.isLoggedIn()) {
+            return new ArrayList<Tag>(tagManager.getFolderTags(bag.getName()));
+        } else {
+            return new ArrayList<Tag>(tagManager.getObjectTags(bag, profile));
+        }
     }
 
     /**
