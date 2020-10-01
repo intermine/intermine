@@ -9,7 +9,7 @@ export ANT_OPTS='-server'
 if [ "$TEST_SUITE" = "intermine" ]; then
     echo "RUNNING intermine unit tests"
     (cd plugin && ./gradlew install)
-    (cd intermine && ./gradlew build)
+    (cd intermine && ./gradlew build --stacktrace)
 
     echo CHECKING results
     ./config/lib/parse_test_report.py 'intermine'
@@ -18,7 +18,7 @@ if [ "$TEST_SUITE" = "intermine" ]; then
 elif [ "$TEST_SUITE" = "bio" ]; then
     echo "RUNNING bio unit tests"
     (cd plugin && ./gradlew install)
-    (cd intermine && ./gradlew install)    
+    (cd intermine && ./gradlew install)
     (cd bio && ./gradlew install)
     (cd bio/sources && ./gradlew install)
     (cd bio/postprocess && ./gradlew install)
@@ -42,7 +42,7 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ./config/lib/parse_checkstyle_report.py 'intermine/pathquery/build/reports/checkstyle/main.xml'
     ./config/lib/parse_checkstyle_report.py 'intermine/integrate/build/reports/checkstyle/main.xml'
     ./config/lib/parse_checkstyle_report.py 'intermine/api/build/reports/checkstyle/main.xml'
-    ./config/lib/parse_checkstyle_report.py 'intermine/webapp/build/reports/checkstyle/main.xml'    
+    ./config/lib/parse_checkstyle_report.py 'intermine/webapp/build/reports/checkstyle/main.xml'
     ./config/lib/parse_checkstyle_report.py 'intermine/webtasks/build/reports/checkstyle/main.xml'
 
     #ant -f 'bio/test-all/build.xml' checkstyle
