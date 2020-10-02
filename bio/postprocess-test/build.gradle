@@ -92,8 +92,8 @@ subprojects {
         maxWarnings = 0
         //reportsDir = file("$project.rootDir/reports/checkstyle/$project.name")
         configProperties = [
-                'checkstyle.header.file': "${rootDir}/../config/checkstyle/copyright_header.txt",
-                'suppressionFile': "${rootDir}/../config/checkstyle/suppressions.xml"
+                'checkstyle.header.file': "${rootDir}/../../config/checkstyle/copyright_header.txt",
+                'suppressionFile': "${rootDir}/../../config/checkstyle/suppressions.xml"
         ]
     }
 
