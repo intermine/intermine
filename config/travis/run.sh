@@ -23,10 +23,10 @@ elif [ "$TEST_SUITE" = "bio" ]; then
     (cd bio/sources && ./gradlew install)
     (cd bio/postprocess && ./gradlew install)
 
-    (cd bio && ./gradlew build)
-    (cd bio/sources && ./gradlew build)
-    (cd bio/postprocess && ./gradlew build)
-    (cd bio/postprocess-test && ./gradlew build)
+    (cd bio && ./gradlew build --stacktrace)
+    (cd bio/sources && ./gradlew build --stacktrace)
+    (cd bio/postprocess && ./gradlew build --stacktrace)
+    (cd bio/postprocess-test && ./gradlew build --stacktrace)
 
     echo CHECKING results
     ./config/lib/parse_test_report.py 'bio'
