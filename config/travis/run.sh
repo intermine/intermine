@@ -9,7 +9,7 @@ export ANT_OPTS='-server'
 if [ "$TEST_SUITE" = "intermine" ]; then
     echo "RUNNING intermine unit tests"
     (cd plugin && ./gradlew install)
-    (cd intermine && ./gradlew build --stacktrace)
+    (cd intermine && ./gradlew build)
 
     echo CHECKING results
     ./config/lib/parse_test_report.py 'intermine'
@@ -23,10 +23,10 @@ elif [ "$TEST_SUITE" = "bio" ]; then
     (cd bio/sources && ./gradlew install)
     (cd bio/postprocess && ./gradlew install)
 
-    (cd bio && ./gradlew build --stacktrace)
-    (cd bio/sources && ./gradlew build --stacktrace)
-    (cd bio/postprocess && ./gradlew build --stacktrace)
-    (cd bio/postprocess-test && ./gradlew build --stacktrace)
+    (cd bio && ./gradlew build)
+    (cd bio/sources && ./gradlew build)
+    (cd bio/postprocess && ./gradlew build)
+    (cd bio/postprocess-test && ./gradlew build)
 
     echo CHECKING results
     ./config/lib/parse_test_report.py 'bio'
