@@ -31,7 +31,36 @@
             <td colspan="2"><html:submit property="action"><fmt:message key="login.login"/></html:submit></td>
           </tr>
         </table>
+
+                <table>
+                  <tr>
+                    <tr>
+                      <td>Token:</td>
+                      <td><input id="token" type="text" name="token"/></td>
+                      <td><button id="testWS" type="button" onclick="callWS()">Test OAuth2 WS</button></td>
+                  </tr>
+                </table>
+
       </html:form>
+    <script type="text/javascript">
+      function callWS() {
+        jQuery.ajax({
+            type: 'GET',
+            url: "/${WEB_PROPERTIES['webapp.path']}/service/oauth2authenticator",
+            data: {
+                provider: 'GOOGLE',
+                token: jQuery('#token').val()
+            },
+            success: function(data) {
+                alert("yuppie!!!");
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Status: " + textStatus); alert("Error: " + errorThrown);
+            }
+        });
+      }
+    </script>
+
 
       <script language="javascript">
         var visibility = 'block';

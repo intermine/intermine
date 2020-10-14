@@ -541,11 +541,13 @@ public abstract class WebService
         try {
             // Use a token if provided.
             if (identity != null) {
+                LOG.warn("authenticate(): Identity is not null");
                 permission = pm.grantPermission(
                      identity.getIssuer(),
                      identity.getIdentity(),
                      im.getClassKeys());
             } else if (StringUtils.isNotEmpty(authToken)) {
+                LOG.warn("authenticate(): authToken is not null");
                 permission = pm.getPermission(authToken, im.getClassKeys());
             } else {
                  // Try and read the authString as a basic auth header.
