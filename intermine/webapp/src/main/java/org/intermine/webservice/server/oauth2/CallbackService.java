@@ -107,7 +107,7 @@ public class CallbackService extends JSONService
         List<String> redirectParts = new ArrayList<String>();
         redirectParts.add(webProperties.getProperty("webapp.baseurl"));
         redirectParts.add(webProperties.getProperty("webapp.path"));
-        redirectParts.add("oauth2callback.do?provider=" + providerName);
+        redirectParts.add("service/oauth2callback?provider=" + providerName);
         return StringUtils.join(redirectParts, "/");
     }
 
