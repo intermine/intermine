@@ -44,20 +44,13 @@
       </html:form>
     <script type="text/javascript">
       function callWS() {
-        jQuery.ajax({
-            type: 'GET',
-            url: "/${WEB_PROPERTIES['webapp.path']}/service/oauth2authenticator",
-            data: {
-                provider: 'GOOGLE',
-                token: jQuery('#token').val()
-            },
-            success: function(data) {
-                alert("yuppie!!!");
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                alert("Status: " + textStatus); alert("Error: " + errorThrown);
-            }
-        });
+        const xhr = new XMLHttpRequest();
+        const url = '/${WEB_PROPERTIES['webapp.path']}/service/oauth2authenticator?provider=GOOGLE&token='+document.getElementById("token").value;
+        xhr.open('GET', url);
+        xhr.onreadystatechange = function(){
+            alert("Test");
+        };
+        xhr.send();
       }
     </script>
 
