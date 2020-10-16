@@ -39,7 +39,9 @@ import org.intermine.postprocess.PostProcessor;
 /**
  * Create features to represent flanking regions of configurable distance either side of gene
  * features.  These will be used in overlap queries.
+ *
  * @author rns
+ * @author Sam Hokin
  */
 public class CreateGeneFlankingFeaturesProcess extends PostProcessor
 {
@@ -49,17 +51,14 @@ public class CreateGeneFlankingFeaturesProcess extends PostProcessor
     private DataSource dataSource;
     private Map<Integer, Chromosome> chrs = new HashMap<Integer, Chromosome>();
 
-    /**
-     * The sizes in kb of flanking regions to create.
-     */
+    // The sizes in kb of flanking regions to create.
     private static double[] distances = new double[] {0.5, 1, 2, 5, 10};
 
-    /**
-     * The values strings for up/down stream from a gene.
-     */
+    // The values strings for up/down stream from a gene.
     private static String[] directions = new String[] {"upstream", "downstream"};
 
-    private static boolean[] includeGenes = new boolean[] {true, false};
+    // SH: don't include genes at all
+    private static boolean[] includeGenes = new boolean[] {false};
 
     private static final Logger LOG = Logger.getLogger(CreateGeneFlankingFeaturesProcess.class);
 
