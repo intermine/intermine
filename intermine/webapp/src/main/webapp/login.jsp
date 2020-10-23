@@ -48,7 +48,8 @@
         const url = '/${WEB_PROPERTIES['webapp.path']}/service/oauth2authenticator?provider=GOOGLE&token='+document.getElementById("token").value;
         xhr.open('GET', url);
         xhr.onreadystatechange = function(){
-            alert("Test");
+            var r = JSON.parse(this.responseText);
+            window.location.replace(r.link);
         };
         xhr.send();
       }

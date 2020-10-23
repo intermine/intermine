@@ -15,14 +15,12 @@ import org.apache.log4j.Logger;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.OAuthProviderType;
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.context.InterMineContext;
+import org.intermine.web.util.URLUtil;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import javax.ws.rs.core.HttpHeaders;
+import java.util.*;
 
 
 /**
@@ -70,8 +68,7 @@ public class AuthenticatorService extends JSONService
                     .setParameter("openid.realm", realm) // link open-id 2.0 accounts [1]
                     .buildQueryMessage();
         String goHere = authRequest.getLocationUri();
-        LOG.info("[OAuth2]: Redirecting to " + goHere);
-        response.sendRedirect(goHere);
+        addResultEntry("link", goHere,false);
     }
 
     private String getRedirectUri(Properties webProperties, String providerName) {
