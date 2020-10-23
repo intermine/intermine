@@ -84,17 +84,19 @@ public class CallbackService extends JSONService
             String accessToken = getAccessToken(redirectUri, oar, provider);
             // Step two - exchange token for identity
             DelegatedIdentity identity = getDelegatedIdentity(providerName, accessToken);
+            LOG.info("Got the identity");
+            LOG.info("Got the email" + identity.getEmail());
             // Step three - login
             //loginUser(request, identity);
             //temporary no merge
             Profile profile = im.getProfileManager()
                     .grantPermission(identity.getProvider(), identity.getId(), im.getClassKeys())
                     .getProfile();
+            LOG.info("After grant permission");
             Map<String, Object> output = new HashMap<String, Object>();
             JSONUserFormatter formatter = new JSONUserFormatter(profile);
             output.put("user", new JSONObject(formatter.format()));
             output.put("token", im.getProfileManager().generate24hrKey(profile));
-            return;
         } catch (ForseenProblem e) {
 
         } catch (Exception e) {
