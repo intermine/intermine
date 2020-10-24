@@ -11,7 +11,9 @@ package org.intermine.webservice.server.query.result;
  */
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -20,26 +22,37 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.BagNotFound;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.ColumnHeaderStyle;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebServiceRequestParser;
@@ -47,6 +60,7 @@ import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.webservice.server.output.FilteringResultIterator;
 import org.intermine.webservice.server.output.FlatFileFormatter;
 import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONCountFormatter;
@@ -57,11 +71,8 @@ import org.intermine.webservice.server.output.JSONSummaryProcessor;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
 import org.intermine.webservice.server.output.Output;
-import org.intermine.webservice.server.output.FilteringResultIterator;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.query.AbstractQueryService;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * Executes query and returns results. Other parameters in request can specify
@@ -82,6 +93,7 @@ public class QueryResultService extends AbstractQueryService
     /** Batch size to use **/
     public static final int BATCH_SIZE = 5000;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
+    protected LinkedHashMap<String, Object> dataPackageAttributes = new LinkedHashMap<String, Object>();
 
     private boolean wantsCount = false;
     private PathQueryExecutor executor;
@@ -104,6 +116,11 @@ public class QueryResultService extends AbstractQueryService
         PathQuery query = builder.getQuery();
         setHeaderAttributes(query, input.getStart(), input.getLimit());
         runPathQuery(query, input.getStart(), input.getLimit());
+
+        // will be replaced by isExportingDataPackage()
+        if(!isUncompressed()) {
+            exportDataPackage(query);
+        }
     }
 
     @Override
@@ -134,6 +151,138 @@ public class QueryResultService extends AbstractQueryService
     @Override
     protected void postInit() {
         executor = getPathQueryExecutor();
+    }
+
+    protected void exportDataPackage(PathQuery pq) {
+        /*
+        The structure of Data package is as follows -
+        {
+            ... (some attributes and values)
+            resources : [
+                {
+                    ... (some attributes and values)
+                    schema: {
+                        fields: [
+                            {column 1 details},
+                            {column 2 details}, and so on...
+                        ],
+                        primaryKey: ["key1","key2","key3"]
+                    }
+                }
+            ]
+            sources: [
+                {source 1 details},
+                {source 2 details}, and so on...
+            ]
+        }
+
+        only sources array (of objects) is hadcoded right now (work in progress)
+        */
+
+        ArrayList<Map<String, Object>> fields = new ArrayList<>();  // array of objects (column details)
+        
+        String clsName; // the name of root class
+        try {
+            clsName = pq.getRootClass();
+        } catch (PathException e1) {
+            // Check this
+            throw new ServiceException(e1);
+        }
+
+        for (String v : pq.getView()) {
+            try {
+                // the column details object
+                LinkedHashMap<String, Object> columnDetails = new LinkedHashMap<String, Object>();
+
+                Path p = pq.makePath(v);
+
+                // get type of column attribute
+                AttributeDescriptor ad = (AttributeDescriptor) p.getEndFieldDescriptor();
+                String type = ad.getType();
+                int lastIndexOfDot = type.lastIndexOf('.');
+                type = type.substring(lastIndexOfDot + 1);
+
+                // get friendly path of column attribute
+                String friendlyPath = WebUtil.formatPathDescription(v, pq, InterMineContext.getWebConfig());
+
+                // make the column details object
+                columnDetails.put("name", p.getLastElement());
+                columnDetails.put("type", type);
+                columnDetails.put("class path", friendlyPath);
+                columnDetails.put("class ontology link", p.getLastClassDescriptor().getFairTerm());
+                columnDetails.put("attribute ontology link", ((AttributeDescriptor) p.getEndFieldDescriptor()).getFairTerm());
+                
+                // add the column details object in fields array
+                fields.add(columnDetails);
+            } catch (PathException e) {
+                throw new ServiceException(e);
+            }
+        }
+
+        // make the schema object
+        LinkedHashMap<String, Object> schema = new LinkedHashMap<String, Object>();
+        schema.put("fields", fields);
+        schema.put("primaryKey", getPrimaryKeys(pq, clsName));
+
+        // get format of results file
+        String format = getFormatType();
+
+        // get web service url for this query
+        String xml = getQueryXML(null, pq);
+        String serviceFormat;
+        if (request.getParameter("serviceFormat") != null) {
+            serviceFormat = request.getParameter("serviceFormat");
+        } else {
+            serviceFormat = "tab";
+        }
+        String link = new QueryResultLinkGenerator().getLink(new URLGenerator(request).getPermanentBaseURL(), xml,
+                serviceFormat);
+
+        // make the resource object of resources array
+        LinkedHashMap<String, Object> resource = new LinkedHashMap<String, Object>();
+        resource.put("profile", "tabular-data-resource");
+        resource.put("name", "intermine-query-data-resource");
+        resource.put("path", link);
+        resource.put("format", format);
+        resource.put("schema", schema);
+
+        // the resources array always contains only 1 resource in our case
+        ArrayList<Object> resources = new ArrayList<Object>();
+        resources.add(resource);
+
+        // hardcoded datasources for sample datapackage - WIP
+        ArrayList<Object> dataSources = new ArrayList<Object>();
+        LinkedHashMap<String, String> tempDataSource = new LinkedHashMap<String, String>();
+        tempDataSource.put("title", "UniProt");
+        tempDataSource.put("url", "UniProt URL");
+        dataSources.add(tempDataSource);
+
+        // finally, prepare the data package object to be exported
+        dataPackageAttributes.put("profile", "data-package");
+        dataPackageAttributes.put("name", "intermine-query");
+        dataPackageAttributes.put("description", "A test InterMine query!");
+        dataPackageAttributes.put("resources", resources);
+        dataPackageAttributes.put("sources", tempDataSource);
+
+        // write the dataPackageAttributes in a new zipFileEntry named datapackage.json
+        try {
+            // close the results file
+            ((StreamedOutput) output).writeFooter();
+            out.flush();
+
+            // initialize the dataPackageOutput
+            dataPackageOutput = makeJSONOutput(out, getLineBreak());
+            ((ZipOutputStream) os).putNextEntry(new ZipEntry("datapackage.json"));
+
+            // ObjectMapper for proper formatting
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+            // write in dataPackageOutput
+            ((StreamedOutput) dataPackageOutput).writeLn(mapper.writeValueAsString(dataPackageAttributes));
+        } catch (IOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     /**
@@ -303,7 +452,7 @@ public class QueryResultService extends AbstractQueryService
         }
     }
 
-    private void runResults(PathQuery pq,  int firstResult, int maxResults) {
+    private void runResults(PathQuery pq, int firstResult, int maxResults) {
         final boolean canGoFaster;
         final Iterator<List<ResultElement>> it;
         final String summaryPath = getOptionalParameter("summaryPath");
@@ -404,5 +553,71 @@ public class QueryResultService extends AbstractQueryService
             qri.setLimit(WebServiceRequestParser.MIN_LIMIT);
         }
         return qri;
+    }
+
+    /**
+     * loads the class_keys.properties file to return primary keys of a class
+     *
+     * @param pq path query
+     * @param clsName   name of class for which keys will looked up
+     * @return  primary keys for the class
+     *              
+     */
+    private List<String> getPrimaryKeys(PathQuery pq, String clsName) {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
+        } catch (IOException e1) {
+            // Fix me
+            throw new ServiceException(e1);
+        }
+        Map<String, List<FieldDescriptor>> classKeys = ClassKeyHelper.readKeys(pq.getModel(), props);
+        List<String> keys = ClassKeyHelper.getKeyFieldNames(classKeys, clsName);
+        return keys;
+    }
+
+    /**
+     * @return the format requested by user for results file
+     */
+    private String getFormatType() {
+        String format;
+        switch (getFormat()) {
+            case HTML:
+                format = "html"; 
+                break;
+            case XML:
+                format = "xml";
+                break;
+            case TSV:
+                format = "tsv";
+                break;
+            case CSV:
+                format = "csv";
+                break;
+            case TEXT:
+                format = "txt";
+                break;
+            case JSON:
+                format = "json";
+                break;
+            case OBJECTS:
+                format = "objects";
+                break;
+            case TABLE:
+                format = "table";
+                break;
+            case ROWS:
+                format = "rows";
+                break;
+            default:
+                format = "default";
+        }
+        return format;
+    }
+
+    private String getQueryXML(String name, PathQuery query) {
+        String modelName = query.getModel().getName();
+        return PathQueryBinding.marshal(query, (name != null ? name : ""), modelName,
+                PathQuery.USERPROFILE_VERSION);
     }
 }

@@ -131,6 +131,8 @@ public abstract class WebService
      * The response to the outside world.
      */
     protected Output output;
+    protected Output dataPackageOutput;
+    protected OutputStream os;
 
     /**
      * The configuration object.
@@ -353,14 +355,38 @@ public abstract class WebService
             sendError(t, response);
         }
 
-        try {
-            if (output == null) {
-                response.flushBuffer();
-            } else {
-                output.flush();
+        // the function isUncompressed() will be replaced by isExportingDataPackage()
+        if(!isUncompressed()) {
+            try {
+                if (dataPackageOutput == null) {
+                    response.flushBuffer();
+                } else {
+                    /*
+                    dataPackageOutput.flush() does 4 things -
+                    1. ensures header is printed    ensureHeaderIsPrinted();
+                    2. writes footer                writeFooter();
+                    3. flushes printwriter          writer.flush();
+                    4. closes printwriter           writer.close();
+
+                    In datapackage output, we don't need 1 and 2 so we just call 3 and 4 directly
+                    */
+                    out.flush();
+                    out.close();
+                }
+            } catch (Throwable t) {
+                logError(t, "Error flushing", 500);
             }
-        } catch (Throwable t) {
-            logError(t, "Error flushing", 500);
+        } else {
+            // the usual flushing when only results are exported
+            try {
+                if (output == null) {
+                    response.flushBuffer();
+                } else {
+                    output.flush();
+                }
+            } catch (Throwable t) {
+                logError(t, "Error flushing", 500);
+            }
         }
 
         try {
@@ -778,7 +804,7 @@ public abstract class WebService
         }
     }
 
-    private PrintWriter out = null;
+    protected PrintWriter out = null;
 
     private String lineBreak = null;
 
@@ -795,7 +821,6 @@ public abstract class WebService
     private void initOutput() {
         final String separator = getLineBreak();
 
-        OutputStream os;
         try {
             // set reasonable buffer size
             response.setBufferSize(8 * 1024);

@@ -68,7 +68,7 @@ public class StreamedOutput extends Output
         return;
     }
 
-    private void writeLn(String s) {
+    public void writeLn(String s) {
         writer.print(s);
         if (separator == null) {
             writer.println();
@@ -108,9 +108,16 @@ public class StreamedOutput extends Output
     @Override
     public void flush() {
         ensureHeaderIsPrinted();
-        writer.print(formatter.formatFooter(getError(), getCode()));
+        writeFooter();
         writer.flush();
         writer.close();
+    }
+
+    /**
+     * Writes footer
+     */
+    public void writeFooter() {
+        writer.print(formatter.formatFooter(getError(), getCode()));
     }
 
     /**
