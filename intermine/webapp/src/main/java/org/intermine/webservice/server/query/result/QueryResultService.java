@@ -93,7 +93,8 @@ public class QueryResultService extends AbstractQueryService
     /** Batch size to use **/
     public static final int BATCH_SIZE = 5000;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
-    protected LinkedHashMap<String, Object> dataPackageAttributes = new LinkedHashMap<String, Object>();
+    protected LinkedHashMap<String, Object> dataPackageAttributes
+            = new LinkedHashMap<String, Object>();
 
     private boolean wantsCount = false;
     private PathQueryExecutor executor;
@@ -118,7 +119,7 @@ public class QueryResultService extends AbstractQueryService
         runPathQuery(query, input.getStart(), input.getLimit());
 
         // will be replaced by isExportingDataPackage()
-        if(!isUncompressed()) {
+        if (!isUncompressed()) {
             exportDataPackage(query);
         }
     }
@@ -153,6 +154,10 @@ public class QueryResultService extends AbstractQueryService
         executor = getPathQueryExecutor();
     }
 
+    /**
+     *
+     * @param pq pathquery to export datapackage for
+     */
     protected void exportDataPackage(PathQuery pq) {
         /*
         The structure of Data package is as follows -
@@ -175,12 +180,12 @@ public class QueryResultService extends AbstractQueryService
                 {source 2 details}, and so on...
             ]
         }
-
         only sources array (of objects) is hadcoded right now (work in progress)
         */
 
-        ArrayList<Map<String, Object>> fields = new ArrayList<>();  // array of objects (column details)
-        
+        // array of objects (column details)
+        ArrayList<Map<String, Object>> fields = new ArrayList<>();
+
         String clsName; // the name of root class
         try {
             clsName = pq.getRootClass();
@@ -203,15 +208,18 @@ public class QueryResultService extends AbstractQueryService
                 type = type.substring(lastIndexOfDot + 1);
 
                 // get friendly path of column attribute
-                String friendlyPath = WebUtil.formatPathDescription(v, pq, InterMineContext.getWebConfig());
+                String friendlyPath = WebUtil.formatPathDescription(v,
+                        pq, InterMineContext.getWebConfig());
 
                 // make the column details object
                 columnDetails.put("name", p.getLastElement());
                 columnDetails.put("type", type);
                 columnDetails.put("class path", friendlyPath);
-                columnDetails.put("class ontology link", p.getLastClassDescriptor().getFairTerm());
-                columnDetails.put("attribute ontology link", ((AttributeDescriptor) p.getEndFieldDescriptor()).getFairTerm());
-                
+                columnDetails.put("class ontology link",
+                        p.getLastClassDescriptor().getFairTerm());
+                columnDetails.put("attribute ontology link",
+                        ((AttributeDescriptor) p.getEndFieldDescriptor()).getFairTerm());
+
                 // add the column details object in fields array
                 fields.add(columnDetails);
             } catch (PathException e) {
@@ -235,7 +243,8 @@ public class QueryResultService extends AbstractQueryService
         } else {
             serviceFormat = "tab";
         }
-        String link = new QueryResultLinkGenerator().getLink(new URLGenerator(request).getPermanentBaseURL(), xml,
+        String link = new QueryResultLinkGenerator().getLink(
+                new URLGenerator(request).getPermanentBaseURL(), xml,
                 serviceFormat);
 
         // make the resource object of resources array
@@ -279,7 +288,8 @@ public class QueryResultService extends AbstractQueryService
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
             // write in dataPackageOutput
-            ((StreamedOutput) dataPackageOutput).writeLn(mapper.writeValueAsString(dataPackageAttributes));
+            ((StreamedOutput) dataPackageOutput).writeLn(
+                        mapper.writeValueAsString(dataPackageAttributes));
         } catch (IOException e) {
             throw new ServiceException(e);
         }
@@ -561,7 +571,7 @@ public class QueryResultService extends AbstractQueryService
      * @param pq path query
      * @param clsName   name of class for which keys will looked up
      * @return  primary keys for the class
-     *              
+     *
      */
     private List<String> getPrimaryKeys(PathQuery pq, String clsName) {
         Properties props = new Properties();
@@ -571,7 +581,8 @@ public class QueryResultService extends AbstractQueryService
             // Fix me
             throw new ServiceException(e1);
         }
-        Map<String, List<FieldDescriptor>> classKeys = ClassKeyHelper.readKeys(pq.getModel(), props);
+        Map<String, List<FieldDescriptor>> classKeys
+                = ClassKeyHelper.readKeys(pq.getModel(), props);
         List<String> keys = ClassKeyHelper.getKeyFieldNames(classKeys, clsName);
         return keys;
     }
@@ -583,7 +594,7 @@ public class QueryResultService extends AbstractQueryService
         String format;
         switch (getFormat()) {
             case HTML:
-                format = "html"; 
+                format = "html";
                 break;
             case XML:
                 format = "xml";

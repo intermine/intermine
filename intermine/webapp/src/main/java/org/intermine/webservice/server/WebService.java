@@ -356,7 +356,7 @@ public abstract class WebService
         }
 
         // the function isUncompressed() will be replaced by isExportingDataPackage()
-        if(!isUncompressed()) {
+        if (!isUncompressed()) {
             try {
                 if (dataPackageOutput == null) {
                     response.flushBuffer();

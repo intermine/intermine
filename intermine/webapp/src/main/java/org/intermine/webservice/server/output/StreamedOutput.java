@@ -68,6 +68,10 @@ public class StreamedOutput extends Output
         return;
     }
 
+    /**
+     *
+     * @param s string to write
+     */
     public void writeLn(String s) {
         writer.print(s);
         if (separator == null) {
