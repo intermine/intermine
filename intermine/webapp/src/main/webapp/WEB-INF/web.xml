@@ -3558,6 +3558,82 @@ The different token types are:
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>ws-bg-properties</servlet-name>
+    <servlet-class>org.intermine.webservice.server.bg.BlueGenesServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-bg-properties</servlet-name>
+    <url-pattern>/service/bluegenes-properties</url-pattern>
+    <metadata>
+        <name>BlueGenes Properies</name>
+        <minVersion>32</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary> Get value of key, or all key-values if key is not specified</summary>
+            <description>
+                This service returns the value of key, or all key-values if not specified
+            </description>
+            <param
+                required="false"
+                type="String"
+                description="The key">key</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+            <summary>Add new key with value</summary>
+            <description>
+                This service adds a new key with value
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The key">key</param>
+            <param required="true"
+		   type="String" 
+                   description="The value">value</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="PUT" authenticationRequired="true">
+            <summary>Update value of existing key</summary>
+            <description>
+                This service updates the value of existing key
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The key">key</param>
+            <param required="true"
+		   type="String" 
+                   description="The new value">value</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="DELETE" authenticationRequired="true">
+            <summary>Remove existing key</summary>
+            <description>
+                This service removes existing key
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The key">key</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>ws-oauth2-authenticator</servlet-name>
     <servlet-class>org.intermine.webservice.server.oauth2.AuthenticatorServlet</servlet-class>
     <init-param>
@@ -3565,7 +3641,6 @@ The different token types are:
      <param-value>true</param-value>
     </init-param>
   </servlet>
-
   <servlet-mapping>
     <servlet-name>ws-oauth2-authenticator</servlet-name>
     <url-pattern>/service/oauth2authenticator</url-pattern>
