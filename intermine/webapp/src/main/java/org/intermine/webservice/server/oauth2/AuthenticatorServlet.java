@@ -16,6 +16,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * A Servlet for the Authenticator Service
+ *
+ * @author Daniela Butano
+ */
 public class AuthenticatorServlet extends HttpServlet
 {
     @Override

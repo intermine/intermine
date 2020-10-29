@@ -66,6 +66,10 @@ public class CallbackService extends JSONService
 {
     private static final Logger LOG = Logger.getLogger(CallbackService.class);
 
+    /**
+     * Constructor
+     * @param im A reference to the InterMine API settings bundle
+     */
     public CallbackService(InterMineAPI im) {
         super(im);
     }
@@ -229,7 +233,8 @@ public class CallbackService extends JSONService
         String idKey = props.getProperty(prefix + ".id-key", "id");
         String nameKey = props.getProperty(prefix + ".name-key", "name");
         String emailKey = props.getProperty(prefix + ".email-key", "email");
-        String authMechanism = props.getProperty(prefix + ".resource-auth-mechanism", "queryparam");
+        String authMechanism = props.getProperty(prefix + ".resource-auth-mechanism",
+                "queryparam");
 
         OAuthBearerClientRequest requestBuilder =
                 new OAuthBearerClientRequest(identityEndpoint).setAccessToken(accessToken);
@@ -257,8 +262,8 @@ public class CallbackService extends JSONService
         return parseIdentity(provider, envelopeKey, idKey, nameKey, emailKey, resp.getBody());
     }
 
-    private DelegatedIdentity parseIdentity(String provider,
-                                            String envelopeKey, String idKey, String nameKey, String emailKey,
+    private DelegatedIdentity parseIdentity(String provider, String envelopeKey,
+                                            String idKey, String nameKey, String emailKey,
                                             String body) throws JSONException {
         JSONObject result = new JSONObject(body);
         if (StringUtils.isNotBlank(envelopeKey)) {

@@ -15,12 +15,13 @@ import org.apache.log4j.Logger;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.OAuthProviderType;
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.util.URLUtil;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
-import javax.ws.rs.core.HttpHeaders;
-import java.util.*;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -36,6 +37,10 @@ public class AuthenticatorService extends JSONService
 {
     private static final Logger LOG = Logger.getLogger(AuthenticatorService.class);
 
+    /**
+     * Constructor
+     * @param im A reference to the InterMine API settings bundle
+     */
     public AuthenticatorService(InterMineAPI im) {
         super(im);
     }
@@ -49,7 +54,8 @@ public class AuthenticatorService extends JSONService
         //TODO there is no session on the ws
         //request.getSession().setAttribute("oauth2.state", state);
 
-        String authorisationUrl = webProperties.getProperty("oauth2." + providerName + ".url.auth");
+        String authorisationUrl = webProperties.getProperty("oauth2." + providerName
+                + ".url.auth");
         if (authorisationUrl == null) {
             try {
                 OAuthProviderType providerType = OAuthProviderType.valueOf(providerName);
@@ -59,16 +65,16 @@ public class AuthenticatorService extends JSONService
             }
         }
         OAuthClientRequest authRequest = OAuthClientRequest
-                    .authorizationLocation(authorisationUrl)
-                    .setClientId(webProperties.getProperty("oauth2." + providerName + ".client-id"))
-                    .setRedirectURI(redirectUri)
-                    .setScope(webProperties.getProperty("oauth2." + providerName + ".scopes"))
-                    .setState(state)
-                    .setParameter("response_type", "code")
-                    .setParameter("openid.realm", realm) // link open-id 2.0 accounts [1]
-                    .buildQueryMessage();
+                .authorizationLocation(authorisationUrl)
+                .setClientId(webProperties.getProperty("oauth2." + providerName + ".client-id"))
+                .setRedirectURI(redirectUri)
+                .setScope(webProperties.getProperty("oauth2." + providerName + ".scopes"))
+                .setState(state)
+                .setParameter("response_type", "code")
+                .setParameter("openid.realm", realm) // link open-id 2.0 accounts [1]
+                .buildQueryMessage();
         String goHere = authRequest.getLocationUri();
-        addResultEntry("link", goHere,false);
+        addResultEntry("link", goHere, false);
     }
 
     private String getRedirectUri(Properties webProperties, String providerName) {

@@ -16,6 +16,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * A Servlet for the Callback Service.
+ *
+ * @author Daniela Butano
+ */
 public class CallbackServlet extends HttpServlet
 {
     @Override
