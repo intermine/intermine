@@ -67,7 +67,7 @@ public class AuthenticatorService extends JSONService
         OAuthClientRequest authRequest = OAuthClientRequest
                 .authorizationLocation(authorisationUrl)
                 .setClientId(webProperties.getProperty("oauth2." + providerName + ".client-id"))
-                .setRedirectURI(redirectUri)
+                //.setRedirectURI(redirectUri)
                 .setScope(webProperties.getProperty("oauth2." + providerName + ".scopes"))
                 .setState(state)
                 .setParameter("response_type", "code")
