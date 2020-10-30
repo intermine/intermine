@@ -3559,7 +3559,7 @@ The different token types are:
 
   <servlet>
     <servlet-name>ws-bg-properties</servlet-name>
-    <servlet-class>org.intermine.webservice.server.bg.BlueGenesServlet</servlet-class>
+    <servlet-class>org.intermine.webservice.server.bg.BGPropertiesServlet</servlet-class>
     <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>

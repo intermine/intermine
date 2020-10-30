@@ -41,20 +41,20 @@ public class BGPropertiesService extends JSONService
         String bgPropsAsString = MetadataManager.retrieve(
                 ((ObjectStoreInterMineImpl) uosw).getDatabase(), MetadataManager.BG_PROPERTIES);
         if (bgPropsAsString == null) {
-            addResultItem(new HashMap<>(), false);
+            addResultEntry(BGPropertiesServlet.BG_PROPS, new HashMap<>(), false);
         }
         else {
             ObjectMapper mapper = new ObjectMapper();
             HashMap<String, String> bgMap = mapper.readValue(bgPropsAsString, HashMap.class);
             if (key == null) {
-                addResultItem(bgMap, false);
+                addResultEntry(BGPropertiesServlet.BG_PROPS, bgMap, false);
             } else {
                 String value = bgMap.get(key);
                 if (value == null) {
                     throw new ResourceNotFoundException("A property with key " + key
                             + " doesn't exists.");
                 }
-                addOutputInfo(key, value);
+                addResultEntry(BGPropertiesServlet.BG_PROPS, (new HashMap<>()).put(key, value),false);
             }
 
         }
