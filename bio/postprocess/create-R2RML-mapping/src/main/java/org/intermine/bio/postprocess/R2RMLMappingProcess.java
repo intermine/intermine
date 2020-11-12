@@ -2,6 +2,7 @@ package org.intermine.bio.postprocess;
 
 /*
  * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2020 SIB Swiss Institute of Bioinformatics
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,6 +27,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * This class translates the InterMine mapping files into
+ * a <a href="https://www.w3.org/TR/r2rml/R2RML">R2RML</a> 
+ * mapping file.
+ *
+ * This allows a R2RML processor to translate <a href="https://www.w3.org/TR/sparql11-overview/SPARQL">SPARQL</a> queries
+ * to run against the InterMine backend database.
+ *
  * @author Jerven Bolleman
  * @author Daniela Butano
  */
