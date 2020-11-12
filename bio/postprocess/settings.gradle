@@ -14,7 +14,8 @@ include ':bio-postprocess-create-chromosome-locations-and-lengths',
         ':bio-postprocess-create-overlap-view',
         ':bio-postprocess-create-attribute-indexes',
         ':bio-postprocess-create-gene-flanking-features',
-        ':bio-postprocess-create-intron-features'
+        ':bio-postprocess-create-intron-features',
+        ':bio-postprocess-create-R2RML-mapping'
 
 project(':bio-postprocess-create-chromosome-locations-and-lengths').projectDir = new File(settingsDir, './create-chromosome-locations')
 project(':bio-postprocess-create-search-index').projectDir = new File(settingsDir, './create-search-index')
@@ -31,3 +32,4 @@ project(':bio-postprocess-create-overlap-view').projectDir = new File(settingsDi
 project(':bio-postprocess-create-attribute-indexes').projectDir = new File(settingsDir, './create-attribute-indexes')
 project(':bio-postprocess-create-gene-flanking-features').projectDir = new File(settingsDir, './create-gene-flanking-features')
 project(':bio-postprocess-create-intron-features').projectDir = new File(settingsDir, './create-intron-features')
+project(':bio-postprocess-create-R2RML-mapping').projectDir = new File(settingsDir, './create-R2RML-mapping')
