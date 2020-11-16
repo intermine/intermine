@@ -107,7 +107,9 @@ public abstract class MailUtils
         if (StringUtils.isEmpty(user)) {
             message.setFrom(new InternetAddress(from));
         } else {
-            message.setReplyTo(InternetAddress.parse(from, true));
+            if (from != null) {
+                message.setReplyTo(InternetAddress.parse(from, true));
+            }
             message.setFrom(new InternetAddress(user));
         }
         message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(to, true)[0]);

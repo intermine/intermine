@@ -1327,7 +1327,7 @@ public class ProfileManager
      */
     public ApiPermission grantPermission(String issuer, String identity,
             Map<String, List<FieldDescriptor>> classKeys) {
-
+        LOG.warn("Profilemanager: grantPermission called");
         String username = issuer + ":" + identity;
         Profile profile = getProfile(username, classKeys);
 

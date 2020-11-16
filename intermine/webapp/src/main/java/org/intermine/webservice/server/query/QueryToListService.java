@@ -11,7 +11,6 @@ package org.intermine.webservice.server.query;
  */
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +24,7 @@ import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileAlreadyExistsException;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStoreException;
@@ -40,6 +40,7 @@ import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.exceptions.UnauthorizedException;
 import org.intermine.webservice.server.lists.ListInput;
+import org.intermine.webservice.server.lists.ListServiceUtils;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 
@@ -93,9 +94,7 @@ public class QueryToListService extends AbstractQueryService
 
         generateListFromQuery(
                 pq,
-                input.getListName(),
-                input.getDescription(),
-                input.getTags(),
+                input,
                 profile);
     }
 
@@ -127,19 +126,18 @@ public class QueryToListService extends AbstractQueryService
     /**
      * Generate a list from a pathquery.
      * @param pq The pathquery
-     * @param name The name of the list
-     * @param description The description of the list
-     * @param tags A list of tags to add to the list
+     * @param input The input
      * @param profile The profile the list should belong to
      * @throws ObjectStoreException If there is an issue running the queries that generate the list.
      * @throws PathException If the paths supplied are illegal.
      */
     protected void generateListFromQuery(PathQuery pq,
-            String name, String description, Collection<String> tags,
+            ListInput input,
             Profile profile) throws ObjectStoreException, PathException {
 
         Query q = getQuery(pq, profile);
 
+        String name = input.getListName();
         String tempName = name + TEMP;
 
         String viewPathString = pq.getView().get(0);
@@ -148,17 +146,25 @@ public class QueryToListService extends AbstractQueryService
 
         try {
             InterMineBag newList =
-                    profile.createBag(tempName, type, description, im.getClassKeys());
+                    profile.createBag(tempName, type, input.getDescription(), im.getClassKeys());
             newList.addToBagFromQuery(q);
             setHeaderAttributes(name, newList.getSavedBagId());
             try {
-                im.getBagManager().addTagsToBag(tags, newList, profile);
+                im.getBagManager().addTagsToBag(input.getTags(), newList, profile);
             } catch (TagManager.TagNameException e) {
                 throw new BadRequestException(e.getMessage());
             } catch (TagManager.TagNamePermissionException e) {
                 throw new ServiceForbiddenException(e.getMessage());
             }
-            profile.renameBag(tempName, name);
+
+            if (input.doReplace()) {
+                ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
+            }
+            try {
+                profile.renameBag(tempName, name);
+            } catch (ProfileAlreadyExistsException ex) {
+                throw new BadRequestException(ex.getMessage());
+            }
 
             output.addResultItem(Arrays.asList("" + newList.size()));
 

@@ -3452,6 +3452,244 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+<!-- new in version 32 -->
+  <servlet>
+    <servlet-name>ws-feedback</servlet-name>
+    <servlet-class>org.intermine.webservice.server.FeedbackServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-feedback</servlet-name>
+    <url-pattern>/service/feedback/*</url-pattern>
+    <metadata>
+        <name>Feedback</name>
+        <minVersion>32</minVersion>
+        <method type="POST" authenticationRequired="false">
+            <summary>Send feedback</summary>
+            <description>
+                This service allows users to send feedback
+            </description>
+            <param
+                required="false"
+                type="Email"
+                description="The user email">email</param>
+            <param
+                description="The feedback"
+                required="true"
+                type="String">feedback</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-request-psw-reset</servlet-name>
+    <servlet-class>org.intermine.webservice.server.user.RequestPswResetServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-request-psw-reset</servlet-name>
+    <url-pattern>/service/user/requestpswreset</url-pattern>
+    <metadata>
+        <name>Request Password Reset</name>
+        <minVersion>32</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Send a password change email with token</summary>
+            <description>
+                This service sends a password change email to the user email address
+            </description>
+            <param
+                required="false"
+                type="Email"
+                description="The user email">email</param>
+            <param
+                description="The url where the user is redicted to change the password"
+                required="true"
+                type="String">redirectUrl</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-psw-reset</servlet-name>
+    <servlet-class>org.intermine.webservice.server.user.PswResetServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-psw-reset</servlet-name>
+    <url-pattern>/service/user/pswreset</url-pattern>
+    <metadata>
+        <name>Password Reset</name>
+        <minVersion>32</minVersion>
+        <method type="PUT" authenticationRequired="false">
+            <summary>Reset a password</summary>
+            <description>
+                This service changes a user's password with the authority of a token previously emailed
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The token previously emailed">pswResetToken</param>
+            <param required="true"
+		   type="String" 
+                   description="The new password">newPassword</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-bg-properties</servlet-name>
+    <servlet-class>org.intermine.webservice.server.bg.BGPropertiesServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-bg-properties</servlet-name>
+    <url-pattern>/service/bluegenes-properties</url-pattern>
+    <metadata>
+        <name>BlueGenes Properies</name>
+        <minVersion>32</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary> Get value of key, or all key-values if key is not specified</summary>
+            <description>
+                This service returns the value of key, or all key-values if not specified
+            </description>
+            <param
+                required="false"
+                type="String"
+                description="The key">key</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+            <summary>Add new key with value</summary>
+            <description>
+                This service adds a new key with value
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The key">key</param>
+            <param required="true"
+		   type="String" 
+                   description="The value">value</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="PUT" authenticationRequired="true">
+            <summary>Update value of existing key</summary>
+            <description>
+                This service updates the value of existing key
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The key">key</param>
+            <param required="true"
+		   type="String" 
+                   description="The new value">value</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="DELETE" authenticationRequired="true">
+            <summary>Remove existing key</summary>
+            <description>
+                This service removes existing key
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The key">key</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-oauth2-authenticator</servlet-name>
+    <servlet-class>org.intermine.webservice.server.oauth2.AuthenticatorServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ws-oauth2-authenticator</servlet-name>
+    <url-pattern>/service/oauth2authenticator</url-pattern>
+    <metadata>
+        <name>OAuth2 Authenticator</name>
+        <minVersion>32</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>OAuth2 Authenticator</summary>
+            <description>
+                This service redirects the user to the oauth2 authenticator provider
+            </description>
+	        <param
+                required="true"
+                type="String"
+                description="The provider used for the authentication, e.g. GOOGLE, IM">provider</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-oauth2-callback</servlet-name>
+    <servlet-class>org.intermine.webservice.server.oauth2.CallbackServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-oauth2-callback</servlet-name>
+    <url-pattern>/service/oauth2callback/*</url-pattern>
+    <metadata>
+        <name>OAuth2 Callback</name>
+        <minVersion>32</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>OAuth2 Callback</summary>
+            <description>
+                This service is called by the oauth2 authenticator provider after the user logs in
+            </description>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
