@@ -27,7 +27,7 @@ include ':bio-source-biogrid',
 ':bio-source-panther',
 ':bio-source-protein2ipr',
 ':bio-source-psi',
-':bio-source-psi-complexes',
+//':bio-source-psi-complexes',
 ':bio-source-psi-mi-ontology',
 ':bio-source-pubmed-gene',
 ':bio-source-reactome',
@@ -76,7 +76,7 @@ project(':bio-source-orthodb').projectDir = new File(settingsDir, './orthodb')
 project(':bio-source-panther').projectDir = new File(settingsDir, './panther')
 project(':bio-source-protein2ipr').projectDir = new File(settingsDir, './protein2ipr')
 project(':bio-source-psi').projectDir = new File(settingsDir, './psi')
-project(':bio-source-psi-complexes').projectDir = new File(settingsDir, './psi-complexes')
+//project(':bio-source-psi-complexes').projectDir = new File(settingsDir, './psi-complexes')
 project(':bio-source-psi-mi-ontology').projectDir = new File(settingsDir, './psi-mi-ontology')
 project(':bio-source-pubmed-gene').projectDir = new File(settingsDir, './pubmed-gene')
 project(':bio-source-reactome').projectDir = new File(settingsDir, './reactome')
