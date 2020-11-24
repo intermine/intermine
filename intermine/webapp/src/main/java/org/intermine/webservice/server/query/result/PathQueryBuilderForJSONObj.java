@@ -100,6 +100,8 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder
                 afterChanges.removeView(badPath);
                 afterChanges.removeOrderBy(badPath);
             }
+            // restore original order by
+            afterChanges.addOrderBys(beforeChanges.getOrderBy());
         }
         return afterChanges;
     }
