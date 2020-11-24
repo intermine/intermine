@@ -54,7 +54,8 @@ public class BGPropertiesService extends JSONService
                     throw new ResourceNotFoundException("A property with key " + key
                             + " doesn't exists.");
                 }
-                addResultEntry(BGPropertiesServlet.BG_PROPS, (new HashMap<>()).put(key, value),false);
+                addResultEntry(BGPropertiesServlet.BG_PROPS, (new HashMap<>()).put(key, value),
+                        false);
             }
 
         }
