@@ -139,7 +139,7 @@ public class ResultElement implements Serializable, ResultCell
             simpleCellId = new Integer(composite);
         }
     }
-    
+
     /**
      * @return the path
      */
