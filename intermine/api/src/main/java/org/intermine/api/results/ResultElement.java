@@ -126,14 +126,16 @@ public class ResultElement implements Serializable, ResultCell
      * Does nothing if simpleCellId has already been set.
      */
     public void setSimpleCellId() {
-        if (simpleCellId==null) {
+        if (simpleCellId == null) {
             // get a 4-digit long from the current time (changes every millisecond)
             long systime = System.currentTimeMillis();
-            String syssix = String.valueOf(systime - (systime/10000)*10000);
+            String syssix = String.valueOf(systime - (systime / 10000) * 10000);
             // tack on a random number between 0 and 99 for good measure
             String rando = String.valueOf(ThreadLocalRandom.current().nextInt(0, 100));
-            if (rando.length()<2) rando = "0"+rando;
-            int composite = Integer.parseInt(syssix+rando);
+            if (rando.length() < 2) {
+                rando = "0" + rando;
+            }
+            int composite = Integer.parseInt(syssix + rando);
             simpleCellId = new Integer(composite);
         }
     }
