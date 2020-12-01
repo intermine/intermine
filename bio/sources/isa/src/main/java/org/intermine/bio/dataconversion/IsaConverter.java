@@ -142,11 +142,15 @@ public class IsaConverter extends BioFileConverter
 
 
             LOG.info("STUDY " + identifier);
-            //LOG.warn(title + " -- " + filename + " | " + subDate);
+            LOG.warn(title + " -- " + filename + " | " + subDate);
 
             Item studyItem = createStudy("Study", identifier, title, description, pubDate, subDate);
-            // store and add ref to investigation
-            store(investigationReference, store(studyItem));
+            // there could be no investigation defined (e.g. single study experiments)
+            // store study:
+            int sid = store(studyItem);
+            // add ref to investigation if there is one
+            if (investigationReference != null) store(investigationReference, sid);
+
             // get study reference, used for collections attached to study
             studyReference = getReference("study", studyItem);
 
@@ -192,6 +196,11 @@ public class IsaConverter extends BioFileConverter
         String description = investigation.path("description").asText();
         String pubDate = investigation.path("publicReleaseDate").asText();
         String subDate = investigation.path("submissionDate").asText();
+
+        if (identifier == null || identifier == "") {
+            LOG.warn("AAAAA");
+            return;
+        }
 
         Item investigationItem = createStudy("Investigation", identifier, title,
                 description, pubDate, subDate);
@@ -488,9 +497,10 @@ public class IsaConverter extends BioFileConverter
             // name should come from the study factor?
 
             Item item = createStudyData(type, sampleName, annotationValue, "");
-            Reference factorRef = getReference("factor", factors.get(categoryId));
-            item.addReference(factorRef);
-
+            if (factors.get(categoryId) != null) { // from new 2x2
+                Reference factorRef = getReference("factor", factors.get(categoryId));
+                item.addReference(factorRef);
+            }
             // add to map of id-item id for refs
             sdItemId.put(id, item.getIdentifier());
 
@@ -609,6 +619,7 @@ public class IsaConverter extends BioFileConverter
             throws ObjectStoreException {
 
         Item item = createItem(type);
+        if (id == null || id == "") id = "untitled";
         item.setAttribute("identifier", id);
 
         if (!title.isEmpty()) {
@@ -720,9 +731,9 @@ public class IsaConverter extends BioFileConverter
         if (!type.isEmpty()) {
             item.setAttribute("type", type);
         }
-        if (!value.isEmpty()) {
-            item.setAttribute("value", value);
-        }
+        //if (!value.isEmpty()) {
+            item.setAttributeIfNotNull("value", value);
+        //}
         if (!measurement.isEmpty()) {
             item.setAttribute("measurement", measurement);
         }
