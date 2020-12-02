@@ -257,7 +257,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("Upper", upper());
         queries.put("Greatest", greatest());
         queries.put("Least", least());
-
+        queries.put("Concat", concat());
+        queries.put("Length", length());
+        
         // test 'foo' IN bag
         queries.put("LargeBagConstraint", largeBagConstraint(false));
         // test 'foo' NOT IN bag
