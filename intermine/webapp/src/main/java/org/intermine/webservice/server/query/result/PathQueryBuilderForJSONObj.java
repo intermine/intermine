@@ -16,8 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.pathquery.Path;
@@ -86,21 +84,7 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder
         List<String> newViews = getAlteredViews(beforeChanges);
         afterChanges.addOrderBy(new OrderElement(newViews.get(0), OrderDirection.ASC));
         afterChanges.addViews(newViews);
-        try {
-            // this will throw a PathException if the root class does not have an id
-            String rootClass = afterChanges.getRootClass();
-        } catch (PathException e) {
-            // HACK: remove the inserted id from the view if it's on a simple class
-            Pattern pattern = Pattern.compile("Path\\s(.*?)\\sin\\sview\\slist");
-            Matcher matcher = pattern.matcher(e.toString());
-            while (matcher.find()) {
-                String badPath = matcher.group(1);
-                afterChanges.removeView(badPath);
-                afterChanges.removeOrderBy(badPath);
-            }
-            // restore original order by
-            afterChanges.addOrderBys(beforeChanges.getOrderBy());
-        }
+
         return afterChanges;
     }
 

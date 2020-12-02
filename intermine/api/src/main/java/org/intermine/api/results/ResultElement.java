@@ -11,7 +11,6 @@ package org.intermine.api.results;
  */
 
 import java.io.Serializable;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -35,9 +34,6 @@ public class ResultElement implements Serializable, ResultCell
     protected final boolean keyField;
     private final Path path;
     private String linkRedirect;
-
-    // this mimics an id for simple objects which do not have an id to make jsonobjects queries work
-    private Integer simpleCellId = null;
 
     /**
      * Constructs a new ResultCell object
@@ -110,34 +106,13 @@ public class ResultElement implements Serializable, ResultCell
     /**
      * Get the Id.
      *
-     * @return the id, which may be a simpleCellId if set, or null
+     * @return the id
      */
     public Integer getId() {
         if (imObj instanceof InterMineObject) {
             return ((InterMineObject) imObj).getId();
-        } else {
-            return simpleCellId;
         }
-    }
-
-    /**
-     * Set a hopefully unique persistent local id for simple objects.
-     * This allows jsonobjects queries to work on queries with simple objects.
-     * Does nothing if simpleCellId has already been set.
-     */
-    public void setSimpleCellId() {
-        if (simpleCellId == null) {
-            // get a 4-digit long from the current time (changes every millisecond)
-            long systime = System.currentTimeMillis();
-            String syssix = String.valueOf(systime - (systime / 10000) * 10000);
-            // tack on a random number between 0 and 99 for good measure
-            String rando = String.valueOf(ThreadLocalRandom.current().nextInt(0, 100));
-            if (rando.length() < 2) {
-                rando = "0" + rando;
-            }
-            int composite = Integer.parseInt(syssix + rando);
-            simpleCellId = new Integer(composite);
-        }
+        return null;
     }
 
     /**
