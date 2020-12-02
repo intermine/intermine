@@ -643,6 +643,14 @@ public abstract class ObjectStoreQueryTestCase {
                 {2000}};
         results.put("Least", ObjectStoreTestUtils.toList(r));
 
+        r = new Object[][]{{new Integer(10)},
+                {new Integer(10)},
+                {new Integer(10)},
+                {new Integer(10)},
+                {new Integer(10)},
+                {new Integer(10)}};
+        results.put("Length", ObjectStoreTestUtils.toList(r));
+
         r = new Object[][]{{data.get("EmployeeA1")},
                 {data.get("EmployeeA2")},
                 {data.get("EmployeeA3")}};
