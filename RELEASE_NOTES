@@ -8,6 +8,7 @@
  *
  */
 InterMine 4.3.0 (December 2020)
+#2308 - Enabling bioschemas markup with JAVA 11 throws an error
 #2274 - Obo: added a new generic obo file source that is configured in project.xml so that it can be used for any ontology (thanks @sammyjava)
 #2276 - Removed gretty plugin (from testmine) which does't work with gradle 4.9
 #2279 - NullPointerException in report page caused by generating permanent url link (Share button)
@@ -15,6 +16,7 @@ InterMine 4.3.0 (December 2020)
 #2282 - Google Charts API broke various things, including the humanmine expression viewers. 
 #2296 - Update google auth and userinfo endopoints
 #2305 - Fix format=jsonobjects queries for simple root classes (thanks @sammyjava)
+The so.obo file has been removed from the bio-source-so to avoid duplication 
 
 InterMine 4.2.0 (June 2020)
 
