@@ -21,7 +21,7 @@ ext {
 
 subprojects {
     group = 'org.intermine'
-    version = '4.2.0'
+    version = '4.3.0'
 
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -96,15 +96,15 @@ subprojects {
     if (it.name != 'bio-source-malaria-gff') {
         checkstyle {
             toolVersion '7.8.1'
-            configFile file("../../../config/checkstyle/checkstyle.xml")
+            configFile file("${rootDir}/../../config/checkstyle/checkstyle.xml")
             sourceSets = [sourceSets.main]
             showViolations = true
             ignoreFailures = false
             maxWarnings = 0
             //reportsDir = file("$project.rootDir/reports/checkstyle/$project.name")
             configProperties = [
-                'checkstyle.header.file': "../../config/checkstyle/copyright_header.txt",
-                'suppressionFile': "../../config/checkstyle/suppressions.xml"
+                'checkstyle.header.file': "${rootDir}/../../config/checkstyle/copyright_header.txt",
+                'suppressionFile': "${rootDir}/../../config/checkstyle/suppressions.xml"
             ]
         }
     }
@@ -112,15 +112,15 @@ subprojects {
     if (it.name == 'bio-source-malaria-gff') {
         checkstyle {
             toolVersion '7.8.1'
-            configFile file("../../../../config/checkstyle/checkstyle.xml")
+            configFile file("${rootDir}/../../config/checkstyle/checkstyle.xml")
             sourceSets = [sourceSets.main]
             showViolations = true
             ignoreFailures = false
             maxWarnings = 0
             //reportsDir = file("$project.rootDir/reports/checkstyle/$project.name")
             configProperties = [
-                'checkstyle.header.file': "../../config/checkstyle/copyright_header.txt",
-                'suppressionFile': "../../config/checkstyle/suppressions.xml"
+                'checkstyle.header.file': "${rootDir}/../../config/checkstyle/copyright_header.txt",
+                'suppressionFile': "${rootDir}/../../config/checkstyle/suppressions.xml"
             ]
         }
     }
@@ -200,9 +200,9 @@ subprojects {
             vcsUrl = 'https://github.com/intermine/intermine.git'
             publicDownloadNumbers = true
             version {
-                name = '4.2.0'
-                desc = 'InterMine 4.2.0'
-                vcsTag = 'intermine-4.2.0'
+                name = '4.3.0'
+                desc = 'InterMine 4.3.0'
+                vcsTag = 'intermine-4.3.0'
             }
         }
         configurations = ['archives']

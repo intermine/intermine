@@ -32,7 +32,7 @@ else
 
         # install everything first. we don't want to test what's in maven
         (cd plugin && ./gradlew install)
-        (cd intermine && ./gradlew install)    
+        (cd intermine && ./gradlew install)
         (cd bio && ./gradlew install)
         (cd bio/sources && ./gradlew install)
         (cd bio/postprocess && ./gradlew install)
@@ -55,7 +55,7 @@ else
             # We need the imjs code to exercise the webservices
             $GIT_GET https://github.com/intermine/imjs.git client
         elif [[ "$CLIENT" = "PY" ]]; then
-            $GIT_GET https://github.com/intermine/intermine-ws-python client
+            $GIT_GET -b master https://github.com/intermine/intermine-ws-python client
         fi
     fi
 fi
