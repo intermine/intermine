@@ -14,6 +14,7 @@ GIT_GET="git clone --single-branch --depth 1"
 BUILD_LOG=${HOME}/build.log
 
 export PSQL_USER=postgres
+export PSQL_PWD=test
 export KEYSTORE=${PWD}/keystore.jks
 
 echo "#---> Running $TEST_SUITE tests"
