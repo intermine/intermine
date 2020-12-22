@@ -2,8 +2,16 @@ void createDbInternal(dbName) {
     println 'Creating database ' + dbName
     exec {
         ignoreExitValue true
-        commandLine 'psql', '-d', 'postgres', '-c', "create database \"" + dbName + "\";"
+        commandLine 'sudo', '-u', 'postgres', 'psql', '-c', "create database \"" + dbName + "\";"
     }   
+}
+
+void grantPrivileges(dbName) {
+    println 'Grant privileges on database ' + dbName
+    exec {
+        ignoreExitValue true
+        commandLine 'sudo', '-u', 'postgres', 'psql', '-c', "grant all privileges on database \"" + dbName + "\" to test;"
+    }
 }
 
 task createUnitTestDatabases {
@@ -12,6 +20,8 @@ task createUnitTestDatabases {
         // fail if DB is already there. Instead we could read in the list of DBs and only
         // create ones that aren't there
         createDbInternal('bio-test')
+        grantPrivileges('bio-test')
         createDbInternal('bio-fulldata-test')
+        grantPrivileges('bio-fulldata-test')
     }   
 }
