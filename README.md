@@ -2,7 +2,7 @@ InterMine
 ============
 
 Master: [![Build Status: master][travis-badge-master]][ci]
-Dev: [![Build Status: dev][travis-badge-dev]][ci]
+Dev: [![InterMine CI](https://github.com/intermine/intermine/workflows/InterMine%20CI/badge.svg?branch=dev)](https://github.com/intermine/intermine/actions?query=workflow%3A%22InterMine+CI%22)
 [![Version](http://img.shields.io/badge/version-4.3.0-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
@@ -87,7 +87,6 @@ Stěpán R, Sullivan J, Micklem G.* <br/>
 See [zotero](https://www.zotero.org/groups/2117194/intermine/) for the full list of InterMine publications.
 
 [travis-badge-master]: https://travis-ci.org/intermine/intermine.svg?branch=master
-[travis-badge-dev]: https://travis-ci.org/intermine/intermine.svg?branch=dev
 [ci]: https://travis-ci.org/intermine/intermine
 [readthedocs]: http://intermine.readthedocs.org/en/latest
 [tutorial]: http://intermine.readthedocs.org/en/latest/get-started/tutorial
