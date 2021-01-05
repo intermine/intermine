@@ -10,7 +10,11 @@ buildscript {
 
 subprojects {
     group = 'org.intermine'
+<<<<<<< HEAD
     version = '5.0.0'
+=======
+    version = '4.3.0'
+>>>>>>> dev
 
     apply plugin: "java"
     apply plugin: "maven"
@@ -46,15 +50,15 @@ subprojects {
 
     checkstyle {
         toolVersion '7.8.1'
-        configFile file("../../config/checkstyle/checkstyle.xml")
+        configFile file("${rootDir}/../config/checkstyle/checkstyle.xml")
         sourceSets = [sourceSets.main]
         showViolations = true
         ignoreFailures = false
         maxWarnings = 0
         //reportsDir = file("$project.rootDir/reports/checkstyle/$project.name")
         configProperties = [
-                'checkstyle.header.file': "../config/checkstyle/copyright_header.txt",
-                'suppressionFile': "../config/checkstyle/suppressions.xml"
+                'checkstyle.header.file': "${rootDir}/../config/checkstyle/copyright_header.txt",
+                'suppressionFile': "${rootDir}/../config/checkstyle/suppressions.xml"
         ]
     }
 
@@ -127,9 +131,15 @@ subprojects {
             vcsUrl = 'https://github.com/intermine/intermine.git'
             publicDownloadNumbers = true
             version {
+<<<<<<< HEAD
                 name = '5.0.0'
                 desc = 'InterMine 5.0.0'
                 vcsTag = 'intermine-5.0.0'
+=======
+                name = '4.3.0'
+                desc = 'InterMine 4.3.0'
+                vcsTag = 'intermine-4.3.0'
+>>>>>>> dev
             }
         }
         configurations = ['archives']
