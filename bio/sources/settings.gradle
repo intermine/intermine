@@ -41,13 +41,14 @@ include ':bio-source-biogrid',
 ':bio-source-vcf',
 ':bio-source-wormbase-identifiers',
 ':bio-source-isa',
+':bio-source-obo',
 //bio-examples-sources
 //':bio-source-kegg',
 //':bio-source-kegg-identifiers',
 ':bio-source-malaria-gff'
 
+project(':bio-source-obo').projectDir = new File(settingsDir, './obo')
 project(':bio-source-isa').projectDir = new File(settingsDir, './isa')
-
 project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
 project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
 project(':bio-source-do').projectDir = new File(settingsDir, './do')

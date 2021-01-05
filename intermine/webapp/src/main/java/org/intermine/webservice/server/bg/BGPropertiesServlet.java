@@ -19,8 +19,9 @@ import org.intermine.webservice.server.core.WebServiceServlet;
  *
  * @author Daniela Butano
  */
-public class BlueGenesServlet extends WebServiceServlet
+public class BGPropertiesServlet extends WebServiceServlet
 {
+    protected static final String BG_PROPS = "bluegenes-properties";
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
