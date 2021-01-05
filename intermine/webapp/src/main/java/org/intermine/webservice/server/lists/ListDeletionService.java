@@ -12,6 +12,7 @@ package org.intermine.webservice.server.lists;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * A service for deleting lists from the user-profile database.
@@ -45,6 +46,9 @@ public class ListDeletionService extends AuthenticatedListService
         Profile profile = getPermission().getProfile();
         ListInput input = getInput();
         addOutputInfo(LIST_NAME_KEY, input.getListName());
+        if (!profile.getAllBags().containsKey(input.getListName())) {
+            throw new BadRequestException(input.getListName() + " doesn't exists");
+        }
         ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
     }
 }
