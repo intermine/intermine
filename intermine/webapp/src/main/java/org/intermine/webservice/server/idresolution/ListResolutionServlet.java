@@ -10,7 +10,6 @@ package org.intermine.webservice.server.idresolution;
  *
  */
 
-import org.apache.log4j.Logger;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 
