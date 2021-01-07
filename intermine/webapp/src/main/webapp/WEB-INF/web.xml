@@ -3633,6 +3633,94 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+   <servlet>
+     <servlet-name>ws-list-resolver</servlet-name>
+     <servlet-class>org.intermine.webservice.server.idresolution.ListResolutionServlet</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+     <servlet-name>ws-list-resolver</servlet-name>
+     <url-pattern>/service/listresolver/*</url-pattern>
+      <metadata>
+        <name>List Resolution</name>
+        <minVersion>32</minVersion>
+        <method type="POST" authenticationRequired="true">
+          <name>Submit a List Upgrading Job</name>
+          <summary>Start a new List Resolution Job on the Server</summary>
+          <description format="markdown">
+List Resolution job checks that all the identifiers in the given list are still valid. Jobs are run asynchronously, so this service simply submits the
+job, and returns the identifier of the job, so that its results and status
+may be polled later.
+          </description>
+          <param type="String" required="true" description="The name of the list which will be checked by the job">name</param>
+          <returns>
+             <format key="uid">json</format>
+          </returns>
+        </method>
+        <method type="GET" authenticationRequired="true" slug="/:uid/status">
+            <name>Check Job Status</name>
+            <summary>Check the Status of a Given Job</summary>
+            <description>Get a representation of the status of job.</description>
+            <param type="String" required="true" description="The unique identifier of the job">uid</param>
+            <returns>
+              <format key="status" accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="GET" authenticationRequired="true" slug="/:uid/results">
+            <name>Retrieve Job Results</name>
+            <summary>Get the Results of a Given Job</summary>
+            <description>Get the full results of running a specific job.</description>
+            <param type="String" required="true" description="The unique identifier of the job">uid</param>
+            <returns>
+              <format key="results" accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="DELETE" authenticationRequired="true" slug="/:uid">
+            <name>Delete A Job</name>
+            <summary>Delete a given job from the server.</summary>
+            <description>Each job should be removed from the server when the user has finished inspecting the results.</description>
+            <param type="String" required="true" description="The unique identifier of the job">uid</param>
+            <returns>
+              <format accept="application/json">json</format>
+            </returns>
+        </method>
+      </metadata>
+   </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-upgrade-list</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.ListUpgradingServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-upgrade-list</servlet-name>
+    <url-pattern>/service/upgradelist/*</url-pattern>
+    <metadata>
+        <name>Upgrade List</name>
+        <minVersion>32</minVersion>
+        <method type="GET" authenticationRequired="false" ALSO="POST">
+          <summary>Upgrade a list with conflicts after a new build</summary>
+            <description>
+              This service allows to upgrade an existing list in order to resolve any conflicts after a new build.
+            </description>
+            <param required="true"
+                  type="String"
+                  description="The name of the list which will be upgraded">name</param>
+          <body description="Internal IDS which will be used to upgrade the list, tab, comma or newline separated.">
+             <content type="text/plain"/>
+          </body>
+          <returns>
+            <format accept="application/json">json</format>
+            <format accept="text/plain">text</format>
+          </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
