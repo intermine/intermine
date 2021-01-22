@@ -87,6 +87,13 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         }
         while (subIter.hasNext()) {
             List<ResultElement> result = subIter.next();
+            // HACK: create a fake id for simple objects which don't have them
+            for (ResultElement cell : result) {
+                if (cell != null && cell.getId() == null) {
+                    cell.setSimpleCellId();
+                }
+            }
+
             Integer currentId = result.get(0).getId(); // id is guarantor of
                                                        // object identity
             if (lastId != null && !lastId.equals(currentId)) {
@@ -102,8 +109,7 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         return nextObj;
     }
 
-    private void addRowToJsonMap(List<ResultElement> results,
-            Map<String, Object> jsonMap) {
+    private void addRowToJsonMap(List<ResultElement> results, Map<String, Object> jsonMap) {
         setOrCheckClassAndId(results.get(0), viewPaths.get(0), jsonMap);
 
         for (int i = 0; i < results.size(); i++) {
@@ -227,13 +233,14 @@ public class JSONResultsIterator implements Iterator<JSONObject>
             Object mapId = jsonMap.get(ID_KEY);
             if (cellId != null && mapId != null && !jsonMap.get(ID_KEY).equals(cell.getId())) {
                 throw new JSONFormattingException(
-                    "This result element (" + cell + ") does not belong on this map (" + jsonMap
-                    + ") - objectIds don't match (" + jsonMap.get(ID_KEY) + " != " + cell.getId()
-                    + ")");
+                                                  "This result element (" + cell
+                                                  + ") does not belong on this map (" + jsonMap
+                                                  + ") - objectIds don't match ("
+                                                  + jsonMap.get(ID_KEY) + " != " + cell.getId()
+                                                  + ")");
             }
         } else {
-            // If these are simple objects, then just cross our fingers and pray...
-            // TODO: fix this abomination, and actually handle simple objects properly.
+            // If these are simple objects, a fake ID should have been appended.
             jsonMap.put(ID_KEY, cell.getId());
         }
     }
@@ -327,7 +334,6 @@ public class JSONResultsIterator implements Iterator<JSONObject>
                         "Bad path type: " + section.toString());
             }
         }
-
     }
 
     /**
