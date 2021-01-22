@@ -102,6 +102,7 @@ public abstract class WebService
     public static final String DEFAULT_CALLBACK = "callback";
 
     private static final String COMPRESS = "compress";
+    private static final String EXPORT_DATAPACKAGE = "exportDataPackage";
     private static final String GZIP = "gzip";
     private static final String ZIP = "zip";
 
@@ -355,8 +356,18 @@ public abstract class WebService
             sendError(t, response);
         }
 
-        // the function isUncompressed() will be replaced by isExportingDataPackage()
-        if (!isUncompressed()) {
+        if (!wantsDataPackage()) {
+            // the usual flushing when only results are exported
+            try {
+                if (output == null) {
+                    response.flushBuffer();
+                } else {
+                    output.flush();
+                }
+            } catch (Throwable t) {
+                logError(t, "Error flushing", 500);
+            }
+        } else {
             try {
                 if (dataPackageOutput == null) {
                     response.flushBuffer();
@@ -368,21 +379,10 @@ public abstract class WebService
                     3. flushes printwriter          writer.flush();
                     4. closes printwriter           writer.close();
 
-                    In datapackage output, we don't need 1 and 2 so we just call 3 and 4 directly
+                    In data package output, we don't need 1 and 2 so we just call 3 and 4 directly
                     */
                     out.flush();
                     out.close();
-                }
-            } catch (Throwable t) {
-                logError(t, "Error flushing", 500);
-            }
-        } else {
-            // the usual flushing when only results are exported
-            try {
-                if (output == null) {
-                    response.flushBuffer();
-                } else {
-                    output.flush();
                 }
             } catch (Throwable t) {
                 logError(t, "Error flushing", 500);
@@ -789,6 +789,13 @@ public abstract class WebService
      */
     protected boolean isUncompressed() {
         return StringUtils.isEmpty(request.getParameter(COMPRESS));
+    }
+
+    /**
+     * @return Whether or not this request wants to export data package.
+     */
+    protected boolean wantsDataPackage() {
+        return request.getParameter(EXPORT_DATAPACKAGE) == null ? false : true;
     }
 
     /**

@@ -244,6 +244,7 @@ public abstract class WebUtil
                                            Map<String, String> userPreferences) {
         Properties webProperties = InterMineContext.getWebProperties();
         String cdnLocation = webProperties.getProperty("head.cdn.location");
+        String imTablesLocation = webProperties.getProperty("head.imTables.location");
         boolean allowUserOverrides =
             "true".equals(webProperties.getProperty("head.allow.user.overrides"));
         List<HeadResource> ret = new ArrayList<HeadResource>();
@@ -264,6 +265,8 @@ public abstract class WebUtil
                 } else {
                     if (value.startsWith("CDN")) {
                         value = value.replace("CDN", cdnLocation);
+                    } else if(value.startsWith("imTables")) {
+                        value = value.replace("imTables", imTablesLocation);
                     } else if (!(value.startsWith("/") || value.startsWith("http"))) {
                         value = String.format("/%s/%s", type, value);
                     }
