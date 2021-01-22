@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.query.result;
 
+/*
+ * Copyright (C) 2002-2020 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,26 +40,26 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.exceptions.ServiceException;
 
-/*
- * Copyright (C) 2002-2020 FlyMine
+/**
+ * Exports Frictionless Data Package if the parameter exportDataPackage
+ * is true. Summarises details about columns, data sources, primary keys.
  *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
+ * @author Nikhil Vats
  */
-
-public class FrictionlessDataPackage {
+public class FrictionlessDataPackage
+{
     protected LinkedHashMap<String, Object> dataPackageAttributes
             = new LinkedHashMap<String, Object>();
-    
+
     protected static final String DATAPACKAGE_FILENAME = "datapackage.json";
     /**
      *
      * @param pq pathquery to export data package for
+     * @param request the servlet request
+     * @param executor the path query executor
+     * @param format format of the results file
      */
-    protected void exportDataPackage(PathQuery pq, HttpServletRequest request, 
+    protected void exportDataPackage(PathQuery pq, HttpServletRequest request,
         PathQueryExecutor executor, String format) {
         /*
         The structure of Data package is as follows -
@@ -173,18 +183,20 @@ public class FrictionlessDataPackage {
                     throw new RuntimeException("Problem making path " + v, e);
                 }
             }
-            String namePath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName() + ".dataSets.dataSource.name";
-            String urlPath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName() + ".dataSets.dataSource.url";
+            String namePath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName()
+                    + ".dataSets.dataSource.name";
+            String urlPath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName()
+                    + ".dataSets.dataSource.url";
             List<ResultsRow> nameResults = (List) executor.summariseQuery(newPq, namePath, true);
             List<ResultsRow> urlResults = (List) executor.summariseQuery(newPq, urlPath, true);
 
-            for(ResultsRow row: nameResults) {
+            for (ResultsRow row: nameResults) {
                 dataSourceNames.add((String) row.get(0));
             }
-            for(ResultsRow row: urlResults) {
+            for (ResultsRow row: urlResults) {
                 dataSourceURLs.add((String) row.get(0));
             }
-            for(int i = 0; i < nameResults.size(); i++) {
+            for (int i = 0; i < nameResults.size(); i++) {
                 LinkedHashMap<String, String> tempDataSource = new LinkedHashMap<String, String>();
                 tempDataSource.put("title", (String) nameResults.get(i).get(0));
                 tempDataSource.put("url", (String) urlResults.get(i).get(0));
@@ -259,8 +271,10 @@ public class FrictionlessDataPackage {
         Collections.sort(viewPaths, PathLengthComparator.getInstance());
         List<String> newViews = new ArrayList<String>();
 
-        String namePath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName() + ".dataSets.dataSource.name";
-        String urlPath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName() + ".dataSets.dataSource.url";
+        String namePath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName()
+                + ".dataSets.dataSource.name";
+        String urlPath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName()
+                + ".dataSets.dataSource.url";
 
         newViews.add(0, namePath);
         newViews.add(1, urlPath);

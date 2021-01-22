@@ -265,7 +265,7 @@ public abstract class WebUtil
                 } else {
                     if (value.startsWith("CDN")) {
                         value = value.replace("CDN", cdnLocation);
-                    } else if(value.startsWith("imTables")) {
+                    } else if (value.startsWith("imTables")) {
                         value = value.replace("imTables", imTablesLocation);
                     } else if (!(value.startsWith("/") || value.startsWith("http"))) {
                         value = String.format("/%s/%s", type, value);

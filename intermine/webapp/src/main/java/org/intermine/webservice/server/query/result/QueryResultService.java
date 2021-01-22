@@ -88,13 +88,13 @@ public class QueryResultService extends AbstractQueryService
     /** Batch size to use **/
     public static final int BATCH_SIZE = 5000;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
-    protected LinkedHashMap<String, Object> dataPackageAttributes 
+    protected LinkedHashMap<String, Object> dataPackageAttributes
         = new LinkedHashMap<String, Object>();
 
     private boolean wantsCount = false;
     protected PathQueryExecutor executor;
     FrictionlessDataPackage fdp;
-    
+
     /**
      * Constructor
      * @param im The InterMineAPI settings bundle for this webservice
@@ -151,6 +151,9 @@ public class QueryResultService extends AbstractQueryService
         executor = getPathQueryExecutor();
     }
 
+    /**
+     * Writes dataPackageAttributes in the output stream.
+     */
     protected void writeDataPackageAttributes() {
         // write the dataPackageAttributes in a new zipFileEntry named datapackage.json
         try {
@@ -160,7 +163,8 @@ public class QueryResultService extends AbstractQueryService
 
             // initialize the dataPackageOutput
             dataPackageOutput = makeJSONOutput(out, getLineBreak());
-            ((ZipOutputStream) os).putNextEntry(new ZipEntry(FrictionlessDataPackage.DATAPACKAGE_FILENAME));
+            ((ZipOutputStream) os).putNextEntry(
+                    new ZipEntry(FrictionlessDataPackage.DATAPACKAGE_FILENAME));
 
             // ObjectMapper for proper formatting
             ObjectMapper mapper = new ObjectMapper();
