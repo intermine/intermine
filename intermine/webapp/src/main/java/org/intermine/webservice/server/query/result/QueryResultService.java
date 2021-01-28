@@ -116,7 +116,7 @@ public class QueryResultService extends AbstractQueryService
 
         if (wantsDataPackage()) {
             fdp = new FrictionlessDataPackage();
-            fdp.exportDataPackage(query, request, executor, getFormatType());
+            fdp.exportDataPackage(query, request, executor, getFormatType(), getProperty("webapp.path"));
             writeDataPackageAttributes();
         }
     }

@@ -36,6 +36,7 @@ import org.intermine.pathquery.PathLengthComparator;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.exceptions.ServiceException;
@@ -60,7 +61,7 @@ public class FrictionlessDataPackage
      * @param format format of the results file
      */
     protected void exportDataPackage(PathQuery pq, HttpServletRequest request,
-        PathQueryExecutor executor, String format) {
+        PathQueryExecutor executor, String format, String mineName) {
         /*
         The structure of Data package is as follows -
         {
@@ -152,7 +153,7 @@ public class FrictionlessDataPackage
         // make the resource object of resources array
         LinkedHashMap<String, Object> resource = new LinkedHashMap<String, Object>();
         resource.put("profile", "tabular-data-resource");
-        resource.put("name", "intermine-query-data-resource");
+        resource.put("name", mineName + "-query-data-resource");
         resource.put("path", link);
         resource.put("format", format);
         resource.put("schema", schema);
@@ -165,8 +166,8 @@ public class FrictionlessDataPackage
 
         // finally, prepare the data package object to be exported
         dataPackageAttributes.put("profile", "data-package");
-        dataPackageAttributes.put("name", "intermine-query");
-        dataPackageAttributes.put("description", "A test InterMine query!");
+        dataPackageAttributes.put("name", mineName + "@v" + Constants.WEB_SERVICE_VERSION);
+        // dataPackageAttributes.put("description", "A test InterMine query!");
         dataPackageAttributes.put("resources", resources);
         Set<String> dataSourceNames = new HashSet<String>();
         Set<String> dataSourceURLs = new HashSet<String>();
