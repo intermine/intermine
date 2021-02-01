@@ -38,6 +38,7 @@ import org.intermine.web.struts.oauth2.ForseenProblem;
 import org.intermine.web.struts.oauth2.CustomOAuthProvider;
 import org.intermine.web.struts.oauth2.DefaultOAuthProvider;
 import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.user.JSONUserFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -173,18 +174,22 @@ public class CallbackService extends JSONService
         LOG.info("Requesting access token: URI = " + clientReq.getLocationUri()
                 + " BODY = " + clientReq.getBody());
 
-        OAuthAccessTokenResponse tokenResponse = null;
-        switch (provider.getResponseType()) {
-            case FORM:
-                tokenResponse = oauthClient.accessToken(clientReq, GitHubTokenResponse.class);
-                break;
-            case JSON:
-                tokenResponse = oauthClient.accessToken(clientReq);
-                break;
-            default:
-                throw new RuntimeException("Unknown response type");
+        try {
+            OAuthAccessTokenResponse tokenResponse = null;
+            switch (provider.getResponseType()) {
+                case FORM:
+                    tokenResponse = oauthClient.accessToken(clientReq, GitHubTokenResponse.class);
+                    break;
+                case JSON:
+                    tokenResponse = oauthClient.accessToken(clientReq);
+                    break;
+                default:
+                    throw new RuntimeException("Unknown response type");
+            }
+            return tokenResponse.getAccessToken();
+        } catch (OAuthProblemException ex) {
+            throw new BadRequestException(ex.getMessage());
         }
-        return tokenResponse.getAccessToken();
     }
 
     private DelegatedIdentity getDelegatedIdentity(String providerName, String accessToken)
