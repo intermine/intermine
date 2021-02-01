@@ -10,25 +10,18 @@ package org.intermine.webservice.server.webproperties;
  *
  */
 
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Queue;
+import java.util.*;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.core.JSONService;
 
 
 /**
  * Exports selected web.properties.
  *
- * @author Julie
+ * @author Julie, Daniela Butano
  */
 public class WebPropertiesService extends JSONService
 {
@@ -62,6 +55,9 @@ public class WebPropertiesService extends JSONService
 
         // defaults for iodocs, only setting default query right now
         appendProperties(webPropertiesMap, "services");
+
+        //oauth2 providers configured in the mine property file
+        appendOAuth2Providers(webPropertiesMap);
 
         addResultItem(webPropertiesMap, false);
     }
@@ -119,6 +115,18 @@ public class WebPropertiesService extends JSONService
             }
             setProperty(thisLevel, path, value);
         }
+    }
+
+    private void appendOAuth2Providers(final Map<String, Object> webPropertiesMap) {
+        Set<String> providers = new LinkedHashSet<String>();
+        String oauth2Providers = webProperties.getProperty("oauth2.providers", "");
+        for (String provider: oauth2Providers.split(",")) {
+            String providerName = provider.trim().toUpperCase();
+            if (webProperties.containsKey("oauth2." + providerName + ".client-id")) {
+                providers.add(providerName);
+            }
+        }
+        webPropertiesMap.put(Constants.OAUTH2_PROVIDERS.toLowerCase(), providers);
     }
 
 }
