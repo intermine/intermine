@@ -89,7 +89,7 @@ public class QueryResultService extends AbstractQueryService
     public static final int BATCH_SIZE = 5000;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
     protected LinkedHashMap<String, Object> dataPackageAttributes
-        = new LinkedHashMap<String, Object>();
+            = new LinkedHashMap<String, Object>();
 
     private boolean wantsCount = false;
     protected PathQueryExecutor executor;
@@ -116,7 +116,8 @@ public class QueryResultService extends AbstractQueryService
 
         if (wantsDataPackage()) {
             fdp = new FrictionlessDataPackage();
-            fdp.exportDataPackage(query, request, executor, getFormatType(), getProperty("webapp.path"));
+            fdp.exportDataPackage(query, request, executor, getFormatType(),
+                    getProperty("webapp.path"));
             writeDataPackageAttributes();
         }
     }
@@ -172,7 +173,7 @@ public class QueryResultService extends AbstractQueryService
 
             // write in dataPackageOutput
             ((StreamedOutput) dataPackageOutput).writeLn(
-                        mapper.writeValueAsString(fdp.dataPackageAttributes));
+                    mapper.writeValueAsString(fdp.dataPackageAttributes));
         } catch (IOException e) {
             throw new ServiceException(e);
         }

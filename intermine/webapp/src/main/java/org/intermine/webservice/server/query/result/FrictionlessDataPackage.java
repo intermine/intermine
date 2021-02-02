@@ -59,6 +59,7 @@ public class FrictionlessDataPackage
      * @param request the servlet request
      * @param executor the path query executor
      * @param format format of the results file
+     * @param mineName name of the mine
      */
     protected void exportDataPackage(PathQuery pq, HttpServletRequest request,
         PathQueryExecutor executor, String format, String mineName) {
