@@ -126,7 +126,7 @@ public class DatabaseWriterTest extends TestCase
         String table = "partialrowswithrest";
         writer = new DatabaseWriter(con, table);
         createTable(table);
-        con.createStatement().execute("SELECT * FROM table1");
+        con.createStatement().execute("SELECT * FROM " + table);
         writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                      + "fourth\tfif");
         con.createStatement().execute("SELECT * FROM table1");
