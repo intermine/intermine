@@ -129,9 +129,9 @@ public class DatabaseWriterTest extends TestCase
         con.createStatement().execute("SELECT * FROM " + table);
         writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                      + "fourth\tfif");
-        con.createStatement().execute("SELECT * FROM table1");
+        con.createStatement().execute("SELECT * FROM " + table);
         writer.write("th\tsixth" + System.getProperty("line.separator"));
-        con.createStatement().execute("SELECT * FROM table1");
+        con.createStatement().execute("SELECT * FROM " + table);
 
         ResultSet res = getResults(table);
         assertTrue(res.next());
