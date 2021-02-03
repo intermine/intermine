@@ -166,7 +166,7 @@ public class FrictionlessDataPackage
         ArrayList<Object> dataSources = new ArrayList<Object>();
 
         // finally, prepare the data package object to be exported
-        dataPackageAttributes.put("profile", "data-package");
+        dataPackageAttributes.put("profile", "tabular-data-package");
         dataPackageAttributes.put("name", mineName + "@v" + Constants.WEB_SERVICE_VERSION);
         // dataPackageAttributes.put("description", "A test InterMine query!");
         dataPackageAttributes.put("resources", resources);
