@@ -11,14 +11,14 @@ package org.intermine.webservice.server.query.result;
  */
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,7 +36,6 @@ import org.intermine.pathquery.PathLengthComparator;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.context.InterMineContext;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.exceptions.ServiceException;
@@ -59,33 +58,9 @@ public class FrictionlessDataPackage
      * @param request the servlet request
      * @param executor the path query executor
      * @param format format of the results file
-     * @param mineName name of the mine
      */
     protected void exportDataPackage(PathQuery pq, HttpServletRequest request,
-        PathQueryExecutor executor, String format, String mineName) {
-        /*
-        The structure of Data package is as follows -
-        {
-            ... (some attributes and values)
-            resources : [
-                {
-                    ... (some attributes and values)
-                    schema: {
-                        fields: [
-                            {column 1 details},
-                            {column 2 details}, and so on...
-                        ],
-                        primaryKey: ["key1","key2","key3"]
-                    }
-                }
-            ]
-            sources: [
-                {source 1 details},
-                {source 2 details}, and so on...
-            ]
-        }
-        only sources array (of objects) is hadcoded right now (work in progress)
-        */
+        PathQueryExecutor executor, String format) {
 
         String clsName; // the name of root class
         try {
@@ -136,9 +111,6 @@ public class FrictionlessDataPackage
         schema.put("fields", fields);
         schema.put("primaryKey", getPrimaryKeys(pq, clsName));
 
-        // get format of results file
-        // String format = getFormatType();
-
         // get web service url for this query
         String xml = getQueryXML(null, pq);
         String serviceFormat;
@@ -151,12 +123,18 @@ public class FrictionlessDataPackage
                 new URLGenerator(request).getPermanentBaseURL(), xml,
                 serviceFormat);
 
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+        String mineName = InterMineContext.getWebProperties().getProperty("webapp.path");
+        String mineVersion = InterMineContext.getWebProperties().getProperty(
+                "project.releaseVersion");
         // make the resource object of resources array
         LinkedHashMap<String, Object> resource = new LinkedHashMap<String, Object>();
         resource.put("profile", "tabular-data-resource");
         resource.put("name", mineName + "-query-data-resource");
         resource.put("path", link);
         resource.put("format", format);
+        resource.put("timestamp", timestamp);
         resource.put("schema", schema);
 
         // the resources array always contains only 1 resource in our case
@@ -167,11 +145,8 @@ public class FrictionlessDataPackage
 
         // finally, prepare the data package object to be exported
         dataPackageAttributes.put("profile", "tabular-data-package");
-        dataPackageAttributes.put("name", mineName + "@v" + Constants.WEB_SERVICE_VERSION);
-        // dataPackageAttributes.put("description", "A test InterMine query!");
+        dataPackageAttributes.put("name", mineName + "@v" + mineVersion);
         dataPackageAttributes.put("resources", resources);
-        Set<String> dataSourceNames = new HashSet<String>();
-        Set<String> dataSourceURLs = new HashSet<String>();
 
         try {
             PathQuery cloneQuery = pq.clone();
@@ -185,26 +160,26 @@ public class FrictionlessDataPackage
                     throw new RuntimeException("Problem making path " + v, e);
                 }
             }
+
             String namePath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName()
                     + ".dataSets.dataSource.name";
             String urlPath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName()
                     + ".dataSets.dataSource.url";
-            List<ResultsRow> nameResults = (List) executor.summariseQuery(newPq, namePath, true);
-            List<ResultsRow> urlResults = (List) executor.summariseQuery(newPq, urlPath, true);
 
-            for (ResultsRow row: nameResults) {
-                dataSourceNames.add((String) row.get(0));
+            if (viewPaths.get(0).getStartClassDescriptor().getAllSuperclassNames().contains(
+                    "org.intermine.model.bio.BioEntity")) {
+                List<ResultsRow> nameList = (List) executor.summariseQuery(newPq, namePath, true);
+                List<ResultsRow> urlList = (List) executor.summariseQuery(newPq, urlPath, true);
+
+                for (int i = 0; i < nameList.size(); i++) {
+                    LinkedHashMap<String, String> tempDataSource
+                             = new LinkedHashMap<String, String>();
+                    tempDataSource.put("title", (String) nameList.get(i).get(0));
+                    tempDataSource.put("url", (String) urlList.get(i).get(0));
+                    dataSources.add(tempDataSource);
+                }
+                dataPackageAttributes.put("sources", dataSources);
             }
-            for (ResultsRow row: urlResults) {
-                dataSourceURLs.add((String) row.get(0));
-            }
-            for (int i = 0; i < nameResults.size(); i++) {
-                LinkedHashMap<String, String> tempDataSource = new LinkedHashMap<String, String>();
-                tempDataSource.put("title", (String) nameResults.get(i).get(0));
-                tempDataSource.put("url", (String) urlResults.get(i).get(0));
-                dataSources.add(tempDataSource);
-            }
-            dataPackageAttributes.put("sources", dataSources);
         } catch (ObjectStoreException e) {
             throw new ServiceException(e);
         }

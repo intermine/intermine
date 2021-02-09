@@ -88,8 +88,6 @@ public class QueryResultService extends AbstractQueryService
     /** Batch size to use **/
     public static final int BATCH_SIZE = 5000;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
-    protected LinkedHashMap<String, Object> dataPackageAttributes
-            = new LinkedHashMap<String, Object>();
 
     private boolean wantsCount = false;
     protected PathQueryExecutor executor;
@@ -116,8 +114,7 @@ public class QueryResultService extends AbstractQueryService
 
         if (wantsDataPackage()) {
             fdp = new FrictionlessDataPackage();
-            fdp.exportDataPackage(query, request, executor, getFormatType(),
-                    getProperty("webapp.path"));
+            fdp.exportDataPackage(query, request, executor, getFormatType());
             writeDataPackageAttributes();
         }
     }
