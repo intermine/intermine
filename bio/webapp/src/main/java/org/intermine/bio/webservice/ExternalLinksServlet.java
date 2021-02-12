@@ -1,4 +1,4 @@
-package org.intermine.webservice.server.webproperties;
+package org.intermine.bio.webservice;
 
 /*
  * Copyright (C) 2002-2020 FlyMine
@@ -10,13 +10,12 @@ package org.intermine.webservice.server.webproperties;
  *
  */
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.web.context.InterMineContext;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.context.InterMineContext;
-import org.intermine.webservice.server.ExternalLinksService;
 
 /**
  * Runs ExternalLinksService web service.

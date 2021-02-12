@@ -1,4 +1,4 @@
-package org.intermine.webservice.server;
+package org.intermine.bio.webservice;
 
 /*
  * Copyright (C) 2002-2020 FlyMine
@@ -9,6 +9,7 @@ package org.intermine.webservice.server;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
