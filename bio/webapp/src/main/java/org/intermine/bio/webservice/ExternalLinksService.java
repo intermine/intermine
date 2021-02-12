@@ -16,6 +16,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.bio.util.BioUtil;
+import org.intermine.bio.web.XRef;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
@@ -38,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,35 +73,27 @@ public class ExternalLinksService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        //Map<String, Object> webPropertiesMap = new HashMap<String, Object>();
-
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
         ReportObject reportObject = null;
         InterMineObject imo = null;
-
 //        if (bag == null) {
 //            reportObject = (ReportObject) request.getAttribute("reportObject");
 //            imo = reportObject.getObject();
 //        }
-
         InterMineAPI im = getInterMineAPI();
         ObjectStore os = im.getObjectStore();
         Model model = im.getModel();
-
         Integer interMineID = Integer.valueOf(request.getParameter("id"));
 //        String type = null;      // uses classDescriptor
 //        String identifier = null;
-
         //try {
 //        InterMineObject entity = im.getObjectStore().getObjectById(interMineID);
         imo = im.getObjectStore().getObjectById(interMineID);
         if (imo == null) {
             //return null;
         }
-
         // TODO: use instead?
         // type = DynamicUtil.getSimpleClass(imo).getSimpleName();
-
         Set<ClassDescriptor> classDescriptors;
         if (imo == null) {
             classDescriptors = bag.getClassDescriptors();
@@ -126,7 +120,6 @@ public class ExternalLinksService extends JSONService
             } catch (Exception e) {
                 // no organism field
             }
-
             if (organismReference == null || organismReference.getTaxonId() == null) {
                 geneOrgKey += "(\\.(\\*))?";
             } else {
@@ -136,7 +129,6 @@ public class ExternalLinksService extends JSONService
         } else { // bag
             geneOrgKey += "(\\.(\\*|[\\d]+))?";
         }
-
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
         // to the configuration
         Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
@@ -170,7 +162,6 @@ public class ExternalLinksService extends JSONService
                 }
 
                 ConfigMap config;
-
                 if (linkConfigs.containsKey(dbName)) {
                     config = linkConfigs.get(dbName);
                 } else {
@@ -179,10 +170,8 @@ public class ExternalLinksService extends JSONService
                     config.put("linkId", dbName);
                     linkConfigs.put(dbName, config);
                 }
-
                 Object attrValue = null;
                 Collection<String> taxIds = null;
-
                 if (config.containsKey("attributeValue")) {
                     attrValue = config.get("attributeValue");
                 } else {
@@ -194,7 +183,6 @@ public class ExternalLinksService extends JSONService
                             if (!"*".equalsIgnoreCase(taxId)) {
                                 taxIds = BioUtil.getOrganisms(os, bag.getType(),
                                         bag.getContentsAsIds(), false, "taxonId");
-
                                 //don't display link if
                                 // a) not a bioentity (no reference to organism)
                                 if (taxIds == null) {
@@ -218,7 +206,6 @@ public class ExternalLinksService extends JSONService
                                 + " in class " + className);
                     }
                 }
-
                 if ("url".equals(propType)) {
                     if (attrValue != null) {
                         String url;
@@ -249,18 +236,15 @@ public class ExternalLinksService extends JSONService
                 }
             }
         }
-
         // this to change into post if required
         linkConfigs = processConfigs(im, linkConfigs, reportObject);
 
 //        request.setAttribute("attributeLinkConfiguration", linkConfigs);
 //        request.setAttribute("attributeLinkClassName", className);
-
 //        addResultItem(webPropertiesMap, false);
         addResultItem(linkConfigs, false);
 
-
-/* XREF skip for now
+/*
         // TODO HACKed for Xref
         // Logic:
         // 1.parse xref.properties
@@ -291,9 +275,7 @@ public class ExternalLinksService extends JSONService
             }
         }
         request.setAttribute("xrefMap", xrefMap);
-        //return null;
-*/
-
+        */
     }
 
     /**
