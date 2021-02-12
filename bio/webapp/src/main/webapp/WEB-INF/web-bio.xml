@@ -700,7 +700,7 @@ following [json-schema](http://json-schema.org/) schema:
 
 <servlet-mapping>
 <servlet-name>ws-external-links</servlet-name>
-<url-pattern>/service/query/results/elinks</url-pattern>
+<url-pattern>/service/elinks</url-pattern>
 <metadata>
     <name>External links</name>
     <minVersion>31</minVersion>
