@@ -32,7 +32,13 @@ import org.intermine.web.util.AttributeLinkURL;
 import org.intermine.webservice.server.core.JSONService;
 
 import java.net.MalformedURLException;
-import java.util.*;
+//import java.util.*;
+import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Collection;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +47,7 @@ import static org.intermine.web.context.InterMineContext.getInterMineAPI;
 /**
  * Exports selected web.properties.
  *
- * @author
+ * @author sc
  */
 public class ExternalLinksService extends JSONService
 {
@@ -297,7 +303,8 @@ public class ExternalLinksService extends JSONService
      * @param linkConfigs
      */
     private Map<String, ConfigMap> processConfigs(InterMineAPI im,
-                                                  Map<String, ConfigMap> linkConfigs, ReportObject reportObject) {
+                                                  Map<String, ConfigMap> linkConfigs,
+                                                  ReportObject reportObject) {
         Map<String, ConfigMap> newMap = new HashMap<String, ConfigMap>(linkConfigs);
         for (Map.Entry<String, ConfigMap> entry : newMap.entrySet()) {
             ConfigMap config = entry.getValue();

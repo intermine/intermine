@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Runs ExternalLinksService web service.
  *
- * @author
+ * @author sc
  */
 public class ExternalLinksServlet extends HttpServlet
 {
