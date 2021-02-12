@@ -16,7 +16,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.bio.util.BioUtil;
-import org.intermine.bio.web.XRef;
+//import org.intermine.bio.web.XRef;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
@@ -33,13 +33,12 @@ import org.intermine.web.util.AttributeLinkURL;
 import org.intermine.webservice.server.core.JSONService;
 
 import java.net.MalformedURLException;
-//import java.util.*;
 import java.util.Properties;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+//import java.util.LinkedHashMap;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
