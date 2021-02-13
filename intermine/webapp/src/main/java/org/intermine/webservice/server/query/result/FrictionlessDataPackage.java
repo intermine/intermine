@@ -24,10 +24,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.Path;
@@ -163,19 +167,47 @@ public class FrictionlessDataPackage
 
             String namePath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName()
                     + ".dataSets.dataSource.name";
-            String urlPath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName()
-                    + ".dataSets.dataSource.url";
 
             if (viewPaths.get(0).getStartClassDescriptor().getAllSuperclassNames().contains(
                     "org.intermine.model.bio.BioEntity")) {
                 List<ResultsRow> nameList = (List) executor.summariseQuery(newPq, namePath, true);
-                List<ResultsRow> urlList = (List) executor.summariseQuery(newPq, urlPath, true);
+
+                PathQuery dataSourceQuery = new PathQuery(Model.getInstanceByName("genomic"));
+                dataSourceQuery.addViews("DataSource.name", "DataSource.url");
+
+                String constraintLogic = "";
+                for (int i = 0; i < nameList.size(); i++) {
+                    dataSourceQuery.addConstraint(Constraints.eq("DataSource.name",
+                            nameList.get(i).get(0).toString()),
+                            String.valueOf(Character.toChars(i + 65)));
+                    if (i < nameList.size() - 1) {
+                        constraintLogic += String.valueOf(Character.toChars(i + 65)) + " OR ";
+                    } else {
+                        constraintLogic += String.valueOf(Character.toChars(i + 65));
+                    }
+                }
+                dataSourceQuery.setConstraintLogic(constraintLogic);
+
+                List<String> urlList = new ArrayList<String>();
+                ExportResultsIterator results;
+                try {
+                    results = executor.execute(dataSourceQuery);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException(e);
+                }
+
+                while (results.hasNext()) {
+                    List<ResultElement> item = results.next();
+                    urlList.add(item.get(1).getField() != null
+                            ? item.get(1).getField().toString() : "null");
+                }
 
                 for (int i = 0; i < nameList.size(); i++) {
                     LinkedHashMap<String, String> tempDataSource
                              = new LinkedHashMap<String, String>();
                     tempDataSource.put("title", (String) nameList.get(i).get(0));
-                    tempDataSource.put("url", (String) urlList.get(i).get(0));
+                    tempDataSource.put("url", urlList.get(i).equals("null")
+                            ? null : urlList.get(i));
                     dataSources.add(tempDataSource);
                 }
                 dataPackageAttributes.put("sources", dataSources);
