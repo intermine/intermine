@@ -176,10 +176,13 @@ public class FrictionlessDataPackage
                 dataSourceQuery.addViews("DataSource.name", "DataSource.url");
 
                 String constraintLogic = "";
+                List<String> simpleList = new ArrayList<>();
+                String name;
                 for (int i = 0; i < nameList.size(); i++) {
-                    dataSourceQuery.addConstraint(Constraints.eq("DataSource.name",
-                            nameList.get(i).get(0).toString()),
+                    name = nameList.get(i).get(0).toString();
+                    dataSourceQuery.addConstraint(Constraints.eq("DataSource.name", name),
                             String.valueOf(Character.toChars(i + 65)));
+                    simpleList.add(name);
                     if (i < nameList.size() - 1) {
                         constraintLogic += String.valueOf(Character.toChars(i + 65)) + " OR ";
                     } else {
@@ -188,7 +191,6 @@ public class FrictionlessDataPackage
                 }
                 dataSourceQuery.setConstraintLogic(constraintLogic);
 
-                List<String> urlList = new ArrayList<String>();
                 ExportResultsIterator results;
                 try {
                     results = executor.execute(dataSourceQuery);
@@ -198,18 +200,19 @@ public class FrictionlessDataPackage
 
                 while (results.hasNext()) {
                     List<ResultElement> item = results.next();
-                    urlList.add(item.get(1).getField() != null
-                            ? item.get(1).getField().toString() : "null");
+                    String sourceName = item.get(0).getField().toString();
+                    //in case of data source names duplication (Panther, panther) we want
+                    //only to add that ones returned by summariseQuery
+                    if (simpleList.contains(sourceName)) {
+                        LinkedHashMap<String, String> tempDataSource =
+                                new LinkedHashMap<String, String>();
+                        tempDataSource.put("title", sourceName);
+                        tempDataSource.put("url", item.get(1).getField() != null
+                                ? item.get(1).getField().toString() : "null");
+                        dataSources.add(tempDataSource);
+                    }
                 }
 
-                for (int i = 0; i < nameList.size(); i++) {
-                    LinkedHashMap<String, String> tempDataSource
-                             = new LinkedHashMap<String, String>();
-                    tempDataSource.put("title", (String) nameList.get(i).get(0));
-                    tempDataSource.put("url", urlList.get(i).equals("null")
-                            ? null : urlList.get(i));
-                    dataSources.add(tempDataSource);
-                }
                 dataPackageAttributes.put("sources", dataSources);
             }
         } catch (ObjectStoreException e) {
