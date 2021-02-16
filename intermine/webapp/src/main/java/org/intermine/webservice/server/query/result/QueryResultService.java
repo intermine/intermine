@@ -11,7 +11,9 @@ package org.intermine.webservice.server.query.result;
  */
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -23,6 +25,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -47,6 +54,7 @@ import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.webservice.server.output.FilteringResultIterator;
 import org.intermine.webservice.server.output.FlatFileFormatter;
 import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONCountFormatter;
@@ -57,11 +65,8 @@ import org.intermine.webservice.server.output.JSONSummaryProcessor;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
 import org.intermine.webservice.server.output.Output;
-import org.intermine.webservice.server.output.FilteringResultIterator;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.query.AbstractQueryService;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * Executes query and returns results. Other parameters in request can specify
@@ -84,7 +89,8 @@ public class QueryResultService extends AbstractQueryService
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     private boolean wantsCount = false;
-    private PathQueryExecutor executor;
+    protected PathQueryExecutor executor;
+    FrictionlessDataPackage fdp;
 
     /**
      * Constructor
@@ -104,6 +110,12 @@ public class QueryResultService extends AbstractQueryService
         PathQuery query = builder.getQuery();
         setHeaderAttributes(query, input.getStart(), input.getLimit());
         runPathQuery(query, input.getStart(), input.getLimit());
+
+        if (wantsDataPackage()) {
+            fdp = new FrictionlessDataPackage();
+            fdp.exportDataPackage(query, request, executor, getFormatType());
+            writeDataPackageAttributes();
+        }
     }
 
     @Override
@@ -134,6 +146,33 @@ public class QueryResultService extends AbstractQueryService
     @Override
     protected void postInit() {
         executor = getPathQueryExecutor();
+    }
+
+    /**
+     * Writes dataPackageAttributes in the output stream.
+     */
+    protected void writeDataPackageAttributes() {
+        // write the dataPackageAttributes in a new zipFileEntry named datapackage.json
+        try {
+            // close the results file
+            ((StreamedOutput) output).writeFooter();
+            out.flush();
+
+            // initialize the dataPackageOutput
+            dataPackageOutput = makeJSONOutput(out, getLineBreak());
+            ((ZipOutputStream) os).putNextEntry(
+                    new ZipEntry(FrictionlessDataPackage.DATAPACKAGE_FILENAME));
+
+            // ObjectMapper for proper formatting
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+            // write in dataPackageOutput
+            ((StreamedOutput) dataPackageOutput).writeLn(
+                    mapper.writeValueAsString(fdp.dataPackageAttributes));
+        } catch (IOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     /**
@@ -303,7 +342,7 @@ public class QueryResultService extends AbstractQueryService
         }
     }
 
-    private void runResults(PathQuery pq,  int firstResult, int maxResults) {
+    private void runResults(PathQuery pq, int firstResult, int maxResults) {
         final boolean canGoFaster;
         final Iterator<List<ResultElement>> it;
         final String summaryPath = getOptionalParameter("summaryPath");
@@ -404,5 +443,44 @@ public class QueryResultService extends AbstractQueryService
             qri.setLimit(WebServiceRequestParser.MIN_LIMIT);
         }
         return qri;
+    }
+
+    /**
+     * @return the format requested by user for results file
+     */
+    protected String getFormatType() {
+        String format;
+        switch (getFormat()) {
+            case HTML:
+                format = "html";
+                break;
+            case XML:
+                format = "xml";
+                break;
+            case TSV:
+                format = "tsv";
+                break;
+            case CSV:
+                format = "csv";
+                break;
+            case TEXT:
+                format = "txt";
+                break;
+            case JSON:
+                format = "json";
+                break;
+            case OBJECTS:
+                format = "objects";
+                break;
+            case TABLE:
+                format = "table";
+                break;
+            case ROWS:
+                format = "rows";
+                break;
+            default:
+                format = "default";
+        }
+        return format;
     }
 }
