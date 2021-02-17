@@ -11,6 +11,7 @@ package org.intermine.bio.webservice;
  */
 
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
@@ -54,9 +55,6 @@ public class ExternalLinksService extends JSONService
 {
     protected static final Logger LOG = Logger.getLogger(ExternalLinksService.class);
 
-    // if there is a parent property with an additional child value, we need a key
-    private static final String DEFAULT_PATH = "default";
-
     /** @param im The InterMine state object. **/
     public ExternalLinksService(InterMineAPI im) {
         super(im);
@@ -72,33 +70,35 @@ public class ExternalLinksService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        InterMineBag bag = (InterMineBag) request.getAttribute("bag");
+//        InterMineBag bag = (InterMineBag) request.getAttribute("bag");
         ReportObject reportObject = null;
         InterMineObject imo = null;
 //        if (bag == null) {
-//            reportObject = (ReportObject) request.getAttribute("reportObject");
+//            reportObject = (ReportObject) request.getServletContext().getAttribute("reportObject");
 //            imo = reportObject.getObject();
 //        }
         InterMineAPI im = getInterMineAPI();
         ObjectStore os = im.getObjectStore();
         Model model = im.getModel();
+
         Integer interMineID = Integer.valueOf(request.getParameter("id"));
-//        String type = null;      // uses classDescriptor
-//        String identifier = null;
-        //try {
-//        InterMineObject entity = im.getObjectStore().getObjectById(interMineID);
         imo = im.getObjectStore().getObjectById(interMineID);
         if (imo == null) {
-            //return null;
-        }
+            // TODO check if returning emtpy string is fine
+            //addResultValue("No object found with this id.", false);
+            addResultValue(StringUtils.EMPTY, false);
+        } //else...
+        
+        String pid= String.valueOf(imo.getFieldValue("primaryIdentifier"));
+
         // TODO: use instead?
         // type = DynamicUtil.getSimpleClass(imo).getSimpleName();
-        Set<ClassDescriptor> classDescriptors;
-        if (imo == null) {
-            classDescriptors = bag.getClassDescriptors();
-        } else {
+       Set<ClassDescriptor> classDescriptors;
+//        if (imo == null) {
+//            classDescriptors = bag.getClassDescriptors();
+//        } else {
             classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
-        }
+//        }
         StringBuffer sb = new StringBuffer();
         for (ClassDescriptor cd : classDescriptors) {
             if (sb.length() <= 0) {
@@ -131,8 +131,9 @@ public class ExternalLinksService extends JSONService
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
         // to the configuration
         Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
-        Properties webProperties =
-                (Properties) request.getAttribute(Constants.WEB_PROPERTIES); //TODO check!
+        //TODO check!
+        Properties webProperties = (Properties) request.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
                 + "\\.([^.]+)(\\.list)?\\"
                 + ".(url|text|imageName|usePost|delimiter|enctype|dataset|useCheckbox)";
@@ -156,9 +157,9 @@ public class ExternalLinksService extends JSONService
                 if (imo != null && imType != null) {
                     continue;
                 }
-                if (bag != null && imType == null) {
-                    continue;
-                }
+//                if (bag != null && imType == null) {
+//                    continue;
+//                }
 
                 ConfigMap config;
                 if (linkConfigs.containsKey(dbName)) {
@@ -178,20 +179,20 @@ public class ExternalLinksService extends JSONService
                         if (imo != null) {
                             attrValue = imo.getFieldValue(attrName);
                         } else { //it's a bag!
-                            attrValue = BagHelper.getAttributesFromBag(bag, os, dbName, attrName);
-                            if (!"*".equalsIgnoreCase(taxId)) {
-                                taxIds = BioUtil.getOrganisms(os, bag.getType(),
-                                        bag.getContentsAsIds(), false, "taxonId");
-                                //don't display link if
-                                // a) not a bioentity (no reference to organism)
-                                if (taxIds == null) {
-                                    continue;
-                                }
-                                // b) organism not present
-                                if (!taxIds.contains(taxId)) {
-                                    continue;
-                                }
-                            }
+//                            attrValue = BagHelper.getAttributesFromBag(bag, os, dbName, attrName);
+//                            if (!"*".equalsIgnoreCase(taxId)) {
+//                                taxIds = BioUtil.getOrganisms(os, bag.getType(),
+//                                        bag.getContentsAsIds(), false, "taxonId");
+//                                //don't display link if
+//                                // a) not a bioentity (no reference to organism)
+//                                if (taxIds == null) {
+//                                    continue;
+//                                }
+//                                // b) organism not present
+//                                if (!taxIds.contains(taxId)) {
+//                                    continue;
+//                                }
+//                            }
                         }
                         if (attrValue != null) {
                             config.put("attributeValue", attrValue);
@@ -236,11 +237,8 @@ public class ExternalLinksService extends JSONService
             }
         }
         // this to change into post if required
-        linkConfigs = processConfigs(im, linkConfigs, reportObject);
+        //linkConfigs = processConfigs(im, linkConfigs, reportObject);
 
-//        request.setAttribute("attributeLinkConfiguration", linkConfigs);
-//        request.setAttribute("attributeLinkClassName", className);
-//        addResultItem(webPropertiesMap, false);
         addResultItem(linkConfigs, false);
 
 /*
@@ -277,12 +275,17 @@ public class ExternalLinksService extends JSONService
         */
     }
 
+    /* =========================================================
+    // All the methods below should be useful for the bag links
+    // ========================================================*/
+
     /**
      * Process configs. Configs that have specified that POST method
      * should be used when request is submitted to third party site are modified with this method.
      * GET form of url is modified to POST form.
      * @param linkConfigs
      */
+/*
     private Map<String, ConfigMap> processConfigs(InterMineAPI im,
                                                   Map<String, ConfigMap> linkConfigs,
                                                   ReportObject reportObject) {
@@ -314,6 +317,7 @@ public class ExternalLinksService extends JSONService
 
     private static boolean hasDataset(InterMineAPI im, ReportObject reportObject,
                                       String datasetToMatch) throws PathException {
+        LOG.info("in hasDataset");
         boolean isValidDataset = false;
         InterMineObject imo = reportObject.getObject();
         Path path = new Path(im.getModel(), DynamicUtil.getSimpleClass(
@@ -338,6 +342,7 @@ public class ExternalLinksService extends JSONService
     }
 
     private static void modifyIdString(ConfigMap config) {
+        LOG.info("in modifyIdStrin");
 
         String delim = (String) config.get("delimiter");
         String urlString = (String) config.get("url");
@@ -356,6 +361,8 @@ public class ExternalLinksService extends JSONService
     }
 
     private static void modifyConfigToPost(ConfigMap config) {
+        LOG.info("in modifyConfigPost");
+
         String urlString = (String) config.get("url");
         AttributeLinkURL link;
         try {
@@ -370,5 +377,5 @@ public class ExternalLinksService extends JSONService
             config.put("parameters", link.getParameters());
         }
     }
-
+*/
 }
