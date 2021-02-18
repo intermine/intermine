@@ -95,96 +95,96 @@ public class ExternalLinksService extends JSONService
             //addResultValue("No object found with this id.", false);
             addResultValue(NO_OBJECT, false);
         } else {
-        //String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
+            //String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
 
-        // TODO: use instead?
-        // type = DynamicUtil.getSimpleClass(imo).getSimpleName();
-        Set<ClassDescriptor> classDescriptors;
+            // TODO: use instead?
+            // type = DynamicUtil.getSimpleClass(imo).getSimpleName();
+            Set<ClassDescriptor> classDescriptors;
 //        if (imo == null) {
 //            classDescriptors = bag.getClassDescriptors();
 //        } else {
-        classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
+            classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
 //        }
-        StringBuffer sb = new StringBuffer();
-        for (ClassDescriptor cd : classDescriptors) {
-            if (sb.length() <= 0) {
-                sb.append("(");
-            } else {
-                sb.append("|");
-            }
-            sb.append(TypeUtil.unqualifiedName(cd.getName()));
-        }
-        StringBuffer append = sb.append(")");
-
-        org.intermine.model.bio.Organism organismReference = null;
-        String geneOrgKey = sb.toString();
-
-        if (imo != null) {
-            try {
-                organismReference = (Organism) imo.getFieldValue("organism");
-            } catch (Exception e) {
-                // no organism field
-            }
-            if (organismReference == null || organismReference.getTaxonId() == null) {
-                geneOrgKey += "(\\.(\\*))?";
-            } else {
-                // we need to check against * as well in case we want it to work for all taxonIds
-                geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
-            }
-        } else { // bag
-            geneOrgKey += "(\\.(\\*|[\\d]+))?";
-        }
-        // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
-        // to the configuration
-        Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
-        Properties webProperties =
-                (Properties) request.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-
-        final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
-                + "\\.([^.]+)(\\.list)?\\"
-                + ".(url|text|imageName|usePost|delimiter|enctype|dataset|useCheckbox)";
-        Pattern p = Pattern.compile(regexp);
-        String className = null;
-        String taxId = null;
-        for (Map.Entry<Object, Object> entry : webProperties.entrySet()) {
-            String key = (String) entry.getKey();
-            String value = (String) entry.getValue();
-            Matcher matcher = p.matcher(key);
-            if (matcher.matches()) {
-
-                String dbName = matcher.group(1);
-                className = matcher.group(2);
-                taxId = matcher.group(4);
-                String attrName = matcher.group(5);
-                String imType = matcher.group(6);
-                String propType = matcher.group(7);
-
-                // to pick the right type of link (list or object)
-                if (imo != null && imType != null) {
-                    continue;
+            StringBuffer sb = new StringBuffer();
+            for (ClassDescriptor cd : classDescriptors) {
+                if (sb.length() <= 0) {
+                    sb.append("(");
+                } else {
+                    sb.append("|");
                 }
+                sb.append(TypeUtil.unqualifiedName(cd.getName()));
+            }
+            StringBuffer append = sb.append(")");
+
+            org.intermine.model.bio.Organism organismReference = null;
+            String geneOrgKey = sb.toString();
+
+            if (imo != null) {
+                try {
+                    organismReference = (Organism) imo.getFieldValue("organism");
+                } catch (Exception e) {
+                    // no organism field
+                }
+                if (organismReference == null || organismReference.getTaxonId() == null) {
+                    geneOrgKey += "(\\.(\\*))?";
+                } else {
+                    // checking against * as well in case we want it to work for all taxonIds
+                    geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
+                }
+            } else { // bag
+                geneOrgKey += "(\\.(\\*|[\\d]+))?";
+            }
+            // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
+            // to the configuration
+            Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
+            Properties webProperties =
+                    (Properties) request.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+
+            final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
+                    + "\\.([^.]+)(\\.list)?\\"
+                    + ".(url|text|imageName|usePost|delimiter|enctype|dataset|useCheckbox)";
+            Pattern p = Pattern.compile(regexp);
+            String className = null;
+            String taxId = null;
+            for (Map.Entry<Object, Object> entry : webProperties.entrySet()) {
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
+                Matcher matcher = p.matcher(key);
+                if (matcher.matches()) {
+
+                    String dbName = matcher.group(1);
+                    className = matcher.group(2);
+                    taxId = matcher.group(4);
+                    String attrName = matcher.group(5);
+                    String imType = matcher.group(6);
+                    String propType = matcher.group(7);
+
+                    // to pick the right type of link (list or object)
+                    if (imo != null && imType != null) {
+                        continue;
+                    }
 //                if (bag != null && imType == null) {
 //                    continue;
 //                }
 
-                ConfigMap config;
-                if (linkConfigs.containsKey(dbName)) {
-                    config = linkConfigs.get(dbName);
-                } else {
-                    config = new ConfigMap();
-                    config.put("attributeName", attrName);
-                    config.put("linkId", dbName);
-                    linkConfigs.put(dbName, config);
-                }
-                Object attrValue = null;
-                Collection<String> taxIds = null;
-                if (config.containsKey("attributeValue")) {
-                    attrValue = config.get("attributeValue");
-                } else {
-                    try {
-                        if (imo != null) {
-                            attrValue = imo.getFieldValue(attrName);
-                        } else { //it's a bag!
+                    ConfigMap config;
+                    if (linkConfigs.containsKey(dbName)) {
+                        config = linkConfigs.get(dbName);
+                    } else {
+                        config = new ConfigMap();
+                        config.put("attributeName", attrName);
+                        config.put("linkId", dbName);
+                        linkConfigs.put(dbName, config);
+                    }
+                    Object attrValue = null;
+                    Collection<String> taxIds = null;
+                    if (config.containsKey("attributeValue")) {
+                        attrValue = config.get("attributeValue");
+                    } else {
+                        try {
+                            if (imo != null) {
+                                attrValue = imo.getFieldValue(attrName);
+                            } else { //it's a bag!
 //                            attrValue = BagHelper.getAttributesFromBag(bag, os, dbName, attrName);
 //                            if (!"*".equalsIgnoreCase(taxId)) {
 //                                taxIds = BioUtil.getOrganisms(os, bag.getType(),
@@ -199,54 +199,54 @@ public class ExternalLinksService extends JSONService
 //                                    continue;
 //                                }
 //                            }
+                            }
+                            if (attrValue != null) {
+                                config.put("attributeValue", attrValue);
+                                config.put("valid", Boolean.TRUE);
+                            }
+                        } catch (IllegalAccessException e) {
+                            config.put("attributeValue", e);
+                            config.put("valid", Boolean.FALSE);
+                            LOG.error("configuration problem in ExternalLinksService: "
+                                    + "couldn't get a value for field " + attrName
+                                    + " in class " + className);
                         }
+                    }
+                    if ("url".equals(propType)) {
                         if (attrValue != null) {
-                            config.put("attributeValue", attrValue);
-                            config.put("valid", Boolean.TRUE);
+                            String url;
+                            if (value.contains(ATTR_MARKER_RE)) {
+                                url = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
+                            } else {
+                                url = value + attrValue;
+                            }
+                            config.put("url", url);
                         }
-                    } catch (IllegalAccessException e) {
-                        config.put("attributeValue", e);
-                        config.put("valid", Boolean.FALSE);
-                        LOG.error("configuration problem in ExternalLinksService: "
-                                + "couldn't get a value for field " + attrName
-                                + " in class " + className);
+                    } else if ("imageName".equals(propType)) {
+                        config.put("imageName", value);
+                    } else if ("usePost".equals(propType)) {
+                        config.put("usePost", value);
+                    } else if ("delimiter".equals(propType)) {
+                        config.put("delimiter", value);
+                    } else if ("enctype".equals(propType)) {
+                        config.put("enctype", value);
+                    } else if ("dataset".equals(propType)) {
+                        config.put("dataset", value);
+                    } else if ("useCheckbox".equals(propType)) {
+                        config.put("useCheckbox", value);
+                    } else if ("text".equals(propType)) {
+                        config.put("title", value.replaceAll("[^A-Za-z0-9 ]", "")
+                                .replaceFirst("attributeValue", ""));
+                        String text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
+                        config.put("text", text);
                     }
-                }
-                if ("url".equals(propType)) {
-                    if (attrValue != null) {
-                        String url;
-                        if (value.contains(ATTR_MARKER_RE)) {
-                            url = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
-                        } else {
-                            url = value + attrValue;
-                        }
-                        config.put("url", url);
-                    }
-                } else if ("imageName".equals(propType)) {
-                    config.put("imageName", value);
-                } else if ("usePost".equals(propType)) {
-                    config.put("usePost", value);
-                } else if ("delimiter".equals(propType)) {
-                    config.put("delimiter", value);
-                } else if ("enctype".equals(propType)) {
-                    config.put("enctype", value);
-                } else if ("dataset".equals(propType)) {
-                    config.put("dataset", value);
-                } else if ("useCheckbox".equals(propType)) {
-                    config.put("useCheckbox", value);
-                } else if ("text".equals(propType)) {
-                    config.put("title", value.replaceAll("[^A-Za-z0-9 ]", "")
-                            .replaceFirst("attributeValue", ""));
-                    String text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
-                    config.put("text", text);
                 }
             }
-        }
-        // this to change into post if required
-        //linkConfigs = processConfigs(im, linkConfigs, reportObject);
+            // this to change into post if required
+            //linkConfigs = processConfigs(im, linkConfigs, reportObject);
 
-        // entry for the JSON response
-        addResultEntry(JSON_KEY, linkConfigs, false);
+            // entry for the JSON response
+            addResultEntry(JSON_KEY, linkConfigs, false);
 
         /*
         // TODO HACKed for Xref
@@ -280,7 +280,7 @@ public class ExternalLinksService extends JSONService
         }
         request.setAttribute("xrefMap", xrefMap);
         */
-    }
+        }
     }
 
     /* =========================================================
