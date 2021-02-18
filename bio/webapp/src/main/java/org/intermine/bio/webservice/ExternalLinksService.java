@@ -11,7 +11,6 @@ package org.intermine.bio.webservice;
  */
 
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
@@ -24,7 +23,12 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.webservice.server.core.JSONService;
 
-import java.util.*;
+import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Collection;
+
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,7 +65,6 @@ public class ExternalLinksService extends JSONService
 
     static final String ATTR_MARKER_RE = "<<attributeValue>>";
     static final String NO_OBJECT = "-1";
-//    static final String JSON_KEY = "\"links\" :";
     static final String JSON_KEY = "links";
 
 
@@ -91,11 +94,8 @@ public class ExternalLinksService extends JSONService
             // TODO check if returning emtpy string is fine
             //addResultValue("No object found with this id.", false);
             addResultValue(NO_OBJECT, false);
-        } //else...
-        String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
-
-        //addResultValue(JSON_KEY, false);
-        //addOutputInfo(JSON_KEY, "");
+        } else {
+        //String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
 
         // TODO: use instead?
         // type = DynamicUtil.getSimpleClass(imo).getSimpleName();
@@ -146,7 +146,7 @@ public class ExternalLinksService extends JSONService
         Pattern p = Pattern.compile(regexp);
         String className = null;
         String taxId = null;
-        for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
+        for (Map.Entry<Object, Object> entry : webProperties.entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
             Matcher matcher = p.matcher(key);
@@ -246,7 +246,7 @@ public class ExternalLinksService extends JSONService
         //linkConfigs = processConfigs(im, linkConfigs, reportObject);
 
         // entry for the JSON response
-        addResultEntry(JSON_KEY,linkConfigs,false);
+        addResultEntry(JSON_KEY, linkConfigs, false);
 
         /*
         // TODO HACKed for Xref
@@ -280,6 +280,7 @@ public class ExternalLinksService extends JSONService
         }
         request.setAttribute("xrefMap", xrefMap);
         */
+    }
     }
 
     /* =========================================================
