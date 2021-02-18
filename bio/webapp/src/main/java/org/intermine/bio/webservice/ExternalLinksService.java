@@ -14,35 +14,38 @@ package org.intermine.bio.webservice;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.util.PathUtil;
-import org.intermine.bio.util.BioUtil;
-//import org.intermine.bio.web.XRef;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.results.ReportObject;
-import org.intermine.web.util.AttributeLinkURL;
 import org.intermine.webservice.server.core.JSONService;
 
-import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
-//import java.util.LinkedHashMap;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+/* bag related imports, not used yet
+//import java.util.LinkedHashMap;
+import java.net.MalformedURLException;
+import org.intermine.web.util.AttributeLinkURL;
+import org.intermine.web.logic.bag.BagHelper;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
+import org.intermine.util.DynamicUtil;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.util.PathUtil;
+import org.intermine.bio.util.BioUtil;
+//import org.intermine.bio.web.XRef;
+*/
 
 import static org.intermine.web.context.InterMineContext.getInterMineAPI;
 
@@ -74,7 +77,8 @@ public class ExternalLinksService extends JSONService
         ReportObject reportObject = null;
         InterMineObject imo = null;
 //        if (bag == null) {
-//            reportObject = (ReportObject) request.getServletContext().getAttribute("reportObject");
+//            reportObject =
+//            (ReportObject) request.getServletContext().getAttribute("reportObject");
 //            imo = reportObject.getObject();
 //        }
         InterMineAPI im = getInterMineAPI();
@@ -88,16 +92,15 @@ public class ExternalLinksService extends JSONService
             //addResultValue("No object found with this id.", false);
             addResultValue(StringUtils.EMPTY, false);
         } //else...
-        
-        String pid= String.valueOf(imo.getFieldValue("primaryIdentifier"));
+        String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
 
         // TODO: use instead?
         // type = DynamicUtil.getSimpleClass(imo).getSimpleName();
-       Set<ClassDescriptor> classDescriptors;
+        Set<ClassDescriptor> classDescriptors;
 //        if (imo == null) {
 //            classDescriptors = bag.getClassDescriptors();
 //        } else {
-            classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
+        classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
 //        }
         StringBuffer sb = new StringBuffer();
         for (ClassDescriptor cd : classDescriptors) {
@@ -132,7 +135,8 @@ public class ExternalLinksService extends JSONService
         // to the configuration
         Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
         //TODO check!
-        Properties webProperties = (Properties) request.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+        Properties webProperties =
+                (Properties) request.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
 
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
                 + "\\.([^.]+)(\\.list)?\\"
