@@ -24,11 +24,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.webservice.server.core.JSONService;
 
-import java.util.Properties;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Collection;
+import java.util.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,6 +60,10 @@ public class ExternalLinksService extends JSONService
     }
 
     static final String ATTR_MARKER_RE = "<<attributeValue>>";
+    static final String NO_OBJECT = "-1";
+//    static final String JSON_KEY = "\"links\" :";
+    static final String JSON_KEY = "links";
+
 
     @SuppressWarnings("serial")
     private class ConfigMap extends HashMap<String, Object>
@@ -76,11 +76,11 @@ public class ExternalLinksService extends JSONService
 //        InterMineBag bag = (InterMineBag) request.getAttribute("bag");
         ReportObject reportObject = null;
         InterMineObject imo = null;
-//        if (bag == null) {
-//            reportObject =
-//            (ReportObject) request.getServletContext().getAttribute("reportObject");
-//            imo = reportObject.getObject();
-//        }
+// if (bag == null) {
+//     reportObject =
+//     (ReportObject) request.getServletContext().getAttribute("reportObject");
+//     imo = reportObject.getObject();
+// }
         InterMineAPI im = getInterMineAPI();
         ObjectStore os = im.getObjectStore();
         Model model = im.getModel();
@@ -90,9 +90,12 @@ public class ExternalLinksService extends JSONService
         if (imo == null) {
             // TODO check if returning emtpy string is fine
             //addResultValue("No object found with this id.", false);
-            addResultValue(StringUtils.EMPTY, false);
+            addResultValue(NO_OBJECT, false);
         } //else...
         String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
+
+        //addResultValue(JSON_KEY, false);
+        //addOutputInfo(JSON_KEY, "");
 
         // TODO: use instead?
         // type = DynamicUtil.getSimpleClass(imo).getSimpleName();
@@ -134,7 +137,6 @@ public class ExternalLinksService extends JSONService
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
         // to the configuration
         Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
-        //TODO check!
         Properties webProperties =
                 (Properties) request.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
 
@@ -243,9 +245,10 @@ public class ExternalLinksService extends JSONService
         // this to change into post if required
         //linkConfigs = processConfigs(im, linkConfigs, reportObject);
 
-        addResultItem(linkConfigs, false);
+        // entry for the JSON response
+        addResultEntry(JSON_KEY,linkConfigs,false);
 
-/*
+        /*
         // TODO HACKed for Xref
         // Logic:
         // 1.parse xref.properties
