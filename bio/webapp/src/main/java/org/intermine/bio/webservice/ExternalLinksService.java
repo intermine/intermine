@@ -22,6 +22,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.exceptions.ServiceException;
 
 import java.util.Properties;
 import java.util.HashMap;
@@ -95,6 +96,7 @@ public class ExternalLinksService extends JSONService
             //addResultValue("No object found with this id.", false);
             //addResultValue(NO_OBJECT, false);
             addResultEntry(JSON_KEY, null, false);
+            throw new ServiceException("no object with ID " + interMineID, 400);
         } else {
             //String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
 
