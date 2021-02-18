@@ -93,7 +93,8 @@ public class ExternalLinksService extends JSONService
         if (imo == null) {
             // TODO check if returning emtpy string is fine
             //addResultValue("No object found with this id.", false);
-            addResultValue(NO_OBJECT, false);
+            //addResultValue(NO_OBJECT, false);
+            addResultEntry(JSON_KEY, null, false);
         } else {
             //String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
 
