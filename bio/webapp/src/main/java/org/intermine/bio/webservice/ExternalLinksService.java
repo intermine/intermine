@@ -10,7 +10,7 @@ package org.intermine.bio.webservice;
  *
  */
 
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
@@ -30,12 +30,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
 
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/* bag related imports, not used yet
-//import java.util.LinkedHashMap;
+/* bag (and xref) related imports, not used yet
+import java.util.LinkedHashMap;
 import java.net.MalformedURLException;
 import org.intermine.web.util.AttributeLinkURL;
 import org.intermine.web.logic.bag.BagHelper;
@@ -45,7 +44,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.bio.util.BioUtil;
-//import org.intermine.bio.web.XRef;
+import org.intermine.bio.web.XRef;
 */
 
 import static org.intermine.web.context.InterMineContext.getInterMineAPI;
@@ -65,9 +64,7 @@ public class ExternalLinksService extends JSONService
     }
 
     static final String ATTR_MARKER_RE = "<<attributeValue>>";
-    static final String NO_OBJECT = "-1";
     static final String JSON_KEY = "links";
-
 
     @SuppressWarnings("serial")
     private class ConfigMap extends HashMap<String, Object>
@@ -92,10 +89,8 @@ public class ExternalLinksService extends JSONService
         Integer interMineID = Integer.valueOf(request.getParameter("id"));
         imo = im.getObjectStore().getObjectById(interMineID);
         if (imo == null) {
-            // TODO check if returning emtpy string is fine
-            //addResultValue("No object found with this id.", false);
-            //addResultValue(NO_OBJECT, false);
-            addResultEntry(JSON_KEY, null, false);
+            // returns error (and empty string, could be an empty map if better)
+            addResultEntry(JSON_KEY, StringUtils.EMPTY, false);
             throw new ServiceException("no object with ID " + interMineID, 400);
         } else {
             //String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
