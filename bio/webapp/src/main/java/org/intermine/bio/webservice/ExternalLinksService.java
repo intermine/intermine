@@ -92,11 +92,7 @@ public class ExternalLinksService extends JSONService
             // returns error (and empty string, could be an empty map if better)
             addResultEntry(JSON_KEY, StringUtils.EMPTY, false);
             throw new ServiceException("no object with ID " + interMineID, 400);
-        } else {
-            //String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
-
-            // TODO: use instead?
-            // type = DynamicUtil.getSimpleClass(imo).getSimpleName();
+        } else { // remove this clause when dealing also with lists
             Set<ClassDescriptor> classDescriptors;
 //        if (imo == null) {
 //            classDescriptors = bag.getClassDescriptors();
@@ -117,21 +113,21 @@ public class ExternalLinksService extends JSONService
             org.intermine.model.bio.Organism organismReference = null;
             String geneOrgKey = sb.toString();
 
-            if (imo != null) {
-                try {
-                    organismReference = (Organism) imo.getFieldValue("organism");
-                } catch (Exception e) {
-                    // no organism field
-                }
-                if (organismReference == null || organismReference.getTaxonId() == null) {
-                    geneOrgKey += "(\\.(\\*))?";
-                } else {
-                    // checking against * as well in case we want it to work for all taxonIds
-                    geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
-                }
-            } else { // bag
-                geneOrgKey += "(\\.(\\*|[\\d]+))?";
+//            if (imo != null) {
+            try {
+                organismReference = (Organism) imo.getFieldValue("organism");
+            } catch (Exception e) {
+                // no organism field
             }
+            if (organismReference == null || organismReference.getTaxonId() == null) {
+                geneOrgKey += "(\\.(\\*))?";
+            } else {
+                // checking against * as well in case we want it to work for all taxonIds
+                geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
+            }
+//            } else { // bag
+//                geneOrgKey += "(\\.(\\*|[\\d]+))?";
+//            }
             // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
             // to the configuration
             Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
