@@ -20,7 +20,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.results.ReportObject;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ServiceException;
 
@@ -46,7 +45,7 @@ public class OtherMinesService extends JSONService
         super(im);
     }
 
-    static final String JSON_KEY = "links";
+    static final String JSON_KEY = "otherMines";
 
     @SuppressWarnings("serial")
     private class ConfigMap extends HashMap<String, Object>
@@ -57,7 +56,6 @@ public class OtherMinesService extends JSONService
     @Override
     protected void execute() throws Exception {
 
-        ReportObject reportObject = null;
         InterMineObject imo = null;
 
         InterMineAPI im = getInterMineAPI();
@@ -71,10 +69,6 @@ public class OtherMinesService extends JSONService
             addResultEntry(JSON_KEY, StringUtils.EMPTY, false);
             throw new ServiceException("no object with ID " + interMineID, 400);
         } else {
-            //String pid = String.valueOf(imo.getFieldValue("primaryIdentifier"));
-
-            // TODO: use instead?
-            // type = DynamicUtil.getSimpleClass(imo).getSimpleName();
             Set<ClassDescriptor> classDescriptors;
             classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
 
@@ -112,7 +106,6 @@ public class OtherMinesService extends JSONService
             addResultEntry("otherMines", linkConfigs, true);
             addResultEntry("localMine", localMine.getName(), true);
             addResultEntry("mayHaveLinks", classDescriptors.contains(gene), false);
-
         }
     }
 }
