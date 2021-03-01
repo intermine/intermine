@@ -336,13 +336,10 @@
           width:			windowSize()/2.2,
           height:			(9 * n) + 50,
           chartArea:		{left: windowSize()/4, top: 0, height: 9 * n},
-          backgroundColor: 	["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
           colors: 			['#C9C9FF', '#0000FF', '#59BB14', '#B5E196'],
           fontName: 		"Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
           fontSize: 		11,
           vAxis: 			{title: 'Tissue', titleTextStyle: {color: '#1F7492'}},
-          hAxis:			'none',
-          legend: 			'none',
           hAxis:			{minValue: geneExpressionAtlasTissuesDisplayer.peaks.down - 2, maxValue: geneExpressionAtlasTissuesDisplayer.peaks.up + 2}
         };
 
