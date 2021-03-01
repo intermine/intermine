@@ -328,7 +328,8 @@ public class TagManager
      */
     public List<Tag> getObjectTags(Taggable taggable, Profile profile) {
         if (profile.isLoggedIn()) {
-            List<Tag> tags = getTags(null, taggable.getName(), taggable.getTagType(), profile.getUsername());
+            List<Tag> tags = getTags(null, taggable.getName(), taggable.getTagType(),
+                    profile.getUsername());
             List<Tag> allTags = new ArrayList<>();
             for (Tag tag : tags) {
                 allTags.add(tag);
