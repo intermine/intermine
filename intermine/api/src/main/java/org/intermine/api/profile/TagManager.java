@@ -334,36 +334,37 @@ public class TagManager
             for (Tag tag : tags) {
                 allTags.add(tag);
             }
-            appendPublicAndFolderTags(allTags, taggable.getName());
+            appendPublicTags(allTags, taggable);
             return allTags;
         } else {
-            return new ArrayList<Tag>(getPublicAndFolderTags(taggable.getName()));
+            //return new ArrayList<Tag>(getPublicAndFolderTags(taggable.getName()));
+            return getTags(null, taggable.getName(), taggable.getTagType(), null);
         }
     }
 
     /**
-     * Return all the folder tags assigned to a specific list.
-     * @param tags
-     * @param taggedObjectId an object identifier that is appropriate for a bag
+     * Append public tags assigned to the taggable, avoiding duplications
+     * @param tags the tags list
+     * @param taggable The object with the tags
      * @return The tags that match these criteria.
      * @see TagTypes
      */
-    private void appendPublicAndFolderTags( List<Tag> tags, String taggedObjectId) {
-        List<Tag> publicAndFolderTags = getPublicAndFolderTags(taggedObjectId);
+    private void appendPublicTags( List<Tag> tags, Taggable taggable) {
+        List<Tag> publicTags = getTags(null, taggable.getName(), taggable.getTagType(), null);
         if (tags.isEmpty()) {
-            tags.addAll(publicAndFolderTags);
+            tags.addAll(publicTags);
             return;
         }
         boolean tagDuplicated = false;
-        for (Tag publicAndFolderTag : publicAndFolderTags) {
+        for (Tag publicTag : publicTags) {
             for (Tag tag : tags) {
-                if (tag.getTagName().equalsIgnoreCase(publicAndFolderTag.getTagName())) {
+                if (tag.getTagName().equalsIgnoreCase(publicTag.getTagName())) {
                     tagDuplicated = true;
                     break;
                 }
             }
             if (!tagDuplicated) {
-                tags.add(publicAndFolderTag);
+                tags.add(publicTag);
             }
         }
     }
