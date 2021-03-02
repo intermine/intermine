@@ -72,11 +72,6 @@ public final class TagNames
     public static final String IM_WIDGET = "im:widget";
 
     /**
-     * Prefix common for all BlueGenes internal tags
-     */
-    public static final String BG_PREFIX = "bgpath:";
-
-    /**
      * Tag separator.
      */
     public static final String SEPARATOR = ":";
