@@ -3721,6 +3721,72 @@ may be polled later.
     </metadata>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ws-oauth2-authenticator</servlet-name>
+    <servlet-class>org.intermine.webservice.server.oauth2.AuthenticatorServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-oauth2-authenticator</servlet-name>
+    <url-pattern>/service/oauth2authenticator</url-pattern>
+    <metadata>
+        <name>OAuth2 Authenticator</name>
+        <minVersion>32</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>OAuth2 Authenticator</summary>
+            <description>
+                This service redirects the user to the oauth2 authenticator provider
+            </description>
+	        <param
+                required="true"
+                type="String"
+                description="The provider used for the authentication, e.g. GOOGLE, IM">provider</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-oauth2-callback</servlet-name>
+    <servlet-class>org.intermine.webservice.server.oauth2.CallbackServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-oauth2-callback</servlet-name>
+    <url-pattern>/service/oauth2callback/*</url-pattern>
+    <metadata>
+        <name>OAuth2 Callback</name>
+        <minVersion>32</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>OAuth2 Callback</summary>
+            <description>
+                This service is called by the oauth2 authenticator provider after the user logs in
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The provider used for the authentication, e.g. GOOGLE, IM">provider</param>
+            <param
+                required="true"
+                type="String"
+                description="The client uri where the user is redirected after authentication">redirect_uri</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>

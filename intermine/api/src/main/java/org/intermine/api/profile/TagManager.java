@@ -328,9 +328,43 @@ public class TagManager
      */
     public List<Tag> getObjectTags(Taggable taggable, Profile profile) {
         if (profile.isLoggedIn()) {
-            return getTags(null, taggable.getName(), taggable.getTagType(), profile.getUsername());
+            List<Tag> tags = getTags(null, taggable.getName(), taggable.getTagType(),
+                    profile.getUsername());
+            List<Tag> allTags = new ArrayList<>();
+            for (Tag tag : tags) {
+                allTags.add(tag);
+            }
+            appendPublicAndFolderTags(allTags, taggable.getName());
+            return allTags;
         } else {
-            return Collections.emptyList();
+            return new ArrayList<Tag>(getPublicAndFolderTags(taggable.getName()));
+        }
+    }
+
+    /**
+     * Return all the folder tags assigned to a specific list.
+     * @param tags
+     * @param taggedObjectId an object identifier that is appropriate for a bag
+     * @return The tags that match these criteria.
+     * @see TagTypes
+     */
+    private void appendPublicAndFolderTags( List<Tag> tags, String taggedObjectId) {
+        List<Tag> publicAndFolderTags = getPublicAndFolderTags(taggedObjectId);
+        if (tags.isEmpty()) {
+            tags.addAll(publicAndFolderTags);
+            return;
+        }
+        boolean tagDuplicated = false;
+        for (Tag publicAndFolderTag : publicAndFolderTags) {
+            for (Tag tag : tags) {
+                if (tag.getTagName().equalsIgnoreCase(publicAndFolderTag.getTagName())) {
+                    tagDuplicated = true;
+                    break;
+                }
+            }
+            if (!tagDuplicated) {
+                tags.add(publicAndFolderTag);
+            }
         }
     }
 
@@ -388,14 +422,15 @@ public class TagManager
      * @return The tags that match these criteria.
      * @see TagTypes
      */
-    public List<Tag> getFolderTags(String taggedObjectId) {
+    public List<Tag> getPublicAndFolderTags(String taggedObjectId) {
         if (taggedObjectId == null) {
             throw new NullPointerException("taggedObjectId must not be null");
         }
         List<Tag> tags = getTags(null, taggedObjectId, TagTypes.BAG, null);
         List<Tag> folderTags = new ArrayList<>();
         for (Tag tag : tags) {
-            if ( tag.getTagName().startsWith(TagNames.BG_PREFIX) ) {
+            if ( tag.getTagName().startsWith(TagNames.BG_PREFIX)
+                || tag.getTagName().startsWith(TagNames.IM_PREFIX) ) {
                 folderTags.add(tag);
             }
         }
