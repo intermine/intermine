@@ -337,7 +337,6 @@ public class TagManager
             appendPublicTags(allTags, taggable);
             return allTags;
         } else {
-            //return new ArrayList<Tag>(getPublicAndFolderTags(taggable.getName()));
             return getTags(null, taggable.getName(), taggable.getTagType(), null);
         }
     }
