@@ -7,6 +7,14 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 4.3.1 (March 2021)
+
+#2311 - Continuos Integration with githubactions
+#2317 - Update build.gradle
+#2331 - Remove invalid draw options, fixing geneExpressionAtlas displayers
+#2338 - Update copyright
+#2339 - Migrate from Travis to Actions
+
 InterMine 4.3.0 (December 2020)
 
 #2308 - Enabling bioschemas markup with JAVA 11 throws an error
