@@ -22,6 +22,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Reader;
@@ -37,6 +38,8 @@ import java.util.Iterator;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Set;
+
+import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 
 /**
@@ -78,7 +81,7 @@ public class IsaConverter extends BioFileConverter
 
     private Reference investigationReference;
     private Reference studyReference;
-
+    private String currentFile;
 
     /**
      * Constructor
@@ -118,7 +121,13 @@ public class IsaConverter extends BioFileConverter
 
         // TODO: decide if to use blunt ids or not
 
-        //File file = getFiles();
+//        File file = getFiles();
+        File f = getCurrentFile();
+        currentFile = f.getName();
+
+        LOG.info("======================================");
+        LOG.info("READING " + currentFile);
+        LOG.info("======================================");
 
         JsonNode root = new ObjectMapper().readTree(reader);
         //otherAccess(root);
@@ -142,14 +151,16 @@ public class IsaConverter extends BioFileConverter
 
 
             LOG.info("STUDY " + identifier);
-            LOG.warn(title + " -- " + filename + " | " + subDate);
+            LOG.info(title + " -- " + filename + " | " + subDate);
 
             Item studyItem = createStudy("Study", identifier, title, description, pubDate, subDate);
             // there could be no investigation defined (e.g. single study experiments)
             // store study:
             int sid = store(studyItem);
             // add ref to investigation if there is one
-            if (investigationReference != null) store(investigationReference, sid);
+            if (investigationReference != null) {
+                store(investigationReference, sid);
+            }
 
             // get study reference, used for collections attached to study
             studyReference = getReference("study", studyItem);
@@ -197,9 +208,9 @@ public class IsaConverter extends BioFileConverter
         String pubDate = investigation.path("publicReleaseDate").asText();
         String subDate = investigation.path("submissionDate").asText();
 
-        if (identifier == null || identifier == "") {
-            LOG.warn("AAAAA");
-            return;
+        if (identifier == null || "".equals(identifier)) {
+            identifier = removeExtension(currentFile);
+            LOG.warn("No investigation for " + currentFile);
         }
 
         Item investigationItem = createStudy("Investigation", identifier, title,
@@ -221,7 +232,7 @@ public class IsaConverter extends BioFileConverter
 
             // get also protocolType (term)..
             createProtocol(id, name, description, uri, version);
-            LOG.warn("PROT " + name + " #pars: " + protocol.path("parameters").size());
+            LOG.info("PROT " + name + " #pars: " + protocol.path("parameters").size());
 
             JsonNode parameterNode = protocol.path("parameters");
 
@@ -331,7 +342,7 @@ public class IsaConverter extends BioFileConverter
             String termAccession = term.getTermAccession();
             String termSource = term.getTermSource();
 
-            LOG.warn("SDD: " + annotationValue);
+            LOG.info("SDD: " + annotationValue);
 
             Item sddItem = createStudyData("study", "descriptor", annotationValue, "");
             Integer sddoid = store(sddItem);
@@ -369,7 +380,7 @@ public class IsaConverter extends BioFileConverter
             String fileName = assay.path("filename").asText();
             String technologyPlatform = assay.path("technologyPlatform").asText();
 
-            LOG.warn("ASSAY " + fileName + " on: " + technologyPlatform);
+            LOG.info("ASSAY " + fileName + " on: " + technologyPlatform);
             String mtValue = null;
             // GET characteristicCategories
             JsonNode characteristicCategoriesNode = assay.get("characteristicCategories");
@@ -441,7 +452,7 @@ public class IsaConverter extends BioFileConverter
 
         getSampleFactors(source.path(innerLevel), name, id, type); // characteristics for SOURCES
         Integer cSize = source.path(innerLevel).size();
-        LOG.warn(type.toUpperCase() + " " + id + ": " + name + " with " + cSize + " " + innerLevel);
+        LOG.info(type.toUpperCase() + " " + id + ": " + name + " with " + cSize + " " + innerLevel);
 
         // empty for sample! is it general?
         JsonNode characteristicNode = source.path("characteristics");
@@ -464,7 +475,7 @@ public class IsaConverter extends BioFileConverter
     private void storeSource(String sourceName) throws ObjectStoreException {
         Item sdItem = createStudyData(sourceName);
 
-        LOG.warn("STORING SOURCE " + sourceName);
+        LOG.info("STORING SOURCE " + sourceName);
         Integer sdoid = store(sdItem);
         store(studyReference, sdoid);
     }
@@ -551,14 +562,14 @@ public class IsaConverter extends BioFileConverter
             store(studyReference, protocoloid);
 
             String pid = entry.getKey();
-            LOG.warn("STORING " + pid + " (" + protocoloid + ")");
+            LOG.info("STORING " + pid + " (" + protocoloid + ")");
             // store protocol parameters
             List<String> pparid = protocolParameterList.get(pid);
             // sometime no parameters (TO CHECK)
             if (pparid != null) {
                 for (String ppid : pparid) {
 
-                    LOG.warn("STORE par " + ppid);
+                    LOG.info("STORE par " + ppid);
                     Reference reference = new Reference();
                     reference.setName("protocol");
                     reference.setRefId(entry.getValue().getIdentifier());
@@ -619,7 +630,9 @@ public class IsaConverter extends BioFileConverter
             throws ObjectStoreException {
 
         Item item = createItem(type);
-        if (id == null || id == "") id = "untitled";
+        if (id == null || "".equals(id)) {
+            id = "untitled";
+        }
         item.setAttribute("identifier", id);
 
         if (!title.isEmpty()) {
@@ -728,18 +741,10 @@ public class IsaConverter extends BioFileConverter
         Item item = createItem("StudyData");
         item.setAttribute("name", name);
 
-        if (!type.isEmpty()) {
-            item.setAttribute("type", type);
-        }
-        //if (!value.isEmpty()) {
-            item.setAttributeIfNotNull("value", value);
-        //}
-        if (!measurement.isEmpty()) {
-            item.setAttribute("measurement", measurement);
-        }
-        if (!technology.isEmpty()) {
-            item.setAttribute("technology", technology);
-        }
+        item.setAttributeIfNotNull("type", type);
+        item.setAttributeIfNotNull("value", value);
+        item.setAttributeIfNotNull("measurement", measurement);
+        item.setAttributeIfNotNull("technology", technology);
         return item;
     }
 
