@@ -121,13 +121,14 @@ public class IsaConverter extends BioFileConverter
 
         // TODO: decide if to use blunt ids or not
 
-//        File file = getFiles();
         File f = getCurrentFile();
-        currentFile = f.getName();
+        if (f != null) { // test is run with an internal file, f will be null
+            currentFile = f.getName();
 
-        LOG.info("======================================");
-        LOG.info("READING " + currentFile);
-        LOG.info("======================================");
+            LOG.info("======================================");
+            LOG.info("READING " + currentFile);
+            LOG.info("======================================");
+        }
 
         JsonNode root = new ObjectMapper().readTree(reader);
         //otherAccess(root);
