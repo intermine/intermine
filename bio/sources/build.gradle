@@ -1,15 +1,10 @@
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
-        maven {
-            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
-        }
+        mavenCentral()
     }
     dependencies {
         classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.6.2"
     }
 }
 
@@ -21,12 +16,11 @@ ext {
 
 subprojects {
     group = 'org.intermine'
-    version = '4.3.1'
+    version = '5.0.0'
 
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'com.jfrog.bintray'
-    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'signing'
     apply plugin: 'dbmodel'
     apply plugin: 'biosource-dbmodel'
     apply plugin: "checkstyle"
@@ -36,12 +30,9 @@ subprojects {
 
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
         maven {
             url 'https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
-        }
-        maven {
-            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
         }
     }
 
@@ -163,49 +154,51 @@ subprojects {
         archives javadocJar
     }
 
-    artifactory {
-        contextUrl = 'https://oss.jfrog.org/artifactory/'
-        resolve {
-            repository {
-                repoKey = 'libs-release'
-            }
-        }
-        publish {
-            repository {
-                if (project.version.endsWith("-SNAPSHOT")) {
-                    repoKey = 'oss-snapshot-local'
-                } else {
-                    repoKey = 'oss-release-local'
-                }
-            username = System.getenv('BINTRAY_USER')
-            password = System.getenv('BINTRAY_KEY')
-            }
-            defaults {
-	        publishConfigs('archives')
-            }
-        }
+    signing {
+        required { gradle.taskGraph.hasTask("publish") }
+        sign configurations.archives
     }
 
-    bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_KEY')
-        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-        publish = true //[Default: false] Whether version should be auto published after an upload
-        override = true //[Default: false] Whether to override version artifacts already published
-        pkg {
-            repo = 'bio'
-            name = project.name
-            userOrg = user
-            licenses = ['LGPL-2.1']
-            vcsUrl = 'https://github.com/intermine/intermine.git'
-            publicDownloadNumbers = true
-            version {
-                name = '4.3.1'
-                desc = 'InterMine 4.3.1'
-                vcsTag = 'intermine-4.3.1'
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name project.name
+                    packaging 'jar'
+                    description 'InterMine bio sources modules'
+                    url 'https://github.com/intermine/intermine'
+
+                    scm {
+                        connection 'scm:git:git://github.com/intermine/intermine.git'
+                        developerConnection 'scm:git:ssh://github.com:intermine/intermine.git'
+                        url 'https://github.com/intermine/intermine/tree/master'
+                    }
+
+                    licenses {
+                        license {
+                            name 'LGPL-2.1'
+                            url 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            name 'InterMine core team and contributors'
+                        }
+                    }
+                }
             }
         }
-        configurations = ['archives']
     }
 
     tasks.compileTestJava.dependsOn 'copyMineProperties'

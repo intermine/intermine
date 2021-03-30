@@ -12,6 +12,7 @@ package org.intermine.webservice.server.query;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,7 +70,7 @@ public class SavedQueryRetrievalService extends JSONService
         Profile p = getPermission().getProfile();
 
         Predicate<String> filter = getFilter(getOptionalParameter("filter", ""));
-        Map<String, PathQuery> queries = getQueries(filter, p.getSavedQueries());
+        Map<String, SavedQuery> queries = getQueries(filter, p.getSavedQueries());
         if (Format.JSON == getFormat()) {
             sendJSON(queries);
         } else {
@@ -77,7 +78,7 @@ public class SavedQueryRetrievalService extends JSONService
         }
     }
 
-    private void sendXML(Map<String, PathQuery> queries) {
+    private void sendXML(Map<String, SavedQuery> queries) {
         int version = im.getProfileManager().getVersion();
 
         try {
@@ -85,10 +86,11 @@ public class SavedQueryRetrievalService extends JSONService
                 = XMLOutputFactory.newInstance().createXMLStreamWriter(getRawOutput());
 
             writer.writeStartElement("saved-queries");
-            for (Entry<String, PathQuery> pair: queries.entrySet()) {
-                PathQueryBinding.marshal(pair.getValue(),
+            for (Entry<String, SavedQuery> pair: queries.entrySet()) {
+                PathQuery pq = pair.getValue().getPathQuery();
+                PathQueryBinding.marshal(pq,
                         pair.getKey(),
-                        pair.getValue().getModel().getName(),
+                        pq.getModel().getName(),
                         writer, version);
             }
             writer.writeEndElement();
@@ -97,11 +99,13 @@ public class SavedQueryRetrievalService extends JSONService
         }
     }
 
-    private void sendJSON(Map<String, PathQuery> queries) {
+    private void sendJSON(Map<String, SavedQuery> queries) {
         JSONObject result = new JSONObject();
         try {
-            for (Entry<String, PathQuery> pair: queries.entrySet()) {
-                result.put(pair.getKey(), new JSONObject(pair.getValue().toJson()));
+            for (Entry<String, SavedQuery> pair: queries.entrySet()) {
+                SavedQuery sq = pair.getValue();
+                Date dateCreated = sq.getDateCreated();
+                result.put(pair.getKey(), new JSONObject(sq.getPathQuery().toJson(dateCreated)));
             }
             output.addResultItem(Arrays.asList(result.toString(0)));
         } catch (JSONException e) {
@@ -109,15 +113,15 @@ public class SavedQueryRetrievalService extends JSONService
         }
     }
 
-    private Map<String, PathQuery> getQueries(
+    private Map<String, SavedQuery> getQueries(
             Predicate<String> filter,
             Map<String, SavedQuery> allSaved) {
-        Map<String, PathQuery> queries = new HashMap<String, PathQuery>();
+        Map<String, SavedQuery> queries = new HashMap<>();
         for (Entry<String, SavedQuery> pair: allSaved.entrySet()) {
             SavedQuery q = pair.getValue();
-            PathQuery pq = q.getPathQuery();
+            //PathQuery pq = q.getPathQuery();
             if (filter.call(pair.getKey())) {
-                queries.put(pair.getKey(), pq);
+                queries.put(pair.getKey(), q);
             }
         }
         return queries;

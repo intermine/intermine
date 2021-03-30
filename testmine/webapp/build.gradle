@@ -2,11 +2,11 @@ apply plugin: "war"
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-cargo-plugin:2.7.1'
+        classpath 'com.bmuschko:gradle-cargo-plugin:2.8.0'
     }
 }
 apply plugin: "com.bmuschko.cargo"
