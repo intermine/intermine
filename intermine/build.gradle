@@ -139,7 +139,7 @@ subprojects {
                     scm {
                         connection 'scm:git:git://github.com/intermine/intermine.git'
                         developerConnection 'scm:git:ssh://github.com:intermine/intermine.git'
-                        url 'https://github.com/intermine/intermine/tree/master'
+                        url 'https://github.com/intermine/intermine'
                     }
 
                     licenses {
