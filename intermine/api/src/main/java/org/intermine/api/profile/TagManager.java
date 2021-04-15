@@ -328,9 +328,43 @@ public class TagManager
      */
     public List<Tag> getObjectTags(Taggable taggable, Profile profile) {
         if (profile.isLoggedIn()) {
-            return getTags(null, taggable.getName(), taggable.getTagType(), profile.getUsername());
+            List<Tag> tags = getTags(null, taggable.getName(), taggable.getTagType(),
+                    profile.getUsername());
+            List<Tag> allTags = new ArrayList<>();
+            for (Tag tag : tags) {
+                allTags.add(tag);
+            }
+            appendPublicTags(allTags, taggable);
+            return allTags;
         } else {
-            return Collections.emptyList();
+            return getTags(null, taggable.getName(), taggable.getTagType(), null);
+        }
+    }
+
+    /**
+     * Append public tags assigned to the taggable, avoiding duplications
+     * @param tags the tags list
+     * @param taggable The object with the tags
+     * @return The tags that match these criteria.
+     * @see TagTypes
+     */
+    private void appendPublicTags( List<Tag> tags, Taggable taggable) {
+        List<Tag> publicTags = getTags(null, taggable.getName(), taggable.getTagType(), null);
+        if (tags.isEmpty()) {
+            tags.addAll(publicTags);
+            return;
+        }
+        boolean tagDuplicated = false;
+        for (Tag publicTag : publicTags) {
+            for (Tag tag : tags) {
+                if (tag.getTagName().equalsIgnoreCase(publicTag.getTagName())) {
+                    tagDuplicated = true;
+                    break;
+                }
+            }
+            if (!tagDuplicated) {
+                tags.add(publicTag);
+            }
         }
     }
 
