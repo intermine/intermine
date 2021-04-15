@@ -89,7 +89,7 @@ public class ListInput
 
         this.listName = produceName();
         this.description = request.getParameter(DESCRIPTION_PARAMETER);
-        this.replaceExisting = Boolean.parseBoolean(REPLACE_PARAMETER);
+        this.replaceExisting = Boolean.parseBoolean(request.getParameter(REPLACE_PARAMETER));
         this.type = request.getParameter(TYPE_PARAMETER);
         this.extraValue = request.getParameter(EXTRA_PARAMETER);
 

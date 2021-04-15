@@ -7,6 +7,26 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 5.0.0 (April 2021)
+
+#1720 - Need Google OAuth2 authentication web service end points
+#1835 - When trying to create a list with the same name as another list via api, give informative error
+#2173 - Password reset / I forgot my password service
+#2177 - Include bgpath: prefixed tags in responses to lists webservice
+#2201 - Include creation/last modified date in saved queries webservice
+#2263 - Fixed UniprotFastaLoaderTaskTest see #2259
+#2269 - Add externalLink webservice
+#2280 - Webservice for sending feedback
+#2288 - 200 OK response when deleting unauthorized list (instead of 400)
+#2290 - Add appropriate error message when renaming a list to something existing
+#2295 - Webservice as key-value store for Bluegenes properties
+#2315 - Upgrade List: new webservice for bluegenes
+#2325 - Disallow adding tags for unauthorized lists
+#2327 - Frictionless
+#2328 - DataRecord (bioscehmas profile) deprecated 
+#2337 - Support passing project.credits in web-properties ws
+#2345 - Remove dependency on jcenter
+
 InterMine 4.3.1 (March 2021)
 
 #2311 - Continuos Integration with githubactions

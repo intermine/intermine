@@ -125,6 +125,11 @@ public final class MetadataManager
     public static final String RANGE_DEFINITIONS = "rangeDefinitions";
 
     /**
+     * The name of the key used to store the bluegenes properties.
+     */
+    public static final String BG_PROPERTIES = "bgProperties";
+
+    /**
      * Store a (key, value) pair in the metadata table of the database
      * @param database the database
      * @param key the key

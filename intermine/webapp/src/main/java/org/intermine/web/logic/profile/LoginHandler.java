@@ -22,7 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.BadTemplateException;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -94,31 +93,11 @@ public abstract class LoginHandler extends InterMineAction
         if (fromProfile != null) {
             mergeQueries = fromProfile.getHistory();
             mergeBags = fromProfile.getSavedBags();
-            mergeTemplates = fromProfile.getSavedTemplates();
         }
 
         // Merge in anonymous query history
         for (SavedQuery savedQuery : mergeQueries.values()) {
             toProfile.saveHistory(savedQuery);
-        }
-        // Merge in saved templates.
-        for (ApiTemplate t: mergeTemplates.values()) {
-            try {
-                toProfile.saveTemplate(t.getName(), t);
-            } catch (BadTemplateException e) {
-                // Could be because the name is invalid - fix it.
-                String oldName = t.getName();
-                String newName = NameUtil.validateName(toProfile.getSavedBags().keySet(), oldName);
-                try {
-                    toProfile.saveTemplate(newName, t);
-                    issues.addFailedTemplate(oldName, newName);
-                } catch (BadTemplateException e1) {
-                    // Template is bad for some other reason - should not happen.
-                    // Currently the only reason we refuse to save templates is their name
-                    // when/if other reasons are added, then we should record them on the issues.
-                    LOG.error("Could not save template due to BadTemplateException", e1);
-                }
-            }
         }
         // Merge anonymous bags
         for (Map.Entry<String, InterMineBag> entry : mergeBags.entrySet()) {
