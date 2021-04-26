@@ -168,7 +168,7 @@ task testReport(type: TestReport) {
 
 task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all child projects as if it was a single project', group: 'Documentation') {
     destinationDir = file("$rootDir/..");
-    title = "$project.name $version API"
+    title = "InterMine 5.0.0 API"
     options.author true
     options.addStringOption 'Xdoclint:none', '-quiet'
 
