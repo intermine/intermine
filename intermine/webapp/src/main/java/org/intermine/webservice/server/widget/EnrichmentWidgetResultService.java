@@ -141,7 +141,8 @@ public class EnrichmentWidgetResultService extends WidgetService
                 if (input.shouldSavePopulation()) {
                     deleteReferencePopulationPreference(input);
                 }
-                addOutputAttribute("message", String.format(BAD_POPULATION_MSG, imBag.getType()));
+                addOutputAttribute("message", String.format(BAD_POPULATION_MSG,
+                    populationBag.getType()));
                 return;
             }
         }
