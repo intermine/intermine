@@ -58,8 +58,8 @@ uploadArchives {
                 url 'https://github.com/intermine/intermine'
 
                 scm {
-                    connection 'scm:git://github.com/intermine/intermine.git'
-                    developerConnection 'scm:git://github.com/intermine/intermine.git'
+                    connection 'scm:git:git://github.com/intermine/intermine.git'
+                    developerConnection 'scm:git:ssh://github.com:intermine/intermine.git'
                     url 'https://github.com/intermine/intermine'
                 }
 
