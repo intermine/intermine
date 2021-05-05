@@ -83,6 +83,7 @@ public class GraphService extends WidgetService
             widget = (GraphWidget) widgetConfig.getWidget(imBag, null,
                     im.getObjectStore(), input, ids, populationIds);
             widget.setType(type);
+            widget.setClassKeys(im.getClassKeys());
             if (filterSelectedValue != null) {
                 widget.setFilter(filterSelectedValue);
             }

@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.api.profile.InterMineBag;
@@ -44,6 +46,7 @@ public class GraphWidget extends Widget
     private String filter;
     private List<Integer> intermineIds = new ArrayList<Integer>();
     private String type;
+    private ClassKeys classKeys;
 
     /**
      * @param config config for widget
@@ -58,7 +61,6 @@ public class GraphWidget extends Widget
         this.bag = interMineBag;
         this.os = os;
         this.ids = ids;
-        this.type = type;
         this.filter = options.getFilter();
         if (bag != null) {
             validateBagType();
@@ -70,6 +72,11 @@ public class GraphWidget extends Widget
     /** @param type Set the type **/
     public void setType(String type) {
         this.type = type;
+    }
+
+    /** @param classKeys Set the classKeys **/
+    public void setClassKeys(ClassKeys classKeys) {
+        this.classKeys = classKeys;
     }
 
     /** @param filter Set the filter to something else **/
@@ -237,7 +244,12 @@ public class GraphWidget extends Widget
      */
     public PathQuery getSimplePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
-        List<String> keyFieldNames = bag.getKeyFieldNames();
+        List<String> keyFieldNames;
+        if (bag != null) {
+            keyFieldNames = bag.getKeyFieldNames();
+        } else {
+            keyFieldNames = ClassKeyHelper.getKeyFieldNames(classKeys, type);
+        }
         String prefix;
         if (!((GraphWidgetConfig) config).isListPathSet()) {
             prefix = config.getStartClass() + ".";
