@@ -1565,6 +1565,12 @@ to will also be returned.
                 description="The name of the list to investigate"
                 default="{name}">list</param>
             <param type="String"
+                required="false"
+                description="Comma-separated list of InterMine object IDs, optional unless list name is NULL.">ids</param>
+			<param type="String"
+                required="false"
+                description="Type of the entities, required when ids is used">type</param>
+            <param type="String"
                 required="true"
                 description="The name of the graphical widget to display"
                 options="/widgets|widgets{widgetType=chart}"
@@ -1604,6 +1610,9 @@ to will also be returned.
                 options="/lists|lists{status=CURRENT}"
                 default="{name}"
                 description="The name of the list to use as the population for the graph">list</param>
+            <param type="String"
+                required="false"
+                description="Comma-separated list of InterMine object IDs, optional unless list name is NULL.">ids</param>
             <param type="String" required="true" description="The name of the graphical widget to display">widget</param>
             <returns>
               <format key="results">json</format>

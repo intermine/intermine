@@ -184,8 +184,10 @@ public class TableWidgetLdr extends WidgetLdr
         // Add the count column
         if (config.getColumnTitle() != null) {
             columns.add(config.getColumnTitle());
-        } else {
+        } else if (bag != null) {
             columns.add(bag.getType() + "s");
+        } else {
+            columns.add("Entities");
         }
 
         q = getQuery(true, null);
@@ -244,8 +246,14 @@ public class TableWidgetLdr extends WidgetLdr
                 qfStartId = new QueryField(qcStart, "id");
                 qcExport = qcStart;
                 q.addFrom(qcStart);
-                QueryHelper.addAndConstraint(q, new BagConstraint(qfStartId, ConstraintOp.IN,
+                if (bag != null) {
+                    QueryHelper.addAndConstraint(q, new BagConstraint(qfStartId, ConstraintOp.IN,
                             bag.getOsb()));
+                }  else if (idsList != null) {
+                    // use list of IDs instead of bag
+                    QueryHelper.addAndConstraint(q, new BagConstraint(qfStartId, ConstraintOp.IN,
+                            idsList));
+                }
             }
 
             String refName;
@@ -522,7 +530,11 @@ public class TableWidgetLdr extends WidgetLdr
             }
             q.addView(view);
         }
-        q.addConstraint(Constraints.in(prefix, bag.getName()));
+        if (bag != null) {
+            q.addConstraint(Constraints.in(prefix, bag.getName()));
+        } else if (idsList != null) {
+            q.addConstraint(Constraints.inIds(prefix, idsList));
+        }
 
         String ps = config.getPathStrings();
         if (ps.contains("[") && ps.contains("]")) {

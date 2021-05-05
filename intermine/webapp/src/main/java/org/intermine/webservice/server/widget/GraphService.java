@@ -68,6 +68,7 @@ public class GraphService extends WidgetService
         addOutputConfig(widgetConfig);
 
         String ids = input.getIds();
+        String type = input.getType();
         String populationIds = input.getPopulationIds();
 
         //filters
@@ -81,6 +82,7 @@ public class GraphService extends WidgetService
         try {
             widget = (GraphWidget) widgetConfig.getWidget(imBag, null,
                     im.getObjectStore(), input, ids, populationIds);
+            widget.setType(type);
             if (filterSelectedValue != null) {
                 widget.setFilter(filterSelectedValue);
             }

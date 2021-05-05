@@ -225,5 +225,4 @@ public class GraphWidgetConfig extends WidgetConfig
             String ids, String populationIds) {
         return new GraphWidget(this, imBag, os, options, ids);
     }
-
 }

@@ -12,6 +12,7 @@ package org.intermine.web.logic.widget;
 
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -41,6 +42,8 @@ public class GraphWidget extends Widget
     private static final Logger LOG = Logger.getLogger(GraphWidget.class);
     private GraphWidgetLoader grapgWidgetLdr = null;
     private String filter;
+    private List<Integer> intermineIds = new ArrayList<Integer>();
+    private String type;
 
     /**
      * @param config config for widget
@@ -55,8 +58,18 @@ public class GraphWidget extends Widget
         this.bag = interMineBag;
         this.os = os;
         this.ids = ids;
+        this.type = type;
         this.filter = options.getFilter();
-        validateBagType();
+        if (bag != null) {
+            validateBagType();
+        } else if (ids != null) {
+            validateIDs();
+        }
+    }
+
+    /** @param type Set the type **/
+    public void setType(String type) {
+        this.type = type;
     }
 
     /** @param filter Set the filter to something else **/
@@ -81,11 +94,11 @@ public class GraphWidget extends Widget
      * Throws a ResourceNotFoundException if it's not valid
      */
     private void validateBagType() {
-        final String type = bag.getType();
+        final String bagType = bag.getType();
         final String accepts = config.getTypeClass();
-        ClassDescriptor bagType = os.getModel().getClassDescriptorByName(type);
-        if (bagType == null) {
-            throw new IllegalArgumentException(NOT_IN_MODEL + type);
+        ClassDescriptor bagTypeClassDescr = os.getModel().getClassDescriptorByName(bagType);
+        if (bagTypeClassDescr == null) {
+            throw new IllegalArgumentException(NOT_IN_MODEL + bagType);
         }
         ClassDescriptor accepted = os.getModel().getClassDescriptorByName(accepts);
         if (accepted == null) {
@@ -93,13 +106,28 @@ public class GraphWidget extends Widget
         }
         if ("InterMineObject".equals(accepted.getUnqualifiedName())) {
             return; // This widget accepts anything, however useless.
-        } else if (bagType.equals(accepted)) {
+        } else if (bagTypeClassDescr.equals(accepted)) {
             return; // Exact match.
-        } else if (bagType.getAllSuperDescriptors().contains(accepted)) {
+        } else if (bagTypeClassDescr.getAllSuperDescriptors().contains(accepted)) {
             return; // Sub-class.
         }
         throw new IllegalArgumentException(
-                String.format(NOT_ACCEPTABLE, config.getId(), accepts, type));
+                String.format(NOT_ACCEPTABLE, config.getId(), accepts, bagType));
+    }
+
+    /**
+     * Validate the IDs
+     * Throws a IllegalStateException if they are not number
+     */
+    private void validateIDs() {
+        String[] idStrings = ids.split(",");
+        for (int i = 0; i < idStrings.length; i++) {
+            try {
+                intermineIds.add(Integer.parseInt(idStrings[i]));
+            } catch (NumberFormatException e) {
+                throw new IllegalStateException("Bad IDs for graph widget");
+            }
+        }
     }
 
     /**
@@ -108,13 +136,15 @@ public class GraphWidget extends Widget
     @Override
     public void process() {
         checkNotProcessed();
-        grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter, ids);
+        grapgWidgetLdr =
+                new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter, ids, type);
         if (grapgWidgetLdr == null || grapgWidgetLdr.getResults() == null) {
             LOG.warn("No data found for graph widget");
             return;
         }
         try {
-            notAnalysed = bag.getSize() - grapgWidgetLdr.getWidgetTotal();
+            int size = (bag != null) ? bag.getSize() : intermineIds.size();
+            notAnalysed = size - grapgWidgetLdr.getWidgetTotal();
         } catch (Exception err) {
             LOG.warn("Error rendering graph widget.", err);
             return;
@@ -158,10 +188,19 @@ public class GraphWidget extends Widget
 
         // bag constraint
         if (((GraphWidgetConfig) config).isListPathSet()) {
-            q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getListPath(),
-                                           bag.getName()));
+            if (bag != null) {
+                q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getListPath(),
+                        bag.getName()));
+            } else {
+                q.addConstraint(Constraints.inIds(((GraphWidgetConfig) config).getListPath(),
+                        intermineIds));
+            }
         } else {
-            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+            if (bag != null) {
+                q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+            } else {
+                q.addConstraint(Constraints.inIds(config.getStartClass(), intermineIds));
+            }
         }
 
         String prefix = config.getStartClass() + ".";
@@ -214,10 +253,19 @@ public class GraphWidget extends Widget
 
         // bag constraint
         if (((GraphWidgetConfig) config).isListPathSet()) {
-            q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getListPath(),
-                                           bag.getName()));
+            if (bag != null) {
+                q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getListPath(),
+                        bag.getName()));
+            } else {
+                q.addConstraint(Constraints.inIds(((GraphWidgetConfig) config).getListPath(),
+                        intermineIds));
+            }
         } else {
-            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+            if (bag != null) {
+                q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+            } else {
+                q.addConstraint(Constraints.inIds(config.getStartClass(), intermineIds));
+            }
         }
 
         //category constraint
