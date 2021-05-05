@@ -49,6 +49,8 @@ public class WidgetsRequestParser
     static final String POPULATION_BAG_NAME = "current_population";
     /* can use list for widgets, or a list of object IDs */
     static final String IDS = "ids";
+    /* for graph widget, type is required when object IDs is used */
+    static final String TYPE = "type";
     /* can use list for widgets populations, or a list of object IDs */
     static final String POPULATION_IDS = "populationIds";
 
@@ -66,6 +68,7 @@ public class WidgetsRequestParser
         // we only need one, either the list name OR the ids in the list
         conditionalParameters.add(BAG_NAME);
         conditionalParameters.add(IDS);
+        conditionalParameters.add(TYPE);
         requiredParameters.add(WIDGET_ID);
     }
 
@@ -132,6 +135,7 @@ public class WidgetsRequestParser
         String populationBagName = request.getParameter(POPULATION_BAG_NAME);
         String savePopulation = request.getParameter(SAVE_POPULATION);
         String ids = request.getParameter(IDS);
+        String type = request.getParameter(TYPE);
         String populationIds = request.getParameter(POPULATION_IDS);
         String filter = getOrDefault(request, FILTER);
         String maxP = getOrDefault(request, MAXP);
@@ -153,6 +157,7 @@ public class WidgetsRequestParser
         ret.setCorrection(errorCorrection);
         ret.setPopulationBagName(populationBagName);
         ret.setIds(ids);
+        ret.setType(type);
         ret.setPopulationIds(populationIds);
         ret.setSavePopulation("true".equalsIgnoreCase(savePopulation));
         if (!isBlank(maxP)) {
