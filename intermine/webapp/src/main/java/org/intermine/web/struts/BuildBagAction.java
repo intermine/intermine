@@ -35,6 +35,7 @@ import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.idresolution.IDResolver;
 import org.intermine.api.idresolution.Job;
 import org.intermine.api.profile.Profile;
+import org.intermine.metadata.Model;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.WebJobInput;
@@ -73,6 +74,10 @@ public class BuildBagAction extends InterMineAction
         BuildBagForm buildBagForm = (BuildBagForm) form;
 
         String type = buildBagForm.getType();
+        if ( !Model.getInstanceByName("genomic").hasClassDescriptor(type)) {
+            recordError(new ActionMessage("bagBuild.typeNotSet"), request);
+            return mapping.findForward("bags");
+        }
 
         if (StringUtils.isEmpty(type)) {
             recordError(new ActionMessage("bagBuild.typeNotSet"), request);
