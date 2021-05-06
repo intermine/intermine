@@ -73,12 +73,13 @@ public class BuildBagAction extends InterMineAction
         BuildBagForm buildBagForm = (BuildBagForm) form;
 
         String type = buildBagForm.getType();
-        if ( !im.getModel().hasClassDescriptor(type)) {
+
+        if (StringUtils.isEmpty(type)) {
             recordError(new ActionMessage("bagBuild.typeNotSet"), request);
             return mapping.findForward("bags");
         }
 
-        if (StringUtils.isEmpty(type)) {
+        if (!im.getModel().hasClassDescriptor(type)) {
             recordError(new ActionMessage("bagBuild.typeNotSet"), request);
             return mapping.findForward("bags");
         }
