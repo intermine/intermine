@@ -35,7 +35,6 @@ import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.idresolution.IDResolver;
 import org.intermine.api.idresolution.Job;
 import org.intermine.api.profile.Profile;
-import org.intermine.metadata.Model;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.WebJobInput;
