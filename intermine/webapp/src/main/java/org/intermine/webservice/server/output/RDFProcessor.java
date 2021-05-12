@@ -13,6 +13,7 @@ package org.intermine.webservice.server.output;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.ClassDescriptor;
@@ -43,6 +44,7 @@ public class RDFProcessor extends ResultProcessor
     private InterMineLUIConverter luiConverter;
     private static final String VOC_NAMESPACE = "http://intermine.org/vocabulary/";
     private static final String RES_NAMESPACE = "http://intermine.org/resource/";
+    private final InterMineAPI im;
 
     /**
      * Constructor
@@ -50,7 +52,8 @@ public class RDFProcessor extends ResultProcessor
      * @param  profile the user profile
      *
      */
-    public RDFProcessor(HttpServletRequest request, Profile profile) {
+    public RDFProcessor(HttpServletRequest request, InterMineAPI im, Profile profile) {
+        this.im = im;
         uri = (new PermanentURIHelper(request)).getPermanentBaseURI();
         uri = (!uri.endsWith("/")) ? uri.concat("/") : uri;
         luiConverter = new InterMineLUIConverter(profile);
@@ -94,9 +97,7 @@ public class RDFProcessor extends ResultProcessor
                         Path partialPath = null;
 
                         try {
-                            partialPath = new Path(
-                                    org.intermine.metadata.Model
-                                            .getInstanceByName("genomic"), stringPath);
+                            partialPath = new Path(im.getModel(), stringPath);
                             if (partialPath.endIsReference() || partialPath.endIsCollection()) {
                                 FieldDescriptor rd = partialPath.getEndFieldDescriptor();
                                 String parentToLink =

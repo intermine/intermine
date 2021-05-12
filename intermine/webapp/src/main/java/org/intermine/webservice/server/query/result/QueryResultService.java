@@ -419,7 +419,7 @@ public class QueryResultService extends AbstractQueryService
                 }
                 break;
             case RDF:
-                processor = new RDFProcessor(request, getPermission().getProfile());
+                processor = new RDFProcessor(request, im, getPermission().getProfile());
                 break;
             default:
                 processor = new ResultProcessor();
