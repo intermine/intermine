@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,7 +11,6 @@ package org.intermine.webservice.server.query;
  */
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
@@ -25,6 +24,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.lists.ListInput;
 
 /**
  * Append items to a list from the results of a query.
@@ -44,9 +44,9 @@ public class QueryListAppendService extends QueryToListService
 
     @Override
     protected void generateListFromQuery(PathQuery pq,
-        String name, String description, Collection<String> tags,
-        Profile profile) throws ObjectStoreException, PathException {
+        ListInput input, Profile profile) throws ObjectStoreException, PathException {
 
+        String name = input.getListName();
         InterMineBag list = getList(profile, name);
         checkQueryMatchesListType(pq, list);
 

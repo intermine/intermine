@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -273,12 +273,12 @@ public class ObjectStoreInterMineImplTestCase extends ObjectStoreAbstractImplTes
             }
         }
         Map expectedIndexMap = new HashMap();
-        expectedIndexMap.put(tableName + "_orderby_field", "CREATE INDEX " + tableName + "_orderby_field ON " + tableName + " USING btree (orderby_field)");
-        expectedIndexMap.put(tableName + "_a1_id__lower_a3____lower_a4__", "CREATE INDEX " + tableName + "_a1_id__lower_a3____lower_a4__ ON " + tableName + " USING btree (a1_id, lower(a3_), lower(a4_))");
-        expectedIndexMap.put(tableName + "_lower_a3__", "CREATE INDEX " + tableName + "_lower_a3__ ON " + tableName + " USING btree (lower(a3_))");
-        expectedIndexMap.put(tableName + "_lower_a3___text_pattern_ops", "CREATE INDEX " + tableName + "_lower_a3___text_pattern_ops ON " + tableName + " USING btree (lower(a3_) text_pattern_ops)");
-        expectedIndexMap.put(tableName + "_lower_a4__", "CREATE INDEX " + tableName + "_lower_a4__ ON " + tableName + " USING btree (lower(a4_))");
-        expectedIndexMap.put(tableName + "_lower_a4___text_pattern_ops", "CREATE INDEX " + tableName + "_lower_a4___text_pattern_ops ON " + tableName + " USING btree (lower(a4_) text_pattern_ops)");
+        expectedIndexMap.put(tableName + "_orderby_field", "CREATE INDEX " + tableName + "_orderby_field ON public." + tableName + " USING btree (orderby_field)");
+        expectedIndexMap.put(tableName + "_a1_id__lower_a3____lower_a4__", "CREATE INDEX " + tableName + "_a1_id__lower_a3____lower_a4__ ON public." + tableName + " USING btree (a1_id, lower(a3_), lower(a4_))");
+        expectedIndexMap.put(tableName + "_lower_a3__", "CREATE INDEX " + tableName + "_lower_a3__ ON public." + tableName + " USING btree (lower(a3_))");
+        expectedIndexMap.put(tableName + "_lower_a3___text_pattern_ops", "CREATE INDEX " + tableName + "_lower_a3___text_pattern_ops ON public." + tableName + " USING btree (lower(a3_) text_pattern_ops)");
+        expectedIndexMap.put(tableName + "_lower_a4__", "CREATE INDEX " + tableName + "_lower_a4__ ON public." + tableName + " USING btree (lower(a4_))");
+        expectedIndexMap.put(tableName + "_lower_a4___text_pattern_ops", "CREATE INDEX " + tableName + "_lower_a4___text_pattern_ops ON public." + tableName + " USING btree (lower(a4_) text_pattern_ops)");
         Assert.assertEquals(expectedIndexMap, indexMap);
     }
 

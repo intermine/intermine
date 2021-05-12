@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,6 +33,7 @@ public class WidgetsServiceInput implements EnrichmentOptions
     protected String correction = null;
     protected String extraAttribute = null;
     protected String ids = null;
+    protected String type = null;
     protected String populationIds = null;
 
 
@@ -68,6 +69,11 @@ public class WidgetsServiceInput implements EnrichmentOptions
     /** @return list of intermine object IDs to analyse **/
     public String getIds() {
         return ids;
+    }
+
+    /** @return type of intermine object IDs to analyse **/
+    public String getType() {
+        return type;
     }
 
     /** @return list of intermine object IDs to analyse instead of populationBagName **/
@@ -169,6 +175,11 @@ public class WidgetsServiceInput implements EnrichmentOptions
         /** @param ids list of intermine object IDs **/
         public void setIds(String ids) {
             this.ids = ids;
+        }
+
+        /** @param type of intermine object IDs **/
+        public void setType(String type) {
+            this.type = type;
         }
 
         /** @param populationIds list of intermine object IDs to use isntead of populationBagName

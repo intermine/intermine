@@ -1,15 +1,10 @@
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
-        maven {
-            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
-        }
+        mavenCentral()
     }
     dependencies {
         classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.6.2"        
     }
 }
 
@@ -22,7 +17,7 @@ ext {
 
 subprojects {
     group = 'org.intermine'
-    version = '4.2.0'
+    version = '5.0.0'
 
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -35,10 +30,8 @@ subprojects {
 
     repositories {
         mavenLocal()
-        jcenter()
-        maven {
-            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
-        }
+        mavenCentral()
+        jcenter()//temporary for bio-source-flymine-static
     }
 
     configurations {
@@ -85,15 +78,15 @@ subprojects {
 
     checkstyle {
         toolVersion '7.8.1'
-        configFile file("../../../config/checkstyle/checkstyle.xml")
+        configFile file("${rootDir}/../../config/checkstyle/checkstyle.xml")
         sourceSets = [sourceSets.main]
         showViolations = true
         ignoreFailures = false
         maxWarnings = 0
         //reportsDir = file("$project.rootDir/reports/checkstyle/$project.name")
         configProperties = [
-                'checkstyle.header.file': "../../config/checkstyle/copyright_header.txt",
-                'suppressionFile': "../../config/checkstyle/suppressions.xml"
+                'checkstyle.header.file': "${rootDir}/../../config/checkstyle/copyright_header.txt",
+                'suppressionFile': "${rootDir}/../../config/checkstyle/suppressions.xml"
         ]
     }
 

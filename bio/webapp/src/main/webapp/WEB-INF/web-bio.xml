@@ -689,5 +689,35 @@ following [json-schema](http://json-schema.org/) schema:
    </metadata>
 </servlet-mapping>
 
+<servlet>
+<servlet-name>ws-external-links</servlet-name>
+<servlet-class>org.intermine.bio.webservice.ExternalLinksServlet</servlet-class>
+<init-param>
+    <param-name>debug</param-name>
+    <param-value>true</param-value>
+</init-param>
+</servlet>
+
+<servlet-mapping>
+<servlet-name>ws-external-links</servlet-name>
+<url-pattern>/service/elinks</url-pattern>
+<metadata>
+    <name>External links</name>
+    <minVersion>31</minVersion>
+    <method type="GET" authenticationRequired="false" ALSO="POST">
+        <summary>External links for intermine object.</summary>
+        <description format="markdown">
+            This service provides a list of external links given the id of the intermine object.
+            Used for the report page.
+        </description>
+        <param required="true"
+               type="String"
+               default="100011001"
+               description="InterMine objectId">id</param>
+    </method>
+</metadata>
+</servlet-mapping>
+
+
 <!--  Allow models to do further replacements -->
 <!--@MODEL_INCLUDE@-->

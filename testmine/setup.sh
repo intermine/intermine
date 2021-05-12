@@ -78,7 +78,11 @@ for db in $USERPROFILEDB $PRODDB; do
         echo $db exists.
     else
         echo Creating $db
-        createdb $db
+        if [ "$PSQL_USER" = "test" ]; then
+            sudo -u postgres createdb $db
+        else
+            createdb $db
+        fi
     fi
 done
 
@@ -112,6 +116,6 @@ echo "------> Loading userprofile..."
 ./gradlew insertUserData --stacktrace --no-daemon
 
 echo "------> Running webapp"
-echo "------> Running ./gradlew tomcatstartwar"
-./gradlew tomcatstartwar --no-daemon &
+echo "------> Running ./gradlew cargoRunLocal"
+./gradlew cargoRunLocal --no-daemon &
 echo "------> Finished"

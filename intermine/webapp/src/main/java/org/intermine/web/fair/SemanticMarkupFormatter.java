@@ -1,7 +1,7 @@
 package org.intermine.web.fair;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Properties;
 import java.util.Map;
-import java.util.Arrays;
+
+
 
 /**
  * Class providing schema/bioschemas markups
@@ -58,8 +59,8 @@ public final class SemanticMarkupFormatter
     private static final String SCHEMA = "http://schema.org";
     private static final String BIO_SCHEMA = "http://bioschemas.org";
     private static final String DATASET_TYPE = "DataSet";
-    private static final String DATA_RECORD_TYPE = "DataRecord";
-    private static final String DATA_RECORD_SUFFIX = "#DR";
+    //private static final String DATA_RECORD_TYPE = "DataRecord";
+    //private static final String DATA_RECORD_SUFFIX = "#DR";
     private static final String BIOCHEMENTITY_TYPE = "BioChemEntity";
     private static final String PROTEIN_TYPE = "Protein";
     private static final String GENE_TYPE = "Gene";
@@ -285,10 +286,12 @@ public final class SemanticMarkupFormatter
         } catch (ObjectStoreException ose) {
             LOG.warn("Failed to find object with id: " + id, ose);
         }
-        //DataRecord
-        Map<String, Object> semanticMarkup = new LinkedHashMap<>();
+
+        Map<String, Object> semanticMarkup = formatBioEntity(entity);
+        if (semanticMarkup == null) {
+            return null;
+        }
         semanticMarkup.put("@context", BIO_SCHEMA);
-        semanticMarkup.put("@type", DATA_RECORD_TYPE);
         Properties props = PropertiesUtil.getProperties();
         semanticMarkup.put("version", props.getProperty("project.releaseVersion"));
         Map<String, String> isPartOf = new LinkedHashMap<>();
@@ -296,21 +299,14 @@ public final class SemanticMarkupFormatter
         isPartOf.put("name", props.getProperty("project.title"));
         isPartOf.put("description", props.getProperty("project.subTitle"));
         semanticMarkup.put("isPartOf", isPartOf);
-
-        Map<String, String> mainEntity = formatMainEntity(entity);
-        if (mainEntity == null) {
-            return null;
-        }
-
         InterMineLUI lui = (new InterMineLUIConverter()).getInterMineLUI(id);
+
         if (lui != null) {
             PermanentURIHelper helper = new PermanentURIHelper(request);
             String permanentURL = helper.getPermanentURL(lui);
-            mainEntity.put("@id", permanentURL);
-            mainEntity.put("url", permanentURL);
-            semanticMarkup.put("@id", permanentURL + DATA_RECORD_SUFFIX);
+            semanticMarkup.put("url", permanentURL);
+            semanticMarkup.put("@id", permanentURL);
         }
-        semanticMarkup.put("mainEntity", mainEntity);
         return semanticMarkup;
     }
 
@@ -319,8 +315,8 @@ public final class SemanticMarkupFormatter
      * @param entity InterMine ID
      * @return the map representing the dataset
      */
-    private static Map<String, String> formatMainEntity(InterMineObject entity) {
-        Map<String, String> mainEntity = new LinkedHashMap<>();
+    private static Map<String, Object> formatBioEntity(InterMineObject entity) {
+        Map<String, Object> mainEntity = new LinkedHashMap<>();
         String type = DynamicUtil.getSimpleClass(entity).getSimpleName();
         try {
             String markupType = null;
@@ -360,28 +356,18 @@ public final class SemanticMarkupFormatter
 
     /**
      * Check if the inputType can be markup with BioChemEntity
-     * @return true if can be markup (because it's configured and xtend BioEntity)
+     * @return true if can be markup (because it extends BioEntity)
      */
     private static boolean isBioChemEntityType(String inputType) {
-        Properties props = InterMineContext.getWebProperties();
-        String typesConfigures = props.getProperty("BioChemEntity");
-        if (typesConfigures == null) {
-            return false;
-        } else {
-            List<String> types = Arrays.asList(StringUtils.split(typesConfigures, ","));
-            for (String type : types) {
-                try {
-                    if (inputType.equalsIgnoreCase(type)
-                            && ClassDescriptor.findInherithance(Model.getInstanceByName("genomic"),
-                                inputType, "BioEntity")) {
-                        return true;
-                    }
-                } catch (MetaDataException mde) {
-                    LOG.warn("Type " + inputType + " is not in the model");
-                    return false;
-                }
+        try {
+            if (ClassDescriptor.findInherithance(Model.getInstanceByName("genomic"),
+                    inputType, "BioEntity")) {
+                return true;
             }
+        } catch (MetaDataException mde) {
+            LOG.warn("Type " + inputType + " is not in the model");
             return false;
         }
+        return false;
     }
 }

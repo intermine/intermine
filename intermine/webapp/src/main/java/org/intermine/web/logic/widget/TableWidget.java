@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -50,7 +50,8 @@ public class TableWidget extends Widget
         checkNotProcessed();
         try {
             bagWidgLdr = new TableWidgetLdr(config, bag, os, ids);
-            notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
+            int size = (bag != null ) ? bag.getSize() : ids.split(",").length;
+            notAnalysed = size - bagWidgLdr.getWidgetTotal();
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -104,7 +105,7 @@ public class TableWidget extends Widget
 
     private void checkNotProcessed() {
         if (bagWidgLdr != null) {
-            throw new IllegalStateException("This widget has already bveen processed.");
+            throw new IllegalStateException("This widget has already been processed.");
         }
     }
 

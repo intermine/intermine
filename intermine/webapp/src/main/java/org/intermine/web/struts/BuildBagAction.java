@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -75,6 +75,11 @@ public class BuildBagAction extends InterMineAction
         String type = buildBagForm.getType();
 
         if (StringUtils.isEmpty(type)) {
+            recordError(new ActionMessage("bagBuild.typeNotSet"), request);
+            return mapping.findForward("bags");
+        }
+
+        if (!im.getModel().hasClassDescriptor(type)) {
             recordError(new ActionMessage("bagBuild.typeNotSet"), request);
             return mapping.findForward("bags");
         }

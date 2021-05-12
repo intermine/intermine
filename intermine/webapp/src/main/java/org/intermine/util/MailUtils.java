@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -107,7 +107,9 @@ public abstract class MailUtils
         if (StringUtils.isEmpty(user)) {
             message.setFrom(new InternetAddress(from));
         } else {
-            message.setReplyTo(InternetAddress.parse(from, true));
+            if (from != null) {
+                message.setReplyTo(InternetAddress.parse(from, true));
+            }
             message.setFrom(new InternetAddress(user));
         }
         message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(to, true)[0]);

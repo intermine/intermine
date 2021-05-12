@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,7 +10,9 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
@@ -45,6 +47,7 @@ public class WidgetLdr
     protected ObjectStore os;
     protected InterMineBag bag;
     protected String ids;
+    protected List<Integer> idsList;
     protected String filter;
     protected QueryClass startClass;
     private static final Logger LOG = Logger.getLogger(WidgetLdr.class);
@@ -73,6 +76,17 @@ public class WidgetLdr
                 || config instanceof GraphWidgetConfig) {
                 throw new IllegalArgumentException("Not found the class set in startClass for the"
                     + " widget " + config.getId(), e);
+            }
+        }
+        if (ids != null) {
+            idsList = new ArrayList<>();
+            String[] idStrings = ids.split(",");
+            for (int i = 0; i < idStrings.length; i++) {
+                try {
+                    idsList.add(Integer.parseInt(idStrings[i]));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Bad IDs for the widget");
+                }
             }
         }
     }

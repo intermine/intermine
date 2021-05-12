@@ -1,7 +1,7 @@
 package org.intermine.sql.logging;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -38,31 +38,32 @@ public class DatabaseWriterTest extends TestCase
         con.close();
     }
 
-    private void createTable() throws Exception {
+    private void createTable(String table) throws Exception {
         Statement stmt = con.createStatement();
-        stmt.execute("CREATE TABLE table1(col1 varchar(10), col2 varchar(10), col3 varchar(10))");
+        stmt.execute("CREATE TABLE " + table + "(col1 varchar(10), col2 varchar(10), col3 varchar(10))");
         con.commit();
     }
 
-    private void dropTable() throws Exception {
+    private void dropTable(String table) throws Exception {
         Statement stmt = con.createStatement();
-        stmt.execute("DROP TABLE table1");
+        stmt.execute("DROP TABLE " + table);
         con.commit();
     }
 
-    private ResultSet getResults() throws Exception {
+    private ResultSet getResults(String table) throws Exception {
         Statement stmt = con.createStatement();
-        return stmt.executeQuery("SELECT * FROM table1");
+        return stmt.executeQuery("SELECT * FROM " + table);
     }
 
     public void testCompleteRows() throws Exception {
+        String table = "completerows";
         try {
-            writer = new DatabaseWriter(con, "table1");
-            createTable();
+            writer = new DatabaseWriter(con, table);
+            createTable(table);
             writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                     + "fourth\tfifth\tsixth" + System.getProperty("line.separator"));
 
-            ResultSet res = getResults();
+            ResultSet res = getResults(table);
             assertTrue(res.next());
             assertEquals("first", res.getString(1));
             assertEquals("second", res.getString(2));
@@ -73,13 +74,14 @@ public class DatabaseWriterTest extends TestCase
             assertEquals("sixth", res.getString(3));
             assertTrue(!(res.next()));
         } finally {
-            dropTable();
+            dropTable(table);
         }
     }
 
     public void testShortRow() throws Exception {
-        writer = new DatabaseWriter(con, "table1");
-        createTable();
+        String table = "shortrows";
+        writer = new DatabaseWriter(con, table);
+        createTable(table);
         try {
             writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                          + "fourth\tfifth" + System.getProperty("line.separator"));
@@ -87,12 +89,13 @@ public class DatabaseWriterTest extends TestCase
         }
         catch (IOException e) {
         }
-        dropTable();
+        dropTable(table);
     }
 
     public void testLongRow() throws Exception {
-        writer = new DatabaseWriter(con, "table1");
-        createTable();
+        String table = "longrow";
+        writer = new DatabaseWriter(con, table);
+        createTable(table);
         try {
             writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                          + "fourth\tfifth\tsixth\tseventh" + System.getProperty("line.separator"));
@@ -100,35 +103,37 @@ public class DatabaseWriterTest extends TestCase
         }
         catch (IOException e) {
         }
-        dropTable();
+        dropTable(table);
     }
 
     public void testPartialRows() throws Exception {
-        writer = new DatabaseWriter(con, "table1");
-        createTable();
+        String table = "partialrows";
+        writer = new DatabaseWriter(con, table);
+        createTable(table);
         writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                      + "fourth\tfif");
 
-        ResultSet res = getResults();
+        ResultSet res = getResults(table);
         assertTrue(res.next());
         assertEquals("first", res.getString(1));
         assertEquals("second", res.getString(2));
         assertEquals("third", res.getString(3));
         assertTrue(!(res.next()));
-        dropTable();
+        dropTable(table);
     }
 
     public void testPartialRowsWithRestOnSecondWrite() throws Exception {
-        writer = new DatabaseWriter(con, "table1");
-        createTable();
-        con.createStatement().execute("SELECT * FROM table1");
+        String table = "partialrowswithrest";
+        writer = new DatabaseWriter(con, table);
+        createTable(table);
+        con.createStatement().execute("SELECT * FROM " + table);
         writer.write("first\tsecond\tthird" + System.getProperty("line.separator")
                      + "fourth\tfif");
-        con.createStatement().execute("SELECT * FROM table1");
+        con.createStatement().execute("SELECT * FROM " + table);
         writer.write("th\tsixth" + System.getProperty("line.separator"));
-        con.createStatement().execute("SELECT * FROM table1");
+        con.createStatement().execute("SELECT * FROM " + table);
 
-        ResultSet res = getResults();
+        ResultSet res = getResults(table);
         assertTrue(res.next());
         assertEquals("first", res.getString(1));
         assertEquals("second", res.getString(2));
@@ -138,6 +143,6 @@ public class DatabaseWriterTest extends TestCase
         assertEquals("fifth", res.getString(2));
         assertEquals("sixth", res.getString(3));
         assertTrue(!(res.next()));
-        dropTable();
+        dropTable(table);
     }
 }

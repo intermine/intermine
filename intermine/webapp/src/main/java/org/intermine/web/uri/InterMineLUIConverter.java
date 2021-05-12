@@ -1,7 +1,7 @@
 package org.intermine.web.uri;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -111,6 +111,12 @@ public class InterMineLUIConverter
             type = DynamicUtil.getSimpleClass(entity).getSimpleName();
             String identifierField = getIdentifier(type);
             identifier = (String) entity.getFieldValue(identifierField);
+            if (identifier == null) {
+                LOGGER.info("The entity " + interMineID + " has " + identifierField + " null, "
+                        + "the share link will not displayed in the report page. Configure a "
+                        + "different key in the class_keys.properties file");
+                return null;
+            }
         } catch (ObjectStoreException ose) {
             LOGGER.error("Failed to find object with id: " + interMineID, ose);
             return null;
