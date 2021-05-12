@@ -49,6 +49,7 @@ public class RDFProcessor extends ResultProcessor
     /**
      * Constructor
      * @param request the http request
+     * @param im the intermine api class
      * @param  profile the user profile
      *
      */
