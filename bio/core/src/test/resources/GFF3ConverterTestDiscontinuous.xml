@@ -30,7 +30,6 @@
 <attribute name="length" value="570"/>
 <attribute name="primaryIdentifier" value="transcript(2179-)"/>
 <attribute name="score" value="1000.0"/>
-<attribute name="scoreType" value="firstEF"/>
 <reference name="chromosome" ref_id="4_1"/>
 <reference name="chromosomeLocation" ref_id="7_1"/>
 <reference name="organism" ref_id="0_1"/>
