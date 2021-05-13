@@ -11,7 +11,6 @@
 <item id="7_2" class="BindingSite">
 <attribute name="primaryIdentifier" value="Mousechain:4162060:13:91454738..91454814"/>
 <attribute name="score" value="3301.0"/>
-<attribute name="scoreType" value="mouseChain"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -24,7 +23,6 @@
 <item id="8_1" class="Transcript">
 <attribute name="primaryIdentifier" value="transcript(90+)"/>
 <attribute name="score" value="1000.0"/>
-<attribute name="scoreType" value="firstEF"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_4"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -38,7 +36,6 @@
 <item id="7_3" class="BindingSite">
 <attribute name="primaryIdentifier" value="Mousechain:4246045:10:58864978..58865031"/>
 <attribute name="score" value="3200.0"/>
-<attribute name="scoreType" value="mouseChain"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -51,7 +48,6 @@
 <item id="7_1" class="BindingSite">
 <attribute name="primaryIdentifier" value="Mousechain:14:6:3063417..48830107"/>
 <attribute name="score" value="3.78348525E8"/>
-<attribute name="scoreType" value="mouseChain"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -82,7 +78,6 @@
 <item id="8_2" class="Transcript">
 <attribute name="primaryIdentifier" value="transcript(2179-)"/>
 <attribute name="score" value="1000.0"/>
-<attribute name="scoreType" value="firstEF"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_4"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
