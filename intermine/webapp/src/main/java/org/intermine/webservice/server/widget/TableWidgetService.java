@@ -52,6 +52,10 @@ public class TableWidgetService extends WidgetService
 
         InterMineBag imBag = retrieveBag(input.getBagName());
         addOutputListInfo(imBag);
+        String type = input.getType();
+        if (type != null) {
+            addOutputInfo("type", type);
+        }
 
         WebConfig webConfig = InterMineContext.getWebConfig();
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());
