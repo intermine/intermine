@@ -96,6 +96,9 @@ public class GraphService extends WidgetService
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
         addOutputInfo("simplePathQuery", widget.getSimplePathQuery().toJson());
         addOutputInfo("pathQuery", widget.getPathQuery().toJson());
+        if (type != null) {
+            addOutputInfo("type", type);
+        }
 
         addOutputResult(widget);
     }
