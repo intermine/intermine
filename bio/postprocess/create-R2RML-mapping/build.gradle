@@ -24,3 +24,4 @@ dependencies {
 processResources {
     from('.') { include ("*.properties")}
 }
+
