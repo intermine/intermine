@@ -12,6 +12,7 @@ package org.intermine.web.uri;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.identifiers.IdentifiersMapper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
@@ -33,8 +34,6 @@ import org.intermine.web.context.InterMineContext;
 public class InterMineLUIConverter
 {
     private static final Integer INTERMINE_ID_NOT_FOUND = -1;
-    private static final String DEFAULT_IDENTIFIER = "primaryIdentifier";
-    private ClassNameURIIdentifierMapper classNameIdentifierMapper = null;
     private static final Logger LOGGER = Logger.getLogger(InterMineLUIConverter.class);
     protected Profile profile = null;
 
@@ -44,14 +43,12 @@ public class InterMineLUIConverter
      */
     public InterMineLUIConverter(Profile profile) {
         this.profile = profile;
-        classNameIdentifierMapper = ClassNameURIIdentifierMapper.getMapper();
     }
 
     /**
      * Constructor
      */
     public InterMineLUIConverter() {
-        classNameIdentifierMapper = ClassNameURIIdentifierMapper.getMapper();
     }
 
     /**
@@ -69,7 +66,7 @@ public class InterMineLUIConverter
         String className = interMineLUI.getClassName();
         String viewPath =  className + ".id";
         pathQuery.addView(viewPath);
-        String identifier = getIdentifier(className);
+        String identifier = IdentifiersMapper.getMapper().getIdentifier(className);
         String constraintPath = className + "." + identifier;
         pathQuery.addConstraint(Constraints.eq(constraintPath, interMineLUI.getIdentifier()));
         if (!pathQuery.isValid()) {
@@ -109,11 +106,11 @@ public class InterMineLUIConverter
                 return null;
             }
             type = DynamicUtil.getSimpleClass(entity).getSimpleName();
-            String identifierField = getIdentifier(type);
+            String identifierField = IdentifiersMapper.getMapper().getIdentifier(type);
             identifier = (String) entity.getFieldValue(identifierField);
             if (identifier == null) {
                 LOGGER.info("The entity " + interMineID + " has " + identifierField + " null, "
-                        + "the share link will not displayed in the report page. Configure a "
+                        + "the share link will not be displayed in the report page. Configure a "
                         + "different key in the class_keys.properties file");
                 return null;
             }
@@ -126,16 +123,6 @@ public class InterMineLUIConverter
         }
 
         return new InterMineLUI(type, identifier);
-    }
-
-    /**
-     * Return the identifier's field of the entity with type given in input
-     * @param type the type of the entity,e.g. Protein
-     * @return the identifier's field if specified or primaryIdentifier
-     */
-    private String getIdentifier(String type) {
-        String identifier = classNameIdentifierMapper.getIdentifier(type);
-        return ( identifier != null) ? identifier : DEFAULT_IDENTIFIER;
     }
 
     /**

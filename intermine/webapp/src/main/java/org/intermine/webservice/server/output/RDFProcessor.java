@@ -15,10 +15,10 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.rdf.RDFHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.PermanentURIHelper;
@@ -42,8 +42,7 @@ public class RDFProcessor extends ResultProcessor
 {
     private String uri;
     private InterMineLUIConverter luiConverter;
-    private static final String VOC_NAMESPACE = "http://intermine.org/vocabulary/";
-    private static final String RES_NAMESPACE = "http://intermine.org/resource/";
+
     private final InterMineAPI im;
 
     /**
@@ -82,13 +81,13 @@ public class RDFProcessor extends ResultProcessor
                     InterMineLUI lui = luiConverter.getInterMineLUI(id);
 
                     String resourceURI = (lui != null) ? uri.concat(lui.toString())
-                            : RES_NAMESPACE.concat(id.toString());
+                            : RDFHelper.RES_NAMESPACE.concat(id.toString());
                     if (classDescriptor.getOntologyTerm() != null) {
                         resource = model.createResource(resourceURI,
                                 model.createResource(classDescriptor.getOntologyTerm()));
                     } else {
                         resource = model.createResource(resourceURI,
-                                model.createResource(RES_NAMESPACE
+                                model.createResource(RDFHelper.RES_NAMESPACE
                                         + classDescriptor.getSimpleName()));
                     }
                     resources.put(currentClassDesc.getName(), resource);
@@ -104,9 +103,8 @@ public class RDFProcessor extends ResultProcessor
                                 String parentToLink =
                                         partialPath.getSecondLastClassDescriptor().getName();
                                 Resource parentResource = resources.get(parentToLink);
-                                String localName = "has" + rd.getName();
                                 parentResource.addProperty(
-                                        model.createProperty(VOC_NAMESPACE, localName), resource);
+                                        RDFHelper.createProperty(rd.getName()), resource);
                             }
                         } catch (PathException pe) {
                             throw new BadRequestException(stringPath + " is not a valid path");
@@ -115,11 +113,8 @@ public class RDFProcessor extends ResultProcessor
                 }
                 FieldDescriptor fd = path.getEndFieldDescriptor();
                 if (fd.isAttribute() && item.getField() != null) {
-                    String ontologyTerm = ((AttributeDescriptor) fd).getOntologyTerm();
-                    if (ontologyTerm != null) {
-                        resource.addProperty(model.createProperty(ontologyTerm),
-                                item.getField().toString());
-                    }
+                    resource.addProperty(RDFHelper.createProperty(fd.getName()),
+                            item.getField().toString());
                 }
             }
 
