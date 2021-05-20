@@ -53,6 +53,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
     private Results results;
     private int items;
     private List<List<Object>> resultTable = new LinkedList<List<Object>>();
+    private String type;
 
     /**
      * Constructor.
@@ -61,12 +62,14 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
      * @param config The description of the list tool.
      * @param filter A filter value.
      * @param ids intermine IDs, required if bag is NULL
+     * @param type type for intermine IDs, required if bag is NULL
      */
     public GraphWidgetLoader(InterMineBag bag,
                               ObjectStore os,
                               GraphWidgetConfig config,
-                              String filter, String ids) {
+                              String filter, String ids, String type) {
         super(bag, os, filter, config, ids);
+        this.type = type;
         this.config = config;
         LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
         if (!config.comparesActualToExpected()) {
@@ -112,24 +115,26 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         if (config.getTypeClass().equals(config.getStartClass())) {
             idQueryField = new QueryField(startClass, "id");
             if (!GraphWidgetActionType.EXPECTED.equals(action)) {
-                cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN,
-                                                   bag.getOsb()));
+                cs.addConstraint(createBagConstraint(idQueryField));
             }
         } else {
             //update query adding the bag
             QueryClass bagTypeQueryClass;
+            String bagType = type;
             try {
+                if (bag != null) {
+                    bagType = bag.getType();
+                }
                 bagTypeQueryClass = new QueryClass(Class.forName(model.getPackageName()
-                                                          + "." + bag.getType()));
+                        + "." + bagType));
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("Not found the class typebag for the bag "
-                                                  + bag.getName(), e);
+                                                  + bagType, e);
             }
             query.addFrom(bagTypeQueryClass);
             idQueryField = new QueryField(bagTypeQueryClass, "id");
             if (!GraphWidgetActionType.EXPECTED.equals(action)) {
-                cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN,
-                                                   bag.getOsb()));
+                cs.addConstraint(createBagConstraint(idQueryField));
             }
 
             QueryClass qc = null;
@@ -198,6 +203,15 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
             mainQuery.addToSelect(qfCount);
             return mainQuery;
         }
+    }
+
+    private BagConstraint createBagConstraint(QueryField queryField) {
+        if (bag != null) {
+            return new BagConstraint(queryField, ConstraintOp.IN, bag.getOsb());
+        } else if (idsList != null) {
+            return new BagConstraint(queryField, ConstraintOp.IN, idsList);
+        }
+        return null;
     }
 
     /**
