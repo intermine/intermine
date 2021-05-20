@@ -11,8 +11,8 @@ package org.intermine.webservice.server.widget;
  */
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -130,12 +130,21 @@ public class EnrichmentWidgetResultService extends WidgetService
 
         //reference population
         InterMineBag populationBag = getReferencePopulationBag(input);
-        if (populationBag != null && !verifyPopulationContainsBag(imBag, populationBag)) {
-            if (input.shouldSavePopulation()) {
-                deleteReferencePopulationPreference(input);
+        if (populationBag != null ) {
+            if (imBag != null && !verifyPopulationContainsBag(imBag, populationBag)) {
+                if (input.shouldSavePopulation()) {
+                    deleteReferencePopulationPreference(input);
+                }
+                addOutputAttribute("message", String.format(BAD_POPULATION_MSG, imBag.getType()));
+                return;
+            } else if (!verifyPopulationContainsIds(ids, populationBag)) {
+                if (input.shouldSavePopulation()) {
+                    deleteReferencePopulationPreference(input);
+                }
+                addOutputAttribute("message", String.format(BAD_POPULATION_MSG,
+                    populationBag.getType()));
+                return;
             }
-            addOutputAttribute("message", String.format(BAD_POPULATION_MSG, imBag.getType()));
-            return;
         }
 
         //instantiate the widget
@@ -328,6 +337,28 @@ public class EnrichmentWidgetResultService extends WidgetService
         List<Integer> bagContentdIds =
             new ArrayList<Integer>(bag.getContentsAsIds());
         if (populationBagContentdIds.containsAll(bagContentdIds)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean verifyPopulationContainsIds(String ids, InterMineBag populationBag) {
+        //verify the population Bag contains all elements of ids
+        List<Integer> populationBagContentdIds =
+                new ArrayList<Integer>(populationBag.getContentsAsIds());
+
+        String[] idArray = ids.split(",");
+        List<Integer> idsList = new ArrayList<>();
+        for (String id : idArray) {
+            try {
+                idsList.add(Integer.valueOf(id.trim()));
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("List of IDs contains invalid integer: "
+                        + id, e);
+            }
+        }
+
+        if (populationBagContentdIds.containsAll(idsList)) {
             return true;
         }
         return false;
