@@ -79,6 +79,11 @@ public class BuildBagAction extends InterMineAction
             return mapping.findForward("bags");
         }
 
+        if (!im.getModel().hasClassDescriptor(type)) {
+            recordError(new ActionMessage("bagBuild.typeNotSet"), request);
+            return mapping.findForward("bags");
+        }
+
         BagQueryRunner bagRunner = im.getBagQueryRunner();
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
