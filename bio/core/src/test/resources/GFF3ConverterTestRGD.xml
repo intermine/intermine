@@ -32,7 +32,6 @@
 <item id="9_1" class="MRNA">
 <attribute name="length" value="3999273"/>
 <attribute name="primaryIdentifier" value="mRNARGD2752358_t00"/>
-<attribute name="scoreType" value="AAA"/>
 <attribute name="symbol" value="NM_017057"/>
 <reference name="chromosome" ref_id="4_1"/>
 <reference name="chromosomeLocation" ref_id="7_2"/>

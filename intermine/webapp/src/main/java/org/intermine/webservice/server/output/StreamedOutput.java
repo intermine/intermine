@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -68,7 +68,11 @@ public class StreamedOutput extends Output
         return;
     }
 
-    private void writeLn(String s) {
+    /**
+     *
+     * @param s string to write
+     */
+    public void writeLn(String s) {
         writer.print(s);
         if (separator == null) {
             writer.println();
@@ -108,9 +112,16 @@ public class StreamedOutput extends Output
     @Override
     public void flush() {
         ensureHeaderIsPrinted();
-        writer.print(formatter.formatFooter(getError(), getCode()));
+        writeFooter();
         writer.flush();
         writer.close();
+    }
+
+    /**
+     * Writes footer
+     */
+    public void writeFooter() {
+        writer.print(formatter.formatFooter(getError(), getCode()));
     }
 
     /**

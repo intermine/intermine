@@ -1,21 +1,10 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.6.2"
-    }
-}
-
 subprojects {
     group = 'org.intermine'
-    version = '4.3.0'
+    version = '5.0.1'
 
     apply plugin: "java"
     apply plugin: "maven"
-    apply plugin: "com.jfrog.bintray"
-    apply plugin: "com.jfrog.artifactory"
+    apply plugin: "signing"
     apply plugin: "checkstyle"
 
     sourceCompatibility = 1.8
@@ -23,12 +12,9 @@ subprojects {
 
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
         maven {
-            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
-        }
-        maven {
-            url 'http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
+            url 'https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
         }
     }
 
@@ -90,51 +76,52 @@ subprojects {
         archives javadocJar
     }
 
-    artifactory {
-        contextUrl = 'https://oss.jfrog.org/artifactory/'
-        resolve {
-            repository {
-                repoKey = 'libs-release'
-            }
-        }
-        publish {
-            repository {
-                if (project.version.endsWith("-SNAPSHOT")) {
-                    repoKey = 'oss-snapshot-local'
-                } else {
-                    repoKey = 'oss-release-local'
+    signing {
+        required { gradle.taskGraph.hasTask("publish") }
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
-            username = System.getenv('BINTRAY_USER')
-            password = System.getenv('BINTRAY_KEY')
-            }
-            defaults {
-	        publishConfigs('archives')
+
+                snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name project.name
+                    packaging 'jar'
+                    description 'InterMine bio modules'
+                    url 'https://github.com/intermine/intermine'
+
+                    scm {
+                        connection 'scm:git:git://github.com/intermine/intermine.git'
+                        developerConnection 'scm:git:ssh://github.com:intermine/intermine.git'
+                        url 'https://github.com/intermine/intermine'
+                    }
+
+                    licenses {
+                        license {
+                            name 'LGPL-2.1'
+                            url 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            name 'InterMine core team and contributors'
+                        }
+                    }
+                }
             }
         }
     }
-
-    bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_KEY')
-        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-        publish = true //[Default: false] Whether version should be auto published after an upload
-        override = true //[Default: false] Whether to override version artifacts already published
-        pkg {
-            repo = 'bio'
-            name = project.name
-            userOrg = user
-            licenses = ['LGPL-2.1']
-            vcsUrl = 'https://github.com/intermine/intermine.git'
-            publicDownloadNumbers = true
-            version {
-                name = '4.3.0'
-                desc = 'InterMine 4.3.0'
-                vcsTag = 'intermine-4.3.0'
-            }
-        }
-        configurations = ['archives']
-    }
-
 }
 
 task testReport(type: TestReport) {

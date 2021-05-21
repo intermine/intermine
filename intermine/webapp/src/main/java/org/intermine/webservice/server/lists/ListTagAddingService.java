@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,7 +55,7 @@ public class ListTagAddingService extends ListTagService
 
         BagManager bagManager = im.getBagManager();
         Profile profile = getPermission().getProfile();
-        Map<String, InterMineBag> lists = bagManager.getBags(profile);
+        Map<String, InterMineBag> lists = bagManager.getUserBags(profile);
         InterMineBag list = lists.get(listName);
         if (list == null) {
             throw new ResourceNotFoundException(

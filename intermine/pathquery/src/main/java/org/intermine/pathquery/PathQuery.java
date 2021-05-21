@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,6 +27,8 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Date;
+
 import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -2336,17 +2338,47 @@ public class PathQuery implements Cloneable
      * @return This query as json.
      */
     public String toJson() {
-        return toJson(true);
+        return toJson(true, null);
+    }
+
+    /**
+     * Convert this PathQuery to a JSON serialisation.
+     *
+     * The returned version should be trimmed to represent only the current state
+     * of the query, not all possible states.
+     * @param onlyRelevant  whether to only return relevant, active constraints.
+     *
+     * @return This query as json.
+     */
+    public String toJson(boolean onlyRelevant) {
+        return toJson(onlyRelevant, null);
+    }
+
+    /**
+     * Convert this PathQuery to a JSON serialisation.
+     *
+     * The returned version should be trimmed to represent only the current state
+     * of the query, not all possible states.
+     * @param date the creation date, used by savedquery
+     *
+     * @return This query as json.
+     */
+    public String toJson(Date date) {
+        return toJson(true, date);
     }
 
     /**
      * Convert this PathQuery to a JSON serialisation.
      * @param onlyRelevant  whether to only return relevant, active constraints.
+     * @param date the creation date, used by savedquery
      * @return This query as json.
      */
-    public synchronized String toJson(boolean onlyRelevant) {
+    public synchronized String toJson(boolean onlyRelevant, Date date) {
         StringBuffer sb = new StringBuffer("{");
 
+        if (date != null) {
+            sb.append("\"created\": " + ConstraintValueParser.ISO_DATE_FORMAT.format(date) + ",");
+        }
         sb.append(String.format("\"model\":{\"name\":\"%s\"}",
                     model.getName()));
 

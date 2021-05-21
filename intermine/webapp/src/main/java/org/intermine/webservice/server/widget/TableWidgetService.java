@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -52,6 +52,10 @@ public class TableWidgetService extends WidgetService
 
         InterMineBag imBag = retrieveBag(input.getBagName());
         addOutputListInfo(imBag);
+        String type = input.getType();
+        if (type != null) {
+            addOutputInfo("type", type);
+        }
 
         WebConfig webConfig = InterMineContext.getWebConfig();
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());

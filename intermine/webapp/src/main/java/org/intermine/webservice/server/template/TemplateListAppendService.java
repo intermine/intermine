@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,7 +11,6 @@ package org.intermine.webservice.server.template;
  */
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 
 import org.intermine.api.InterMineAPI;
@@ -27,6 +26,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.lists.ListInput;
 
 /**
  * A class to append items from a set of template results to a
@@ -47,8 +47,7 @@ public class TemplateListAppendService extends TemplateToListService
 
     @Override
     protected void generateListFromQuery(PathQuery pq,
-        String name, String description, Collection<String> tags,
-        Profile profile) throws ObjectStoreException, PathException {
+        ListInput input, Profile profile) throws ObjectStoreException, PathException {
         Query q = MainHelper.makeQuery(
                 pq,
                 bagManager.getBags(profile),
@@ -56,6 +55,7 @@ public class TemplateListAppendService extends TemplateToListService
                 im.getBagQueryRunner(),
                 new HashMap<String, BagQueryResult>());
 
+        String name = input.getListName();
         InterMineBag list = profile.getSavedBags().get(name);
         if (list == null) {
             throw new BadRequestException(
@@ -64,7 +64,7 @@ public class TemplateListAppendService extends TemplateToListService
         try {
             list.addToBagFromQuery(q);
             try {
-                im.getBagManager().addTagsToBag(tags, list, profile);
+                im.getBagManager().addTagsToBag(input.getTags(), list, profile);
             } catch (TagManager.TagNameException e) {
                 throw new BadRequestException(e.getMessage());
             } catch (TagManager.TagNamePermissionException e) {

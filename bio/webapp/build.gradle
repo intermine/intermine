@@ -70,3 +70,4 @@ artifacts {
     archives classesJar
 }
 
+tasks.signArchives.dependsOn('warBioWebApp')

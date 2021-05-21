@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -89,7 +89,7 @@ public class ListInput
 
         this.listName = produceName();
         this.description = request.getParameter(DESCRIPTION_PARAMETER);
-        this.replaceExisting = Boolean.parseBoolean(REPLACE_PARAMETER);
+        this.replaceExisting = Boolean.parseBoolean(request.getParameter(REPLACE_PARAMETER));
         this.type = request.getParameter(TYPE_PARAMETER);
         this.extraValue = request.getParameter(EXTRA_PARAMETER);
 

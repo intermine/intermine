@@ -1,7 +1,7 @@
 package org.intermine.modelproduction;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -123,6 +123,11 @@ public final class MetadataManager
      * Description of range type columns defined in the database.
      */
     public static final String RANGE_DEFINITIONS = "rangeDefinitions";
+
+    /**
+     * The name of the key used to store the bluegenes properties.
+     */
+    public static final String BG_PROPERTIES = "bgProperties";
 
     /**
      * Store a (key, value) pair in the metadata table of the database

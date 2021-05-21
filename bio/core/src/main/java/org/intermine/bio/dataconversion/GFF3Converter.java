@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -384,9 +384,6 @@ public class GFF3Converter extends DataConverter
         Double score = record.getScore();
         if (score != null && !"".equals(String.valueOf(score))) {
             feature.setAttribute("score", String.valueOf(score));
-            if (record.getSource() != null) {
-                feature.setAttribute("scoreType", record.getSource());
-            }
         }
 
         for (Item synonym : synonymsToAdd) {

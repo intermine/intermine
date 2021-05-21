@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -120,7 +120,6 @@ public class GFF3ConverterTest extends ItemsTestCase {
 //            10116.attributes.ID=primaryIdentifier
 //            10116.gene.attributes.ID=secondaryIdentifier
 //            10116.attributes.Note=description
-//            10116.mRNA.attributes.Type=scoreType
 //            10116.attributes.Dbxref.EntrezGene=ncbiGeneNumber
 //            10116.attributes.Dbxref.EnsemblGenes=synonym
 //        */

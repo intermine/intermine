@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2020 FlyMine
+ * Copyright (C) 2002-2021 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -102,6 +102,7 @@ public abstract class WebService
     public static final String DEFAULT_CALLBACK = "callback";
 
     private static final String COMPRESS = "compress";
+    private static final String EXPORT_DATAPACKAGE = "exportDataPackage";
     private static final String GZIP = "gzip";
     private static final String ZIP = "zip";
 
@@ -131,6 +132,8 @@ public abstract class WebService
      * The response to the outside world.
      */
     protected Output output;
+    protected Output dataPackageOutput;
+    protected OutputStream os;
 
     /**
      * The configuration object.
@@ -353,14 +356,37 @@ public abstract class WebService
             sendError(t, response);
         }
 
-        try {
-            if (output == null) {
-                response.flushBuffer();
-            } else {
-                output.flush();
+        if (!wantsDataPackage()) {
+            // the usual flushing when only results are exported
+            try {
+                if (output == null) {
+                    response.flushBuffer();
+                } else {
+                    output.flush();
+                }
+            } catch (Throwable t) {
+                logError(t, "Error flushing", 500);
             }
-        } catch (Throwable t) {
-            logError(t, "Error flushing", 500);
+        } else {
+            try {
+                if (dataPackageOutput == null) {
+                    response.flushBuffer();
+                } else {
+                    /*
+                    dataPackageOutput.flush() does 4 things -
+                    1. ensures header is printed    ensureHeaderIsPrinted();
+                    2. writes footer                writeFooter();
+                    3. flushes printwriter          writer.flush();
+                    4. closes printwriter           writer.close();
+
+                    In data package output, we don't need 1 and 2 so we just call 3 and 4 directly
+                    */
+                    out.flush();
+                    out.close();
+                }
+            } catch (Throwable t) {
+                logError(t, "Error flushing", 500);
+            }
         }
 
         try {
@@ -766,6 +792,13 @@ public abstract class WebService
     }
 
     /**
+     * @return Whether or not this request wants to export data package.
+     */
+    protected boolean wantsDataPackage() {
+        return request.getParameter(EXPORT_DATAPACKAGE) == null ? false : true;
+    }
+
+    /**
      * @return the file-name extension for the result-set.
      */
     protected String getExtension() {
@@ -778,7 +811,7 @@ public abstract class WebService
         }
     }
 
-    private PrintWriter out = null;
+    protected PrintWriter out = null;
 
     private String lineBreak = null;
 
@@ -795,7 +828,6 @@ public abstract class WebService
     private void initOutput() {
         final String separator = getLineBreak();
 
-        OutputStream os;
         try {
             // set reasonable buffer size
             response.setBufferSize(8 * 1024);
