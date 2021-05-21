@@ -67,6 +67,10 @@ public class InterMineLUIConverter
         String viewPath =  className + ".id";
         pathQuery.addView(viewPath);
         String identifier = IdentifiersMapper.getMapper().getIdentifier(className);
+        if (identifier == null) {
+            LOGGER.info("No " + className + "_URI defined in the class_key.properties file");
+            return INTERMINE_ID_NOT_FOUND;
+        }
         String constraintPath = className + "." + identifier;
         pathQuery.addConstraint(Constraints.eq(constraintPath, interMineLUI.getIdentifier()));
         if (!pathQuery.isValid()) {
@@ -107,6 +111,12 @@ public class InterMineLUIConverter
             }
             type = DynamicUtil.getSimpleClass(entity).getSimpleName();
             String identifierField = IdentifiersMapper.getMapper().getIdentifier(type);
+            if (identifierField == null) {
+                LOGGER.info("The entity " + interMineID + " has no key configured, "
+                        + "the share link will not be displayed in the report page. "
+                        + "Configure a different key in the class_keys.properties file");
+                return null;
+            }
             identifier = (String) entity.getFieldValue(identifierField);
             if (identifier == null) {
                 LOGGER.info("The entity " + interMineID + " has " + identifierField + " null, "

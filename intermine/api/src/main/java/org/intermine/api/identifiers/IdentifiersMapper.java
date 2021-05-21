@@ -34,7 +34,6 @@ public final class IdentifiersMapper
 {
     private static IdentifiersMapper instance = null;
     private static final String URI_SUFFIX = "_URI";
-    private Properties properties = null;
     //map tp cache the identifier associated to a class Name
     private static Map<String, String> classNameIdentifiersMap = new HashMap();
     private static final Logger LOGGER = Logger.getLogger(IdentifiersMapper.class);
@@ -47,7 +46,14 @@ public final class IdentifiersMapper
      * Private constructor called by getMapper (singleton)
      */
     private IdentifiersMapper() {
-        properties = new Properties();
+        //load all classes extending Annotatable
+        String annotatable = "Annotatable";
+        classNameIdentifiersMap.put(annotatable, DEFAULT_IDENTIFIER);
+        Set<String> subClassNames = getSubClassNames(annotatable);
+        for (String subClassName : subClassNames) {
+            classNameIdentifiersMap.put(subClassName, DEFAULT_IDENTIFIER);
+        }
+        Properties properties = new Properties();
         try {
             InputStream inputStream = null;
             try {
@@ -66,7 +72,6 @@ public final class IdentifiersMapper
                 }
                 properties.load(inputStream);
                 String key = null;
-                Set<String> subClassNames = null;
                 for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                     key = (String) entry.getKey();
                     if (key.endsWith(URI_SUFFIX)) {
@@ -109,9 +114,9 @@ public final class IdentifiersMapper
     public String getIdentifier(String className) {
         if (classNameIdentifiersMap != null) {
             String identifier = classNameIdentifiersMap.get(className);
-            return ( identifier != null)
-                    ? identifier
-                    : IdentifiersMapper.DEFAULT_IDENTIFIER;
+            if ( identifier != null) {
+                return identifier;
+            }
         }
         return null;
     }
@@ -121,7 +126,7 @@ public final class IdentifiersMapper
         Model model = Model.getInstanceByName("genomic");
         ClassDescriptor cl = model.getClassDescriptorByName(className);
         if (cl != null) {
-            Set<ClassDescriptor> subDescriptors = cl.getSubDescriptors();
+            Set<ClassDescriptor> subDescriptors = model.getAllSubs(cl);
             for (ClassDescriptor descriptor : subDescriptors) {
                 subClassNames.add(descriptor.getSimpleName());
             }
