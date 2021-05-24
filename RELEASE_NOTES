@@ -9,6 +9,7 @@
  */
 InterMine 5.0.2 (May 2021)
 
+#2335 - BioGrid data change causing loader to throw Exception
 #2344 - Why feature.setAttribute("scoreType", record.getSource()) in  GFF3Converter.java?
 #2352 - Enrichment web service fails if using ids and background population 
 #2356 - Graph and table windgets WSs do not work when passing IDs
