@@ -7,8 +7,17 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-InterMine 5.0.1 (May 2021)
+InterMine 5.0.2 (May 2021)
 
+#2344 - Why feature.setAttribute("scoreType", record.getSource()) in  GFF3Converter.java?
+#2352 - Enrichment web service fails if using ids and background population 
+#2356 - Graph and table windgets WSs do not work when passing IDs
+#2358 - Check the type in the bag upload form
+#2367 - preparation release 5.0.1
+
+InterMine 5.0.1 (May 2021) - Broken
+Due to a sync issue, the bio-webapp 5.0.1 artifact has been built wrapping intermine-webapp 5.0.0 instead of 5.0.1 and as a consequence, it doesn't contains some of the following fixes.
+Please use 5.0.2 instead.
 #2344 - Why feature.setAttribute("scoreType", record.getSource()) in  GFF3Converter.java?
 #2352 - Enrichment web service fails if using ids and background population 
 #2356 - Graph and table windgets WSs do not work when passing IDs
