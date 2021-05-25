@@ -120,7 +120,6 @@ public class GFF3ConverterTest extends ItemsTestCase {
 //            10116.attributes.ID=primaryIdentifier
 //            10116.gene.attributes.ID=secondaryIdentifier
 //            10116.attributes.Note=description
-//            10116.mRNA.attributes.Type=scoreType
 //            10116.attributes.Dbxref.EntrezGene=ncbiGeneNumber
 //            10116.attributes.Dbxref.EnsemblGenes=synonym
 //        */
