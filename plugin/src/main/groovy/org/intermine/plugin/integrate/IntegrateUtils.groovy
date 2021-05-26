@@ -254,6 +254,11 @@ class IntegrateUtils {
         ontologyName = (ant.project.getProperty("obo.ontology.name") != null) ?
             ant.project.getProperty("obo.ontology.name") : ontologyName
 
+        String description = (bioSourceProperties.getProperty("obo.ontology.description") != null) ?
+            bioSourceProperties.getProperty("obo.ontology.description") : ""
+        description = (ant.project.getProperty("obo.ontology.description") != null) ?
+            ant.project.getProperty("obo.ontology.description") : description
+
         String url = (bioSourceProperties.getProperty("obo.ontology.url") != null) ?
             bioSourceProperties.getProperty("obo.ontology.url") : ""
         url = (ant.project.getProperty("obo.ontology.url") != null) ?
@@ -269,6 +274,7 @@ class IntegrateUtils {
         ant.convertOBO(file: BioSourceProperties.getUserProperty(source, "src.data.file"),
                        osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
                        ontologyName: ontologyName,
+                       description: description,
                        url: url,
                        termClass: bioSourceProperties.getProperty("obo.term.class"),
                        licence: licence)
