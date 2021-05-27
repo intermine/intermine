@@ -83,8 +83,11 @@ public class RDFProcessor extends ResultProcessor
                     String resourceURI = (lui != null) ? uri.concat(lui.toString())
                             : RDFHelper.RES_NAMESPACE.concat(id.toString());
                     if (classDescriptor.getOntologyTerm() != null) {
-                        resource = model.createResource(resourceURI,
-                                model.createResource(classDescriptor.getOntologyTerm()));
+                        String[] terms = classDescriptor.getOntologyTerm().split(",");
+                        for (int index = 0; index < terms.length; index++) {
+                            resource = model.createResource(resourceURI,
+                                    model.createResource(terms[index]));
+                        }
                     } else {
                         resource = model.createResource(resourceURI,
                                 model.createResource(RDFHelper.RES_NAMESPACE

@@ -101,6 +101,8 @@ public class R2RMLMappingProcess extends PostProcessor
     private void setKnownPrefixes(final Model jenaModel) {
         jenaModel.setNsPrefix("rr", R2RML.URI);
         jenaModel.setNsPrefix("rdfs", RDFS.uri);
+        jenaModel.setNsPrefix("sio", R2RML.SIO);
+        jenaModel.setNsPrefix("obo", R2RML.OBO);
         jenaModel.setNsPrefix("up", R2RML.UNIPROT_NS);
     }
 
@@ -187,9 +189,12 @@ public class R2RMLMappingProcess extends PostProcessor
                     model.add(subjectMap, R2RML.TEMPLATE, createURI(tableName));
 
                     if (cd.getOntologyTerm() != null && !cd.getOntologyTerm().isEmpty()) {
-                        Resource classInOutsideWorld =
-                                ResourceFactory.createProperty(cd.getOntologyTerm());
-                        model.add(subjectMap, R2RML.CLASS_PROPERTY, classInOutsideWorld);
+                        String[] terms = cd.getOntologyTerm().split(",");
+                        for (int index = 0; index < terms.length; index++) {
+                            Resource classInOutsideWorld =
+                                    ResourceFactory.createProperty(terms[index]);
+                            model.add(subjectMap, R2RML.CLASS_PROPERTY, classInOutsideWorld);
+                        }
                     } /* else {
                         Resource classInOutsideWorld = ResourceFactory.createProperty(
                             URIHelper.interMineVocNS + cd.getSimpleName());
