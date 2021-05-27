@@ -42,6 +42,16 @@ public final class R2RML
     public static final  String UNIPROT_KBNS = "http://purl.uniprot.org/uniprot/";
 
     /**
+     * Semanticscience Integrated Ontology
+     */
+    public static final String SIO = "http://semanticscience.org/resource/";
+
+    /**
+     * OBO Ontology
+     */
+    public static final String OBO = "http://purl.obolibrary.org/obo/";
+
+    /**
      * Create TriplesMap property
      */
     public static final Resource TRIPLE_MAP = ResourceFactory.createProperty(URI, "TriplesMap");
