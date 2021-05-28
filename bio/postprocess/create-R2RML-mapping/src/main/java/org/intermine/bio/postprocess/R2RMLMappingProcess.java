@@ -56,6 +56,7 @@ public class R2RMLMappingProcess extends PostProcessor
 {
     static final int FORMAT_VERSION = 1;
     private String baseUri;
+    private Set<String> excludedClasses;
     private static final Logger LOG = Logger.getLogger(R2RMLMappingProcess.class);
 
 
@@ -66,6 +67,14 @@ public class R2RMLMappingProcess extends PostProcessor
      */
     public R2RMLMappingProcess(ObjectStoreWriter osw) {
         super(osw);
+        excludedClasses = new HashSet<>();
+        excludedClasses.add("Annotatable");
+        excludedClasses.add("BioEntity");
+        excludedClasses.add("Comment");
+        excludedClasses.add("OntologyAnnotation");
+        excludedClasses.add("OntologyTerm");
+        excludedClasses.add("SequenceCollection");
+        excludedClasses.add("SequenceFeature");
     }
 
     /**
@@ -78,12 +87,35 @@ public class R2RMLMappingProcess extends PostProcessor
     }
 
     /**
+     * set the classes that will not be mapped
+     *
+     * @param classes the classes that will not mapped
+     */
+    public void setExcludes(String classes) {
+        if (classes != null) {
+            org.intermine.metadata.Model model =
+                    org.intermine.metadata.Model.getInstanceByName("genomic");
+            String[] classesArray = classes.split(",");
+            String className = null;
+            for (int index=0; index < classesArray.length; index++) {
+                className = classesArray[index];
+                if (model.getClassDescriptorByName(className) != null) {
+                    excludedClasses.add(className);
+                } else {
+                    LOG.error("Class " + className + " doesn't not belong to the model");
+                }
+            }
+        }
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     public void postProcess() throws Exception {
         final Model jenaModel = ModelFactory.createDefaultModel();
         setKnownPrefixes(jenaModel);
-        Set<ClassDescriptor> classDescriptors = getChildClassDescriptors();
+        Set<ClassDescriptor> classDescriptors = getMappableClasses();
         for (ClassDescriptor cd : classDescriptors) {
             mapBasicFields(cd, jenaModel);
             mapJoinToOtherTable(cd, jenaModel);
@@ -106,38 +138,21 @@ public class R2RMLMappingProcess extends PostProcessor
         jenaModel.setNsPrefix("up", R2RML.UNIPROT_NS);
     }
 
-    private Set<ClassDescriptor> getChildClassDescriptors() {
-        Set<ClassDescriptor> validClassDescriptors = new HashSet<>();
+    private Set<ClassDescriptor> getMappableClasses() {
+        Set<ClassDescriptor> validClassDescriptors = new HashSet<ClassDescriptor>();
         Set<ClassDescriptor> classDescriptors =
                 org.intermine.metadata.Model.getInstanceByName("genomic").getClassDescriptors();
         for (ClassDescriptor cd : classDescriptors) {
-            if (isChildClassDescriptor(cd)) {
+            if (isMappable(cd)) {
                 validClassDescriptors.add(cd);
             }
         }
         return validClassDescriptors;
     }
 
-    private boolean isChildClassDescriptor(ClassDescriptor classDescriptor) {
+    private boolean isMappable(ClassDescriptor classDescriptor) {
         String dataType = classDescriptor.getSimpleName();
-        if ("Annotatable".equalsIgnoreCase(dataType)
-                || "BioEntity".equalsIgnoreCase(dataType)
-                || "SequenceCollection".equalsIgnoreCase(dataType)
-                || "ChromosomeStructureVariation".equalsIgnoreCase(dataType)
-                || "SequenceFeature".equalsIgnoreCase(dataType)
-                || "BindingSite".equalsIgnoreCase(dataType)
-                || "GoldenPathRegion".equalsIgnoreCase(dataType)
-                || "Oligo".equalsIgnoreCase(dataType)
-                || "EST".equalsIgnoreCase(dataType)
-                || "ProbeSet".equalsIgnoreCase(dataType)
-                || "RegulatoryRegion".equalsIgnoreCase(dataType)
-                || "Transcript".equalsIgnoreCase(dataType)
-                || "TransposableElementInsertionSite".equalsIgnoreCase(dataType)
-                || "Comment".equalsIgnoreCase(dataType)
-                || "CrossReference".equalsIgnoreCase(dataType)
-                || "OntologyAnnotation".equalsIgnoreCase(dataType)
-                || "OntologyTerm".equalsIgnoreCase(dataType)
-                || "UniProtFeature".equalsIgnoreCase(dataType)) {
+        if (excludedClasses.contains(dataType)) {
             return false;
         }
         return true;
@@ -165,7 +180,7 @@ public class R2RMLMappingProcess extends PostProcessor
                         + " with type " + ((AttributeDescriptor) fd).getType() + "\n");
             } else if (fd.isCollection() && ((CollectionDescriptor) fd).relationType()
                     == FieldDescriptor.ONE_N_RELATION) {
-                /*if (isChildClassDescriptor(cd)) {
+                /*if (isMappable(cd)) {
                     //Gene hasSynonym Synonyms
                     mapOneToMany(model, cd, (CollectionDescriptor) fd, basicTableMapping);
                 }*/
@@ -257,7 +272,7 @@ public class R2RMLMappingProcess extends PostProcessor
 
         String jointTable = collection.getReferencedClassDescriptor().getSimpleName();
         if (findSubjectMap(collection.getReferencedClassDescriptor()) != null
-                && isChildClassDescriptor(collection.getReferencedClassDescriptor())
+                && isMappable(collection.getReferencedClassDescriptor())
                 && !"OntologyAnnotation".equalsIgnoreCase(jointTable)) {
             //e.g strain -> Sequencefeature
             Resource objectMap = model.createResource();
@@ -306,12 +321,12 @@ public class R2RMLMappingProcess extends PostProcessor
         Set<ClassDescriptor> toSubDescriptors = imModel.getAllSubs(refClassDescriptor);
         if (!toSubDescriptors.isEmpty()) {
             for (ClassDescriptor toSubDescriptor : toSubDescriptors) {
-                if (isChildClassDescriptor(toSubDescriptor)) {
+                if (isMappable(toSubDescriptor)) {
                     createManyToOneResources(model, basicTableMapping, fd, toSubDescriptor);
                 }
             }
         } else {
-            if (isChildClassDescriptor(refClassDescriptor)) {
+            if (isMappable(refClassDescriptor)) {
                 createManyToOneResources(model, basicTableMapping, fd, refClassDescriptor);
             }
         }
@@ -364,12 +379,12 @@ public class R2RMLMappingProcess extends PostProcessor
                 Set<ClassDescriptor> toSubDescriptors = imModel.getAllSubs(toTableDescription);
                 if (!toSubDescriptors.isEmpty()) {
                     for (ClassDescriptor toSubDescriptor : toSubDescriptors) {
-                        if (isChildClassDescriptor(toSubDescriptor)) {
+                        if (isMappable(toSubDescriptor)) {
                             createManyToManyResources(model, cd, toSubDescriptor, collection);
                         }
                     }
                 } else {
-                    if (isChildClassDescriptor(toTableDescription)) {
+                    if (isMappable(toTableDescription)) {
                         createManyToManyResources(model, cd, toTableDescription, collection);
                     }
                 }
