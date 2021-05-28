@@ -97,7 +97,7 @@ public class R2RMLMappingProcess extends PostProcessor
                     org.intermine.metadata.Model.getInstanceByName("genomic");
             String[] classesArray = classes.split(",");
             String className = null;
-            for (int index=0; index < classesArray.length; index++) {
+            for (int index = 0; index < classesArray.length; index++) {
                 className = classesArray[index];
                 if (model.getClassDescriptorByName(className) != null) {
                     excludedClasses.add(className);
