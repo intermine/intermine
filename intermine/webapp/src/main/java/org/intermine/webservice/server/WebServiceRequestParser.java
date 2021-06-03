@@ -351,6 +351,8 @@ public class WebServiceRequestParser
                 return Format.CSV;
             } else if (pathInfo.endsWith("/txt")) {
                 return Format.TEXT;
+            } else if (pathInfo.endsWith("/rdf")) {
+                return Format.RDF;
             }
         }
         return null;

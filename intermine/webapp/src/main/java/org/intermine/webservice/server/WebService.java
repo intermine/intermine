@@ -907,6 +907,7 @@ public abstract class WebService
                 break;
             case RDF:
                 output = new RDFOutput(out);
+                ResponseUtil.setNTriplesHeader(response, "result.nt");
                 break;
             default:
                 output = getDefaultOutput(out, os, separator);
