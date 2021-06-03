@@ -341,7 +341,7 @@ public class GFF3Record
             return null;
         }
     }
-    
+
     /**
      * Return the first value of the Alias field from the attributes of this record.
      * @return the Alias from the attributes of this record or null of there isn't a value
