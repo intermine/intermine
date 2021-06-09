@@ -197,7 +197,10 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
      * @param facetValues values for facets
      * @return search result for given facet
      */
-    private Vector<KeywordSearchFacet> parseFacets(QueryResponse resp,
+    private Vector<KeywordSearchFacet> parseFacets(QueryResponse resp,    <source name="legume.genefam.fam1.M65K" type="lis-genefamily" dump="true">
+    <source name="legume.genefam.fam1.M65K.trees_ML_rooted" type="lis-phylotree" dump="true">
+    <source name="glyma-about" type="lis-about" dump="true">
+    <source name="glyma.Wm82.gnm1.FCtY.genome_main" type="lis-fasta" dump="true">
                                                   Vector<KeywordSearchFacetData> facetVector,
                                                   Map<String, String> facetValues) {
         long time = System.currentTimeMillis();
@@ -227,7 +230,10 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
         }
         LOG.debug("Parsing " + searchResultsFacets.size() + " facets took "
                 + (System.currentTimeMillis() - time) + " ms");
-        return searchResultsFacets;
+        return searchResultsFacets;    <source name="legume.genefam.fam1.M65K" type="lis-genefamily" dump="true">
+    <source name="legume.genefam.fam1.M65K.trees_ML_rooted" type="lis-phylotree" dump="true">
+    <source name="glyma-about" type="lis-about" dump="true">
+    <source name="glyma.Wm82.gnm1.FCtY.genome_main" type="lis-fasta" dump="true">
     }
 
     /**
@@ -300,8 +306,8 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             // add faceting selections
             for (Map.Entry<String, String> facetValue : facetValues.entrySet()) {
                 if (facetValue != null) {
-                    newQuery.addFilterQuery(facetValue.getKey() + ":\"" +
-                        facetValue.getValue() + "\"");
+                    newQuery.addFilterQuery(facetValue.getKey() + ":\""
+                        + facetValue.getValue() + "\"");
                 }
             }
 
