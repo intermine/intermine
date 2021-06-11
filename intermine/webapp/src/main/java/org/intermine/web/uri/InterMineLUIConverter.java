@@ -92,6 +92,47 @@ public class InterMineLUIConverter
     }
 
     /**
+     * Given a InterMineLUI (compact uri, e.g. protein:P27362) returns the internal intermine Id
+     * @param interMineLUI the interMineLUI
+     * @return internal intermine id OR -1 if there is no entity matching with the LUI or if there
+     * is no identifier set in the class_keys.properties file for the class defined in the lui
+     * @throws ObjectStoreException if there are any objectstore issues
+     */
+    public InterMineObject getInterMineObject(InterMineLUI interMineLUI) throws ObjectStoreException {
+        if (interMineLUI == null) {
+            throw new RuntimeException("InterMineLUI is null");
+        }
+        PathQuery pathQuery = new PathQuery(getModel());
+        String className = interMineLUI.getClassName();
+        String viewPath =  className + ".id";
+        pathQuery.addView(viewPath);
+        String identifier = IdentifiersMapper.getMapper().getIdentifier(className);
+        if (identifier == null) {
+            LOGGER.info("No " + className + "_URI defined in the class_key.properties file");
+            return null;
+        }
+        String constraintPath = className + "." + identifier;
+        pathQuery.addConstraint(Constraints.eq(constraintPath, interMineLUI.getIdentifier()));
+        if (!pathQuery.isValid()) {
+            LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid. No "
+                    + className + "_URI defined in the class_key.properties file");
+            return null;
+        }
+        LOGGER.info("InterMineLUIConverter: pathQuery to retrieve internal id: "
+                + pathQuery.toString());
+        ExportResultsIterator iterator = getPathQueryExecutor().execute(pathQuery);
+        if (iterator.hasNext()) {
+            ResultElement row = iterator.next().get(0);
+            InterMineAPI im = getInterMineAPI();
+            return im.getObjectStore().getObjectById(row.getId());
+        } else {
+            LOGGER.info("InterMineLUIConverter: there are no " + className
+                    + " with " + constraintPath + "=" + interMineLUI.getIdentifier());
+            return null;
+        }
+    }
+
+    /**
      * Generate the InterMineLUI associated to the internal interMine ID
      * @param interMineID the interMineID
      * @return the InterMineLUI

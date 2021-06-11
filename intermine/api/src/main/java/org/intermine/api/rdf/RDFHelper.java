@@ -13,6 +13,15 @@ package org.intermine.api.rdf;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Utility class for RDF generation
@@ -23,12 +32,14 @@ public final class RDFHelper
     /**
      * InterMine vocabulary namespace
      */
-    public static final String VOC_NAMESPACE = "http://intermine.org/vocabulary/";
+    public static final String VOC_NAMESPACE = Namespaces.getNamespaces().get("im");
 
     /**
      * InterMine resource namespace
      */
     public static final String RES_NAMESPACE = "http://intermine.org/resource/";
+
+    private static Map<String, String> namespaces= null;
 
     /**
      * default constructor
@@ -45,5 +56,19 @@ public final class RDFHelper
     public static final Property createProperty(String attribute) {
         return ResourceFactory.createProperty(VOC_NAMESPACE,
                 "has" + StringUtils.capitalize(attribute));
+    }
+
+    /**
+     * Create a RDF property given the attribute
+     * @param attributeDescriptor the field Descriptor
+     * @return the RDF property
+     */
+    public static final Property createProperty(AttributeDescriptor attributeDescriptor) {
+        if (attributeDescriptor.getOntologyTerm() != null) {
+            return ResourceFactory.createProperty(attributeDescriptor.getOntologyTerm());
+        } else {
+            return ResourceFactory.createProperty(VOC_NAMESPACE,
+            "has" + StringUtils.capitalize(attributeDescriptor.getName()));
+        }
     }
 }
