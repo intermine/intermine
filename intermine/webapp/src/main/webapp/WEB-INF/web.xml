@@ -3796,7 +3796,6 @@ may be polled later.
     </metadata>
   </servlet-mapping>
 
-
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
@@ -3836,6 +3835,17 @@ may be polled later.
   <filter-mapping>
       <filter-name>PermanentURLFilter</filter-name>
       <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+
+  <filter>
+    <filter-name>EntityRepresentation</filter-name>
+    <filter-class>org.intermine.web.filters.EntityRepresentationFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>EntityRepresentation</filter-name>
+    <url-pattern>*.rdf</url-pattern>
   </filter-mapping>
 
   <!-- Interpret POST parameters as UTF-8 by default -->
