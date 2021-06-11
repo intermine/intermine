@@ -51,21 +51,6 @@ public class PermanentURIHelper
     }
 
     /**
-     * Returns the permanent URI given the intermine lui, e.g. protein:P31946
-     * @param lui intermine lui
-     * @return the permanent uri
-     */
-    public String getPermanentURI(InterMineLUI lui) {
-        String permanentURI = null;
-        String baseURI = getPermanentBaseURI();
-        if (!baseURI.endsWith("/")) {
-            baseURI = baseURI + "/";
-        }
-        permanentURI = baseURI + lui.toString();
-        return permanentURI;
-    }
-
-    /**
      * Returns the permanent base URI
      * @return the permanent base uri
      */
@@ -75,7 +60,7 @@ public class PermanentURIHelper
         if (baseURI == null || StringUtils.isEmpty(baseURI)) {
             baseURI = new URLGenerator(request).getPermanentBaseURL();
         }
-        return baseURI;
+        return (!baseURI.endsWith("/")) ? baseURI.concat("/") : baseURI;
     }
 
 
