@@ -42,7 +42,8 @@ import java.util.Set;
  *
  * @author Daniela Butano
  */
-public class RDFObject {
+public class RDFObject
+{
     private InterMineObject imObject;
     private String resourceURI;
     private InterMineLUIConverter urlConverter;
@@ -56,10 +57,12 @@ public class RDFObject {
     /**
      * Setup internal ReportObject
      * @param lui the InterMine lui
+     * @param request the http request
      * @param im the InterMineAPI
      * @throws Exception Exception
      */
-    public RDFObject(InterMineLUI lui, InterMineAPI im, HttpServletRequest request) throws Exception {
+    public RDFObject(InterMineLUI lui, InterMineAPI im, HttpServletRequest request)
+            throws Exception {
         if (lui != null) {
             urlConverter =
                     new InterMineLUIConverter(im.getProfileManager().createAnonymousProfile());
@@ -118,7 +121,8 @@ public class RDFObject {
                 fieldValue = fieldClob.toString();
             }
             AttributeDescriptor attributeDescriptor = (AttributeDescriptor) fd;
-            resource.addProperty(RDFHelper.createProperty(attributeDescriptor), fieldValue.toString());
+            resource.addProperty(RDFHelper.createProperty(attributeDescriptor),
+                    fieldValue.toString());
         }
     }
 
@@ -142,7 +146,8 @@ public class RDFObject {
                 InterMineObject referenceObj = proxy.getObject();
                 InterMineLUI lui = urlConverter.getInterMineLUI(referenceObj.getId());
                 if (lui != null) {
-                    Resource referenceObjResource = model.createResource(baseUrl.concat(lui.toString()));
+                    Resource referenceObjResource =
+                            model.createResource(baseUrl.concat(lui.toString()));
                     resource.addProperty(RDFHelper.createProperty(refName), referenceObjResource);
                 }
             }
@@ -169,20 +174,18 @@ public class RDFObject {
                 InterMineObject referenceObj = (InterMineObject) it.next();
                 InterMineLUI lui = urlConverter.getInterMineLUI(referenceObj.getId());
                 if (lui != null) {
-                    Resource referenceObjResource = model.createResource(baseUrl.concat(lui.toString()));
+                    Resource referenceObjResource =
+                            model.createResource(baseUrl.concat(lui.toString()));
                     resource.addProperty(RDFHelper.createProperty(colName), referenceObjResource);
                 }
             }
         }
     }
 
-    public Model getModel() {
-        if (model == null) {
-            initialise();
-        }
-        return model;
-    }
-
+    /**
+     * Write the model as an XML document.
+     * @param out the writer to which the RDF/XML will be written
+     */
     public void serializeAsRDF(Writer out) {
         if (model == null) {
             initialise();

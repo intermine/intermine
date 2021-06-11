@@ -11,18 +11,18 @@ package org.intermine.web.filters;
  */
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.results.RDFObject;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.uri.InterMineLUI;
-import org.intermine.web.uri.InterMineLUIConverter;
 import org.intermine.web.uri.InvalidPermanentURLException;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;

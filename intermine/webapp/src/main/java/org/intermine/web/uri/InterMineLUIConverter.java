@@ -98,7 +98,8 @@ public class InterMineLUIConverter
      * is no identifier set in the class_keys.properties file for the class defined in the lui
      * @throws ObjectStoreException if there are any objectstore issues
      */
-    public InterMineObject getInterMineObject(InterMineLUI interMineLUI) throws ObjectStoreException {
+    public InterMineObject getInterMineObject(InterMineLUI interMineLUI)
+            throws ObjectStoreException {
         if (interMineLUI == null) {
             throw new RuntimeException("InterMineLUI is null");
         }

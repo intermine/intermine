@@ -46,7 +46,10 @@ public final class Namespaces
         }
     }
 
-
+    /**
+     * Return all the namespaces configured in the prefix_namespaces.properties file
+     * @return the map containing prefix and uri
+     */
     public static Map<String, String> getNamespaces() {
         if (instance == null) {
             instance = new Namespaces();

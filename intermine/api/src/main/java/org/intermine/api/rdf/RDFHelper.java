@@ -14,14 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Utility class for RDF generation
@@ -39,7 +32,7 @@ public final class RDFHelper
      */
     public static final String RES_NAMESPACE = "http://intermine.org/resource/";
 
-    private static Map<String, String> namespaces= null;
+    private static Map<String, String> namespaces = null;
 
     /**
      * default constructor
