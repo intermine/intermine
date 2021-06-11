@@ -334,8 +334,25 @@ public class GFF3Record
     public List<String> getNames() {
         if (getAttributes().containsKey("Name")) {
             return getAttributes().get("Name");
+        } else if (getAttributes().containsKey("name")) {
+            return getAttributes().get("name");
+        } else {
+            return null;
         }
-        return null;
+    }
+
+    /**
+     * Return the list of the Symbol/symbol field from the attributes of this record.
+     * @return the Symbol from the attributes of this record or null if there isn't a value
+     */
+    public List<String> getSymbols() {
+        if (getAttributes().containsKey("Symbol")) {
+            return getAttributes().get("Symbol");
+        } else if (getAttributes().containsKey("symbol")) {
+            return getAttributes().get("symbol");
+        } else {
+            return null;
+        }
     }
 
     /**
