@@ -11,12 +11,11 @@ package org.intermine.webservice.server.entity;
  */
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.core.JSONService;
 
 
 /**
- *
+ * Service to write an entity using RDF/XML format
  * @author Daniela Butano
  *
  */
@@ -34,7 +33,6 @@ public class EntityRepresentationService extends JSONService
     @Override
     protected void execute() throws Exception {
         String entity = request.getPathInfo();
-        System.out.println (entity);
     }
 
 }
