@@ -17,7 +17,6 @@ dependencies {
     bioModel group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     compile group: "org.intermine", name: "intermine-api", version: imVersion
-    compile group: "org.intermine", name: "intermine-webapp", version: imVersion, classifier: "classes"
     compile group: "org.apache.jena", name: "apache-jena-libs", version: "3.16.0"
 }
 
