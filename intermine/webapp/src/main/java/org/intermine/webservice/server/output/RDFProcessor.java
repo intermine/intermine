@@ -55,7 +55,6 @@ public class RDFProcessor extends ResultProcessor
     public RDFProcessor(HttpServletRequest request, InterMineAPI im, Profile profile) {
         this.im = im;
         uri = (new PermanentURIHelper(request)).getPermanentBaseURI();
-        uri = (!uri.endsWith("/")) ? uri.concat("/") : uri;
         luiConverter = new InterMineLUIConverter(profile);
     }
 
