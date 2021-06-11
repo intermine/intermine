@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,6 +40,7 @@ import org.intermine.metadata.FieldDescriptor;
 
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.sql.DatabaseUtil;
+import org.intermine.api.rdf.Namespaces;
 
 /**
  * This class translates the InterMine mapping files into
@@ -131,11 +133,11 @@ public class R2RMLMappingProcess extends PostProcessor
     }
 
     private void setKnownPrefixes(final Model jenaModel) {
+        Map<String, String> namespaces = Namespaces.getNamespaces();
+        for (String prefix : namespaces.keySet()) {
+            jenaModel.setNsPrefix(prefix, namespaces.get(prefix));
+        }
         jenaModel.setNsPrefix("rr", R2RML.URI);
-        jenaModel.setNsPrefix("rdfs", RDFS.uri);
-        jenaModel.setNsPrefix("sio", R2RML.SIO);
-        jenaModel.setNsPrefix("obo", R2RML.OBO);
-        jenaModel.setNsPrefix("up", R2RML.UNIPROT_NS);
     }
 
     private Set<ClassDescriptor> getMappableClasses() {
@@ -233,11 +235,11 @@ public class R2RMLMappingProcess extends PostProcessor
     private String createURI(String type) {
         String identifier = IdentifiersMapper.getMapper().getIdentifier(type);
         if (identifier != null) {
-            if (("Protein").equalsIgnoreCase(type)) {
-                return R2RML.UNIPROT_KBNS + "{" + identifier + "}";
-            } else {
+/*            if (("Protein").equalsIgnoreCase(type)) {
+                return RDFHelper.UNIPROT_KBNS + "{" + identifier + "}";
+            } else {*/
                 return baseUri + StringUtils.lowerCase(type) + ":{" + identifier + "}";
-            }
+            //}
         }
         return null;
     }
@@ -444,11 +446,11 @@ public class R2RMLMappingProcess extends PostProcessor
     }
 
     private String createURI(String type, String allias) {
-        if (("Protein").equalsIgnoreCase(type)) {
-            return R2RML.UNIPROT_KBNS + "{" + allias + "}";
-        } else {
+/*        if (("Protein").equalsIgnoreCase(type)) {
+            return RDFHelper.UNIPROT_KBNS + "{" + allias + "}";
+        } else {*/
             return baseUri + StringUtils.lowerCase(type) + ":{" + allias + "}";
-        }
+       // }
     }
 
     private Resource createMappingNameForTable(Model model, final String tableName) {
