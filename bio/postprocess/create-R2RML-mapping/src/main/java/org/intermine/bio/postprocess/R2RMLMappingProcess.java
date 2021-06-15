@@ -31,12 +31,11 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.sql.DatabaseUtil;
@@ -238,7 +237,7 @@ public class R2RMLMappingProcess extends PostProcessor
 /*            if (("Protein").equalsIgnoreCase(type)) {
                 return RDFHelper.UNIPROT_KBNS + "{" + identifier + "}";
             } else {*/
-                return baseUri + StringUtils.lowerCase(type) + ":{" + identifier + "}";
+            return baseUri + StringUtils.lowerCase(type) + ":{" + identifier + "}";
             //}
         }
         return null;
@@ -267,7 +266,7 @@ public class R2RMLMappingProcess extends PostProcessor
         model.add(predicateObjectMap, R2RML.PREDICATE, RDFHelper.createProperty(columnName));
     }
 
-    private void mapOneToMany(Model model, ClassDescriptor cd,
+/*    private void mapOneToMany(Model model, ClassDescriptor cd,
                                     CollectionDescriptor collection, Resource basicTableMapping) {
         LOG.info("ONE_N_RELATION");
         ReferenceDescriptor reverse = collection.getReverseReferenceDescriptor();
@@ -289,7 +288,7 @@ public class R2RMLMappingProcess extends PostProcessor
             model.add(joinCondition, R2RML.CHILD, "id");
             model.add(joinCondition, R2RML.PARENT, reverse.getName() + "id");
         }
-    }
+    }*/
 
     private AttributeDescriptor findSubjectMap(ClassDescriptor cd) {
         String tableName = DatabaseUtil.getTableName(cd);
@@ -449,7 +448,7 @@ public class R2RMLMappingProcess extends PostProcessor
 /*        if (("Protein").equalsIgnoreCase(type)) {
             return RDFHelper.UNIPROT_KBNS + "{" + allias + "}";
         } else {*/
-            return baseUri + StringUtils.lowerCase(type) + ":{" + allias + "}";
+        return baseUri + StringUtils.lowerCase(type) + ":{" + allias + "}";
        // }
     }
 
