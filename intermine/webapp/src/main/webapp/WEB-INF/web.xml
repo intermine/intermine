@@ -3356,12 +3356,16 @@ The different token types are:
         <method type="GET" authenticationRequired="false">
             <summary>Get permanent URL for data objetct</summary>
             <description>
-                This service generates permanent URL based on the internal intermine ID
+                This service generates permanent URL based on the internal intermine ID. If the type=rdf, it returns the link to the rdf representation of the entity 
             </description>
             <param
                 required="true"
                 type="String"
                 description="The internal InterMine ID">id</param>
+            <param
+                required="false"
+                type="String"
+                description="The type of the url">type</param>
             <returns>
                 <format accept="application/json">json</format>
             </returns>

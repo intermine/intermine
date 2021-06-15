@@ -13,6 +13,8 @@ package org.intermine.webservice.server.fair;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.PermanentURIHelper;
+import org.intermine.webservice.server.Format;
+import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.core.JSONService;
 
 /**
@@ -40,11 +42,15 @@ public class PermanentURLService extends JSONService
     @Override
     protected void execute() throws Exception {
         String id = getRequiredParameter("id");
+        String type = getOptionalParameter("type");
         String url = (new PermanentURIHelper(request)).getPermanentURL(
                 Integer.parseInt(id), getPermission().getProfile());
         if (url == null) {
             addOutputInfo("url", StringUtils.EMPTY);
         } else {
+            if (type != null && type.equals(WebServiceRequestParser.FORMAT_PARAMETER_RDF)) {
+                url += ".rdf";
+            }
             addOutputInfo("url", url);
         }
     }
