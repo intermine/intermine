@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+
 import java.util.Map;
 
 /**
@@ -62,6 +64,20 @@ public final class RDFHelper
         } else {
             return ResourceFactory.createProperty(VOC_NAMESPACE,
             "has" + StringUtils.capitalize(attributeDescriptor.getName()));
+        }
+    }
+
+    /**
+     * Create a RDF property given the attribute
+     * @param referenceDescriptor the field Descriptor
+     * @return the RDF property
+     */
+    public static final Property createProperty(ReferenceDescriptor referenceDescriptor) {
+        if (referenceDescriptor.getOntologyTerm() != null) {
+            return ResourceFactory.createProperty(referenceDescriptor.getOntologyTerm());
+        } else {
+            return ResourceFactory.createProperty(VOC_NAMESPACE,
+                    "has" + StringUtils.capitalize(referenceDescriptor.getName()));
         }
     }
 }

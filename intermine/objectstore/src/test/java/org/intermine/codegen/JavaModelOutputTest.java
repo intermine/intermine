@@ -153,9 +153,9 @@ public class JavaModelOutputTest extends TestCase
     public void testGenerateClassDescriptorHasFields() throws Exception {
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String", null);
         Set atts = new HashSet(Collections.singleton(atd1));
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null);
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null, null);
         Set refs = new HashSet(Collections.singleton(rfd1));
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null, null);
         Set cols = new HashSet(Collections.singleton(cod1));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, refs, cols, null);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet(), null);
@@ -204,7 +204,7 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateReferenceDescriptor() throws Exception {
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class2", null);
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class2", null, null);
         Set refs = new HashSet(Collections.singleton(rfd1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), refs, new HashSet(), null);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet(), null);
@@ -221,7 +221,7 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateCollectionDescriptor() throws Exception {
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null, null);
         Set cols = new HashSet(Collections.singleton(cod1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols, null);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet(), null);
@@ -272,8 +272,8 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("inty", "int", null);
         AttributeDescriptor atd2 = new AttributeDescriptor("str", "java.lang.String", null);
         AttributeDescriptor atd3 = new AttributeDescriptor("integery", "java.lang.Integer", null);
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null);
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null, null);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null, null);
         Set<AttributeDescriptor> atts = new LinkedHashSet(Arrays.asList(atd1, atd2, atd3));
         Set<ReferenceDescriptor> refs = new LinkedHashSet(Arrays.asList(rfd1));
         Set<CollectionDescriptor> cols = new LinkedHashSet(Arrays.asList(cod1));
@@ -290,8 +290,8 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String", null);
         assertEquals("java.lang.String", mo.getType(atd1));
 
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null);
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null, null);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null, null);
         Set refs = new HashSet(Collections.singleton(rfd1));
         Set cols = new HashSet(Collections.singleton(cod1));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs, cols, null);

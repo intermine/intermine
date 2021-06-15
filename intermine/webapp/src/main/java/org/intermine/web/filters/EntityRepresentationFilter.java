@@ -58,6 +58,7 @@ public class EntityRepresentationFilter implements Filter
                 response.setStatus(HttpStatus.SC_NOT_FOUND);
                 chain.doFilter(req, res);
             } else {
+                response.setStatus(HttpStatus.SC_OK);
                 ResponseUtil.setRDFXMLContentType(response);
                 PrintWriter out = new PrintWriter(response.getOutputStream());
                 rdfObject.serializeAsRDF(out);

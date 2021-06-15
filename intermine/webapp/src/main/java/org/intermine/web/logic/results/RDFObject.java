@@ -71,9 +71,8 @@ public class RDFObject
             resourceURI = baseUrl.concat(lui.toString());
             String objectType = DynamicUtil.getSimpleClass(imObject).getSimpleName();
             objectClassDescriptor = im.getModel().getClassDescriptorByName(objectType);
-            nullRefsCols =
-                    im.getObjectStoreSummary()
-                            .getNullReferencesAndCollections(objectClassDescriptor.getName());
+            nullRefsCols = im.getObjectStoreSummary()
+                .getNullReferencesAndCollections(objectClassDescriptor.getName());
         }
     }
 
@@ -86,7 +85,7 @@ public class RDFObject
             resource = model.createResource(resourceURI);
             String[] terms = objectClassDescriptor.getOntologyTerm().split(",");
             for (int index = 0; index < terms.length; index++) {
-                resource.addProperty(RDF.type, terms[index]);
+                resource.addProperty(RDF.type, model.createResource(terms[index]));
             }
 
             for (FieldDescriptor fd : objectClassDescriptor.getAllFieldDescriptors()) {
@@ -148,7 +147,7 @@ public class RDFObject
                 if (lui != null) {
                     Resource referenceObjResource =
                             model.createResource(baseUrl.concat(lui.toString()));
-                    resource.addProperty(RDFHelper.createProperty(refName), referenceObjResource);
+                    resource.addProperty(RDFHelper.createProperty(ref), referenceObjResource);
                 }
             }
         }
@@ -176,7 +175,8 @@ public class RDFObject
                 if (lui != null) {
                     Resource referenceObjResource =
                             model.createResource(baseUrl.concat(lui.toString()));
-                    resource.addProperty(RDFHelper.createProperty(colName), referenceObjResource);
+                    resource.addProperty(RDFHelper.createProperty(
+                        (ReferenceDescriptor) fieldDescriptor), referenceObjResource);
                 }
             }
         }

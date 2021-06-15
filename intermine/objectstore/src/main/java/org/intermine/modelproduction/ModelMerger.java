@@ -447,7 +447,7 @@ public final class ModelMerger
 
     private static ReferenceDescriptor cloneReferenceDescriptor(ReferenceDescriptor ref) {
         return new ReferenceDescriptor(ref.getName(), ref.getReferencedClassName(),
-                ref.getReverseReferenceFieldName());
+                ref.getReverseReferenceFieldName(), ref.getOntologyTerm());
     }
 
     /**
@@ -467,7 +467,7 @@ public final class ModelMerger
 
     private static CollectionDescriptor cloneCollectionDescriptor(CollectionDescriptor ref) {
         return new CollectionDescriptor(ref.getName(), ref.getReferencedClassName(),
-                ref.getReverseReferenceFieldName());
+                ref.getReverseReferenceFieldName(), ref.getOntologyTerm());
     }
 
     /**

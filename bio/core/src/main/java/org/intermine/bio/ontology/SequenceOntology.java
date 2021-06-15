@@ -831,11 +831,11 @@ public class SequenceOntology
                     if (isManyToMany(parent, childIdentifier)) {
                         parentName = parentName + "s";
                         CollectionDescriptor cd = new CollectionDescriptor(parentName,
-                                fullyQualifiedClassName, reverseReference);
+                                fullyQualifiedClassName, reverseReference, null);
                         collections.add(cd);
                     } else {
                         ReferenceDescriptor rd = new ReferenceDescriptor(parentName,
-                                fullyQualifiedClassName, reverseReference);
+                                fullyQualifiedClassName, reverseReference, null);
                         references.add(rd);
                     }
                 }
@@ -858,7 +858,7 @@ public class SequenceOntology
                             isManyToMany(collection, childIdentifier));
                     // cd
                     CollectionDescriptor cd = new CollectionDescriptor(collectionName ,
-                            fullyQualifiedClassName, reverseReference);
+                            fullyQualifiedClassName, reverseReference, null);
                     collections.add(cd);
                 }
             }
