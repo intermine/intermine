@@ -140,7 +140,7 @@
         <collection name="strains" referenced-type="Strain"/>
     </class>
 
-    <class name="Protein" extends="BioEntity" is-interface="true" term="http://semanticscience.org/resource/SIO_010043,http://purl.uniprot.org/core/Protein">
+    <class name="Protein" extends="BioEntity" is-interface="true" term="http://purl.uniprot.org/core/Protein,http://semanticscience.org/resource/SIO_010043">
         <attribute name="md5checksum" type="java.lang.String" term="http://edamontology.org/data_2190"/>
         <attribute name="primaryAccession" type="java.lang.String" term="http://edamontology.org/data_2907"/>
         <attribute name="length" type="java.lang.Integer" term="http://semanticscience.org/resource/SIO_000041"/>
