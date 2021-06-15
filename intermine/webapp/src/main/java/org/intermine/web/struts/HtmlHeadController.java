@@ -132,6 +132,7 @@ public class HtmlHeadController extends TilesAction
 
                 ReportObject reportObject = reportObjects.get(object);
                 markupReportPage(request, reportObject);
+                request.setAttribute("lui", reportObject.getLUI());
                 htmlPageTitle = reportObject.getHtmlHeadTitle();
 
             } catch (Exception e) {
