@@ -293,8 +293,8 @@ public class ClassDescriptorTest extends TestCase
 
     private Set<ReferenceDescriptor> getReferences() {
         Set<ReferenceDescriptor> references = new HashSet<ReferenceDescriptor>();
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "String", "reverse1");
-        ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", "Integer", "reverse2");
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "String", "reverse1", null);
+        ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", "Integer", "reverse2", null);
         references.add(rfd1);
         references.add(rfd2);
         return references;
@@ -302,8 +302,8 @@ public class ClassDescriptorTest extends TestCase
 
     private Set<CollectionDescriptor> getCollections() {
         Set<CollectionDescriptor> collections = new HashSet<CollectionDescriptor>();
-        CollectionDescriptor cld1 = new CollectionDescriptor("cld1", "String", "reverse1");
-        CollectionDescriptor cld2 = new CollectionDescriptor("cld2", "Integer", "reverse2");
+        CollectionDescriptor cld1 = new CollectionDescriptor("cld1", "String", "reverse1", null);
+        CollectionDescriptor cld2 = new CollectionDescriptor("cld2", "Integer", "reverse2", null);
         collections.add(cld1);
         collections.add(cld2);
         return collections;
@@ -321,8 +321,8 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testMultiInheritanceLegalRef() throws Exception {
-        ReferenceDescriptor ref1 = new ReferenceDescriptor("atd1", "package.name.Class2", null);
-        ReferenceDescriptor ref2 = new ReferenceDescriptor("atd1", "package.name.Class2", null);
+        ReferenceDescriptor ref1 = new ReferenceDescriptor("atd1", "package.name.Class2", null, null);
+        ReferenceDescriptor ref2 = new ReferenceDescriptor("atd1", "package.name.Class2", null, null);
         Set<ReferenceDescriptor> refs1 = Collections.singleton(ref1);
         Set<ReferenceDescriptor> refs2 = Collections.singleton(ref2);
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, noAttrs, refs1, noColls, null);
@@ -334,8 +334,8 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testMultiInheritanceLegalCol() throws Exception {
-        CollectionDescriptor coll1 = new CollectionDescriptor("atd1", "package.name.Class2", null);
-        CollectionDescriptor coll2 = new CollectionDescriptor("atd1", "package.name.Class2", null);
+        CollectionDescriptor coll1 = new CollectionDescriptor("atd1", "package.name.Class2", null, null);
+        CollectionDescriptor coll2 = new CollectionDescriptor("atd1", "package.name.Class2", null, null);
         Set<CollectionDescriptor> colls1 = Collections.singleton(coll1);
         Set<CollectionDescriptor> colls2 = Collections.singleton(coll2);
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, noAttrs, noRefs, colls1, null);
@@ -363,7 +363,7 @@ public class ClassDescriptorTest extends TestCase
 
     public void testMultiInheritanceIllegalAttRef() throws Exception {
         AttributeDescriptor attr = new AttributeDescriptor("collision", "float", null);
-        ReferenceDescriptor ref = new ReferenceDescriptor("collision", "package.name.Class2", null);
+        ReferenceDescriptor ref = new ReferenceDescriptor("collision", "package.name.Class2", null, null);
         Set<AttributeDescriptor> attrs = Collections.singleton(attr);
         Set<ReferenceDescriptor> refs = Collections.singleton(ref);
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, noAttrs, refs, noColls, null);
@@ -377,7 +377,7 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testMultiInheritanceIllegalAttCol() throws Exception {
-        CollectionDescriptor coll = new CollectionDescriptor("collision", "package.name.Class2", null);
+        CollectionDescriptor coll = new CollectionDescriptor("collision", "package.name.Class2", null, null);
         AttributeDescriptor attr = new AttributeDescriptor("collision", "float", null);
         Set<CollectionDescriptor> colls = Collections.singleton(coll);
         Set<AttributeDescriptor> attrs = Collections.singleton(attr);
@@ -392,8 +392,8 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testMultiInheritanceIllegalRefCol() throws Exception {
-        CollectionDescriptor coll = new CollectionDescriptor("atd1", "package.name.Class2", null);
-        ReferenceDescriptor ref = new ReferenceDescriptor("atd1", "package.name.Class2", null);
+        CollectionDescriptor coll = new CollectionDescriptor("atd1", "package.name.Class2", null, null);
+        ReferenceDescriptor ref = new ReferenceDescriptor("atd1", "package.name.Class2", null, null);
         Set<CollectionDescriptor> colls = Collections.singleton(coll);
         Set<ReferenceDescriptor> refs = Collections.singleton(ref);
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, noAttrs, noRefs, colls, null);
