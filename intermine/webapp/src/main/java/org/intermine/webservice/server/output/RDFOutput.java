@@ -33,6 +33,9 @@ public class RDFOutput extends Output
         this.writer = writer;
     }
 
+    /** Set the format for ntriple, the default is RDF
+     *
+     * **/
     public void setNTripleFormat() {
         this.format = "N-TRIPLE";
     }
