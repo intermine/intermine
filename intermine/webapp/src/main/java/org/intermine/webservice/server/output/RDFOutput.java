@@ -23,6 +23,7 @@ public class RDFOutput extends Output
 {
     private PrintWriter writer;
     private int resultsCount;
+    private String format = "RDF/XML";
 
     /**
      * Constructor.
@@ -30,6 +31,10 @@ public class RDFOutput extends Output
      */
     public RDFOutput(PrintWriter writer) {
         this.writer = writer;
+    }
+
+    public void setNTripleFormat() {
+        this.format = "N-TRIPLE";
     }
 
     /** Forwards data to associated writer
@@ -45,7 +50,7 @@ public class RDFOutput extends Output
      * **/
     public void addResultItem(Model itemModel) {
         //generate ntriples
-        itemModel.write(writer, "N-TRIPLE");
+        itemModel.write(writer, format);
         resultsCount++;
     }
 

@@ -131,6 +131,9 @@ public class WebServiceRequestParser
     /** Value of parameter when user wants rdf output to be returned. **/
     public static final String FORMAT_PARAMETER_RDF = "rdf";
 
+    /** Value of parameter when user wants N-triples output to be returned. **/
+    public static final String FORMAT_PARAMETER_N_TRIPLES = "ntriples";
+
     /**Name of format parameter that specifies format of returned results. */
     public static final String OUTPUT_PARAMETER = "format";
 
@@ -208,6 +211,7 @@ public class WebServiceRequestParser
             put(FORMAT_PARAMETER_JSONP_COUNT, Format.JSON);
             put(FORMAT_PARAMETER_JSON_COUNT, Format.JSON);
             put(FORMAT_PARAMETER_RDF, Format.RDF);
+            put(FORMAT_PARAMETER_N_TRIPLES, Format.N_TRIPLES);
         }
     };
 
@@ -353,6 +357,8 @@ public class WebServiceRequestParser
                 return Format.TEXT;
             } else if (pathInfo.endsWith("/rdf")) {
                 return Format.RDF;
+            } else if (pathInfo.endsWith("/ntriples")) {
+                return Format.N_TRIPLES;
             }
         }
         return null;

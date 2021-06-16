@@ -148,6 +148,18 @@ public final class ResponseUtil
     }
 
     /**
+     * Sets the response header and content type for ntriples output
+     * @param response Our response to this request
+     * @param filename The name this response should have
+     */
+    public static void setRDFHeader(HttpServletResponse response,
+                                         String filename) {
+        setRDFXMLContentType(response);
+        setFileName(response, filename);
+        setNoCache(response);
+    }
+
+    /**
      * Sets response header and content type for a custom content type.
      * @param response response
      * @param fileName file name of downloaded file

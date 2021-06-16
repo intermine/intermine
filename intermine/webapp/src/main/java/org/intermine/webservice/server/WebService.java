@@ -905,9 +905,14 @@ public abstract class WebService
                     ResponseUtil.setJSONHeader(response, "result.json", formatIsJSONP());
                 }
                 break;
+            case N_TRIPLES:
+                output = new RDFOutput(out);
+                ((RDFOutput) output).setNTripleFormat();
+                ResponseUtil.setNTriplesHeader(response, "result.nt");
+                break;
             case RDF:
                 output = new RDFOutput(out);
-                ResponseUtil.setNTriplesHeader(response, "result.nt");
+                ResponseUtil.setRDFHeader(response, "result.xml");
                 break;
             default:
                 output = getDefaultOutput(out, os, separator);
