@@ -15,6 +15,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.rdf.Namespaces;
 import org.intermine.api.rdf.RDFHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.ClassDescriptor;
@@ -61,6 +62,7 @@ public class RDFProcessor extends ResultProcessor
     @Override
     public void write(Iterator<List<ResultElement>> resultIt, Output output) {
         Model model = ModelFactory.createDefaultModel();
+        setKnownPrefixes(model);
 
         while (resultIt.hasNext())  {
             Resource resource = null;
@@ -122,5 +124,12 @@ public class RDFProcessor extends ResultProcessor
 
         }
         ((RDFOutput) output).addResultItem(model);
+    }
+
+    private void setKnownPrefixes(Model model) {
+        Map<String, String> namespaces = Namespaces.getNamespaces();
+        for (String prefix : namespaces.keySet()) {
+            model.setNsPrefix(prefix, namespaces.get(prefix));
+        }
     }
 }
