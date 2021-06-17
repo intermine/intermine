@@ -53,8 +53,7 @@ public class EntityRepresentationFilter implements Filter
             InterMineLUI lui = new InterMineLUI(requestURI);
             RDFObject rdfObject = new RDFObject(lui, SessionMethods.getInterMineAPI(session),
                     request);
-            //manage case when id=-1 -> not found
-            if (rdfObject == null) {
+            if (!rdfObject.isValid()) {
                 response.setStatus(HttpStatus.SC_NOT_FOUND);
                 chain.doFilter(req, res);
             } else {

@@ -10,8 +10,17 @@ package org.intermine.webservice.server.entity;
  *
  */
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.intermine.api.InterMineAPI;
+import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.results.RDFObject;
+import org.intermine.web.uri.InterMineLUI;
+import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
+
+import java.io.PrintWriter;
 
 
 /**
@@ -32,7 +41,21 @@ public class EntityRepresentationService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        String entity = request.getPathInfo();
+        String luiInput = getRequiredParameter("lui");
+        InterMineLUI lui = new InterMineLUI("/" + luiInput);
+        String type = getRequiredParameter("format");
+        if (!type.equalsIgnoreCase(WebServiceRequestParser.FORMAT_PARAMETER_RDF)) {
+            throw new BadRequestException("Only rdf format has been implemented");
+        }
+        RDFObject rdfObject = new RDFObject(lui, im, request);
+        if (!rdfObject.isValid()) {
+            throw new ResourceNotFoundException("The lui doesn't exist");
+        } else {
+            response.setStatus(HttpStatus.SC_OK);
+            ResponseUtil.setRDFXMLContentType(response);
+            PrintWriter out = new PrintWriter(response.getOutputStream());
+            rdfObject.serializeAsRDF(out);
+            response.flushBuffer();
+        }
     }
-
 }

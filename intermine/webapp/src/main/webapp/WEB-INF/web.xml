@@ -128,6 +128,7 @@
             <format accept="application/json;type=count" key="results">jsoncount</format>
             <format accept="application/xml">xml</format>
             <format accept="text/html">html</format>
+            <format accept="application/rdf+xml">rdf+xml</format>
         </returns>
     </method>
   </metadata>
@@ -3795,6 +3796,42 @@ may be polled later.
                 description="The client uri where the user is redirected after authentication">redirect_uri</param>
             <returns>
                 <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+<!-- new in version 33 -->
+  <servlet>
+    <servlet-name>ws-entity-representation</servlet-name>
+    <servlet-class>org.intermine.webservice.server.entity.EntityRepresentationServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-entity-representation</servlet-name>
+    <url-pattern>/service/entity-representation/*</url-pattern>
+    <metadata>
+        <name>Entity Representation</name>
+        <minVersion>33</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <summary>Entity Representation</summary>
+            <description>
+                This service return the representation of a entity
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The Local Unique Identifier of the entity">lui</param>
+            <param
+                required="true"
+                type="String"
+                description="The type of the representation. Only RDF is supported">format</param>
+            <returns>
+                <format accept="application/rdf+xml">rdf+xml</format>
             </returns>
         </method>
     </metadata>

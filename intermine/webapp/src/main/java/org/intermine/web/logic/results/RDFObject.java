@@ -45,6 +45,7 @@ import java.util.Set;
 public class RDFObject
 {
     private InterMineObject imObject;
+    private boolean isValid = true;
     private String resourceURI;
     private InterMineLUIConverter urlConverter;
     private String baseUrl;
@@ -67,6 +68,10 @@ public class RDFObject
             urlConverter =
                     new InterMineLUIConverter(im.getProfileManager().createAnonymousProfile());
             imObject = urlConverter.getInterMineObject(lui);
+            if (imObject == null) {
+                isValid = false;
+                return;
+            }
             baseUrl = (new PermanentURIHelper(request)).getPermanentBaseURI();
             resourceURI = baseUrl.concat(lui.toString());
             String objectType = DynamicUtil.getSimpleClass(imObject).getSimpleName();
@@ -74,6 +79,14 @@ public class RDFObject
             nullRefsCols = im.getObjectStoreSummary()
                 .getNullReferencesAndCollections(objectClassDescriptor.getName());
         }
+    }
+
+
+    /**
+     * Return if it's valid entity, matching an existing intermine object
+     */
+    public boolean isValid() {
+        return isValid;
     }
 
     private void initialise() {
