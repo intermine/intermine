@@ -84,6 +84,7 @@ public class RDFObject
 
     /**
      * Return if it's valid entity, matching an existing intermine object
+     * @return if it 's valid or not
      */
     public boolean isValid() {
         return isValid;
