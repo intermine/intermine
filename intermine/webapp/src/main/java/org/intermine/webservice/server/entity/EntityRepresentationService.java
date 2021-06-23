@@ -29,7 +29,8 @@ import java.io.PrintWriter;
  * @author Daniela Butano
  *
  */
-public class EntityRepresentationService extends JSONService {
+public class EntityRepresentationService extends JSONService
+{
 
     /**
      * Constructor
