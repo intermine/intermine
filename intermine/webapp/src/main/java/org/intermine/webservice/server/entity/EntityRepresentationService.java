@@ -15,6 +15,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.results.RDFObject;
 import org.intermine.web.uri.InterMineLUI;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -28,11 +29,11 @@ import java.io.PrintWriter;
  * @author Daniela Butano
  *
  */
-public class EntityRepresentationService extends JSONService
-{
+public class EntityRepresentationService extends JSONService {
 
     /**
      * Constructor
+     *
      * @param im The InterMine configuration object.
      */
     public EntityRepresentationService(InterMineAPI im) {
@@ -49,6 +50,9 @@ public class EntityRepresentationService extends JSONService
         }
         RDFObject rdfObject = new RDFObject(lui, im, request);
         if (!rdfObject.isValid()) {
+            output = makeJSONOutput(out, getLineBreak());
+            String filename = getRequestFileName() + ".json";
+            ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
             throw new ResourceNotFoundException("The lui doesn't exist");
         } else {
             response.setStatus(HttpStatus.SC_OK);
@@ -57,5 +61,11 @@ public class EntityRepresentationService extends JSONService
             rdfObject.serializeAsRDF(out);
             response.flushBuffer();
         }
+    }
+
+    @Override
+    protected boolean canServe(Format format) {
+        //for now only rdf is supported
+        return (format == Format.RDF);
     }
 }
