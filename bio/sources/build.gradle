@@ -31,10 +31,10 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        jcenter()//temporary for bio-source-flymine-static
         maven {
             url 'https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
         }
-        jcenter()//temporary for bio-source-flymine-static
     }
 
     configurations {
