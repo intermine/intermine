@@ -137,7 +137,7 @@ public class EnrichmentWidgetResultService extends WidgetService
                 }
                 addOutputAttribute("message", String.format(BAD_POPULATION_MSG, imBag.getType()));
                 return;
-            } else if (!verifyPopulationContainsIds(ids, populationBag)) {
+            } else if (ids != null && !verifyPopulationContainsIds(ids, populationBag)) {
                 if (input.shouldSavePopulation()) {
                     deleteReferencePopulationPreference(input);
                 }

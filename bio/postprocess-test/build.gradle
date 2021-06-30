@@ -17,7 +17,7 @@ ext {
 
 subprojects {
     group = 'org.intermine'
-    version = '5.0.2'
+    version = '5.0.3'
 
     apply plugin: 'java'
     apply plugin: 'maven'
