@@ -7,6 +7,12 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 5.0.3 (June 2021)
+
+#2375 - Update interpro_keys.properties
+#2376 - Update interpro-go_keys.properties
+#2384 - Enrichment widget not working when changing background population
+
 InterMine 5.0.2 (May 2021)
 
 #2335 - BioGrid data change causing loader to throw Exception
