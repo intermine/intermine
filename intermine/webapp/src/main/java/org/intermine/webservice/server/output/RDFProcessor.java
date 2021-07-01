@@ -18,6 +18,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.rdf.Namespaces;
 import org.intermine.api.rdf.RDFHelper;
 import org.intermine.api.results.ResultElement;
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.pathquery.Path;
@@ -82,7 +83,7 @@ public class RDFProcessor extends ResultProcessor
                     InterMineLUI lui = luiConverter.getInterMineLUI(id);
 
                     String resourceURI = (lui != null) ? uri.concat(lui.toString())
-                            : RDFHelper.RES_NAMESPACE.concat(id.toString());
+                            : uri.concat(id.toString());
                     if (classDescriptor.getOntologyTerm() != null) {
                         String[] terms = classDescriptor.getOntologyTerm().split(",");
                         for (int index = 0; index < terms.length; index++) {
@@ -91,8 +92,9 @@ public class RDFProcessor extends ResultProcessor
                         }
                     } else {
                         resource = model.createResource(resourceURI,
-                                model.createResource(RDFHelper.RES_NAMESPACE
-                                        + classDescriptor.getSimpleName()));
+                                RDFHelper.createIMTypeResource(classDescriptor));
+                               /* model.createResource(RDFHelper.RES_NAMESPACE
+                                        + classDescriptor.getSimpleName()));*/
                     }
                     resources.put(currentClassDesc.getName(), resource);
                     if (!resources.isEmpty()) {
@@ -108,7 +110,7 @@ public class RDFProcessor extends ResultProcessor
                                         partialPath.getSecondLastClassDescriptor().getName();
                                 Resource parentResource = resources.get(parentToLink);
                                 parentResource.addProperty(
-                                        RDFHelper.createProperty(rd.getName()), resource);
+                                        RDFHelper.createIMProperty(rd), resource);
                             }
                         } catch (PathException pe) {
                             throw new BadRequestException(stringPath + " is not a valid path");
@@ -117,7 +119,9 @@ public class RDFProcessor extends ResultProcessor
                 }
                 FieldDescriptor fd = path.getEndFieldDescriptor();
                 if (fd.isAttribute() && item.getField() != null) {
-                    resource.addProperty(RDFHelper.createProperty(fd.getName()),
+                    /*resource.addProperty(RDFHelper.createIMProperty(fd),
+                            item.getField().toString());*/
+                    resource.addProperty(RDFHelper.createProperty((AttributeDescriptor) fd),
                             item.getField().toString());
                 }
             }

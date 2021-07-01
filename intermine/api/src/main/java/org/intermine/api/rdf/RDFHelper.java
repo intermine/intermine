@@ -12,8 +12,11 @@ package org.intermine.api.rdf;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 
 import java.util.Map;
@@ -29,11 +32,6 @@ public final class RDFHelper
      */
     public static final String VOC_NAMESPACE = Namespaces.getNamespaces().get("im");
 
-    /**
-     * InterMine resource namespace
-     */
-    public static final String RES_NAMESPACE = "http://intermine.org/resource/";
-
     private static Map<String, String> namespaces = null;
 
     /**
@@ -45,12 +43,21 @@ public final class RDFHelper
 
     /**
      * Create a RDF property given the attribute
-     * @param attribute the attribute
+     * @param fieldDescriptor the attribute
      * @return the RDF property
      */
-    public static final Property createProperty(String attribute) {
+    public static final Property createIMProperty(FieldDescriptor fieldDescriptor) {
         return ResourceFactory.createProperty(VOC_NAMESPACE,
-                "has" + StringUtils.capitalize(attribute));
+                "has" + StringUtils.capitalize(fieldDescriptor.getName()));
+    }
+
+    /**
+     * Create a RDF property given the attribute
+     * @param classDescriptor the attribute
+     * @return the RDF property
+     */
+    public static final Resource createIMTypeResource(ClassDescriptor classDescriptor) {
+        return ResourceFactory.createResource(VOC_NAMESPACE + classDescriptor.getSimpleName());
     }
 
     /**
@@ -62,8 +69,7 @@ public final class RDFHelper
         if (attributeDescriptor.getOntologyTerm() != null) {
             return ResourceFactory.createProperty(attributeDescriptor.getOntologyTerm());
         } else {
-            return ResourceFactory.createProperty(VOC_NAMESPACE,
-            "has" + StringUtils.capitalize(attributeDescriptor.getName()));
+            return createIMProperty(attributeDescriptor);
         }
     }
 
