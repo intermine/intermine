@@ -93,23 +93,23 @@ public class RDFObject
     private void initialise() {
         model = ModelFactory.createDefaultModel();
         setKnownPrefixes();
-        Resource resource = null;
+        Resource resource = model.createResource(resourceURI);
 
         if (objectClassDescriptor.getOntologyTerm() != null) {
-            resource = model.createResource(resourceURI);
             String[] terms = objectClassDescriptor.getOntologyTerm().split(",");
             for (int index = 0; index < terms.length; index++) {
                 resource.addProperty(RDF.type, model.createResource(terms[index]));
             }
-
-            for (FieldDescriptor fd : objectClassDescriptor.getAllFieldDescriptors()) {
-                if (fd.isAttribute() && !"id".equals(fd.getName())) {
-                    initialiseAttribute(resource, imObject, fd);
-                } else if (fd.isReference()) {
-                    initialiseReference(resource, fd);
-                } else if (fd.isCollection()) {
-                    initialiseCollection(resource, fd);
-                }
+        } else {
+            resource.addProperty(RDF.type, RDFHelper.createIMTypeResource(objectClassDescriptor));
+        }
+        for (FieldDescriptor fd : objectClassDescriptor.getAllFieldDescriptors()) {
+            if (fd.isAttribute() && !"id".equals(fd.getName())) {
+                initialiseAttribute(resource, imObject, fd);
+            } else if (fd.isReference()) {
+                initialiseReference(resource, fd);
+            } else if (fd.isCollection()) {
+                initialiseCollection(resource, fd);
             }
         }
     }
@@ -134,8 +134,7 @@ public class RDFObject
                 fieldValue = fieldClob.toString();
             }
             AttributeDescriptor attributeDescriptor = (AttributeDescriptor) fd;
-            resource.addProperty(RDFHelper.createProperty(attributeDescriptor),
-                    fieldValue.toString());
+            resource.addProperty(RDFHelper.createProperty(attributeDescriptor), fieldValue.toString());
         }
     }
 
@@ -157,15 +156,18 @@ public class RDFObject
 
             if (proxy != null) {
                 InterMineObject referenceObj = proxy.getObject();
-                InterMineLUI lui = urlConverter.getInterMineLUI(referenceObj.getId());
-                if (lui != null) {
-                    Resource referenceObjResource =
-                            model.createResource(baseUrl.concat(lui.toString()));
-                    resource.addProperty(RDFHelper.createProperty(ref), referenceObjResource);
-                }
+                addReferenceResource(referenceObj, ref, resource);
             }
         }
+    }
 
+    private void addReferenceResource(InterMineObject referenceObj, ReferenceDescriptor ref, Resource resource) {
+        InterMineLUI lui = urlConverter.getInterMineLUI(referenceObj.getId());
+        if (lui != null) {
+            Resource referenceObjResource =
+                    model.createResource(baseUrl.concat(lui.toString()));
+            resource.addProperty(RDFHelper.createProperty(ref), referenceObjResource);
+        }
     }
 
     private void initialiseCollection(Resource resource, FieldDescriptor fieldDescriptor) {
@@ -185,13 +187,8 @@ public class RDFObject
             Iterator it = proxyCollection.iterator();
             while (it.hasNext()) {
                 InterMineObject referenceObj = (InterMineObject) it.next();
-                InterMineLUI lui = urlConverter.getInterMineLUI(referenceObj.getId());
-                if (lui != null) {
-                    Resource referenceObjResource =
-                            model.createResource(baseUrl.concat(lui.toString()));
-                    resource.addProperty(RDFHelper.createProperty(
-                        (ReferenceDescriptor) fieldDescriptor), referenceObjResource);
-                }
+                addReferenceResource(referenceObj, (ReferenceDescriptor) fieldDescriptor,
+                        resource);
             }
         }
     }
