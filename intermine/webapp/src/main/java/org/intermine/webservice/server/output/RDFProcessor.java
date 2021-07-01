@@ -93,8 +93,6 @@ public class RDFProcessor extends ResultProcessor
                     } else {
                         resource = model.createResource(resourceURI,
                                 RDFHelper.createIMTypeResource(classDescriptor));
-                               /* model.createResource(RDFHelper.RES_NAMESPACE
-                                        + classDescriptor.getSimpleName()));*/
                     }
                     resources.put(currentClassDesc.getName(), resource);
                     if (!resources.isEmpty()) {
@@ -119,8 +117,6 @@ public class RDFProcessor extends ResultProcessor
                 }
                 FieldDescriptor fd = path.getEndFieldDescriptor();
                 if (fd.isAttribute() && item.getField() != null) {
-                    /*resource.addProperty(RDFHelper.createIMProperty(fd),
-                            item.getField().toString());*/
                     resource.addProperty(RDFHelper.createProperty((AttributeDescriptor) fd),
                             item.getField().toString());
                 }
