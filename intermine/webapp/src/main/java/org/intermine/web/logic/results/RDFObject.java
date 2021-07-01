@@ -134,7 +134,8 @@ public class RDFObject
                 fieldValue = fieldClob.toString();
             }
             AttributeDescriptor attributeDescriptor = (AttributeDescriptor) fd;
-            resource.addProperty(RDFHelper.createProperty(attributeDescriptor), fieldValue.toString());
+            resource.addProperty(RDFHelper.createProperty(attributeDescriptor),
+                    fieldValue.toString());
         }
     }
 
@@ -161,7 +162,8 @@ public class RDFObject
         }
     }
 
-    private void addReferenceResource(InterMineObject referenceObj, ReferenceDescriptor ref, Resource resource) {
+    private void addReferenceResource(InterMineObject referenceObj, ReferenceDescriptor ref,
+                                      Resource resource) {
         InterMineLUI lui = urlConverter.getInterMineLUI(referenceObj.getId());
         if (lui != null) {
             Resource referenceObjResource =
