@@ -175,13 +175,13 @@ public class R2RMLMappingProcess extends PostProcessor
             String columnName = DatabaseUtil.getColumnName(fd);
 
             if (fd instanceof AttributeDescriptor) {
-                mapPrimitiveObjects(model, tableName, basicTableMapping, (AttributeDescriptor) fd);
+                mapPrimitiveObjects(model, basicTableMapping, (AttributeDescriptor) fd);
                 LOG.info(columnName
                         + ("id".equalsIgnoreCase(columnName) ? ": PRIMARY KEY" : ": column")
                         + " with type " + ((AttributeDescriptor) fd).getType() + "\n");
-            } else if (fd.isCollection() && ((CollectionDescriptor) fd).relationType()
+            /*} else if (fd.isCollection() && ((CollectionDescriptor) fd).relationType()
                     == FieldDescriptor.ONE_N_RELATION) {
-                /*if (isMappable(cd)) {
+                if (isMappable(cd)) {
                     //Gene hasSynonym Synonyms
                     mapOneToMany(model, cd, (CollectionDescriptor) fd, basicTableMapping);
                 }*/
@@ -211,11 +211,10 @@ public class R2RMLMappingProcess extends PostProcessor
                                     ResourceFactory.createProperty(terms[index]);
                             model.add(subjectMap, R2RML.CLASS_PROPERTY, classInOutsideWorld);
                         }
-                    } /* else {
-                        Resource classInOutsideWorld = ResourceFactory.createProperty(
-                            URIHelper.interMineVocNS + cd.getSimpleName());
-                        model.add(subjectMap, R2RML.classProperty, classInOutsideWorld);
-                    }*/
+                    }  else {
+                        model.add(subjectMap, R2RML.CLASS_PROPERTY,
+                                RDFHelper.createIMTypeResource(cd));
+                    }
                     return ad;
                 }
             }
@@ -246,11 +245,10 @@ public class R2RMLMappingProcess extends PostProcessor
     /**
      * A primitive object is field that is just a value such as true, false or 1 or "lala"
      * @param model
-     * @param tableName
      * @param basicTableMapping
      * @param ad
      */
-    private void mapPrimitiveObjects(Model model, final String tableName,
+    private void mapPrimitiveObjects(Model model,
                     final Resource basicTableMapping, AttributeDescriptor ad) {
         String columnName = DatabaseUtil.getColumnName(ad);
         Resource predicateObjectMap = model.createResource();
@@ -263,7 +261,7 @@ public class R2RMLMappingProcess extends PostProcessor
 
         model.add(objectMap, R2RML.DATA_TYPE, getXsdForFullyQualifiedClassName(ad));
         model.add(objectMap, R2RML.COLUMN, columnName);
-        model.add(predicateObjectMap, R2RML.PREDICATE, RDFHelper.createProperty(columnName));
+        model.add(predicateObjectMap, R2RML.PREDICATE, RDFHelper.createProperty(ad));
     }
 
 /*    private void mapOneToMany(Model model, ClassDescriptor cd,
@@ -343,7 +341,7 @@ public class R2RMLMappingProcess extends PostProcessor
             Resource joinCondition = model.createResource();
             model.add(basicTableMapping, R2RML.PREDICATE_OBJECT_MAP, objectPredicateMap);
             model.add(objectPredicateMap, R2RML.PREDICATE,
-                    RDFHelper.createProperty(referencedClassDescriptor.getSimpleName()));
+                    RDFHelper.createProperty((ReferenceDescriptor) fieldDescriptor));
             model.add(objectPredicateMap, R2RML.OBJECT_MAP, objectMap);
             model.add(objectMap, R2RML.PARENT_TRIPLE_MAP,
                     createMappingNameForTable(model, jointTable));
@@ -429,9 +427,8 @@ public class R2RMLMappingProcess extends PostProcessor
                         + joinTableName + "." + fromJoinColumn + " AND "
                         + toTableName + ".id = " + joinTableName + "." + toJoinColumn);
                 model.add(jointTriplesMap, R2RML.PREDICATE_OBJECT_MAP, objectPredicateMap);
-                //TODO figure out what predicate to use. Maybe for now just use intermine
                 model.add(objectPredicateMap, R2RML.PREDICATE,
-                        RDFHelper.createProperty(toTableName));
+                        RDFHelper.createProperty(collection));
                 model.add(objectPredicateMap, R2RML.OBJECT_MAP, objectMap);
                 model.add(objectMap, RDF.type, R2RML.TERM_MAP);
                 model.add(objectMap, RDF.type, R2RML.OBJECT_MAP);
