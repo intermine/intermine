@@ -637,6 +637,27 @@ public class SqlGeneratorTest extends SetupDataTestCase
         assertEquals("SUBSTR('Hello', 3, 5)", buffer.toString());
     }
 
+    public void testSelectQueryConcatExpression() throws Exception {
+        QueryValue v1 = new QueryValue("Hello");
+        QueryValue v2 = new QueryValue("world");
+        QueryExpression e1 = new QueryExpression(v1, QueryExpression.CONCAT, v2);
+        StringBuffer buffer = new StringBuffer();
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
+        assertEquals("'Hello'||'world'", buffer.toString());
+    }
+
+    public void testSelectQueryLengthExpression() throws Exception {
+        QueryValue v1 = new QueryValue("Hello");
+        QueryExpression e1 = new QueryExpression(QueryExpression.LENGTH, v1);
+        StringBuffer buffer = new StringBuffer();
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
+        assertEquals("LENGTH('Hello')", buffer.toString());
+    }
+
     public void testSelectQueryExpressionGreatestLeast() throws Exception {
         QueryValue v1 = new QueryValue(new Integer(5));
         QueryValue v2 = new QueryValue(new Integer(7));
