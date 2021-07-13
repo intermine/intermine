@@ -13,10 +13,14 @@ package org.intermine.web.logic.results;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.rdf.Namespaces;
+import org.intermine.api.rdf.PurlConfig;
 import org.intermine.api.rdf.RDFHelper;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -103,6 +107,11 @@ public class RDFObject
         } else {
             resource.addProperty(RDF.type, RDFHelper.createIMTypeResource(objectClassDescriptor));
         }
+        //sameAs
+        String externalIdentifier = PurlConfig.getExternalIdentifier(imObject);
+        if (externalIdentifier != null) {
+            resource.addProperty(OWL.sameAs, ResourceFactory.createProperty(externalIdentifier));
+        }
         for (FieldDescriptor fd : objectClassDescriptor.getAllFieldDescriptors()) {
             if (fd.isAttribute() && !"id".equals(fd.getName())) {
                 initialiseAttribute(resource, imObject, fd);
@@ -166,8 +175,8 @@ public class RDFObject
                                       Resource resource) {
         InterMineLUI lui = urlConverter.getInterMineLUI(referenceObj.getId());
         if (lui != null) {
-            Resource referenceObjResource =
-                    model.createResource(baseUrl.concat(lui.toString()));
+            resourceURI = baseUrl.concat(lui.toString());
+            Resource referenceObjResource = model.createResource(resourceURI);
             resource.addProperty(RDFHelper.createProperty(ref), referenceObjResource);
         }
     }

@@ -18,6 +18,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
 
 import java.util.Map;
 
@@ -74,7 +75,7 @@ public final class RDFHelper
     }
 
     /**
-     * Create a RDF property given the attribute
+     * Create a RDF property given a reference
      * @param referenceDescriptor the field Descriptor
      * @return the RDF property
      */
@@ -82,8 +83,7 @@ public final class RDFHelper
         if (referenceDescriptor.getOntologyTerm() != null) {
             return ResourceFactory.createProperty(referenceDescriptor.getOntologyTerm());
         } else {
-            return ResourceFactory.createProperty(VOC_NAMESPACE,
-                    "has" + StringUtils.capitalize(referenceDescriptor.getName()));
+            return createIMProperty(referenceDescriptor);
         }
     }
 }
