@@ -18,7 +18,6 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.InterMineObject;
 
 import java.util.Map;
 
