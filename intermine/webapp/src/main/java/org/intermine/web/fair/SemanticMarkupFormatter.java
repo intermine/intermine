@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.rdf.PurlConfig;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.ClassDescriptor;
@@ -58,7 +59,6 @@ import java.util.Iterator;
 public final class SemanticMarkupFormatter
 {
     private static final String SCHEMA = "http://schema.org";
-    private static final String BIO_SCHEMA = "http://bioschemas.org";
     private static final String DATASET_TYPE = "DataSet";
     private static final String BIOCHEMENTITY_TYPE = "BioChemEntity";
     private static final String PROTEIN_TYPE = "Protein";
@@ -302,7 +302,7 @@ public final class SemanticMarkupFormatter
         if (semanticMarkup == null) {
             return null;
         }
-        semanticMarkup.put("@context", BIO_SCHEMA);
+        semanticMarkup.put("@context", SCHEMA);
         Properties props = PropertiesUtil.getProperties();
         semanticMarkup.put("version", props.getProperty("project.releaseVersion"));
         Map<String, String> isPartOf = new LinkedHashMap<>();
@@ -338,6 +338,7 @@ public final class SemanticMarkupFormatter
         geneMarkups.put("@type", GENE_TYPE);
         setBasicProperties(gene.getId(), geneMarkups);
         setName(gene, geneMarkups);
+        setSameAs(gene, geneMarkups);
         try {
             geneMarkups.put("description", (String) gene.getFieldValue("description"));
             setTaxonomicRange(gene, geneMarkups);
@@ -386,6 +387,13 @@ public final class SemanticMarkupFormatter
         }
     }
 
+    private static void setSameAs(InterMineObject bioEntity, Map<String, Object> entityMarkups) {
+        String externalIdentifier = PurlConfig.getExternalIdentifier(bioEntity);
+        if (externalIdentifier != null) {
+            entityMarkups.put("sameAs", externalIdentifier);
+        }
+    }
+
     private static void setTaxonomicRange(InterMineObject imObject, Map<String, Object> markups) {
         try {
             ProxyReference organismRef = (ProxyReference) imObject.getFieldProxy("organism");
@@ -406,6 +414,7 @@ public final class SemanticMarkupFormatter
         proteinMarkups.put("@type", PROTEIN_TYPE);
         setBasicProperties(protein.getId(), proteinMarkups);
         setName(protein, proteinMarkups);
+        setSameAs(protein, proteinMarkups);
         setTaxonomicRange(protein, proteinMarkups);
 
         try {
@@ -433,6 +442,7 @@ public final class SemanticMarkupFormatter
         bioChemEntityMarkups.put("@type", BIOCHEMENTITY_TYPE);
         setBasicProperties(bioChemEntity.getId(), bioChemEntityMarkups);
         setName(bioChemEntity, bioChemEntityMarkups);
+        setSameAs(bioChemEntity, bioChemEntityMarkups);
         return bioChemEntityMarkups;
     }
 
