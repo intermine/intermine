@@ -58,7 +58,7 @@ import java.util.Iterator;
  */
 public final class SemanticMarkupFormatter
 {
-    private static final String SCHEMA = "http://schema.org";
+    private static final String SCHEMA = "https://schema.org";
     private static final String DATASET_TYPE = "DataSet";
     private static final String BIOCHEMENTITY_TYPE = "BioChemEntity";
     private static final String PROTEIN_TYPE = "Protein";
