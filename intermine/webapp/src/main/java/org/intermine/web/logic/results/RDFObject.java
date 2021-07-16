@@ -103,7 +103,24 @@ public class RDFObject
             for (int index = 0; index < terms.length; index++) {
                 resource.addProperty(RDF.type, model.createResource(terms[index]));
             }
-        } else {
+        }/* else if (hasSequenceOntologyTerm(imObject)) {
+            String soIdentifier = null;
+            try {
+                ProxyReference ontologyTermProxy =
+                        (ProxyReference) imObject.getFieldProxy("sequenceOntologyTerm");
+                if (ontologyTermProxy != null) {
+                    InterMineObject ontologyTerm = ontologyTermProxy.getObject();
+                    soIdentifier = (String) ontologyTerm.getFieldValue("identifier");
+                }
+            } catch (IllegalAccessException e1) {
+                e1.printStackTrace();
+            }
+            if (soIdentifier != null) {
+                resource.addProperty(RDF.type, ResourceFactory.createResource(soIdentifier));
+            } else {
+                resource.addProperty(RDF.type, RDFHelper.createIMTypeResource(objectClassDescriptor));
+            }
+        }*/ else {
             resource.addProperty(RDF.type, RDFHelper.createIMTypeResource(objectClassDescriptor));
         }
         //sameAs
@@ -121,6 +138,25 @@ public class RDFObject
             }
         }
     }
+
+/*    *//**
+     * Check if the inputType can be markup with BioChemEntity
+     * @return true if can be markup (because it extends BioEntity)
+     *//*
+    private static boolean hasSequenceOntologyTerm(InterMineObject imo) {
+        String type = null;
+        try {
+            type = DynamicUtil.getSimpleClass(imo).getSimpleName();
+            if (ClassDescriptor.findInherithance(org.intermine.metadata.Model.getInstanceByName("genomic"),
+                    type, "SequenceFeature")) {
+                return true;
+            }
+        } catch (MetaDataException mde) {
+            LOG.warn("Type " + type + " is not in the model");
+            return false;
+        }
+        return false;
+    }*/
 
     private void setKnownPrefixes() {
         Map<String, String> namespaces = Namespaces.getNamespaces();
