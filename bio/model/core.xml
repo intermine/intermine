@@ -159,7 +159,7 @@
         <attribute name="year" type="java.lang.Integer" term="http://purl.org/dc/terms/date"/>
         <attribute name="volume" type="java.lang.String" term="http://purl.org/ontology/bibo/volume"/>
         <attribute name="journal" type="java.lang.String" term="http://purl.org/dc/terms/publisher"/>
-        <attribute name="firstAuthor" type="java.lang.String" term=" 	http://purl.org/dc/elements/1.1/creator"/>
+        <attribute name="firstAuthor" type="java.lang.String" term="http://purl.org/dc/elements/1.1/creator"/>
         <attribute name="abstractText" type="java.lang.String" term="http://purl.org/ontology/bibo/abstract"/>
         <collection name="authors" referenced-type="Author" reverse-reference="publications" term="http://purl.org/ontology/bibo/authorList"/>
         <collection name="entities" referenced-type="Annotatable" reverse-reference="publications" />
