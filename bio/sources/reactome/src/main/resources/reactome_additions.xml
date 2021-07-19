@@ -8,9 +8,9 @@
   </class>
   <!-- populated by postprocess -->
   <class name="Gene" is-interface="true">
-     <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
+     <collection name="pathways" referenced-type="Pathway" reverse-reference="genes" term="http://purl.obolibrary.org/obo/NCIT_R130"/>
   </class>
-  <class name="Pathway" is-interface="true" >
+  <class name="Pathway" is-interface="true" term="http://semanticscience.org/resource/SIO_010525">
      <attribute name="identifier" type="java.lang.String"/>
      <attribute name="name" type="java.lang.String"/>
      <attribute name="shortName" type="java.lang.String"/>
