@@ -57,7 +57,7 @@
         <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="dataSets" term="http://semanticscience.org/resource/SIO_001277"/>
     </class>
 
-    <class name="Gene" extends="SequenceFeature" is-interface="true">
+    <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://semanticscience.org/resource/SIO_010035">
         <attribute name="description" type="java.lang.String" term="http://purl.org/dc/terms/description"/>
         <attribute name="briefDescription" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
         <collection name="proteins" referenced-type="Protein" reverse-reference="genes" term="https://semanticscience.org/resource/SIO_010078"/>
