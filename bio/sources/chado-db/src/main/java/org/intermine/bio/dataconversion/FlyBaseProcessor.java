@@ -763,7 +763,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                                String name, String uniqueName, int seqlen, String taxonId) {
         String realInterMineType = interMineType;
 
-        if ("protein".equals(chadoFeatureType) && !uniqueName.startsWith("FBpp")) {
+        if ("polypeptide".equals(chadoFeatureType) && !uniqueName.startsWith("FBpp")) {
             return null;
         }
 
@@ -840,10 +840,15 @@ public class FlyBaseProcessor extends SequenceProcessor
             // webapp so we filter them out. See #1086
             return null;
         }
-        if ("protein".equals(chadoFeatureType) && seqlen == 0) {
+        if ("polypeptide".equals(chadoFeatureType) && seqlen == 0) {
             // flybase has ~ 2100 protein features that don't appear in their webapp so we
             // filter them out
             return null;
+        }
+
+        // converting polypeptide back to protein for intermine
+        if ("polypeptide".equals(chadoFeatureType)) {
+            realInterMineType = "Protein";
         }
 
         Item feature = getChadoDBConverter().createItem(realInterMineType);
@@ -872,7 +877,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-            "gene", "mRNA", "transcript", "protein",
+            "gene", "mRNA", "transcript", "polypeptide",
             "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
@@ -1085,7 +1090,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             int start, int end, int strand, String taxonId)
         throws ObjectStoreException {
 
-        if ("protein".equalsIgnoreCase(subjectFeatureData.getInterMineType())) {
+        if ("polypeptide".equalsIgnoreCase(subjectFeatureData.getInterMineType())) {
             // don't make locations for proteins
             return;
         }
@@ -1749,8 +1754,8 @@ public class FlyBaseProcessor extends SequenceProcessor
     protected FeatureData makeFeatureData(int featureId, String type, String uniqueName,
                                           String name, String md5checksum, int seqlen,
                                           int organismId) throws ObjectStoreException {
-
-        if ("protein".equals(type)) {
+        // FB replaced 'protein' with 'polypeptide'
+        if ("polypeptide".equals(type)) {
             if (!uniqueName.startsWith("FBpp")) {
                 return null;
             }
