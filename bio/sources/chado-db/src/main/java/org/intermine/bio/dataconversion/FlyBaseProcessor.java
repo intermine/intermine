@@ -720,7 +720,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        return "NOT ((cvterm.name = 'golden_path_region'"
+        return "NOT ((cvterm.name = 'golden_path'"
             + " OR cvterm.name = 'unassigned_supercontig'"
             + " OR cvterm.name = 'ultra_scaffold')"
             + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))"
@@ -806,7 +806,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             realInterMineType = "Chromosome";
         }
 
-        if ("golden_path_region".equals(chadoFeatureType)) {
+        if ("golden_path".equals(chadoFeatureType)) {
             // only change to be a chromosome if it's on our list of good ones.
             if (VALID_CHROMOSOMES.contains(uniqueName)) {
                 realInterMineType = "Chromosome";
