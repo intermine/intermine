@@ -92,6 +92,14 @@ public class KeywordSearchResultsController extends TilesAction
                 KeywordSearchPropertiesManager.getInstance(im.getObjectStore()).getFacets();
         int totalHits = 0;
 
+        // DEBUG
+        System.err.println("########## KeywordSearchResultsController.facets:");
+        for (KeywordSearchFacetData ksfd : facets) {
+            System.err.println("field="+ksfd.getField()+" name="+ksfd.getName()+" type="+ksfd.getType());
+        }
+        System.err.println("##########");
+        //
+
         //track the keyword search
         Profile profile = SessionMethods.getProfile(request.getSession());
         im.getTrackerDelegate().trackKeywordSearch(searchTerm, profile,
@@ -107,6 +115,14 @@ public class KeywordSearchResultsController extends TilesAction
         int offset = getOffset(request);
 
         Map<String, String> facetValues = getFacetValues(request, facets);
+
+        // DEBUG
+        System.err.println("########## KeywordSearchResultsController.facetValues:");
+        for (String key : facetValues.keySet()) {
+            System.err.println(key+":"+facetValues.get(key));
+        }
+        System.err.println("##########");
+        //
 
         LOG.debug("Initializing took " + (System.currentTimeMillis() - time) + " ms");
 
@@ -136,10 +152,10 @@ public class KeywordSearchResultsController extends TilesAction
         // DEBUG
         System.err.println("########## KeywordSearchResultsController.searchResultsFacets:");
         for (KeywordSearchFacet ksf : searchResultsFacets) {
-            System.err.println(ksf.getField());
-            System.err.println(ksf.getName());
-            System.err.println(ksf.getValue());
-            System.err.println(ksf.getItems());
+            System.err.println("field="+ksf.getField());
+            System.err.println("name="+ksf.getName());
+            System.err.println("value="+ksf.getValue());
+            System.err.println("items="+ksf.getItems());
         }
         System.err.println("##########");
         //
