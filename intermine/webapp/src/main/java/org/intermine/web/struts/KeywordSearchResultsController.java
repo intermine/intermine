@@ -133,6 +133,17 @@ public class KeywordSearchResultsController extends TilesAction
         Collection<KeywordSearchFacet> searchResultsFacets = results.getFacets();
         totalHits = results.getTotalHits();
 
+        // DEBUG
+        System.err.println("########## KeywordSearchResultsController.searchResultsFacets:");
+        for (KeywordSearchFacet ksf : searchResultsFacets) {
+            System.err.println(ksf.getField());
+            System.err.println(ksf.getName());
+            System.err.println(ksf.getValue());
+            System.err.println(ksf.getItems());
+        }
+        System.err.println("##########");
+        //
+
         //logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
         LOG.debug("SEARCH RESULTS FOR " + searchTerm  + ": " + totalHits);
 
