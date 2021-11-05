@@ -309,10 +309,6 @@ input.submit {
                 &laquo; show all </a></div>
               </c:when>
               <c:otherwise>
-<pre>
-facet.name=${facet.name}
-facet.items=${facet.items}
-</pre>
                 <h3 class="facetHeader">Hits by ${facet.name}</h3>
                 <div class="facetContents">
                 <ul>
