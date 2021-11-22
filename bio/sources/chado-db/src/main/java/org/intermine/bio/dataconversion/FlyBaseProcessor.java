@@ -369,7 +369,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             " CREATE TEMPORARY TABLE " + ALLELE_TEMP_TABLE_NAME
             + " AS SELECT feature_id"
             + " FROM feature, cvterm feature_type "
-            + " WHERE feature_type.name = 'gene'"
+            + " WHERE feature_type.name = 'allele'"
             + " AND type_id = feature_type.cvterm_id"
             + " AND uniquename LIKE 'FBal%'"
             + " AND NOT feature.is_obsolete"
@@ -877,7 +877,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-            "gene", "mRNA", "transcript", "polypeptide",
+            "allele", "gene", "mRNA", "transcript", "polypeptide",
             "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
@@ -914,7 +914,8 @@ public class FlyBaseProcessor extends SequenceProcessor
                              featureData.getChadoFeatureUniqueName());
             }
         }
-        if (FEATURES.contains("gene")) {
+
+        if (FEATURES.contains("allele")) {
             processAlleleProps(connection, features);
 
             Map<Integer, List<String>> mutagenMap = makeMutagenMap(connection);
@@ -928,7 +929,9 @@ public class FlyBaseProcessor extends SequenceProcessor
                 ReferenceList referenceList = new ReferenceList();
                 referenceList.setName("mutagens");
                 referenceList.setRefIds(mutagenRefIds);
-                getChadoDBConverter().store(referenceList, alleleDat.getIntermineObjectId());
+                if (alleleDat.getIntermineObjectId() != null) {
+                    getChadoDBConverter().store(referenceList, alleleDat.getIntermineObjectId());
+                }
             }
 
             createIndelReferences(connection);
@@ -937,6 +940,8 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             createInteractions(connection);
         }
+
+
     }
 
     private Item getInteraction(Map<MultiKey, Item> interactions, String refId,
@@ -1226,9 +1231,14 @@ public class FlyBaseProcessor extends SequenceProcessor
             String propType = res.getString("type_name");
             Integer featurePropId = new Integer(res.getInt("featureprop_id"));
 
+            if (features.get(featureId) == null) {
+                continue;
+            }
             FeatureData alleleFeatureData = features.get(featureId);
+
             OrganismData od = alleleFeatureData.getOrganismData();
             Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId());
+
 
             String alleleItemIdentifier = alleleFeatureData.getItemIdentifier();
 
@@ -1254,7 +1264,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     /**
-     * Return a Map from allele feature_id to mutagen.  The mutagen is found be looking at cvterms
+     * Return a Map from allele feature_id to mutagen.  The mutagen is found looking at cvterms
      * that are associated with each feature and saving those terms that have "origin of mutation"
      * as a parent term.
      */
@@ -1299,7 +1309,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     /**
      * Get result set of feature_id, cvterm_id pairs for the alleles in flybase chado.
-     * @param connection the Connectio
+     * @param connection the Connection
      * @return the cvterms
      * @throws SQLException if there is a database problem
      */
@@ -1463,7 +1473,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     /**
-     * Return the item identifiers of the alleles metioned in the with clauses of the argument.
+     * Return the item identifiers of the alleles mentioned in the with clauses of the argument.
      * Currently unused because flybase with clauses are wrong - see ticket #889
      */
 //    @SuppressWarnings("unused")
