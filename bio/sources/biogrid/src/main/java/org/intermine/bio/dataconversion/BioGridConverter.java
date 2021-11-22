@@ -212,7 +212,7 @@ public class BioGridConverter extends BioFileConverter
             } else if ("alias".equals(attribute)) {
                 config.setAlias(value);
             } else if ("strain".equals(attribute)) {
-                    strains.put(value, taxonId);
+                strains.put(value, taxonId);
             } else if ("prefix".equals(attribute)) {
                 // e.g. MGI:
                 config.setPrefix(value);
