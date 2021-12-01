@@ -14,18 +14,12 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.ApiTemplate;
-import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateSummariser;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.template.TemplateQuery;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -10,30 +10,20 @@ package org.intermine.webservice.server.template;
  *
  */
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.BadTemplateException;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.template.TemplateQuery;
-import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.webservice.server.Format;
-import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * A service to enable templates to be precomputed.
