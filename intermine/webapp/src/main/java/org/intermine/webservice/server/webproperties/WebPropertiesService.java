@@ -60,6 +60,9 @@ public class WebPropertiesService extends JSONService
         // mine name, citation
         appendProperties(webPropertiesMap, "project");
 
+        // mine name, citation
+        appendProperties(webPropertiesMap, "bluegenes");
+
         // list params, delimiters
         appendProperties(webPropertiesMap, "list");
 
