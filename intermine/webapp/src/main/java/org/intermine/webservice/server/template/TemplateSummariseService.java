@@ -84,4 +84,9 @@ public class TemplateSummariseService extends JSONService
         }
         addResultItem(summarisedTemplateMap, false);
     }
+
+    @Override
+    public String getResultsKey() {
+        return "templates";
+    }
 }

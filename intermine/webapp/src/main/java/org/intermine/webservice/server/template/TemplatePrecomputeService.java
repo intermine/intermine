@@ -85,4 +85,9 @@ public class TemplatePrecomputeService extends JSONService
         }
         addResultItem(precomputedTemplateMap, false);
     }
+
+    @Override
+    public String getResultsKey() {
+        return "templates";
+    }
 }
