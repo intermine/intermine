@@ -3796,6 +3796,93 @@ may be polled later.
     </metadata>
   </servlet-mapping>
 
+  <!-- new in version 33 -->
+  <servlet>
+    <servlet-name>ws-precompute-template</servlet-name>
+    <servlet-class>org.intermine.webservice.server.template.TemplatePrecomputeServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-precompute-template</servlet-name>
+    <url-pattern>/service/template/precompute</url-pattern>
+    <metadata>
+        <name>Precompute</name>
+        <minVersion>33</minVersion>
+        <method type="GET" authenticationRequired="true">
+            <summary>Template Precomputed or not</summary>
+            <description>
+                This service tells if a template has been already precomputed
+            </description>
+			<param
+                required="false"
+                type="String"
+                description="The name of the template">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+            <summary>Precompute a template</summary>
+            <description>
+                This service allow to precompute a template
+            </description>
+			<param
+                required="true"
+                type="String"
+                description="The name of the template">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-summarise-template</servlet-name>
+    <servlet-class>org.intermine.webservice.server.template.TemplateSummariseServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ws-summarise-template</servlet-name>
+    <url-pattern>/service/template/summarise</url-pattern>
+    <metadata>
+        <name>Summarise</name>
+        <minVersion>33</minVersion>
+        <method type="GET" authenticationRequired="true">
+            <summary>Template summarised or not</summary>
+            <description>
+                This service tells if a template has been already summarised
+            </description>
+			<param
+                required="false"
+                type="String"
+                description="The name of the template">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+            <summary>Summarise a template</summary>
+            <description>
+                This service allow to Summarise a template
+            </description>
+			<param
+                required="true"
+                type="String"
+                description="The name of the template">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
