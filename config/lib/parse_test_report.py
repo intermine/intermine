@@ -29,7 +29,7 @@ for project_directory in next(os.walk(directory))[1]:
             with open(path.join(tests_path, entry)) as f:
                 suite, tr = xunitparser.parse(f)
 
-                failures = [testcase for testcase in suite if not testcase.good]
+                failures = [testcase for testcase in suite if testcase and not testcase.good]
 
                 for testcase in failures:
                     print(
