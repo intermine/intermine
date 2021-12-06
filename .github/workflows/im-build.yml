@@ -37,10 +37,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: '11'
-    - name: Set up python 3.8
+    - name: Set up python 3.10
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: '3.10'
     - name: Install PostgreSQL client
       run: |
         sudo apt-get update -y
@@ -83,10 +83,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: '11'
-    - name: Set up python 3.8
+    - name: Set up python 3.10
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: '3.10'
     - name: Install PostgreSQL client
       run: |
         sudo apt-get update -y
