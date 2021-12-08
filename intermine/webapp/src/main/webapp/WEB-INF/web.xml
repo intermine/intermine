@@ -3622,6 +3622,9 @@ The different token types are:
             <param required="true"
 		   type="String" 
                    description="The new value">value</param>
+            <body description="The key and value, if using body content.">
+                <content type="application/x-www-form-urlencoded"/>
+            </body>
             <returns>
                 <format accept="application/json">json</format>
             </returns>

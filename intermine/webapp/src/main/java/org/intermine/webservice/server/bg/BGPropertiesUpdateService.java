@@ -11,6 +11,8 @@ package org.intermine.webservice.server.bg;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -18,6 +20,7 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -40,9 +43,18 @@ public class BGPropertiesUpdateService extends JSONService
         if (!getPermission().getProfile().isSuperuser()) {
             throw new ServiceForbiddenException("Only admins users can access this service");
         }
-
-        String key = getRequiredParameter("key");
-        String value = getRequiredParameter("value");
+        String body = IOUtils.toString(request.getReader());
+        String key = null;
+        String value = null;
+        if (!StringUtils.isEmpty(body)) {
+            String[] input = parseInput(body);
+            key = input[0];
+            value = input[1];
+        }
+        if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
+            key = getRequiredParameter("key");
+            value = getRequiredParameter("value");
+        }
 
         ObjectStoreWriter uosw = im.getProfileManager().getProfileObjectStoreWriter();
         String bgPropsAsString = MetadataManager.retrieve(
@@ -61,5 +73,20 @@ public class BGPropertiesUpdateService extends JSONService
             MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
                         MetadataManager.BG_PROPERTIES, mapper.writeValueAsString(bgMap));
         }
+    }
+
+    private String[] parseInput(String input) {
+        int keyIndex = input.indexOf("key");
+        int valueIndex = input.indexOf("value");
+        int separatorIndex = input.indexOf("&");
+        String key, value;
+        if (keyIndex < valueIndex) {
+            key = input.substring(keyIndex + 4, separatorIndex);
+            value = input.substring(valueIndex + 6);
+        } else {
+            value = input.substring(valueIndex + 6, separatorIndex);
+            key = input.substring(keyIndex + 4);
+        }
+        return new String[] {key, value};
     }
 }
