@@ -207,7 +207,7 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
         if (rank != null) {
             retVal.put("rank", rank);
         }
-        retVal.put("authorized", Boolean.toString(authorized));
+        retVal.put("authorized", authorized);
         return retVal;
     }
 
