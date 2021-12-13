@@ -64,21 +64,20 @@ public class TemplateSummariseStatusService extends JSONService
         Profile currentProfile = getPermission().getProfile();
         Map<String, ApiTemplate> templates = currentProfile.getSavedTemplates();
         TemplateSummariser summariser = im.getTemplateSummariser();
-        Map<String, String> summarisedTemplateMap = new HashMap<String, String>();
+        Map<String, Boolean> summarisedTemplateMap = new HashMap<>();
 
         if (!StringUtils.isEmpty(templateName)) {
             ApiTemplate template = templates.get(templateName);
             if (template == null) {
                 throw new BadRequestException("The template " + templateName + " doesn't exist");
             } else if (template.isValid()) {
-                summarisedTemplateMap.put(template.getName(), Boolean.toString(summariser
-                        .isSummarised(template)));
+                summarisedTemplateMap.put(template.getName(), summariser.isSummarised(template));
             }
         } else {
             for (ApiTemplate template : templates.values()) {
                 if (template.isValid()) {
-                    summarisedTemplateMap.put(template.getName(), Boolean.toString(summariser
-                            .isSummarised(template)));
+                    summarisedTemplateMap.put(template.getName(),
+                        summariser.isSummarised(template));
                 }
             }
         }

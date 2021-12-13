@@ -67,7 +67,7 @@ public class TemplatePrecomputeService extends JSONService
         Profile currentProfile = getPermission().getProfile();
         Map<String, ApiTemplate> templates = currentProfile.getSavedTemplates();
         TemplateQuery template = templates.get(templateName);
-        Map<String, String> precomputedTemplateMap = new HashMap<>();
+        Map<String, Boolean> precomputedTemplateMap = new HashMap<>();
         if (template == null) {
             throw new BadRequestException("The template " + templateName + " doesn't exist");
         }
@@ -78,10 +78,10 @@ public class TemplatePrecomputeService extends JSONService
         WebResultsExecutor executor = im.getWebResultsExecutor(currentProfile);
         try {
             executor.precomputeTemplate(template);
-            precomputedTemplateMap.put(templateName, "true");
+            precomputedTemplateMap.put(templateName, true);
         } catch (ObjectStoreException e) {
             LOG.error("Error while precomputing", e);
-            precomputedTemplateMap.put(templateName, "false");
+            precomputedTemplateMap.put(templateName, false);
         }
         addResultItem(precomputedTemplateMap, false);
     }

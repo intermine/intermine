@@ -66,7 +66,7 @@ public class TemplateSummariseService extends JSONService
         Profile currentProfile = getPermission().getProfile();
         Map<String, ApiTemplate> templates = currentProfile.getSavedTemplates();
         ApiTemplate template = templates.get(templateName);
-        Map<String, String> summarisedTemplateMap = new HashMap<String, String>();
+        Map<String, Boolean> summarisedTemplateMap = new HashMap<>();
         if (template == null) {
             throw new BadRequestException("The template " + templateName + " doesn't exist");
         }
@@ -77,10 +77,10 @@ public class TemplateSummariseService extends JSONService
         TemplateSummariser summariser = im.getTemplateSummariser();
         try {
             summariser.summarise(template);
-            summarisedTemplateMap.put(templateName, "true");
+            summarisedTemplateMap.put(templateName, true);
         } catch (ObjectStoreException e) {
             LOG.error("Error while summarising", e);
-            summarisedTemplateMap.put(templateName, "false");
+            summarisedTemplateMap.put(templateName, false);
         }
         addResultItem(summarisedTemplateMap, false);
     }

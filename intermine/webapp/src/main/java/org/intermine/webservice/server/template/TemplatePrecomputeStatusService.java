@@ -68,7 +68,7 @@ public class TemplatePrecomputeStatusService extends JSONService
         Profile currentProfile = getPermission().getProfile();
         Map<String, ApiTemplate> templates = currentProfile.getSavedTemplates();
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) im.getObjectStore();
-        Map<String, String> precomputedTemplateMap = new HashMap<>();
+        Map<String, Boolean> precomputedTemplateMap = new HashMap<>();
         String templateName = getOptionalParameter("name");
 
         if (!StringUtils.isEmpty(templateName)) {
@@ -78,16 +78,16 @@ public class TemplatePrecomputeStatusService extends JSONService
             } else if (template.isValid()) {
                 Query query = TemplatePrecomputeHelper
                         .getPrecomputeQuery(template, new ArrayList<QuerySelectable>(), null);
-                precomputedTemplateMap.put(template.getName(), Boolean.toString(os
-                        .isPrecomputed(query, "template")));
+                precomputedTemplateMap.put(template.getName(),
+                        os.isPrecomputed(query, "template"));
             }
         } else {
             for (ApiTemplate template : templates.values()) {
                 if (template.isValid()) {
                     Query query = TemplatePrecomputeHelper
                             .getPrecomputeQuery(template, new ArrayList<QuerySelectable>(), null);
-                    precomputedTemplateMap.put(template.getName(), Boolean.toString(os
-                            .isPrecomputed(query, "template")));
+                    precomputedTemplateMap.put(template.getName(), os
+                            .isPrecomputed(query, "template"));
                 }
             }
         }
