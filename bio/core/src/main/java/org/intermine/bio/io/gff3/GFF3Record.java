@@ -356,6 +356,18 @@ public class GFF3Record
     }
 
     /**
+    * Return the list of the Symbol field from the attributes of this record.
+    * @return the Symbol from the attributes of this record or null if there isn't a value
+    */
+    public List<String> getSymbols() {
+        if (getAttributes().containsKey("Symbol")) {
+            return getAttributes().get("Symbol");
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Return the first value of the Alias field from the attributes of this record.
      * @return the Alias from the attributes of this record or null of there isn't a value
      */
