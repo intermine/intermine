@@ -12,7 +12,7 @@ directory = sys.argv[1]
 total_failure_count = 0
 total_test_count = 0
 
-for project_directory in os.walk(directory).next()[1]:
+for project_directory in next(os.walk(directory))[1]:
     tests_path = path.join(directory, project_directory, 'build/test-results/test')
 
     if not path.isdir(tests_path):
@@ -24,12 +24,12 @@ for project_directory in os.walk(directory).next()[1]:
     test_count = 0
     failure_count = 0
 
-    for entry in os.walk(tests_path).next()[2]:
+    for entry in next(os.walk(tests_path))[2]:
         if entry.endswith('.xml') and not entry.endswith('TestSuites.xml'):
             with open(path.join(tests_path, entry)) as f:
                 suite, tr = xunitparser.parse(f)
 
-                failures = [testcase for testcase in suite if not testcase.good]
+                failures = [testcase for testcase in suite if testcase and not testcase.good]
 
                 for testcase in failures:
                     print(
