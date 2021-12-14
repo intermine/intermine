@@ -21,6 +21,7 @@ import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 
 /**
@@ -46,7 +47,7 @@ public class BGPropertiesUpdateService extends JSONService
         String key = null;
         String value = null;
         if (!StringUtils.isEmpty(body)) {
-            String[] input = parseInput(body);
+            String[] input = parseInput(URLDecoder.decode(body, "UTF-8"));
             key = input[0];
             value = input[1];
         }
