@@ -378,6 +378,9 @@ public class ProfileManager
             if (userProfile == null) {
                 throw new ObjectStoreException("User is not in the data store.");
             }
+
+            profile.getPreferences().clear();
+
             for (org.intermine.api.userprofile.SavedQuery sq: userProfile.getSavedQuerys()) {
                 uosw.delete(sq);
             }
