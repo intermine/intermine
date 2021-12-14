@@ -75,16 +75,16 @@ public class BGPropertiesUpdateService extends JSONService
     }
 
     private String[] parseInput(String input) {
-        int keyIndex = input.indexOf("key");
-        int valueIndex = input.indexOf("value");
-        int separatorIndex = input.indexOf("&");
-        String key, value;
-        if (keyIndex < valueIndex) {
-            key = input.substring(keyIndex + 4, separatorIndex);
-            value = input.substring(valueIndex + 6);
-        } else {
-            value = input.substring(valueIndex + 6, separatorIndex);
-            key = input.substring(keyIndex + 4);
+        String key = "";
+        String value = "";
+        String[] keyValuePairs = StringUtils.split(input, "&");
+        for (int index = 0; index< keyValuePairs.length; index++) {
+            String[] keyValuePair = StringUtils.split(keyValuePairs[index], "=");
+            if (keyValuePair[0].equalsIgnoreCase("key")) {
+                key = keyValuePair[1];
+            } else if (keyValuePair[0].equalsIgnoreCase("value")) {
+                value = keyValuePair[1];
+            }
         }
         return new String[] {key, value};
     }
