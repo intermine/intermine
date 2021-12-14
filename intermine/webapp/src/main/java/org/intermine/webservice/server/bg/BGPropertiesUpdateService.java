@@ -78,7 +78,7 @@ public class BGPropertiesUpdateService extends JSONService
         String key = "";
         String value = "";
         String[] keyValuePairs = StringUtils.split(input, "&");
-        for (int index = 0; index< keyValuePairs.length; index++) {
+        for (int index = 0; index < keyValuePairs.length; index++) {
             String[] keyValuePair = StringUtils.split(keyValuePairs[index], "=");
             if (keyValuePair[0].equalsIgnoreCase("key")) {
                 key = keyValuePair[1];
