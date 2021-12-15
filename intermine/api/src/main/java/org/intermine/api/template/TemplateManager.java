@@ -137,8 +137,17 @@ public class TemplateManager
         // where name collisions occur user templates take precedence
         Map<String, ApiTemplate> allTemplates = new HashMap<String, ApiTemplate>();
 
-        allTemplates.putAll(getGlobalTemplates());
-        allTemplates.putAll(profile.getSavedTemplates());
+        Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
+        for (ApiTemplate template : globalTemplates.values()) {
+            template.setAuthorized(false);
+        }
+        allTemplates.putAll(globalTemplates);
+
+        Map<String, ApiTemplate> savedTemplates = profile.getSavedTemplates();
+        for (ApiTemplate template : savedTemplates.values()) {
+            template.setAuthorized(true);
+        }
+        allTemplates.putAll(savedTemplates);
 
         return allTemplates;
     }
