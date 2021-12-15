@@ -21,6 +21,8 @@ import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.PortalHelper;
+import org.intermine.web.uri.InterMineLUI;
+import org.intermine.web.uri.InterMineLUIConverter;
 import org.json.JSONObject;
 
 /**
@@ -67,7 +69,11 @@ public class TableCellFormatter
                 link = redirector.generateLink(im, (InterMineObject) cell.getObject());
             }
             if (link == null) {
-                link = PortalHelper.generateReportPath(cell);
+                InterMineLUI lui = new InterMineLUIConverter(im.getProfileManager()
+                        .getSuperuserProfile()).getInterMineLUI(cell.getId());
+                link = (lui != null)
+                        ? "/" + lui.toString()
+                        : PortalHelper.generateReportPath(cell);
             }
             mapping.put(CELL_KEY_URL, link);
 
