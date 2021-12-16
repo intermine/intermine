@@ -140,7 +140,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
                 "4bdcdd74743c6326f277da6fe9e07f2a", 1
             },
             {
-                1000002, "", "", "protein", null,
+                1000002, "uto", "ughi", "protein", null,
                 "VSFAQVWCSSTTDETNLLQMEKDPHSPSQFRVIGTLSNMKEFAEVFQCKPGKRMNPTEKCEVW",
                 "4bdcdd74743c6326f277da6fe9e07f2a", 1
             },

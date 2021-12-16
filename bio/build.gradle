@@ -1,6 +1,6 @@
 subprojects {
     group = 'org.intermine'
-    version = '5.0.3'
+    version = '5.0.4'
 
     apply plugin: "java"
     apply plugin: "maven"
@@ -14,7 +14,7 @@ subprojects {
         mavenLocal()
         mavenCentral()
         maven {
-            url 'https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
+            url 'https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/'
         }
     }
 
