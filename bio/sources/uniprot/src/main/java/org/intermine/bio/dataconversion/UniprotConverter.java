@@ -428,7 +428,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (type.equals(geneDesignation)) {
                     entry.addGeneDesignation(getAttrValue(attrs, "value"));
                 } else if ("evidence".equals(type)) {
-                    entry.addGOEvidence(entry.getDbref(), getAttrValue(attrs, "value"));
+                    entry.addOntologyEvidence(entry.getDbref(), getAttrValue(attrs, "value"));
                 }
             } else if ("name".equals(qName) && "gene".equals(previousQName)) {
                 attName = getAttrValue(attrs, "type");
@@ -965,11 +965,11 @@ public class UniprotConverter extends BioDirectoryConverter
                 Set<String> values = dbref.getValue();
                 if ("GO".equalsIgnoreCase(key)) {
                     for (String goTerm : values) {
-                        String code = getGOEvidenceCode(entry.getGOEvidence(goTerm));
-                        Item goEvidence = createItem("GOEvidence");
+                        String code = getOntologyEvidenceCode(entry.getOntologyEvidence(goTerm));
+                        Item goEvidence = createItem("OntologyEvidence");
                         goEvidence.setReference("code", code);
 
-                        Item goAnnotation = createItem("GOAnnotation");
+                        Item goAnnotation = createItem("OntologyAnnotation");
                         goAnnotation.setReference("subject", gene);
                         goAnnotation.setReference("ontologyTerm", getGoTerm(goTerm));
                         goAnnotation.addToCollection("evidence", goEvidence);
@@ -1288,7 +1288,7 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     // value is NAS:FlyBase
-    private String getGOEvidenceCode(String value)
+    private String getOntologyEvidenceCode(String value)
         throws SAXException {
         String[] bits = value.split(":");
         String code = "";
@@ -1299,7 +1299,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
         String refId = goEvidenceCodes.get(code);
         if (refId == null) {
-            Item item = createItem("GOEvidenceCode");
+            Item item = createItem("OntologyEvidenceCode");
             item.setAttribute("code", code);
             refId = item.getIdentifier();
             goEvidenceCodes.put(code, refId);
@@ -1317,7 +1317,7 @@ public class UniprotConverter extends BioDirectoryConverter
         throws SAXException {
         String refId = goterms.get(identifier);
         if (refId == null) {
-            Item item = createItem("GOTerm");
+            Item item = createItem("OntologyTerm");
             item.setAttribute("identifier", identifier);
             refId = item.getIdentifier();
             goterms.put(identifier, refId);

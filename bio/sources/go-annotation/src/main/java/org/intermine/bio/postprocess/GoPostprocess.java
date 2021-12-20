@@ -19,7 +19,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.ConstraintOp;
-import org.intermine.model.bio.GOAnnotation;
+import org.intermine.model.bio.OntologyAnnotation;
 import org.intermine.model.bio.OntologyEvidence;
 import org.intermine.model.bio.OntologyAnnotationEvidenceCode;
 import org.intermine.model.bio.Gene;
@@ -42,7 +42,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.postprocess.PostProcessor;
 
 /**
- * Take any GOAnnotation objects assigned to proteins and copy them to corresponding genes.
+ * Take any OntologyAnnotation objects assigned to proteins and copy them to corresponding genes.
  * Merge evidence where duplication is found.
  * Update evidence codes with names and descriptions.
  * @author Richard Smith
@@ -79,31 +79,31 @@ public class GoPostprocess extends PostProcessor
 
         int count = 0;
         Gene lastGene = null;
-        Map<OntologyTerm, GOAnnotation> annotations = new HashMap<OntologyTerm, GOAnnotation>();
+        Map<OntologyTerm, OntologyAnnotation> annotations = new HashMap<OntologyTerm, OntologyAnnotation>();
 
         while (resIter.hasNext()) {
             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             Gene thisGene = (Gene) rr.get(0);
-            GOAnnotation thisAnnotation = (GOAnnotation) rr.get(1);
+            OntologyAnnotation thisAnnotation = (OntologyAnnotation) rr.get(1);
 
             // process last set of annotations if this is a new gene
             if (lastGene != null && !(lastGene.equals(thisGene))) {
-                for (GOAnnotation item : annotations.values()) {
+                for (OntologyAnnotation item : annotations.values()) {
                     osw.store(item);
                 }
-                lastGene.setGoAnnotation(new HashSet(annotations.values()));
+                lastGene.setOntologyAnnotations(new HashSet(annotations.values()));
                 LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
-                        + lastGene.getGoAnnotation().size() + " GO.");
+                        + lastGene.getOntologyAnnotations().size() + " GO.");
                 osw.store(lastGene);
 
                 lastGene = thisGene;
-                annotations = new HashMap<OntologyTerm, GOAnnotation>();
+                annotations = new HashMap<OntologyTerm, OntologyAnnotation>();
             }
 
             OntologyTerm term = thisAnnotation.getOntologyTerm();
             Set<OntologyEvidence> evidence = thisAnnotation.getEvidence();
 
-            GOAnnotation tempAnnotation;
+            OntologyAnnotation tempAnnotation;
             try {
                 tempAnnotation = PostProcessUtil.copyInterMineObject(thisAnnotation);
             } catch (IllegalAccessException e) {
@@ -121,24 +121,24 @@ public class GoPostprocess extends PostProcessor
         }
 
         if (lastGene != null) {
-            for (GOAnnotation item : annotations.values()) {
+            for (OntologyAnnotation item : annotations.values()) {
                 osw.store(item);
             }
-            lastGene.setGoAnnotation(new HashSet(annotations.values()));
+            lastGene.setOntologyAnnotations(new HashSet(annotations.values()));
             LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
-                    + lastGene.getGoAnnotation().size() + " GO.");
+                    + lastGene.getOntologyAnnotations().size() + " GO.");
             osw.store(lastGene);
         }
 
-        LOG.info("Created " + count + " new GOAnnotation objects for Genes"
+        LOG.info("Created " + count + " new OntologyAnnotation objects for Genes"
                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
     }
 
-    private boolean hasDupes(Map<OntologyTerm, GOAnnotation> annotations, OntologyTerm term,
-            Set<OntologyEvidence> evidence, GOAnnotation newAnnotation) {
+    private boolean hasDupes(Map<OntologyTerm, OntologyAnnotation> annotations, OntologyTerm term,
+            Set<OntologyEvidence> evidence, OntologyAnnotation newAnnotation) {
         boolean isDupe = false;
-        GOAnnotation alreadySeenAnnotation = annotations.get(term);
+        OntologyAnnotation alreadySeenAnnotation = annotations.get(term);
         if (alreadySeenAnnotation != null) {
             isDupe = true;
             mergeEvidence(evidence, alreadySeenAnnotation);
@@ -149,7 +149,7 @@ public class GoPostprocess extends PostProcessor
     }
 
     // we've seen this term, merge instead of storing new object
-    private void mergeEvidence(Set<OntologyEvidence> evidence, GOAnnotation alreadySeenAnnotation) {
+    private void mergeEvidence(Set<OntologyEvidence> evidence, OntologyAnnotation alreadySeenAnnotation) {
         for (OntologyEvidence g : evidence) {
             OntologyAnnotationEvidenceCode c = g.getCode();
             Set<Publication> pubs = g.getPublications();
@@ -182,8 +182,8 @@ public class GoPostprocess extends PostProcessor
     }
 
     /**
-     * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene,
-     *  Protein and GOTerm.
+     * Query Gene->Protein->Annotation->OntologyTerm and return an iterator over the Gene,
+     *  Protein and OntologyTerm.
      *
      * @param restrictToPrimaryGoTermsOnly Only get primary Annotation items linking the gene
      *  and the go term.
@@ -202,7 +202,7 @@ public class GoPostprocess extends PostProcessor
         QueryClass qcProtein = new QueryClass(Protein.class);
         q.addFrom(qcProtein);
 
-        QueryClass qcAnnotation = new QueryClass(GOAnnotation.class);
+        QueryClass qcAnnotation = new QueryClass(OntologyAnnotation.class);
         q.addFrom(qcAnnotation);
         q.addToSelect(qcAnnotation);
 

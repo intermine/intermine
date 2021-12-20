@@ -43,17 +43,17 @@ public abstract class BioFileConverter extends FileConverter
      * @param writer the Writer used to output the resultant items
      * @param model the data model
      * @param dataSourceName the DataSource name
-     * @param dataSetTitle the DataSet title
+     * @param dataSetName the DataSet name
      */
     public BioFileConverter (ItemWriter writer, Model model, String dataSourceName,
-                             String dataSetTitle) {
+                             String dataSetName, String dataSetDescription) {
         super(writer, model);
         String dataSource = null;
         String dataSet = null;
         sequenceOntologyRefId = BioConverterUtil.getOntology(this);
-        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
+        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetName)) {
             dataSource = getDataSource(dataSourceName);
-            dataSet = getDataSet(dataSetTitle, dataSource, null);
+            dataSet = getDataSet(dataSetName, dataSource, dataSetDescription, null);
         }
         setStoreHook(new BioStoreHook(model, dataSet, dataSource, sequenceOntologyRefId));
     }
@@ -64,18 +64,19 @@ public abstract class BioFileConverter extends FileConverter
      * @param writer the Writer used to output the resultant items
      * @param model the data model
      * @param dataSourceName the DataSource name
-     * @param dataSetTitle the DataSet title
+     * @param dataSetName the DataSet name
+     * @param dataSetDescription the DataSet description
      * @param licence URL pointing to licence information
      */
     public BioFileConverter (ItemWriter writer, Model model, String dataSourceName,
-                             String dataSetTitle, String licence) {
+                             String dataSetName, String dataSetDescription, String licence) {
         super(writer, model);
         String dataSource = null;
         String dataSet = null;
         sequenceOntologyRefId = BioConverterUtil.getOntology(this);
-        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
+        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetName)) {
             dataSource = getDataSource(dataSourceName);
-            dataSet = getDataSet(dataSetTitle, dataSource, licence);
+            dataSet = getDataSet(dataSetName, dataSource, dataSetDescription, licence);
         }
         setStoreHook(new BioStoreHook(model, dataSet, dataSource, sequenceOntologyRefId));
     }
@@ -85,12 +86,13 @@ public abstract class BioFileConverter extends FileConverter
      * @param writer the Writer used to output the resultant items
      * @param model the data model
      * @param dataSourceName the DataSource name
-     * @param dataSetTitle the DataSet title
+     * @param dataSetName the DataSet name
+     * @param dataSetDescription the DataSet description
      * @param storeOntology if TRUE, store ontology as normal
      * @param licence URL pointing to licence information
      */
     public BioFileConverter (ItemWriter writer, Model model, String dataSourceName,
-            String dataSetTitle, String licence, boolean storeOntology) {
+			     String dataSetName, String dataSetDescription, String licence, boolean storeOntology) {
         super(writer, model);
         String dataSource = null;
         String dataSet = null;
@@ -98,9 +100,9 @@ public abstract class BioFileConverter extends FileConverter
         if (storeOntology) {
             sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         }
-        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
+        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetName)) {
             dataSource = getDataSource(dataSourceName);
-            dataSet = getDataSet(dataSetTitle, dataSource, licence);
+            dataSet = getDataSet(dataSetName, dataSource, dataSetDescription, licence);
         }
         setStoreHook(new BioStoreHook(model, dataSet, dataSource, sequenceOntologyRefId));
     }
@@ -127,7 +129,7 @@ public abstract class BioFileConverter extends FileConverter
     }
 
     /**
-     * Return a DataSource item for the given title
+     * Return a DataSource item for the given name
      * @param name the DataSource name
      * @return the DataSource Item
      */
@@ -153,27 +155,30 @@ public abstract class BioFileConverter extends FileConverter
     /**
      * Return a DataSet ref with the given details.
      *
-     * @param title the DataSet title
+     * @param name the DataSet name
      * @param dataSourceRefId the DataSource referenced by the the DataSet
      * @return the DataSet Item
      */
-    public String getDataSet(String title, String dataSourceRefId) {
-        return getDataSet(title, dataSourceRefId, null);
+    public String getDataSet(String name, String dataSourceRefId) {
+        return getDataSet(name, dataSourceRefId, null, null);
     }
 
     /**
      * Return a DataSet ref with the given details.
      *
-     * @param title the DataSet title
+     * @param name the DataSet name
      * @param dataSourceRefId the DataSource referenced by the the DataSet
      * @param licence URL pointing to the licence for this data set
      * @return the DataSet Item
      */
-    public String getDataSet(String title, String dataSourceRefId, String licence) {
-        String refId = dataSets.get(title);
+    public String getDataSet(String name, String dataSourceRefId, String dataSetDescription, String licence) {
+        String refId = dataSets.get(name);
         if (refId == null) {
             Item dataSet = createItem("DataSet");
-            dataSet.setAttribute("name", title);
+            dataSet.setAttribute("name", name);
+	    if (dataSetDescription!=null) {
+		dataSet.setAttribute("description", dataSetDescription);
+	    }
             if (licence != null) {
                 dataSet.setAttribute("licence", licence);
             }
@@ -181,10 +186,10 @@ public abstract class BioFileConverter extends FileConverter
             try {
                 store(dataSet);
             } catch (ObjectStoreException e) {
-                throw new RuntimeException("failed to store DataSet with title: " + title, e);
+                throw new RuntimeException("failed to store DataSet with name: " + name, e);
             }
             refId = dataSet.getIdentifier();
-            dataSets.put(title, refId);
+            dataSets.put(name, refId);
         }
         return refId;
     }

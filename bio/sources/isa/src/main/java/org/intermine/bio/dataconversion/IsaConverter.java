@@ -90,7 +90,7 @@ public class IsaConverter extends BioFileConverter
      * @param model  the Model
      */
     public IsaConverter(ItemWriter writer, Model model) {
-        super(writer, model, "ISA", "ISA data");
+        super(writer, model, "ISA", "ISA data", "ISA data");
     }
 
     /*

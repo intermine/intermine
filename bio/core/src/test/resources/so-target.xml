@@ -1,5 +1,6 @@
 <model name="so" package="org.intermine.model.bio">
 <class name="Chromosome" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000340"></class>
+<class name="Supercontig" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000148"></class>
 <class name="Exon" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000147">
 	<reference name="transcript" referenced-type="Transcript" reverse-reference="exons"/>
 </class>

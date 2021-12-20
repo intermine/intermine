@@ -417,6 +417,26 @@ public class TagManager
     }
 
     /**
+     * Return all the folder tags assigned to a specific list.
+     * @param taggedObjectId an object identifier that is appropriate for a bag
+     * @return The tags that match these criteria.
+     * @see TagTypes
+     */
+    public List<Tag> getFolderTags(String taggedObjectId) {
+        if (taggedObjectId == null) {
+            throw new NullPointerException("taggedObjectId must not be null");
+        }
+        List<Tag> tags = getTags(null, taggedObjectId, TagTypes.BAG, null);
+        List<Tag> folderTags = new ArrayList<>();
+        for (Tag tag : tags) {
+            if ( tag.getTagName().startsWith(TagNames.BG_PREFIX) ) {
+                folderTags.add(tag);
+            }
+        }
+        return folderTags;
+    }
+
+    /**
      * Return a List of Tags that match all the arguments.  Any null arguments will be treated as
      * wildcards.
      *

@@ -146,18 +146,18 @@ public final class SqlGenerator
      * @throws ObjectStoreException if the given class is not in the model
      */
     public static String generateQueryForId(Integer id, Class<?> clazz,
-            DatabaseSchema schema) throws ObjectStoreException {
+                                            DatabaseSchema schema) throws ObjectStoreException {
         ClassDescriptor tableMaster;
-//        if (schema.isFlatMode(clazz)) {
-//            Query q = new Query();
-//            QueryClass qc = new QueryClass(clazz);
-//            q.addFrom(qc);
-//            q.addToSelect(qc);
-//            q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
-//                        new QueryValue(id)));
-//            q.setDistinct(false);
-//            return generate(q, 0, 2, schema, null, null);
-//        }
+        //        if (schema.isFlatMode(clazz)) {
+        //            Query q = new Query();
+        //            QueryClass qc = new QueryClass(clazz);
+        //            q.addFrom(qc);
+        //            q.addToSelect(qc);
+        //            q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
+        //                        new QueryValue(id)));
+        //            q.setDistinct(false);
+        //            return generate(q, 0, 2, schema, null, null);
+        //        }
         if (schema.isMissingNotXml()) {
             tableMaster = schema.getModel()
                 .getClassDescriptorByName(InterMineObject.class.getName());
@@ -188,7 +188,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if the given class is not in the model
      */
     public static String tableNameForId(Class<?> clazz,
-            DatabaseSchema schema) throws ObjectStoreException {
+                                        DatabaseSchema schema) throws ObjectStoreException {
         ClassDescriptor tableMaster;
         if (schema.isMissingNotXml()) {
             tableMaster = schema.getModel()
@@ -217,7 +217,7 @@ public final class SqlGenerator
      *        contents of the bag that are relevant for the BagConstraint
      */
     public static void registerOffset(Query q, int start, DatabaseSchema schema, Database db,
-            Object value, Map<Object, String> bagTableNames) {
+                                      Object value, Map<Object, String> bagTableNames) {
         LOG.debug("registerOffset() called with offset: " + start);
 
         try {
@@ -227,7 +227,7 @@ public final class SqlGenerator
             QueryOrderable firstOrderByO = null;
             firstOrderByO = (QueryOrderable) q.getEffectiveOrderBy().iterator().next();
             if ((firstOrderByO instanceof QueryClass) && (!InterMineObject.class
-                        .isAssignableFrom(((QueryClass) firstOrderByO).getType()))) {
+                                                          .isAssignableFrom(((QueryClass) firstOrderByO).getType()))) {
                 return;
             }
             synchronized (q) {
@@ -235,7 +235,7 @@ public final class SqlGenerator
                 CacheEntry cacheEntry = schemaCache.get(q);
                 if (cacheEntry != null) {
                     if ((cacheEntry.getLastOffset() - start >= 100000)
-                            || (start - cacheEntry.getLastOffset() >= 10000)) {
+                        || (start - cacheEntry.getLastOffset() >= 10000)) {
                         QueryNode firstOrderBy = null;
                         firstOrderBy = (QueryNode) q.getEffectiveOrderBy().iterator().next();
                         if (firstOrderBy instanceof QueryFunction) {
@@ -300,7 +300,7 @@ public final class SqlGenerator
      * @return the constraint(s) to add to the main query
      */
     protected static Constraint getOffsetConstraint(Query q, QueryOrderable firstOrderBy,
-            Object value, DatabaseSchema schema) {
+                                                    Object value, DatabaseSchema schema) {
         boolean reverse = false;
         QueryOrderable newFirstOrderBy = firstOrderBy;
         if (newFirstOrderBy instanceof OrderDescending) {
@@ -321,8 +321,8 @@ public final class SqlGenerator
                 } else {
                     AttributeDescriptor desc = (AttributeDescriptor) schema
                         .getModel().getFieldDescriptorsForClass(((QueryClass) qc)
-                        .getType()).get(((QueryField) newFirstOrderBy)
-                                        .getFieldName());
+                                                                .getType()).get(((QueryField) newFirstOrderBy)
+                                                                                .getFieldName());
                     if (desc.isPrimitive()) {
                         hasNulls = false;
                     }
@@ -331,21 +331,21 @@ public final class SqlGenerator
         }
         if (reverse) {
             return new SimpleConstraint((QueryEvaluable) newFirstOrderBy,
-                    ConstraintOp.LESS_THAN, new QueryValue(value));
+                                        ConstraintOp.LESS_THAN, new QueryValue(value));
         } else {
             SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) newFirstOrderBy,
-                    ConstraintOp.GREATER_THAN, new QueryValue(value));
+                                                       ConstraintOp.GREATER_THAN, new QueryValue(value));
             if (hasNulls) {
                 // if the query aready constrains the first order by field to be
                 // not null it doesn't make sense to add a costraint to null
                 CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint((QueryNode)
-                        newFirstOrderBy);
+                                                                                    newFirstOrderBy);
                 ConstraintHelper.traverseConstraints(q.getConstraint(), check);
                 if (!check.exists()) {
                     ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
                     cs.addConstraint(sc);
                     cs.addConstraint(new SimpleConstraint((QueryEvaluable) newFirstOrderBy,
-                                ConstraintOp.IS_NULL));
+                                                          ConstraintOp.IS_NULL));
                     return cs;
                 }
             }
@@ -368,7 +368,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     public static String generate(Query q, int start, int limit, DatabaseSchema schema, Database db,
-            Map<Object, String> bagTableNames) throws ObjectStoreException {
+                                  Map<Object, String> bagTableNames) throws ObjectStoreException {
         synchronized (q) {
             if ((q.getSelect().size() == 1) && (q.getSelect().get(0) instanceof Clob)) {
                 // Special case.
@@ -392,7 +392,7 @@ public final class SqlGenerator
                 if (lastKey != null) {
                     int offset = lastKey.intValue();
                     if ((offset > cacheEntry.getLastOffset())
-                            || (cacheEntry.getLastOffset() > start)) {
+                        || (cacheEntry.getLastOffset() > start)) {
                         return cacheEntry.getCached().get(lastKey)
                             + (limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
                             + (start == offset ? "" : " OFFSET " + (start - offset));
@@ -400,19 +400,19 @@ public final class SqlGenerator
                         return cacheEntry.getLastSQL()
                             + (limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
                             + (start == cacheEntry.getLastOffset() ? ""
-                                    : " OFFSET " + (start - cacheEntry.getLastOffset()));
+                               : " OFFSET " + (start - cacheEntry.getLastOffset()));
                     }
                 }
             }
             String sql = generate(q, schema, db, null, QUERY_NORMAL, bagTableNames);
             /*if (cached == null) {
-                cached = new TreeMap();
-                schemaCache.put(q, cached);
-            }
-            cached.put(new Integer(0), sql);
+              cached = new TreeMap();
+              schemaCache.put(q, cached);
+              }
+              cached.put(new Integer(0), sql);
             */
             return sql + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
-                        + (start == 0 ? "" : " OFFSET " + start));
+                          + (start == 0 ? "" : " OFFSET " + start));
         }
     }
 
@@ -447,8 +447,8 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     public static String generate(Query q, DatabaseSchema schema, Database db,
-            Constraint offsetCon, int kind,
-            Map<Object, String> bagTableNames) throws ObjectStoreException {
+                                  Constraint offsetCon, int kind,
+                                  Map<Object, String> bagTableNames) throws ObjectStoreException {
         State state = new State();
         List<QuerySelectable> selectList = q.getSelect();
         if ((selectList.size() == 1) && (selectList.get(0) instanceof ObjectStoreBag)) {
@@ -457,16 +457,16 @@ public final class SqlGenerator
                 + BAGID_COLUMN + " = " + ((ObjectStoreBag) selectList.get(0)).getBagId()
                 + " ORDER BY " + BAGVAL_COLUMN;
         } else if ((selectList.size() == 1)
-                && (selectList.get(0) instanceof ObjectStoreBagCombination)) {
+                   && (selectList.get(0) instanceof ObjectStoreBagCombination)) {
             // Another special case.
             ObjectStoreBagCombination osbc = (ObjectStoreBagCombination) selectList.get(0);
             return generateSQLForBagCombo(osbc);
         } else if ((selectList.size() == 1)
-                && (selectList.get(0) instanceof ObjectStoreBagsForObject)) {
+                   && (selectList.get(0) instanceof ObjectStoreBagsForObject)) {
             // Another special case.
             ObjectStoreBagsForObject osbfo = (ObjectStoreBagsForObject) selectList.get(0);
             StringBuffer retval = new StringBuffer("SELECT " + BAGID_COLUMN + " AS a1_ FROM "
-                    + INT_BAG_TABLE_NAME + " WHERE " + BAGVAL_COLUMN + " = " + osbfo.getValue());
+                                                   + INT_BAG_TABLE_NAME + " WHERE " + BAGVAL_COLUMN + " = " + osbfo.getValue());
             Collection<ObjectStoreBag> bags = osbfo.getBags();
             if ((bags != null) && (!bags.isEmpty())) {
                 retval.append(" AND " + BAGID_COLUMN + " IN (");
@@ -524,8 +524,8 @@ public final class SqlGenerator
         // have sub-combinations.
         if (osbc.getOp() == ObjectStoreBagCombination.UNION) {
             StringBuffer retval = new StringBuffer("SELECT DISTINCT " + BAGVAL_COLUMN
-                    + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
-                    + " IN (");
+                                                   + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
+                                                   + " IN (");
             boolean needComma = false;
             for (QuerySelectable qs : osbc.getBags()) {
                 ObjectStoreBag osb = (ObjectStoreBag) qs;
@@ -539,8 +539,8 @@ public final class SqlGenerator
             return retval.toString();
         } else if (osbc.getOp() == ObjectStoreBagCombination.ALLBUTINTERSECT) {
             StringBuffer retval = new StringBuffer("SELECT " + BAGVAL_COLUMN
-                    + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
-                    + " IN (");
+                                                   + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
+                                                   + " IN (");
             boolean needComma = false;
             for (QuerySelectable qs : osbc.getBags()) {
                 ObjectStoreBag osb = (ObjectStoreBag) qs;
@@ -551,7 +551,7 @@ public final class SqlGenerator
                 retval.append(osb.getBagId() + "");
             }
             retval.append(") GROUP BY " + BAGVAL_COLUMN + " HAVING COUNT(*) < "
-                    + osbc.getBags().size() + " ORDER BY " + BAGVAL_COLUMN);
+                          + osbc.getBags().size() + " ORDER BY " + BAGVAL_COLUMN);
             return retval.toString();
         } else {
             StringBuffer retval = new StringBuffer();
@@ -559,13 +559,13 @@ public final class SqlGenerator
             for (QuerySelectable qs : osbc.getBags()) {
                 if (needComma) {
                     retval.append(osbc.getOp() == ObjectStoreBagCombination.INTERSECT
-                            ? " INTERSECT " : " EXCEPT ");
+                                  ? " INTERSECT " : " EXCEPT ");
                 }
                 needComma = true;
                 if (qs instanceof ObjectStoreBag) {
                     ObjectStoreBag osb = (ObjectStoreBag) qs;
                     retval.append("SELECT " + BAGVAL_COLUMN + " AS a1_ FROM " + INT_BAG_TABLE_NAME
-                            + " WHERE " + BAGID_COLUMN + " = " + osb.getBagId());
+                                  + " WHERE " + BAGID_COLUMN + " = " + osb.getBagId());
                 } else {
                     // Must be a bag combo.
                     ObjectStoreBagCombination subCombo = (ObjectStoreBagCombination) qs;
@@ -640,7 +640,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     public static Set<Object> findTableNames(Query q, DatabaseSchema schema,
-            boolean individualOsbs) throws ObjectStoreException {
+                                             boolean individualOsbs) throws ObjectStoreException {
         Map<Query, Set<Object>> schemaCache = getTablenamesCacheForSchema(schema);
         synchronized (q) {
             Set<Object> tablenames = schemaCache.get(q);
@@ -683,8 +683,8 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     private static void findTableNames(Set<Object> tablenames, Query q,
-            DatabaseSchema schema, boolean addInterMineObject,
-            boolean individualOsbs) throws ObjectStoreException {
+                                       DatabaseSchema schema, boolean addInterMineObject,
+                                       boolean individualOsbs) throws ObjectStoreException {
         if (completelyFalse(q.getConstraint())) {
             return;
         }
@@ -692,7 +692,7 @@ public final class SqlGenerator
         for (FromElement fromElement : q.getFrom()) {
             if (fromElement instanceof QueryClass) {
                 for (Class<?> cls : Util.decomposeClass(((QueryClass) fromElement)
-                        .getType())) {
+                                                        .getType())) {
                     ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
                     if (cld == null) {
                         throw new ObjectStoreException(cls + " is not in the model");
@@ -710,7 +710,7 @@ public final class SqlGenerator
             }
         }
         String interMineObject = DatabaseUtil.getTableName(schema.getModel()
-                .getClassDescriptorByName(InterMineObject.class.getName()));
+                                                           .getClassDescriptorByName(InterMineObject.class.getName()));
         for (QuerySelectable selectable : q.getSelect()) {
             if (selectable instanceof QueryClass) {
                 if (addInterMineObject && schema.isMissingNotXml()) {
@@ -742,22 +742,22 @@ public final class SqlGenerator
                 }
             } else if (selectable instanceof QueryCollectionPathExpression) {
                 Collection<ProxyReference> empty = Collections.singleton(new ProxyReference(null,
-                            new Integer(1), InterMineObject.class));
+                                                                                            new Integer(1), InterMineObject.class));
                 findTableNames(tablenames, ((QueryCollectionPathExpression) selectable)
-                        .getQuery(empty), schema, addInterMineObject, individualOsbs);
+                               .getQuery(empty), schema, addInterMineObject, individualOsbs);
             } else if (selectable instanceof QueryObjectPathExpression) {
                 Collection<Integer> empty = Collections.singleton(new Integer(1));
                 findTableNames(tablenames, ((QueryObjectPathExpression) selectable)
-                        .getQuery(empty, schema.isMissingNotXml()), schema,
-                        addInterMineObject, individualOsbs);
+                               .getQuery(empty, schema.isMissingNotXml()), schema,
+                               addInterMineObject, individualOsbs);
             } else if (selectable instanceof PathExpressionField) {
                 Collection<Integer> empty = Collections.singleton(new Integer(1));
                 findTableNames(tablenames, ((PathExpressionField) selectable).getQope()
-                        .getQuery(empty, schema.isMissingNotXml()), schema,
-                        addInterMineObject, individualOsbs);
+                               .getQuery(empty, schema.isMissingNotXml()), schema,
+                               addInterMineObject, individualOsbs);
             } else {
                 throw new ObjectStoreException("Illegal entry in SELECT list: "
-                        + selectable.getClass());
+                                               + selectable.getClass());
             }
         }
     }
@@ -773,17 +773,17 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     private static void findTableNamesInConstraint(Set<Object> tablenames, Constraint c,
-            DatabaseSchema schema, boolean individualOsbs) throws ObjectStoreException {
+                                                   DatabaseSchema schema, boolean individualOsbs) throws ObjectStoreException {
         if (c instanceof ConstraintSet) {
             for (Constraint subC : ((ConstraintSet) c).getConstraints()) {
                 findTableNamesInConstraint(tablenames, subC, schema, individualOsbs);
             }
         } else if (c instanceof SubqueryConstraint) {
             findTableNames(tablenames, ((SubqueryConstraint) c).getQuery(), schema, false,
-                    individualOsbs);
+                           individualOsbs);
         } else if (c instanceof SubqueryExistsConstraint) {
             findTableNames(tablenames, ((SubqueryExistsConstraint) c).getQuery(), schema, false,
-                    individualOsbs);
+                           individualOsbs);
         } else if (c instanceof ContainsConstraint) {
             ContainsConstraint cc = (ContainsConstraint) c;
             QueryReference ref = cc.getReference();
@@ -792,10 +792,10 @@ public final class SqlGenerator
                     .getFieldDescriptorsForClass(ref.getQcType()).get(ref.getFieldName());
                 if (refDesc.relationType() == FieldDescriptor.M_N_RELATION) {
                     tablenames.add(DatabaseUtil.getIndirectionTableName((CollectionDescriptor)
-                                refDesc));
+                                                                        refDesc));
                 } else if (cc.getQueryClass() == null) {
                     tablenames.add(DatabaseUtil.getTableName(schema.getTableMaster(
-                                    refDesc.getReferencedClassDescriptor())));
+                                                                                   refDesc.getReferencedClassDescriptor())));
                 }
             }
         } else if (c instanceof BagConstraint) {
@@ -807,8 +807,8 @@ public final class SqlGenerator
                 }
             }
         } else if (!((c == null) || (c instanceof SimpleConstraint)
-                    || (c instanceof ClassConstraint) || (c instanceof OverlapConstraint)
-                    || (c instanceof MultipleInBagConstraint))) {
+                     || (c instanceof ClassConstraint) || (c instanceof OverlapConstraint)
+                     || (c instanceof MultipleInBagConstraint))) {
             throw new ObjectStoreException("Unknown constraint type: " + c.getClass());
         }
     }
@@ -823,7 +823,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void buildFromComponent(State state, Query q, DatabaseSchema schema,
-            Map<Object, String> bagTableNames) throws ObjectStoreException {
+                                             Map<Object, String> bagTableNames) throws ObjectStoreException {
         for (FromElement fromElement : q.getFrom()) {
             if (fromElement instanceof QueryClass) {
                 QueryClass qc = (QueryClass) fromElement;
@@ -841,7 +841,7 @@ public final class SqlGenerator
                     if (sequence == 0) {
                         aliases.add(new ClassDescriptorAndAlias(cld, baseAlias));
                         state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS "
-                                + baseAlias);
+                                        + baseAlias);
                         if (schema.isTruncated(tableMaster)) {
                             if (state.getWhereBuffer().length() > 0) {
                                 state.addToWhere(" AND ");
@@ -851,16 +851,16 @@ public final class SqlGenerator
                     } else {
                         aliases.add(new ClassDescriptorAndAlias(cld, baseAlias + "_" + sequence));
                         state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS " + baseAlias
-                                + "_" + sequence);
+                                        + "_" + sequence);
                         if (state.getWhereBuffer().length() > 0) {
                             state.addToWhere(" AND ");
                         }
                         state.addToWhere(baseAlias + lastAlias + ".id = " + baseAlias
-                                + "_" + sequence + ".id");
+                                         + "_" + sequence + ".id");
                         lastAlias = "_" + sequence;
                         if (schema.isTruncated(tableMaster)) {
                             state.addToWhere(" AND " + baseAlias + "_" + sequence
-                                    + ".tableclass = '" + cls.getName() + "'");
+                                             + ".tableclass = '" + cls.getName() + "'");
                         }
                     }
                     sequence++;
@@ -873,9 +873,9 @@ public final class SqlGenerator
                     List<Iterator<? extends FieldDescriptor>> iterators
                         = new ArrayList<Iterator<? extends FieldDescriptor>>();
                     ClassDescriptor cld = schema.getTableMaster(schema.getModel()
-                        .getClassDescriptorsForClass(qc.getType()).iterator().next());
+                                                                .getClassDescriptorsForClass(qc.getType()).iterator().next());
                     DatabaseSchema.Fields dbsFields = schema.getTableFields(schema
-                            .getTableMaster(cld));
+                                                                            .getTableMaster(cld));
                     iterators.add(dbsFields.getAttributes().iterator());
                     iterators.add(dbsFields.getReferences().iterator());
                     fieldIter = new CombinedIterator<FieldDescriptor>(iterators);
@@ -889,7 +889,7 @@ public final class SqlGenerator
                         ClassDescriptor cld = aliasEntry.getClassDescriptor();
                         String alias = aliasEntry.getAlias();
                         if (cld.getAllFieldDescriptors().contains(field) || schema.isFlatMode(qc
-                                    .getType())) {
+                                                                                              .getType())) {
                             fieldToAlias.put(name, alias + "." + DatabaseUtil.getColumnName(field));
                             break;
                         }
@@ -912,10 +912,10 @@ public final class SqlGenerator
                 fieldToAlias.put("class", baseAlias + ".class");
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, schema, state.getDb(), null,
-                                QUERY_SUBQUERY_FROM, bagTableNames) + ") AS "
-                        + DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(fromElement)));
+                                               QUERY_SUBQUERY_FROM, bagTableNames) + ") AS "
+                                + DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(fromElement)));
                 state.setFieldToAlias(fromElement, new AlwaysMap<String, String>(DatabaseUtil
-                            .generateSqlCompatibleName((q.getAliases().get(fromElement)))));
+                                                                                 .generateSqlCompatibleName((q.getAliases().get(fromElement)))));
             } else if (fromElement instanceof QueryClassBag) {
                 // The problem here is:
                 // We do not know the column name for the "id" field, because this will use a
@@ -940,7 +940,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void buildWhereClause(State state, Query q, Constraint c,
-            DatabaseSchema schema) throws ObjectStoreException {
+                                           DatabaseSchema schema) throws ObjectStoreException {
         if (c != null) {
             if (completelyFalse(c)) {
                 throw new CompletelyFalseException();
@@ -956,7 +956,7 @@ public final class SqlGenerator
             while (!constraints.isEmpty()) {
                 Constraint con = constraints.removeFirst();
                 if ((con instanceof ConstraintSet)
-                        && ((ConstraintSet) con).getOp().equals(ConstraintOp.AND)) {
+                    && ((ConstraintSet) con).getOp().equals(ConstraintOp.AND)) {
                     constraints.addAll(0, ((ConstraintSet) con).getConstraints());
                 } else {
                     boolean[] whs = whereHavingSafe(con, q);
@@ -976,7 +976,7 @@ public final class SqlGenerator
                         constraintToString(state, buffer, con, q, schema, SAFENESS_SAFE, true);
                     } else {
                         throw new ObjectStoreException("Constraint " + con + " mixes WHERE"
-                                + " and HAVING components");
+                                                       + " and HAVING components");
                     }
                 }
             }
@@ -996,7 +996,7 @@ public final class SqlGenerator
     protected static boolean[] whereHavingSafe(Object o, Query q) throws ObjectStoreException {
         if (o instanceof QueryField) {
             return new boolean[] {true, q.getGroupBy().contains(o)
-                || q.getGroupBy().contains(((QueryField) o).getFromElement())};
+                                  || q.getGroupBy().contains(((QueryField) o).getFromElement())};
         } else if (o instanceof QueryClass) {
             return new boolean[] {true, q.getGroupBy().contains(o)};
         } else if (o instanceof QueryValue) {
@@ -1026,7 +1026,7 @@ public final class SqlGenerator
             return new boolean[] {whereSafe, havingSafe};
         } else if (o instanceof QueryForeignKey) {
             return new boolean[] {true, q.getGroupBy().contains(o)
-                || q.getGroupBy().contains(((QueryForeignKey) o).getQueryClass())};
+                                  || q.getGroupBy().contains(((QueryForeignKey) o).getQueryClass())};
         } else if (o instanceof QueryReference) {
             QueryClass qc = ((QueryReference) o).getQueryClass();
             if (qc == null) {
@@ -1111,7 +1111,7 @@ public final class SqlGenerator
             boolean[] s5 = whereHavingSafe(oc.getRight().getEnd(), q);
             boolean[] s6 = whereHavingSafe(oc.getRight().getParent(), q);
             return new boolean[] {s1[0] && s2[0] && s3[0] && s4[0] && s5[0] && s6[0],
-                s1[1], s2[1], s3[1], s4[1], s5[1], s6[1]};
+                                  s1[1], s2[1], s3[1], s4[1], s5[1], s6[1]};
         } else {
             throw new ObjectStoreException("Unrecognised object " + o);
         }
@@ -1169,10 +1169,10 @@ public final class SqlGenerator
                 Class<?> type = bc.getQueryNode().getType();
                 for (Object bagItem : bc.getBag()) {
                     if (!(ProxyReference.class.equals(bagItem.getClass())
-                                || DynamicUtil.isInstance(bagItem, type))) {
+                          || DynamicUtil.isInstance(bagItem, type))) {
                         throw new ObjectStoreException("Bag<" + Util.getFriendlyName(type)
-                                + "> contains element of wrong type ("
-                                + Util.getFriendlyName(bagItem.getClass()) + ")");
+                                                       + "> contains element of wrong type ("
+                                                       + Util.getFriendlyName(bagItem.getClass()) + ")");
                     }
                     empty = false;
                 }
@@ -1234,10 +1234,10 @@ public final class SqlGenerator
                 Class<?> type = bc.getQueryNode().getType();
                 for (Object bagItem : bc.getBag()) {
                     if (!(bagItem == null || ProxyReference.class.equals(bagItem.getClass())
-                                || DynamicUtil.isInstance(bagItem, type))) {
+                          || DynamicUtil.isInstance(bagItem, type))) {
                         throw new ObjectStoreException("Bag<" + Util.getFriendlyName(type)
-                                + "> contains element of wrong type ("
-                                + Util.getFriendlyName(bagItem.getClass()) + ")");
+                                                       + "> contains element of wrong type ("
+                                                       + Util.getFriendlyName(bagItem.getClass()) + ")");
                     }
                     empty = false;
                 }
@@ -1268,32 +1268,32 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void constraintToString(State state, StringBuffer buffer, Constraint c,
-            Query q, DatabaseSchema schema, int safeness,
-            boolean loseBrackets) throws ObjectStoreException {
+                                             Query q, DatabaseSchema schema, int safeness,
+                                             boolean loseBrackets) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
-                && (safeness != SAFENESS_UNSAFE)) {
+            && (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown ContainsConstraint safeness: " + safeness);
         }
         if (c instanceof ConstraintSet) {
             constraintSetToString(state, buffer, (ConstraintSet) c, q, schema, safeness,
-                    loseBrackets);
+                                  loseBrackets);
         } else if (c instanceof SimpleConstraint) {
             simpleConstraintToString(state, buffer, (SimpleConstraint) c, q);
         } else if (c instanceof SubqueryConstraint) {
             subqueryConstraintToString(state, buffer, (SubqueryConstraint) c, q, schema);
         } else if (c instanceof SubqueryExistsConstraint) {
             subqueryExistsConstraintToString(state, buffer, (SubqueryExistsConstraint) c,
-                    schema);
+                                             schema);
         } else if (c instanceof ClassConstraint) {
             classConstraintToString(state, buffer, (ClassConstraint) c, q, schema);
         } else if (c instanceof ContainsConstraint) {
             containsConstraintToString(state, buffer, (ContainsConstraint) c, q, schema, safeness,
-                    loseBrackets);
+                                       loseBrackets);
         } else if (c instanceof BagConstraint) {
             bagConstraintToString(state, buffer, (BagConstraint) c, q, schema, safeness);
         } else if (c instanceof MultipleInBagConstraint) {
             multipleInBagConstraintToString(state, buffer, (MultipleInBagConstraint) c, q,
-                    safeness);
+                                            safeness);
         } else if (c instanceof OverlapConstraint) {
             overlapConstraintToString(state, buffer, (OverlapConstraint) c, q, schema, safeness);
         } else {
@@ -1315,10 +1315,10 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void constraintSetToString(State state, StringBuffer buffer, ConstraintSet c,
-            Query q, DatabaseSchema schema, int safeness,
-            boolean loseBrackets) throws ObjectStoreException {
+                                                Query q, DatabaseSchema schema, int safeness,
+                                                boolean loseBrackets) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
-                && (safeness != SAFENESS_UNSAFE)) {
+            && (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown ContainsConstraint safeness: " + safeness);
         }
         ConstraintOp op = c.getOp();
@@ -1352,7 +1352,7 @@ public final class SqlGenerator
                         queryEvaluableToString(left, subQCEval, q, state);
                     } else {
                         queryClassToString(left, subQCClass, q, schema, QUERY_SUBQUERY_CONSTRAINT,
-                                state);
+                                           state);
                     }
                     left.append(" " + subQC.getOp().toString() + " (");
                     StringBuffer existing = subqueryConstraints.get(left.toString());
@@ -1363,10 +1363,10 @@ public final class SqlGenerator
                         existing.append(" UNION ");
                     }
                     existing.append(generate(subQCQuery, schema, state.getDb(), null,
-                                QUERY_SUBQUERY_CONSTRAINT, state.getBagTableNames()));
+                                             QUERY_SUBQUERY_CONSTRAINT, state.getBagTableNames()));
                 } else {
                     if ((disjunctive && completelyFalse(subC))
-                            || ((!disjunctive) && completelyTrue(subC))) {
+                        || ((!disjunctive) && completelyTrue(subC))) {
                         // This query can be skipped
                     } else {
                         if (needComma) {
@@ -1374,7 +1374,7 @@ public final class SqlGenerator
                         }
                         needComma = true;
                         constraintToString(state, buffer, subC, q, schema, newSafeness, (!negate)
-                                && (!disjunctive));
+                                           && (!disjunctive));
                     }
                 }
             }
@@ -1403,7 +1403,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void simpleConstraintToString(State state, StringBuffer buffer,
-            SimpleConstraint c, Query q) throws ObjectStoreException {
+                                                   SimpleConstraint c, Query q) throws ObjectStoreException {
         queryEvaluableToString(buffer, c.getArg1(), q, state);
         buffer.append(" " + c.getOp().toString());
         if (c.getArg2() != null) {
@@ -1423,7 +1423,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void subqueryConstraintToString(State state, StringBuffer buffer,
-            SubqueryConstraint c, Query q, DatabaseSchema schema) throws ObjectStoreException {
+                                                     SubqueryConstraint c, Query q, DatabaseSchema schema) throws ObjectStoreException {
         Query subQ = c.getQuery();
         QueryEvaluable qe = c.getQueryEvaluable();
         QueryClass cls = c.getQueryClass();
@@ -1431,11 +1431,11 @@ public final class SqlGenerator
             queryEvaluableToString(buffer, qe, q, state);
         } else {
             queryClassToString(buffer, cls, q, schema, QUERY_SUBQUERY_CONSTRAINT,
-                    state);
+                               state);
         }
         buffer.append(" " + c.getOp().toString() + " ("
-                + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT,
-                    state.getBagTableNames()) + ")");
+                      + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT,
+                                 state.getBagTableNames()) + ")");
     }
 
     /**
@@ -1449,12 +1449,12 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void subqueryExistsConstraintToString(State state, StringBuffer buffer,
-            SubqueryExistsConstraint c, DatabaseSchema schema) throws ObjectStoreException {
+                                                           SubqueryExistsConstraint c, DatabaseSchema schema) throws ObjectStoreException {
         Query subQ = c.getQuery();
         buffer.append((c.getOp() == ConstraintOp.EXISTS ? "EXISTS(" : "(NOT EXISTS(")
-                         + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_EXISTS,
-                                    state.getBagTableNames())
-                         + (c.getOp() == ConstraintOp.EXISTS ? ")" : "))"));
+                      + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_EXISTS,
+                                 state.getBagTableNames())
+                      + (c.getOp() == ConstraintOp.EXISTS ? ")" : "))"));
     }
 
     /**
@@ -1468,7 +1468,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void classConstraintToString(State state, StringBuffer buffer,
-            ClassConstraint c, Query q, DatabaseSchema schema) throws ObjectStoreException {
+                                                  ClassConstraint c, Query q, DatabaseSchema schema) throws ObjectStoreException {
         QueryClass arg1 = c.getArg1();
         QueryClass arg2QC = c.getArg2QueryClass();
         InterMineObject arg2O = c.getArg2Object();
@@ -1480,7 +1480,7 @@ public final class SqlGenerator
             objectToString(buffer, arg2O);
         } else {
             throw new ObjectStoreException("ClassConstraint cannot contain an InterMineObject"
-                    + " without an ID set");
+                                           + " without an ID set");
         }
     }
 
@@ -1498,10 +1498,10 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void containsConstraintToString(State state, StringBuffer buffer,
-            ContainsConstraint c, Query q, DatabaseSchema schema, int safeness,
-            boolean loseBrackets) throws ObjectStoreException {
+                                                     ContainsConstraint c, Query q, DatabaseSchema schema, int safeness,
+                                                     boolean loseBrackets) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
-                && (safeness != SAFENESS_UNSAFE)) {
+            && (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown ContainsConstraint safeness: " + safeness);
         }
         QueryReference arg1 = c.getReference();
@@ -1513,14 +1513,14 @@ public final class SqlGenerator
             fieldNameToFieldDescriptor.get(arg1.getFieldName());
         if (arg1Desc == null) {
             throw new ObjectStoreException("Reference "
-                    + IqlQuery.queryReferenceToString(q, arg1, new ArrayList<Object>())
-                    + "." + arg1.getFieldName() + " is not in the model - fields available in "
-                    + arg1.getQcType() + " are " + fieldNameToFieldDescriptor.keySet());
+                                           + IqlQuery.queryReferenceToString(q, arg1, new ArrayList<Object>())
+                                           + "." + arg1.getFieldName() + " is not in the model - fields available in "
+                                           + arg1.getQcType() + " are " + fieldNameToFieldDescriptor.keySet());
         }
         if (arg1 instanceof QueryObjectReference) {
             String arg1Alias = state.getFieldToAlias(arg1.getQueryClass()).get(arg1Desc.getName());
             if (c.getOp().equals(ConstraintOp.IS_NULL) || c.getOp().equals(ConstraintOp
-                        .IS_NOT_NULL)) {
+                                                                           .IS_NOT_NULL)) {
                 buffer.append(arg1Alias + " " + c.getOp().toString());
             } else {
                 buffer.append(arg1Alias + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
@@ -1535,15 +1535,15 @@ public final class SqlGenerator
             QueryClass arg1Qc = arg1.getQueryClass();
             QueryClassBag arg1Qcb = ((QueryCollectionReference) arg1).getQcb();
             if ((arg1Qcb != null) && (safeness != (c.getOp().equals(ConstraintOp.CONTAINS)
-                            ? SAFENESS_SAFE : SAFENESS_ANTISAFE))) {
+                                                   ? SAFENESS_SAFE : SAFENESS_ANTISAFE))) {
                 throw new ObjectStoreException(safeness == SAFENESS_UNSAFE
-                        ? "Invalid constraint: QueryClassBag ContainsConstraint cannot be inside"
-                        + " an OR ConstraintSet"
-                        : "Invalid constraint: DOES NOT CONTAINS cannot be applied to a"
-                        + " QueryClassBag");
+                                               ? "Invalid constraint: QueryClassBag ContainsConstraint cannot be inside"
+                                               + " an OR ConstraintSet"
+                                               : "Invalid constraint: DOES NOT CONTAINS cannot be applied to a"
+                                               + " QueryClassBag");
             }
             if (c.getOp().equals(ConstraintOp.IS_NULL) || c.getOp().equals(ConstraintOp
-                    .IS_NOT_NULL)) {
+                                                                           .IS_NOT_NULL)) {
                 addNullPhrase(state, buffer, c, schema, arg1, arg1Desc);
             } else if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 if (arg2 == null) {
@@ -1552,18 +1552,18 @@ public final class SqlGenerator
                     String arg2Alias = indirectTableAlias + "."
                         + DatabaseUtil.getColumnName(reverse);
                     ClassDescriptor tableMaster = schema.getTableMaster(reverse
-                            .getClassDescriptor());
+                                                                        .getClassDescriptor());
                     state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS "
-                            + indirectTableAlias);
+                                    + indirectTableAlias);
                     buffer.append(loseBrackets ? "" : "(");
                     if (schema.isTruncated(tableMaster)) {
                         buffer.append(indirectTableAlias + ".tableclass = '"
-                                + reverse.getClassDescriptor().getType().getName() + "' AND ");
+                                      + reverse.getClassDescriptor().getType().getName() + "' AND ");
                     }
                     if (arg1Qc != null) {
                         queryClassToString(buffer, arg1Qc, q, schema, ID_ONLY, state);
                         buffer.append((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
-                                + arg2Alias + " AND ");
+                                      + arg2Alias + " AND ");
                     } else if (arg1Qcb != null) {
                         Map<String, String> fieldToAlias = state.getFieldToAlias(arg1Qcb);
                         if (fieldToAlias.containsKey("id")) {
@@ -1572,38 +1572,38 @@ public final class SqlGenerator
                             fieldToAlias.put("id", arg2Alias);
                             if (arg1Qcb.getOsb() != null) {
                                 bagConstraintToString(state, buffer, new BagConstraint(new
-                                            QueryField(arg1Qcb), ConstraintOp.IN,
-                                            arg1Qcb.getOsb()), q,
-                                        schema, SAFENESS_UNSAFE);
-                             // TODO: Not really unsafe
-                             // [ 2012-08-06 ajk: what does this comment mean??]
+                                                                                       QueryField(arg1Qcb), ConstraintOp.IN,
+                                                                                       arg1Qcb.getOsb()), q,
+                                                      schema, SAFENESS_UNSAFE);
+                                // TODO: Not really unsafe
+                                // [ 2012-08-06 ajk: what does this comment mean??]
                                 buffer.append(" AND ");
                             } else if (arg1Qcb.getIds() != null) {
                                 BagConstraint bagCon = new BagConstraint(new QueryField(arg1Qcb),
-                                        (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
-                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds());
+                                                                         (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
+                                                                          : ConstraintOp.NOT_IN), arg1Qcb.getIds());
                                 state.getBagTableNames().put(bagCon, state.getBagTableNames().get(
-                                            arg1Qcb));
+                                                                                                  arg1Qcb));
                                 bagConstraintToString(state, buffer, bagCon, q, schema,
-                                        ((safeness == SAFENESS_SAFE)
-                                         && (c.getOp() == ConstraintOp.CONTAINS)) ? SAFENESS_SAFE
-                                        : SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                                      ((safeness == SAFENESS_SAFE)
+                                                       && (c.getOp() == ConstraintOp.CONTAINS)) ? SAFENESS_SAFE
+                                                      : SAFENESS_UNSAFE); // TODO: Not really unsafe
                                 buffer.append(" AND ");
                             }
                         }
                     } else {
                         buffer.append(arg1Obj.getId() + (c.getOp() == ConstraintOp.CONTAINS
-                                    ? " = " : " != ") + arg2Alias + " AND ");
+                                                         ? " = " : " != ") + arg2Alias + " AND ");
                     }
                     buffer.append(indirectTableAlias + ".id = " + arg2Obj.getId());
                     buffer.append(loseBrackets ? "" : ")");
                 } else {
                     String arg2Alias = state.getFieldToAlias(arg2).get(arg1Desc
-                            .getReverseReferenceDescriptor().getName());
+                                                                       .getReverseReferenceDescriptor().getName());
                     if (arg1Qc != null) {
                         queryClassToString(buffer, arg1Qc, q, schema, ID_ONLY, state);
                         buffer.append((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
-                                + arg2Alias);
+                                      + arg2Alias);
                     } else if (arg1Qcb != null) {
                         Map<String, String> fieldToAlias = state.getFieldToAlias(arg1Qcb);
                         if (fieldToAlias.containsKey("id")) {
@@ -1612,41 +1612,41 @@ public final class SqlGenerator
                             fieldToAlias.put("id", arg2Alias);
                             if (arg1Qcb.getOsb() != null) {
                                 bagConstraintToString(state, buffer, new BagConstraint(
-                                            new QueryField(arg1Qcb), ConstraintOp.IN,
-                                            arg1Qcb.getOsb()), q, schema,
-                                        SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                                                                       new QueryField(arg1Qcb), ConstraintOp.IN,
+                                                                                       arg1Qcb.getOsb()), q, schema,
+                                                      SAFENESS_UNSAFE); // TODO: Not really unsafe
                             } else if (arg1Qcb.getIds() != null) {
                                 BagConstraint bagCon = new BagConstraint(new QueryField(arg1Qcb),
-                                        (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
-                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds());
+                                                                         (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
+                                                                          : ConstraintOp.NOT_IN), arg1Qcb.getIds());
                                 state.getBagTableNames().put(bagCon, state.getBagTableNames().get(
-                                            arg1Qcb));
+                                                                                                  arg1Qcb));
                                 bagConstraintToString(state, buffer, bagCon, q, schema,
-                                        ((safeness == SAFENESS_SAFE)
-                                         && (c.getOp() == ConstraintOp.CONTAINS)) ? SAFENESS_SAFE
-                                        : SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                                      ((safeness == SAFENESS_SAFE)
+                                                       && (c.getOp() == ConstraintOp.CONTAINS)) ? SAFENESS_SAFE
+                                                      : SAFENESS_UNSAFE); // TODO: Not really unsafe
                             }
                         }
                     } else {
                         buffer.append("" + arg1Obj.getId()
-                                + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
-                                + arg2Alias);
+                                      + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
+                                      + arg2Alias);
                     }
                 }
             } else {
                 if (safeness != (c.getOp().equals(ConstraintOp.CONTAINS) ? SAFENESS_SAFE
-                            : SAFENESS_ANTISAFE)) {
+                                 : SAFENESS_ANTISAFE)) {
                     throw new ObjectStoreException(safeness == SAFENESS_UNSAFE
-                            ? "Cannot represent a many-to-many collection inside an OR"
-                            + " ConstraintSet in SQL"
-                            : "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL");
+                                                   ? "Cannot represent a many-to-many collection inside an OR"
+                                                   + " ConstraintSet in SQL"
+                                                   : "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL");
                 }
                 CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
                 String indirectTableAlias = state.getIndirectAlias();
                 String arg2Alias = indirectTableAlias + "."
                     + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc, schema.getVersion());
                 state.addToFrom(DatabaseUtil.getIndirectionTableName(arg1ColDesc) + " AS "
-                        + indirectTableAlias);
+                                + indirectTableAlias);
                 buffer.append(loseBrackets ? "" : "(");
                 if (arg1Qc != null) {
                     queryClassToString(buffer, arg1Qc, q, schema, ID_ONLY, state);
@@ -1661,20 +1661,20 @@ public final class SqlGenerator
                         fieldToAlias.put("id", arg2Alias);
                         if (arg1Qcb.getOsb() != null) {
                             bagConstraintToString(state, buffer, new BagConstraint(
-                                        new QueryField(arg1Qcb), ConstraintOp.IN, arg1Qcb
-                                        .getOsb()), q, schema,
-                                    SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                                                                   new QueryField(arg1Qcb), ConstraintOp.IN, arg1Qcb
+                                                                                   .getOsb()), q, schema,
+                                                  SAFENESS_UNSAFE); // TODO: Not really unsafe
                             buffer.append(" AND ");
                         } else if (arg1Qcb.getIds() != null) {
                             BagConstraint bagCon = new BagConstraint(new QueryField(arg1Qcb),
-                                    (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
-                                     : ConstraintOp.NOT_IN), arg1Qcb.getIds());
+                                                                     (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
+                                                                      : ConstraintOp.NOT_IN), arg1Qcb.getIds());
                             state.getBagTableNames().put(bagCon, state.getBagTableNames().get(
-                                        arg1Qcb));
+                                                                                              arg1Qcb));
                             bagConstraintToString(state, buffer, bagCon, q, schema,
-                                    ((safeness == SAFENESS_SAFE)
-                                     && (c.getOp() == ConstraintOp.CONTAINS)) ? SAFENESS_SAFE
-                                    : SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                                  ((safeness == SAFENESS_SAFE)
+                                                   && (c.getOp() == ConstraintOp.CONTAINS)) ? SAFENESS_SAFE
+                                                  : SAFENESS_UNSAFE); // TODO: Not really unsafe
                             buffer.append(" AND ");
                         }
                     }
@@ -1683,8 +1683,8 @@ public final class SqlGenerator
                     buffer.append(" AND ");
                 }
                 buffer.append(indirectTableAlias + "."
-                        + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc,
-                            schema.getVersion()) + " = ");
+                              + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc,
+                                                                             schema.getVersion()) + " = ");
                 if (arg2 == null) {
                     buffer.append("" + arg2Obj.getId());
                 } else {
@@ -1696,8 +1696,8 @@ public final class SqlGenerator
     }
 
     private static void addNullPhrase(State state, StringBuffer buffer,
-            ContainsConstraint c, DatabaseSchema schema, QueryReference arg1,
-            ReferenceDescriptor arg1Desc) {
+                                      ContainsConstraint c, DatabaseSchema schema, QueryReference arg1,
+                                      ReferenceDescriptor arg1Desc) {
         // EXISTS OR NOT EXISTS to wrap this query
         String arg1Alias = state.getFieldToAlias(arg1.getQueryClass()).get("id");
         if (c.getOp() == ConstraintOp.IS_NULL) {
@@ -1711,12 +1711,12 @@ public final class SqlGenerator
             String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
 
             String reverseRefAlias = indirectTableAlias + "."
-                    + DatabaseUtil.getColumnName(reverse);
+                + DatabaseUtil.getColumnName(reverse);
 
             ClassDescriptor referencedClass = schema.getTableMaster(reverse
-                    .getClassDescriptor());
+                                                                    .getClassDescriptor());
             buffer.append(DatabaseUtil.getTableName(referencedClass) + " AS "
-                    + indirectTableAlias);
+                          + indirectTableAlias);
             buffer.append(" WHERE " + reverseRefAlias + " = " + arg1Alias);
         } else if (arg1Desc.relationType() == FieldDescriptor.M_N_RELATION) {
             // We need to see if there are rows in the indirection table that points back
@@ -1725,8 +1725,8 @@ public final class SqlGenerator
             String indirectTableAlias = state.getIndirectAlias();
             String indirectionTable = DatabaseUtil.getIndirectionTableName(arg1ColDesc);
             String inwardIndirectionCol = indirectTableAlias + "."
-                    + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc,
-                            schema.getVersion());
+                + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc,
+                                                              schema.getVersion());
             buffer.append(indirectionTable + " AS " + indirectTableAlias);
             buffer.append(" WHERE " + inwardIndirectionCol + " = " + arg1Alias);
         }
@@ -1755,7 +1755,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void bagConstraintToString(State state, StringBuffer buffer, BagConstraint c,
-            Query q, DatabaseSchema schema, int safeness) throws ObjectStoreException {
+                                                Query q, DatabaseSchema schema, int safeness) throws ObjectStoreException {
         Class<?> type = c.getQueryNode().getType();
         String leftHandSide;
         if (c.getQueryNode() instanceof QueryEvaluable) {
@@ -1779,15 +1779,15 @@ public final class SqlGenerator
             }
 
             if (((safeness == SAFENESS_SAFE) && (c.getOp() == ConstraintOp.IN))
-                    || ((safeness == SAFENESS_ANTISAFE)
-                        && (c.getOp() == ConstraintOp.NOT_IN))) {
+                || ((safeness == SAFENESS_ANTISAFE)
+                    && (c.getOp() == ConstraintOp.NOT_IN))) {
                 // We can move the temporary bag table to the FROM list.
                 String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
                 state.addToFrom(INT_BAG_TABLE_NAME + " AS "
-                        + indirectTableAlias);
+                                + indirectTableAlias);
                 buffer.append(" = " + indirectTableAlias + "." + BAGVAL_COLUMN);
                 buffer.append(" AND " + indirectTableAlias + "." + BAGID_COLUMN + " = "
-                        + osb.getBagId());
+                              + osb.getBagId());
             } else {
                 buffer.append(" IN (SELECT " + BAGVAL_COLUMN + " FROM ");
                 buffer.append(INT_BAG_TABLE_NAME);
@@ -1802,7 +1802,7 @@ public final class SqlGenerator
                 if (bagItem == null) {
                     nullSeen = true;
                 } else if (ProxyReference.class.equals(bagItem.getClass())
-                        || DynamicUtil.isInstance(bagItem, type)) {
+                           || DynamicUtil.isInstance(bagItem, type)) {
                     if (bagItem instanceof InterMineObject) {
                         Integer bagValue = ((InterMineObject) bagItem).getId();
                         filteredBag.add(bagValue);
@@ -1813,7 +1813,7 @@ public final class SqlGenerator
                     }
                 } else {
                     throw new ObjectStoreException("Bag<" + type.getName() + "> contains element "
-                            + "of wrong type (" + bagItem.getClass().getName() + ")");
+                                                   + "of wrong type (" + bagItem.getClass().getName() + ")");
                 }
             }
             if (nullSeen) {
@@ -1821,11 +1821,11 @@ public final class SqlGenerator
                     buffer.append("(");
                 }
                 buffer.append("(" + leftHandSide + " "
-                        + (c.getOp() == ConstraintOp.IN ? "IS" : "IS NOT") + " NULL)");
+                              + (c.getOp() == ConstraintOp.IN ? "IS" : "IS NOT") + " NULL)");
                 if (!filteredBag.isEmpty()) {
                     buffer.append(" ")
-                          .append(c.getOp() == ConstraintOp.IN ? "OR" : "AND")
-                          .append(" ");
+                        .append(c.getOp() == ConstraintOp.IN ? "OR" : "AND")
+                        .append(" ");
                 }
             }
             if (filteredBag.isEmpty() && !nullSeen) {
@@ -1838,7 +1838,7 @@ public final class SqlGenerator
                     boolean limitRange = false;
                     //boolean limitRange = (lowest < highest) && (filteredBag.size() > 10);
                     //if (limitRange) {
-                  //    buffer.append("(" + leftHandSide + " >= " + lowest + " AND " + leftHandSide
+                    //    buffer.append("(" + leftHandSide + " >= " + lowest + " AND " + leftHandSide
                     //            + " <= " + highest + " AND ");
                     //}
                     boolean parenthesesForGroups = (filteredBag.size() > 9000)
@@ -1846,7 +1846,7 @@ public final class SqlGenerator
                     for (Object orNext : filteredBag) {
                         if (needComma == 0) {
                             buffer.append((parenthesesForGroups ? "(" : "") + leftHandSide
-                                    + " IN (");
+                                          + " IN (");
                         } else if (needComma % 9000 == 0) {
                             buffer.append(") OR " + leftHandSide + " IN (");
                         } else {
@@ -1875,8 +1875,8 @@ public final class SqlGenerator
                     }
 
                     if (((safeness == SAFENESS_SAFE) && (c.getOp() == ConstraintOp.IN))
-                            || ((safeness == SAFENESS_ANTISAFE)
-                                && (c.getOp() == ConstraintOp.NOT_IN))) {
+                        || ((safeness == SAFENESS_ANTISAFE)
+                            && (c.getOp() == ConstraintOp.NOT_IN))) {
                         // We can move the temporary bag table to the FROM list.
                         String indirectTableAlias = state.getIndirectAlias(); // Not really
                                                                               // indirection
@@ -1910,7 +1910,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void multipleInBagConstraintToString(State state, StringBuffer buffer,
-            MultipleInBagConstraint c, Query q, int safeness)
+                                                          MultipleInBagConstraint c, Query q, int safeness)
         throws ObjectStoreException {
         Class<?> type = null;
         for (QueryEvaluable qe : c.getEvaluables()) {
@@ -1918,7 +1918,7 @@ public final class SqlGenerator
                 type = qe.getType();
             } else if (!type.equals(qe.getType())) {
                 throw new IllegalArgumentException("MultipleInBagConstraint evaluables do not match"
-                        + " type");
+                                                   + " type");
             }
         }
         List<String> leftHandSide = new ArrayList<String>();
@@ -1937,7 +1937,7 @@ public final class SqlGenerator
                     throw new NullPointerException("Couldn't determine type of list");
                 } else {
                     throw new ObjectStoreException("Bag<" + type.getName() + "> contains element "
-                            + "of wrong type (" + bagItem.getClass().getName() + ")");
+                                                   + "of wrong type (" + bagItem.getClass().getName() + ")");
                 }
             }
         }
@@ -2015,10 +2015,10 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void overlapConstraintToString(State state, StringBuffer buffer,
-            OverlapConstraint c, Query q, DatabaseSchema schema,
-            int safeness) throws ObjectStoreException {
+                                                    OverlapConstraint c, Query q, DatabaseSchema schema,
+                                                    int safeness) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
-                && (safeness != SAFENESS_UNSAFE)) {
+            && (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown constraint safeness: " + safeness);
         }
         boolean not = (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())
@@ -2034,10 +2034,10 @@ public final class SqlGenerator
         QueryObjectReference leftParent = c.getLeft().getParent();
         QueryObjectReference rightParent = c.getRight().getParent();
         buffer.append(state.getFieldToAlias(leftParent.getQueryClass()).get(leftParent
-                .getFieldName()))
+                                                                            .getFieldName()))
             .append(" = ")
             .append(state.getFieldToAlias(rightParent.getQueryClass()).get(rightParent
-                    .getFieldName()))
+                                                                           .getFieldName()))
             .append(" AND ");
         String rangeFunction = "int4range(";
         buffer.append(rangeFunction);
@@ -2051,16 +2051,16 @@ public final class SqlGenerator
             buffer.append(")");
         }
         if ((ConstraintOp.CONTAINS == c.getOp())
-                || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
+            || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
             buffer.append(" @> ");
         } else if ((ConstraintOp.IN == c.getOp()) || (ConstraintOp.NOT_IN == c.getOp())) {
             buffer.append(" <@ ");
         } else if ((ConstraintOp.OVERLAPS == c.getOp())
-                || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
+                   || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
             buffer.append(" && ");
         } else {
             throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
-                + " for range");
+                                               + " for range");
         }
         buffer.append(rangeFunction);
         queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
@@ -2087,14 +2087,14 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     public static void objectToString(StringBuffer buffer,
-            Object value) throws ObjectStoreException {
+                                      Object value) throws ObjectStoreException {
         if (value instanceof UnknownTypeValue) {
             buffer.append(value.toString());
         } else if (value instanceof InterMineObject) {
             Integer id = ((InterMineObject) value).getId();
             if (id == null) {
                 throw new ObjectStoreException("InterMineObject found"
-                        + " without an ID set");
+                                               + " without an ID set");
             }
             buffer.append(id.toString());
         } else if (value instanceof Date) {
@@ -2116,17 +2116,17 @@ public final class SqlGenerator
      * @throws ObjectStoreException if the model is internally inconsistent
      */
     protected static void queryClassToString(StringBuffer buffer, QueryClass qc, Query q,
-            DatabaseSchema schema, int kind, State state) throws ObjectStoreException {
+                                             DatabaseSchema schema, int kind, State state) throws ObjectStoreException {
         if ((kind == ID_ONLY) && (!InterMineObject.class.isAssignableFrom(qc.getType()))) {
             throw new ObjectStoreException("QueryClass for non-InterMineObject class does not"
-                    + " have an ID");
+                                           + " have an ID");
         }
         String alias = q.getAliases().get(qc);
         Map<String, String> fieldToAlias = state.getFieldToAlias(qc);
         if (alias == null) {
             throw new NullPointerException("A QueryClass is referenced by elements of a query,"
-                    + " but the QueryClass is not in the FROM list of that query. QueryClass: "
-                    + qc + ", aliases: " + q.getAliases());
+                                           + " but the QueryClass is not in the FROM list of that query. QueryClass: "
+                                           + qc + ", aliases: " + q.getAliases());
         }
         if (kind == QUERY_SUBQUERY_EXISTS) {
             if (InterMineObject.class.isAssignableFrom(qc.getType())) {
@@ -2143,7 +2143,7 @@ public final class SqlGenerator
             if ((kind != QUERY_SUBQUERY_FROM) && (objectAlias != null)) {
                 buffer.append(objectAlias);
                 if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
-                        || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING)) {
+                    || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING)) {
                     buffer.append(" AS ")
                         .append(alias.equals(alias.toLowerCase())
                                 ? DatabaseUtil.generateSqlCompatibleName(alias)
@@ -2152,18 +2152,18 @@ public final class SqlGenerator
                 needComma = true;
             }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)
-                    || (((kind == QUERY_NORMAL) || (kind == QUERY_FOR_GOFASTER)
-                        || (kind == QUERY_FOR_COUNTING)) && schema.isFlatMode(qc.getType()))
-                    || (kind == QUERY_FOR_PRECOMP)) {
+                || (((kind == QUERY_NORMAL) || (kind == QUERY_FOR_GOFASTER)
+                     || (kind == QUERY_FOR_COUNTING)) && schema.isFlatMode(qc.getType()))
+                || (kind == QUERY_FOR_PRECOMP)) {
                 Iterator<FieldDescriptor> fieldIter = null;
                 ClassDescriptor cld = schema.getModel().getClassDescriptorByName(qc.getType()
-                        .getName());
+                                                                                 .getName());
                 if (schema.isFlatMode(qc.getType()) && ((kind == QUERY_NORMAL)
-                            || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING))) {
+                                                        || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING))) {
                     List<Iterator<? extends FieldDescriptor>> iterators
                         = new ArrayList<Iterator<? extends FieldDescriptor>>();
                     DatabaseSchema.Fields fields = schema.getTableFields(schema
-                            .getTableMaster(cld));
+                                                                         .getTableMaster(cld));
                     iterators.add(fields.getAttributes().iterator());
                     iterators.add(fields.getReferences().iterator());
                     fieldIter = new CombinedIterator<FieldDescriptor>(iterators);
@@ -2191,7 +2191,7 @@ public final class SqlGenerator
                         buffer.append(" AS ")
                             .append(DatabaseUtil.generateSqlCompatibleName(alias) + columnName);
                     } else if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
-                            || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING)) {
+                               || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING)) {
                         buffer.append(" AS ")
                             .append(alias.equals(alias.toLowerCase())
                                     ? DatabaseUtil.generateSqlCompatibleName(alias) + columnName
@@ -2200,7 +2200,7 @@ public final class SqlGenerator
                     }
                 }
                 if (schema.isFlatMode(qc.getType())
-                        && schema.isTruncated(schema.getTableMaster(cld))) {
+                    && schema.isTruncated(schema.getTableMaster(cld))) {
                     buffer.append(", ")
                         .append(fieldToAlias.get("class"))
                         .append(" AS ")
@@ -2232,7 +2232,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void queryEvaluableToString(StringBuffer buffer, QueryEvaluable node,
-            Query q, State state) throws ObjectStoreException {
+                                                 Query q, State state) throws ObjectStoreException {
         if (node instanceof QueryField) {
             QueryField nodeF = (QueryField) node;
             FromElement nodeClass = nodeF.getFromElement();
@@ -2247,7 +2247,7 @@ public final class SqlGenerator
                         .append(DatabaseUtil.generateSqlCompatibleName(nodeF.getFieldName()))
                         .append(nodeF.getSecondFieldName() == null
                                 ? "" : DatabaseUtil.generateSqlCompatibleName(nodeF
-                                    .getSecondFieldName()));
+                                                                              .getSecondFieldName()));
                 }
             } else {
                 buffer.append(DatabaseUtil.generateSqlCompatibleName(nodeF.getFieldName()));
@@ -2268,6 +2268,13 @@ public final class SqlGenerator
                     queryEvaluableToString(buffer, arg3, q, state);
                 }
                 buffer.append(")");
+            } else if (nodeE.getOperation() == QueryExpression.CONCAT) {
+                QueryEvaluable arg1 = nodeE.getArg1();
+                QueryEvaluable arg2 = nodeE.getArg2();
+
+                queryEvaluableToString(buffer, arg1, q, state);
+                buffer.append("||");
+                queryEvaluableToString(buffer, arg2, q, state);
             } else if (nodeE.getOperation() == QueryExpression.INDEX_OF) {
                 QueryEvaluable arg1 = nodeE.getArg1();
                 QueryEvaluable arg2 = nodeE.getArg2();
@@ -2283,6 +2290,10 @@ public final class SqlGenerator
                 buffer.append(")");
             } else if (nodeE.getOperation() == QueryExpression.UPPER) {
                 buffer.append("UPPER(");
+                queryEvaluableToString(buffer, nodeE.getArg1(), q, state);
+                buffer.append(")");
+            } else if (nodeE.getOperation() == QueryExpression.LENGTH) {
+                buffer.append("LENGTH(");
                 queryEvaluableToString(buffer, nodeE.getArg1(), q, state);
                 buffer.append(")");
             } else if (nodeE.getOperation() == QueryExpression.GREATEST) {
@@ -2302,24 +2313,24 @@ public final class SqlGenerator
                 QueryEvaluable arg2 = nodeE.getArg2();
                 String op = null;
                 switch (nodeE.getOperation()) {
-                    case QueryExpression.ADD:
-                        op = " + ";
-                        break;
-                    case QueryExpression.SUBTRACT:
-                        op = " - ";
-                        break;
-                    case QueryExpression.MULTIPLY:
-                        op = " * ";
-                        break;
-                    case QueryExpression.DIVIDE:
-                        op = " / ";
-                        break;
-                    case QueryExpression.MODULO:
-                        op = " % ";
-                        break;
-                    default:
-                        throw (new ObjectStoreException("Invalid QueryExpression operation: "
-                                    + nodeE.getOperation()));
+                case QueryExpression.ADD:
+                    op = " + ";
+                    break;
+                case QueryExpression.SUBTRACT:
+                    op = " - ";
+                    break;
+                case QueryExpression.MULTIPLY:
+                    op = " * ";
+                    break;
+                case QueryExpression.DIVIDE:
+                    op = " / ";
+                    break;
+                case QueryExpression.MODULO:
+                    op = " % ";
+                    break;
+                default:
+                    throw (new ObjectStoreException("Invalid QueryExpression operation: "
+                                                    + nodeE.getOperation()));
                 }
                 buffer.append("(");
                 queryEvaluableToString(buffer, arg1, q, state);
@@ -2330,66 +2341,66 @@ public final class SqlGenerator
         } else if (node instanceof QueryFunction) {
             QueryFunction nodeF = (QueryFunction) node;
             switch (nodeF.getOperation()) {
-                case QueryFunction.COUNT:
-                    buffer.append("COUNT(*)");
-                    break;
-                case QueryFunction.SUM:
-                    buffer.append("SUM(");
-                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                    buffer.append(")");
-                    break;
-                case QueryFunction.AVERAGE:
-                    buffer.append("AVG(");
-                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                    buffer.append(")");
-                    break;
-                case QueryFunction.MIN:
-                    buffer.append("MIN(");
-                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                    buffer.append(")");
-                    break;
-                case QueryFunction.MAX:
-                    buffer.append("MAX(");
-                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                    buffer.append(")");
-                    break;
-                case QueryFunction.STDDEV:
-                    buffer.append("STDDEV(");
-                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                    buffer.append(")");
-                    break;
-                case QueryFunction.CEIL:
-                    buffer.append("CEIL(");
-                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                    buffer.append(")");
-                    break;
-                case QueryFunction.FLOOR:
-                    buffer.append("FLOOR(");
-                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                    buffer.append(")");
-                    break;
-                case QueryFunction.ROUND:
-                    buffer.append("ROUND(");
-                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                    buffer.append(", ");
-                    queryEvaluableToString(buffer, nodeF.getParam2(), q, state);
-                    buffer.append(")");
-                    break;
-                case QueryFunction.WIDTH_BUCKET:
-                    WidthBucketFunction wbf = (WidthBucketFunction) nodeF;
-                    buffer.append("WIDTH_BUCKET(");
-                    queryEvaluableToString(buffer, wbf.getParam(), q, state);
-                    buffer.append(", ");
-                    queryEvaluableToString(buffer, wbf.getMinParam(), q, state);
-                    buffer.append(", ");
-                    queryEvaluableToString(buffer, wbf.getMaxParam(), q, state);
-                    buffer.append(", ");
-                    queryEvaluableToString(buffer, wbf.getBinsParam(), q, state);
-                    buffer.append(")");
-                    break;
-                default:
-                    throw (new ObjectStoreException("Invalid QueryFunction operation: "
-                                + nodeF.getOperation()));
+            case QueryFunction.COUNT:
+                buffer.append("COUNT(*)");
+                break;
+            case QueryFunction.SUM:
+                buffer.append("SUM(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.AVERAGE:
+                buffer.append("AVG(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.MIN:
+                buffer.append("MIN(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.MAX:
+                buffer.append("MAX(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.STDDEV:
+                buffer.append("STDDEV(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.CEIL:
+                buffer.append("CEIL(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.FLOOR:
+                buffer.append("FLOOR(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.ROUND:
+                buffer.append("ROUND(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(", ");
+                queryEvaluableToString(buffer, nodeF.getParam2(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.WIDTH_BUCKET:
+                WidthBucketFunction wbf = (WidthBucketFunction) nodeF;
+                buffer.append("WIDTH_BUCKET(");
+                queryEvaluableToString(buffer, wbf.getParam(), q, state);
+                buffer.append(", ");
+                queryEvaluableToString(buffer, wbf.getMinParam(), q, state);
+                buffer.append(", ");
+                queryEvaluableToString(buffer, wbf.getMaxParam(), q, state);
+                buffer.append(", ");
+                queryEvaluableToString(buffer, wbf.getBinsParam(), q, state);
+                buffer.append(")");
+                break;
+            default:
+                throw (new ObjectStoreException("Invalid QueryFunction operation: "
+                                                + nodeF.getOperation()));
             }
         } else if (node instanceof QueryValue) {
             QueryValue nodeV = (QueryValue) node;
@@ -2401,10 +2412,10 @@ public final class SqlGenerator
             queryEvaluableToString(buffer, ((QueryCast) node).getValue(), q, state);
             buffer.append(")::");
             String torqueTypeName = TorqueModelOutput.generateJdbcType(node.getType()
-                    .getName());
+                                                                       .getName());
             SchemaType torqueType = SchemaType.getEnum(torqueTypeName);
             Platform torquePlatform = PlatformFactory.getPlatformFor(state.getDb().getPlatform()
-                    .toLowerCase());
+                                                                     .toLowerCase());
             Domain torqueDomain = torquePlatform.getDomainForSchemaType(torqueType);
             buffer.append(torqueDomain.getSqlType());
         } else if (node instanceof QueryForeignKey) {
@@ -2426,7 +2437,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static String buildSelectComponent(State state, Query q, DatabaseSchema schema,
-            int kind) throws ObjectStoreException {
+                                                 int kind) throws ObjectStoreException {
         boolean needComma = false;
         StringBuffer retval = new StringBuffer();
         Iterator<QuerySelectable> iter = q.getSelect().iterator();
@@ -2449,10 +2460,10 @@ public final class SqlGenerator
                 needComma = true;
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                 if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
-                        || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING)) {
+                    || (kind == QUERY_FOR_GOFASTER) || (kind == QUERY_FOR_COUNTING)) {
                     retval.append(" AS " + (alias.equals(alias.toLowerCase())
-                            ? DatabaseUtil.generateSqlCompatibleName(alias)
-                            : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\""));
+                                            ? DatabaseUtil.generateSqlCompatibleName(alias)
+                                            : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\""));
                 } else if (kind == QUERY_SUBQUERY_FROM) {
                     retval.append(" AS " + DatabaseUtil.generateSqlCompatibleName(alias));
                 }
@@ -2484,7 +2495,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static String buildGroupBy(Query q, DatabaseSchema schema,
-            State state) throws ObjectStoreException {
+                                         State state) throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         boolean needComma = false;
         for (QueryNode node : q.getGroupBy()) {
@@ -2492,7 +2503,7 @@ public final class SqlGenerator
             needComma = true;
             if (node instanceof QueryClass) {
                 queryClassToString(retval, (QueryClass) node, q, schema, NO_ALIASES_ALL_FIELDS,
-                        state);
+                                   state);
             } else {
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
             }
@@ -2511,7 +2522,7 @@ public final class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static String buildOrderBy(State state, Query q, DatabaseSchema schema,
-            int kind) throws ObjectStoreException {
+                                         int kind) throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         HashSet<String> seen = new HashSet<String>();
         boolean needComma = false;
@@ -2528,7 +2539,7 @@ public final class SqlGenerator
                         queryClassToString(buffer, (QueryClass) node, q, schema, ID_ONLY, state);
                     } else {
                         queryClassToString(buffer, (QueryClass) node, q, schema,
-                                NO_ALIASES_ALL_FIELDS, state);
+                                           NO_ALIASES_ALL_FIELDS, state);
                     }
                     if (!seen.contains(buffer.toString())) {
                         retval.append(needComma ? ", " : " ORDER BY ");
@@ -2536,14 +2547,14 @@ public final class SqlGenerator
                         retval.append(buffer.toString());
                         seen.add(buffer.toString());
                         if ((!q.getSelect().contains(node))
-                                && (!q.getSelect().contains(new QueryField((QueryClass) node,
-                                                "id")))) {
+                            && (!q.getSelect().contains(new QueryField((QueryClass) node,
+                                                                       "id")))) {
                             if (q.isDistinct()) {
                                 throw new ObjectStoreException("Class " + q.getAliases().get(node)
-                                        + " in the ORDER BY list must be in the SELECT list, or its"
-                                        + " id, or the query made non-distinct");
+                                                               + " in the ORDER BY list must be in the SELECT list, or its"
+                                                               + " id, or the query made non-distinct");
                             } else if ((kind == QUERY_FOR_PRECOMP)
-                                    || (kind == QUERY_FOR_GOFASTER)) {
+                                       || (kind == QUERY_FOR_GOFASTER)) {
                                 state.addToOrderBy(buffer.toString());
                             }
                         }
@@ -2551,7 +2562,7 @@ public final class SqlGenerator
                 } else if (node instanceof QueryObjectReference) {
                     QueryObjectReference ref = (QueryObjectReference) node;
                     buffer.append(state.getFieldToAlias(ref.getQueryClass()).get(ref
-                            .getFieldName()));
+                                                                                 .getFieldName()));
                     if (!seen.contains(buffer.toString())) {
                         retval.append(needComma ? ", " : " ORDER BY ");
                         needComma = true;
@@ -2569,13 +2580,13 @@ public final class SqlGenerator
                                 }
                             } else {
                                 throw new ObjectStoreException("Reference " + buffer.toString()
-                                        + " in the ORDER BY list must be in the SELECT list, or the"
-                                        + " whole QueryClass must be in the SELECT list, or the"
-                                        + " query made non-distinct");
+                                                               + " in the ORDER BY list must be in the SELECT list, or the"
+                                                               + " whole QueryClass must be in the SELECT list, or the"
+                                                               + " query made non-distinct");
                             }
                         } else if ((!q.getSelect().contains(ref)) && ((kind == QUERY_FOR_PRECOMP)
-                                    || (kind == QUERY_FOR_GOFASTER))
-                                && (!schema.isFlatMode(ref.getQueryClass().getType()))) {
+                                                                      || (kind == QUERY_FOR_GOFASTER))
+                                   && (!schema.isFlatMode(ref.getQueryClass().getType()))) {
                             state.addToOrderBy(buffer.toString());
                         }
                     }
@@ -2599,7 +2610,7 @@ public final class SqlGenerator
                         retval.append(buffer.toString());
                         seen.add(buffer.toString());
                         if ((!q.getSelect().contains(node)) && q.isDistinct()
-                                && (node instanceof QueryField)) {
+                            && (node instanceof QueryField)) {
                             FromElement fe = ((QueryField) node).getFromElement();
                             if (q.getSelect().contains(fe)) {
                                 // This means that this field is not in the SELECT list, but its
@@ -2610,18 +2621,18 @@ public final class SqlGenerator
                                 }
                             } else if (fe instanceof QueryClass) {
                                 throw new ObjectStoreException("Field " + buffer.toString()
-                                        + " in the ORDER BY list must be in the SELECT list, or the"
-                                        + " whole QueryClass " + fe.toString() + " must be in the"
-                                        + " SELECT list, or the query made non-distinct");
+                                                               + " in the ORDER BY list must be in the SELECT list, or the"
+                                                               + " whole QueryClass " + fe.toString() + " must be in the"
+                                                               + " SELECT list, or the query made non-distinct");
                             } else {
                                 throw new ObjectStoreException("Field " + buffer.toString()
-                                        + " in the ORDER BY list must be in the SELECT list, or the"
-                                        + " query made non-distinct");
+                                                               + " in the ORDER BY list must be in the SELECT list, or the"
+                                                               + " query made non-distinct");
                             }
                         } else if ((!q.getSelect().contains(node)) && (!q.isDistinct())
-                                && ((kind == QUERY_FOR_PRECOMP)
-                                    || (kind == QUERY_FOR_GOFASTER))
-                                && (!schema.isFlatMode(InterMineObject.class))) {
+                                   && ((kind == QUERY_FOR_PRECOMP)
+                                       || (kind == QUERY_FOR_GOFASTER))
+                                   && (!schema.isFlatMode(InterMineObject.class))) {
                             state.addToOrderBy(buffer.toString());
                         }
                     }

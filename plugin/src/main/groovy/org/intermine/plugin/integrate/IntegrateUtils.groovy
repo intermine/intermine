@@ -87,7 +87,6 @@ class IntegrateUtils {
                     excludes: BioSourceProperties.getUserProperty(source, "src.data.dir.excludes"))
         }
     }
-
     def retrieveTgtFromDB = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
         source.userProperties.each { prop ->
@@ -107,7 +106,6 @@ class IntegrateUtils {
                 osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
                 dbAlias: "db." + BioSourceProperties.getUserProperty(source, "source.db.name"))
     }
-
     def retrieveTgtFromCustomDir = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
         //set dynamic properties
@@ -160,7 +158,6 @@ class IntegrateUtils {
             }
         }
     }
-
     def retrieveTgtFromLargeXMLFile = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
         def includes = BioSourceProperties.getUserProperty(source, "src.data.dir.includes")
@@ -218,12 +215,19 @@ class IntegrateUtils {
                 seqClsName: BioSourceProperties.getUserProperty(source, "gff3.seqClsName"),
                 orgTaxonId: BioSourceProperties.getUserProperty(source, "gff3.taxonId"),
                 dataSourceName: BioSourceProperties.getUserProperty(source, "gff3.dataSourceName"),
+                dataSourceDescription: BioSourceProperties.getUserProperty(source, "gff3.dataSourceDescription"),
+                dataSourceUrl: BioSourceProperties.getUserProperty(source, "gff3.dataSourceUrl"),
                 seqDataSourceName: BioSourceProperties.getUserProperty(source, "gff3.seqDataSourceName"),
                 dataSetTitle: BioSourceProperties.getUserProperty(source, "gff3.dataSetTitle"),
+                dataSetDescription: BioSourceProperties.getUserProperty(source, "gff3.dataSetDescription"),
+                dataSetUrl: BioSourceProperties.getUserProperty(source, "gff3.dataSetUrl"),
                 dontCreateLocations: BioSourceProperties.getUserProperty(source, "gff3.dontCreateLocations"),
                 model: "genomic",
                 handlerClassName: bioSourceProperties.getProperty("gff3.handlerClassName"),
                 seqHandlerClassName: gff3SeqHandlerClassName,
+                strainIdentifier: BioSourceProperties.getUserProperty(source, "gff3.strainIdentifier"),
+                assemblyVersion: BioSourceProperties.getUserProperty(source, "gff3.assemblyVersion"),
+                annotationVersion: BioSourceProperties.getUserProperty(source, "gff3.annotationVersion"),
                 licence: licence) {
             fileset(dir: BioSourceProperties.getUserProperty(source, "src.data.dir"),
                     includes: includes)
@@ -233,7 +237,7 @@ class IntegrateUtils {
     def retrieveFromOBO = {Source source, Properties bioSourceProperties ->
         def ant = new AntBuilder()
 
-        //set dynamic properties
+        //set dynamic properties                                                                                                                                                                                                              
         source.userProperties.each { prop ->
             if (!"src.data.dir".equals(prop.name)) {
                 ant.project.setProperty(prop.name, prop.value)
@@ -250,6 +254,11 @@ class IntegrateUtils {
         ontologyName = (ant.project.getProperty("obo.ontology.name") != null) ?
             ant.project.getProperty("obo.ontology.name") : ontologyName
 
+        String description = (bioSourceProperties.getProperty("obo.ontology.description") != null) ?
+            bioSourceProperties.getProperty("obo.ontology.description") : ""
+        description = (ant.project.getProperty("obo.ontology.description") != null) ?
+            ant.project.getProperty("obo.ontology.description") : description
+
         String url = (bioSourceProperties.getProperty("obo.ontology.url") != null) ?
             bioSourceProperties.getProperty("obo.ontology.url") : ""
         url = (ant.project.getProperty("obo.ontology.url") != null) ?
@@ -265,6 +274,7 @@ class IntegrateUtils {
         ant.convertOBO(file: BioSourceProperties.getUserProperty(source, "src.data.file"),
                        osName: "osw." + COMMON_OS_PREFIX + "-tgt-items", modelName: "genomic",
                        ontologyName: ontologyName,
+                       description: description,
                        url: url,
                        termClass: bioSourceProperties.getProperty("obo.term.class"),
                        licence: licence)
