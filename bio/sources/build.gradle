@@ -42,7 +42,8 @@ subprojects {
     }
     
     dependencies {
-        compile group: 'log4j', name: 'log4j', version: '1.2.17'
+        compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.0'
+        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.0'
         compile group: 'org.intermine', name: 'bio-core', version: System.getProperty("bioVersion"), transitive: false
         compile group : "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion") // log4j
         compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
