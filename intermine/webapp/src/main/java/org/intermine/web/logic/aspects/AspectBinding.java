@@ -24,7 +24,6 @@ import org.apache.commons.digester.Digester;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
 
 
 import org.xml.sax.SAXException;
