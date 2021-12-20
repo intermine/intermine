@@ -37,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
@@ -584,7 +583,6 @@ public class ProfileManager
         profile.updateUserRepositoryWithSharedBags();
         return profile;
     }
-
 
     /**
      * Return the TagManager for adding, removing and fetching Tags assigned to templates, bags
@@ -1157,7 +1155,6 @@ public class ProfileManager
             // No op stub.
         }
     }
-
 
     /**
      * Transient API access keys for automated API access. These tokens are only valid for a

@@ -12,10 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -215,7 +213,6 @@ public class EmploymentPeriodHelperIntegrationTest {
         }
     }
 
-    
     @Test
     public void testWithin() throws ObjectStoreException {
         Results res = runQuery("Employee.employmentPeriod", ConstraintOp.WITHIN, ranges);
@@ -244,7 +241,6 @@ public class EmploymentPeriodHelperIntegrationTest {
         }
         assertEquals(EMP_COUNT - 10, res.size());
     }
-    
 
     @Test
     public void testOverlaps() throws ObjectStoreException {
@@ -258,7 +254,6 @@ public class EmploymentPeriodHelperIntegrationTest {
         }
         assertEquals(68, res.size());
     }
-    
 
     @Test
     public void testDoesntOverlap() throws ObjectStoreException {

@@ -27,10 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;

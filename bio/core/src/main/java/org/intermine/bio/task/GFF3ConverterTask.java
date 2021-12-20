@@ -24,7 +24,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.metadata.Model;
 
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
@@ -34,9 +33,6 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
-
 
 /**
  * Task to convert gff3 data
@@ -74,7 +70,6 @@ public class GFF3ConverterTask extends Task
         this.converter = converter;
     }
 
-
     /**
      * Set the target ObjectStore alias
      * @param targetAlias the targetAlias
@@ -83,7 +78,6 @@ public class GFF3ConverterTask extends Task
         this.targetAlias = targetAlias;
     }
 
-
      /**
      * Set the sequenceClassName
      * @param seqClsName the seqClsName;
@@ -91,7 +85,6 @@ public class GFF3ConverterTask extends Task
     public void setSeqClsName(String seqClsName) {
         this.seqClsName = seqClsName;
     }
-
 
     /**
      * Set the organism taxon id

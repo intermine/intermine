@@ -16,10 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.PostProcessUtil;
@@ -126,7 +124,6 @@ public class CreateGeneFlankingFeaturesProcess extends PostProcessor
 
         osw.commitTransaction();
     }
-
 
     private void createAndStoreFlankingRegion(Chromosome chr, Location geneLoc, Gene gene)
             throws ObjectStoreException {

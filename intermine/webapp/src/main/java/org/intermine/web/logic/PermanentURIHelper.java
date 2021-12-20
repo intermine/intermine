@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.profile.Profile;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.uri.InterMineLUI;
@@ -81,7 +80,6 @@ public class PermanentURIHelper
         }
         return baseURI;
     }
-
 
     /**
      * Returns the permanent URL given the class name and the primary identifier

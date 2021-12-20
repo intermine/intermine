@@ -37,10 +37,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.torque.engine.database.model.Domain;
 import org.apache.torque.engine.database.model.SchemaType;
@@ -287,7 +285,6 @@ public final class SqlGenerator
             LOG.warn("Error while registering offset for query " + q + ": " + e);
         }
     }
-
 
     /**
      * Create a constraint to add to the main query to deal with offset - this is based on
@@ -1740,7 +1737,6 @@ public final class SqlGenerator
         }
     }
 
-
     /**
      * The maximum size a bag in a BagConstraint can be before we consider using a temporary table
      * instead.
@@ -2081,7 +2077,6 @@ public final class SqlGenerator
             buffer.append(")");
         }
     }
-
 
     /**
      * Converts an Object to a String, in a form suitable for SQL.

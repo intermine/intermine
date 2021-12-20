@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.apache.solr.client.solrj.response.FacetField;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
@@ -52,7 +51,6 @@ import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.XMLFormatter;
-
 
 /**
  * A service that runs key-word searches.
@@ -274,6 +272,5 @@ public class QuickSearch extends JSONService
         ResponseUtil.setXMLHeader(response, "search.xml");
         return new StreamedOutput(out, new QuickSearchXMLFormatter());
     }
-
 
 }

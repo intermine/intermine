@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -230,7 +229,6 @@ public class OrthodbConverter extends BioFileConverter
         final String type = (geneTaxonId.equals(homologueTaxonId) ? PARALOGUE : ORTHOLOGUE);
         createHomologue(refId1, refId2, type);
     }
-
 
     private void processHomologues() throws ObjectStoreException {
         for (Entry<GeneHolder, List<GeneHolder>> entry : geneToHomologues.entrySet()) {

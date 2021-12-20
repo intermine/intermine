@@ -15,11 +15,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 
 /**
  * A factory for ChadoCV objects.
@@ -120,6 +117,5 @@ public class ChadoCVFactory
         ResultSet res = stmt.executeQuery();
         return res;
     }
-
 
 }

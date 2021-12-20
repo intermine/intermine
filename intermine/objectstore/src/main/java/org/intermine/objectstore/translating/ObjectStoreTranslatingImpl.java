@@ -20,10 +20,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -235,7 +233,6 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         throw new UnsupportedOperationException("getObjectsByExample not supported by"
                     + "ObjectStoreTranslatingImpl");
     }
-
 
     /**
      * {@inheritDoc}

@@ -30,7 +30,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.search.OriginatingEvent;
 import org.intermine.api.search.DeletionEvent;
 import org.intermine.api.search.WebSearchWatcher;
@@ -381,6 +380,5 @@ public abstract class StorableBag implements WebSearchable
             }
         }
     }
-
 
 }

@@ -35,7 +35,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.writebatch.Batch;
@@ -45,7 +44,6 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
 
 /**
  * Create items from the modENCODE metadata extensions to the chado schema.
@@ -71,14 +69,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private static final String STRAIN = "strain";
     private static final String DEVSTAGE = "developmental stage";
 
-
     // submission maps
     // ---------------
     private Map<Integer, String> submissionOrganismMap = new HashMap<Integer, String>();
     // maps from chado identifier to lab/project details
     private Map<Integer, SubmissionDetails> submissionMap =
             new HashMap<Integer, SubmissionDetails>();
-
 
     // subId to dcc id
     private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
@@ -117,7 +113,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, Integer> experimentIdMap = new HashMap<String, Integer>();
     private Map<String, String> experimentIdRefMap = new HashMap<String, String>();
     private Map<String, List<Integer>> expSubMap = new HashMap<String, List<Integer>>();
-
 
     // ...we need a further map to link to submission
     private Map<Integer, String> submissionProjectMap = new HashMap<Integer, String>();
@@ -178,7 +173,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // the second map is used directly to build the references
     private Map<DatabaseRecordKey, Integer> dbRecords = new HashMap<DatabaseRecordKey, Integer>();
     private Map<Integer, List<String>> dbRecordIdSubItems = new HashMap<Integer, List<String>>();
-
 
     private static final class SubmissionDetails
     {
@@ -374,7 +368,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return doQuery(connection, query, "getDeleted");
     }
 
-
     /**
      *
      * ==============
@@ -459,7 +452,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("PROCESS TIME features: " + (System.currentTimeMillis() - bT) + " ms");
     }
 
-
     private void storeSubmissionsCollections(Map<Integer, List<String>> subCollections)
         throws ObjectStoreException {
         for (Map.Entry<Integer, List<String>> entry : subCollections.entrySet()) {
@@ -486,7 +478,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
     }
-
 
     private void processDataFeatureTable(Connection connection, Map<Integer, List<String>> subCols,
             Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String dataIdTable)
@@ -751,7 +742,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         setAppliedProtocolSteps(connection);
         LOG.info("PROCESS TIME DAG: " + (System.currentTimeMillis() - bT) + " ms");
     }
-
 
     /**
      * @param newAD
@@ -1278,7 +1268,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             submission.setReference("lab", labItemIdentifier);
             String organismName = submissionOrganismMap.get(submissionId);
 
-
             int divPos = organismName.indexOf(' ');
             String genus = organismName.substring(0, divPos);
             String species = organismName.substring(divPos + 1);
@@ -1507,7 +1496,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return doQuery(connection, query, "getEFactors");
     }
 
-
     /**
      * ==============
      *    PROTOCOL
@@ -1544,7 +1532,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("found " + count + " protocols");
         LOG.info("PROCESS TIME protocols: " + (System.currentTimeMillis() - bT) + " ms");
     }
-
 
     private Integer getProtocolInterMineId(Integer chadoId) {
         return protocolItemToObjectId.get(protocolItemIds.get(chadoId));
@@ -2025,7 +2012,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             this.dataValue = dataValue;
         }
 
-
     }
 
     // process new query
@@ -2381,8 +2367,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         getChadoDBConverter().store(subProperty);
     }
 
-
-
     // Traverse DAG following previous applied protocol links to build a list of all AppliedData
     private void findAppliedProtocolsAndDataFromEarlierInDag(Integer startDataId,
             List<AppliedData> foundAppliedData, List<AppliedProtocol> foundAppliedProtocols) {
@@ -2403,7 +2387,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
     }
-
 
     private void createExperimentalFactors(Integer submissionId, String type,
             Collection<Item> items) throws ObjectStoreException {
@@ -2468,7 +2451,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Util.addToListMap(submissionEFactorMap, current, efName);
     }
 
-
     private void addToSubToTypes(Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes,
             Integer submissionId, SubmissionProperty prop) {
         // submissionId -> [type -> SubmissionProperty]
@@ -2490,7 +2472,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         subProps.add(prop);
     }
-
 
     private void addSubmissionPropsFromCharacteristics(
             Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes,
@@ -2611,7 +2592,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return type;
     }
 
-
     private Boolean congruentType (String type, String wikiType) {
         // check only strain and devstages
         if (wikiType.contains("Strain") && !type.equals(STRAIN)) {
@@ -2623,7 +2603,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return true;
     }
 
-
     // Some submission mention e.g. an RNA Sample but the details of how that sample was created,
     // stage, strain, etc are in a previous submission.  There are references to previous submission
     // DCC ids where a sample with the corresponding name can be found.  We then need to traverse
@@ -2634,7 +2613,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes,
             Map<String, SubmissionProperty> props,
             Map<Integer, List<SubmissionReference>> submissionRefs) {
-
 
         for (Map.Entry<Integer, List<SubmissionReference>> entry : submissionRefs.entrySet()) {
             Integer submissionId = entry.getKey();
@@ -3013,10 +2991,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return items;
     }
 
-
-
-
-
     private String correctAttrValue(String value) {
         if (value == null) {
             return null;
@@ -3377,7 +3351,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 + (System.currentTimeMillis() - bT) + " ms");
     }
 
-
     /**
      * =====================
      *    DATABASE RECORDS
@@ -3523,7 +3496,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-
     /**
      * =====================
      *    RESULT FILES
@@ -3628,7 +3600,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         itemIds.add(submissionMap.get(relatedId).itemIdentifier);
     }
-
 
     //sub -> prot
     private void setSubmissionProtocolsRefs(Connection connection)
@@ -3820,7 +3791,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME setting submission-experiment references: "
                 + (System.currentTimeMillis() - bT) + " ms");
     }
-
 
     //sub -> ef
     @SuppressWarnings("unused")
@@ -4103,7 +4073,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("QUERY TIME " + comment + ": " + (System.currentTimeMillis() - bT) + " ms");
         return res;
     }
-
 
     /**
      * adds an element to a list which is the value of a map

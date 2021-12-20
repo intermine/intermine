@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.util.Constants;
 import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.MetaDataException;
@@ -55,7 +54,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
 
 import org.intermine.postprocess.PostProcessor;
-
 
 /**
  * Methods for creating feature for introns.
@@ -271,7 +269,6 @@ public class CreateIntronFeaturesProcess extends PostProcessor
         }
         osw.commitTransaction();
     }
-
 
     /**
      * Return a set of Intron objects that don't overlap the Locations

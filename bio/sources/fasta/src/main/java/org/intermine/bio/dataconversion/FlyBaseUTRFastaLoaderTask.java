@@ -16,10 +16,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.biojava.nbio.core.sequence.template.Sequence;
 import org.intermine.metadata.Model;
@@ -90,7 +88,6 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         String id = tokens[0];
         return id;
     }
-
 
     /**
      * {@inheritDoc}

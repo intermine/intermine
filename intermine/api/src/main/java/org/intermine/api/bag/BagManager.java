@@ -23,10 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.BagState;

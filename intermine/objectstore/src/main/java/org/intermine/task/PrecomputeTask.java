@@ -21,10 +21,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -111,7 +109,6 @@ public class PrecomputeTask extends Task
 
         precompute(false, os, minRows);
     }
-
 
     /**
      * Create precomputed tables for the given ObjectStore.

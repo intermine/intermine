@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.SharingInvite.NotFoundException;
@@ -136,7 +135,6 @@ public class ListSharingInvitationAcceptanceService extends JSONService
         } catch (UserAlreadyShareBagException e) {
             LOG.warn("User accepted an invitation to a list they already have access to", e);
         }
-
 
         if (input.notify) {
             notifyOwner(input.invite);

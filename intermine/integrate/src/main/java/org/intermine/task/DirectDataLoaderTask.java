@@ -12,10 +12,8 @@ package org.intermine.task;
 
 import java.util.Properties;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataloader.BatchingFetcher;
@@ -83,7 +81,6 @@ public abstract class DirectDataLoaderTask extends DynamicAttributeTask
         this.ignoreDuplicates = ignoreDuplicates;
     }
 
-
     /**
      * Return the IntegrationWriter for this task.
      * @return the IntegrationWriter
@@ -95,7 +92,6 @@ public abstract class DirectDataLoaderTask extends DynamicAttributeTask
                 throw new RuntimeException("integrationWriterAlias property is null while "
                                            + "getting IntegrationWriter");
             }
-
 
             iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriterAlias);
 

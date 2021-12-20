@@ -23,11 +23,8 @@ import org.intermine.objectstore.ObjectStoreLimitReachedException;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.model.testmodel.Department;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 
 public class ResultsTest extends TestCase
 {
@@ -229,7 +226,6 @@ public class ResultsTest extends TestCase
         List list = res.resultsBatches.fetchBatchFromObjectStore(2, true, true);
         assertEquals(0, list.size());
     }
-
 
     public void testSetBatchSizeWhenInitialised() throws Exception {
         Query q = new Query();

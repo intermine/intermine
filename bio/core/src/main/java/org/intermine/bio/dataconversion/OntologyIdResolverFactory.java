@@ -17,10 +17,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collections;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;

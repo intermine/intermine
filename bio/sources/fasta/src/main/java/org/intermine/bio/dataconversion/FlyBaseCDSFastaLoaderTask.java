@@ -29,8 +29,6 @@ import org.intermine.util.DynamicUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-
 /**
  * A fasta loader that understand the headers of FlyBase fasta CDS fasta files and can make the
  * appropriate extra objects and references.

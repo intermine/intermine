@@ -13,10 +13,8 @@ package org.intermine.dataloader;
 import java.util.Collection;
 import java.util.Properties;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.dataconversion.ItemToObjectTranslator;
 import org.intermine.metadata.Util;

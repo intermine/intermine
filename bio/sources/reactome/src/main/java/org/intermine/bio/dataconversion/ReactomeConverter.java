@@ -10,8 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-
-
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -33,7 +30,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-
 
 /**
  *
@@ -133,7 +129,6 @@ public class ReactomeConverter extends BioFileConverter
         }
         return taxonId;
     }
-
 
     private Item getPathway(String pathwayId, String pathwayName) throws ObjectStoreException {
         Item item = pathways.get(pathwayId);

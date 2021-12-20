@@ -17,10 +17,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
@@ -171,7 +169,6 @@ public class ResidueFieldExporter implements FieldExporter
             return null;
         }
     }
-
 
     /**
      * Find the Protein that references the given Sequence.

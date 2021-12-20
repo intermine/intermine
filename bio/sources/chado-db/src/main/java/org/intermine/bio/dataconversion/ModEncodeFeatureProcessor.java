@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.objectstore.ObjectStoreException;
@@ -194,7 +193,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         processPeaksSources(connection);
     }
 
-
     /**
      * Make a Location between a SequenceFeature and a Chromosome.
      * @param start the start position
@@ -219,7 +217,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 start, end, strand);
         return location;
     }
-
 
     /**
      * Method to set the source for gene

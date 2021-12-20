@@ -16,11 +16,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 
 /**
  * This is a Map implementation designed specifically for people intending to create a cache.

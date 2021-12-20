@@ -29,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -202,7 +201,6 @@ public class PsiConverter extends BioFileConverter
         // per gene - list of identifiers
         private Map<String, Set<String>> geneIdentifiers = new HashMap<String, Set<String>>();
 
-
         /**
          * {@inheritDoc}
          */
@@ -252,7 +250,6 @@ public class PsiConverter extends BioFileConverter
                             && stack.search("participantIdentificationMethod") == 2) {
                 String termItemId = getTerm(attrs.getValue("id"));
                 experimentHolder.setMethod("participantIdentificationMethods", termItemId);
-
 
             // --------------- interactors -------------------- //
 

@@ -30,10 +30,8 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.InterMineException;
 import org.intermine.api.bag.BagQueryConfig;
@@ -934,7 +932,6 @@ public final class MainHelper
             return new SimpleConstraint(qe, op, new QueryValue(value));
         }
     }
-
 
     /**
      * Make a SimpleConstraint for the given Date Constraint.  The time stored in the Date will be

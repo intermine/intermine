@@ -10,10 +10,8 @@ package org.intermine.webservice.server.user;
  *
  */
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;

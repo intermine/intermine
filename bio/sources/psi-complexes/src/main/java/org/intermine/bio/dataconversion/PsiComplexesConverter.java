@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -51,7 +50,6 @@ import psidev.psi.mi.jami.model.Stoichiometry;
 import psidev.psi.mi.jami.model.Xref;
 import uk.ac.ebi.chebi.webapps.chebiWS.client.ChebiWebServiceClient;
 import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
-
 
 /**
  * Converter to parse complexes. May expand to handle others later.
@@ -285,7 +283,6 @@ public class PsiComplexesConverter extends BioFileConverter
             store(region);
         }
     }
-
 
     private void setBiologicalRole(ModelledParticipant modelledParticipant, Item interactor)
         throws ObjectStoreException {

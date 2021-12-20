@@ -15,11 +15,8 @@ import java.io.Writer;
 import java.lang.ref.WeakReference;
 import java.util.Stack;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 
 /**
  * This class provides a "shutdown" service to other classes. It sets up a single

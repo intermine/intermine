@@ -27,7 +27,6 @@ import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.core.JSONService;
 
-
 /**
  * Exports selected web.properties.
  *

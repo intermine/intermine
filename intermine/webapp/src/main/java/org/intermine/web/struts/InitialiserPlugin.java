@@ -48,7 +48,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
@@ -185,7 +184,6 @@ public class InitialiserPlugin implements PlugIn
         setupClassSummaryInformation(servletContext, oss, os.getModel());
 
         trackerDelegate = initTrackers(webProperties, userprofileOSW);
-
 
         final InterMineAPI im = loadInterMineAPI(
                 servletContext, webProperties, webConfig, userprofileOSW, oss);
@@ -351,7 +349,6 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private ObjectStore getProductionObjectStore(Properties webProperties) {
-
 
         String osAlias = (String) webProperties.get("webapp.os.alias");
 

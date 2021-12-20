@@ -18,10 +18,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.PathQueryExecutor;
@@ -89,7 +87,6 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
 
         request.setAttribute("summary", summary);
     }
-
 
     private Object arrayAtlasExpressionTissues(GeneSummary summary) {
         PathQuery query = new PathQuery(im.getModel());

@@ -28,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.BioConverterUtil;

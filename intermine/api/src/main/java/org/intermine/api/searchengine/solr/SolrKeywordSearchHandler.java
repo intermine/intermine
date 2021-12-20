@@ -10,10 +10,8 @@ package org.intermine.api.searchengine.solr;
  *
  */
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -269,7 +267,6 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
         return fieldNames;
     }
 
-
     private QueryResponse performSearch(InterMineAPI im, String queryString, Map<String,
                                         String> facetValues, List<Integer> ids,
                                         int offSet, int rowSize) {
@@ -337,7 +334,6 @@ public final class SolrKeywordSearchHandler implements KeywordSearchHandler
             }
 
             LOG.info("Field List Query : " + fieldListQuery);
-
 
             newQuery.add("bq", boostQuery);
             newQuery.add("qf", fieldListQuery);

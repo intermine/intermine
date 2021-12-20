@@ -20,10 +20,8 @@ import java.io.IOException;
 
 import net.iharder.Base64;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.userprofile.SavedTemplateQuery;
 import org.intermine.api.userprofile.TemplateSummary;

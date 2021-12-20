@@ -18,10 +18,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
@@ -77,7 +75,6 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter
 
         return ret;
     }
-
 
     private Map<String, Object> getMatchInfo(BagQueryResult bqr) {
         final Map<String, Object> ret = new HashMap<String, Object>();

@@ -36,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.metadata.StringUtil;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.ShutdownHook;
@@ -74,7 +73,6 @@ public class Database implements Shutdownable
     protected Database() {
         // empty
     }
-
 
     /**
      * Constructs a Database object from a set of properties

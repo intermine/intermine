@@ -23,10 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -39,7 +37,6 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
 import org.intermine.model.bio.DataSource;
-
 
 /**
  * Class to fill in organism information using UniProt.

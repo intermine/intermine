@@ -14,11 +14,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 
 /**
  * A wrapper class to provide IdResolver service.

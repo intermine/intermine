@@ -181,7 +181,6 @@ public final class PortalHelper
         return url;
     }
 
-
     /**
      * Generate a link to the object details page using the internal id. This does not produce
      * a link suitable for use as a permalink.

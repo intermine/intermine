@@ -20,10 +20,8 @@ import java.util.regex.Pattern;
 
 import net.sf.cglib.proxy.Factory;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;

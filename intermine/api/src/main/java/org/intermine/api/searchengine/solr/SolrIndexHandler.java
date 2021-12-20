@@ -10,10 +10,8 @@ package org.intermine.api.searchengine.solr;
  *
  */
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -98,7 +96,6 @@ public final class SolrIndexHandler implements IndexHandler
         this.indexedFields = new ArrayList<String>();
 
         createFieldTypeDefinitions(solrClient);
-
 
         KeywordSearchPropertiesManager keywordSearchPropertiesManager
                 = KeywordSearchPropertiesManager.getInstance(os);
@@ -191,7 +188,6 @@ public final class SolrIndexHandler implements IndexHandler
                 + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
                 time % 1000) + " minutes");
     }
-
 
     private void addSolrDocuments(SolrClient solrClient, List<SolrInputDocument> solrDocumentList)
             throws IOException, SolrServerException {
@@ -400,7 +396,6 @@ public final class SolrIndexHandler implements IndexHandler
             }
         }
     }
-
 
     private List<String> getAllExistingFieldsFromSolr(SolrClient solrClient)
             throws IOException, SolrServerException {

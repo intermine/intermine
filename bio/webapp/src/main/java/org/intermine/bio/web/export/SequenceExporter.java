@@ -34,7 +34,6 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
 import org.biojava.nbio.core.sequence.DNASequence;
@@ -55,7 +54,6 @@ import org.intermine.util.IntPresentSet;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
-
 
 /**
  * Export data in FASTA format. Select cell in each row that can be exported as
@@ -281,7 +279,6 @@ public class SequenceExporter implements Exporter
         return bioSequence;
     }
 
-
     private BioSequence createSequenceFeatureWithExtension(
             StringBuffer header,
             Object object, List<ResultElement> row,
@@ -327,7 +324,6 @@ public class SequenceExporter implements Exporter
         makeHeader(header, object, row, unionPathCollection, newPathCollection);
         return bioSequence;
     }
-
 
     /**
      * Set the header to be the contents of row, separated by spaces.

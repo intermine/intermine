@@ -16,10 +16,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.PropertiesUtil;

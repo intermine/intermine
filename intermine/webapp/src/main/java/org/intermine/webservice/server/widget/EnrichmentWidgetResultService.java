@@ -20,7 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -176,8 +175,6 @@ public class EnrichmentWidgetResultService extends WidgetService
 
         addOutputResult(widget);
     }
-
-
 
     @Override
     protected void addOutputConfig(WidgetConfig config) {

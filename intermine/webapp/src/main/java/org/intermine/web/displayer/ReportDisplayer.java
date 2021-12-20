@@ -19,7 +19,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
@@ -40,7 +39,6 @@ public abstract class ReportDisplayer
     protected ReportDisplayerConfig config;
     protected InterMineAPI im;
     private static final Logger LOG = LogManager.getLogger(ReportDisplayer.class);
-
 
     /**
      * Construct with config information read from webconfig-model.xml and the API.

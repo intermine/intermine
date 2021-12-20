@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -27,7 +26,6 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -271,7 +269,6 @@ public class KeggOrthologuesConverter extends BioFileConverter
         }
         return evidenceRefId;
     }
-
 
     private String resolveGene(String originalId, String taxonId) {
         String primaryIdentifier = null;

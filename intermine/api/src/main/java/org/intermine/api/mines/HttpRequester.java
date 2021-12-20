@@ -23,8 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-
 /**
  * A mine requester that makes HTTP requests.
  * @author Alex Kalderimis
@@ -34,7 +32,6 @@ public class HttpRequester implements MineRequester
 {
 
     private static final Logger LOG = LogManager.getLogger(HttpRequester.class);
-
 
     /** The number of seconds we will wait before timing out. **/
     private int timeout = 20; // seconds

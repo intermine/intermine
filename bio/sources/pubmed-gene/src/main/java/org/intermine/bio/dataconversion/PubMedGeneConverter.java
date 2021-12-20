@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -116,7 +115,6 @@ public class PubMedGeneConverter extends BioFileConverter
         }
         return originalTaxonId;
     }
-
 
     private String getPublication(String pubMedId) throws ObjectStoreException {
         String refId = publications.get(pubMedId);

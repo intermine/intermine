@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.metadata.InterMineModelParser;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ModelParser;

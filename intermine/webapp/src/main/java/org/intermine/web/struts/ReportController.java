@@ -26,10 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -194,7 +192,6 @@ public class ReportController extends InterMineAction
                 request.setAttribute("stableLink", fairPermanentLink);
             }
 
-
             stepTime = System.currentTimeMillis();
             startTime = stepTime;
 
@@ -262,7 +259,6 @@ public class ReportController extends InterMineAction
         }
         return requestedObject;
     }
-
 
     private String getTaggedType(FieldDescriptor fd) {
         if (fd.isCollection()) {

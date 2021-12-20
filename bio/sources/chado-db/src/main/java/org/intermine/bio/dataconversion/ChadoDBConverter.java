@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -55,7 +54,6 @@ public class ChadoDBConverter extends BioDBConverter
 
     private Connection connection;
     private String licence;
-
 
     /**
      * Create a new ChadoDBConverter object.

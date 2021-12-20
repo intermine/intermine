@@ -18,10 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -222,7 +220,6 @@ public class QueryBuilderChange extends DispatchAction
         session.setAttribute("joinStylePath", path);
         return mapping.findForward("query");
     }
-
 
     /**
      * Change the currently active metadata Node
@@ -445,7 +442,6 @@ public class QueryBuilderChange extends DispatchAction
         editConstraint(mapping, form, request, response);
         return mapping.findForward("queryBuilderConstraint");
     }
-
 
     /**
      * AJAX request - edit a template constraint.

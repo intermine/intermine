@@ -43,7 +43,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
@@ -938,7 +937,6 @@ public class AjaxServices
             return null;
         }
     }
-
 
     /**
      * Add an ID to the PagedTable selection

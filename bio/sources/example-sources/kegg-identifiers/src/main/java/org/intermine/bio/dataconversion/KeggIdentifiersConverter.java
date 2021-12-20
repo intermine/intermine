@@ -15,17 +15,14 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-
 
 /**
  * DataConverter to load Kegg Pathways

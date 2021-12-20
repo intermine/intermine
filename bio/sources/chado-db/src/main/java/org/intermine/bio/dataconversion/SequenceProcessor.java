@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.DoNothingAction;
@@ -49,7 +48,6 @@ import org.intermine.metadata.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
 
 /**
  * A processor for the chado sequence module.
@@ -228,7 +226,6 @@ public class SequenceProcessor extends ChadoProcessor
         res.close();
     }
 
-
     /**
      * Add the given chromosome feature_id, uniqueName and organismId to chromosomeMaps.
      */
@@ -295,7 +292,6 @@ public class SequenceProcessor extends ChadoProcessor
                 fixedUniqueName = fixIdentifier(fdat, fdat.getUniqueName());
             }
         }
-
 
         Set<String> fieldValuesSet = new HashSet<String>();
         String fixedName = fixIdentifier(fdat, name);
@@ -1277,7 +1273,6 @@ public class SequenceProcessor extends ChadoProcessor
         res.close();
     }
 
-
     /**
      * Read the feature, feature_cvterm and cvterm tables, then set fields, create synonyms or
      * create objects based on the cvterms.
@@ -1398,7 +1393,6 @@ public class SequenceProcessor extends ChadoProcessor
         LOG.info("created " + count + " synonyms from the feature_cvterm table");
         res.close();
     }
-
 
     /**
      * Given the object id and a map of reference/collection names to Items, store the Items in the
@@ -1771,7 +1765,6 @@ public class SequenceProcessor extends ChadoProcessor
         return "SELECT feature_id FROM " + tempFeatureTableName;
     }
 
-
     private String getChromosomeFeatureIdQuery() {
         return
                 "SELECT feature_id FROM feature, cvterm"
@@ -1887,7 +1880,6 @@ public class SequenceProcessor extends ChadoProcessor
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
-
 
     /**
      * Return the interesting matches from the featureloc and feature tables.
@@ -2021,7 +2013,6 @@ public class SequenceProcessor extends ChadoProcessor
         return res;
     }
 
-
     /**
      * Return the interesting rows from the feature_cvterm/cvterm table.  Only returns rows for
      * those features returned by getFeatureIdQuery().
@@ -2137,6 +2128,5 @@ public class SequenceProcessor extends ChadoProcessor
     protected Map<String, Integer> getChromosomeFeatureMap(Integer organismId) {
         return chromosomeMaps.get(organismId);
     }
-
 
 }

@@ -20,10 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.ClassDescriptor;
@@ -112,7 +110,6 @@ public class EnrichmentWidget extends Widget
             }
         }
     }
-
 
     /** @param filter Set the filter to something else **/
     public void setFilter(String filter) {
@@ -392,7 +389,6 @@ public class EnrichmentWidget extends Widget
             }
             pathQuery.addConstraint(Constraints.inIds(config.getStartClass(), intermineIds));
         }
-
 
         //subclass constraint
         if (subClassContraint) {

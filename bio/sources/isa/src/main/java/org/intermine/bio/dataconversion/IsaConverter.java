@@ -10,13 +10,11 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -25,7 +23,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,7 +42,6 @@ import java.util.Set;
 
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
-
 /**
  * @author sc
  */
@@ -59,7 +55,6 @@ public class IsaConverter extends BioFileConverter
 
     private static final List<String> MATERIALS =
             Collections.unmodifiableList(Arrays.asList("sources", "samples"));
-
 
     private Map<String, Map> people;
     private Map<String, Map> publications;
@@ -117,7 +112,6 @@ public class IsaConverter extends BioFileConverter
      *
      *///            getCharacteristicCategories(study);
 
-
     /**
      * {@inheritDoc}
      */
@@ -153,7 +147,6 @@ public class IsaConverter extends BioFileConverter
             String filename = study.path("filename").asText();
             String subDate = study.path("submissionDate").asText();
             String pubDate = study.path("publicReleaseDate").asText();
-
 
             LOG.info("STUDY " + identifier);
             LOG.info(title + " -- " + filename + " | " + subDate);
@@ -203,7 +196,6 @@ public class IsaConverter extends BioFileConverter
         sdItemId.clear();
         factors.clear();
     }
-
 
     private void processInvestigation(JsonNode investigation) throws ObjectStoreException {
 
@@ -259,7 +251,6 @@ public class IsaConverter extends BioFileConverter
         }
     }
 
-
     private void getProcess(JsonNode study) throws ObjectStoreException {
         JsonNode processNode = study.path("processSequence");
         for (JsonNode process : processNode) {
@@ -288,7 +279,6 @@ public class IsaConverter extends BioFileConverter
         }
         LOG.debug("SP: " + protocolIn.toString() + "->" + protocolOut.toString());
     }
-
 
     private void getFactors(JsonNode study, String path) throws ObjectStoreException {
         JsonNode factorNode = study.path(path);
@@ -324,7 +314,6 @@ public class IsaConverter extends BioFileConverter
         }
     }
 
-
     // generic
     private Reference getReference(String name, Item item) {
         Reference reference = new Reference();
@@ -354,7 +343,6 @@ public class IsaConverter extends BioFileConverter
             store(studyReference, sddoid);
         }
     }
-
 
     private void getMaterials(JsonNode study) throws ObjectStoreException {
         // processes sources and samples
@@ -414,12 +402,10 @@ public class IsaConverter extends BioFileConverter
 
             LOG.info("MT " + id + ": " + annotationValue + "|" + termAccession + "|" + termSource);
 
-
             Item sdItem = createStudyData("file", fileName, mtValue, annotationValue,
                     technologyPlatform);
             Reference sdRef = getReference("studyData", sdItem);
             store(studyReference, store(sdItem));
-
 
             // GET datafiles
             JsonNode dataFilesNode = assay.get("dataFiles");
@@ -439,7 +425,6 @@ public class IsaConverter extends BioFileConverter
             }
         }
     }
-
 
     private void getMaterials(JsonNode source, String types) throws ObjectStoreException {
         String name = source.path("name").asText();
@@ -476,7 +461,6 @@ public class IsaConverter extends BioFileConverter
         }
     }
 
-
     private void storeSource(String sourceName) throws ObjectStoreException {
         Item sdItem = createStudyData(sourceName);
 
@@ -491,7 +475,6 @@ public class IsaConverter extends BioFileConverter
         Integer sdoid = store(sdItem);
         store(studyReference, sdoid);
     }
-
 
     private void getSampleFactors(JsonNode source, String sampleName, String id, String type)
             throws ObjectStoreException {
@@ -528,7 +511,6 @@ public class IsaConverter extends BioFileConverter
         }
     }
 
-
     private void getOntologies(JsonNode osr) throws ObjectStoreException {
         for (JsonNode node : osr) {
             String name = node.path("name").asText();
@@ -542,7 +524,6 @@ public class IsaConverter extends BioFileConverter
         }
     }
 
-
     private File getFiles() throws FileNotFoundException {
         File file = getCurrentFile();
         if (file == null) {
@@ -553,7 +534,6 @@ public class IsaConverter extends BioFileConverter
         LOG.info("====================================================================");
         return file;
     }
-
 
     /**
      * {@inheritDoc}
@@ -624,11 +604,9 @@ public class IsaConverter extends BioFileConverter
 //        }
     }
 
-
 //    long bT = System.currentTimeMillis();     // to monitor time spent in the process
 //        LOG.info("TIME setting submission-protocol references: "
 //                + (System.currentTimeMillis() - bT) + " ms");
-
 
     private Item createStudy(String type, String id, String title, String description,
                              String subDate, String pubDate)
@@ -681,7 +659,6 @@ public class IsaConverter extends BioFileConverter
         return formattedDate;
     }
 
-
     private Item createFactor(String fid, String cid, String name, String type, String value,
                               String unit, String accession)
             throws ObjectStoreException {
@@ -706,7 +683,6 @@ public class IsaConverter extends BioFileConverter
         return item;
     }
 
-
     private Item createDataFile(String type, String name)
             throws ObjectStoreException {
 
@@ -718,7 +694,6 @@ public class IsaConverter extends BioFileConverter
         }
         return item;
     }
-
 
     private Item createStudyData(String type, String name, String value, String unit)
             throws ObjectStoreException {
@@ -753,7 +728,6 @@ public class IsaConverter extends BioFileConverter
         return item;
     }
 
-
     private Item createStudyData(String source)
             throws ObjectStoreException {
 
@@ -777,7 +751,6 @@ public class IsaConverter extends BioFileConverter
         return item;
     }
 
-
     private Item createProtocol(String id, String name, String description, String uri,
                                 String version)
             throws ObjectStoreException {
@@ -799,7 +772,6 @@ public class IsaConverter extends BioFileConverter
         return item;
     }
 
-
     private Item createProtocolParameter(String id, String name)
             throws ObjectStoreException {
         Item item = protocolParameters.get(id);
@@ -813,7 +785,6 @@ public class IsaConverter extends BioFileConverter
         return item;
     }
 
-
     private void getTerm(JsonNode source) { //TODO rename to more generic
         //    String sourceName = source.path("name").asText();
         //    String sourceId = source.path("@id").asText();
@@ -826,7 +797,6 @@ public class IsaConverter extends BioFileConverter
         LOG.info("CHAR: " + annotationValue + "|" + termAccession + "|" + termSource);
 
     }
-
 
     private class Term
     {
@@ -895,7 +865,6 @@ public class IsaConverter extends BioFileConverter
             return this;
         }
     }
-
 
     /**
      * adds an element to a list which is the value of a map

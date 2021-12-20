@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.web.security.KeySourceException;
 import org.intermine.web.security.PublicKeySource;
 import org.json.JSONException;

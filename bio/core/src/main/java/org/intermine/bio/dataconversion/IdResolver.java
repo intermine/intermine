@@ -34,8 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-
 /**
  * Hold data about primary identifiers and synonyms for a particular class in the
  * data model and provide methods to resolved synonyms into corresponding
@@ -552,7 +550,6 @@ public class IdResolver
         fw.flush();
         fw.close();
     }
-
 
     /**
      * Read contents of an IdResolver from file, allows for caching during a build.

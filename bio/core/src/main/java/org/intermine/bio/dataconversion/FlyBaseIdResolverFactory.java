@@ -21,10 +21,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.sql.Database;

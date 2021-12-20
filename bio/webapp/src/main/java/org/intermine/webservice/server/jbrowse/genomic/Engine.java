@@ -10,7 +10,6 @@ package org.intermine.webservice.server.jbrowse.genomic;
  *
  */
 
-
 import static java.lang.String.format;
 import static org.intermine.pathquery.Constraints.eq;
 import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
@@ -34,7 +33,6 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;

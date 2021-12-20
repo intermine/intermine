@@ -15,10 +15,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -26,7 +24,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 import org.xml.sax.SAXException;
-
 
 /**
  * Loads go annotation from interpro2go goa file
@@ -41,7 +38,6 @@ public class InterproGoConverter extends BioFileConverter
     private static final String INTERPRO_PREFIX = "InterPro:";
     private Map<String, Item> proteinDomains = new HashMap<String, Item>();
     private Map<String, String> goTerms = new HashMap<String, String>();
-
 
     /**
      * Constructor

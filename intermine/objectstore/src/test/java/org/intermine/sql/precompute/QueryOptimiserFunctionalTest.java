@@ -30,11 +30,8 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.metadata.StringUtil;
 import org.postgresql.util.PSQLException;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 
 public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 {

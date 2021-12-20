@@ -10,10 +10,8 @@ package org.intermine.api.search;
  *
  */
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.profile.Profile;
 

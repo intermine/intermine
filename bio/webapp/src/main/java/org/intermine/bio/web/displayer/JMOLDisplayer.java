@@ -12,10 +12,8 @@ package org.intermine.bio.web.displayer;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.displayer.ReportDisplayer;
@@ -39,7 +37,6 @@ public class JMOLDisplayer extends ReportDisplayer
     public JMOLDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
-
 
     @SuppressWarnings("unchecked")
     @Override

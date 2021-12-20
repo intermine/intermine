@@ -17,7 +17,6 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import java.sql.SQLException;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.metadata.ClassDescriptor;
@@ -158,7 +157,6 @@ public class CreateReferencesProcess extends PostProcessor
         } catch (IllegalAccessException e) {
             throw new RuntimeException("couldn't find connecting classes " + e);
         }
-
 
         // results will be sourceClass ; destClass (ordered by sourceClass)
         osw.beginTransaction();

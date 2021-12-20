@@ -18,11 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -79,7 +76,6 @@ public class AutoCompleter
         }
 
     }
-
 
     /**
      * Returns n search results
@@ -146,7 +142,6 @@ public class AutoCompleter
                 }
 
                 stringResults[0] = status;
-
 
                 return stringResults;
 
@@ -246,7 +241,6 @@ public class AutoCompleter
             LOG.error("Retrieving existing Fieldnames in Solr failed");
         }
 
-
         for (String fieldName: fieldList) {
             if (existingFields != null) {
                 if (!existingFields.contains(fieldName)) {
@@ -285,7 +279,6 @@ public class AutoCompleter
             e.printStackTrace();
         }
     }
-
 
     /**
      * checks if an autocompletion exists

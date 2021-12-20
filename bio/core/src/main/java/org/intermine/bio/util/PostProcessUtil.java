@@ -10,7 +10,6 @@ package org.intermine.bio.util;
  *
  */
 
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -71,7 +69,6 @@ public final class PostProcessUtil
         return PostProcessUtil.cloneInterMineObject(obj, false);
     }
 
-
     /**
      * Create a copy of given InterMineObject with *no* id set and copies of collections
      *
@@ -86,7 +83,6 @@ public final class PostProcessUtil
         newObj.setId(null);
         return newObj;
     }
-
 
     private static <O extends InterMineObject> O cloneInterMineObject(O obj,
             boolean copyCollections) throws IllegalAccessException {

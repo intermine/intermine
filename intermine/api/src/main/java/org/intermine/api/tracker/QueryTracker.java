@@ -14,10 +14,8 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Queue;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.track.QueryTrack;

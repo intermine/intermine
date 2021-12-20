@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.tracker.util.ListTrackerEvent;
 import org.intermine.objectstore.ObjectStore;
@@ -201,7 +200,6 @@ public class TrackAjaxServices
             + " GROUP BY tt.templatename ORDER BY COUNT(templatename) DESC LIMIT 20";
         return getTracksDataTable(sql);
     }
-
 
     private Date calculateDate(String timeRange) {
         long currentDateMs = System.currentTimeMillis();

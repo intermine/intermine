@@ -34,7 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
@@ -237,7 +236,6 @@ public class GoConverter extends BioFileConverter
             store(item);
         }
     }
-
 
     /**
      * {@inheritDoc}
@@ -606,7 +604,6 @@ public class GoConverter extends BioFileConverter
         return goTermIdentifier;
     }
 
-
     private String getDataSourceCodeName(String sourceCode) {
         String title = sourceCode;
 
@@ -763,7 +760,6 @@ public class GoConverter extends BioFileConverter
             return organism;
         }
 
-
         /**
          * @return the storedAnnotationId
          */
@@ -778,7 +774,6 @@ public class GoConverter extends BioFileConverter
             this.storedAnnotationId = storedAnnotationId;
         }
     }
-
 
     /**
      * Identify a GoTerm/geneProduct pair with qualifier

@@ -17,10 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.InterMineException;
 import org.intermine.api.profile.InterMineBag;
@@ -151,7 +149,6 @@ public final class TypeConverter
             throw new RuntimeException("Template is invalid", e);
         }
     }
-
 
     /**
      * Get conversion query for the types provided, edited so that the first

@@ -20,10 +20,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.MetaDataException;

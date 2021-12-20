@@ -206,7 +206,6 @@ public class TransferSequencesProcessTest extends TestCase
         checkTranscriptSequences();
     }
 
-
     public void testCDSSequence() throws Exception {
         TransferSequencesProcess ts = new TransferSequencesProcess(osw);
         ts.transferToLocatedSequenceFeatures();
@@ -266,7 +265,6 @@ public class TransferSequencesProcessTest extends TestCase
         CDS resCDS0 = (CDS) os.getObjectById(storedCDS.getId());
         assertEquals(expectedCDSSequence0, resCDS0.getSequence().getResidues().toString());
    }
-
 
     private void createData() throws Exception {
         osw.flushObjectById();

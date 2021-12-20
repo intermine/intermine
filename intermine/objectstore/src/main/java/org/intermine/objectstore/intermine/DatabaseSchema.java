@@ -19,10 +19,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;

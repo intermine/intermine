@@ -28,7 +28,6 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.config.ClassKeyHelper;

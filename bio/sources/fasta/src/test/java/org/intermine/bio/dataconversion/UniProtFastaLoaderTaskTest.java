@@ -43,11 +43,8 @@ import org.junit.Before;
 import org.junit.After;
 import static org.junit.Assert.* ;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 
 public class UniProtFastaLoaderTaskTest {
 

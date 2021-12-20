@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.apache.tools.ant.BuildException;
 import org.biojava.nbio.core.exceptions.ParserException;
 import org.biojava.nbio.core.sequence.DNASequence;
@@ -47,7 +46,6 @@ import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.PendingClob;
 import org.intermine.task.FileDirectDataLoaderTask;
-
 
 /**
  * A task that can read a set of FASTA files and create the corresponding Sequence objects in an
@@ -229,7 +227,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
     }
 
-
     /**
      * Handles each fasta file. Factored out so we can supply files for testing.
      *
@@ -396,7 +393,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         dataSets.put(dataSetTitle, dataSet);
         return dataSet;
     }
-
 
     /**
      * Do any extra processing needed for this record (extra attributes, objects, references etc.)

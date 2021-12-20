@@ -34,10 +34,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
@@ -105,7 +103,6 @@ public class GenomicRegionSearchService
         "Chromosome location information is missing";
 
     private static final Logger LOG = LogManager.getLogger(GenomicRegionSearchService.class);
-
 
     /**
      * Constructor
@@ -381,7 +378,6 @@ public class GenomicRegionSearchService
 //        preDataStr = preDataStr.replaceAll("'", "\\\\'");
 
         return preDataStr;
-
 
     }
 
@@ -1395,7 +1391,6 @@ public class GenomicRegionSearchService
 
         sb.append("<br>");
 
-
         if (!"false".equals(exportChromosomeSegment)) {
             sb.append("<span style=\"padding: 10px;\">Export sequence for entire region: "
                     + "<a href='javascript: exportFeatures(\""
@@ -1440,7 +1435,6 @@ public class GenomicRegionSearchService
                 + "individual sequences' href='javascript: "
                 + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
                 + facet + "\", \"sequence\");'></a></span>");
-
 
         // Display galaxy export
         if (!"false".equals(galaxyDisplay)) {

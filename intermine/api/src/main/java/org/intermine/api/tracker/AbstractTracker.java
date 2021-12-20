@@ -15,10 +15,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Queue;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.tracker.track.Track;
 import org.intermine.sql.DatabaseUtil;

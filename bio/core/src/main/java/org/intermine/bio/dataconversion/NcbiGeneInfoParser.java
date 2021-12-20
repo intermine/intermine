@@ -23,10 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.util.FormattedTextParser;
 import org.intermine.metadata.Util;
-
 
 /**
  * Parse NCBI Entrez gene_info file and return data structure for each row for later processing.

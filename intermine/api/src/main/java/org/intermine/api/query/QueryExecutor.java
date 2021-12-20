@@ -15,10 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryRunner;
@@ -62,7 +60,6 @@ public abstract class QueryExecutor
     protected BagManager bagManager;
     protected BagQueryRunner bagQueryRunner;
     protected ObjectStore os;
-
 
     /**
      * Creates a query that returns the summary for a column in a PathQuery.

@@ -16,10 +16,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.results.ResultElement;
 import org.intermine.webservice.server.core.ResultProcessor;

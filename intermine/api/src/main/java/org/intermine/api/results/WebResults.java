@@ -18,10 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
@@ -184,7 +182,6 @@ public class WebResults
     public List<String> getColumnNames() {
         return columnNames;
     }
-
 
     @Override
     public void addColumns(List<Path> paths) {

@@ -22,10 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -245,7 +243,6 @@ public final class DataLoaderHelper
         }
     }
 
-
     /**
      * Fetch all primary keys for the given source. Parses source keys properties file, can handle
      * both 'old style' key definitions (key name used in source, details found in keyDefs file)
@@ -346,7 +343,6 @@ public final class DataLoaderHelper
         }
         return keys;
     }
-
 
     /**
      * Look a the values of the given primary key in the object and return true if and only if some

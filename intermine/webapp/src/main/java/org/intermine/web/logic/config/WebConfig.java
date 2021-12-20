@@ -35,7 +35,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -153,7 +152,6 @@ public class WebConfig
         digester.addSetProperties("webconfig/class/inlinelist/table",
                 "showInHeader", "showInHeader");
         digester.addSetProperties("webconfig/class/inlinelist/table", "lineLength", "lineLength");
-
 
         digester.addObjectCreate("webconfig/class/bagdisplayers/displayer", Displayer.class);
         digester.addSetProperties("webconfig/class/bagdisplayers/displayer");
@@ -278,7 +276,6 @@ public class WebConfig
         }
         return props;
     }
-
 
     /**
      * Load labels specified in any configured mapping files, and apply them to the

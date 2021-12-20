@@ -20,10 +20,8 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.model.GeneModelCache;

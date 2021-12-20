@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.Mine;
@@ -90,7 +89,6 @@ public class MinePathwaysDisplayer extends ReportDisplayer
                 = FriendlyMineManager.getInstance(im, webProperties);
             Collection<Mine> mines = linkManager.getFriendlyMines();
 
-
             mineToOrthologues = buildHomologueMap(mines, orthologues);
             localMine = linkManager.getLocalMine();
 
@@ -110,8 +108,6 @@ public class MinePathwaysDisplayer extends ReportDisplayer
 
             localMineCache.put(reportObject, localMine);
         }
-
-
 
         request.setAttribute("minesForPathways", mineToOrthologues);
         request.setAttribute("localMine", localMine);

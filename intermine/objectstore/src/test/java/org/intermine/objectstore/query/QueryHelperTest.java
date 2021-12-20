@@ -14,10 +14,8 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;

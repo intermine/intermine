@@ -29,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -43,7 +42,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
 
 /**
  * DataConverter to parse biogrid data into items
@@ -172,7 +170,6 @@ public class BioGridConverter extends BioFileConverter
         }
         return false;
     }
-
 
     private void readConfig() {
         Properties props = new Properties();
@@ -398,7 +395,6 @@ public class BioGridConverter extends BioFileConverter
             attValue = new StringBuffer();
         }
 
-
         /**
          * {@inheritDoc}
          */
@@ -443,7 +439,6 @@ public class BioGridConverter extends BioFileConverter
                 setExperiment(experimentHolder);
 
             /********************************* GENES ***********************************/
-
 
             // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
             } else if (attName != null && "shortLabel".equals(attName)
@@ -539,7 +534,6 @@ public class BioGridConverter extends BioFileConverter
             }
             return interaction;
         }
-
 
         // get all the gene ref IDs for an interaction
         private ReferenceList getAllRefIds(Collection<InteractorHolder> allInteractors) {
@@ -930,7 +924,6 @@ public class BioGridConverter extends BioFileConverter
 
         }
 
-
     }
 
     /**
@@ -1141,7 +1134,6 @@ public class BioGridConverter extends BioFileConverter
             }
         }
     }
-
 
 }
 

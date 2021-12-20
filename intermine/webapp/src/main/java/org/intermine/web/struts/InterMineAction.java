@@ -14,9 +14,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionMessage;

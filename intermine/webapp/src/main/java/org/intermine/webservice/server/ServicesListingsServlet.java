@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.Output;

@@ -33,12 +33,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
-
 
 /**
  * Generic utility functions.
@@ -61,8 +57,6 @@ public final class Util
      * Name of the key under which to store the serialized version of the model
      */
     public static final String MODEL = "model";
-
-
 
     private Util() {
         // don't
@@ -255,8 +249,6 @@ public final class Util
         return sb.toString();
     }
 
-
-
     /**
      * @param sequence sequence to be encoded
      * @return encoded sequence, set to lowercase
@@ -340,7 +332,6 @@ public final class Util
         }
         values.addAll(newValues);
     }
-
 
     /**
      * Add a value to a Map from keys to Set of values, creating the value list
@@ -485,7 +476,6 @@ public final class Util
         }
         return cls;
     }
-
 
     /**
      * Returns all Properties in props that begin with str
@@ -695,6 +685,4 @@ public final class Util
         }
     }
 }
-
-
 

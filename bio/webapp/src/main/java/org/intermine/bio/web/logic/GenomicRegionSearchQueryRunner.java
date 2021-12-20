@@ -47,7 +47,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
-
 /**
  * This class has all database query logics for genomic region search.
  *

@@ -10,10 +10,8 @@ package org.intermine.web.uri;
  *
  */
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;

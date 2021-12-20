@@ -23,10 +23,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -196,8 +194,6 @@ public class ObjectStoreSummary
             }
         }
 
-
-
         // This is faster as a bottom up traversal, though this may save fewer queres the saved
         // queries would take longer. If a ref/col is not empty it must not be empty in all parents.
         Set<String> notEmptyFields = new HashSet<String>();
@@ -252,7 +248,6 @@ public class ObjectStoreSummary
         }
     }
 
-
     private void countAndStore(ObjectStore os, Model model, ClassDescriptor cld)
         throws ObjectStoreException {
         if (!classCountsMap.containsKey(cld.getName())) {
@@ -270,7 +265,6 @@ public class ObjectStoreSummary
             }
         }
     }
-
 
     /**
      * Construct a summary from a properties object.

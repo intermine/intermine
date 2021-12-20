@@ -22,10 +22,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.Emailer;
@@ -198,7 +196,6 @@ public final class InterMineContext implements Shutdownable
 
     private static final String STOPPING_THREAD =
         "Forcibly stopping thread to avoid memory leak: ";
-
 
     // TODO: commented out the below section for now. Remove once everything is working
 

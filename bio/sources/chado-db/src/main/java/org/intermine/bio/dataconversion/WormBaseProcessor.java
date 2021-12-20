@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.objectstore.ObjectStoreException;

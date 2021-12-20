@@ -26,11 +26,8 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.ObjectPipe;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 
 /**
  * Class providing EquivalentObjectFetcher functionality that fetches batches of equivalent objects

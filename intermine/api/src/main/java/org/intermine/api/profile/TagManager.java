@@ -26,7 +26,6 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.search.TaggingEvent;
 import org.intermine.api.search.TaggingEvent.TagChange;
 import org.intermine.api.search.WebSearchable;

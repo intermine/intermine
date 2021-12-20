@@ -15,10 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
@@ -27,8 +25,6 @@ import org.intermine.sql.DatabaseConnectionException;
 
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
-
-
 
 /**
  * Create an index on the location table to be used for range queries.

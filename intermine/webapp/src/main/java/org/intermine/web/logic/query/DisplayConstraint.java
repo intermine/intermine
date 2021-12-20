@@ -20,10 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
@@ -56,8 +54,6 @@ import org.intermine.template.SwitchOffAbility;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.querybuilder.DisplayPath;
 
-
-
 /**
  * Representation of a PathQuery constraint for use by JSP pages.  This object provides methods
  * needed to populate constraint editing boxes and dropdowns, find available bag names, etc.  Can
@@ -87,7 +83,6 @@ public class DisplayConstraint
     private PathQuery query;
     private String code;
     private boolean editableInTemplate;
-
 
     private SwitchOffAbility switchOffAbility;
     private boolean isBagSelected;
@@ -523,7 +518,6 @@ public class DisplayConstraint
         return null;
     }
 
-
     /**
      * Values to populate a dropdown for the path if possible values are available.
      * @return possible values to populate a dropdown
@@ -813,7 +807,6 @@ public class DisplayConstraint
     public void setSwitchOffAbility(SwitchOffAbility switchOffAbility) {
         this.switchOffAbility = switchOffAbility;
     }
-
 
     /**
      * Return true if the input field can be displayed, method for use in JSP

@@ -29,7 +29,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -84,7 +83,6 @@ public final class SearchResults implements Iterable<SearchResult>
         public boolean hasNext() {
             return subiter.hasNext();
         }
-
 
         @Override
         public SearchResult next() {

@@ -36,10 +36,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
@@ -1437,7 +1435,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
             }
         });
-
 
         boolean wasNotInTransaction = false;
 

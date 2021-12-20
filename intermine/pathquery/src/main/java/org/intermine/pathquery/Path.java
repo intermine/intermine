@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -523,7 +522,6 @@ public class Path
         }
         return returnStringBuffer.toString();
     }
-
 
     /**
      * {@inheritDoc}

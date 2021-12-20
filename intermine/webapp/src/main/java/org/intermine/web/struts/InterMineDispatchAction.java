@@ -12,9 +12,7 @@ package org.intermine.web.struts;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;

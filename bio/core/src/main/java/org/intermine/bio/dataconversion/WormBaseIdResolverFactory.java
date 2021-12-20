@@ -28,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.sql.Database;
 import org.intermine.util.FormattedTextParser;

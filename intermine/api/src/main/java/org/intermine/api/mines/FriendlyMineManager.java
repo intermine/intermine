@@ -24,7 +24,6 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.beans.PartnerLink;
 import org.intermine.metadata.TypeUtil;

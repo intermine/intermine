@@ -23,13 +23,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-
 
 /**
  * Read RGD RAT_GENES identifiers file to create canonical rat genes with correct identifiers.
@@ -60,7 +58,6 @@ public class RgdIdentifiersConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-
 
         Set<String> duplicateEnsembls = new HashSet<String>();
         Map<String, Integer> storedGeneIds = new HashMap<String, Integer>();

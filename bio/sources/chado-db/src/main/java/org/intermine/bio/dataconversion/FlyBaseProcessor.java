@@ -15,7 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.bio.chado.ChadoCV;
 import org.intermine.bio.chado.ChadoCVFactory;
@@ -214,7 +212,6 @@ public class FlyBaseProcessor extends SequenceProcessor
 
         chromosomeStructureVariationTypes = getChromosomeStructureVariationTypes(connection);
 
-
 //        try {
 //            cdnaLengths = makeCDNALengthMap(connection);
 //        } catch (SQLException e) {
@@ -318,7 +315,6 @@ public class FlyBaseProcessor extends SequenceProcessor
 
         return retVal;
     }
-
 
     /**
      * Create a temporary table containing the ids of the located genes.  This is a protected
@@ -550,7 +546,6 @@ public class FlyBaseProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("symbol")));
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
-
 
             // dbxref table configuration example: for features of class "Gene", where the
             // db.name is "FlyBase Annotation IDs" and "is_current" is true, set the
@@ -945,7 +940,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             createInteractions(connection);
         }
 
-
     }
 
     private Item getInteraction(Map<MultiKey, Item> interactions, String refId,
@@ -1242,7 +1236,6 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             OrganismData od = alleleFeatureData.getOrganismData();
             Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId());
-
 
             String alleleItemIdentifier = alleleFeatureData.getItemIdentifier();
 
@@ -1649,7 +1642,6 @@ public class FlyBaseProcessor extends SequenceProcessor
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
-
 
     /**
      * Return a result set containing pairs of insertion feature_ids (eg. for "FBti0027974" =>

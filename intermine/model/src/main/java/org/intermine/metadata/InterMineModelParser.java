@@ -23,8 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-
 /**
  * Parse InterMine metadata XML to produce an InterMine Model
  *
@@ -270,6 +268,5 @@ public class InterMineModelParser implements ModelParser
             this.fairTerm = fairTerm;
         }
     }
-
 
 }

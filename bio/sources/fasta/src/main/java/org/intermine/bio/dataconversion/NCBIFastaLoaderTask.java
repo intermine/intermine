@@ -10,10 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.template.Sequence;
@@ -42,7 +40,6 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
 
         // new header:
         // >NC_000024.10 Homo sapiens chromosome Y, GRCh38.p13 Primary Assembly
-
 
         for (String headerString : header.split("\\|")) {
             if (headerString.contains("mitochondrion")) {

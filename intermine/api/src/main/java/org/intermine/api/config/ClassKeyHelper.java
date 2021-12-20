@@ -16,10 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.ClassDescriptor;
@@ -177,7 +175,6 @@ public final class ClassKeyHelper
 
         return classKeys.get(className);
     }
-
 
     /**
      * Return names of the key fields for a given class.

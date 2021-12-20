@@ -29,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -618,7 +617,6 @@ public final class DatabaseUtil
         con.createStatement().execute("DROP VIEW IF EXISTS " + view);
     }
 
-
     /**
      * Creates a table name for a class descriptor
      *
@@ -790,7 +788,6 @@ public final class DatabaseUtil
         }
     }
 
-
     /**
      * Analyse database table for a given class and all associated indirection tables.
      * WARNING: currently PostgreSQL specific
@@ -826,7 +823,6 @@ public final class DatabaseUtil
             conn.close();
         }
     }
-
 
     /**
      * Given a ClassDescriptor find names of all related indirection tables.

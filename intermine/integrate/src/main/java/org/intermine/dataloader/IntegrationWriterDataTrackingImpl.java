@@ -21,10 +21,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -525,7 +523,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         }
     }
 
-
     private void storeNonInterMineObject(FastPathObject nimo, Source source, Source skelSource,
             int type) throws IllegalAccessException, ObjectStoreException {
         long time1 = System.currentTimeMillis();
@@ -544,7 +541,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         time2 = System.currentTimeMillis();
         timeSpentStore += time2 - time1;
     }
-
 
     private void copyFields(Source source, Source skelSource, int type, InterMineObject o,
             InterMineObject newObj, Map<String, Source> trackingMap,

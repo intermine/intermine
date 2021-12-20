@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -285,7 +284,6 @@ public class UniprotConverter extends BioDirectoryConverter
             this.allowduplicates = false;
         }
     }
-
 
     /**
      * Sets the list of taxonIds that should be imported if using split input files.
@@ -646,7 +644,6 @@ public class UniprotConverter extends BioDirectoryConverter
             }
         }
 
-
         private List<UniprotEntry> processEntry(UniprotEntry uniprotEntry)
             throws SAXException, ObjectStoreException {
             entryCount++;
@@ -945,7 +942,6 @@ public class UniprotConverter extends BioDirectoryConverter
                     setCrossReference(protein.getIdentifier(), identifier, key, false);
                 }
             }
-
 
         }
 

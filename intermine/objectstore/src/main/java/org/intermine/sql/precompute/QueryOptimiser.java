@@ -27,10 +27,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
@@ -844,7 +842,6 @@ public final class QueryOptimiser
                 // BY clause of the original query.
                 reconstructAbstractValues(query.getOrderBy(), precomputedSqlTable, valueMap,
                         precompQuery.getFrom(), true, newQuery.getOrderBy());
-
 
                 // Now copy the EXPLAIN, DISTINCT, LIMIT, and OFFSET status to the new query:
                 newQuery.setDistinct(query.isDistinct());

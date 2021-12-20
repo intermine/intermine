@@ -26,7 +26,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse;
@@ -459,7 +458,6 @@ public class SolrObjectHandler extends Thread
 
         SolrInputDocument doc = new SolrInputDocument();
 
-
         // id has to be stored so we can fetch the actual objects for the
         // results
         doc.addField("id", object.getId().toString());
@@ -594,7 +592,6 @@ public class SolrObjectHandler extends Thread
             } else {
                 addFieldNameToSchema(f.getName(), ANALYZED_FIELD_TYPE_NAME, false, true);
             }
-
 
             return f;
         }

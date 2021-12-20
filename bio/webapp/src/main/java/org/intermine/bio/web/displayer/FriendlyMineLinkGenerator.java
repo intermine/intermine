@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.beans.ObjectDetails;
 import org.intermine.api.beans.PartnerLink;
 import org.intermine.api.mines.Mine;
@@ -216,6 +215,5 @@ public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
         }
 
     }
-
 
 }

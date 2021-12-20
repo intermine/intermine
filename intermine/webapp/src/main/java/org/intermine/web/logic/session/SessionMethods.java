@@ -31,7 +31,6 @@ import org.apache.commons.collections.map.LRUMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
@@ -654,7 +653,6 @@ public final class SessionMethods
         return queries;
     }
 
-
     /**
      * Start a query running in the background that will return the row count of the query argument.
      * A new query id will be created and added to the RUNNING_QUERIES session attribute.
@@ -790,7 +788,6 @@ public final class SessionMethods
         return op;
     }
 
-
     /**
      * Return true if and only if the current user if the superuser.
      * @param session the session
@@ -866,7 +863,6 @@ public final class SessionMethods
         setResultsTable(session, identifier, pagedResults);
         return pagedResults;
     }
-
 
     /**
      * @param request a HttpServletRequest

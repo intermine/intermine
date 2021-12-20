@@ -16,10 +16,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
@@ -42,7 +40,6 @@ import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 
-
 /**
  * Populate the SequenceFeature.childFeatures() collection for: Gene, Transcript, Exon
  * Only used for JBrowse
@@ -57,7 +54,6 @@ public class PopulateChildFeaturesProcess extends PostProcessor
     private static final String TARGET_COLLECTION = "childFeatures";
     private Map<String, Set<CollectionHolder>> parentToChildren
             = new HashMap<String, Set<CollectionHolder>>();
-
 
     /**
      * Create a new instance

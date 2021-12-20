@@ -25,7 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -769,7 +768,6 @@ public class Profile
         bagToUpdate.setDescription(newDescription);
     }
 
-
     /**
      * Rename an existing bag, throw exceptions when bag doesn't exist of if new name already
      * exists.  Moves tags from old bag to new bag.
@@ -878,7 +876,6 @@ public class Profile
     public SearchRepository getSearchRepository() {
         return searchRepository;
     }
-
 
     /**
      * @return the user's API key token.

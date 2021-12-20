@@ -26,7 +26,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -186,8 +185,6 @@ public class InterMineBag extends StorableBag implements Cloneable
             setClassDescriptors();
         }
     }
-
-
 
     /**
      * Declare that this bag is invalid, and return its InvalidBag representation.
@@ -437,7 +434,6 @@ public class InterMineBag extends StorableBag implements Cloneable
             }
         }
     }
-
 
     @Override
     public int getSize() throws ObjectStoreException {

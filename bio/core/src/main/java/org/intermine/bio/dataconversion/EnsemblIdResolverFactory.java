@@ -24,10 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
-
 
 /**
  * Create an IdResolverFactory for human Ensembl gene ids, this doesn't include any synonyms or id

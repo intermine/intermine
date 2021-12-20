@@ -10,10 +10,8 @@ package org.intermine.webservice.server;
  *
  */
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.apache.solr.client.solrj.response.FacetField;
 import org.intermine.api.InterMineAPI;
@@ -27,7 +25,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * A web service for returning all the facet list

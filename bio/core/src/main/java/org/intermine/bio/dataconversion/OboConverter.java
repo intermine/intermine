@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.bio.ontology.OboParser;
 import org.intermine.bio.ontology.OboRelation;
 import org.intermine.bio.ontology.OboTerm;

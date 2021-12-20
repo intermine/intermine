@@ -16,10 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.TypeUtil;
@@ -132,7 +130,6 @@ public final class GFF3Util
             idList.add(lsf.getPrimaryIdentifier());
             recordAttribute.put("ID", idList);
         }
-
 
         Double score = null;
         try {

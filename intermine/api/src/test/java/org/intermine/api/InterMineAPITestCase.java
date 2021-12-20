@@ -22,10 +22,8 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
@@ -54,7 +52,6 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
-
 
 /**
  * A TestCase that sets up a working InterMineAPI for use in TestCases that extend this class.  The

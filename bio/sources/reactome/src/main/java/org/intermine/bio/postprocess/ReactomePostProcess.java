@@ -16,10 +16,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.bio.util.Constants;
 import org.intermine.bio.util.PostProcessUtil;
@@ -45,7 +43,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.DynamicUtil;
-
 
 /**
  * Copy over Protein.pathways to Gene.pathways

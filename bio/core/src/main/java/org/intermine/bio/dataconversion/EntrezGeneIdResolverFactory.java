@@ -28,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import org.intermine.util.PropertiesUtil;
 
 /**
@@ -215,7 +214,6 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         LOG.info("New taxons: " + newTaxonIds.keySet() + ", original taxons: "
                 + newTaxonIds.values());
 
-
         NcbiGeneInfoParser parser = new NcbiGeneInfoParser(new BufferedReader(new FileReader(f)),
                 new HashSet<String>(newTaxonIds.keySet()));
         Map<String, Set<GeneInfoRecord>> records = parser.getGeneInfoRecords();
@@ -363,7 +361,6 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     protected void createIdResolver() {
         // Not implemented. TaxonId is needed as argument
     }
-
 
     /** used for testing
      * @return xrefs from config

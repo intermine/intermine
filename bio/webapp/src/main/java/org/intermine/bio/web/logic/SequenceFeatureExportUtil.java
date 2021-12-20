@@ -17,10 +17,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
@@ -86,7 +84,6 @@ public final class SequenceFeatureExportUtil
         return retPaths;
     }
 
-
     /**
      * Get organism info from PathQuery
      *
@@ -100,7 +97,6 @@ public final class SequenceFeatureExportUtil
         Profile profile = SessionMethods.getProfile(session);
         return getOrganisms(pathQuery, im, profile);
     }
-
 
     /**
      * @param pathQuery query
