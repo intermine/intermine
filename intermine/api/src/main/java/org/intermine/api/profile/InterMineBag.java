@@ -22,7 +22,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -61,7 +66,7 @@ import org.intermine.objectstore.query.SingletonResults;
  */
 public class InterMineBag extends StorableBag implements Cloneable
 {
-    protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
+    protected static final Logger LOG = LogManager.getLogger(InterMineBag.class);
     /** name of bag values table */
     public static final String BAG_VALUES = "bagvalues";
     private String name;

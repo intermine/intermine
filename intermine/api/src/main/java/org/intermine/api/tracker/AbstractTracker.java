@@ -15,7 +15,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.tracker.track.Track;
 import org.intermine.sql.DatabaseUtil;
 
@@ -26,7 +31,7 @@ import org.intermine.sql.DatabaseUtil;
  */
 public abstract class AbstractTracker implements Tracker
 {
-    private static final Logger LOG = Logger.getLogger(AbstractTracker.class);
+    private static final Logger LOG = LogManager.getLogger(AbstractTracker.class);
     protected Queue<Track> trackQueue = null;
     protected String trackTableName;
     protected TrackerLogger trackerLogger = null;

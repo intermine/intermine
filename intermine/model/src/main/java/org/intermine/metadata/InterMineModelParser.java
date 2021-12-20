@@ -19,7 +19,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * Parse InterMine metadata XML to produce an InterMine Model
@@ -28,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 public class InterMineModelParser implements ModelParser
 {
-    private static final Logger LOG = Logger.getLogger(InterMineModelParser.class);
+    private static final Logger LOG = LogManager.getLogger(InterMineModelParser.class);
 
     /**
      * Read source model information in InterMine XML format and

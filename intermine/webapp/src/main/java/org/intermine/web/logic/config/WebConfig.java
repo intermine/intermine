@@ -29,8 +29,14 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+// Asher: Don't know if we still need this
+// import org.apache.log4j.BasicConfigurator;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -52,7 +58,7 @@ import org.xml.sax.SAXException;
  */
 public class WebConfig
 {
-    private static final Logger LOG = Logger.getLogger(WebConfig.class);
+    private static final Logger LOG = LogManager.getLogger(WebConfig.class);
     private final Map<String, Type> types = new TreeMap<String, Type>();
     private final Map<String, TableExportConfig> tableExportConfigs =
         new TreeMap<String, TableExportConfig>();
@@ -74,7 +80,8 @@ public class WebConfig
     public static WebConfig parse(final ServletContext context, final Model model)
         throws IOException, SAXException, ClassNotFoundException {
 
-        BasicConfigurator.configure();
+        // Asher: See import above
+        // BasicConfigurator.configure();
 
         final InputStream webconfXML = context.getResourceAsStream("/WEB-INF/webconfig-model.xml");
         if (webconfXML == null) {

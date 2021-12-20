@@ -24,7 +24,12 @@ import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -45,7 +50,7 @@ public class TreefamConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "TreeFam";
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
-    private static final Logger LOG = Logger.getLogger(TreefamConverter.class);
+    private static final Logger LOG = LogManager.getLogger(TreefamConverter.class);
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
     protected File geneFile;

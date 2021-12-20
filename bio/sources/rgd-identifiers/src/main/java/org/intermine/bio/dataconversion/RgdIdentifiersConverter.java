@@ -19,7 +19,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.FormattedTextParser;
@@ -39,7 +44,7 @@ public class RgdIdentifiersConverter extends BioFileConverter
 
     private static final String RAT_TAXON = "10116";
 
-    protected static final Logger LOG = Logger.getLogger(RgdIdentifiersConverter.class);
+    protected static final Logger LOG = LogManager.getLogger(RgdIdentifiersConverter.class);
 
     /**
      * Constructor

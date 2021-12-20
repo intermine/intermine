@@ -14,7 +14,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.results.ResultElement;
 import org.intermine.pathquery.Path;
 
@@ -23,7 +28,7 @@ import org.intermine.pathquery.Path;
  **/
 public class ResultElementConverter
 {
-    protected static final Logger LOG = Logger.getLogger(ResultElementConverter.class);
+    protected static final Logger LOG = LogManager.getLogger(ResultElementConverter.class);
 
     /**
      * Converts data from ResultElement to Objects. It takes

@@ -23,7 +23,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.profile.Profile;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
@@ -46,7 +51,7 @@ public final class TemplateHelper
     /**
      * A logger.
      */
-    private static final Logger LOG = Logger.getLogger(TemplateHelper.class);
+    private static final Logger LOG = LogManager.getLogger(TemplateHelper.class);
 
     private TemplateHelper() {
         // don't

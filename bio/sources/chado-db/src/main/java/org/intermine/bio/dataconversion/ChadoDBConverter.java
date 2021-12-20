@@ -23,7 +23,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -37,7 +42,7 @@ import org.intermine.metadata.StringUtil;
  */
 public class ChadoDBConverter extends BioDBConverter
 {
-    protected static final Logger LOG = Logger.getLogger(ChadoDBConverter.class);
+    protected static final Logger LOG = LogManager.getLogger(ChadoDBConverter.class);
 
     // a Map from chado organism_id to taxonId
     private final Map<Integer, OrganismData> chadoToOrgData = new HashMap<Integer, OrganismData>();

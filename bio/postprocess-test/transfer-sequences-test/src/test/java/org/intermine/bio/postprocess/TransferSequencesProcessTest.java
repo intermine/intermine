@@ -164,7 +164,7 @@ public class TransferSequencesProcessTest extends TestCase
                     "acgcctcaacgggcagactaagtgccgtcacgacgcgctgagacgctgaaaaaatacaat"+
                     "cagcaccaccgtcagcgcgcagtgctttccccgcctcgcc";
 
-    //private static final Logger LOG = Logger.getLogger(TransferSequencesTest.class);
+    //private static final Logger LOG = LogManager.getLogger(TransferSequencesTest.class);
 
     private static final String EXPECTED_TRANSCRIPT_0_RESIDUES =
             "tcaaatcaaattgataacttgtcaagtatccctatgcttgtcaagataaacct";

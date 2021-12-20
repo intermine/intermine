@@ -20,7 +20,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.Constants;
 import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.MetaDataException;
@@ -69,7 +74,7 @@ public class CreateIntronFeaturesProcess extends PostProcessor
     protected Map<String, SequenceFeature> intronMap = new HashMap<String, SequenceFeature>();
     protected Map<SequenceFeature, Set<SequenceFeature>> intronTranscripts =
             new HashMap<SequenceFeature, Set<SequenceFeature>>();
-    private static final Logger LOG = Logger.getLogger(CreateIntronFeaturesProcess.class);
+    private static final Logger LOG = LogManager.getLogger(CreateIntronFeaturesProcess.class);
 
     /**
      * Create a new instance

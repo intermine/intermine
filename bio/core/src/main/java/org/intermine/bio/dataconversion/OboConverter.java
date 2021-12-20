@@ -19,7 +19,12 @@ import java.util.Map;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.ontology.OboParser;
 import org.intermine.bio.ontology.OboRelation;
 import org.intermine.bio.ontology.OboTerm;
@@ -39,7 +44,7 @@ import org.intermine.xml.full.Reference;
  */
 public class OboConverter extends DataConverter
 {
-    private static final Logger LOG = Logger.getLogger(OboConverter.class);
+    private static final Logger LOG = LogManager.getLogger(OboConverter.class);
 
     protected String dagFilename;
     protected String termClass;

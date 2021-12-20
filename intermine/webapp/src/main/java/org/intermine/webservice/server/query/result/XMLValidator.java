@@ -24,7 +24,12 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.xml.sax.SAXParseException;
 
@@ -40,7 +45,7 @@ public class XMLValidator
           + "xsi:schemaLocation=\"http://intermine.org/query/1.0 query.xsd\"";
     private XMLValidatorErrorHandler errorHandler = null;
 
-    private static final Logger LOG = Logger.getLogger(XMLValidator.class);
+    private static final Logger LOG = LogManager.getLogger(XMLValidator.class);
 
     /**
      * Validates an XML string according to an XML Schema at a given URL.

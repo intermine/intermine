@@ -19,7 +19,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.OAuthProviderType;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -44,7 +49,7 @@ import org.intermine.web.struts.InterMineAction;
 public class Authenticator extends InterMineAction
 {
 
-    private static final Logger LOG = Logger.getLogger(Authenticator.class);
+    private static final Logger LOG = LogManager.getLogger(Authenticator.class);
 
     /**
      * Method called for login in

@@ -24,7 +24,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
@@ -40,7 +45,7 @@ import org.intermine.api.tracker.util.TrackerUtil;
  */
 public class TemplateTracker extends AbstractTracker
 {
-    private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
+    private static final Logger LOG = LogManager.getLogger(TemplateTracker.class);
     private static TemplateTracker templateTracker = null;
     private static TemplatesExecutionMap templatesExecutionCache;
 

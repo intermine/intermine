@@ -18,7 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
@@ -36,7 +41,7 @@ import org.intermine.objectstore.query.Query;
 public abstract class BagOperation implements BagProducer
 {
 
-    protected static final Logger LOG = Logger.getLogger(BagOperation.class);
+    protected static final Logger LOG = LogManager.getLogger(BagOperation.class);
     private final Profile profile;
     private Collection<InterMineBag> bags;
     private String nameFormat = "%s List (%tc)";

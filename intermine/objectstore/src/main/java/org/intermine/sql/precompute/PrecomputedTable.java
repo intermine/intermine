@@ -19,7 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.sql.query.AbstractTable;
 import org.intermine.sql.query.AbstractValue;
 import org.intermine.sql.query.Field;
@@ -37,7 +42,7 @@ import org.intermine.sql.query.Table;
  */
 public class PrecomputedTable implements SQLStringable, Comparable<PrecomputedTable>
 {
-    private static final Logger LOG = Logger.getLogger(PrecomputedTable.class);
+    private static final Logger LOG = LogManager.getLogger(PrecomputedTable.class);
     /** The name of the field that is generated as the order by field */
     public static final String ORDERBY_FIELD = "orderby_field";
     protected Query q;

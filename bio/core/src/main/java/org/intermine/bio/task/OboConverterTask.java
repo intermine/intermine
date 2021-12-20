@@ -28,7 +28,7 @@ import org.intermine.task.ConverterTask;
  */
 public class OboConverterTask extends ConverterTask
 {
-//    protected static final Logger LOG = Logger.getLogger(OboConverterTask.class);
+//    protected static final Logger LOG = LogManager.getLogger(OboConverterTask.class);
 
     private String file, ontologyName, osName, url, termClass, licence;
 

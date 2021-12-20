@@ -20,7 +20,12 @@ import java.util.regex.Pattern;
 
 import net.sf.cglib.proxy.Factory;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
@@ -43,7 +48,7 @@ public final class NotXmlParser
     private NotXmlParser() {
     }
 
-    private static final Logger LOG = Logger.getLogger(NotXmlParser.class);
+    private static final Logger LOG = LogManager.getLogger(NotXmlParser.class);
     /**
      * The string that delimits the sections of the NotXml.
      */

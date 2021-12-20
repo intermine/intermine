@@ -36,7 +36,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
@@ -103,9 +108,9 @@ import org.intermine.util.Shutdownable;
  */
 public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements Shutdownable
 {
-    private static final Logger LOG = Logger.getLogger(ObjectStoreInterMineImpl.class);
+    private static final Logger LOG = LogManager.getLogger(ObjectStoreInterMineImpl.class);
 
-    private static final Logger SQLLOGGER = Logger.getLogger("sqllogger");
+    private static final Logger SQLLOGGER = LogManager.getLogger("sqllogger");
 
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
     protected static Map<String, ObjectStoreInterMineImpl> instances

@@ -37,7 +37,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.torque.engine.database.model.Domain;
 import org.apache.torque.engine.database.model.SchemaType;
 import org.apache.torque.engine.platform.Platform;
@@ -111,7 +116,7 @@ public final class SqlGenerator
     private SqlGenerator() {
     }
 
-    private static final Logger LOG = Logger.getLogger(SqlGenerator.class);
+    private static final Logger LOG = LogManager.getLogger(SqlGenerator.class);
     /** normal query **/
     public static final int QUERY_NORMAL = 0;
     /** subquery in FROM **/

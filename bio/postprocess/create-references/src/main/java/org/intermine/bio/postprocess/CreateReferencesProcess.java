@@ -13,7 +13,12 @@ package org.intermine.bio.postprocess;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import java.sql.SQLException;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.metadata.ClassDescriptor;
@@ -40,7 +45,7 @@ import org.intermine.postprocess.PostProcessor;
 public class CreateReferencesProcess extends PostProcessor
 {
     private Model model;
-    private static final Logger LOG = Logger.getLogger(CreateReferencesProcess.class);
+    private static final Logger LOG = LogManager.getLogger(CreateReferencesProcess.class);
     /**
      * Create a new instance
      *

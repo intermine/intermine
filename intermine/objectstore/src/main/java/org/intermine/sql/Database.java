@@ -32,7 +32,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.StringUtil;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.ShutdownHook;
@@ -50,7 +55,7 @@ import com.zaxxer.hikari.HikariDataSource;
  */
 public class Database implements Shutdownable
 {
-    private static final Logger LOG = Logger.getLogger(Database.class);
+    private static final Logger LOG = LogManager.getLogger(Database.class);
     private static final String HIKARI_CLASSNAME = "com.zaxxer.hikari.HikariDataSource";
     protected DataSource datasource;
     protected String platform;

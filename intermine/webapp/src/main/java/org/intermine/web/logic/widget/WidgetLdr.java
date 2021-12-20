@@ -16,7 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.metadata.ConstraintOp;
@@ -50,7 +55,7 @@ public class WidgetLdr
     protected List<Integer> idsList;
     protected String filter;
     protected QueryClass startClass;
-    private static final Logger LOG = Logger.getLogger(WidgetLdr.class);
+    private static final Logger LOG = LogManager.getLogger(WidgetLdr.class);
 
     //map containing queryclass already in the query
     protected Map<String, QueryClass> queryClassInQuery = new HashMap<String, QueryClass>();

@@ -31,7 +31,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
@@ -81,7 +86,7 @@ import org.intermine.webservice.server.jbrowse.Segment;
 public class Engine extends CommandRunner
 {
 
-    private static final Logger LOG = Logger.getLogger(CommandRunner.class);
+    private static final Logger LOG = LogManager.getLogger(CommandRunner.class);
 
     private final Model model;
     private static final Map<Command, Map<String, Object>> STATS_CACHE =

@@ -14,7 +14,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.writebatch.BatchWriter;
 import org.intermine.util.PropertiesUtil;
@@ -30,7 +35,7 @@ public final class ObjectStoreWriterFactory
     private ObjectStoreWriterFactory() {
     }
 
-    private static final Logger LOG = Logger.getLogger(ObjectStoreWriterFactory.class);
+    private static final Logger LOG = LogManager.getLogger(ObjectStoreWriterFactory.class);
 
     /**
      * Return an ObjectStoreWriter configured using properties file

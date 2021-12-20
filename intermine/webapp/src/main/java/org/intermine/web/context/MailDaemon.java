@@ -13,7 +13,12 @@ package org.intermine.web.context;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.util.Emailer;
 
 /**
@@ -24,7 +29,7 @@ import org.intermine.util.Emailer;
 public final class MailDaemon implements Runnable
 {
 
-    private static final Logger LOG = Logger.getLogger(MailDaemon.class);
+    private static final Logger LOG = LogManager.getLogger(MailDaemon.class);
     private final ArrayBlockingQueue<MailAction> mailQueue;
     private final Emailer emailer;
 

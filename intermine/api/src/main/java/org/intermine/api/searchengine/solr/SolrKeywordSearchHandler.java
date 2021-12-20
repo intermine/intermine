@@ -10,7 +10,12 @@ package org.intermine.api.searchengine.solr;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -52,7 +57,7 @@ import java.util.Vector;
 public final class SolrKeywordSearchHandler implements KeywordSearchHandler
 {
 
-    private static final Logger LOG = Logger.getLogger(SolrKeywordSearchHandler.class);
+    private static final Logger LOG = LogManager.getLogger(SolrKeywordSearchHandler.class);
 
     @Override
     public KeywordSearchResults doKeywordSearch(InterMineAPI im, String queryString, Map<String,

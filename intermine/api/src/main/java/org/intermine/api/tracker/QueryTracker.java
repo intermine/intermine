@@ -14,7 +14,12 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.track.QueryTrack;
 import org.intermine.api.tracker.track.Track;
@@ -27,7 +32,7 @@ import org.intermine.api.tracker.util.TrackerUtil;
  */
 public class QueryTracker extends AbstractTracker
 {
-    private static final Logger LOG = Logger.getLogger(QueryTracker.class);
+    private static final Logger LOG = LogManager.getLogger(QueryTracker.class);
     private static QueryTracker queryTracker = null;
 
     /**

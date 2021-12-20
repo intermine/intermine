@@ -25,7 +25,12 @@ import java.util.Stack;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -66,7 +71,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class BioGridConverter extends BioFileConverter
 {
-    private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
+    private static final Logger LOG = LogManager.getLogger(BioGridConverter.class);
     private static final String PROP_FILE = "biogrid_config.properties";
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();

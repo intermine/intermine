@@ -24,7 +24,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.config.ClassKeyHelper;
@@ -64,7 +69,7 @@ public final class ProfileManagerBinding
         // Hidden constructor for utility class.
     }
 
-    private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
+    private static final Logger LOG = LogManager.getLogger(ProfileManagerBinding.class);
 
     /**
      * Default version of profile if it is not specified.
@@ -185,7 +190,7 @@ class ProfileManagerHandler extends DefaultHandler
     private boolean abortOnError;
     private long startTime = 0;
     private int version;
-    private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
+    private static final Logger LOG = LogManager.getLogger(ProfileManagerBinding.class);
 
     /**
      * Create a new ProfileManagerHandler

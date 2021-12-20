@@ -15,7 +15,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
@@ -35,7 +40,7 @@ public abstract class ReportDisplayer
 
     protected ReportDisplayerConfig config;
     protected InterMineAPI im;
-    private static final Logger LOG = Logger.getLogger(ReportDisplayer.class);
+    private static final Logger LOG = LogManager.getLogger(ReportDisplayer.class);
 
 
     /**

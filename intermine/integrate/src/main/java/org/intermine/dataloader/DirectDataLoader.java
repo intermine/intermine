@@ -17,7 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.PrimaryKey;
@@ -37,7 +42,7 @@ import org.intermine.util.DynamicUtil;
 
 public class DirectDataLoader extends DataLoader
 {
-    private static final Logger LOG = Logger.getLogger(DirectDataLoader.class);
+    private static final Logger LOG = LogManager.getLogger(DirectDataLoader.class);
     private int idCounter = 0;
     private int storeCount = 0;
     private long startTime;

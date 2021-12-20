@@ -13,7 +13,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.xml.sax.SAXException;
@@ -24,7 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class TrackHandler extends DefaultHandler
 {
-    private static final Logger LOG = Logger.getLogger(TrackHandler.class);
+    private static final Logger LOG = LogManager.getLogger(TrackHandler.class);
     protected ObjectStoreWriter osw;
     protected Connection connection;
     protected PreparedStatement stm;

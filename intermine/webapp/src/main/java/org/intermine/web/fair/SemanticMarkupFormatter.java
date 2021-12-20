@@ -10,7 +10,12 @@ package org.intermine.web.fair;
  *
  */
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -66,7 +71,7 @@ public final class SemanticMarkupFormatter
     private static final String GENE_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
     private static final String INTERMINE_REGISTRY = "https://registry.intermine.org/";
-    private static final Logger LOG = Logger.getLogger(SemanticMarkupFormatter.class);
+    private static final Logger LOG = LogManager.getLogger(SemanticMarkupFormatter.class);
 
     private SemanticMarkupFormatter() {
         // don't instantiate

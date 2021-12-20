@@ -16,7 +16,12 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -33,7 +38,7 @@ import org.apache.struts.config.ExceptionConfig;
  */
 public class InterMineExceptionHandler extends ExceptionHandler
 {
-    protected static final Logger LOG = Logger.getLogger(InterMineExceptionHandler.class);
+    protected static final Logger LOG = LogManager.getLogger(InterMineExceptionHandler.class);
 
     /**
      * Handle the exception. In this case we traverse the exception

@@ -19,7 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.document.Document;
@@ -48,7 +53,7 @@ public abstract class SearchRepository implements WebSearchWatcher
     protected static final Set<SearchRepository> GLOBALS =
             new HashSet<SearchRepository>();
 
-    private static final Logger LOG = Logger.getLogger(SearchRepository.class);
+    private static final Logger LOG = LogManager.getLogger(SearchRepository.class);
 
     protected Set<WebSearchable> searchItems = new HashSet<WebSearchable>();
     protected Map<String, Directory> indexes = new HashMap<String, Directory>();

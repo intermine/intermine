@@ -12,7 +12,12 @@ package org.intermine.dataconversion;
 
 import java.io.Reader;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
@@ -28,7 +33,7 @@ import org.xml.sax.InputSource;
  */
 public class FullXmlConverter extends DataConverter
 {
-    private static final Logger LOG = Logger.getLogger(FullXmlConverter.class);
+    private static final Logger LOG = LogManager.getLogger(FullXmlConverter.class);
 
     protected long count = 0;
     protected long start, time;

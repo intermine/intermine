@@ -18,7 +18,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.profile.InterMineBag;
@@ -46,7 +51,7 @@ import org.intermine.template.TemplateQuery;
 
 public class LoadDefaultTemplatesTask extends Task
 {
-    private static final Logger LOG = Logger.getLogger(LoadDefaultTemplatesTask.class);
+    private static final Logger LOG = LogManager.getLogger(LoadDefaultTemplatesTask.class);
 
     protected static Random random = new Random();
 

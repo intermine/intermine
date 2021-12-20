@@ -17,7 +17,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -61,7 +66,7 @@ public final class PathQueryResultHelper
         //disable external instantiation
     }
 
-    private static final Logger LOG = Logger.getLogger(PathQueryResultHelper.class);
+    private static final Logger LOG = LogManager.getLogger(PathQueryResultHelper.class);
 
     /**
      * Return a list of string paths that are defined as WebConfig to be shown in results.  This

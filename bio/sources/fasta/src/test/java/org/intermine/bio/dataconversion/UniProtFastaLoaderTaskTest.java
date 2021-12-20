@@ -43,12 +43,17 @@ import org.junit.Before;
 import org.junit.After;
 import static org.junit.Assert.* ;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 public class UniProtFastaLoaderTaskTest {
 
     private ObjectStoreWriter osw;
-    private static final Logger LOG = Logger.getLogger(UniProtFastaLoaderTaskTest.class);
+    private static final Logger LOG = LogManager.getLogger(UniProtFastaLoaderTaskTest.class);
     private String dataSetTitle = "uniprot fasta test title";
     private final String dataSourceName = "test-source";
     private final String LICENCE = "https://data.gov.uk/data/report/licence";

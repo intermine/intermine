@@ -22,7 +22,12 @@ import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.bag.SharingInvite;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
@@ -51,7 +56,7 @@ public final class ProfileBinding
     private ProfileBinding() {
     }
 
-    private static final Logger LOG = Logger.getLogger(ProfileBinding.class);
+    private static final Logger LOG = LogManager.getLogger(ProfileBinding.class);
 
     /**
      * Convert a Profile to XML and write XML to given writer.

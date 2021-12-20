@@ -17,7 +17,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collections;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 
@@ -26,7 +31,7 @@ import org.intermine.sql.DatabaseFactory;
  */
 public class OntologyIdResolverFactory extends IdResolverFactory
 {
-    protected static final Logger LOG = Logger.getLogger(OntologyIdResolverFactory.class);
+    protected static final Logger LOG = LogManager.getLogger(OntologyIdResolverFactory.class);
 
     private String ontology = null;
     private static final String MOCK_TAXON_ID = "0";

@@ -20,7 +20,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
@@ -54,7 +59,7 @@ import org.intermine.util.CacheHoldingArrayList;
  */
 public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
 {
-    private static final Logger LOG = Logger.getLogger(ObjectStoreFastCollectionsImpl.class);
+    private static final Logger LOG = LogManager.getLogger(ObjectStoreFastCollectionsImpl.class);
 
     private boolean fetchAllFields = true;
     private Set<FieldDescriptor> fieldExceptions = Collections.emptySet();

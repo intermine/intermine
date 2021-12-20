@@ -24,7 +24,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -44,7 +49,7 @@ import org.intermine.util.PropertiesUtil;
  */
 public class BuildDbTask extends Task
 {
-    private static final Logger LOG = Logger.getLogger(BuildDbTask.class);
+    private static final Logger LOG = LogManager.getLogger(BuildDbTask.class);
     private static final String SERIAL_SEQUENCE_NAME = "serial";
     private File tempDir;
     protected Database database;

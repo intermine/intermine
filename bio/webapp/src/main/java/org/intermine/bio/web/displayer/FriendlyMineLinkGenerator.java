@@ -20,7 +20,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.beans.ObjectDetails;
 import org.intermine.api.beans.PartnerLink;
 import org.intermine.api.mines.Mine;
@@ -56,7 +61,7 @@ public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
 
     }
 
-    private static final Logger LOG = Logger.getLogger(FriendlyMineLinkGenerator.class);
+    private static final Logger LOG = LogManager.getLogger(FriendlyMineLinkGenerator.class);
 
     /**
      * Constructor

@@ -23,7 +23,12 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.Output;
@@ -38,7 +43,7 @@ import org.xml.sax.SAXException;
 public class ServicesListingsServlet extends HttpServlet
 {
 
-    private static final Logger LOGGER = Logger.getLogger(VersionServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger(VersionServlet.class);
     private static final String FILENAME = "services.json";
     private static final String WEB_XML = "web.xml";
     private static final long serialVersionUID = 1L;

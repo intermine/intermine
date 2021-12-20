@@ -22,7 +22,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -56,7 +61,7 @@ public final class DataLoaderHelper
     private DataLoaderHelper() {
     }
 
-    private static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
+    private static final Logger LOG = LogManager.getLogger(DataLoaderHelper.class);
 
     protected static Map<Source, Properties> sourceKeys = new HashMap<Source, Properties>();
     protected static Map<Model, Map<String, List<String>>> modelDescriptors

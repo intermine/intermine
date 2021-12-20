@@ -30,12 +30,17 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.metadata.StringUtil;
 import org.postgresql.util.PSQLException;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 {
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(QueryOptimiserFunctionalTest.class);
+    private static final Logger LOG = LogManager.getLogger(QueryOptimiserFunctionalTest.class);
     protected Map<String, String> queries = new HashMap<String, String>();
     protected Map<String, String> precomps = new HashMap<String, String>();
     protected PrecomputedTable toDelete;

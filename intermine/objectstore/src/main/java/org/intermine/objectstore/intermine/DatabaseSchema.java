@@ -19,7 +19,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -36,7 +41,7 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class DatabaseSchema
 {
-    private static final Logger LOG = Logger.getLogger(DatabaseSchema.class);
+    private static final Logger LOG = LogManager.getLogger(DatabaseSchema.class);
 
     private Model model;
     private List<ClassDescriptor> truncated;

@@ -23,7 +23,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.Mine;
@@ -54,7 +59,7 @@ public class MinePathwaysDisplayer extends ReportDisplayer
     private static Map<ReportObject, Map<Mine, String>> minePathwayCache
         = new CacheMap<ReportObject, Map<Mine, String>>();
     private static Map<ReportObject, Mine> localMineCache = new CacheMap<ReportObject, Mine>();
-    protected static final Logger LOG = Logger.getLogger(MinePathwaysDisplayer.class);
+    protected static final Logger LOG = LogManager.getLogger(MinePathwaysDisplayer.class);
 
     /**
      * Construct with config and the InterMineAPI.

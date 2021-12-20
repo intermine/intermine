@@ -33,7 +33,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
@@ -83,7 +88,7 @@ import org.intermine.util.PropertiesUtil;
  */
 public class ProfileManager
 {
-    private static final Logger LOG = Logger.getLogger(ProfileManager.class);
+    private static final Logger LOG = LogManager.getLogger(ProfileManager.class);
 
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;

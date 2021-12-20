@@ -16,7 +16,12 @@ import java.lang.reflect.Method;
 import java.util.Hashtable;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -35,7 +40,7 @@ import org.apache.tools.ant.Task;
 
 public class DynamicAttributeTask extends Task
 {
-    protected static final Logger LOG = Logger.getLogger(DynamicAttributeTask.class);
+    protected static final Logger LOG = LogManager.getLogger(DynamicAttributeTask.class);
 
     /**
      * Look at set methods on a target object and lookup values in project

@@ -55,7 +55,7 @@ import psidev.psi.mi.jami.model.impl.DefaultXref;
  */
 public class ExportService extends JSONService
 {
-//    private static final Logger LOG = Logger.getLogger(ExportService.class);
+//    private static final Logger LOG = LogManager.getLogger(ExportService.class);
     private static final String FORMAT_PARAMETER = "format";
     private static final String DEFAULT_FORMAT = "JSON";
     private static final String EBI = "intact";

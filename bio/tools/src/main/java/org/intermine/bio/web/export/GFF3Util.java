@@ -16,7 +16,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.metadata.Util;
@@ -30,7 +35,7 @@ import org.intermine.model.bio.SequenceFeature;
  */
 public final class GFF3Util
 {
-    private static final Logger LOG = Logger.getLogger(GFF3Util.class);
+    private static final Logger LOG = LogManager.getLogger(GFF3Util.class);
     private static final String UCSC_PREFIX = "chr";
 
     private GFF3Util() {

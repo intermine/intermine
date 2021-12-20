@@ -18,7 +18,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.PathQueryExecutor;
@@ -40,7 +45,7 @@ import org.intermine.web.logic.results.ReportObject;
 public class DiseaseDisplayer extends ReportDisplayer
 {
     private static final String RAT = "R. norvegicus";
-    protected static final Logger LOG = Logger.getLogger(DiseaseDisplayer.class);
+    protected static final Logger LOG = LogManager.getLogger(DiseaseDisplayer.class);
 
     /**
      * Construct with config and the InterMineAPI.

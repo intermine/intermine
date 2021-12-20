@@ -14,7 +14,12 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.InterMineException;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -31,7 +36,7 @@ import org.intermine.util.XmlBinding;
 
 public class XmlDataLoader extends DataLoader
 {
-    private static final Logger LOG = Logger.getLogger(XmlDataLoader.class);
+    private static final Logger LOG = LogManager.getLogger(XmlDataLoader.class);
     private static int idCounter = 1;
 
     /**

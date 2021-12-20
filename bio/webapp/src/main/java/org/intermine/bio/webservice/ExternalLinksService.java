@@ -11,7 +11,12 @@ package org.intermine.bio.webservice;
  */
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -56,7 +61,7 @@ import static org.intermine.web.context.InterMineContext.getInterMineAPI;
  */
 public class ExternalLinksService extends JSONService
 {
-    protected static final Logger LOG = Logger.getLogger(ExternalLinksService.class);
+    protected static final Logger LOG = LogManager.getLogger(ExternalLinksService.class);
 
     /** @param im The InterMine state object. **/
     public ExternalLinksService(InterMineAPI im) {

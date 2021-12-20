@@ -52,7 +52,7 @@ import org.intermine.web.struts.InterMineAction;
  */
 public class SequenceExportAction extends InterMineAction
 {
-    // private static final Logger LOG = Logger.getLogger(SequenceExportAction.class);
+    // private static final Logger LOG = LogManager.getLogger(SequenceExportAction.class);
     private static final String PROPERTY_DESCRIPTIONLINE = "description_line";
 
     /**

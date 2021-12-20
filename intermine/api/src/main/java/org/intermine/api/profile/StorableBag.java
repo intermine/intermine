@@ -26,7 +26,12 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.search.OriginatingEvent;
 import org.intermine.api.search.DeletionEvent;
 import org.intermine.api.search.WebSearchWatcher;
@@ -52,7 +57,7 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 public abstract class StorableBag implements WebSearchable
 {
 
-    private static final Logger LOG = Logger.getLogger(StorableBag.class);
+    private static final Logger LOG = LogManager.getLogger(StorableBag.class);
 
     private enum Order {
         BY_VALUE("value asc"), BY_EXTRA("extra desc");

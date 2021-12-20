@@ -20,7 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 
@@ -33,7 +38,7 @@ import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
  */
 public class LiftOverService
 {
-    private static final Logger LOG = Logger.getLogger(LiftOverService.class);
+    private static final Logger LOG = LogManager.getLogger(LiftOverService.class);
 
     private static final Map<String, String> ORGANISM_COMMON_NAME_MAP;
     static {

@@ -18,7 +18,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryResult.IssueResult;
@@ -44,7 +49,7 @@ import org.intermine.web.logic.config.WebConfig;
 public class BagResultCategoryKeyFormatter implements BagResultFormatter
 {
 
-    private static final Logger LOG = Logger.getLogger(BagResultCategoryKeyFormatter.class);
+    private static final Logger LOG = LogManager.getLogger(BagResultCategoryKeyFormatter.class);
 
     private static final String[] ISSUES = new String[] {
         BagQueryResult.DUPLICATE,

@@ -22,7 +22,12 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.bag.SharedBagManager;
@@ -61,7 +66,7 @@ import org.intermine.util.PropertiesUtil;
  */
 public abstract class InterMineAPITestCase extends TestCase {
 
-    private static final Logger LOG = Logger.getLogger(InterMineAPITestCase.class);
+    private static final Logger LOG = LogManager.getLogger(InterMineAPITestCase.class);
 
     protected InterMineAPI im;
     protected ObjectStore os;

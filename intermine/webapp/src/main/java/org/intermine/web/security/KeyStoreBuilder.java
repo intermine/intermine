@@ -27,7 +27,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.ResourceOpener;
 import org.intermine.web.security.KeySigner.SigningException;
@@ -55,7 +60,7 @@ public class KeyStoreBuilder
 
     private static final String CANT_GEN_CERT = "Could not generate certificate for ";
 
-    private static final Logger LOG = Logger.getLogger(KeyStoreBuilder.class);
+    private static final Logger LOG = LogManager.getLogger(KeyStoreBuilder.class);
 
     private static final String DEFAULT_TITLE                = "InterMine";
     private static final String PROJECT_TITLE                = "project.title";

@@ -20,7 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.config.ClassKeyHelper;
@@ -66,7 +71,7 @@ import org.intermine.web.logic.querybuilder.DisplayPath;
  */
 public class DisplayConstraint
 {
-    private static final Logger LOG = Logger.getLogger(DisplayConstraint.class);
+    private static final Logger LOG = LogManager.getLogger(DisplayConstraint.class);
     private Path path;
     private List<DisplayConstraintOption> validOps;
     private AutoCompleter ac;

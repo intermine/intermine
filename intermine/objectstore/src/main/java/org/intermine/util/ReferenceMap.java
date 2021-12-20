@@ -16,7 +16,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * This is a Map implementation designed specifically for people intending to create a cache.
@@ -33,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class ReferenceMap<K, V> implements Map<K, V>
 {
-    private static final Logger LOG = Logger.getLogger(ReferenceMap.class);
+    private static final Logger LOG = LogManager.getLogger(ReferenceMap.class);
     protected static final NullValue NULL_VALUE = new NullValue();
 
     protected Map<K, Reference<Object>> subMap;

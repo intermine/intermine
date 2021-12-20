@@ -17,7 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.InterMineException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
@@ -43,7 +48,7 @@ import org.intermine.template.TemplateQuery;
  */
 public final class TypeConverter
 {
-    private static final Logger LOG = Logger.getLogger(TypeConverter.class);
+    private static final Logger LOG = LogManager.getLogger(TypeConverter.class);
 
     private TypeConverter() {
         // nothing to do

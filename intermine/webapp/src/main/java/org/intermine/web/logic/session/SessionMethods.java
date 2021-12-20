@@ -27,7 +27,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
@@ -91,7 +96,7 @@ public final class SessionMethods
         void process();
     }
 
-    protected static final Logger LOG = Logger.getLogger(SessionMethods.class);
+    protected static final Logger LOG = LogManager.getLogger(SessionMethods.class);
     private static int topQueryId = 0;
     private static int index = 0;
 
@@ -397,7 +402,7 @@ public final class SessionMethods
      */
     public static void logTemplateQueryUse(HttpSession session, String templateType,
             String templateName) {
-        Logger log = Logger.getLogger(TemplateAction.class);
+        Logger log = LogManager.getLogger(TemplateAction.class);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String username = profile.getUsername();
 
@@ -415,7 +420,7 @@ public final class SessionMethods
      * @param exampleName The name of the example query loaded
      */
     public static void logExampleQueryUse(HttpSession session, String exampleName) {
-        Logger log = Logger.getLogger(LoadQueryAction.class);
+        Logger log = LogManager.getLogger(LoadQueryAction.class);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String username = profile.getUsername();
 

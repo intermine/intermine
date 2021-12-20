@@ -23,7 +23,12 @@ import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -44,7 +49,7 @@ import java.util.ArrayList;
  */
 public class OrthodbConverter extends BioFileConverter
 {
-    private static final Logger LOG = Logger.getLogger(OrthodbConverter.class);
+    private static final Logger LOG = LogManager.getLogger(OrthodbConverter.class);
 
     private static final String DATASET_TITLE = "OrthoDB data set";
     private static final String DATA_SOURCE_NAME = "OrthoDB";

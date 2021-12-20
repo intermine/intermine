@@ -17,7 +17,12 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.NonOverrideableProperties;
 
 /**
@@ -27,7 +32,7 @@ import org.intermine.metadata.NonOverrideableProperties;
  */
 public final class PropertiesUtil
 {
-    private static final Logger LOG = Logger.getLogger(PropertiesUtil.class);
+    private static final Logger LOG = LogManager.getLogger(PropertiesUtil.class);
 
     private static Properties globalProperties;
 

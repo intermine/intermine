@@ -17,7 +17,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.SharingInvite.NotFoundException;
@@ -41,7 +46,7 @@ public class ListSharingInvitationAcceptanceService extends JSONService
 {
 
     private static final Logger LOG =
-        Logger.getLogger(ListSharingInvitationAcceptanceService.class);
+        LogManager.getLogger(ListSharingInvitationAcceptanceService.class);
     private static final Set<String> ACCEPTABLE_ACCEPTANCES =
         new HashSet<String>(Arrays.asList("true", "false"));
 

@@ -10,7 +10,12 @@ package org.intermine.web.uri;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -35,7 +40,7 @@ public class InterMineLUIConverter
     private static final Integer INTERMINE_ID_NOT_FOUND = -1;
     private static final String DEFAULT_IDENTIFIER = "primaryIdentifier";
     private ClassNameURIIdentifierMapper classNameIdentifierMapper = null;
-    private static final Logger LOGGER = Logger.getLogger(InterMineLUIConverter.class);
+    private static final Logger LOGGER = LogManager.getLogger(InterMineLUIConverter.class);
     protected Profile profile = null;
 
     /**

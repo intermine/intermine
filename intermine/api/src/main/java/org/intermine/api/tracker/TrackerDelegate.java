@@ -18,7 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.factory.TrackerFactory;
@@ -39,7 +44,7 @@ import org.intermine.util.Shutdownable;
  */
 public class TrackerDelegate implements Shutdownable
 {
-    private static final Logger LOG = Logger.getLogger(TrackerDelegate.class);
+    private static final Logger LOG = LogManager.getLogger(TrackerDelegate.class);
     protected Map<String, Tracker> trackers = new HashMap<String, Tracker>();
     protected ObjectStoreWriter osw;
     protected final Connection connection;

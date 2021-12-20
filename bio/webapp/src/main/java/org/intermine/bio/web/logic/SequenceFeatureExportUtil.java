@@ -17,7 +17,12 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
@@ -41,7 +46,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public final class SequenceFeatureExportUtil
 {
-    private static final Logger LOG = Logger.getLogger(SequenceFeatureExportUtil.class);
+    private static final Logger LOG = LogManager.getLogger(SequenceFeatureExportUtil.class);
 
     private SequenceFeatureExportUtil() {
         super();

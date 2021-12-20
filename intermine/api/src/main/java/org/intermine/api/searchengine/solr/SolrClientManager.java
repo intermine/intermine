@@ -10,7 +10,12 @@ package org.intermine.api.searchengine.solr;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.intermine.api.searchengine.KeywordSearchPropertiesManager;
@@ -24,7 +29,7 @@ import org.intermine.objectstore.ObjectStore;
 
 public final class SolrClientManager
 {
-    private static final Logger LOG = Logger.getLogger(SolrClientManager.class);
+    private static final Logger LOG = LogManager.getLogger(SolrClientManager.class);
 
     private static SolrClient solrClient;
 

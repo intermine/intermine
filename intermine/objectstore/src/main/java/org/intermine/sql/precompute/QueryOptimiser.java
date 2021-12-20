@@ -27,7 +27,12 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.sql.query.AbstractConstraint;
@@ -63,7 +68,7 @@ public final class QueryOptimiser
     private QueryOptimiser() {
     }
 
-    private static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
+    private static final Logger LOG = LogManager.getLogger(QueryOptimiser.class);
     private static final int REPORT_INTERVAL = 10000;
 
     private static final String ALIAS_PREFIX = "P";

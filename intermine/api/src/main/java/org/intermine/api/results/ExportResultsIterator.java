@@ -17,7 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -39,7 +44,7 @@ import org.intermine.pathquery.PathQuery;
  */
 public class ExportResultsIterator implements Iterator<List<ResultElement>>
 {
-    private static final Logger LOG = Logger.getLogger(ExportResultsIterator.class);
+    private static final Logger LOG = LogManager.getLogger(ExportResultsIterator.class);
 
     private Iterator<List> osIter;
     protected Iterator<List<ResultElement>> subIter;

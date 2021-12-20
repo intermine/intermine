@@ -41,7 +41,12 @@ import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
@@ -53,7 +58,7 @@ import static org.junit.Assert.* ;
 public class FlyBaseCDSFastaLoaderTaskTest {
 
     private ObjectStoreWriter osw;
-    private static final Logger LOG = Logger.getLogger(FlyBaseCDSFastaLoaderTaskTest.class);
+    private static final Logger LOG = LogManager.getLogger(FlyBaseCDSFastaLoaderTaskTest.class);
     private String dataSetTitle = "cds test title";
 
     @Before

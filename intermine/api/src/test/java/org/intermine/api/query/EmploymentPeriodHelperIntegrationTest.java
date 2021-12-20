@@ -12,7 +12,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
@@ -36,7 +41,7 @@ import org.junit.Test;
 public class EmploymentPeriodHelperIntegrationTest {
 
     private static ObjectStoreWriter osw;
-    private static final Logger LOG = Logger.getLogger(EmploymentPeriodHelperIntegrationTest.class);
+    private static final Logger LOG = LogManager.getLogger(EmploymentPeriodHelperIntegrationTest.class);
     protected static final int EMP_COUNT = 1000;
     
     protected Collection<String> ranges = Arrays.asList("2010-07-30 .. 2010-09-06");

@@ -30,7 +30,12 @@ import java.util.Set;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * Hold data about primary identifiers and synonyms for a particular class in the
@@ -42,7 +47,7 @@ import org.apache.log4j.Logger;
  */
 public class IdResolver
 {
-    private static final Logger LOG = Logger.getLogger(IdResolver.class);
+    private static final Logger LOG = LogManager.getLogger(IdResolver.class);
 
     private String clsName;
 

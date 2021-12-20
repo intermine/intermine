@@ -20,7 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.biojava.nbio.core.sequence.AccessionID;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
@@ -38,7 +43,7 @@ import org.intermine.util.DynamicUtil;
  */
 public class GenomicRegionSequenceExporter
 {
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSequenceExporter.class);
+    private static final Logger LOG = LogManager.getLogger(GenomicRegionSequenceExporter.class);
     private ObjectStore os;
     private OutputStream out;
     // Map to hold DNA sequence of a whole chromosome in memory

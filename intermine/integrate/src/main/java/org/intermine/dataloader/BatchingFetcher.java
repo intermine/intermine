@@ -22,7 +22,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
@@ -59,7 +64,7 @@ import org.intermine.util.Shutdownable;
  */
 public class BatchingFetcher extends HintingFetcher
 {
-    private static final Logger LOG = Logger.getLogger(BatchingFetcher.class);
+    private static final Logger LOG = LogManager.getLogger(BatchingFetcher.class);
     protected Map<InterMineObject, Set<InterMineObject>> equivalents = Collections
         .synchronizedMap(new WeakHashMap<InterMineObject, Set<InterMineObject>>());
     protected DataTracker dataTracker;

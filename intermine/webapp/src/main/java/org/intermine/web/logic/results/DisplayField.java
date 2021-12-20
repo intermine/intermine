@@ -16,7 +16,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
@@ -37,7 +42,7 @@ public class DisplayField
     Collection<?> collection = null;
     WebConfig webConfig = null;
 
-    protected static final Logger LOG = Logger.getLogger(DisplayField.class);
+    protected static final Logger LOG = LogManager.getLogger(DisplayField.class);
     private final Map<String, List<FieldDescriptor>> classKeys;
 
     /** @List<Class<?> PathQueryResultHelper resolved */

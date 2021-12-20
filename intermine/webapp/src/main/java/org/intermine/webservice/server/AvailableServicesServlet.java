@@ -18,7 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.StringUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
@@ -32,7 +37,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
   */
 public class AvailableServicesServlet extends HttpServlet
 {
-    private static final Logger LOGGER = Logger.getLogger(AvailableServicesServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger(AvailableServicesServlet.class);
 
     private static final long serialVersionUID = 1L;
 

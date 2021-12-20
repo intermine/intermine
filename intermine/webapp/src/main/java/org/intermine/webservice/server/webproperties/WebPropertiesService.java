@@ -35,7 +35,7 @@ import org.intermine.webservice.server.core.JSONService;
  */
 public class WebPropertiesService extends JSONService
 {
-    //private static final Logger LOG = Logger.getLogger(WebPropertiesService.class);
+    //private static final Logger LOG = LogManager.getLogger(WebPropertiesService.class);
     // if there is a parent property with an additional child value, we need a key
     private static final String DEFAULT_PATH = "default";
 

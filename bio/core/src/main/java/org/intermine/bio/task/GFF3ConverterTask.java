@@ -31,7 +31,12 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.Task;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 
 /**
@@ -40,7 +45,7 @@ import org.apache.log4j.Logger;
  */
 public class GFF3ConverterTask extends Task
 {
-    protected static final Logger LOG = Logger.getLogger(GFF3ConverterTask.class);
+    protected static final Logger LOG = LogManager.getLogger(GFF3ConverterTask.class);
 
     protected FileSet fileSet;
     protected String converter, targetAlias, seqClsName, orgTaxonId;

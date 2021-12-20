@@ -23,7 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.sql.DatabaseUtil;
 
 /**
@@ -34,7 +39,7 @@ import org.intermine.sql.DatabaseUtil;
  */
 public class BatchWriterSimpleImpl implements BatchWriter
 {
-    private static final Logger LOG = Logger.getLogger(BatchWriterSimpleImpl.class);
+    private static final Logger LOG = LogManager.getLogger(BatchWriterSimpleImpl.class);
     protected int deleteTempTableSize = 200;
 
     protected Connection con;

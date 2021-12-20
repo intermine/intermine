@@ -35,7 +35,12 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.StringUtil;
@@ -73,7 +78,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class EntrezPublicationsRetriever
 {
-    protected static final Logger LOG = Logger.getLogger(EntrezPublicationsRetriever.class);
+    protected static final Logger LOG = LogManager.getLogger(EntrezPublicationsRetriever.class);
     protected static final String ENDL = System.getProperty("line.separator");
     // full record (new)
     // rettype=abstract or just leave it out

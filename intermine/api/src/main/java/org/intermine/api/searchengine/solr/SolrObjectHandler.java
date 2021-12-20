@@ -22,7 +22,12 @@ import java.util.Vector;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse;
@@ -68,7 +73,7 @@ import org.intermine.util.ObjectPipe;
 public class SolrObjectHandler extends Thread
 {
 
-    private static final Logger LOG = Logger.getLogger(SolrObjectHandler.class);
+    private static final Logger LOG = LogManager.getLogger(SolrObjectHandler.class);
 
     //this field type is analyzed
     private static final String ANALYZED_FIELD_TYPE_NAME = "analyzed_string";

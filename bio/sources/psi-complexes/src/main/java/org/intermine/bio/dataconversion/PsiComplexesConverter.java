@@ -19,7 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -56,7 +61,7 @@ import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
  */
 public class PsiComplexesConverter extends BioFileConverter
 {
-    private static final Logger LOG = Logger.getLogger(PsiComplexesConverter.class);
+    private static final Logger LOG = LogManager.getLogger(PsiComplexesConverter.class);
     private static final String DATASET_TITLE = "IntAct Complexes";
     private static final String DATA_SOURCE_NAME = "EBI IntAct";
     private static final String COMPLEX_PROPERTIES = "complex-properties";

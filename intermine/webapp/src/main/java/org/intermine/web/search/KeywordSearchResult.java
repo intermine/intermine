@@ -15,7 +15,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -31,7 +36,7 @@ import org.intermine.web.logic.config.WebConfig;
  */
 public class KeywordSearchResult
 {
-    private static final Logger LOG = Logger.getLogger(KeywordSearchResult.class);
+    private static final Logger LOG = LogManager.getLogger(KeywordSearchResult.class);
 
     final WebConfig webconfig;
     final InterMineObject object;

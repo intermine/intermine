@@ -15,7 +15,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.ClobAccessReverseComplement;
 import org.intermine.bio.util.Constants;
 import org.intermine.bio.util.PostProcessUtil;
@@ -59,7 +64,7 @@ import org.intermine.postprocess.PostProcessor;
 public class TransferSequencesProcess extends PostProcessor
 {
     private Model model;
-    private static final Logger LOG = Logger.getLogger(TransferSequencesProcess.class);
+    private static final Logger LOG = LogManager.getLogger(TransferSequencesProcess.class);
 
     /**
      * Create a new instance

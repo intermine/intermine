@@ -10,7 +10,12 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
@@ -31,7 +36,7 @@ import org.intermine.objectstore.ObjectStoreException;
 public class CreateOverlapViewProcess extends PostProcessor
 {
 
-    private static final Logger LOG = Logger.getLogger(CreateOverlapViewProcess.class);
+    private static final Logger LOG = LogManager.getLogger(CreateOverlapViewProcess.class);
 
     /**
      * Create a new instance

@@ -12,7 +12,12 @@ package org.intermine.api.searchengine;
 
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.ClassDescriptor;
@@ -41,7 +46,7 @@ import java.util.Vector;
 public final class KeywordSearchPropertiesManager
 {
 
-    private static final Logger LOG = Logger.getLogger(KeywordSearchPropertiesManager.class);
+    private static final Logger LOG = LogManager.getLogger(KeywordSearchPropertiesManager.class);
 
     private static KeywordSearchPropertiesManager keywordSearchPropertiesManager;
 

@@ -17,7 +17,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataloader.BaseEquivalentObjectFetcher;
 import org.intermine.dataloader.EquivalentObjectFetcher;
 import org.intermine.dataloader.Source;
@@ -34,8 +39,7 @@ import org.intermine.util.IntToIntMap;
  */
 public class PkQueryIdUpgrader implements IdUpgrader
 {
-    private static final Logger LOG = Logger
-            .getLogger(PkQueryIdUpgrader.class);
+    private static final Logger LOG = LogManager.getLogger(PkQueryIdUpgrader.class);
     private Source source = null;
     EquivalentObjectFetcher eof;
     private IntToIntMap newIdsCacheSingle = new IntToIntMap();

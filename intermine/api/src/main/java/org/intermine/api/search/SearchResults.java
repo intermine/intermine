@@ -25,7 +25,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -63,7 +68,7 @@ import org.intermine.template.TemplateQuery;
  */
 public final class SearchResults implements Iterable<SearchResult>
 {
-    private static final Logger LOG = Logger.getLogger(SearchResults.class);
+    private static final Logger LOG = LogManager.getLogger(SearchResults.class);
 
     /** The iterator for this iterable **/
     private static final class SearchResultIt implements Iterator<SearchResult>

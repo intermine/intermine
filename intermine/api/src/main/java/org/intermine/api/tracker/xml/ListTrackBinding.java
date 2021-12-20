@@ -19,7 +19,12 @@ import java.util.LinkedList;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.tracker.ListTracker;
 import org.intermine.api.tracker.track.Track;
@@ -35,7 +40,7 @@ import org.xml.sax.SAXException;
  */
 public final class ListTrackBinding
 {
-    private static final Logger LOG = Logger.getLogger(ListTrackBinding.class);
+    private static final Logger LOG = LogManager.getLogger(ListTrackBinding.class);
     /**
      * label for XML
      */

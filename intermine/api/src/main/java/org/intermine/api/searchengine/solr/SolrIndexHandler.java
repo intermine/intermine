@@ -10,7 +10,12 @@ package org.intermine.api.searchengine.solr;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.schema.AnalyzerDefinition;
@@ -40,7 +45,7 @@ import java.util.Map;
  */
 public final class SolrIndexHandler implements IndexHandler
 {
-    private static final Logger LOG = Logger.getLogger(SolrIndexHandler.class);
+    private static final Logger LOG = LogManager.getLogger(SolrIndexHandler.class);
 
     //this field type is analyzed
     private static final String ANALYZED_FIELD_TYPE_NAME = "analyzed_string";

@@ -10,7 +10,12 @@ package org.intermine.web.uri;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 
@@ -37,7 +42,7 @@ public final class ClassNameURIIdentifierMapper
     private Properties properties = null;
     //map tp cache the identifier associated to a class Name
     private static Map<String, String> classNameIdentifiersMap = new HashMap();
-    private static final Logger LOGGER = Logger.getLogger(ClassNameURIIdentifierMapper.class);
+    private static final Logger LOGGER = LogManager.getLogger(ClassNameURIIdentifierMapper.class);
 
     /**
      * Private constructor called by getMapper (singleton)

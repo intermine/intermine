@@ -10,7 +10,12 @@ package org.intermine.web.uri;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.Model;
 
 import java.io.UnsupportedEncodingException;
@@ -33,7 +38,7 @@ public class InterMineLUI
     private String className;
     private static final String LOCAL_ID_SEPARATOR = ":";
     private String identifier;
-    private static final Logger LOGGER = Logger.getLogger(InterMineLUI.class);
+    private static final Logger LOGGER = LogManager.getLogger(InterMineLUI.class);
 
     /**
      * Constructor. Build a InterMineLUI given prefix and LUI

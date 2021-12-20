@@ -11,7 +11,12 @@ package org.intermine.webservice.server.user;
  */
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -35,7 +40,7 @@ import java.util.Map;
  */
 public class LoginService extends JSONService
 {
-    private static final Logger LOG = Logger.getLogger(LoginService.class);
+    private static final Logger LOG = LogManager.getLogger(LoginService.class);
 
     /**
      * Constructor

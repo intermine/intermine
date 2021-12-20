@@ -20,7 +20,12 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.pathquery.Path;
@@ -44,7 +49,7 @@ import org.intermine.web.struts.TableExportForm;
 @SuppressWarnings("deprecation")
 public abstract class StandardHttpExporter extends HttpExporterBase implements TableHttpExporter
 {
-    protected static final Logger LOG = Logger.getLogger(StandardHttpExporter.class);
+    protected static final Logger LOG = LogManager.getLogger(StandardHttpExporter.class);
 
     /**
      * Constructor.

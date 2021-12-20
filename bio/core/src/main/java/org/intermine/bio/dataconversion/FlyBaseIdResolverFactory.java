@@ -21,7 +21,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
@@ -34,7 +39,7 @@ import org.intermine.sql.DatabaseFactory;
  */
 public class FlyBaseIdResolverFactory extends IdResolverFactory
 {
-    protected static final Logger LOG = Logger.getLogger(FlyBaseIdResolverFactory.class);
+    protected static final Logger LOG = LogManager.getLogger(FlyBaseIdResolverFactory.class);
 
     private final String propName = "db.flybase";
     private final String taxonId = "7227";

@@ -24,7 +24,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.BioConverterUtil;
@@ -49,7 +54,7 @@ import org.intermine.xml.full.Reference;
 
 public class GFF3Converter extends DataConverter
 {
-    private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
+    private static final Logger LOG = LogManager.getLogger(GFF3Converter.class);
     private Reference orgRef;
     private String seqClsName, orgTaxonId;
     private Item organism, dataSet, dataSource;

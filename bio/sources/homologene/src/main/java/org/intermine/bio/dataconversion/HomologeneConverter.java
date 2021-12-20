@@ -22,7 +22,12 @@ import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -38,7 +43,7 @@ import org.intermine.xml.full.Item;
  */
 public class HomologeneConverter extends BioFileConverter
 {
-    private static final Logger LOG = Logger.getLogger(HomologeneConverter.class);
+    private static final Logger LOG = LogManager.getLogger(HomologeneConverter.class);
     private IdResolver rslv;
     private static final String DATASET_TITLE = "HomoloGene homology predictions";
     private static final String DATA_SOURCE_NAME = "HomoloGene";

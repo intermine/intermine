@@ -31,7 +31,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.writebatch.Batch;
@@ -49,7 +54,7 @@ import org.intermine.xml.full.ReferenceList;
  */
 public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
-    private static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
+    private static final Logger LOG = LogManager.getLogger(ModEncodeMetaDataProcessor.class);
     private static final String DATA_IDS_TABLE_NAME = "data_ids";
     private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php?title=";
     private static final String FILE_URL = "http://submit.modencode.org/submit/public/get_file/";

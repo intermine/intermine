@@ -21,7 +21,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.metadata.Model;
@@ -44,7 +49,7 @@ import org.intermine.objectstore.querygen.QueryGenUtil;
  */
 public class PrecomputeTask extends Task
 {
-    private static final Logger LOG = Logger.getLogger(PrecomputeTask.class);
+    private static final Logger LOG = LogManager.getLogger(PrecomputeTask.class);
     protected static final int THREAD_COUNT = 4;
 
     protected String objectStoreAlias;

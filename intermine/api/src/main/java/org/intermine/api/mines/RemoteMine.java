@@ -23,7 +23,12 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.InterMineModelParser;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ModelParser;
@@ -49,7 +54,7 @@ public class RemoteMine implements ConfigurableMine
     private static final String MODEL_URL           = "/service/model";
     private static final String QUERY_RESULTS_PATH  = "/service/query/results";
 
-    private static final Logger LOG = Logger.getLogger(RemoteMine.class);
+    private static final Logger LOG = LogManager.getLogger(RemoteMine.class);
 
     private final String id;
     private final MineRequester requester;

@@ -33,7 +33,12 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 
 /**
@@ -44,7 +49,7 @@ import org.apache.log4j.Logger;
 public final class Util
 {
 
-    private static final Logger LOG = Logger.getLogger(Util.class);
+    private static final Logger LOG = LogManager.getLogger(Util.class);
     /**
      * Name of the key under which to store the serialized version of the key definitions
      */

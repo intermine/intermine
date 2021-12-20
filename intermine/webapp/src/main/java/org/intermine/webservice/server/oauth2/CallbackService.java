@@ -11,7 +11,12 @@ package org.intermine.webservice.server.oauth2;
  */
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -63,7 +68,7 @@ import java.util.Collections;
  */
 public class CallbackService extends JSONService
 {
-    private static final Logger LOG = Logger.getLogger(CallbackService.class);
+    private static final Logger LOG = LogManager.getLogger(CallbackService.class);
 
     /**
      * Constructor

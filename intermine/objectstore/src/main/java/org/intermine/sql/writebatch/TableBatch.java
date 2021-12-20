@@ -18,7 +18,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.model.StringConstructor;
 import org.intermine.util.NullFirstComparator;
 
@@ -29,7 +34,7 @@ import org.intermine.util.NullFirstComparator;
  */
 public class TableBatch implements Table
 {
-    private static final Logger LOG = Logger.getLogger(TableBatch.class);
+    private static final Logger LOG = LogManager.getLogger(TableBatch.class);
     private String idField;
     private String[] colNames;
     private Set<Object> idsToDelete;

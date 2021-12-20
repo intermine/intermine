@@ -16,7 +16,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.webservice.server.core.JSONService;
@@ -33,7 +38,7 @@ public class BrandingService extends JSONService
     private static final String PROPERTIES_NEED_2_SECTIONS
         = "Branding properties should contain at least two sections. Skipping ";
     private static final String PREFIX = "branding.";
-    private static final Logger LOG = Logger.getLogger(BrandingService.class);
+    private static final Logger LOG = LogManager.getLogger(BrandingService.class);
 
     /** @param im The InterMine state object. **/
     public BrandingService(InterMineAPI im) {

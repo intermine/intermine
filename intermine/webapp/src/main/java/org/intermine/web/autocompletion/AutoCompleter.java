@@ -18,7 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -48,7 +53,7 @@ import org.intermine.objectstore.query.ResultsRow;
  */
 public class AutoCompleter
 {
-    private static final Logger LOG = Logger.getLogger(AutoCompleter.class);
+    private static final Logger LOG = LogManager.getLogger(AutoCompleter.class);
 
     private PropertiesManager propertiesManager;
 

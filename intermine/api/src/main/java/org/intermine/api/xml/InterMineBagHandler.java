@@ -19,7 +19,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.BagState;
@@ -43,7 +48,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class InterMineBagHandler extends DefaultHandler
 {
-    private static final Logger LOG = Logger.getLogger(InterMineBagHandler.class);
+    private static final Logger LOG = LogManager.getLogger(InterMineBagHandler.class);
 
     private ObjectStoreWriter uosw;
     private ObjectStoreWriter osw;

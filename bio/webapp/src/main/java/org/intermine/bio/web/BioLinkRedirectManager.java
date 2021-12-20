@@ -16,7 +16,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
 import org.intermine.metadata.ClassDescriptor;
@@ -35,7 +40,7 @@ import org.intermine.metadata.TypeUtil;
  */
 public class BioLinkRedirectManager extends LinkRedirectManager
 {
-    protected static final Logger LOG = Logger.getLogger(BioLinkRedirectManager.class);
+    protected static final Logger LOG = LogManager.getLogger(BioLinkRedirectManager.class);
 
     /**
      * @param webProperties the web properties

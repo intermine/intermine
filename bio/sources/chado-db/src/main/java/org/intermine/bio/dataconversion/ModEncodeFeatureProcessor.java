@@ -27,7 +27,12 @@ import java.util.Set;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.objectstore.ObjectStoreException;
@@ -44,7 +49,7 @@ import org.intermine.xml.full.Reference;
  */
 public class ModEncodeFeatureProcessor extends SequenceProcessor
 {
-    private static final Logger LOG = Logger.getLogger(ModEncodeFeatureProcessor.class);
+    private static final Logger LOG = LogManager.getLogger(ModEncodeFeatureProcessor.class);
     private final String dataSetIdentifier;
     private final String title;
     private final String scoreProtocolItemId;

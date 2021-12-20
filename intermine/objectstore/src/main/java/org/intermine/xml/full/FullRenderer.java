@@ -20,7 +20,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 
@@ -31,7 +36,7 @@ import org.intermine.model.FastPathObject;
  */
 public final class FullRenderer
 {
-    private static final Logger LOG = Logger.getLogger(FullRenderer.class);
+    private static final Logger LOG = LogManager.getLogger(FullRenderer.class);
 
     private static final String ENDL = System.getProperty("line.separator");
 

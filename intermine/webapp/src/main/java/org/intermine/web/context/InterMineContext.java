@@ -22,7 +22,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.Emailer;
 import org.intermine.util.ShutdownHook;
@@ -41,7 +46,7 @@ import org.intermine.web.security.KeyStoreBuilder;
  */
 public final class InterMineContext implements Shutdownable
 {
-    private static final Logger LOG = Logger.getLogger(InterMineContext.class);
+    private static final Logger LOG = LogManager.getLogger(InterMineContext.class);
 
     private InterMineContext() {
         // Hidden constructor.

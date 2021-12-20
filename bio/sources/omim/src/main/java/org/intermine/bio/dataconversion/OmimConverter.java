@@ -24,7 +24,12 @@ import java.util.regex.Pattern;
 import java.io.BufferedReader;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -39,7 +44,7 @@ import org.intermine.xml.full.Item;
 public class OmimConverter extends BioDirectoryConverter
 {
 
-    private static final Logger LOG = Logger.getLogger(OmimConverter.class);
+    private static final Logger LOG = LogManager.getLogger(OmimConverter.class);
 
     private static final String DATASET_TITLE = "OMIM diseases";
     private static final String DATA_SOURCE_NAME = "OMIM";

@@ -14,7 +14,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
@@ -30,7 +35,7 @@ import org.intermine.xml.full.ReferenceList;
  */
 public abstract class DataConverter
 {
-    private static final Logger LOG = Logger.getLogger(DataConverter.class);
+    private static final Logger LOG = LogManager.getLogger(DataConverter.class);
 
     private ItemWriter writer;
     private Map<String, String> aliases = new HashMap<String, String>();

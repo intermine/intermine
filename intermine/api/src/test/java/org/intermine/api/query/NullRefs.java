@@ -9,7 +9,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.query.MainHelper;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;
@@ -50,7 +55,7 @@ public class NullRefs {
     private static ObjectStoreWriter osw;
     private static final String ALIAS = "osw.unittest";
     
-    private static final Logger LOG = Logger.getLogger(NullRefs.class);
+    private static final Logger LOG = LogManager.getLogger(NullRefs.class);
     private static Set<InterMineObject> madeThings = new HashSet<InterMineObject>();
 
     @BeforeClass

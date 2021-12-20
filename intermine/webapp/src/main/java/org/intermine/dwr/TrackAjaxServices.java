@@ -20,7 +20,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.tracker.util.ListTrackerEvent;
 import org.intermine.objectstore.ObjectStore;
@@ -33,7 +38,7 @@ import org.intermine.web.context.InterMineContext;
  */
 public class TrackAjaxServices
 {
-    protected static final Logger LOG = Logger.getLogger(TrackAjaxServices.class);
+    protected static final Logger LOG = LogManager.getLogger(TrackAjaxServices.class);
 
     private ObjectStore uos = null;
     private static final String LAST_2WEEKS = "LAST2WEEKS";

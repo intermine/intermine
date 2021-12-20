@@ -20,7 +20,12 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -66,7 +71,7 @@ import org.intermine.xml.full.ItemHelper;
  */
 public class ItemToObjectTranslator extends Translator
 {
-    private static final Logger LOG = Logger.getLogger(ItemToObjectTranslator.class);
+    private static final Logger LOG = LogManager.getLogger(ItemToObjectTranslator.class);
 
     protected Model model;
     protected SortedMap<Integer, String> idToNamespace = new TreeMap<Integer, String>();

@@ -15,7 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -39,7 +44,7 @@ import org.intermine.webservice.server.query.result.QueryResultLinkGenerator;
  */
 public class ExportQueryAction extends InterMineAction
 {
-    protected static final Logger LOG = Logger.getLogger(ExportQueryAction.class);
+    protected static final Logger LOG = LogManager.getLogger(ExportQueryAction.class);
 
     /**
      * Method called to export a saved Query.

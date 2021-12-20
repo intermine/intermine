@@ -22,7 +22,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.web.context.InterMineContext;
 
 /**
@@ -37,7 +42,7 @@ import org.intermine.web.context.InterMineContext;
 public class ReleaseEtagFilter implements Filter
 {
 
-    private static final Logger LOG = Logger.getLogger(ReleaseEtagFilter.class);
+    private static final Logger LOG = LogManager.getLogger(ReleaseEtagFilter.class);
     private static String release = null;
     static final Date START_UP = new Date();
 

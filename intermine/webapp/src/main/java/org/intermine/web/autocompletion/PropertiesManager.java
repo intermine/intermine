@@ -11,7 +11,12 @@ package org.intermine.web.autocompletion;
  */
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +32,7 @@ import java.util.Properties;
  */
 final class PropertiesManager
 {
-    private static final Logger LOG = Logger.getLogger(PropertiesManager.class);
+    private static final Logger LOG = LogManager.getLogger(PropertiesManager.class);
 
     private static PropertiesManager propertiesManager;
 

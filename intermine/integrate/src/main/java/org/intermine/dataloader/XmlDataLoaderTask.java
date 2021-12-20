@@ -18,7 +18,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
@@ -33,7 +38,7 @@ import org.apache.tools.ant.types.FileSet;
  */
 public class XmlDataLoaderTask extends Task
 {
-    private static final Logger LOG = Logger.getLogger(XmlDataLoaderTask.class);
+    private static final Logger LOG = LogManager.getLogger(XmlDataLoaderTask.class);
     protected String integrationWriter;
     protected FileSet fileSet;
     protected String sourceName;

@@ -16,7 +16,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -31,7 +36,7 @@ import org.intermine.xml.full.Item;
  */
 public class KeggExampleConverter extends BioFileConverter
 {
-    protected static final Logger LOG = Logger.getLogger(KeggExampleConverter.class);
+    protected static final Logger LOG = LogManager.getLogger(KeggExampleConverter.class);
 
     protected HashMap<String, Item> pathwayMap = new HashMap<String, Item>();
     private String taxonId = null;

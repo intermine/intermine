@@ -17,7 +17,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
@@ -47,7 +52,7 @@ import org.intermine.metadata.TypeUtil;
  */
 public final class PostProcessUtil
 {
-    private static final Logger LOG = Logger.getLogger(PostProcessUtil.class);
+    private static final Logger LOG = LogManager.getLogger(PostProcessUtil.class);
 
     private PostProcessUtil() {
         //disable external instantiation

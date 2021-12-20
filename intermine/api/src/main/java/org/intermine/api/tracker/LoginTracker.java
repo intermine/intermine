@@ -19,7 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.tracker.track.LoginTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
@@ -30,7 +35,7 @@ import org.intermine.api.tracker.util.TrackerUtil;
  */
 public class LoginTracker extends AbstractTracker
 {
-    private static final Logger LOG = Logger.getLogger(LoginTracker.class);
+    private static final Logger LOG = LogManager.getLogger(LoginTracker.class);
     private static LoginTracker loginTracker = null;
 
     /**

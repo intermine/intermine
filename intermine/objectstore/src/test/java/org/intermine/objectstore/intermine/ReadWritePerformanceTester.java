@@ -15,7 +15,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -33,7 +38,7 @@ import org.intermine.objectstore.query.ResultsRow;
  *
  */
 public class ReadWritePerformanceTester {
-    protected static final Logger LOG = Logger.getLogger(ReadWritePerformanceTester.class);
+    protected static final Logger LOG = LogManager.getLogger(ReadWritePerformanceTester.class);
 
     public static void testPerformance(ObjectStore os)
         throws ObjectStoreException {

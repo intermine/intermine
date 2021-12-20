@@ -26,7 +26,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.ontology.SequenceOntology;
@@ -47,7 +52,7 @@ import org.intermine.web.logic.export.Exporter;
  */
 public class GFF3Exporter implements Exporter
 {
-    private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
+    private static final Logger LOG = LogManager.getLogger(GFF3Exporter.class);
     /**
      * the fields we don't want to display as attributes
      */

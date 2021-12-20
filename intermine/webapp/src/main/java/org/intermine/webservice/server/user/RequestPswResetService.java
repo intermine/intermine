@@ -10,7 +10,12 @@ package org.intermine.webservice.server.user;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.MailUtils;
@@ -24,7 +29,7 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  */
 public class RequestPswResetService extends JSONService
 {
-    private static final Logger LOG = Logger.getLogger(RequestPswResetService.class);
+    private static final Logger LOG = LogManager.getLogger(RequestPswResetService.class);
 
     /**
      * Constructor

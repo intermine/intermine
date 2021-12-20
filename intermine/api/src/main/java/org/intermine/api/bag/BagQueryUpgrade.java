@@ -13,7 +13,12 @@ package org.intermine.api.bag;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.InterMineException;
 import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.InterMineBag;
@@ -23,7 +28,7 @@ import org.intermine.api.profile.InterMineBag;
  */
 public class BagQueryUpgrade
 {
-    private static final Logger LOG = Logger.getLogger(BagQueryUpgrade.class);
+    private static final Logger LOG = LogManager.getLogger(BagQueryUpgrade.class);
     BagQueryRunner bagQueryRunner;
     private InterMineBag bag;
 

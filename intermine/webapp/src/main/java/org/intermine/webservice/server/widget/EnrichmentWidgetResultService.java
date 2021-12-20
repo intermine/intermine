@@ -16,7 +16,12 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -62,7 +67,7 @@ public class EnrichmentWidgetResultService extends WidgetService
 
     }
 
-    private static final Logger LOG = Logger.getLogger(EnrichmentWidgetResultService.class);
+    private static final Logger LOG = LogManager.getLogger(EnrichmentWidgetResultService.class);
 
     private final WidgetsRequestParser requestParser;
 

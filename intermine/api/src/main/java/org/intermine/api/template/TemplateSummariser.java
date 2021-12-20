@@ -20,7 +20,12 @@ import java.io.IOException;
 
 import net.iharder.Base64;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.userprofile.SavedTemplateQuery;
 import org.intermine.api.userprofile.TemplateSummary;
 import org.intermine.objectstore.ObjectStore;
@@ -44,7 +49,7 @@ import org.intermine.template.TemplateQuery;
  */
 public class TemplateSummariser
 {
-    private static final Logger LOG = Logger.getLogger(TemplateSummariser.class);
+    private static final Logger LOG = LogManager.getLogger(TemplateSummariser.class);
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
     protected Map<TemplateQuery, HashMap<String, List<Object>>> possibleValues

@@ -15,7 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
@@ -49,7 +54,7 @@ public abstract class QueryExecutor
         Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
     protected int summaryBatchSize;
 
-    private static final Logger LOG = Logger.getLogger(QueryExecutor.class);
+    private static final Logger LOG = LogManager.getLogger(QueryExecutor.class);
     /**
      * The profile to use to find bags from.
      */

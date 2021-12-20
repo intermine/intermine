@@ -15,7 +15,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -31,7 +36,7 @@ import org.xml.sax.SAXException;
 public class InterproGoConverter extends BioFileConverter
 {
 
-    protected static final Logger LOG = Logger.getLogger(InterproGoConverter.class);
+    protected static final Logger LOG = LogManager.getLogger(InterproGoConverter.class);
     private static final String DATASET_TITLE = "InterPro domain GO annotations";
     private static final String DATA_SOURCE_NAME = "InterPro";
     private static final String INTERPRO_PREFIX = "InterPro:";

@@ -20,7 +20,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.Util;
@@ -41,7 +46,7 @@ import org.intermine.sql.DatabaseConnectionException;
  */
 public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
 {
-    private static final Logger LOG = Logger.getLogger(ObjectStoreTranslatingImpl.class);
+    private static final Logger LOG = LogManager.getLogger(ObjectStoreTranslatingImpl.class);
     private ObjectStore os;
     private Translator translator;
     private Map<Query, Query> queryCache = Collections.synchronizedMap(

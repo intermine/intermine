@@ -15,7 +15,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Constructor;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
@@ -37,7 +42,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
  */
 public class FileConverterTask extends ConverterTask
 {
-    protected static final Logger LOG = Logger.getLogger(FileConverterTask.class);
+    protected static final Logger LOG = LogManager.getLogger(FileConverterTask.class);
 
     protected FileSet fileSet;
     protected String clsName;

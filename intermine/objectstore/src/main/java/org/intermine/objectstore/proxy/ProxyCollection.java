@@ -17,7 +17,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -38,7 +43,7 @@ import org.intermine.objectstore.query.SingletonResults;
  */
 public class ProxyCollection<E> extends AbstractSet<E> implements LazyCollection<E>
 {
-    private static final Logger LOG = Logger.getLogger(ProxyCollection.class);
+    private static final Logger LOG = LogManager.getLogger(ProxyCollection.class);
 
     private ObjectStore os;
     private InterMineObject o;

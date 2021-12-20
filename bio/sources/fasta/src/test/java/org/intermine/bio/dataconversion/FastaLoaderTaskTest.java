@@ -39,7 +39,12 @@ import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 import org.junit.Before;
 import org.junit.After;
@@ -49,7 +54,7 @@ import static org.junit.Assert.* ;
 public class FastaLoaderTaskTest {
 
     private ObjectStoreWriter osw;
-    private static final Logger LOG = Logger.getLogger(FastaLoaderTaskTest.class);
+    private static final Logger LOG = LogManager.getLogger(FastaLoaderTaskTest.class);
     private String dataSetTitle = "fasta test title";
 
     @Before

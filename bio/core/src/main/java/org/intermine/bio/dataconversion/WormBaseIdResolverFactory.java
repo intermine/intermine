@@ -24,7 +24,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.sql.Database;
 import org.intermine.util.FormattedTextParser;
@@ -38,7 +43,7 @@ import org.intermine.util.PropertiesUtil;
  */
 public class WormBaseIdResolverFactory extends IdResolverFactory
 {
-    protected static final Logger LOG = Logger.getLogger(WormBaseIdResolverFactory.class);
+    protected static final Logger LOG = LogManager.getLogger(WormBaseIdResolverFactory.class);
 
     private final String taxonId = "6239";
     private final String propKeyFile = "resolver.file.rootpath";

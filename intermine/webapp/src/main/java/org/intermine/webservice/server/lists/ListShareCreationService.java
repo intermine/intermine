@@ -13,7 +13,12 @@ package org.intermine.webservice.server.lists;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.profile.InterMineBag;
@@ -33,7 +38,7 @@ import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 public class ListShareCreationService extends JSONService
 {
 
-    private static final Logger LOG = Logger.getLogger(ListShareCreationService.class);
+    private static final Logger LOG = LogManager.getLogger(ListShareCreationService.class);
     private final ProfileManager pm;
     private final SharedBagManager sbm;
 

@@ -10,7 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.template.Sequence;
 
@@ -22,7 +27,7 @@ import org.biojava.nbio.core.sequence.template.Sequence;
  */
 public class NCBIFastaLoaderTask extends FastaLoaderTask
 {
-    protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
+    protected static final Logger LOG = LogManager.getLogger(NCBIFastaLoaderTask.class);
     private static final String ORG_HEADER = " Homo sapiens ";
     private static final String CHROMOSOME_HEADER = "chromosome";
 

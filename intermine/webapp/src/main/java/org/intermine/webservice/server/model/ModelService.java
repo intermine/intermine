@@ -23,7 +23,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -62,7 +67,7 @@ import org.json.JSONObject;
 public class ModelService extends WebService
 {
     private static final String DEFAULT_CALLBACK = "parseModel";
-    private static final Logger LOG = Logger.getLogger(ModelService.class);
+    private static final Logger LOG = LogManager.getLogger(ModelService.class);
     private static final String FILE_BASE_NAME = "model";
     private WebConfig config = null;
     private Path node = null;

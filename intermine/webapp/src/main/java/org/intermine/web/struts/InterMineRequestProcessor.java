@@ -23,7 +23,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMessage;
@@ -47,7 +52,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class InterMineRequestProcessor extends TilesRequestProcessor
 {
-    private static final Logger LOG = Logger.getLogger(InterMineRequestProcessor.class);
+    private static final Logger LOG = LogManager.getLogger(InterMineRequestProcessor.class);
     private static final String LOGON_PATH = "/begin";
     private static final String LOGON_INIT_PATH = "/initBegin";
 

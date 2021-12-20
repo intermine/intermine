@@ -19,7 +19,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.util.FormattedTextParser;
 import org.intermine.metadata.Util;
 
@@ -32,7 +37,7 @@ import org.intermine.metadata.Util;
  */
 public class NcbiGeneInfoParser
 {
-    protected static final Logger LOG = Logger.getLogger(NcbiGeneInfoParser.class);
+    protected static final Logger LOG = LogManager.getLogger(NcbiGeneInfoParser.class);
 
     private Map<String, Set<GeneInfoRecord>> recordMap = new HashMap<String, Set<GeneInfoRecord>>();
     private Map<String, Set<String>> duplicateEnsemblIds = new HashMap<String, Set<String>>();

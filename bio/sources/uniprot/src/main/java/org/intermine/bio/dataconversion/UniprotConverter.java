@@ -11,7 +11,12 @@ package org.intermine.bio.dataconversion;
  */
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -49,7 +54,7 @@ import java.util.Stack;
 public class UniprotConverter extends BioDirectoryConverter
 {
     private static final UniprotConfig CONFIG = new UniprotConfig();
-    private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
+    private static final Logger LOG = LogManager.getLogger(UniprotConverter.class);
     private Map<String, String> pubs = new HashMap<String, String>();
     private Set<Item> synonymsAndXrefs = new HashSet<Item>();
     // taxonId -> [md5Checksum -> stored protein identifier]

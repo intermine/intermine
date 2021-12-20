@@ -19,7 +19,12 @@ import java.util.Set;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
@@ -46,7 +51,7 @@ public class CreateChromosomeLocationsProcessTest extends TestCase
     private Model model;
     private ItemFactory itemFactory;
 
-    private static final Logger LOG = Logger.getLogger(CreateChromosomeLocationsProcessTest.class);
+    private static final Logger LOG = LogManager.getLogger(CreateChromosomeLocationsProcessTest.class);
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");

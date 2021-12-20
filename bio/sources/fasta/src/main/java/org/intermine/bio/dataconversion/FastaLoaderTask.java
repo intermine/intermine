@@ -20,7 +20,12 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.biojava.nbio.core.exceptions.ParserException;
 import org.biojava.nbio.core.sequence.DNASequence;
@@ -55,7 +60,7 @@ import org.intermine.task.FileDirectDataLoaderTask;
 
 public class FastaLoaderTask extends FileDirectDataLoaderTask
 {
-    private static final Logger LOG = Logger.getLogger(FastaLoaderTask.class);
+    private static final Logger LOG = LogManager.getLogger(FastaLoaderTask.class);
 
     private String sequenceType = "dna";
     private String classAttribute = "primaryIdentifier";

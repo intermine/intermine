@@ -17,7 +17,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.util.PathUtil;
@@ -70,7 +75,7 @@ public class InlineResultsTable
     /** @var List of InlineResultTableInlineRows */
     private LinkedList<Object> listOfTableRows = null;
 
-    protected static final Logger LOG = Logger.getLogger(InlineResultsTable.class);
+    protected static final Logger LOG = LogManager.getLogger(InlineResultsTable.class);
     private FieldDescriptor fieldDescriptor = null;
 
     /**

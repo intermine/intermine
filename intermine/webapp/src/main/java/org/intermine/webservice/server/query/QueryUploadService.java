@@ -33,7 +33,12 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
@@ -64,7 +69,7 @@ public class QueryUploadService extends WebService
     public static final String QUERIES_PARAMETER = "xml";
     /** The key for the version parameter **/
     public static final String VERSION_PARAMETER = "version";
-    private static final Logger LOG = Logger.getLogger(QueryUploadService.class);
+    private static final Logger LOG = LogManager.getLogger(QueryUploadService.class);
     private Map<String, InterMineBag> lists;
     private final Set<String> knownBags = new HashSet<String>();
     private final List<String> problems = new ArrayList<String>();

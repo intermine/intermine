@@ -29,7 +29,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.chado.ChadoCV;
 import org.intermine.bio.chado.ChadoCVFactory;
 import org.intermine.bio.chado.ChadoCVTerm;
@@ -118,7 +123,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     }
 
-    private static final Logger LOG = Logger.getLogger(FlyBaseProcessor.class);
+    private static final Logger LOG = LogManager.getLogger(FlyBaseProcessor.class);
 
     // the configuration for this processor, set when getConfig() is called the first time
     private final Map<String, MultiKeyMap> config = new HashMap<String, MultiKeyMap>();

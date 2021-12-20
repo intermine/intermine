@@ -11,7 +11,12 @@ package org.intermine.webservice.server;
  */
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.solr.client.solrj.response.FacetField;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.searchengine.KeywordSearchFacet;
@@ -38,7 +43,7 @@ import java.util.Vector;
 public class FacetService extends JSONService
 {
 
-    private static final Logger LOG = Logger.getLogger(FacetService.class);
+    private static final Logger LOG = LogManager.getLogger(FacetService.class);
 
     /**
      * Constructor

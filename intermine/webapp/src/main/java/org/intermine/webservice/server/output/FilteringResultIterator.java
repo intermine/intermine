@@ -15,7 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.intermine.api.results.ResultElement;
@@ -29,7 +34,7 @@ import org.intermine.objectstore.query.Results;
 public class FilteringResultIterator implements Iterator<List<ResultElement>>
 {
 
-    private static Logger logger = Logger.getLogger(FilteringResultIterator.class);
+    private static Logger logger = LogManager.getLogger(FilteringResultIterator.class);
 
     private int counter = 0;
     private int start = 0;

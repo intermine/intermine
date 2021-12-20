@@ -12,7 +12,12 @@ package org.intermine.bio.web.displayer;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
@@ -25,7 +30,7 @@ import org.intermine.web.logic.results.ReportObject;
 public class JMOLDisplayer extends ReportDisplayer
 {
 
-    protected static final Logger LOG = Logger.getLogger(JMOLDisplayer.class);
+    protected static final Logger LOG = LogManager.getLogger(JMOLDisplayer.class);
 
     /**
      * Construct with config and the InterMineAPI.

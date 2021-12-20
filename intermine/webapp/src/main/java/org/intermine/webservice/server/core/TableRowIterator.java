@@ -21,7 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ResultCell;
 import org.intermine.metadata.FieldDescriptor;
@@ -58,7 +63,7 @@ public class TableRowIterator implements
             "Table row iteration only supported over InterMine Objects, not %s instances. Got %s";
 
     /** Apache Log4J Logger **/
-    private static final Logger LOG = Logger.getLogger(TableRowIterator.class);
+    private static final Logger LOG = LogManager.getLogger(TableRowIterator.class);
 
     /* Initialisation variables */
 

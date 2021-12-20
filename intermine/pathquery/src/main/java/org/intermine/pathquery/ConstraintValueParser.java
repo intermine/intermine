@@ -18,8 +18,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
+import org.apache.logging.log4j.Level;
 import org.intermine.metadata.TypeUtil;
 
 /**
@@ -28,7 +33,7 @@ import org.intermine.metadata.TypeUtil;
  **/
 public final class ConstraintValueParser
 {
-    private static final Logger LOG = Logger.getLogger(ConstraintValueParser.class);
+    private static final Logger LOG = LogManager.getLogger(ConstraintValueParser.class);
 
     private ConstraintValueParser() {
     }
@@ -98,7 +103,7 @@ public final class ConstraintValueParser
             Date date = sdf.parse(value);
             return ISO_DATE_FORMAT.format(date);
         } catch (ParseException e) {
-            LOG.log(Priority.ERROR, "The date" + value + " is not a valid date", e);
+            LOG.error("The date" + value + " is not a valid date", e);
         }
         return "";
     }

@@ -31,7 +31,7 @@ import org.intermine.metadata.ModelParserException;
  */
 public final class ModelFileMerger
 {
-    //private static final Logger LOG = Logger.getLogger(ModelFileMerger.class);
+    //private static final Logger LOG = LogManager.getLogger(ModelFileMerger.class);
 
     private ModelFileMerger() {
         // Hidden

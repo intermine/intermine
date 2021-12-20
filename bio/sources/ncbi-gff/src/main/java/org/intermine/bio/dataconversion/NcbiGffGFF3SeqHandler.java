@@ -16,7 +16,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * A handler for NCBI GFF chromosomes
@@ -25,7 +30,7 @@ import org.apache.log4j.Logger;
  */
 public class NcbiGffGFF3SeqHandler extends GFF3SeqHandler
 {
-    protected static final Logger LOG = Logger.getLogger(NcbiGffGFF3SeqHandler.class);
+    protected static final Logger LOG = LogManager.getLogger(NcbiGffGFF3SeqHandler.class);
     private static final Map<String, String> CHROMOSOMES = new LinkedHashMap<String, String>();
     private Set<String> resolvedIds = new HashSet<String>();
 

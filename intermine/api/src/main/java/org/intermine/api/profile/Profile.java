@@ -21,7 +21,12 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -56,7 +61,7 @@ import org.intermine.pathquery.PathQuery;
  */
 public class Profile
 {
-    private static final Logger LOG = Logger.getLogger(Profile.class);
+    private static final Logger LOG = LogManager.getLogger(Profile.class);
     /** Empty typed map holding no saved queries - useful when creating profiles. **/
     public static final Map<String, SavedQuery> NO_QUERIES = Collections.emptyMap();
     /** Empty typed map holding no bags - useful when creating profiles. **/

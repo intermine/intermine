@@ -44,7 +44,12 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
@@ -107,7 +112,7 @@ import org.intermine.webservice.server.query.result.XMLValidator;
  */
 public class InitialiserPlugin implements PlugIn
 {
-    private static final Logger LOG = Logger.getLogger(InitialiserPlugin.class);
+    private static final Logger LOG = LogManager.getLogger(InitialiserPlugin.class);
 
     ProfileManager profileManager;
     TrackerDelegate trackerDelegate;

@@ -56,7 +56,7 @@ public class DynamicBean implements MethodInterceptor
     }
 
     private static final CallbackFilter FINALIZE_FILTER = new FinalizeFilter();
-    //private static final Logger LOG = Logger.getLogger(DynamicBean.class);
+    //private static final Logger LOG = LogManager.getLogger(DynamicBean.class);
     private Map<String, Object> map = new HashMap<String, Object>();
 
     /**

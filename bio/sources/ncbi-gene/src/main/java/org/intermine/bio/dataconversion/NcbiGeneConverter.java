@@ -20,7 +20,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -39,7 +44,7 @@ public class NcbiGeneConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "NCBI";
     private Set<String> taxonIds = null;
 
-    protected static final Logger LOG = Logger.getLogger(NcbiGeneConverter.class);
+    protected static final Logger LOG = LogManager.getLogger(NcbiGeneConverter.class);
 
     private static final String PROP_FILE = "ncbigene_config.properties";
     private Properties props = new Properties();

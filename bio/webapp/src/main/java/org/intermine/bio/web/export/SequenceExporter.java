@@ -30,7 +30,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.AccessionID;
 import org.biojava.nbio.core.sequence.DNASequence;
@@ -74,7 +79,7 @@ public class SequenceExporter implements Exporter
     // Map to hold DNA sequence of a whole chromosome in memory
     private static Map<MultiKey, String> chromosomeSequenceMap = new HashMap<MultiKey, String>();
     private List<Path> paths = Collections.emptyList();
-    private static final Logger LOG = Logger.getLogger(SequenceExporter.class);
+    private static final Logger LOG = LogManager.getLogger(SequenceExporter.class);
     private static final String PROPERTY_DESCRIPTIONLINE = "description_line";
 
     /**

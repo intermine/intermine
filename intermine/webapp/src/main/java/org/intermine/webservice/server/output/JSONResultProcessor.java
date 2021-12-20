@@ -16,7 +16,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.results.ResultElement;
 import org.intermine.webservice.server.core.ResultProcessor;
 
@@ -28,7 +33,7 @@ import org.intermine.webservice.server.core.ResultProcessor;
  */
 public abstract class JSONResultProcessor extends ResultProcessor
 {
-    private static final Logger LOG = Logger.getLogger(ResultProcessor.class);
+    private static final Logger LOG = LogManager.getLogger(ResultProcessor.class);
 
     /**
      * Constructor.

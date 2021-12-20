@@ -18,7 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.track.KeySearchTrack;
 import org.intermine.api.tracker.track.Track;
@@ -31,7 +36,7 @@ import org.intermine.api.tracker.util.TrackerUtil;
  */
 public class KeySearchTracker extends AbstractTracker
 {
-    private static final Logger LOG = Logger.getLogger(KeySearchTracker.class);
+    private static final Logger LOG = LogManager.getLogger(KeySearchTracker.class);
     private static KeySearchTracker searchTracker = null;
 
     /**

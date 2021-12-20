@@ -25,7 +25,12 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * A fasta loader that understand the headers of FlyBase fasta CDS fasta files and can make the
@@ -34,7 +39,7 @@ import org.apache.log4j.Logger;
  */
 public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 {
-    private static final Logger LOG = Logger.getLogger(FlyBaseCDSFastaLoaderTask.class);
+    private static final Logger LOG = LogManager.getLogger(FlyBaseCDSFastaLoaderTask.class);
 
    /**
      * {@inheritDoc}

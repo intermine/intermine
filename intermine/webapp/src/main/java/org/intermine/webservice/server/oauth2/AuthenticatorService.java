@@ -10,7 +10,12 @@ package org.intermine.webservice.server.oauth2;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.OAuthProviderType;
 import org.intermine.api.InterMineAPI;
@@ -27,7 +32,7 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  */
 public class AuthenticatorService extends JSONService
 {
-    private static final Logger LOG = Logger.getLogger(AuthenticatorService.class);
+    private static final Logger LOG = LogManager.getLogger(AuthenticatorService.class);
 
     /**
      * Constructor

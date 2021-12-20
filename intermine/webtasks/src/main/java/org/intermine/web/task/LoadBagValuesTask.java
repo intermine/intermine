@@ -20,7 +20,12 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -55,7 +60,7 @@ public class LoadBagValuesTask extends Task
     private ObjectStore uos = null;
     private ObjectStore os = null;
 
-    private static final Logger LOG = Logger.getLogger(LoadBagValuesTask.class);
+    private static final Logger LOG = LogManager.getLogger(LoadBagValuesTask.class);
 
     /**
      * Set the alias of the main object store.

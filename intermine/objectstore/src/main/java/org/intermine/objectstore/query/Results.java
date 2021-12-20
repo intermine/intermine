@@ -19,7 +19,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.objectstore.DataChangedException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -38,7 +43,7 @@ import org.intermine.objectstore.proxy.LazyCollection;
 public class Results extends AbstractList<Object> implements LazyCollection<Object>
 {
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(Results.class);
+    private static final Logger LOG = LogManager.getLogger(Results.class);
 
     protected ResultsBatches resultsBatches;
     protected boolean optimise = true;

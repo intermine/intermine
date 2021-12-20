@@ -38,7 +38,7 @@ import org.intermine.web.util.URLGenerator;
  **/
 public final class PortalHelper
 {
-//    private static final Logger LOG = Logger.getLogger(PortalHelper.class);
+//    private static final Logger LOG = LogManager.getLogger(PortalHelper.class);
     private static Map<String, BagConverter> bagConverters = new HashMap<String, BagConverter>();
     private static String portalBaseUrl = null;
 

@@ -15,7 +15,12 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -40,7 +45,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class InvitationAction extends InterMineAction
 {
 
-    private static final Logger LOG = Logger.getLogger(InvitationAction.class);
+    private static final Logger LOG = LogManager.getLogger(InvitationAction.class);
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,

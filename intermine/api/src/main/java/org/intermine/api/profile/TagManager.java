@@ -22,7 +22,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.search.TaggingEvent;
 import org.intermine.api.search.TaggingEvent.TagChange;
 import org.intermine.api.search.WebSearchable;
@@ -58,7 +63,7 @@ import org.intermine.util.DynamicUtil;
  */
 public class TagManager
 {
-    private static final Logger LOG = Logger.getLogger(TagManager.class);
+    private static final Logger LOG = LogManager.getLogger(TagManager.class);
     protected ObjectStoreWriter osWriter;
     private CacheMap<MultiKey, List<Tag>> tagCache = null;
 

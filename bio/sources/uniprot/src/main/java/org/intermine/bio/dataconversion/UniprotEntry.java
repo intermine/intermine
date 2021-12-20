@@ -18,7 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.Util;
 import org.intermine.xml.full.Item;
 
@@ -29,7 +34,7 @@ import org.intermine.xml.full.Item;
  */
 public class UniprotEntry
 {
-    private static final Logger LOG = Logger.getLogger(UniprotEntry.class);
+    private static final Logger LOG = LogManager.getLogger(UniprotEntry.class);
     private String datasetRefId = null;
     private String length, molecularWeight;
     private Set<Item> features = new HashSet<Item>();

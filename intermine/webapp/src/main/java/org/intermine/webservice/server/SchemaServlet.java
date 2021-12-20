@@ -26,7 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.StringUtil;
 import org.intermine.web.context.InterMineContext;
@@ -41,7 +46,7 @@ import org.intermine.webservice.server.output.Output;
 public class SchemaServlet extends HttpServlet
 {
 
-    private static final Logger LOGGER = Logger.getLogger(SchemaServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger(SchemaServlet.class);
 
     private static final long serialVersionUID = 1L;
 

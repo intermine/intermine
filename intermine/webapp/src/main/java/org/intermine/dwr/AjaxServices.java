@@ -39,7 +39,12 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
@@ -123,7 +128,7 @@ import org.json.JSONObject;
 @SuppressWarnings("deprecation")
 public class AjaxServices
 {
-    protected static final Logger LOG = Logger.getLogger(AjaxServices.class);
+    protected static final Logger LOG = LogManager.getLogger(AjaxServices.class);
     private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
 
     private static final Set<String> NON_WS_TAG_TYPES = new HashSet<String>(Arrays.asList(

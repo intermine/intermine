@@ -15,7 +15,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.objectstore.ObjectStoreException;
 
 /**
@@ -28,7 +33,7 @@ public final class PrefetchManager
     private PrefetchManager() {
     }
 
-    private static final Logger LOG = Logger.getLogger(PrefetchManager.class);
+    private static final Logger LOG = LogManager.getLogger(PrefetchManager.class);
     /** Pending set of requests - always accessed inside a synchronise on sync. */
     protected static Set<Request> pending = new HashSet<Request>();
     /** Set of requests currently being serviced. This Set is not accessed inside a block

@@ -20,7 +20,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -40,7 +45,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class ObjectTrailController extends TilesAction
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectTrailController.class);
+    protected static final Logger LOG = LogManager.getLogger(ObjectTrailController.class);
 
     /**
      * Looks at the "trail" request parameter and extracts the object ids from it, then

@@ -20,7 +20,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.beans.PartnerLink;
 import org.intermine.metadata.TypeUtil;
@@ -40,7 +45,7 @@ public class FriendlyMineManager
     private static final String REQUESTER_IMPL = "friendlymines.requester.impl";
 
     @SuppressWarnings("unused") private static final boolean DEBUG = false;
-    private static final Logger LOG = Logger.getLogger(FriendlyMineManager.class);
+    private static final Logger LOG = LogManager.getLogger(FriendlyMineManager.class);
     private static final Map<MultiKey, Collection<PartnerLink>> LINK_CACHE
         = new CacheMap<MultiKey, Collection<PartnerLink>>();
     private static final Map<InterMineAPI, FriendlyMineManager> INSTANCE_MAP

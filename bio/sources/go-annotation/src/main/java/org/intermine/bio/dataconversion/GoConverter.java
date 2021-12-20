@@ -30,7 +30,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
@@ -85,7 +90,7 @@ public class GoConverter extends BioFileConverter
     private static Config defaultConfig = null;
     private String datasource, dataset, licence;
     private String datasetRefId = null;
-    private static final Logger LOG = Logger.getLogger(GoConverter.class);
+    private static final Logger LOG = LogManager.getLogger(GoConverter.class);
     private static final String GO_ANNOTATION_NAME = "GO Annotation";
 
     /**

@@ -33,7 +33,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -60,7 +65,7 @@ import org.intermine.web.logic.session.SessionMethods;
 
 public abstract class WebUtil
 {
-    protected static final Logger LOG = Logger.getLogger(WebUtil.class);
+    protected static final Logger LOG = LogManager.getLogger(WebUtil.class);
 
     private WebUtil() {
         // don't

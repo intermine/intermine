@@ -14,14 +14,19 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Employee;
 
 public class QueryHelperTest extends TestCase
 {
-    private static final Logger LOG = Logger.getLogger(QueryHelperTest.class);
+    private static final Logger LOG = LogManager.getLogger(QueryHelperTest.class);
 
     Model model;
 

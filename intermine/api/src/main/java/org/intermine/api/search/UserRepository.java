@@ -10,7 +10,12 @@ package org.intermine.api.search;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.profile.Profile;
 
 /**
@@ -28,7 +33,7 @@ public class UserRepository extends SearchRepository
         super(profile);
     }
 
-    private static final Logger LOG = Logger.getLogger(UserRepository.class);
+    private static final Logger LOG = LogManager.getLogger(UserRepository.class);
 
     @Override
     protected void handleCreation(CreationEvent e) {

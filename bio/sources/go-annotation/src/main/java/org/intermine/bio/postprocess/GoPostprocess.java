@@ -16,7 +16,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.bio.GOAnnotation;
@@ -50,7 +55,7 @@ import org.intermine.postprocess.PostProcessor;
  */
 public class GoPostprocess extends PostProcessor
 {
-    private static final Logger LOG = Logger.getLogger(GoPostprocess.class);
+    private static final Logger LOG = LogManager.getLogger(GoPostprocess.class);
     protected ObjectStore os;
 
     /**

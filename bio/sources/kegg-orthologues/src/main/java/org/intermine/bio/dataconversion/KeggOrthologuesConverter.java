@@ -24,7 +24,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,7 +42,7 @@ import org.intermine.xml.full.Item;
  */
 public class KeggOrthologuesConverter extends BioFileConverter
 {
-    protected static final Logger LOG = Logger.getLogger(KeggOrthologuesConverter.class);
+    protected static final Logger LOG = LogManager.getLogger(KeggOrthologuesConverter.class);
     private static final String PROP_FILE = "kegg_config.properties";
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";

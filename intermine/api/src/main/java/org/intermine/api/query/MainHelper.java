@@ -30,7 +30,12 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.InterMineException;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
@@ -106,7 +111,7 @@ public final class MainHelper
     private MainHelper() {
     }
 
-    private static final Logger LOG = Logger.getLogger(MainHelper.class);
+    private static final Logger LOG = LogManager.getLogger(MainHelper.class);
 
     private static final LookupTokeniser LOOKUP_TOKENISER = LookupTokeniser.getLookupTokeniser();
 

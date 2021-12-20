@@ -19,7 +19,12 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -49,7 +54,7 @@ import org.json.JSONObject;
  */
 public class HomologueDisplayer extends ReportDisplayer
 {
-    protected static final Logger LOG = Logger.getLogger(HomologueDisplayer.class);
+    protected static final Logger LOG = LogManager.getLogger(HomologueDisplayer.class);
 
     /**
      * Construct with config information read from webconfig-model.xml and the API.

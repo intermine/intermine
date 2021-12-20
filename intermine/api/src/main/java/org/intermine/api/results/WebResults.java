@@ -18,7 +18,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagQueryResult;
@@ -59,7 +64,7 @@ public class WebResults
     extends AbstractList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
     implements WebTable
 {
-    protected static final Logger LOG = Logger.getLogger(WebResults.class);
+    protected static final Logger LOG = LogManager.getLogger(WebResults.class);
     private List<Path> columnPaths;
     protected LinkedHashMap<String, Integer> pathToIndex;
     protected Model model;

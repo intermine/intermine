@@ -22,7 +22,12 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -52,7 +57,7 @@ import org.json.JSONObject;
  */
 public class CodeService extends AbstractQueryService
 {
-    protected static final Logger LOG = Logger.getLogger(CodeService.class);
+    protected static final Logger LOG = LogManager.getLogger(CodeService.class);
     private String perlModuleVersion;
     private static final String PERL_MODULE_URI =
             "http://api.metacpan.org/v0/module/Webservice::InterMine";

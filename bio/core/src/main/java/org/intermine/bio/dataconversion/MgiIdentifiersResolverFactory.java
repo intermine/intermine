@@ -20,7 +20,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.metadata.StringUtil;
@@ -32,7 +37,7 @@ import org.intermine.metadata.StringUtil;
  */
 public class MgiIdentifiersResolverFactory extends IdResolverFactory
 {
-    protected static final Logger LOG = Logger.getLogger(MgiIdentifiersResolverFactory.class);
+    protected static final Logger LOG = LogManager.getLogger(MgiIdentifiersResolverFactory.class);
 
     // data file path set in ~/.intermine/MINE.properties
     // e.g. resolver.zfin.file=/micklem/data/mgi-identifiers/current/MGI_Coordinate.rpt

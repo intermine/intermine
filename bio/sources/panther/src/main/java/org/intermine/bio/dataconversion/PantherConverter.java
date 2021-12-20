@@ -22,7 +22,12 @@ import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
@@ -42,7 +47,7 @@ public class PantherConverter extends BioFileConverter
     private static final String PROP_FILE = "panther_config.properties";
     private static final String DATASET_TITLE = "Panther orthologue and paralogue predictions";
     private static final String DATA_SOURCE_NAME = "Panther";
-    private static final Logger LOG = Logger.getLogger(PantherConverter.class);
+    private static final Logger LOG = LogManager.getLogger(PantherConverter.class);
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
     private Set<String> allTaxonIds = new HashSet<String>();

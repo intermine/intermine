@@ -22,7 +22,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.api.tracker.track.Track;
@@ -46,7 +51,7 @@ public final class TemplateTrackBinding
         // don't
     }
 
-    private static final Logger LOG = Logger.getLogger(TemplateTrackBinding.class);
+    private static final Logger LOG = LogManager.getLogger(TemplateTrackBinding.class);
     /**
      * label for XML
      */

@@ -23,7 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStore;
@@ -43,7 +48,7 @@ import org.intermine.model.bio.DataSource;
  */
 public class DataSourceUpdater extends Task
 {
-    protected static final Logger LOG = Logger.getLogger(DataSourceUpdater.class);
+    protected static final Logger LOG = LogManager.getLogger(DataSourceUpdater.class);
     private String osAlias = null;
     private String outputFile = null;
     private String dataSourceFile = null;

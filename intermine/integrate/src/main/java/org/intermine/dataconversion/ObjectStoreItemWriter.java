@@ -14,7 +14,12 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
@@ -31,7 +36,7 @@ import org.intermine.objectstore.proxy.ProxyReference;
  */
 public class ObjectStoreItemWriter implements ItemWriter
 {
-    private static final Logger LOG = Logger.getLogger(ObjectStoreItemWriter.class);
+    private static final Logger LOG = LogManager.getLogger(ObjectStoreItemWriter.class);
 
     private ObjectStoreWriter osw;
     private int transactionCounter = 0;

@@ -18,7 +18,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -44,8 +49,8 @@ public class PathQueryBuilder
 {
 
     private PathQuery pathQuery;
-    private static Logger logger = Logger.getLogger(PathQueryBuilder.class);
-    private static final Logger LOG = Logger.getLogger(PathQueryBuilder.class);
+    private static Logger logger = LogManager.getLogger(PathQueryBuilder.class);
+    private static final Logger LOG = LogManager.getLogger(PathQueryBuilder.class);
 
     /**
      * Constructor for testing.

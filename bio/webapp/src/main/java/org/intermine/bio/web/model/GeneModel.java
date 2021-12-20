@@ -17,7 +17,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -50,7 +55,7 @@ public class GeneModel
      */
     public static final Set<String> TYPES = new HashSet<String>(Arrays.asList(types));
 
-    protected static final Logger LOG = Logger.getLogger(GeneModel.class);
+    protected static final Logger LOG = LogManager.getLogger(GeneModel.class);
 
     /**
      * Construct a new gene model for the given transcript and gene.  This will run queries for

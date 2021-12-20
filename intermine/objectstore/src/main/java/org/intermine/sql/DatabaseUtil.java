@@ -25,7 +25,12 @@ import java.util.Set;
 
 import org.apache.commons.lang.CharUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -47,7 +52,7 @@ import org.intermine.sql.writebatch.TableBatch;
  */
 public final class DatabaseUtil
 {
-    private static final Logger LOG = Logger.getLogger(DatabaseUtil.class);
+    private static final Logger LOG = LogManager.getLogger(DatabaseUtil.class);
     private static final Set<String> RESERVED_WORDS = new HashSet<String>(Arrays.asList(
             "ABS",
         "ABSOLUTE",

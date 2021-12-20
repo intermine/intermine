@@ -23,11 +23,16 @@ import org.intermine.objectstore.ObjectStoreLimitReachedException;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.model.testmodel.Department;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 public class ResultsTest extends TestCase
 {
-    private static final Logger LOG = Logger.getLogger(ResultsTest.class);
+    private static final Logger LOG = LogManager.getLogger(ResultsTest.class);
 
     public ResultsTest(String arg1) {
         super(arg1);

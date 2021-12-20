@@ -16,7 +16,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.biojava.nbio.core.sequence.template.Sequence;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
@@ -38,7 +43,7 @@ import org.intermine.util.DynamicUtil;
  */
 public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 {
-    private static final Logger LOG = Logger.getLogger(FlyBaseUTRFastaLoaderTask.class);
+    private static final Logger LOG = LogManager.getLogger(FlyBaseUTRFastaLoaderTask.class);
     Map<String, Chromosome> chrMap = new HashMap<String, Chromosome>();
 
     /**

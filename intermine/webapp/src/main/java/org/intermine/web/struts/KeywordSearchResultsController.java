@@ -24,7 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -55,7 +60,7 @@ import org.json.JSONObject;
 public class KeywordSearchResultsController extends TilesAction
 {
     private static final String QUERY_TERM_ALL = "*:*";
-    private static final Logger LOG = Logger.getLogger(KeywordSearchResultsController.class);
+    private static final Logger LOG = LogManager.getLogger(KeywordSearchResultsController.class);
     private static Logger searchLog = null;
 
     /**
@@ -264,7 +269,7 @@ public class KeywordSearchResultsController extends TilesAction
 
 //    private void intialiseLogging(String projectName) throws IOException {
 //        if (searchLog == null) {
-//            searchLog = Logger.getLogger(KeywordSearchResultsController.class.getName()
+//            searchLog = LogManager.getLogger(KeywordSearchResultsController.class.getName()
 //                        + ".searches");
 //            String logFileName = projectName + "_searches.log";
 //            Layout layout = new PatternLayout("%d{ISO8601}\t%m%n");

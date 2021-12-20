@@ -19,7 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 
 /**
@@ -29,7 +34,7 @@ import org.apache.log4j.Logger;
  */
 public final class SequenceOntologyFactory
 {
-    private static final Logger LOG = Logger.getLogger(SequenceOntologyFactory.class);
+    private static final Logger LOG = LogManager.getLogger(SequenceOntologyFactory.class);
     private static SequenceOntology so = null;
     private static final String OBO_FILE = "so-obo";
     private static File tmpFile = null;

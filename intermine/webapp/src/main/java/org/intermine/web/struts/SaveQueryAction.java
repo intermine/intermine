@@ -14,7 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -36,7 +41,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class SaveQueryAction extends InterMineAction
 {
-    protected static final Logger LOG = Logger.getLogger(SaveQueryAction.class);
+    protected static final Logger LOG = LogManager.getLogger(SaveQueryAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP

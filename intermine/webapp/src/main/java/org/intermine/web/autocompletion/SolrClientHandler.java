@@ -10,7 +10,12 @@ package org.intermine.web.autocompletion;
  *
  */
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
@@ -22,7 +27,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 final class SolrClientHandler
 {
-    private static final Logger LOG = Logger.getLogger(SolrClientHandler.class);
+    private static final Logger LOG = LogManager.getLogger(SolrClientHandler.class);
 
     private static SolrClient solrClient;
 

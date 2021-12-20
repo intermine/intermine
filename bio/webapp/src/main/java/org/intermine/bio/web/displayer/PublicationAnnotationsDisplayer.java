@@ -21,7 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -47,7 +52,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class PublicationAnnotationsDisplayer extends ReportDisplayer
 {
 
-    protected static final Logger LOG = Logger.getLogger(PublicationAnnotationsDisplayer.class);
+    protected static final Logger LOG = LogManager.getLogger(PublicationAnnotationsDisplayer.class);
 
     /**
      * Construct with config and the InterMineAPI.

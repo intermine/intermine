@@ -23,7 +23,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,7 +42,7 @@ import org.intermine.xml.full.Item;
  */
 public class EnsemblComparaConverter extends BioFileConverter
 {
-    private static final Logger LOG = Logger.getLogger(EnsemblComparaConverter.class);
+    private static final Logger LOG = LogManager.getLogger(EnsemblComparaConverter.class);
     private static final String PROP_FILE = "ensembl-compara_config.properties";
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";

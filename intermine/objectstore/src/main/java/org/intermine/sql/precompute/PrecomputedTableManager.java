@@ -27,7 +27,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.query.AbstractTable;
@@ -45,7 +50,7 @@ import org.intermine.sql.query.Table;
  */
 public class PrecomputedTableManager
 {
-    private static final Logger LOG = Logger.getLogger(PrecomputedTableManager.class);
+    private static final Logger LOG = LogManager.getLogger(PrecomputedTableManager.class);
 
     protected TreeSet<PrecomputedTable> precomputedTables = new TreeSet<PrecomputedTable>();
     protected Map<String, Map<String, PrecomputedTable>> types

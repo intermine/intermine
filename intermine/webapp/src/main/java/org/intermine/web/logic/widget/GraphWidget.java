@@ -15,7 +15,12 @@ import java.text.FieldPosition;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.ClassDescriptor;
@@ -41,7 +46,7 @@ public class GraphWidget extends Widget
         = "This widget is configured incorrectly. Its type is not in the model: ";
     private static final String NOT_IN_MODEL
         = "This bag has a type not found in the current model: ";
-    private static final Logger LOG = Logger.getLogger(GraphWidget.class);
+    private static final Logger LOG = LogManager.getLogger(GraphWidget.class);
     private GraphWidgetLoader grapgWidgetLdr = null;
     private String filter;
     private List<Integer> intermineIds = new ArrayList<Integer>();

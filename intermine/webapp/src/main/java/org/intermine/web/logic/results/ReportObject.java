@@ -25,7 +25,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.util.PathUtil;
@@ -103,7 +108,7 @@ public class ReportObject
      */
     private Properties webProperties;
 
-    private static final Logger LOG = Logger.getLogger(ReportObject.class);
+    private static final Logger LOG = LogManager.getLogger(ReportObject.class);
 
     /**
      * Setup internal ReportObject

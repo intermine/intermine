@@ -26,7 +26,12 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.ObjectPipe;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * Class providing EquivalentObjectFetcher functionality that fetches batches of equivalent objects
@@ -36,7 +41,7 @@ import org.apache.log4j.Logger;
  */
 public class ParallelBatchingFetcher extends BatchingFetcher
 {
-    private static final Logger LOG = Logger.getLogger(ParallelBatchingFetcher.class);
+    private static final Logger LOG = LogManager.getLogger(ParallelBatchingFetcher.class);
     private ObjectPipe<WorkUnit> jobs = new ObjectPipe<WorkUnit>();
 
     /**

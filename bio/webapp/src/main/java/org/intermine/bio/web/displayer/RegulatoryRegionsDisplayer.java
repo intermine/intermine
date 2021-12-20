@@ -20,7 +20,12 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.model.GeneModelCache;
 import org.intermine.metadata.FieldDescriptor;
@@ -48,7 +53,7 @@ public class RegulatoryRegionsDisplayer extends ReportDisplayer
     /** @var maximum amount of rows to show per table */
     private Integer maxCount = 30;
 
-    protected static final Logger LOG = Logger.getLogger(RegulatoryRegionsDisplayer.class);
+    protected static final Logger LOG = LogManager.getLogger(RegulatoryRegionsDisplayer.class);
 
     /**
      * Construct with config and the InterMineAPI.

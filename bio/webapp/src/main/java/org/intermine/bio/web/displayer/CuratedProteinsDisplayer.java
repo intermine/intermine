@@ -19,7 +19,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -44,7 +49,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class CuratedProteinsDisplayer extends ReportDisplayer
 {
 
-    protected static final Logger LOG = Logger.getLogger(CuratedProteinsDisplayer.class);
+    protected static final Logger LOG = LogManager.getLogger(CuratedProteinsDisplayer.class);
 
     /** @var column keys of PathQuery results. */
     private ArrayList<String> columns =  new ArrayList<String>() { {

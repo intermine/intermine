@@ -15,7 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -35,7 +40,7 @@ import org.intermine.webservice.server.core.JSONService;
 public class SummaryService extends JSONService
 {
 
-    private static final Logger LOG = Logger.getLogger(SummaryService.class);
+    private static final Logger LOG = LogManager.getLogger(SummaryService.class);
 
     /**
      * Constructor

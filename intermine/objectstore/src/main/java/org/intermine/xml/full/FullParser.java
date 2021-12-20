@@ -17,7 +17,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.metadata.Util;
@@ -41,7 +46,7 @@ public final class FullParser
         //disable external instantiation
     }
 
-    private static final Logger LOG = Logger.getLogger(FullParser.class);
+    private static final Logger LOG = LogManager.getLogger(FullParser.class);
 
     /**
      * Parse a InterMine Full XML file

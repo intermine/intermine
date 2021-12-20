@@ -25,7 +25,12 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -44,7 +49,7 @@ import org.intermine.sql.DatabaseUtil;
  */
 public class TorqueModelOutput
 {
-    private static final Logger LOG = Logger.getLogger(TorqueModelOutput.class);
+    private static final Logger LOG = LogManager.getLogger(TorqueModelOutput.class);
 
     /** The version number of the database format */
     public static final int FORMAT_VERSION = 1;

@@ -16,7 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -38,7 +43,7 @@ public final class ClassKeyHelper
         // don't instantiate
     }
 
-    private static final Logger LOG = Logger.getLogger(ClassKeyHelper.class);
+    private static final Logger LOG = LogManager.getLogger(ClassKeyHelper.class);
 
     private static final Map<Model, ClassKeys> CLASS_KEYS = new HashMap<Model, ClassKeys>();
 

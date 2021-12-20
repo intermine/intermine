@@ -21,7 +21,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -38,7 +43,7 @@ import org.intermine.xml.full.Item;
  */
 public class ReactomeConverter extends BioFileConverter
 {
-    private static final Logger LOG = Logger.getLogger(ReactomeConverter.class);
+    private static final Logger LOG = LogManager.getLogger(ReactomeConverter.class);
     private Set<String> taxonIds;
     private Map<String, Item> pathways = new HashMap<String, Item>();
     private Map<String, Item> proteins = new HashMap<String, Item>();

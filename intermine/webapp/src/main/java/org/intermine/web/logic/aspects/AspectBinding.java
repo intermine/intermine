@@ -21,7 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.digester.Digester;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.xml.sax.SAXException;
 
 /**
@@ -32,7 +37,7 @@ import org.xml.sax.SAXException;
  */
 public final class AspectBinding
 {
-    private static final Logger LOG = Logger.getLogger(AspectBinding.class);
+    private static final Logger LOG = LogManager.getLogger(AspectBinding.class);
 
     private AspectBinding() {
         // Hidden constructor.

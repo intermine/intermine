@@ -21,7 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -66,7 +71,7 @@ import org.json.JSONObject;
 public class Callback extends LoginHandler
 {
 
-    private static final Logger LOG = Logger.getLogger(Callback.class);
+    private static final Logger LOG = LogManager.getLogger(Callback.class);
 
     /**
      * Method called for login in

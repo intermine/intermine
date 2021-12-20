@@ -15,7 +15,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * Class representing the track
@@ -23,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class TrackAbstract implements Track
 {
-    private static final Logger LOG = Logger.getLogger(TrackAbstract.class);
+    private static final Logger LOG = LogManager.getLogger(TrackAbstract.class);
 
     protected String userName;
     protected String sessionIdentifier;

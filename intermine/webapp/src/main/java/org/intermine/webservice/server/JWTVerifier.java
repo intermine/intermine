@@ -19,7 +19,12 @@ import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.web.security.KeySourceException;
 import org.intermine.web.security.PublicKeySource;
 import org.json.JSONException;
@@ -49,7 +54,7 @@ public class JWTVerifier
     private final Properties options;
     private final PublicKeySource publicKeys;
     private final String strategy;
-    private static final Logger LOG = Logger.getLogger(JWTVerifier.class);
+    private static final Logger LOG = LogManager.getLogger(JWTVerifier.class);
 
     /**
      * Construct a verifier.

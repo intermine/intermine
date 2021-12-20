@@ -15,7 +15,12 @@ import java.io.Writer;
 import java.lang.ref.WeakReference;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * This class provides a "shutdown" service to other classes. It sets up a single
@@ -33,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public final class ShutdownHook extends Thread
 {
-    private static final Logger LOG = Logger.getLogger(ShutdownHook.class);
+    private static final Logger LOG = LogManager.getLogger(ShutdownHook.class);
     private static Stack<Object> objects = new Stack<Object>();
     private static ShutdownHook instance = new ShutdownHook();
 

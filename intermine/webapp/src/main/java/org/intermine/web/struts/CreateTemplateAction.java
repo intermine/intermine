@@ -18,7 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -45,7 +50,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class CreateTemplateAction extends InterMineAction
 {
-    protected static final Logger LOG = Logger.getLogger(CreateTemplateAction.class);
+    protected static final Logger LOG = LogManager.getLogger(CreateTemplateAction.class);
 
     /**
      * Take the current query and TemplateBuildState from the session and create a

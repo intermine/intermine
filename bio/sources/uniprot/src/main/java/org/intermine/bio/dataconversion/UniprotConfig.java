@@ -18,7 +18,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  *
@@ -27,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class UniprotConfig
 {
-    private static final Logger LOG = Logger.getLogger(UniprotConfig.class);
+    private static final Logger LOG = LogManager.getLogger(UniprotConfig.class);
     private static final String PROP_FILE = "uniprot_config.properties";
     private List<String> featureTypes = new ArrayList<String>();
     private List<String> xrefs = new ArrayList<String>();

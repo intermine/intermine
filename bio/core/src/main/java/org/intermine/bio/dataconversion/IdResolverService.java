@@ -14,7 +14,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * A wrapper class to provide IdResolver service.
@@ -38,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 public final class IdResolverService
 {
-    protected static final Logger LOG = Logger.getLogger(IdResolverService.class);
+    protected static final Logger LOG = LogManager.getLogger(IdResolverService.class);
 
     private IdResolverService() {
     }

@@ -19,7 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -53,7 +58,7 @@ public final class GeneModelCache
 {
     private static CacheMap<Integer, List<GeneModel>> cache =
         new CacheMap<Integer, List<GeneModel>>();
-    protected static final Logger LOG = Logger.getLogger(GeneModelCache.class);
+    protected static final Logger LOG = LogManager.getLogger(GeneModelCache.class);
     private static Map<String, GeneModelSettings> organismSettings =
         new HashMap<String, GeneModelSettings>();
 

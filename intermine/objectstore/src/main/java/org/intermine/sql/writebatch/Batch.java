@@ -19,7 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * A class representing a collection of writes to an SQL database. This class is intended for the
@@ -34,7 +39,7 @@ import org.apache.log4j.Logger;
  */
 public class Batch
 {
-    private static final Logger LOG = Logger.getLogger(Batch.class);
+    private static final Logger LOG = LogManager.getLogger(Batch.class);
     private static final int OPP_BATCH_SIZE = 10000000;
     private static final int MAX_BATCH_SIZE = 100000000;
 

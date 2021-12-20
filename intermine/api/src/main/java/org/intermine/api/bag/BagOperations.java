@@ -32,7 +32,7 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public final class BagOperations
 {
-//    private static final Logger LOG = Logger.getLogger(BagOperations.class);
+//    private static final Logger LOG = LogManager.getLogger(BagOperations.class);
 
     private BagOperations() {
         // don't

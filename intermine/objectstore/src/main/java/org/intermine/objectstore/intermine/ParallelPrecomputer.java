@@ -20,7 +20,12 @@ import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
@@ -34,7 +39,7 @@ import org.intermine.util.SynchronisedIterator;
  */
 public class ParallelPrecomputer
 {
-    private static final Logger LOG = Logger.getLogger(ParallelPrecomputer.class);
+    private static final Logger LOG = LogManager.getLogger(ParallelPrecomputer.class);
 
     private int threadCount;
     private ObjectStoreInterMineImpl os;

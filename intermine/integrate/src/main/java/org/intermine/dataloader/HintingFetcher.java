@@ -17,7 +17,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -39,7 +44,7 @@ import org.intermine.objectstore.query.Query;
  */
 public class HintingFetcher extends BaseEquivalentObjectFetcher
 {
-    private static final Logger LOG = Logger.getLogger(HintingFetcher.class);
+    private static final Logger LOG = LogManager.getLogger(HintingFetcher.class);
 
     EquivalentObjectHints hints;
     int savedDatabaseEmpty = 0;

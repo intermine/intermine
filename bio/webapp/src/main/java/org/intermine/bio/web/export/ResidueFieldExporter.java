@@ -17,7 +17,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
 import org.biojava.nbio.ontology.utils.SmallAnnotation;
@@ -51,7 +56,7 @@ import org.intermine.web.logic.export.FieldExporter;
 
 public class ResidueFieldExporter implements FieldExporter
 {
-    protected static final Logger LOG = Logger.getLogger(ResidueFieldExporter.class);
+    protected static final Logger LOG = LogManager.getLogger(ResidueFieldExporter.class);
     protected static final String PROPERTY_DESCRIPTIONLINE = "description_line";
 
     /**

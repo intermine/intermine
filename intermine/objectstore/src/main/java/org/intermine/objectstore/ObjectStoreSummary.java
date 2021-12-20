@@ -23,7 +23,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -55,7 +60,7 @@ import org.intermine.objectstore.query.SubqueryExistsConstraint;
  */
 public class ObjectStoreSummary
 {
-    private static final Logger LOG = Logger.getLogger(ObjectStoreSummary.class);
+    private static final Logger LOG = LogManager.getLogger(ObjectStoreSummary.class);
 
     private final Map<String, Integer> classCountsMap = new HashMap<String, Integer>();
     private final Map<String, List<Object>> fieldValuesMap = new HashMap<String, List<Object>>();

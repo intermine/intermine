@@ -18,7 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
@@ -30,7 +35,7 @@ import org.intermine.webservice.server.core.WebServiceServlet;
  */
 public class IdResolutionServlet extends WebServiceServlet
 {
-    private static final Logger LOG = Logger.getLogger(IdResolutionServlet.class);
+    private static final Logger LOG = LogManager.getLogger(IdResolutionServlet.class);
     private static final long serialVersionUID = -3364780354450369691L;
     private JobJanitor janitor = null;
     private Thread janitorThread = null;

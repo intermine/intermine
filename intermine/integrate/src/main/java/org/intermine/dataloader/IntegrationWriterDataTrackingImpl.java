@@ -21,7 +21,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -48,7 +53,7 @@ import org.intermine.util.IntPresentSet;
  */
 public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstractImpl
 {
-    private static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImpl.class);
+    private static final Logger LOG = LogManager.getLogger(IntegrationWriterDataTrackingImpl.class);
     protected DataTracker dataTracker;
     protected Set<Class<?>> trackerMissingClasses;
     protected IntPresentSet skeletons = new IntPresentSet();

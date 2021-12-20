@@ -20,7 +20,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
 
@@ -33,7 +38,7 @@ import org.intermine.util.PropertiesUtil;
  */
 public class EnsemblIdResolverFactory extends IdResolverFactory
 {
-    protected static final Logger LOG = Logger.getLogger(EnsemblIdResolverFactory.class);
+    protected static final Logger LOG = LogManager.getLogger(EnsemblIdResolverFactory.class);
     private final String propKey = "resolver.file.rootpath";
     private final String resolverFileSymbo = "ensembl";
     private final String taxonId = "9606";

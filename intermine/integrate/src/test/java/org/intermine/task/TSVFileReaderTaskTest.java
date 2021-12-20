@@ -36,7 +36,12 @@ import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.types.FileSet;
 
 /**
@@ -48,7 +53,7 @@ import org.apache.tools.ant.types.FileSet;
 public class TSVFileReaderTaskTest extends TestCase
 {
     private Model model;
-    private static final Logger LOG = Logger.getLogger(TSVFileReaderTaskTest.class);
+    private static final Logger LOG = LogManager.getLogger(TSVFileReaderTaskTest.class);
 
     public void setUp() throws Exception {
         model = Model.getInstanceByName("testmodel");

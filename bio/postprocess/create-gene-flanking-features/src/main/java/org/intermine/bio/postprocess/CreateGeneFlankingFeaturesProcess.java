@@ -16,7 +16,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.ClassDescriptor;
@@ -61,7 +66,7 @@ public class CreateGeneFlankingFeaturesProcess extends PostProcessor
 
     private static boolean[] includeGenes = new boolean[] {true, false};
 
-    private static final Logger LOG = Logger.getLogger(CreateGeneFlankingFeaturesProcess.class);
+    private static final Logger LOG = LogManager.getLogger(CreateGeneFlankingFeaturesProcess.class);
 
     /**
      * Create a new instance

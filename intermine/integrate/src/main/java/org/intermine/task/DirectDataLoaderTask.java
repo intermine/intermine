@@ -12,7 +12,12 @@ package org.intermine.task;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataloader.BatchingFetcher;
 import org.intermine.dataloader.DirectDataLoader;
@@ -41,7 +46,7 @@ public abstract class DirectDataLoaderTask extends DynamicAttributeTask
     private DirectDataLoader directDataLoader;
     private IntegrationWriter iw;
 
-    private static final Logger LOG = Logger.getLogger(DirectDataLoaderTask.class);
+    private static final Logger LOG = LogManager.getLogger(DirectDataLoaderTask.class);
 
     /**
      * Set the IntegrationWriter.

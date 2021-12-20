@@ -19,7 +19,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.intermine.SQLOperation;
@@ -33,7 +38,7 @@ import org.intermine.sql.DatabaseUtil;
 public class PreferencesManager
 {
 
-    private static final Logger LOG = Logger.getLogger(PreferencesManager.class);
+    private static final Logger LOG = LogManager.getLogger(PreferencesManager.class);
     private final ObjectStoreWriterInterMineImpl osw;
 
     private static final String TABLE_NAME = "userpreferences";

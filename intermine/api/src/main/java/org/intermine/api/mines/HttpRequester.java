@@ -19,7 +19,12 @@ import java.net.URLConnection;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 /**
  * A mine requester that makes HTTP requests.
@@ -29,7 +34,7 @@ import org.apache.log4j.Logger;
 public class HttpRequester implements MineRequester
 {
 
-    private static final Logger LOG = Logger.getLogger(HttpRequester.class);
+    private static final Logger LOG = LogManager.getLogger(HttpRequester.class);
 
 
     /** The number of seconds we will wait before timing out. **/

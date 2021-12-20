@@ -28,7 +28,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.map.MultiValueMap;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 import org.obo.dataadapter.OBOAdapter;
 import org.obo.dataadapter.OBOFileAdapter;
@@ -44,7 +49,7 @@ import org.obo.datamodel.OBOSession;
  */
 public class OboParser
 {
-    private static final Logger LOG = Logger.getLogger(OboParser.class);
+    private static final Logger LOG = LogManager.getLogger(OboParser.class);
     //    private static File temp = null;
     private final Pattern synPattern = Pattern.compile("\\s*\"(.+?[^\\\\])\".*");
     private final Matcher synMatcher = synPattern.matcher("");

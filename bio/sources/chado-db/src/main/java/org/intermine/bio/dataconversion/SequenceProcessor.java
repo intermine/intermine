@@ -28,7 +28,12 @@ import java.util.Map.Entry;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.DoNothingAction;
@@ -57,7 +62,7 @@ public class SequenceProcessor extends ChadoProcessor
     // name for temporary tables
     private static int tempTableCount = 0;
 
-    private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
+    private static final Logger LOG = LogManager.getLogger(SequenceProcessor.class);
 
     // a map from chado feature id to FeatureData objects, populated by processFeatureTable()
     // and used to get object types, Item IDs etc. (see FeatureData)

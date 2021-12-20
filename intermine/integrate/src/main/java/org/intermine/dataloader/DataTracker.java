@@ -25,7 +25,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.sql.Database;
 
 /**
@@ -38,7 +43,7 @@ import org.intermine.sql.Database;
  */
 public class DataTracker
 {
-    private static final Logger LOG = Logger.getLogger(DataTracker.class);
+    private static final Logger LOG = LogManager.getLogger(DataTracker.class);
 
     /* We need a Map or two to store the entries. Each entry can be in several states:
      * 1. Recently-used and new - must be written to the database eventually.

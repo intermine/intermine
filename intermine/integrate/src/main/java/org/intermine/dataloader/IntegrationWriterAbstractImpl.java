@@ -18,7 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
@@ -51,7 +56,7 @@ import org.intermine.util.IntToIntMap;
  */
 public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
-    private static final Logger LOG = Logger.getLogger(IntegrationWriterAbstractImpl.class);
+    private static final Logger LOG = LogManager.getLogger(IntegrationWriterAbstractImpl.class);
 
     protected ObjectStoreWriter osw;
     protected static final int SKELETON = 0;

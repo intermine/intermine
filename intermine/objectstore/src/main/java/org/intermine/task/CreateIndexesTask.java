@@ -47,7 +47,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -71,7 +76,7 @@ public class CreateIndexesTask extends Task
     private boolean attributeIndexes = false;
     private DatabaseSchema schema = null;
     private Database database = null;
-    private static final Logger LOG = Logger.getLogger(CreateIndexesTask.class);
+    private static final Logger LOG = LogManager.getLogger(CreateIndexesTask.class);
     private Map<String, Set<String>> tableIndexesDone = Collections.synchronizedMap(
             new HashMap<String, Set<String>>());
     private Set<String> indexesMade = Collections.synchronizedSet(new HashSet<String>());

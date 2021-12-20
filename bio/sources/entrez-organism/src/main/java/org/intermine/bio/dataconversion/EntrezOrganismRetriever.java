@@ -25,7 +25,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.metadata.StringUtil;
@@ -49,7 +54,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class EntrezOrganismRetriever extends Task
 {
-    protected static final Logger LOG = Logger.getLogger(EntrezOrganismRetriever.class);
+    protected static final Logger LOG = LogManager.getLogger(EntrezOrganismRetriever.class);
     // see https://eutils.ncbi.nlm.nih.gov/entrez/query/static/esummary_help.html for details
     protected static final String ESUMMARY_URL =
         "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=taxonomy&retmode=xml&id=";

@@ -17,7 +17,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
@@ -39,7 +44,7 @@ import org.intermine.metadata.Util;
  */
 public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<MultiRowValue>>>
 {
-    protected static final Logger LOG = Logger.getLogger(ResultsFlatOuterJoinsImpl.class);
+    protected static final Logger LOG = LogManager.getLogger(ResultsFlatOuterJoinsImpl.class);
 
     private List<ResultsRow> orig;
     private Query query;

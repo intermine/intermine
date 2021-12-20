@@ -21,7 +21,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.xml.sax.Attributes;
@@ -56,7 +61,7 @@ public class PathQueryHandler extends DefaultHandler
     protected Map<String, String> constraintAttributes = null;
     protected Collection<String> constraintValues = null;
     protected String constraintCode = null;
-    private static final Logger LOG = Logger.getLogger(PathQueryHandler.class);
+    private static final Logger LOG = LogManager.getLogger(PathQueryHandler.class);
 
     /**
      * Collection of models used for lookup before resorting to

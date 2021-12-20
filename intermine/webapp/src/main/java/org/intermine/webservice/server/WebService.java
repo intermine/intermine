@@ -32,7 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -106,7 +111,7 @@ public abstract class WebService
     private static final String GZIP = "gzip";
     private static final String ZIP = "zip";
 
-    private static final Logger LOG = Logger.getLogger(WebService.class);
+    private static final Logger LOG = LogManager.getLogger(WebService.class);
     private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
     private static final String AUTH_TOKEN_PARAM_KEY = "token";
     private static final Profile ANON_PROFILE = new AnonProfile();

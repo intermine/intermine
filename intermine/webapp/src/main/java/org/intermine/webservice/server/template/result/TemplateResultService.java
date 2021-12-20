@@ -13,7 +13,12 @@ package org.intermine.webservice.server.template.result;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
@@ -42,7 +47,7 @@ public class TemplateResultService extends QueryResultService
     /** Name of name parameter **/
     public static final String NAME_PARAMETER = "name";
 
-    private static final Logger LOG = Logger.getLogger(TemplateResultService.class);
+    private static final Logger LOG = LogManager.getLogger(TemplateResultService.class);
 
     /**
      * Construct with an InterMineAPI.

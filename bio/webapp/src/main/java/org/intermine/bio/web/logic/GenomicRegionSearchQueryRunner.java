@@ -51,7 +51,7 @@ import org.intermine.web.logic.session.SessionMethods;
 /**
  * This class has all database query logics for genomic region search.
  *
- *private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
+ *private static final Logger LOG = LogManager.getLogger(GenomicRegionSearchService.class);
  *@author Fengyuan Hu
  */
 public class GenomicRegionSearchQueryRunner implements Runnable

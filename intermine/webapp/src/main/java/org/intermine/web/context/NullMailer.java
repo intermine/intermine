@@ -13,7 +13,12 @@ package org.intermine.web.context;
 import java.util.Arrays;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.intermine.util.Emailer;
 
 /**
@@ -24,7 +29,7 @@ import org.intermine.util.Emailer;
 public class NullMailer extends Emailer
 {
 
-    private static final Logger LOG = Logger.getLogger(NullMailer.class);
+    private static final Logger LOG = LogManager.getLogger(NullMailer.class);
 
     /**
      * Get a new NullMailer

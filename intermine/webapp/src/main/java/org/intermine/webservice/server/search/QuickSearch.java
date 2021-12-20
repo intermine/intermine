@@ -23,7 +23,12 @@ import java.util.Vector;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+
+
 import org.apache.solr.client.solrj.response.FacetField;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
@@ -60,7 +65,7 @@ public class QuickSearch extends JSONService
     private static final String FACET_PREFIX = "facet_";
     private static final int PREFIX_LEN = FACET_PREFIX.length();
 
-    private static final Logger LOG = Logger.getLogger(QuickSearch.class);
+    private static final Logger LOG = LogManager.getLogger(QuickSearch.class);
 
     private Map<String, Map<String, Object>> headerObjs
         = new HashMap<String, Map<String, Object>>();
