@@ -22,7 +22,7 @@ subprojects {
     configurations {
         all {
             resolutionStrategy {
-                force 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.0'
+                force group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.0'
             }
         }
     }
