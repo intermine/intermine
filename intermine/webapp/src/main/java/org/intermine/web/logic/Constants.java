@@ -219,13 +219,14 @@ public final class Constants
      * 30 - Jaccard Index,  Add semantic markup endpoints & permanent URL
      * 31 - Login/Logout/Change password, simplified markup endpoints
      * 32 - Added the mandatory input type to the chart graphs when ids is used
+     * 33 - Added precompute and summarize templates
      */
-    public static final int WEB_SERVICE_VERSION = 32;
+    public static final int WEB_SERVICE_VERSION = 33;
 
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "5.0.3";
+    public static final String INTERMINE_VERSION = "5.0.4";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

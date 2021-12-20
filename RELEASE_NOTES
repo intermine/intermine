@@ -7,6 +7,19 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 5.0.4 (Dicember 2021)
+
+#2324 - Remove dependency from EBI maven nexus repo
+#2377 - Updated GFF3Record (thanks @sammyjava)
+#2396 - Biogrid extension
+#2392 - Public name can be taken by deleted account
+#2397 - Implement a new WS to summarise templates
+#2398 - Implement a new WS to precompute templates
+#2399 - Update the GET /templates WS to show which templates user can make change
+#2400 - Update the PUT /bluegenes-properties WS to use body
+#2402 - WebProperties WS returns blugenes properties too
+#2404 - Update CI to use Python 3.7
+
 InterMine 5.0.3 (June 2021)
 
 #2375 - Update interpro_keys.properties

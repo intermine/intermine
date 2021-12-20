@@ -2299,6 +2299,8 @@ public class PathQuery implements Cloneable
         } else if (value instanceof String) {
             String newValue = StringEscapeUtils.escapeJava((String) value);
             return "\"" + key + "\":\""  + newValue + "\"";
+        }  else if (value instanceof Boolean) {
+            return "\"" + key + "\":"  + value;
         }
         throw new IllegalArgumentException(value + " must be either String or a list of strings");
     }

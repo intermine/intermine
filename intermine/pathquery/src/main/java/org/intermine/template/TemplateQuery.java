@@ -548,6 +548,11 @@ public class TemplateQuery extends PathQuery
         sb.append(String.format(",\"editable\":%b",     isEditable(con)));
         sb.append(String.format(",\"switchable\":%b",   soa != SwitchOffAbility.LOCKED));
         sb.append(String.format(",\"switched\":\"%s\"", soa));
+/*        String description = constraintDescriptions.get(con);
+        if (description == null) {
+            description = "";
+        }
+        sb.append(String.format(",\"description\":\"%s\"", description));*/
         return sb.toString();
     }
 
