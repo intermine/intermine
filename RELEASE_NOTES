@@ -7,6 +7,10 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 5.0.5 (Dicember 2021)
+
+#2411 - Log4j-1x compatibility upgrade (thanks @asherpasha)
+
 InterMine 5.0.4 (Dicember 2021)
 
 #2324 - Remove dependency from EBI maven nexus repo
