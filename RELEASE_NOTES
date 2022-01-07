@@ -7,6 +7,11 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 5.0.6 (Dicember 2021)
+
+#2414 - Upgraded psi lib version (thanks @asherpasha)
+#2416 - Log4j upgraded to 2.17.1 (thanks @asherpasha)
+
 InterMine 5.0.5 (Dicember 2021)
 
 #2411 - Log4j-1x compatibility upgrade (thanks @asherpasha)

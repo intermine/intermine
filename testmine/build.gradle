@@ -1,5 +1,5 @@
 ext {
-    imVersion = "5.0.5"
+    imVersion = "5.0.6"
     taskGroup = "InterMine"
     minePropertyFileName = "testmodel.properties"
     minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
@@ -28,7 +28,7 @@ subprojects {
 
     dependencies {
         compile group: 'ant', name: 'ant', version: '1.6.5'
-        compile group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.17.0'
+        compile group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.17.1'
         commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
     }
 
