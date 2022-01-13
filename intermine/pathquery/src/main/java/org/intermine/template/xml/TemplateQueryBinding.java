@@ -81,8 +81,7 @@ public class TemplateQueryBinding extends PathQueryBinding
             } else {
                 writer.writeAttribute("comment", template.getComment());
             }
-            writer.writeAttribute("dataTypes", StringUtil.join(template.getViewDataTypes(),
-                    StringUtils.EMPTY));
+            writer.writeAttribute("dataTypes", StringUtil.join(template.getViewDataTypes(), " "));
 
             doMarshal(template, template.getName(), template.getModel()
                     .getName(), writer, version);
