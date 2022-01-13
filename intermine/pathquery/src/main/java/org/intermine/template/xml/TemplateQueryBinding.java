@@ -20,8 +20,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.SAXParser;
+import org.intermine.metadata.StringUtil;
 import org.intermine.pathquery.JSONQueryHandler;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
@@ -79,6 +81,8 @@ public class TemplateQueryBinding extends PathQueryBinding
             } else {
                 writer.writeAttribute("comment", template.getComment());
             }
+            writer.writeAttribute("dataTypes", StringUtil.join(template.getViewDataTypes(),
+                    StringUtils.EMPTY));
 
             doMarshal(template, template.getName(), template.getModel()
                     .getName(), writer, version);
