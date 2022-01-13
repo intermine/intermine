@@ -545,6 +545,11 @@ public class TemplateQuery extends PathQuery
         return retVal;
     }
 
+    /**
+     * Get the data type associate to the views
+     *
+     * @return the list of the data types
+     */
     public List<String> getViewDataTypes() {
         List<String> dataTypes = new ArrayList<>();
         for (String v : getView()) {
@@ -553,7 +558,7 @@ public class TemplateQuery extends PathQuery
                 AttributeDescriptor attributeDescriptor =
                         (AttributeDescriptor) path.getEndFieldDescriptor();
                 dataTypes.add(attributeDescriptor.getType());
-            } catch (PathException ex ){
+            } catch (PathException ex ) {
                 dataTypes.add(StringUtils.EMPTY);
             }
         }
