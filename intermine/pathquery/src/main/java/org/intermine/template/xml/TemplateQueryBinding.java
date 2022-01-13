@@ -20,7 +20,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.SAXParser;
 import org.intermine.metadata.StringUtil;
