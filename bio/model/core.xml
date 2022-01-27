@@ -191,10 +191,11 @@
         <collection name="childFeatures" referenced-type="SequenceFeature" />
     </class>
 
-    <class name="Strain" extends="BioEntity" is-interface="true">
-        <attribute name="annotationVersion" type="java.lang.String"/>
-        <attribute name="assemblyVersion" type="java.lang.String"/>
-        <collection name="features" referenced-type="SequenceFeature" reverse-reference="strain" />
+    <class name="Strain" is-interface="true" term="http://semanticscience.org/resource/SIO_010055">
+      <attribute name="identifier" type="java.lang.String" term="http://edamontology.org/data_2379"/>
+      <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_1046"/>
+      <attribute name="accession" type="java.lang.String" term="http://edamontology.org/data_2912"/>
+      <reference name="organism" referenced-type="Organism" reverse-reference="strains"/>
     </class>
 
     <class name="Synonym" is-interface="true" term="http://semanticscience.org/resource/SIO_000122">
