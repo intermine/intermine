@@ -33,6 +33,7 @@ include ':bio-source-biogrid',
 ':bio-source-reactome',
 ':bio-source-rgd-identifiers',
 ':bio-source-so',
+':bio-source-tsv',
 ':bio-source-treefam',
 ':bio-source-uniprot',
 ':bio-source-uniprot-keywords',
@@ -82,6 +83,7 @@ project(':bio-source-pubmed-gene').projectDir = new File(settingsDir, './pubmed-
 project(':bio-source-reactome').projectDir = new File(settingsDir, './reactome')
 project(':bio-source-rgd-identifiers').projectDir = new File(settingsDir, './rgd-identifiers')
 project(':bio-source-so').projectDir = new File(settingsDir, './so')
+project(':bio-source-tsv').projectDir = new File(settingsDir, './tsv')
 project(':bio-source-treefam').projectDir = new File(settingsDir, './treefam')
 project(':bio-source-uniprot').projectDir = new File(settingsDir, './uniprot')
 project(':bio-source-uniprot-keywords').projectDir = new File(settingsDir, './uniprot-keywords')
