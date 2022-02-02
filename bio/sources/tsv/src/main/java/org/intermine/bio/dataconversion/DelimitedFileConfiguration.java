@@ -23,6 +23,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -36,9 +38,9 @@ import java.util.TreeMap;
 
 public class DelimitedFileConfiguration
 {
+    Map<String, Map> classNameColumnFieldDescriptorMap = new HashMap();
     private ClassDescriptor configClassDescriptor = null;
-    private List columnFieldDescriptors = null;
-    private List columnFieldClasses;
+    private Map<String, List> classNameColumnFieldDescriptors = new HashMap();
 
     /**
      * Create a new DelimitedFileConfiguration from an InputStream.
@@ -50,69 +52,73 @@ public class DelimitedFileConfiguration
         throws IOException {
 
         Properties properties = new Properties();
-
         properties.load(inputStream);
 
-        String className = properties.getProperty("className");
+        Map columnFieldDescriptorMap;
 
-        if (className == null) {
-            throw new IllegalArgumentException("className not set in property file for "
-                                               + "DelimitedFileConfiguration");
-        }
-        configClassDescriptor = model.getClassDescriptorByName(className);
-
-        if (configClassDescriptor == null) {
-            throw new IllegalArgumentException("cannot find ClassDescriptor for: " + className);
-        }
-
-        Map columnFieldDescriptorMap = new TreeMap();
 
         Enumeration enumeration = properties.propertyNames();
 
         while (enumeration.hasMoreElements()) {
             String key = (String) enumeration.nextElement();
+            String columnNumberString = key.substring(7);
 
-            if (key.startsWith("column.")) {
-                String columnNumberString = key.substring(7);
+            try {
+                int keyColumnNumber = Integer.valueOf(columnNumberString).intValue();
 
-                try {
-                    int keyColumnNumber = Integer.valueOf(columnNumberString).intValue();
-
-                    String fieldName = properties.getProperty(key);
-
-                    FieldDescriptor columnFD =
-                        configClassDescriptor.getFieldDescriptorByName(fieldName);
-
-                    if (columnFD == null) {
-                        throw new IllegalArgumentException("cannot find FieldDescriptor for "
-                                                           + fieldName + " in " + className);
-                    }
-
-                    if (!columnFD.isAttribute()) {
-                        String message = "field: " + fieldName + " in "
-                                + className + " is not an attribute field so cannot be used as a "
-                                + "className in DelimitedFileConfiguration";
-                        throw new IllegalArgumentException(message);
-                    }
-
-                    columnFieldDescriptorMap.put(new Integer(keyColumnNumber), columnFD);
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("column number (" + key + ") not parsable "
-                                                       + "in property file for "
-                                                       + "DelimitedFileConfiguration");
+                String value = properties.getProperty(key);
+                String className = value.substring(0, value.indexOf("."));
+                configClassDescriptor = model.getClassDescriptorByName(className);
+                if (configClassDescriptor == null) {
+                    throw new IllegalArgumentException("cannot find ClassDescriptor for: "
+                            + className);
                 }
+
+                if (classNameColumnFieldDescriptorMap.get(className) == null ) {
+                    columnFieldDescriptorMap = new TreeMap();
+                    classNameColumnFieldDescriptorMap.put(className, columnFieldDescriptorMap);
+                } else {
+                    columnFieldDescriptorMap = classNameColumnFieldDescriptorMap.get(className);
+                }
+
+                String fieldName = value.substring(value.indexOf(".") + 1);
+                FieldDescriptor columnFD =
+                    configClassDescriptor.getFieldDescriptorByName(fieldName);
+                if (columnFD == null) {
+                    throw new IllegalArgumentException("cannot find FieldDescriptor for "
+                                                       + fieldName + " in " + className);
+                }
+
+                if (!columnFD.isAttribute()) {
+                    String message = "field: " + fieldName + " in "
+                            + className + " is not an attribute field so cannot be used as a "
+                            + "className in DelimitedFileConfiguration";
+                    throw new IllegalArgumentException(message);
+                }
+
+                columnFieldDescriptorMap.put(new Integer(keyColumnNumber), columnFD);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("column number (" + key + ") not parsable "
+                                                   + "in property file for "
+                                                   + "DelimitedFileConfiguration");
             }
         }
 
-        int mapMax = findMapMaxKey(columnFieldDescriptorMap);
+        Iterator classNameIter = getClassNames().iterator();
+        while (classNameIter.hasNext()) {
+            String className = (String) classNameIter.next();
+            int mapMax = findMapMaxKey(classNameColumnFieldDescriptorMap.get(className));
 
-        columnFieldDescriptors = new ArrayList(mapMax + 1);
+            List<FieldDescriptor> columnFieldDescriptors = new ArrayList(mapMax + 1);
 
-        for (int columnNumber = 0; columnNumber < mapMax + 1; columnNumber++) {
-            FieldDescriptor columnFD =
-                (FieldDescriptor) columnFieldDescriptorMap.get(new Integer(columnNumber));
+            columnFieldDescriptorMap = classNameColumnFieldDescriptorMap.get(className);
+            for (int columnNumber = 0; columnNumber < mapMax + 1; columnNumber++) {
+                FieldDescriptor columnFD =
+                        (FieldDescriptor) columnFieldDescriptorMap.get(new Integer(columnNumber));
 
-            columnFieldDescriptors.add(columnFD);
+                columnFieldDescriptors.add(columnFD);
+            }
+            classNameColumnFieldDescriptors.put(className, columnFieldDescriptors);
         }
     }
 
@@ -137,6 +143,14 @@ public class DelimitedFileConfiguration
     }
 
     /**
+     * Return the class names
+     * @return the class names
+     */
+    public Set<String> getClassNames() {
+        return classNameColumnFieldDescriptorMap.keySet();
+    }
+
+    /**
      * Return the ClassDescriptor of the class to modify.
      * @return the ClassDescriptor
      */
@@ -150,8 +164,8 @@ public class DelimitedFileConfiguration
      * have null at that index.
      * @return the configured AttributeDescriptors
      */
-    public List getColumnFieldDescriptors() {
-        return columnFieldDescriptors;
+    public List getColumnFieldDescriptors(String className) {
+        return classNameColumnFieldDescriptors.get(className);
     }
 
     /**
@@ -159,17 +173,16 @@ public class DelimitedFileConfiguration
      * getColumnFieldDescriptors().
      * @return the Class objects
      */
-    public List getColumnFieldClasses() {
-        if (columnFieldClasses == null) {
-            columnFieldClasses = new ArrayList();
-            for (int i = 0; i < columnFieldDescriptors.size(); i++) {
-                AttributeDescriptor ad = (AttributeDescriptor) columnFieldDescriptors.get(i);
-                if (ad == null) {
-                    columnFieldClasses.add(null);
-                } else {
-                    String className = ad.getType();
-                    columnFieldClasses.add(TypeUtil.instantiate(className));
-                }
+    public List getColumnFieldClasses(String className) {
+        List columnFieldClasses = new ArrayList();
+        List columnFieldDescriptors = classNameColumnFieldDescriptors.get(className);
+        for (int i = 0; i < columnFieldDescriptors.size(); i++) {
+            AttributeDescriptor ad = (AttributeDescriptor) columnFieldDescriptors.get(i);
+            if (ad == null) {
+                columnFieldClasses.add(null);
+            } else {
+                String type = ad.getType();
+                columnFieldClasses.add(TypeUtil.instantiate(type));
             }
         }
 
