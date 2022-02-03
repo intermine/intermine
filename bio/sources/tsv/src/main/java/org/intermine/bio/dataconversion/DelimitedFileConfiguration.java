@@ -74,11 +74,10 @@ public class DelimitedFileConfiguration
                             + className);
                 }
 
-                if (classNameColumnFieldDescriptorMap.get(className) == null ) {
+                columnFieldDescriptorMap = classNameColumnFieldDescriptorMap.get(className);
+                if (columnFieldDescriptorMap == null) {
                     columnFieldDescriptorMap = new TreeMap();
                     classNameColumnFieldDescriptorMap.put(className, columnFieldDescriptorMap);
-                } else {
-                    columnFieldDescriptorMap = classNameColumnFieldDescriptorMap.get(className);
                 }
 
                 String fieldName = value.substring(value.indexOf(".") + 1);
@@ -128,17 +127,13 @@ public class DelimitedFileConfiguration
         }
 
         int maxSoFar = Integer.MIN_VALUE;
-
         Iterator mapKeyIter = map.keySet().iterator();
-
         while (mapKeyIter.hasNext()) {
             Integer key = (Integer) mapKeyIter.next();
-
             if (key.intValue() > maxSoFar) {
                 maxSoFar = key.intValue();
             }
         }
-
         return maxSoFar;
     }
 
@@ -185,7 +180,6 @@ public class DelimitedFileConfiguration
                 columnFieldClasses.add(TypeUtil.instantiate(type));
             }
         }
-
         return columnFieldClasses;
     }
 }
