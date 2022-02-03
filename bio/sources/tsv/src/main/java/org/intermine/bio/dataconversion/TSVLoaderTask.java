@@ -9,6 +9,7 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
 
 /**
  * Read a file of tab separated values.  Use one column as the key to look up objects and use the
@@ -50,7 +53,6 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     private Model model;
     private DataSource dataSource;
     private Map<String, DataSet> dataSets = new HashMap<String, DataSet>();
-
 
     /**
      * Set the configuration file to use.
@@ -179,6 +181,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                 }
 
                 List fieldClasses = dfc.getColumnFieldClasses(className);
+                Set<String> fieldNames = new HashSet<String>();
                 for (int columnIndex = 0; columnIndex < thisRow.length; columnIndex++) {
                     if (dfc.getColumnFieldDescriptors(className).size() <= columnIndex) {
                         // ignore - no configuration for this column
@@ -196,12 +199,16 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                             Class fieldClass = (Class) fieldClasses.get(columnIndex);
                             Object typedObject = TypeUtil.stringToObject(fieldClass, rowValue);
                             o.setFieldValue(columnAD.getName(), typedObject);
+                            fieldNames.add(columnAD.getName());
                         }
                     }
                 }
-
+                //avoid duplication
                 try {
-                    getDirectDataLoader().store(o);
+                    IntegrationWriter iw = getDirectDataLoader().getIntegrationWriter();
+                    if (iw.getObjectByExample(o, fieldNames) == null) {
+                        getDirectDataLoader().store(o);
+                    }
                 } catch (ObjectStoreException e) {
                     throw new BuildException("exception while storing: " + o, e);
                 } finally {
