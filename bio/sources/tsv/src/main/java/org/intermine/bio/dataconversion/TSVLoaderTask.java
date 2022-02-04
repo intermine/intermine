@@ -18,11 +18,15 @@ import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.*;
 import org.apache.tools.ant.BuildException;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.FormattedTextParser;
+import org.intermine.util.DynamicUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,6 +57,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     private Model model;
     private DataSource dataSource;
     private Map<String, DataSet> dataSets = new HashMap<String, DataSet>();
+    private Map<String, InterMineObject> objectsInRow;
 
     /**
      * Set the configuration file to use.
@@ -158,9 +163,10 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
             throw new BuildException("cannot parse file: " + file, e);
         }
 
+        objectsInRow = new HashMap();
         while (tsvIter.hasNext()) {
             String[] thisRow = (String[]) tsvIter.next();
-
+            //objectsInRow = new HashMap();
             Set<String> classNamesSet = dfc.getClassNames();
             Iterator classNameIter = classNamesSet.iterator();
 
@@ -187,7 +193,6 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                         // ignore - no configuration for this column
                         continue;
                     }
-
                     AttributeDescriptor columnAD =
                             (AttributeDescriptor) dfc.getColumnFieldDescriptors(className).get(columnIndex);
 
@@ -203,11 +208,15 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                         }
                     }
                 }
-                //avoid duplication
+
                 try {
                     IntegrationWriter iw = getDirectDataLoader().getIntegrationWriter();
-                    if (iw.getObjectByExample(o, fieldNames) == null) {
+                    //avoid duplication
+                    InterMineObject existingObj = iw.getObjectByExample(o, fieldNames);
+                    if (existingObj == null) {
+                        objectsInRow.put(className, o);
                         getDirectDataLoader().store(o);
+                        setJoinFields(className, o);
                     }
                 } catch (ObjectStoreException e) {
                     throw new BuildException("exception while storing: " + o, e);
@@ -215,6 +224,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                     try {
                         getDirectDataLoader().close();
                     } catch (ObjectStoreException e) {
+                        System.out.println("exception when closinf for " + className);
                         throw new IllegalArgumentException(e);
                     }
                 }
@@ -251,5 +261,23 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
             getDirectDataLoader().store(dataSource);
         }
         return dataSource;
+    }
+
+    private void setJoinFields(String className, InterMineObject imo) {
+        ClassDescriptor cd = model.getClassDescriptorByName(className);
+        for (FieldDescriptor fd : cd.getAllFieldDescriptors()) {
+            if (fd instanceof ReferenceDescriptor) {
+                ReferenceDescriptor rd = (ReferenceDescriptor) fd;
+                String refName = rd.getName();
+                String refClassName = rd.getReferencedClassName();
+                int index = refClassName.lastIndexOf(".");
+                String simpleRefClassName = refClassName.substring(index + 1);
+                InterMineObject objectInRow = objectsInRow.get(simpleRefClassName);
+                if (objectInRow != null) {
+                    imo.setFieldValue(refName, objectInRow);
+                }
+
+            }
+        }
     }
 }
