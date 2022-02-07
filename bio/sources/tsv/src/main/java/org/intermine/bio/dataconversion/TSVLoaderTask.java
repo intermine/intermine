@@ -57,7 +57,11 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     private Model model;
     private DataSource dataSource;
     private Map<String, DataSet> dataSets = new HashMap<String, DataSet>();
-    private Map<String, InterMineObject> objectsInRow;
+    //map which holds all objects by values
+    private Map<String, InterMineObject> storedObjects = new HashMap();
+    //map wich hold the values in a row by class
+    private Map<String, String> valuesInRow;
+
 
     /**
      * Set the configuration file to use.
@@ -163,10 +167,10 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
             throw new BuildException("cannot parse file: " + file, e);
         }
 
-        objectsInRow = new HashMap();
+
         while (tsvIter.hasNext()) {
+            valuesInRow = new HashMap();
             String[] thisRow = (String[]) tsvIter.next();
-            //objectsInRow = new HashMap();
             Set<String> classNamesSet = dfc.getClassNames();
             Iterator classNameIter = classNamesSet.iterator();
 
@@ -187,7 +191,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                 }
 
                 List fieldClasses = dfc.getColumnFieldClasses(className);
-                Set<String> fieldNames = new HashSet<String>();
+                StringBuilder fieldValuesStringBuilder = new StringBuilder();
                 for (int columnIndex = 0; columnIndex < thisRow.length; columnIndex++) {
                     if (dfc.getColumnFieldDescriptors(className).size() <= columnIndex) {
                         // ignore - no configuration for this column
@@ -204,17 +208,18 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                             Class fieldClass = (Class) fieldClasses.get(columnIndex);
                             Object typedObject = TypeUtil.stringToObject(fieldClass, rowValue);
                             o.setFieldValue(columnAD.getName(), typedObject);
-                            fieldNames.add(columnAD.getName());
+                            fieldValuesStringBuilder.append(rowValue);
                         }
                     }
                 }
 
                 try {
-                    IntegrationWriter iw = getDirectDataLoader().getIntegrationWriter();
                     //avoid duplication
-                    InterMineObject existingObj = iw.getObjectByExample(o, fieldNames);
-                    if (existingObj == null) {
-                        objectsInRow.put(className, o);
+                    String fieldValues = fieldValuesStringBuilder.toString();
+                    valuesInRow.put(className, fieldValues);
+                    InterMineObject storedObj = storedObjects.get(fieldValues);
+                    if (storedObj == null) {
+                        storedObjects.put(fieldValues, o);
                         getDirectDataLoader().store(o);
                         setJoinFields(className, o);
                     }
@@ -272,11 +277,14 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                 String refClassName = rd.getReferencedClassName();
                 int index = refClassName.lastIndexOf(".");
                 String simpleRefClassName = refClassName.substring(index + 1);
-                InterMineObject objectInRow = objectsInRow.get(simpleRefClassName);
+                String keyInRow = valuesInRow.get(simpleRefClassName);
+                InterMineObject objectInRow = null;
+                if (keyInRow != null) {
+                    objectInRow = storedObjects.get(keyInRow);
+                }
                 if (objectInRow != null) {
                     imo.setFieldValue(refName, objectInRow);
                 }
-
             }
         }
     }
