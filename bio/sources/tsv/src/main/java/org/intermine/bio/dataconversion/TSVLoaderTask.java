@@ -16,11 +16,12 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.*;
 import org.apache.tools.ant.BuildException;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
@@ -39,6 +40,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
 
+import java.lang.reflect.Method;
+
 /**
  * Read a file of tab separated values.  Use one column as the key to look up objects and use the
  * other columns to set fields in that object.
@@ -50,7 +53,6 @@ import java.util.Arrays;
 public class TSVLoaderTask extends FileDirectDataLoaderTask
 {
     private File configurationFile;
-    private String taxonId;
     private String dataSourceName;
     private String dataSetTitle;
     private String licence;
@@ -69,14 +71,6 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
      */
     public void setConfigurationFile(File configurationFile) {
         this.configurationFile = configurationFile;
-    }
-
-    /**
-     * Set the Taxon Id of the Organism we are loading.
-     * @param taxonId the taxon id to set.
-     */
-    public void setTaxonId(String taxonId) {
-        this.taxonId = taxonId;
     }
 
     /**
@@ -112,9 +106,6 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
         if (getProject() != null) {
             configureDynamicAttributes(this);
         }
-        if (taxonId == null) {
-            throw new BuildException("taxonId needs to be set");
-        }
         if (configurationFile == null) {
             throw new BuildException("configurationFile needs to be set");
         }
@@ -126,6 +117,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
         if (dataSetTitle == null) {
             throw new BuildException("dataSetTitle needs to be set");
         }
+
         try{
             model = getDirectDataLoader().getIntegrationWriter().getModel();
         } catch (ObjectStoreException e) {
@@ -166,7 +158,6 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + file, e);
         }
-
 
         while (tsvIter.hasNext()) {
             valuesInRow = new HashMap();
@@ -213,27 +204,29 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                     }
                 }
 
-                try {
-                    //avoid duplication
-                    String fieldValues = fieldValuesStringBuilder.toString();
-                    valuesInRow.put(className, fieldValues);
-                    InterMineObject storedObj = storedObjects.get(fieldValues);
-                    if (storedObj == null) {
-                        storedObjects.put(fieldValues, o);
-                        getDirectDataLoader().store(o);
-                        setJoinFields(className, o);
-                    }
-                } catch (ObjectStoreException e) {
-                    throw new BuildException("exception while storing: " + o, e);
-                } finally {
+                //avoid duplication
+                String fieldValues = fieldValuesStringBuilder.toString();
+                valuesInRow.put(className, fieldValues);
+                InterMineObject storedObj = storedObjects.get(fieldValues);
+                if (storedObj == null) {
+                    storedObjects.put(fieldValues, o);
                     try {
-                        getDirectDataLoader().close();
+                        getDirectDataLoader().store(o);
                     } catch (ObjectStoreException e) {
-                        System.out.println("exception when closinf for " + className);
-                        throw new IllegalArgumentException(e);
+                        throw new BuildException("exception while storing: " + o, e);
                     }
+                    setJoinFields(className, o);
+                } else {
+                    setJoinFields(className, storedObj);
                 }
             }
+        }
+
+        try {
+            getDirectDataLoader().close();
+        } catch (ObjectStoreException e) {
+            System.out.println("exception when closing");
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -277,13 +270,28 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                 String refClassName = rd.getReferencedClassName();
                 int index = refClassName.lastIndexOf(".");
                 String simpleRefClassName = refClassName.substring(index + 1);
-                String keyInRow = valuesInRow.get(simpleRefClassName);
-                InterMineObject objectInRow = null;
-                if (keyInRow != null) {
-                    objectInRow = storedObjects.get(keyInRow);
-                }
-                if (objectInRow != null) {
-                    imo.setFieldValue(refName, objectInRow);
+                //e.g we do not want to set Protein.isoforms
+                if (!simpleRefClassName.equals(className)) {
+                    String keyInRow = valuesInRow.get(simpleRefClassName);
+                    InterMineObject objectInRow = null;
+                    if (keyInRow != null) {
+                        objectInRow = storedObjects.get(keyInRow);
+                    }
+                    if (objectInRow != null) {
+                        if (rd instanceof CollectionDescriptor) {
+                            String methodName = "add" + StringUtils.capitalize(refName);
+                            try {
+                                Class<?> clazz = Class.forName("org.intermine.model.bio." + className);
+                                Class<?> paramClazz = Class.forName(rd.getReferencedClassName());
+                                Method m = clazz.getMethod(methodName, new Class[]{paramClazz});
+                                m.invoke(imo, objectInRow);
+                            } catch (Exception err) {
+                                throw new BuildException(err);
+                            }
+                        } else {
+                            imo.setFieldValue(refName, objectInRow);
+                        }
+                    }
                 }
             }
         }
