@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
+import java.util.Collections;
 
 import java.lang.reflect.Method;
 
@@ -58,7 +59,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     private String licence;
     private Model model;
     private DataSource dataSource;
-    private Map<String, DataSet> dataSets = new HashMap<String, DataSet>();
+    private DataSet dataSet;
     //map which holds all objects by values
     private Map<String, InterMineObject> storedObjects = new HashMap();
     //map wich hold the values in a row by class
@@ -142,7 +143,49 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
             throw new BuildException("unable to read configuration for "
                                      + this.getClass().getName(), e);
         }
+        initDataSet();
         executeInternal(dfc, file);
+    }
+
+    private void initDataSet() {
+        initDataSource();
+        try {
+            DataSet newDataSet = getDirectDataLoader().createObject(DataSet.class);
+            newDataSet.setName(dataSetTitle);
+            IntegrationWriter iw = getDirectDataLoader().getIntegrationWriter();
+            DataSet existingDataSet = iw.getObjectByExample(newDataSet, Collections.singleton("name"));
+            if (existingDataSet == null) {
+                dataSet = newDataSet;
+                if (licence != null) {
+                    dataSet.setLicence(licence);
+                }
+                if (dataSource != null) {
+                    dataSet.setDataSource(dataSource);
+                }
+                getDirectDataLoader().store(dataSet);
+            } else {
+                dataSet = existingDataSet;
+            }
+        } catch (ObjectStoreException e) {
+                throw new BuildException("exception while init data set: " + dataSetTitle, e);
+        }
+    }
+
+    private void initDataSource() {
+        try {
+            DataSource newDataSource = getDirectDataLoader().createObject(DataSource.class);
+            newDataSource.setName(dataSourceName);
+            IntegrationWriter iw = getDirectDataLoader().getIntegrationWriter();
+            DataSource existingDataSource = iw.getObjectByExample(newDataSource, Collections.singleton("name"));
+            if (existingDataSource == null) {
+                dataSource = newDataSource;
+                getDirectDataLoader().store(dataSource);
+            } else {
+                dataSource = existingDataSource;
+            }
+        } catch (ObjectStoreException e) {
+            throw new BuildException("exception while init data source: " + dataSourceName, e);
+        }
     }
 
     /**
@@ -172,7 +215,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
                 try {
                     o = getDirectDataLoader().createObject(fullyClassName);
                     if (o instanceof BioEntity) {
-                        ((BioEntity) o).addDataSets(getDataSet());
+                        ((BioEntity) o).addDataSets(dataSet);
                     }
                 } catch (ClassNotFoundException e) {
                     throw new BuildException("cannot find class while reading: " + file, e);
@@ -228,37 +271,6 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
             System.out.println("exception when closing");
             throw new IllegalArgumentException(e);
         }
-    }
-
-    /**
-     * Return the DataSet to add to each object.
-     * @return the DataSet
-     * @throws ObjectStoreException if there is an ObjectStore problem
-     */
-    public DataSet getDataSet() throws ObjectStoreException {
-        if (dataSets.containsKey(dataSetTitle)) {
-            return dataSets.get(dataSetTitle);
-        }
-        DataSet dataSet = getDirectDataLoader().createObject(DataSet.class);
-        dataSet.setName(dataSetTitle);
-        if (licence != null) {
-            dataSet.setLicence(licence);
-        }
-        if (dataSourceName != null) {
-            dataSet.setDataSource(getDataSource());
-        }
-        getDirectDataLoader().store(dataSet);
-        dataSets.put(dataSetTitle, dataSet);
-        return dataSet;
-    }
-
-    private DataSource getDataSource() throws ObjectStoreException {
-        if (dataSource == null) {
-            dataSource = getDirectDataLoader().createObject(DataSource.class);
-            dataSource.setName(dataSourceName);
-            getDirectDataLoader().store(dataSource);
-        }
-        return dataSource;
     }
 
     private void setJoinFields(String className, InterMineObject imo) {
