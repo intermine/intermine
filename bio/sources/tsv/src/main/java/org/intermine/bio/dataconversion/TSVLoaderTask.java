@@ -57,6 +57,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     private String dataSourceName;
     private String dataSetTitle;
     private String licence;
+    private String hasHeader;
     private Model model;
     private DataSource dataSource;
     private DataSet dataSet;
@@ -88,6 +89,14 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
      */
     public void setDataSetTitle(String dataSetTitle) {
         this.dataSetTitle = dataSetTitle;
+    }
+
+    /**
+     * If a value is specified this title will used when a DataSet is created.
+     * @param dataSetTitle the title of the DataSets of any new features
+     */
+    public void setHasHeader(String hasHeader) {
+        this.hasHeader = hasHeader;
     }
 
     /**
@@ -202,6 +211,9 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
             throw new BuildException("cannot parse file: " + file, e);
         }
 
+        if (hasHeader()) {
+            tsvIter.next();
+        }
         while (tsvIter.hasNext()) {
             valuesInRow = new HashMap();
             String[] thisRow = (String[]) tsvIter.next();
@@ -271,6 +283,13 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
             System.out.println("exception when closing");
             throw new IllegalArgumentException(e);
         }
+    }
+
+    private boolean hasHeader() {
+        if (hasHeader == null || hasHeader.equalsIgnoreCase("true")) {
+            return true;
+        }
+        return false;
     }
 
     private void setJoinFields(String className, InterMineObject imo) {
