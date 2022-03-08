@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.TreeMap;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This class specifies how the values in a tab or comma separated file should be used to fill in
@@ -36,19 +37,86 @@ import java.util.TreeMap;
  * @author Kim Rutherford
  */
 
-public class DelimitedFileConfiguration
+public class DelimitedConfiguration
 {
     Map<String, Map> classNameColumnFieldDescriptorMap = new HashMap();
     private ClassDescriptor configClassDescriptor = null;
     private Map<String, List> classNameColumnFieldDescriptors = new HashMap();
 
     /**
-     * Create a new DelimitedFileConfiguration from an InputStream.
+     * Create a new DelimitedConfiguration from an InputStream.
      * @param model The model to use when looking for ClassDescriptors and FieldDescriptors
      * @param inputStream The InputStream to read the configuration from
      * @throws IOException throws if the read fails
      */
-    public DelimitedFileConfiguration (Model model, InputStream inputStream)
+    public DelimitedConfiguration(Model model, String columns)
+            throws IOException {
+        Map columnFieldDescriptorMap;
+        String[] colummnsConfig = StringUtils.split(columns, ",");
+        int keyColumnNumber;
+        for (int index = 0; index < colummnsConfig.length; index++) {
+            keyColumnNumber = index;
+            String value = colummnsConfig[index].trim();
+            System.out.println("keyColumnNumber: " + keyColumnNumber + " and value: " + value);
+            if (value.isEmpty() || value.equalsIgnoreCase("null")) {
+                continue;
+            }
+            String className = value.substring(0, value.indexOf("."));
+            configClassDescriptor = model.getClassDescriptorByName(className);
+            if (configClassDescriptor == null) {
+                throw new IllegalArgumentException("cannot find ClassDescriptor for: "
+                        + className);
+            }
+
+            columnFieldDescriptorMap = classNameColumnFieldDescriptorMap.get(className);
+            if (columnFieldDescriptorMap == null) {
+                columnFieldDescriptorMap = new TreeMap();
+                classNameColumnFieldDescriptorMap.put(className, columnFieldDescriptorMap);
+            }
+
+            String fieldName = value.substring(value.indexOf(".") + 1);
+            FieldDescriptor columnFD =
+                    configClassDescriptor.getFieldDescriptorByName(fieldName);
+            if (columnFD == null) {
+                throw new IllegalArgumentException("cannot find FieldDescriptor for "
+                        + fieldName + " in " + className);
+            }
+
+            if (!columnFD.isAttribute()) {
+                String message = "field: " + fieldName + " in "
+                        + className + " is not an attribute field so cannot be used as a "
+                        + "className in DelimitedConfiguration";
+                throw new IllegalArgumentException(message);
+            }
+
+            columnFieldDescriptorMap.put(new Integer(keyColumnNumber), columnFD);
+        }
+
+        Iterator classNameIter = getClassNames().iterator();
+        while (classNameIter.hasNext()) {
+            String className = (String) classNameIter.next();
+            int mapMax = findMapMaxKey(classNameColumnFieldDescriptorMap.get(className));
+
+            List<FieldDescriptor> columnFieldDescriptors = new ArrayList(mapMax + 1);
+
+            columnFieldDescriptorMap = classNameColumnFieldDescriptorMap.get(className);
+            for (int columnNumber = 0; columnNumber < mapMax + 1; columnNumber++) {
+                FieldDescriptor columnFD =
+                        (FieldDescriptor) columnFieldDescriptorMap.get(new Integer(columnNumber));
+
+                columnFieldDescriptors.add(columnFD);
+            }
+            classNameColumnFieldDescriptors.put(className, columnFieldDescriptors);
+        }
+    }
+
+    /**
+     * Create a new DelimitedConfiguration from an InputStream.
+     * @param model The model to use when looking for ClassDescriptors and FieldDescriptors
+     * @param inputStream The InputStream to read the configuration from
+     * @throws IOException throws if the read fails
+     */
+    public DelimitedConfiguration(Model model, InputStream inputStream)
         throws IOException {
 
         Properties properties = new Properties();
@@ -91,7 +159,7 @@ public class DelimitedFileConfiguration
                 if (!columnFD.isAttribute()) {
                     String message = "field: " + fieldName + " in "
                             + className + " is not an attribute field so cannot be used as a "
-                            + "className in DelimitedFileConfiguration";
+                            + "className in DelimitedConfiguration";
                     throw new IllegalArgumentException(message);
                 }
 
@@ -99,7 +167,7 @@ public class DelimitedFileConfiguration
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("column number (" + key + ") not parsable "
                                                    + "in property file for "
-                                                   + "DelimitedFileConfiguration");
+                                                   + "DelimitedConfiguration");
             }
         }
 

@@ -38,8 +38,6 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
 import java.util.Collections;
 
 import java.lang.reflect.Method;
@@ -54,7 +52,7 @@ import java.lang.reflect.Method;
 
 public class TSVLoaderTask extends FileDirectDataLoaderTask
 {
-    private File configurationFile;
+    private String columns;
     private String dataSourceName;
     private String dataSetTitle;
     private String licence;
@@ -70,11 +68,11 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
 
 
     /**
-     * Set the configuration file to use.
-     * @param configurationFile the configuration File
+     * Set the columns configuration to use.
+     * @param columns the columns configuration
      */
-    public void setConfigurationFile(File configurationFile) {
-        this.configurationFile = configurationFile;
+    public void setColumns(String columns) {
+        this.columns = columns;
     }
 
     /**
@@ -133,8 +131,8 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
         if (getProject() != null) {
             configureDynamicAttributes(this);
         }
-        if (configurationFile == null) {
-            throw new BuildException("configurationFile needs to be set");
+        if (columns == null) {
+            throw new BuildException("columns needs to be set");
         }
 
         if (dataSourceName == null) {
@@ -156,15 +154,15 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * Query all objects of the class given by the className specified in the configurationFile.
+     * Query all objects of the class given by the className specified in the columns.
      * Set fields in the objects by using the tab separated files as input.
      * @param file the File to process
      * @throws BuildException if an ObjectStore method fails
      */
     public void processFile(File file) {
-        DelimitedFileConfiguration dfc;
+        DelimitedConfiguration dfc;
         try {
-            dfc = new DelimitedFileConfiguration(model, new FileInputStream(configurationFile));
+            dfc = new DelimitedConfiguration(model, columns);
         } catch (Exception e) {
             throw new BuildException("unable to read configuration for "
                                      + this.getClass().getName(), e);
@@ -220,7 +218,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
      * @param file The file to read from
      * @throws BuildException if an ObjectStore method fails
      */
-    void executeInternal(DelimitedFileConfiguration dfc, File file) {
+    void executeInternal(DelimitedConfiguration dfc, File file) {
         Iterator tsvIter;
         try {
             if (separator.equals(Separator.CSV)) {
