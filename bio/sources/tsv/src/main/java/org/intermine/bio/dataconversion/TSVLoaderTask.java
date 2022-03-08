@@ -9,6 +9,7 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.objectstore.ObjectStoreException;
@@ -58,6 +59,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     private String dataSetTitle;
     private String licence;
     private String hasHeader;
+    private Separator separator = Separator.TAB;
     private Model model;
     private DataSource dataSource;
     private DataSet dataSet;
@@ -92,13 +94,28 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * If a value is specified this title will used when a DataSet is created.
-     * @param dataSetTitle the title of the DataSets of any new features
+     * Specify if the file has a header
+     * @param hasHeader specify if the fila has a geader
      */
     public void setHasHeader(String hasHeader) {
         this.hasHeader = hasHeader;
     }
 
+    /**
+     * Specify the separator, tab or comma. Default value is tab
+     * @param separator the separator
+     */
+    public void setSeparator(String separator) {
+        if(StringUtils.isEmpty(separator) || separator.equalsIgnoreCase("TAB")) {
+            this.separator = Separator.TAB;
+        } else if (separator.equalsIgnoreCase("CSV")) {
+            this.separator = Separator.CSV;
+        }
+    }
+
+    private enum Separator {
+        TAB, CSV;
+    }
     /**
      * If a value is specified this title will used when a DataSet is created.
      * @param dataSetTitle the title of the DataSets of any new features
@@ -206,7 +223,11 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     void executeInternal(DelimitedFileConfiguration dfc, File file) {
         Iterator tsvIter;
         try {
-            tsvIter = FormattedTextParser.parseTabDelimitedReader(new FileReader(file));
+            if (separator.equals(Separator.CSV)) {
+                tsvIter = FormattedTextParser.parseCsvDelimitedReader(new FileReader(file));
+            } else {
+                tsvIter = FormattedTextParser.parseTabDelimitedReader(new FileReader(file));
+            }
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + file, e);
         }
