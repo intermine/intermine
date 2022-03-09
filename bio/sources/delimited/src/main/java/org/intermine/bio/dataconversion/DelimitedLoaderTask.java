@@ -50,7 +50,7 @@ import java.lang.reflect.Method;
  * @author Kim Rutherford
  */
 
-public class TSVLoaderTask extends FileDirectDataLoaderTask
+public class DelimitedLoaderTask extends FileDirectDataLoaderTask
 {
     private String columns;
     private String dataSourceName;
@@ -104,15 +104,15 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
      * @param separator the separator
      */
     public void setSeparator(String separator) {
-        if(StringUtils.isEmpty(separator) || separator.equalsIgnoreCase("TAB")) {
+        if(StringUtils.isEmpty(separator) || separator.equalsIgnoreCase("tab")) {
             this.separator = Separator.TAB;
-        } else if (separator.equalsIgnoreCase("CSV")) {
-            this.separator = Separator.CSV;
+        } else if (separator.equalsIgnoreCase("comma")) {
+            this.separator = Separator.COMMA;
         }
     }
 
     private enum Separator {
-        TAB, CSV;
+        TAB, COMMA;
     }
     /**
      * If a value is specified this title will used when a DataSet is created.
@@ -221,7 +221,7 @@ public class TSVLoaderTask extends FileDirectDataLoaderTask
     void executeInternal(DelimitedConfiguration dfc, File file) {
         Iterator tsvIter;
         try {
-            if (separator.equals(Separator.CSV)) {
+            if (separator.equals(Separator.COMMA)) {
                 tsvIter = FormattedTextParser.parseCsvDelimitedReader(new FileReader(file));
             } else {
                 tsvIter = FormattedTextParser.parseTabDelimitedReader(new FileReader(file));
