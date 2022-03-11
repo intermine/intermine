@@ -17,15 +17,12 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
 
@@ -44,9 +41,9 @@ public class DelimitedConfiguration
     private Map<String, List> classNameColumnFieldDescriptors = new HashMap();
 
     /**
-     * Create a new DelimitedConfiguration from an InputStream.
+     * Create a new DelimitedConfiguration
      * @param model The model to use when looking for ClassDescriptors and FieldDescriptors
-     * @param inputStream The InputStream to read the configuration from
+     * @param columns to read the configuration from
      * @throws IOException throws if the read fails
      */
     public DelimitedConfiguration(Model model, String columns)
@@ -57,7 +54,7 @@ public class DelimitedConfiguration
         for (int index = 0; index < colummnsConfig.length; index++) {
             keyColumnNumber = index;
             String value = colummnsConfig[index].trim();
-            if (value.isEmpty() || value.equalsIgnoreCase("null")) {
+            if (value.isEmpty() || "null".equalsIgnoreCase(value)) {
                 continue;
             }
             String className = value.substring(0, value.indexOf("."));
@@ -89,85 +86,6 @@ public class DelimitedConfiguration
             }
 
             columnFieldDescriptorMap.put(new Integer(keyColumnNumber), columnFD);
-        }
-
-        Iterator classNameIter = getClassNames().iterator();
-        while (classNameIter.hasNext()) {
-            String className = (String) classNameIter.next();
-            int mapMax = findMapMaxKey(classNameColumnFieldDescriptorMap.get(className));
-
-            List<FieldDescriptor> columnFieldDescriptors = new ArrayList(mapMax + 1);
-
-            columnFieldDescriptorMap = classNameColumnFieldDescriptorMap.get(className);
-            for (int columnNumber = 0; columnNumber < mapMax + 1; columnNumber++) {
-                FieldDescriptor columnFD =
-                        (FieldDescriptor) columnFieldDescriptorMap.get(new Integer(columnNumber));
-
-                columnFieldDescriptors.add(columnFD);
-            }
-            classNameColumnFieldDescriptors.put(className, columnFieldDescriptors);
-        }
-    }
-
-    /**
-     * Create a new DelimitedConfiguration from an InputStream.
-     * @param model The model to use when looking for ClassDescriptors and FieldDescriptors
-     * @param inputStream The InputStream to read the configuration from
-     * @throws IOException throws if the read fails
-     */
-    public DelimitedConfiguration(Model model, InputStream inputStream)
-        throws IOException {
-
-        Properties properties = new Properties();
-        properties.load(inputStream);
-
-        Map columnFieldDescriptorMap;
-
-
-        Enumeration enumeration = properties.propertyNames();
-
-        while (enumeration.hasMoreElements()) {
-            String key = (String) enumeration.nextElement();
-            String columnNumberString = key.substring(7);
-
-            try {
-                int keyColumnNumber = Integer.valueOf(columnNumberString).intValue();
-
-                String value = properties.getProperty(key);
-                String className = value.substring(0, value.indexOf("."));
-                configClassDescriptor = model.getClassDescriptorByName(className);
-                if (configClassDescriptor == null) {
-                    throw new IllegalArgumentException("cannot find ClassDescriptor for: "
-                            + className);
-                }
-
-                columnFieldDescriptorMap = classNameColumnFieldDescriptorMap.get(className);
-                if (columnFieldDescriptorMap == null) {
-                    columnFieldDescriptorMap = new TreeMap();
-                    classNameColumnFieldDescriptorMap.put(className, columnFieldDescriptorMap);
-                }
-
-                String fieldName = value.substring(value.indexOf(".") + 1);
-                FieldDescriptor columnFD =
-                    configClassDescriptor.getFieldDescriptorByName(fieldName);
-                if (columnFD == null) {
-                    throw new IllegalArgumentException("cannot find FieldDescriptor for "
-                                                       + fieldName + " in " + className);
-                }
-
-                if (!columnFD.isAttribute()) {
-                    String message = "field: " + fieldName + " in "
-                            + className + " is not an attribute field so cannot be used as a "
-                            + "className in DelimitedConfiguration";
-                    throw new IllegalArgumentException(message);
-                }
-
-                columnFieldDescriptorMap.put(new Integer(keyColumnNumber), columnFD);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("column number (" + key + ") not parsable "
-                                                   + "in property file for "
-                                                   + "DelimitedConfiguration");
-            }
         }
 
         Iterator classNameIter = getClassNames().iterator();
@@ -224,6 +142,7 @@ public class DelimitedConfiguration
      * Return a List of the configured AttributeDescriptors.  The List is indexed by column number
      * (starting with column 0).  If a column has no configured AttributeDescriptor the List will
      * have null at that index.
+     * @param className the className
      * @return the configured AttributeDescriptors
      */
     public List getColumnFieldDescriptors(String className) {
@@ -231,8 +150,8 @@ public class DelimitedConfiguration
     }
 
     /**
-     * Return a List of Class objects corresponding to the fields returned by
-     * getColumnFieldDescriptors().
+     * Return a List of Class objects corresponding to the className
+     * @param className the className
      * @return the Class objects
      */
     public List getColumnFieldClasses(String className) {

@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.BioEntity;
@@ -29,10 +28,8 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.util.DynamicUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.Iterator;
 import java.util.List;
@@ -105,9 +102,9 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
      * @param separator the separator
      */
     public void setSeparator(String separator) {
-        if(StringUtils.isEmpty(separator) || separator.equalsIgnoreCase("tab")) {
+        if (StringUtils.isEmpty(separator) || "tab".equalsIgnoreCase(separator)) {
             this.separator = Separator.TAB;
-        } else if (separator.equalsIgnoreCase("comma")) {
+        } else if ("comma".equalsIgnoreCase(separator)) {
             this.separator = Separator.COMMA;
         }
     }
@@ -117,8 +114,8 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * If a value is specified this title will used when a DataSet is created.
-     * @param dataSetTitle the title of the DataSets of any new features
+     * Set the licence
+     * @param licence the licence
      */
     public void setLicence(String licence) {
         this.licence = licence;
@@ -132,7 +129,9 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
         // don't configure dynamic attributes if this is a unit test!
         if (getProject() != null) {
             configureDynamicAttributes(this);
-        } else { //create a project dfor the unit test to prevent npe AbstractFileSet.setupDirectoryScanner
+        } else {
+            //create a project dfor the unit test to prevent
+            // npe AbstractFileSet.setupDirectoryScanner
             Project proj = new Project();
             proj.init();
             setProject(proj);
@@ -149,7 +148,7 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
             throw new BuildException("dataSetTitle needs to be set");
         }
 
-        try{
+        try {
             model = getDirectDataLoader().getIntegrationWriter().getModel();
         } catch (ObjectStoreException e) {
             throw new BuildException("ObjectStore problem");
@@ -183,7 +182,8 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
             DataSet newDataSet = getDirectDataLoader().createObject(DataSet.class);
             newDataSet.setName(dataSetTitle);
             IntegrationWriter iw = getDirectDataLoader().getIntegrationWriter();
-            DataSet existingDataSet = iw.getObjectByExample(newDataSet, Collections.singleton("name"));
+            DataSet existingDataSet = iw.getObjectByExample(newDataSet,
+                    Collections.singleton("name"));
             if (existingDataSet == null) {
                 dataSet = newDataSet;
                 if (licence != null) {
@@ -197,7 +197,7 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
                 dataSet = existingDataSet;
             }
         } catch (ObjectStoreException e) {
-                throw new BuildException("exception while init data set: " + dataSetTitle, e);
+            throw new BuildException("exception while init data set: " + dataSetTitle, e);
         }
     }
 
@@ -206,7 +206,8 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
             DataSource newDataSource = getDirectDataLoader().createObject(DataSource.class);
             newDataSource.setName(dataSourceName);
             IntegrationWriter iw = getDirectDataLoader().getIntegrationWriter();
-            DataSource existingDataSource = iw.getObjectByExample(newDataSource, Collections.singleton("name"));
+            DataSource existingDataSource = iw.getObjectByExample(newDataSource,
+                    Collections.singleton("name"));
             if (existingDataSource == null) {
                 dataSource = newDataSource;
                 getDirectDataLoader().store(dataSource);
@@ -270,7 +271,8 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
                         continue;
                     }
                     AttributeDescriptor columnAD =
-                            (AttributeDescriptor) dfc.getColumnFieldDescriptors(className).get(columnIndex);
+                        (AttributeDescriptor) dfc.getColumnFieldDescriptors(className)
+                                .get(columnIndex);
 
                     if (columnAD == null) {
                         // ignore - no configuration for this column
@@ -306,13 +308,12 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
         try {
             getDirectDataLoader().close();
         } catch (ObjectStoreException e) {
-            System.out.println("exception when closing");
             throw new IllegalArgumentException(e);
         }
     }
 
     private boolean hasHeader() {
-        if (hasHeader == null || hasHeader.equalsIgnoreCase("true")) {
+        if (hasHeader == null || "true".equalsIgnoreCase(hasHeader)) {
             return true;
         }
         return false;
@@ -338,7 +339,8 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
                         if (rd instanceof CollectionDescriptor) {
                             String methodName = "add" + StringUtils.capitalize(refName);
                             try {
-                                Class<?> clazz = Class.forName("org.intermine.model.bio." + className);
+                                Class<?> clazz =
+                                    Class.forName("org.intermine.model.bio." + className);
                                 Class<?> paramClazz = Class.forName(rd.getReferencedClassName());
                                 Method m = clazz.getMethod(methodName, new Class[]{paramClazz});
                                 m.invoke(imo, objectInRow);
