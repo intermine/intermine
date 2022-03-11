@@ -18,6 +18,7 @@ import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.BioEntity;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
@@ -114,6 +115,7 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
     private enum Separator {
         TAB, COMMA;
     }
+
     /**
      * If a value is specified this title will used when a DataSet is created.
      * @param dataSetTitle the title of the DataSets of any new features
@@ -130,6 +132,10 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
         // don't configure dynamic attributes if this is a unit test!
         if (getProject() != null) {
             configureDynamicAttributes(this);
+        } else { //create a project dfor the unit test to prevent npe AbstractFileSet.setupDirectoryScanner
+            Project proj = new Project();
+            proj.init();
+            setProject(proj);
         }
         if (columns == null) {
             throw new BuildException("columns needs to be set");
@@ -241,7 +247,8 @@ public class DelimitedLoaderTask extends FileDirectDataLoaderTask
 
             while (classNameIter.hasNext()) {
                 String className = (String) classNameIter.next();
-                String fullyClassName = model.getClassDescriptorByName(className).getName();
+                ClassDescriptor classDescriptor = model.getClassDescriptorByName(className);
+                String fullyClassName = classDescriptor.getName();
                 InterMineObject o;
                 try {
                     o = getDirectDataLoader().createObject(fullyClassName);

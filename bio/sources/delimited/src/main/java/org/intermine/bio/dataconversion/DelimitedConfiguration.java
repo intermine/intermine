@@ -57,7 +57,6 @@ public class DelimitedConfiguration
         for (int index = 0; index < colummnsConfig.length; index++) {
             keyColumnNumber = index;
             String value = colummnsConfig[index].trim();
-            System.out.println("keyColumnNumber: " + keyColumnNumber + " and value: " + value);
             if (value.isEmpty() || value.equalsIgnoreCase("null")) {
                 continue;
             }
