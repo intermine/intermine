@@ -106,12 +106,6 @@ public class FileConverterTask extends ConverterTask
             }
             for (int i = 0; i < files.length; i++) {
                 File f = new File(ds.getBasedir(), files[i]);
-                if (i<10) {
-                    // limit how many of these we spit out
-                    System.err.println("Processing file: " + f.getPath());
-                } else if (i==10) {
-                    System.err.println("Processing more files...");
-                }
                 converter.setCurrentFile(f);
                 FileReader fr = null;
                 BufferedReader br = null;
