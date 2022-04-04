@@ -51,13 +51,10 @@
     <reference name="location" referenced-type="Location"/>
   </class>
 
-  <!-- CDSRegion are SequenceFeatures from GFFs; CDS is a BioEntity which has a CDSRegion collection -->
-  <class name="CDS" extends="BioEntity" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000316">
-    <attribute name="length" type="java.lang.Integer" term="http://semanticscience.org/resource/SIO_000041"/>
-    <reference name="sequence" referenced-type="Sequence"/>
+  <!-- CDSRegion are SequenceFeatures from GFFs; CDS is sourced from a FASTA -->
+  <class name="CDS" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000316">
     <reference name="gene" referenced-type="Gene" reverse-reference="CDSs"/>
-    <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
-    <reference name="transcript" referenced-type="Transcript" reverse-reference="CDSs"/>
+    <reference name="protein" referenced-type="Protein" reverse-reference="CDS"/>
     <collection name="regions" referenced-type="CDSRegion" reverse-reference="CDS"/>
   </class>
   <class name="CDSRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000851">
@@ -71,11 +68,11 @@
   <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000704">
     <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
     <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
-    <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
-    <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
-    <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
     <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
-    <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
+    <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
+    <collection name="introns" referenced-type="Intron" reverse-reference="gene"/>
+    <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
+    <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
     <collection name="proteinDomains" referenced-type="ProteinDomain"/>
   </class>
   
@@ -93,7 +90,7 @@
   </class>
 
   <class name="Intron" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000188">
-    <collection name="genes" referenced-type="Gene" reverse-reference="introns"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="introns"/>
   </class>
 
   <class name="MRNA" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000234">
@@ -101,9 +98,10 @@
     <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
   </class>
 
+  <!-- one transcript per protein -->
   <class name="Protein" is-interface="true" term="http://semanticscience.org/resource/SIO_010043">
-    <collection name="CDSs" referenced-type="CDS" reverse-reference="protein"/>
-    <collection name="transcripts" referenced-type="Transcript" reverse-reference="protein"/>
+    <reference name="CDS" referenced-type="CDS" reverse-reference="protein"/>
+    <reference name="transcript" referenced-type="Transcript" reverse-reference="protein"/>
     <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
     <collection name="proteinHmmMatches" referenced-type="ProteinHmmMatch" reverse-reference="protein"/>
   </class>
@@ -124,8 +122,7 @@
   </class>
   
   <class name="Transcript" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000673">
-    <reference name="protein" referenced-type="Protein" reverse-reference="transcripts"/>
-    <reference name="CDSs" referenced-type="CDS" reverse-reference="transcript"/>
+    <reference name="protein" referenced-type="Protein" reverse-reference="transcript"/>
   </class>
   
   <class name="UTR" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000203">
