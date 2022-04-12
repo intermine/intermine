@@ -59,9 +59,19 @@ public class TemplateResultService extends QueryResultService
     protected void execute() {
         TemplateManager templateManager = this.im.getTemplateManager();
         TemplateResultInput input = getInput();
-        TemplateQuery template;
+        TemplateQuery template = null;
         Profile profile = getPermission().getProfile();
-        template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
+        if (profile.isSuperuser() && input.getUserName() != null) {
+            Profile inputProfile = im.getProfileManager().getProfile(input.getUserName());
+            if (inputProfile != null) {
+                template = templateManager.getUserOrGlobalTemplate(inputProfile, input.getName());
+            } else {
+                throw new ResourceNotFoundException(
+                    "The user " + input.getUserName() + " doesn't exist");
+            }
+        } else {
+            template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
+        }
         if (template == null) {
             throw new ResourceNotFoundException(
                 "You do not have access to a template called '"
