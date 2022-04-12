@@ -13,12 +13,19 @@ package org.intermine.webservice.server.template;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateHelper;
+import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 
+import org.intermine.webservice.server.exceptions.NotAcceptableException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.UnauthorizedException;
 import org.intermine.webservice.server.output.JSONFormatter;
+import org.intermine.webservice.server.output.Output;
+import org.intermine.webservice.server.output.PlainFormatter;
+import org.intermine.webservice.server.output.StreamedOutput;
 
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Arrays;
@@ -41,8 +48,14 @@ public class AllAvailableTemplatesService extends WebService
     }
 
     @Override
+    protected Output makeXMLOutput(PrintWriter out, String separator) {
+        ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + ".xml");
+        return new StreamedOutput(out, new PlainFormatter(), separator);
+    }
+
+    @Override
     protected Format getDefaultFormat() {
-        return Format.JSON;
+        return Format.XML;
     }
 
     @Override
@@ -58,10 +71,23 @@ public class AllAvailableTemplatesService extends WebService
                 throw new UnauthorizedException("The request must be authenticated"
                         + " by a super user");
             }
-            Map<String, Object> attributes = new HashMap<String, Object>();
-            attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
-            output.setHeaderAttributes(attributes);
-            output.addResultItem(Arrays.asList(TemplateHelper.allTemplatesMapToJson(im)));
+            switch (getFormat()) {
+                case XML:
+                    output.addResultItem(Arrays.asList(TemplateHelper.allTemplatesMapToXml(im)));
+                    break;
+                case JSON:
+                    Map<String, Object> attributes = new HashMap<String, Object>();
+                    attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
+                    output.setHeaderAttributes(attributes);
+                    output.addResultItem(Arrays.asList(TemplateHelper.allTemplatesMapToJson(im)));
+                    break;
+                case TEXT:
+                    throw new ServiceException("Not implemented: " + Format.TEXT);
+                case HTML:
+                    throw new ServiceException("Not implemented: " + Format.HTML);
+                default:
+                    throw new NotAcceptableException();
+            }
         } else {
             throw new UnauthorizedException("The request must be authenticated by a super user");
         }

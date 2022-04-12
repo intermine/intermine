@@ -33,6 +33,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 
@@ -122,6 +123,41 @@ public final class TemplateHelper
      */
     public static String apiTemplateMapToXml(Map<String, ApiTemplate> templates, int version) {
         return templateMapToXml(downCast(templates), version);
+    }
+
+    /**
+     * Serialse a map of all templates to XML.
+     * @param im The intermine API
+     * @return An XML serialise.
+     */
+    public static String allTemplatesMapToXml(InterMineAPI im) {
+        StringWriter sw = new StringWriter();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+
+        try {
+            XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+            writer.writeStartElement("template-queries");
+            try {
+                Collection<Profile> profiles = im.getProfileManager().getAllUsers();
+                Iterator it = profiles.iterator();
+
+                while (it.hasNext()) {
+                    Profile profile = (Profile) it.next();
+
+                    Map<String, TemplateQuery> templates = downCast(profile.getSavedTemplates());
+                    for (TemplateQuery template : templates.values()) {
+                        TemplateQueryBinding.marshal(template, profile.getUsername(), writer,
+                                PathQuery.USERPROFILE_VERSION);
+                    }
+                }
+                writer.writeEndElement();
+            } catch (ObjectStoreException ex) {
+
+            }
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
+        return sw.toString();
     }
 
     private static Map<String, TemplateQuery> downCast(Map<String, ApiTemplate> templates) {
