@@ -3909,6 +3909,7 @@ may be polled later.
                 Get a listing of all templates configured in an InterMine instance by any user. Only admin users can access it
             </description>
             <returns>
+                <format>xml</format>
                 <format accept="application/json">json</format>
             </returns>
         </method>

@@ -60,7 +60,7 @@ public class AllAvailableTemplatesService extends WebService
 
     @Override
     protected boolean canServe(Format format) {
-        return Format.JSON_FORMATS.contains(format);
+        return Format.BASIC_FORMATS.contains(format);
     }
 
     @Override
