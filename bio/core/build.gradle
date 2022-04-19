@@ -11,11 +11,6 @@ buildscript {
 apply plugin: 'dbmodel'
 apply plugin: 'biocore-dbmodel'
 
-repositories {
-    //temporary for bio-source-flymine-static
-    jcenter()
-}
-
 sourceSets {
     main {
         java {

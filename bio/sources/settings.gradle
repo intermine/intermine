@@ -3,6 +3,7 @@ rootProject.name = 'bio-sources'
 include ':bio-source-biogrid',
 ':bio-source-chado-db',
 ':bio-source-do',
+':bio-source-delimited',
 ':bio-source-eco',
 ':bio-source-ensembl-compara',
 ':bio-source-entrez-organism',
@@ -52,6 +53,7 @@ project(':bio-source-isa').projectDir = new File(settingsDir, './isa')
 project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
 project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
 project(':bio-source-do').projectDir = new File(settingsDir, './do')
+project(':bio-source-delimited').projectDir = new File(settingsDir, './delimited')
 project(':bio-source-eco').projectDir = new File(settingsDir, './eco')
 project(':bio-source-ensembl-compara').projectDir = new File(settingsDir, './ensembl-compara')
 project(':bio-source-entrez-organism').projectDir = new File(settingsDir, './entrez-organism')
