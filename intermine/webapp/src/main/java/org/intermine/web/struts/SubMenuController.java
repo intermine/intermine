@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -41,7 +42,7 @@ public class SubMenuController extends TilesAction
         WebState webState = SessionMethods.getWebState(request.getSession());
 
         if (subtab != null && subtab.length() != 0) {
-            webState.addSubtab("subtab" + pageName, subtab);
+            webState.addSubtab("subtab" + pageName, StringEscapeUtils.escapeHtml(subtab));
         }
 
         request.setAttribute("subtabs", webState.getSubtabs());
