@@ -206,6 +206,7 @@
     <class name="SyntenyBlock" is-interface="true">
         <collection name="syntenicRegions" referenced-type="SyntenicRegion" reverse-reference="syntenyBlock" />
         <collection name="dataSets" referenced-type="DataSet" />
+        <collection name="publications" referenced-type="Publication" />
     </class>
     <class name="SyntenicRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0005858">
         <reference name="syntenyBlock" referenced-type="SyntenyBlock" reverse-reference="syntenicRegions"/>
