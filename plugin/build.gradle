@@ -4,7 +4,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group 'org.intermine'
-version '5.0.6'
+version '5.0.7'
 
 sourceCompatibility = 1.8
 
