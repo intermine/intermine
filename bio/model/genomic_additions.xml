@@ -51,15 +51,14 @@
     <reference name="location" referenced-type="Location"/>
   </class>
 
-  <!-- CDSRegion are SequenceFeatures from GFFs; CDS is sourced from a FASTA -->
+  <!-- CDS is sourced from a FASTA and contains the full sequence, related to gene and protein by ID matching -->
   <class name="CDS" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000316">
     <reference name="gene" referenced-type="Gene" reverse-reference="CDSs"/>
     <reference name="protein" referenced-type="Protein" reverse-reference="CDS"/>
-    <collection name="regions" referenced-type="CDSRegion" reverse-reference="CDS"/>
   </class>
-  <class name="CDSRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000851">
-    <reference name="CDS" referenced-type="CDS" reverse-reference="regions"/>
-  </class>
+
+  <!-- CDSRegion is a type=CDS SequenceFeature from a GFF and is smaller coding regions -->
+  <class name="CDSRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000851"/>
 
   <class name="Exon" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000147">
     <reference name="gene" referenced-type="Gene" reverse-reference="exons"/>
