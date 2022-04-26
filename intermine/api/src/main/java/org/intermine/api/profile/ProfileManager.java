@@ -56,19 +56,19 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.util.CacheMap;
@@ -1011,6 +1011,35 @@ public class ProfileManager
         example.setSuperuser(true);
         for (UserProfile up: uosw.getObjectsByExample(example, singleton("superuser"))) {
             names.add(up.getUsername());
+        }
+        return names;
+    }
+
+    /**
+     * @return All the profiles of users
+     * @throws ObjectStoreException If we have trouble accessing the data-store.
+     */
+    public Collection<Profile> getAllUsers() throws ObjectStoreException {
+        List<Profile> profiles = new ArrayList<>();
+        for (String name: getAllUserNames()) {
+            profiles.add(getProfile(name));
+        }
+        return profiles;
+    }
+
+    private Iterable<String> getAllUserNames() throws ObjectStoreException {
+        List<String> names = new ArrayList<>();
+        Query q = new Query();
+        QueryClass user = new QueryClass(UserProfile.class);
+        q.addFrom(user);
+        QueryField qf = new QueryField(user, "username");
+        q.addToSelect(qf);
+        q.addToOrderBy(qf);
+        List<?> results = uosw.execute(q);
+        Iterator resIter = results.iterator();
+        while (resIter.hasNext()) {
+            String userName = (String) ((List) resIter.next()).get(0);
+            names.add(userName);
         }
         return names;
     }

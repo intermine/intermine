@@ -52,6 +52,7 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
     private void parseRequest(TemplateResultInput input) {
         super.parseRequest(request, input);
         input.setName(getRequiredStringParameter(NAME_PARAMETER));
+        input.setUserName(getOptionalUserNameParameter());
         try {
             input.setConstraints(Templates.parseConstraints(request));
         } catch (TemplateValueParseException e) {
@@ -67,5 +68,13 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
         } else {
             return param;
         }
+    }
+
+    private String getOptionalUserNameParameter() {
+        String param = request.getParameter("userName");
+        if (param == null || "".equals(param)) {
+            return null;
+        }
+        return param;
     }
 }
