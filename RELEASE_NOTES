@@ -16,6 +16,8 @@ InterMine 5.0.7 (April 2022)
 #2027 - Added a new generic TSV data source
       - Completly removed dependencies on jcenter
       - Added pombe organims to the taxon id to be ingnored by the idresolver
+      - Copyright updated
+	  - Fixed typo in the go evidence code
 
 InterMine 5.0.6 (Dicember 2021)
 

@@ -199,7 +199,7 @@
     </item>
     <item id="1_4" class="GOEvidenceCode">
         <attribute name="code" value="HGI"/>
-        <attribute name="name" value="nferred from High Throughput Genetic Interaction"/>
+        <attribute name="name" value="Inferred from High Throughput Genetic Interaction"/>
         <attribute name="url" value="http://wiki.geneontology.org/index.php/Inferred_from_High_Throughput_Genetic_Interaction_(HGI)"/>
     </item>
     <item id="1_18" class="GOEvidenceCode">
