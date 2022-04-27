@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template.result;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -52,6 +52,7 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
     private void parseRequest(TemplateResultInput input) {
         super.parseRequest(request, input);
         input.setName(getRequiredStringParameter(NAME_PARAMETER));
+        input.setUserName(getOptionalUserNameParameter());
         try {
             input.setConstraints(Templates.parseConstraints(request));
         } catch (TemplateValueParseException e) {
@@ -67,5 +68,13 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
         } else {
             return param;
         }
+    }
+
+    private String getOptionalUserNameParameter() {
+        String param = request.getParameter("userName");
+        if (param == null || "".equals(param)) {
+            return null;
+        }
+        return param;
     }
 }

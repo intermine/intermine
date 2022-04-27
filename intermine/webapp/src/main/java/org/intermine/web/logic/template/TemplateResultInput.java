@@ -1,7 +1,7 @@
 package org.intermine.web.logic.template;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,6 +26,8 @@ public class TemplateResultInput extends WebServiceInput
     private Map<String, List<ConstraintInput>> constraints;
 
     private String layout;
+
+    private String userName;
 
     /**
      * @return layout string specifying result table layout
@@ -71,5 +73,21 @@ public class TemplateResultInput extends WebServiceInput
      */
     public Map<String, List<ConstraintInput>> getConstraints() {
         return constraints;
+    }
+
+    /**
+     * Returns username the template belongs to.
+     * @return the user's name
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Sets username the template belongs to.
+     * @param userName the user's name
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

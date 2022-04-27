@@ -3,7 +3,7 @@ InterMine
 
 Master: [![InterMine CI](https://github.com/intermine/intermine/workflows/InterMine%20CI/badge.svg?branch=master)](https://github.com/intermine/intermine/actions?query=workflow%3A%22InterMine+CI%22)
 Dev: [![InterMine CI](https://github.com/intermine/intermine/workflows/InterMine%20CI/badge.svg?branch=dev)](https://github.com/intermine/intermine/actions?query=workflow%3A%22InterMine+CI%22)
-[![Version](http://img.shields.io/badge/version-5.0.6-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
+[![Version](http://img.shields.io/badge/version-5.0.7-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
 [![Conda](https://anaconda.org/anaconda/conda-build/badges/installer/conda.svg)](https://anaconda.org/bioconda/intermine)
@@ -56,7 +56,7 @@ You can build InterMine using Docker. See https://github.com/intermine/docker-in
 Copyright and Licence
 ------------------------
 
-Copyright (C) 2002-2021 FlyMine
+Copyright (C) 2002-2022 FlyMine
 
 See [LICENSE](LICENSE) file for licensing information.
 

@@ -1,6 +1,6 @@
 subprojects {
     group = 'org.intermine'
-    version '5.0.6'
+    version '5.0.7'
 
     apply plugin: "java"
     apply plugin: "maven"

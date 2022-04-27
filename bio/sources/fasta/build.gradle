@@ -17,11 +17,6 @@ sourceSets {
     }
 }
 
-repositories {
-    //temporary for bio-source-flymine-static
-    jcenter()
-}
-
 dependencies {
     bioModel group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false
     testCompile group: 'org.intermine', name: 'bio-source-flymine-static', version: System.getProperty("flymineVersion"), transitive: false

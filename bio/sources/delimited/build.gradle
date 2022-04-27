@@ -1,0 +1,28 @@
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/gen']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+    bioModel group: 'org.intermine', name: 'bio-model', version: bioVersion, transitive: false
+    compile group: 'org.intermine', name: 'intermine-integrate', version: imVersion
+    compile group: "org.biojava", name: "biojava-core", version: "4.2.0"
+}
+
+processResources {
+    from('.') { include ("*.properties")}
+}
