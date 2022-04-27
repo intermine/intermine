@@ -1,5 +1,5 @@
 ext {
-    imVersion = "5.0.6"
+    imVersion = "5.0.7"
     taskGroup = "InterMine"
     minePropertyFileName = "testmodel.properties"
     minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
