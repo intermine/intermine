@@ -56,7 +56,7 @@ You can build InterMine using Docker. See https://github.com/intermine/docker-in
 Copyright and Licence
 ------------------------
 
-Copyright (C) 2002-2021 FlyMine
+Copyright (C) 2002-2022 FlyMine
 
 See [LICENSE](LICENSE) file for licensing information.
 
