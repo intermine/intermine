@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -81,7 +81,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     // default feature types to query from the feature table
     private static final List<String> DEFAULT_FEATURES = Arrays.asList(
-            "gene", "mRNA", "transcript", "CDS", "intron", "exon", "EST",
+            "allele", "gene", "mRNA", "transcript", "CDS", "intron", "exon", "EST",
             "five_prime_untranslated_region", "five_prime_UTR", "three_prime_untranslated_region",
             "three_prime_UTR", "origin_of_replication"
     );
@@ -89,7 +89,7 @@ public class SequenceProcessor extends ChadoProcessor
     // default chromosome-like feature types - ie those types of features that occur in the
     // srcfeature column of the featureloc table
     private static final List<String> DEFAULT_CHROMOSOME_FEATURES =
-            Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
+            Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path");
 
     // Avoid explosion of log messages by only logging missing collections once
     private Set<String> loggedMissingCols = new HashSet<String>();
@@ -1843,11 +1843,12 @@ public class SequenceProcessor extends ChadoProcessor
             + " AND f3.type_id = f3type.cvterm_id "
             + " AND f1type.name = 'gene' "
             + " AND f2type.name = 'mRNA' "
-            + " AND f3type.name = 'protein'";
+    //        + " AND f3type.name = 'protein'";
+            + " AND f3type.name = 'polypeptide'";
     }
 
     /**
-     * @param string
+     * @param fieldName
      * @return
      */
     private String makePartOfConstraints(String fieldName) {
@@ -1992,6 +1993,7 @@ public class SequenceProcessor extends ChadoProcessor
     }
 
     // TODO this shouldn't specify flybase
+    // TODO: check cellular component
     /**
      * Return the interesting rows from the librarycvterm table.
      * This is a protected method so that it can be overridden for testing

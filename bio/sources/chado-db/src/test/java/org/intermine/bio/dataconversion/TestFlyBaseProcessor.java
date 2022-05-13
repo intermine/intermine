@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -140,7 +140,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
                 "4bdcdd74743c6326f277da6fe9e07f2a", 1
             },
             {
-                1000002, "", "", "protein", null,
+                1000002, "uto", "ughi", "protein", null,
                 "VSFAQVWCSSTTDETNLLQMEKDPHSPSQFRVIGTLSNMKEFAEVFQCKPGKRMNPTEKCEVW",
                 "4bdcdd74743c6326f277da6fe9e07f2a", 1
             },

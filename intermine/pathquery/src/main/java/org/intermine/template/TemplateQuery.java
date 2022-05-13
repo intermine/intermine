@@ -1,7 +1,7 @@
 package org.intermine.template;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,6 +29,10 @@ import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
+import org.apache.commons.lang.StringUtils;
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.template.xml.TemplateQueryBinding;
 
 /**
@@ -537,8 +541,28 @@ public class TemplateQuery extends PathQuery
         Map<String, Object> retVal = super.getHeadAttributes();
         retVal.put("name", getName());
         retVal.put("comment", getComment());
-
+        retVal.put("dataTypes", getViewDataTypes());
         return retVal;
+    }
+
+    /**
+     * Get the data type associate to the views
+     *
+     * @return the list of the data types
+     */
+    public List<String> getViewDataTypes() {
+        List<String> dataTypes = new ArrayList<>();
+        for (String v : getView()) {
+            try {
+                Path path = super.makePath(v);
+                AttributeDescriptor attributeDescriptor =
+                        (AttributeDescriptor) path.getEndFieldDescriptor();
+                dataTypes.add(attributeDescriptor.getType());
+            } catch (PathException ex ) {
+                dataTypes.add(StringUtils.EMPTY);
+            }
+        }
+        return dataTypes;
     }
 
     @Override
@@ -548,6 +572,11 @@ public class TemplateQuery extends PathQuery
         sb.append(String.format(",\"editable\":%b",     isEditable(con)));
         sb.append(String.format(",\"switchable\":%b",   soa != SwitchOffAbility.LOCKED));
         sb.append(String.format(",\"switched\":\"%s\"", soa));
+/*        String description = constraintDescriptions.get(con);
+        if (description == null) {
+            description = "";
+        }
+        sb.append(String.format(",\"description\":\"%s\"", description));*/
         return sb.toString();
     }
 

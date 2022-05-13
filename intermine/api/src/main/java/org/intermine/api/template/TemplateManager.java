@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -137,8 +137,17 @@ public class TemplateManager
         // where name collisions occur user templates take precedence
         Map<String, ApiTemplate> allTemplates = new HashMap<String, ApiTemplate>();
 
-        allTemplates.putAll(getGlobalTemplates());
-        allTemplates.putAll(profile.getSavedTemplates());
+        Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
+        for (ApiTemplate template : globalTemplates.values()) {
+            template.setAuthorized(false);
+        }
+        allTemplates.putAll(globalTemplates);
+
+        Map<String, ApiTemplate> savedTemplates = profile.getSavedTemplates();
+        for (ApiTemplate template : savedTemplates.values()) {
+            template.setAuthorized(true);
+        }
+        allTemplates.putAll(savedTemplates);
 
         return allTemplates;
     }

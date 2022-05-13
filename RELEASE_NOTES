@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,6 +7,46 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 5.0.7 (April 2022)
+
+#2419 - Updated the WS /templates to return dataTypes
+#2425 - Fix XSS issue
+#2427 - Create a WS returning all the templates
+#2428 - Superuser can run whatever template
+#2027 - Added a new generic TSV data source
+      - Completly removed dependencies on jcenter
+      - Added pombe organims to the taxon id to be ingnored by the idresolver
+      - Copyright updated
+	  - Fixed typo in the go evidence code
+
+InterMine 5.0.6 (Dicember 2021)
+
+#2414 - Upgraded psi lib version (thanks @asherpasha)
+#2416 - Log4j upgraded to 2.17.1 (thanks @asherpasha)
+
+InterMine 5.0.5 (Dicember 2021)
+
+#2411 - Log4j-1x compatibility upgrade (thanks @asherpasha)
+
+InterMine 5.0.4 (Dicember 2021)
+
+#2324 - Remove dependency from EBI maven nexus repo
+#2377 - Updated GFF3Record (thanks @sammyjava)
+#2396 - Biogrid extension
+#2392 - Public name can be taken by deleted account
+#2397 - Implement a new WS to summarise templates
+#2398 - Implement a new WS to precompute templates
+#2399 - Update the GET /templates WS to show which templates user can make change
+#2400 - Update the PUT /bluegenes-properties WS to use body
+#2402 - WebProperties WS returns blugenes properties too
+#2404 - Update CI to use Python 3.7
+
+InterMine 5.0.3 (June 2021)
+
+#2375 - Update interpro_keys.properties
+#2376 - Update interpro-go_keys.properties
+#2384 - Enrichment widget not working when changing background population
+
 InterMine 5.0.2 (May 2021)
 
 #2335 - BioGrid data change causing loader to throw Exception

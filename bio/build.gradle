@@ -14,7 +14,7 @@ subprojects {
         mavenLocal()
         mavenCentral()
         maven {
-            url 'https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
+            url 'https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/'
         }
     }
 

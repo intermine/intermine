@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,6 +43,7 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
     protected SavedTemplateQuery savedTemplateQuery = null;
     Profile profile = null;
     TrackerDelegate templateTracker = null;
+    private boolean authorized = false;
 
     // so we can include tags
     private InterMineAPI im;
@@ -95,6 +96,15 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
      */
     public SavedTemplateQuery getSavedTemplateQuery() {
         return savedTemplateQuery;
+    }
+
+    /**
+     * Set the authorized flag
+     *
+     * @param authorized the flag
+     */
+    public void setAuthorized(boolean authorized) {
+        this.authorized = authorized;
     }
 
     @Override
@@ -197,6 +207,7 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
         if (rank != null) {
             retVal.put("rank", rank);
         }
+        retVal.put("authorized", authorized);
         return retVal;
     }
 

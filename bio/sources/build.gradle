@@ -32,7 +32,7 @@ subprojects {
         mavenLocal()
         mavenCentral()
         maven {
-            url 'https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
+            url 'https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/'
         }
     }
 
@@ -42,7 +42,7 @@ subprojects {
     }
     
     dependencies {
-        compile group: 'log4j', name: 'log4j', version: '1.2.17'
+        compile group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.17.1'
         compile group: 'org.intermine', name: 'bio-core', version: System.getProperty("bioVersion"), transitive: false
         compile group : "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion") // log4j
         compile group: 'commons-collections', name: 'commons-collections', version: '3.2'

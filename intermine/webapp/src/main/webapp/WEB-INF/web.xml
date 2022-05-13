@@ -3627,6 +3627,9 @@ The different token types are:
             <param required="true"
 		   type="String" 
                    description="The new value">value</param>
+            <body description="The key and value, if using body content.">
+                <content type="application/x-www-form-urlencoded"/>
+            </body>
             <returns>
                 <format accept="application/json">json</format>
             </returns>
@@ -3801,7 +3804,124 @@ may be polled later.
     </metadata>
   </servlet-mapping>
 
-<!-- new in version 33 -->
+  <!-- new in version 33 -->
+  <servlet>
+    <servlet-name>ws-precompute-template</servlet-name>
+    <servlet-class>org.intermine.webservice.server.template.TemplatePrecomputeServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-precompute-template</servlet-name>
+    <url-pattern>/service/template/precompute</url-pattern>
+    <metadata>
+        <name>Precompute</name>
+        <minVersion>33</minVersion>
+        <method type="GET" authenticationRequired="true">
+            <summary>Template Precomputed or not</summary>
+            <description>
+                This service tells if a template has been already precomputed
+            </description>
+			<param
+                required="false"
+                type="String"
+                description="The name of the template">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+            <summary>Precompute a template</summary>
+            <description>
+                This service allow to precompute a template
+            </description>
+			<param
+                required="true"
+                type="String"
+                description="The name of the template">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-summarise-template</servlet-name>
+    <servlet-class>org.intermine.webservice.server.template.TemplateSummariseServlet</servlet-class>
+    <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ws-summarise-template</servlet-name>
+    <url-pattern>/service/template/summarise</url-pattern>
+    <metadata>
+        <name>Summarise</name>
+        <minVersion>33</minVersion>
+        <method type="GET" authenticationRequired="true">
+            <summary>Template summarised or not</summary>
+            <description>
+                This service tells if a template has been already summarised
+            </description>
+			<param
+                required="false"
+                type="String"
+                description="The name of the template">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+            <summary>Summarise a template</summary>
+            <description>
+                This service allow to Summarise a template
+            </description>
+			<param
+                required="true"
+                type="String"
+                description="The name of the template">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <!-- new in version 34 -->
+  <servlet>
+    <servlet-name>ws-all-templates</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+       <param-name>GET</param-name>
+       <param-value>org.intermine.webservice.server.template.AllAvailableTemplatesService</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-all-templates</servlet-name>
+    <url-pattern>/service/alltemplates</url-pattern>
+    <metadata>
+        <name>All templates</name>
+        <minVersion>34</minVersion>
+        <method type="GET" authenticationRequired="true">
+            <summary>All templates created by users</summary>
+            <description>
+                Get a listing of all templates configured in an InterMine instance by any user. Only admin users can access it
+            </description>
+            <returns>
+                <format>xml</format>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <!-- new in version 35 -->
   <servlet>
     <servlet-name>ws-entity-representation</servlet-name>
     <servlet-class>org.intermine.webservice.server.entity.EntityRepresentationServlet</servlet-class>
@@ -3816,7 +3936,7 @@ may be polled later.
     <url-pattern>/service/entity-representation/*</url-pattern>
     <metadata>
         <name>Entity Representation</name>
-        <minVersion>33</minVersion>
+        <minVersion>35</minVersion>
         <method type="GET" authenticationRequired="false">
             <summary>Entity Representation</summary>
             <description>

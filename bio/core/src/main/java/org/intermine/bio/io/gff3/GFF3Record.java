@@ -1,7 +1,7 @@
 package org.intermine.bio.io.gff3;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -328,6 +328,18 @@ public class GFF3Record
             return getAttributes().get("Name");
         }
         return null;
+    }
+
+    /**
+    * Return the list of the Symbol field from the attributes of this record.
+    * @return the Symbol from the attributes of this record or null if there isn't a value
+    */
+    public List<String> getSymbols() {
+        if (getAttributes().containsKey("Symbol")) {
+            return getAttributes().get("Symbol");
+        } else {
+            return null;
+        }
     }
 
     /**

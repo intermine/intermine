@@ -1,7 +1,7 @@
 package org.intermine.template.xml;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.SAXParser;
+import org.intermine.metadata.StringUtil;
 import org.intermine.pathquery.JSONQueryHandler;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
@@ -57,6 +58,19 @@ public class TemplateQueryBinding extends PathQueryBinding
      * Convert a TemplateQuery to XML and write XML to given writer.
      *
      * @param template the TemplateQuery
+     * @param userName the username the template belongs to
+     * @param writer the XMLStreamWriter to write to
+     * @param version the version number of the XML format
+     */
+    public static void marshal(TemplateQuery template, String userName, XMLStreamWriter writer,
+                               int version) {
+        INSTANCE.doMarshal(template, userName, writer, version);
+    }
+
+    /**
+     * Convert a TemplateQuery to XML and write XML to given writer.
+     *
+     * @param template the TemplateQuery
      * @param writer the XMLStreamWriter to write to
      * @param version the version number of the XML format
      */
@@ -79,6 +93,46 @@ public class TemplateQueryBinding extends PathQueryBinding
             } else {
                 writer.writeAttribute("comment", template.getComment());
             }
+            writer.writeAttribute("dataTypes", StringUtil.join(template.getViewDataTypes(), " "));
+
+            doMarshal(template, template.getName(), template.getModel()
+                    .getName(), writer, version);
+            writer.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Convert a TemplateQuery to XML and write XML to given writer.
+     *
+     * @param template the TemplateQuery
+     * @param userName the user name the template belongs to
+     * @param writer the XMLStreamWriter to write to
+     * @param version the version number of the XML format
+     */
+    public void doMarshal(TemplateQuery template, String userName, XMLStreamWriter writer,
+                          int version) {
+        if (template == null) {
+            throw new NullPointerException("template must not be null");
+        }
+        if (writer == null) {
+            throw new NullPointerException("writer must not be null");
+        }
+        try {
+            writer.writeCharacters("\n");
+            writer.writeStartElement("template");
+            writer.writeAttribute("name", template.getName());
+            writer.writeAttribute("userName", userName);
+            if (template.getTitle() != null) {
+                writer.writeAttribute("title", template.getTitle());
+            }
+            if (template.getComment() == null) {
+                writer.writeAttribute("comment", "");
+            } else {
+                writer.writeAttribute("comment", template.getComment());
+            }
+            writer.writeAttribute("dataTypes", StringUtil.join(template.getViewDataTypes(), " "));
 
             doMarshal(template, template.getName(), template.getModel()
                     .getName(), writer, version);

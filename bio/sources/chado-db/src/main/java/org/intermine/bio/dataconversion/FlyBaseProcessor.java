@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -369,7 +369,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             " CREATE TEMPORARY TABLE " + ALLELE_TEMP_TABLE_NAME
             + " AS SELECT feature_id"
             + " FROM feature, cvterm feature_type "
-            + " WHERE feature_type.name = 'gene'"
+            + " WHERE feature_type.name = 'allele'"
             + " AND type_id = feature_type.cvterm_id"
             + " AND uniquename LIKE 'FBal%'"
             + " AND NOT feature.is_obsolete"
@@ -720,7 +720,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        return "NOT ((cvterm.name = 'golden_path_region'"
+        return "NOT ((cvterm.name = 'golden_path'"
             + " OR cvterm.name = 'unassigned_supercontig'"
             + " OR cvterm.name = 'ultra_scaffold')"
             + " AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))"
@@ -763,7 +763,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                                String name, String uniqueName, int seqlen, String taxonId) {
         String realInterMineType = interMineType;
 
-        if ("protein".equals(chadoFeatureType) && !uniqueName.startsWith("FBpp")) {
+        if ("polypeptide".equals(chadoFeatureType) && !uniqueName.startsWith("FBpp")) {
             return null;
         }
 
@@ -806,7 +806,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             realInterMineType = "Chromosome";
         }
 
-        if ("golden_path_region".equals(chadoFeatureType)) {
+        if ("golden_path".equals(chadoFeatureType)) {
             // only change to be a chromosome if it's on our list of good ones.
             if (VALID_CHROMOSOMES.contains(uniqueName)) {
                 realInterMineType = "Chromosome";
@@ -840,10 +840,15 @@ public class FlyBaseProcessor extends SequenceProcessor
             // webapp so we filter them out. See #1086
             return null;
         }
-        if ("protein".equals(chadoFeatureType) && seqlen == 0) {
+        if ("polypeptide".equals(chadoFeatureType) && seqlen == 0) {
             // flybase has ~ 2100 protein features that don't appear in their webapp so we
             // filter them out
             return null;
+        }
+
+        // converting polypeptide back to protein for intermine
+        if ("polypeptide".equals(chadoFeatureType)) {
+            realInterMineType = "Protein";
         }
 
         Item feature = getChadoDBConverter().createItem(realInterMineType);
@@ -872,7 +877,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-            "gene", "mRNA", "transcript", "protein",
+            "allele", "gene", "mRNA", "transcript", "polypeptide",
             "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
@@ -909,7 +914,8 @@ public class FlyBaseProcessor extends SequenceProcessor
                              featureData.getChadoFeatureUniqueName());
             }
         }
-        if (FEATURES.contains("gene")) {
+
+        if (FEATURES.contains("allele")) {
             processAlleleProps(connection, features);
 
             Map<Integer, List<String>> mutagenMap = makeMutagenMap(connection);
@@ -923,7 +929,9 @@ public class FlyBaseProcessor extends SequenceProcessor
                 ReferenceList referenceList = new ReferenceList();
                 referenceList.setName("mutagens");
                 referenceList.setRefIds(mutagenRefIds);
-                getChadoDBConverter().store(referenceList, alleleDat.getIntermineObjectId());
+                if (alleleDat.getIntermineObjectId() != null) {
+                    getChadoDBConverter().store(referenceList, alleleDat.getIntermineObjectId());
+                }
             }
 
             createIndelReferences(connection);
@@ -932,6 +940,8 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             createInteractions(connection);
         }
+
+
     }
 
     private Item getInteraction(Map<MultiKey, Item> interactions, String refId,
@@ -1085,7 +1095,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             int start, int end, int strand, String taxonId)
         throws ObjectStoreException {
 
-        if ("protein".equalsIgnoreCase(subjectFeatureData.getInterMineType())) {
+        if ("polypeptide".equalsIgnoreCase(subjectFeatureData.getInterMineType())) {
             // don't make locations for proteins
             return;
         }
@@ -1221,9 +1231,14 @@ public class FlyBaseProcessor extends SequenceProcessor
             String propType = res.getString("type_name");
             Integer featurePropId = new Integer(res.getInt("featureprop_id"));
 
+            if (features.get(featureId) == null) {
+                continue;
+            }
             FeatureData alleleFeatureData = features.get(featureId);
+
             OrganismData od = alleleFeatureData.getOrganismData();
             Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId());
+
 
             String alleleItemIdentifier = alleleFeatureData.getItemIdentifier();
 
@@ -1249,7 +1264,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     /**
-     * Return a Map from allele feature_id to mutagen.  The mutagen is found be looking at cvterms
+     * Return a Map from allele feature_id to mutagen.  The mutagen is found looking at cvterms
      * that are associated with each feature and saving those terms that have "origin of mutation"
      * as a parent term.
      */
@@ -1294,7 +1309,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     /**
      * Get result set of feature_id, cvterm_id pairs for the alleles in flybase chado.
-     * @param connection the Connectio
+     * @param connection the Connection
      * @return the cvterms
      * @throws SQLException if there is a database problem
      */
@@ -1458,7 +1473,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     /**
-     * Return the item identifiers of the alleles metioned in the with clauses of the argument.
+     * Return the item identifiers of the alleles mentioned in the with clauses of the argument.
      * Currently unused because flybase with clauses are wrong - see ticket #889
      */
 //    @SuppressWarnings("unused")
@@ -1749,8 +1764,8 @@ public class FlyBaseProcessor extends SequenceProcessor
     protected FeatureData makeFeatureData(int featureId, String type, String uniqueName,
                                           String name, String md5checksum, int seqlen,
                                           int organismId) throws ObjectStoreException {
-
-        if ("protein".equals(type)) {
+        // FB replaced 'protein' with 'polypeptide'
+        if ("polypeptide".equals(type)) {
             if (!uniqueName.startsWith("FBpp")) {
                 return null;
             }

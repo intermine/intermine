@@ -64,5 +64,6 @@
   <class name="PointMutation" extends="SequenceFeature" is-interface="true"/>
   <class name="TransposableElementInsertionSite" extends="SequenceFeature" is-interface="true"/>
   <class name="CDNAClone" extends="SequenceFeature" is-interface="true"/>
-  <class name="GoldenPathRegion" extends="SequenceFeature" is-interface="true"/>
+  <class name="GoldenPath" extends="SequenceFeature" is-interface="true"/>
+
 </classes>

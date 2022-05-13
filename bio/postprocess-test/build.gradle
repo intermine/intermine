@@ -31,7 +31,6 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        jcenter()//temporary for bio-source-flymine-static
     }
 
     configurations {

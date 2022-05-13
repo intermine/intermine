@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -137,7 +137,7 @@ public class EnrichmentWidgetResultService extends WidgetService
                 }
                 addOutputAttribute("message", String.format(BAD_POPULATION_MSG, imBag.getType()));
                 return;
-            } else if (!verifyPopulationContainsIds(ids, populationBag)) {
+            } else if (ids != null && !verifyPopulationContainsIds(ids, populationBag)) {
                 if (input.shouldSavePopulation()) {
                     deleteReferencePopulationPreference(input);
                 }

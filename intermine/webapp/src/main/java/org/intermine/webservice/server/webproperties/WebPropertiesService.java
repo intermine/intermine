@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.webproperties;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -59,6 +59,9 @@ public class WebPropertiesService extends JSONService
 
         // mine name, citation
         appendProperties(webPropertiesMap, "project");
+
+        // mine name, citation
+        appendProperties(webPropertiesMap, "bluegenes");
 
         // list params, delimiters
         appendProperties(webPropertiesMap, "list");
