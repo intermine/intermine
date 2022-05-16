@@ -68,8 +68,7 @@ public class RDFObject
     public RDFObject(InterMineLUI lui, InterMineAPI im, HttpServletRequest request)
             throws Exception {
         if (lui != null) {
-            urlConverter =
-                    new InterMineLUIConverter(im.getProfileManager().createAnonymousProfile());
+            urlConverter = new InterMineLUIConverter();
             imObject = urlConverter.getInterMineObject(lui);
             if (imObject == null) {
                 isValid = false;

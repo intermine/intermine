@@ -13,7 +13,6 @@ package org.intermine.web.uri;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.identifiers.IdentifiersMapper;
-import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
@@ -35,15 +34,6 @@ public class InterMineLUIConverter
 {
     private static final Integer INTERMINE_ID_NOT_FOUND = -1;
     private static final Logger LOGGER = Logger.getLogger(InterMineLUIConverter.class);
-    protected Profile profile = null;
-
-    /**
-     * Constructor
-     * @param profile the profile
-     */
-    public InterMineLUIConverter(Profile profile) {
-        this.profile = profile;
-    }
 
     /**
      * Constructor
@@ -197,8 +187,8 @@ public class InterMineLUIConverter
      * Returns the PathQueryExecutor
      * @return the PathQueryExecutor
      */
-    public PathQueryExecutor getPathQueryExecutor() {
+    private PathQueryExecutor getPathQueryExecutor() {
         InterMineAPI im = getInterMineAPI();
-        return new PathQueryExecutor(im.getObjectStore(), profile, null, im.getBagManager());
+        return new PathQueryExecutor(im.getObjectStore(), null, null, im.getBagManager());
     }
 }

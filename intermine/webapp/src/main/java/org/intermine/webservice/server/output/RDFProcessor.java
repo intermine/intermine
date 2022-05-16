@@ -14,11 +14,9 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
 import org.intermine.api.rdf.Namespaces;
 import org.intermine.api.rdf.RDFHelper;
 import org.intermine.api.results.ResultElement;
-import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.pathquery.Path;
@@ -44,20 +42,18 @@ public class RDFProcessor extends ResultProcessor
 {
     private String uri;
     private InterMineLUIConverter luiConverter;
-
     private final InterMineAPI im;
 
     /**
      * Constructor
      * @param request the http request
      * @param im the intermine api class
-     * @param  profile the user profile
      *
      */
-    public RDFProcessor(HttpServletRequest request, InterMineAPI im, Profile profile) {
+    public RDFProcessor(HttpServletRequest request, InterMineAPI im) {
         this.im = im;
         uri = (new PermanentURIHelper(request)).getPermanentBaseURI();
-        luiConverter = new InterMineLUIConverter(profile);
+        luiConverter = new InterMineLUIConverter();
     }
 
     @Override

@@ -419,10 +419,10 @@ public class QueryResultService extends AbstractQueryService
                 }
                 break;
             case RDF:
-                processor = new RDFProcessor(request, im, getPermission().getProfile());
+                processor = new RDFProcessor(request, im);
                 break;
             case N_TRIPLES:
-                processor = new RDFProcessor(request, im, getPermission().getProfile());
+                processor = new RDFProcessor(request, im);
                 break;
             default:
                 processor = new ResultProcessor();
