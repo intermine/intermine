@@ -65,7 +65,7 @@ public class PermanentURIHelper
 
 
     /**
-     * Returns the permanent URL given the class name and the primary identifier
+     * Returns the permanent URL of th entity given its internal id
      * The permanent URL is used in the Share button, to set the url in Schema.org
      * @param interMineId the internal id
      * @param profile the profile
