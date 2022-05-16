@@ -73,6 +73,12 @@ public class PurlConfig
         }
     }
 
+
+    /**
+     * Return the external identifier as configured in purl.properties
+     * @param imObject the im object
+     * @return the external identifier or null
+     */
     public static String getExternalIdentifier(InterMineObject imObject) {
         if (identifiers == null) {
             new PurlConfig();
