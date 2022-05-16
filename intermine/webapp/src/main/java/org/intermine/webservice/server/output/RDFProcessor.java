@@ -84,40 +84,38 @@ public class RDFProcessor extends ResultProcessor
 
                     String resourceURI = (lui != null) ? uri.concat(lui.toString())
                             : uri.concat(id.toString());
+                    resource = model.createResource(resourceURI,
+                            RDFHelper.createIMTypeResource(classDescriptor));
                     if (classDescriptor.getOntologyTerm() != null) {
                         String[] terms = classDescriptor.getOntologyTerm().split(",");
                         for (int index = 0; index < terms.length; index++) {
                             resource = model.createResource(resourceURI,
                                     model.createResource(terms[index]));
                         }
-                    } else {
-                        resource = model.createResource(resourceURI,
-                                RDFHelper.createIMTypeResource(classDescriptor));
                     }
                     resources.put(currentClassDesc.getName(), resource);
-                    if (!resources.isEmpty()) {
-                        String stringPath = path.toString();
-                        stringPath = stringPath.substring(0, stringPath.lastIndexOf("."));
-                        Path partialPath = null;
 
-                        try {
-                            partialPath = new Path(im.getModel(), stringPath);
-                            if (partialPath.endIsReference() || partialPath.endIsCollection()) {
-                                FieldDescriptor rd = partialPath.getEndFieldDescriptor();
-                                String parentToLink =
-                                        partialPath.getSecondLastClassDescriptor().getName();
-                                Resource parentResource = resources.get(parentToLink);
-                                parentResource.addProperty(
-                                        RDFHelper.createIMProperty(rd), resource);
-                            }
-                        } catch (PathException pe) {
-                            throw new BadRequestException(stringPath + " is not a valid path");
+                    String stringPath = path.toString();
+                    stringPath = stringPath.substring(0, stringPath.lastIndexOf("."));
+                    Path partialPath = null;
+
+                    try {
+                        partialPath = new Path(im.getModel(), stringPath);
+                        if (partialPath.endIsReference() || partialPath.endIsCollection()) {
+                            FieldDescriptor rd = partialPath.getEndFieldDescriptor();
+                            String parentToLink =
+                                    partialPath.getSecondLastClassDescriptor().getName();
+                            Resource parentResource = resources.get(parentToLink);
+                            parentResource.addProperty(
+                                    RDFHelper.createIMProperty(rd), resource);
                         }
+                    } catch (PathException pe) {
+                        throw new BadRequestException(stringPath + " is not a valid path");
                     }
                 }
                 FieldDescriptor fd = path.getEndFieldDescriptor();
                 if (fd.isAttribute() && item.getField() != null) {
-                    resource.addProperty(RDFHelper.createProperty((AttributeDescriptor) fd),
+                    resource.addProperty(RDFHelper.createIMProperty(fd),
                             item.getField().toString());
                 }
             }
