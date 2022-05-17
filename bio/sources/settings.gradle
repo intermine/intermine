@@ -17,6 +17,7 @@ include ':bio-source-biogrid',
 ':bio-source-intermine-items-xml-file',
 ':bio-source-interpro',
 ':bio-source-interpro-go',
+':bio-source-isa',
 ':bio-source-so',
 ':bio-source-obo'
 
@@ -32,6 +33,11 @@ project(':bio-source-entrez-organism').projectDir = new File(settingsDir, './ent
 project(':bio-source-fasta').projectDir = new File(settingsDir, './fasta')
 project(':bio-source-gff').projectDir = new File(settingsDir, './gff')
 project(':bio-source-go').projectDir = new File(settingsDir, './go')
+project(':bio-source-go-annotation').projectDir = new File(settingsDir, './go-annotation')
+project(':bio-source-hgnc').projectDir = new File(settingsDir, './hgnc')
+project(':bio-source-homologene').projectDir = new File(settingsDir, './homologene')
+project(':bio-source-intermine-items-large-xml-file').projectDir = new File(settingsDir, './intermine-items-large-xml-file')
+project(':bio-source-intermine-items-xml-file').projectDir = new File(settingsDir, './intermine-items-xml-file')
 project(':bio-source-interpro').projectDir = new File(settingsDir, './interpro')
 project(':bio-source-interpro-go').projectDir = new File(settingsDir, './interpro-go')
 project(':bio-source-so').projectDir = new File(settingsDir, './so')
