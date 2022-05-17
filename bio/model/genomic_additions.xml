@@ -10,6 +10,7 @@
 
   <class name="Organism" is-interface="true">
     <attribute name="abbreviation" type="java.lang.String"/>
+    <collection name="dataSets" referenced-type="DataSet" />
   </class>
 
   <class name="SequenceFeature" is-interface="true">
@@ -23,8 +24,9 @@
   </class>
   
   <!-- interpro loader has ProteinDomain extend BioEntity -->
-  <class name="ProteinDomain" extends="BioEntity" is-interface="true">
+  <class name="ProteinDomain" extends="BioEntity" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000417">
     <attribute name="description" type="java.lang.String"/>
+    <collection name="geneFamilies" referenced-type="GeneFamily" reverse-reference="proteinDomains"/>
   </class>
 
   <!-- InterPro terms from LIS -->
@@ -67,12 +69,14 @@
   <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000704">
     <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
     <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
+    <reference name="geneFamily" referenced-type="GeneFamily" reverse-reference="genes"/>
     <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
     <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
     <collection name="introns" referenced-type="Intron" reverse-reference="gene"/>
     <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
     <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
     <collection name="proteinDomains" referenced-type="ProteinDomain"/>
+    <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
   </class>
   
   <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000239">
@@ -82,8 +86,6 @@
     <reference name="gene" referenced-type="Gene" reverse-reference="flankingRegions"/>
   </class>
 
-  <class name="GeneticMarker" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0001645"/>
-  
   <class name="IntergenicRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000605">
     <collection name="adjacentGenes" referenced-type="Gene"/>
   </class>
@@ -101,6 +103,8 @@
   <class name="Protein" is-interface="true" term="http://semanticscience.org/resource/SIO_010043">
     <reference name="CDS" referenced-type="CDS" reverse-reference="protein"/>
     <reference name="transcript" referenced-type="Transcript" reverse-reference="protein"/>
+    <reference name="geneFamily" referenced-type="GeneFamily" reverse-reference="proteins"/>
+    <reference name="phylonode" referenced-type="Phylonode" reverse-reference="protein"/>
     <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
     <collection name="proteinHmmMatches" referenced-type="ProteinHmmMatch" reverse-reference="protein"/>
   </class>
@@ -112,6 +116,7 @@
   <class name="Strain" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <attribute name="origin" type="java.lang.String"/>
+    <collection name="dataSets" referenced-type="DataSet" />
   </class>
   
   <class name="Supercontig" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000148" />
@@ -153,4 +158,190 @@
   <class name="LongTerminalRepeat" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000286" />
   <class name="PrimerBindingSite" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0005850" />
 
+
+
+  <!-- LIS GeneticMarker -->
+  <!-- linkageGroupPositions give cM position on linkage groups, populated by a post-processor -->
+  <class name="GeneticMarker" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0001645">
+    <collection name="linkageGroupPositions" referenced-type="LinkageGroupPosition"/>
+    <collection name="qtls" referenced-type="QTL" reverse-reference="markers"/>
+    <collection name="gwasResults" referenced-type="GWASResult" reverse-reference="markers"/>
+  </class>
+
+  <!-- LIS GeneFamily -->
+  <!-- GeneFamily.size is populated by a post-processor since it has multiple annotations contributing -->
+  <class name="GeneFamily" is-interface="true">
+    <attribute name="identifier" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="version" type="java.lang.String"/>
+    <attribute name="size" type="java.lang.Integer"/>
+    <reference name="phylotree" referenced-type="Phylotree" reverse-reference="geneFamily"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
+    <collection name="genes" referenced-type="Gene" reverse-reference="geneFamily"/>
+    <collection name="proteins" referenced-type="Protein" reverse-reference="geneFamily"/>
+    <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="geneFamilies"/>
+  </class>
+
+  <!-- LIS Pathway -->
+  <class name="Pathway" is-interface="true" >
+     <attribute name="identifier" type="java.lang.String"/>
+     <attribute name="name" type="java.lang.String"/>
+     <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
+     <collection name="dataSets" referenced-type="DataSet"/>
+  </class>
+
+  <!-- LIS Phylotree -->
+  <class name="Phylotree" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="numLeaves" type="java.lang.Integer"/>
+    <collection name="nodes" referenced-type="Phylonode" reverse-reference="tree"/>
+    <reference name="geneFamily" referenced-type="GeneFamily" reverse-reference="phylotree"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+  </class>
+  <class name="Newick" is-interface="false" extends="java.lang.Object">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="contents" type="java.lang.String"/>
+    <reference name="phylotree" referenced-type="Phylotree"/>
+    <reference name="geneFamily" referenced-type="GeneFamily"/>
+  </class>
+  <class name="Phylonode" is-interface="true">
+    <attribute name="identifier" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="length" type="java.lang.Double"/>
+    <attribute name="numChildren" type="java.lang.Integer"/>
+    <attribute name="isLeaf" type="java.lang.Boolean"/>
+    <attribute name="isRoot" type="java.lang.Boolean"/>
+    <reference name="tree" referenced-type="Phylotree" reverse-reference="nodes"/>
+    <reference name="protein" referenced-type="Protein" reverse-reference="phylonode"/>
+    <reference name="parent" referenced-type="Phylonode" reverse-reference="children"/>
+    <collection name="children" referenced-type="Phylonode" reverse-reference="parent"/>
+  </class>
+  
+  <!-- LIS Expression -->
+  <class name="BioProject" is-interface="true">
+    <attribute name="accession" type="java.lang.String"/>
+    <attribute name="title" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+  </class>
+  <class name="ExpressionSource" extends="Annotatable" is-interface="true">
+    <attribute name="synopsis" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="geoSeries" type="java.lang.String"/>
+    <attribute name="sra" type="java.lang.String"/>
+    <reference name="organism" referenced-type="Organism"/>
+    <reference name="strain" referenced-type="Strain"/>
+    <reference name="bioProject" referenced-type="BioProject"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+    <collection name="samples" referenced-type="ExpressionSample" reverse-reference="source"/>
+  </class>
+  <class name="ExpressionSample" extends="BioEntity" is-interface="true">
+    <attribute name="num" type="java.lang.Integer"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="bioSample" type="java.lang.String"/>
+    <reference name="source" referenced-type="ExpressionSource" reverse-reference="samples"/>
+  </class>
+  <class name="ExpressionValue" is-interface="false" extends="java.lang.Object">
+    <attribute name="value" type="java.lang.Double"/>
+    <attribute name="unit" type="java.lang.String"/>
+    <reference name="sample" referenced-type="ExpressionSample"/>
+    <reference name="feature" referenced-type="SequenceFeature"/>
+  </class>
+
+  <!-- LIS Genetic Map -->
+  <!-- A GeneticMap represents a set of LinkageGroups and GeneticMarkers mapped to them -->
+  <class name="GeneticMap" extends="Annotatable" is-interface="true">
+    <attribute name="synopsis" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="genotypes" type="java.lang.String"/>
+    <attribute name="genotypingPlatform" type="java.lang.String"/>
+    <attribute name="genotypingMethod" type="java.lang.String"/>
+    <reference name="organism" referenced-type="Organism"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+    <collection name="linkageGroups" referenced-type="LinkageGroup" reverse-reference="geneticMap"/>
+  </class>
+  <!-- a LinkageGroup is a component of a GeneticMap -->
+  <class name="LinkageGroup" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000018">
+    <attribute name="number" type="java.lang.Integer"/>
+    <attribute name="length" type="java.lang.Double"/>
+    <reference name="geneticMap" referenced-type="GeneticMap" reverse-reference="linkageGroups"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
+    <collection name="qtls" referenced-type="QTL" reverse-reference="linkageGroup"/>
+  </class>
+  <!-- A marker's position (in cM) on a linkage group, referenced by name -->
+  <class name="LinkageGroupPosition" is-interface="true">
+    <attribute name="markerName" type="java.lang.String"/>
+    <attribute name="position" type="java.lang.Double"/>
+    <reference name="linkageGroup" referenced-type="LinkageGroup"/>
+  </class>
+
+
+  <!-- a QTLStudy represents a particular QTL study from a DataSet/Publication -->
+  <class name="QTLStudy" extends="Annotatable" is-interface="true">
+    <attribute name="synopsis" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="genotypes" type="java.lang.String"/>
+    <attribute name="geneticMap" type="java.lang.String"/>
+    <reference name="organism" referenced-type="Organism"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+    <collection name="qtls" referenced-type="QTL" reverse-reference="qtlStudy"/>
+  </class>
+  <!-- QTL references a trait, resides on a linkage group, and has associated markers -->
+  <!-- marker names are stored here in a |-delimited markerNames string; -->
+  <!-- QTL.markers are loaded by a post-processor from markerNames -->
+  <!-- QTL.genes are populated by a post-processor -->
+  <class name="QTL" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001645">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="lod" type="java.lang.Double"/>
+    <attribute name="likelihoodRatio" type="java.lang.Double"/>
+    <attribute name="markerR2" type="java.lang.Double"/>
+    <attribute name="peak" type="java.lang.Double"/>
+    <attribute name="start" type="java.lang.Double"/>
+    <attribute name="end" type="java.lang.Double"/>
+    <attribute name="markerNames" type="java.lang.String"/>
+    <reference name="qtlStudy" referenced-type="QTLStudy" reverse-reference="qtls"/>
+    <reference name="trait" referenced-type="Trait" reverse-reference="qtls"/>
+    <collection name="markers" referenced-type="GeneticMarker" reverse-reference="qtls"/>
+    <reference name="linkageGroup" referenced-type="LinkageGroup" reverse-reference="qtls"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+    <collection name="genes" referenced-type="Gene"/>
+  </class>
+  <!-- A Trait is an experimentally measured phenotype for a QTL, which has ontology annotations -->
+  <!-- Because trait measurement/treatment is specific to an experiment, it has a single dataset which keys it along with primaryIdentifier -->
+  <!-- name is the given name "Seed weight" while primaryIdentifier is forced to be unique dataSetName.trait -->
+  <class name="Trait" extends="Annotatable" is-interface="true" term="https://browser.planteome.org/amigo/term/TO:0000387">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+    <collection name="qtls" referenced-type="QTL" reverse-reference="trait"/>
+    <collection name="gwasResults" referenced-type="GWASResult" reverse-reference="trait"/>
+  </class>
+
+
+  <!-- GWAS is a study from a publication containing GWASResults, one per marker association -->
+  <class name="GWAS" extends="Annotatable" is-interface="true">
+    <attribute name="genotypes" type="java.lang.String"/>
+    <attribute name="synopsis" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="genotypingPlatform" type="java.lang.String"/>
+    <attribute name="genotypingMethod" type="java.lang.String"/>
+    <reference name="organism" referenced-type="Organism"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+    <collection name="results" referenced-type="GWASResult" reverse-reference="gwas"/>
+  </class>
+  <!-- GWASResult relates a marker to a measured trait with a p-value -->
+  <!-- Since a marker may have several genomic mappings, we store markerName here -->
+  <!-- GWASResult.markers is populated with a post-processor -->
+  <class name="GWASResult" is-interface="true">
+    <attribute name="markerName" type="java.lang.String"/>
+    <attribute name="pValue" type="java.lang.Double"/>
+    <reference name="gwas" referenced-type="GWAS" reverse-reference="results"/>
+    <reference name="trait" referenced-type="Trait" reverse-reference="gwasResults"/>
+    <collection name="markers" referenced-type="GeneticMarker" reverse-reference="gwasResults"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+  </class>
+
+  
+  
 </classes>
