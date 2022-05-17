@@ -1,11 +1,36 @@
 rootProject.name = 'bio-sources'
 
-include ':bio-source-go',
+include ':bio-source-biogrid',
+':bio-source-chado-db',
+':bio-source-do',
+':bio-source-delimited',
+':bio-source-eco',
+':bio-source-ensembl-compara',
+':bio-source-entrez-organism',
+':bio-source-fasta',
+':bio-source-gff',
+':bio-source-go',
+':bio-source-go-annotation',
+':bio-source-hgnc',
+':bio-source-homologene',
+':bio-source-intermine-items-large-xml-file',
+':bio-source-intermine-items-xml-file',
 ':bio-source-interpro',
 ':bio-source-interpro-go',
 ':bio-source-so',
 ':bio-source-obo'
 
+project(':bio-source-obo').projectDir = new File(settingsDir, './obo')
+project(':bio-source-isa').projectDir = new File(settingsDir, './isa')
+project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
+project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
+project(':bio-source-do').projectDir = new File(settingsDir, './do')
+project(':bio-source-delimited').projectDir = new File(settingsDir, './delimited')
+project(':bio-source-eco').projectDir = new File(settingsDir, './eco')
+project(':bio-source-ensembl-compara').projectDir = new File(settingsDir, './ensembl-compara')
+project(':bio-source-entrez-organism').projectDir = new File(settingsDir, './entrez-organism')
+project(':bio-source-fasta').projectDir = new File(settingsDir, './fasta')
+project(':bio-source-gff').projectDir = new File(settingsDir, './gff')
 project(':bio-source-go').projectDir = new File(settingsDir, './go')
 project(':bio-source-interpro').projectDir = new File(settingsDir, './interpro')
 project(':bio-source-interpro-go').projectDir = new File(settingsDir, './interpro-go')

@@ -3,8 +3,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-group = 'org.intermine'
-version = '5.0.6.4'
+group 'org.intermine'
+version '5.0.7'
 
 sourceCompatibility = 1.8
 

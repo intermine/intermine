@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
+
 import java.util.Map.Entry;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -27,9 +29,11 @@ import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 
@@ -121,6 +125,41 @@ public final class TemplateHelper
         return templateMapToXml(downCast(templates), version);
     }
 
+    /**
+     * Serialse a map of all templates to XML.
+     * @param im The intermine API
+     * @return An XML serialise.
+     */
+    public static String allTemplatesMapToXml(InterMineAPI im) {
+        StringWriter sw = new StringWriter();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+
+        try {
+            XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+            writer.writeStartElement("template-queries");
+            try {
+                Collection<Profile> profiles = im.getProfileManager().getAllUsers();
+                Iterator it = profiles.iterator();
+
+                while (it.hasNext()) {
+                    Profile profile = (Profile) it.next();
+
+                    Map<String, TemplateQuery> templates = downCast(profile.getSavedTemplates());
+                    for (TemplateQuery template : templates.values()) {
+                        TemplateQueryBinding.marshal(template, profile.getUsername(), writer,
+                                PathQuery.USERPROFILE_VERSION);
+                    }
+                }
+                writer.writeEndElement();
+            } catch (ObjectStoreException ex) {
+
+            }
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
+        return sw.toString();
+    }
+
     private static Map<String, TemplateQuery> downCast(Map<String, ApiTemplate> templates) {
         Map<String, TemplateQuery> ret = new HashMap<String, TemplateQuery>();
         for (Entry<String, ApiTemplate> pair: templates.entrySet()) {
@@ -165,6 +204,51 @@ public final class TemplateHelper
             }
         }
         sb.append("}");
+        String result = sb.toString();
+        return result;
+    }
+
+    /**
+     * Routine for serialising map of templates to JSON.
+     * @param im intermine API
+     * @return A JSON string.
+     */
+    public static String allTemplatesMapToJson(InterMineAPI im) {
+        Map<String, Map<String, ApiTemplate>> userTemplates = new HashMap<>();
+        StringBuilder sb = new StringBuilder("{");
+        try {
+            Collection<Profile> profiles = im.getProfileManager().getAllUsers();
+            Iterator it = profiles.iterator();
+
+            while (it.hasNext()) {
+                Profile profile = (Profile) it.next();
+
+                userTemplates.put(profile.getUsername(), profile.getSavedTemplates());
+                sb.append(TemplateHelper.userTemplatesMapToJson(im, profile.getSavedTemplates(),
+                        profile));
+                if (it.hasNext()) {
+                    sb.append(",");
+                }
+            }
+            sb.append("}");
+        } catch (ObjectStoreException ex) {
+            sb.append("}");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Routine for serialising map of templates per user to JSON.
+     * @param templates The templates to serialise.
+     * @param im intermine API
+     * @param profile the profile
+     * @return A JSON string.
+     */
+    public static String userTemplatesMapToJson(InterMineAPI im, Map<String, ApiTemplate> templates,
+                                            Profile profile) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"" + profile.getUsername() + "\":");
+        sb.append(templateMapToJson(im, templates, profile));
         String result = sb.toString();
         return result;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,6 +7,18 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 5.0.7 (April 2022)
+
+#2419 - Updated the WS /templates to return dataTypes
+#2425 - Fix XSS issue
+#2427 - Create a WS returning all the templates
+#2428 - Superuser can run whatever template
+#2027 - Added a new generic TSV data source
+      - Completly removed dependencies on jcenter
+      - Added pombe organims to the taxon id to be ingnored by the idresolver
+      - Copyright updated
+	  - Fixed typo in the go evidence code
+
 InterMine 5.0.6 (Dicember 2021)
 
 #2414 - Upgraded psi lib version (thanks @asherpasha)
