@@ -56,8 +56,6 @@ public class RDFObject
     private Model model;
     private Set<String> nullRefsCols;
 
-    private static final Logger LOG = Logger.getLogger(RDFObject.class);
-
     /**
      * Setup internal ReportObject
      * @param lui the InterMine lui
@@ -95,15 +93,8 @@ public class RDFObject
     private void initialise() {
         model = ModelFactory.createDefaultModel();
         setKnownPrefixes();
-        Resource resource = model.createResource(resourceURI);
 
-        resource.addProperty(RDF.type, RDFHelper.createIMTypeResource(objectClassDescriptor));
-        if (objectClassDescriptor.getOntologyTerm() != null) {
-            String[] terms = objectClassDescriptor.getOntologyTerm().split(",");
-            for (int index = 0; index < terms.length; index++) {
-                resource.addProperty(RDF.type, model.createResource(terms[index]));
-            }
-        }
+        Resource resource = RDFHelper.createResource(resourceURI, objectClassDescriptor, model);
         //sameAs
         String externalIdentifier = PurlConfig.getExternalIdentifier(imObject);
         if (externalIdentifier != null) {

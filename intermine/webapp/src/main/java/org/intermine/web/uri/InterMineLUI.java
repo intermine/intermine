@@ -33,7 +33,6 @@ public class InterMineLUI
     private String className;
     private static final String LOCAL_ID_SEPARATOR = ":";
     private String identifier;
-    private static final Logger LOGGER = Logger.getLogger(InterMineLUI.class);
 
     /**
      * Constructor. Build a InterMineLUI given prefix and LUI

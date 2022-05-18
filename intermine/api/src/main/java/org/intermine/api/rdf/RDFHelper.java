@@ -11,6 +11,7 @@ package org.intermine.api.rdf;
  */
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -53,11 +54,32 @@ public final class RDFHelper
 
     /**
      * Create a RDF property given the attribute
-     * @param classDescriptor the attribute
-     * @return the RDF property
+     * @param classDescriptor the class
+     * @return the RDF resource
      */
-    public static final Resource createIMTypeResource(ClassDescriptor classDescriptor) {
+    private static final Resource createIMTypeResource(ClassDescriptor classDescriptor) {
         return ResourceFactory.createResource(VOC_NAMESPACE + classDescriptor.getSimpleName());
+    }
+
+    /**
+     * Create a RDF resource ans setting types
+     * @param  resourceURI for the subject
+     * @param classDescriptor the class
+     * @param model the jena model
+     * @return the RDF resource
+     */
+    public static final Resource createResource(String resourceURI,
+                ClassDescriptor classDescriptor, Model model) {
+        Resource resource = model.createResource(resourceURI,
+                RDFHelper.createIMTypeResource(classDescriptor));
+        if (classDescriptor.getOntologyTerm() != null) {
+            String[] terms = classDescriptor.getOntologyTerm().split(",");
+            for (int index = 0; index < terms.length; index++) {
+                resource = model.createResource(resourceURI,
+                        model.createResource(terms[index]));
+            }
+        }
+        return resource;
     }
 
     /**
