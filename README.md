@@ -66,7 +66,7 @@ This product includes software developed by the
 InterMine Development Roadmap
 -----------------------------
 
-For more information about the upcoming releases, please visit the [InterMine Development Roadmap](https://intermine.readthedocs.io/en/latest/intermine/roadmap/#intermine-development-roadmap). For the roadmap, please see [here](https://github.com/intermine/intermine/projects/7).
+For more information about the upcoming releases, please visit the [InterMine Development Roadmap](http://intermine.org/im-docs/docs/intermine/roadmap/). For the roadmap, please see [here](https://github.com/intermine/intermine/projects/7).
 
 Please cite
 ------------------------
