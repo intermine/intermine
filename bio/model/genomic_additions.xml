@@ -27,6 +27,7 @@
   <class name="ProteinDomain" extends="BioEntity" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000417">
     <attribute name="description" type="java.lang.String"/>
     <collection name="geneFamilies" referenced-type="GeneFamily" reverse-reference="proteinDomains"/>
+    <collection name="genes" referenced-type="Gene" reverse-reference="proteinDomains"/>
   </class>
 
   <!-- InterPro terms from LIS -->
@@ -66,16 +67,24 @@
     <reference name="gene" referenced-type="Gene" reverse-reference="exons"/>
   </class>
 
+  <!-- stores a gene family assignment along with various measures -->
+  <class name="GeneFamilyAssignment" is-interface="true">
+    <attribute name="evalue" type="java.lang.Double"/>
+    <attribute name="score" type="java.lang.Double"/>
+    <attribute name="bestDomainScore" type="java.lang.Double"/>
+    <reference name="geneFamily" referenced-type="GeneFamily"/>
+  </class>
+
   <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000704">
     <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
     <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
-    <reference name="geneFamily" referenced-type="GeneFamily" reverse-reference="genes"/>
+    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" />
     <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
     <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
     <collection name="introns" referenced-type="Intron" reverse-reference="gene"/>
     <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
     <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
-    <collection name="proteinDomains" referenced-type="ProteinDomain"/>
+    <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="genes"/>
     <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
   </class>
   
@@ -103,8 +112,8 @@
   <class name="Protein" is-interface="true" term="http://semanticscience.org/resource/SIO_010043">
     <reference name="CDS" referenced-type="CDS" reverse-reference="protein"/>
     <reference name="transcript" referenced-type="Transcript" reverse-reference="protein"/>
-    <reference name="geneFamily" referenced-type="GeneFamily" reverse-reference="proteins"/>
     <reference name="phylonode" referenced-type="Phylonode" reverse-reference="protein"/>
+    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" />
     <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
     <collection name="proteinHmmMatches" referenced-type="ProteinHmmMatch" reverse-reference="protein"/>
   </class>
@@ -178,8 +187,8 @@
     <attribute name="size" type="java.lang.Integer"/>
     <reference name="phylotree" referenced-type="Phylotree" reverse-reference="geneFamily"/>
     <collection name="dataSets" referenced-type="DataSet"/>
-    <collection name="genes" referenced-type="Gene" reverse-reference="geneFamily"/>
-    <collection name="proteins" referenced-type="Protein" reverse-reference="geneFamily"/>
+    <collection name="genes" referenced-type="Gene"/>
+    <collection name="proteins" referenced-type="Protein"/>
     <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="geneFamilies"/>
   </class>
 
