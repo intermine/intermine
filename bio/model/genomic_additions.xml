@@ -23,8 +23,8 @@
     <attribute name="synopsis" type="java.lang.String"/>
   </class>
   
-  <!-- interpro loader has ProteinDomain extend BioEntity -->
-  <class name="ProteinDomain" extends="BioEntity" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000417">
+  <!-- NOTE: interpro loader modified to have  ProteinDomain extend Annotatable -->
+  <class name="ProteinDomain" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000417">
     <attribute name="description" type="java.lang.String"/>
     <collection name="geneFamilies" referenced-type="GeneFamily" reverse-reference="proteinDomains"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="proteinDomains"/>
@@ -181,7 +181,6 @@
   <!-- GeneFamily.size is populated by a post-processor since it has multiple annotations contributing -->
   <class name="GeneFamily" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
-    <attribute name="name" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="version" type="java.lang.String"/>
     <attribute name="size" type="java.lang.Integer"/>
@@ -202,21 +201,20 @@
 
   <!-- LIS Phylotree -->
   <class name="Phylotree" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="identifier" type="java.lang.String"/>
     <attribute name="numLeaves" type="java.lang.Integer"/>
     <collection name="nodes" referenced-type="Phylonode" reverse-reference="tree"/>
     <reference name="geneFamily" referenced-type="GeneFamily" reverse-reference="phylotree"/>
     <reference name="dataSet" referenced-type="DataSet"/>
   </class>
   <class name="Newick" is-interface="false" extends="java.lang.Object">
-    <attribute name="name" type="java.lang.String"/>
+    <attribute name="identifier" type="java.lang.String"/>
     <attribute name="contents" type="java.lang.String"/>
     <reference name="phylotree" referenced-type="Phylotree"/>
     <reference name="geneFamily" referenced-type="GeneFamily"/>
   </class>
   <class name="Phylonode" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
-    <attribute name="name" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Double"/>
     <attribute name="numChildren" type="java.lang.Integer"/>
     <attribute name="isLeaf" type="java.lang.Boolean"/>
