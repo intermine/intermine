@@ -31,28 +31,19 @@
   </class>
 
   <!-- InterPro terms from LIS -->
-  <class name="ProteinMatch" extends="BioEntity" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000349">
-    <attribute name="source" type="java.lang.String"/>
+  <class name="ProteinMatch" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000349">
+    <attribute name="name" type="java.lang.String"/>
     <attribute name="accession" type="java.lang.String"/>
+    <attribute name="source" type="java.lang.String"/>
     <attribute name="status" type="java.lang.String"/>
     <attribute name="date" type="java.lang.String"/>
     <attribute name="target" type="java.lang.String"/>
     <attribute name="signatureDesc" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Integer"/>
+    <reference name="location" referenced-type="Location"/>
     <reference name="protein" referenced-type="Protein" reverse-reference="proteinMatches"/>
-    <reference name="location" referenced-type="Location"/>
   </class>
-  <class name="ProteinHmmMatch" extends="BioEntity" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001831">
-    <attribute name="source" type="java.lang.String"/>
-    <attribute name="accession" type="java.lang.String"/>
-    <attribute name="status" type="java.lang.String"/>
-    <attribute name="date" type="java.lang.String"/>
-    <attribute name="target" type="java.lang.String"/>
-    <attribute name="signatureDesc" type="java.lang.String"/>
-    <attribute name="length" type="java.lang.Integer"/>
-    <reference name="protein" referenced-type="Protein" reverse-reference="proteinHmmMatches"/>
-    <reference name="location" referenced-type="Location"/>
-  </class>
+  <class name="ProteinHmmMatch" extends="ProteinMatch" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001831" />
 
   <!-- CDS is sourced from a FASTA and contains the full sequence, related to gene and protein by ID matching -->
   <class name="CDS" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000316">
@@ -115,7 +106,6 @@
     <reference name="phylonode" referenced-type="Phylonode" reverse-reference="protein"/>
     <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" />
     <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
-    <collection name="proteinHmmMatches" referenced-type="ProteinHmmMatch" reverse-reference="protein"/>
   </class>
 
   <class name="SequenceVariant" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0001060">
@@ -178,7 +168,7 @@
   </class>
 
   <!-- LIS GeneFamily -->
-  <!-- GeneFamily.size is populated by a post-processor since it has multiple annotations contributing -->
+  <!-- GeneFamily.size and tallies are populated by a post-processor since it has multiple annotations contributing -->
   <class name="GeneFamily" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
@@ -189,8 +179,16 @@
     <collection name="genes" referenced-type="Gene"/>
     <collection name="proteins" referenced-type="Protein"/>
     <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="geneFamilies"/>
+    <collection name="tallies" referenced-type="GeneFamilyTally" reverse-reference="geneFamily"/>
   </class>
 
+  <!-- tally of genes per GeneFamily per Organism -->
+  <class name="GeneFamilyTally" is-interface="true">
+    <attribute name="tally" type="java.lang.Integer"/>
+    <reference name="geneFamily" referenced-type="GeneFamily" reverse-reference="tallies"/>
+    <reference name="organism" referenced-type="Organism"/>
+  </class>
+  
   <!-- LIS Pathway -->
   <class name="Pathway" is-interface="true" >
      <attribute name="identifier" type="java.lang.String"/>
