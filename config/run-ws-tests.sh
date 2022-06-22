@@ -19,7 +19,6 @@ if [ "$CLIENT" = "JS" ]; then
     # but Travis always does.
     # try to no install acorn anymore
     # npm install acorn
-    npm install
     npm install # installs deps
     grunt test  # runs tests
 
