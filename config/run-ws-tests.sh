@@ -17,7 +17,8 @@ if [ "$CLIENT" = "JS" ]; then
     # The error only happens in a fresh environment without node_modules and
     # bower_components installed, so devs don't usually see the error,
     # but Travis always does.
-    npm install acorn
+    # try to no install acorn anymore
+    # npm install acorn
     npm install # installs deps
     grunt test  # runs tests
 
