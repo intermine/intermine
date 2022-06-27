@@ -10,7 +10,6 @@ package org.intermine.web.uri;
  *
  */
 
-import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 
 import java.io.UnsupportedEncodingException;
