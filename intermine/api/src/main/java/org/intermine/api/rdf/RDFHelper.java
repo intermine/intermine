@@ -57,7 +57,7 @@ public final class RDFHelper
      * @param classDescriptor the class
      * @return the RDF resource
      */
-    private static final Resource createIMTypeResource(ClassDescriptor classDescriptor) {
+    public static final Resource createIMTypeResource(ClassDescriptor classDescriptor) {
         return ResourceFactory.createResource(VOC_NAMESPACE + classDescriptor.getSimpleName());
     }
 
