@@ -57,7 +57,7 @@ public final class RDFHelper
      * @param classDescriptor the class
      * @return the RDF resource
      */
-    public static final Resource createIMTypeResource(ClassDescriptor classDescriptor) {
+    public static final Resource createIMResource(ClassDescriptor classDescriptor) {
         return ResourceFactory.createResource(VOC_NAMESPACE + classDescriptor.getSimpleName());
     }
 
@@ -71,7 +71,7 @@ public final class RDFHelper
     public static final Resource createResource(String resourceURI,
                 ClassDescriptor classDescriptor, Model model) {
         Resource resource = model.createResource(resourceURI,
-                RDFHelper.createIMTypeResource(classDescriptor));
+                RDFHelper.createIMResource(classDescriptor));
         if (classDescriptor.getOntologyTerm() != null) {
             String[] terms = classDescriptor.getOntologyTerm().split(",");
             for (int index = 0; index < terms.length; index++) {

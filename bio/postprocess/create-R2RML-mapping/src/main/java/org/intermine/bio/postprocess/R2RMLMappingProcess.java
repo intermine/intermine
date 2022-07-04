@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2021 FlyMine
+ * Copyright (C) 2002-2022 FlyMine
  * Copyright (C) 2020 SIB Swiss Institute of Bioinformatics
  *
  * This code may be freely distributed and modified under the
@@ -213,7 +213,7 @@ public class R2RMLMappingProcess extends PostProcessor
                         }
                     }  else {
                         model.add(subjectMap, R2RML.CLASS_PROPERTY,
-                                RDFHelper.createIMTypeResource(cd));
+                                RDFHelper.createIMResource(cd));
                     }
                     return ad;
                 }
