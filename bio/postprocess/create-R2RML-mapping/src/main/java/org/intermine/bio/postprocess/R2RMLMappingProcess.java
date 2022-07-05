@@ -179,12 +179,6 @@ public class R2RMLMappingProcess extends PostProcessor
                 LOG.info(columnName
                         + ("id".equalsIgnoreCase(columnName) ? ": PRIMARY KEY" : ": column")
                         + " with type " + ((AttributeDescriptor) fd).getType() + "\n");
-            /*} else if (fd.isCollection() && ((CollectionDescriptor) fd).relationType()
-                    == FieldDescriptor.ONE_N_RELATION) {
-                if (isMappable(cd)) {
-                    //Gene hasSynonym Synonyms
-                    mapOneToMany(model, cd, (CollectionDescriptor) fd, basicTableMapping);
-                }*/
             } else if (!fd.isCollection()) {
                 mapManyToOne(model, basicTableMapping, fd);
             }
@@ -263,30 +257,6 @@ public class R2RMLMappingProcess extends PostProcessor
         model.add(objectMap, R2RML.COLUMN, columnName);
         model.add(predicateObjectMap, R2RML.PREDICATE, RDFHelper.createProperty(ad));
     }
-
-/*    private void mapOneToMany(Model model, ClassDescriptor cd,
-                                    CollectionDescriptor collection, Resource basicTableMapping) {
-        LOG.info("ONE_N_RELATION");
-        ReferenceDescriptor reverse = collection.getReverseReferenceDescriptor();
-
-        String jointTable = collection.getReferencedClassDescriptor().getSimpleName();
-        if (findSubjectMap(collection.getReferencedClassDescriptor()) != null
-                && isMappable(collection.getReferencedClassDescriptor())
-                && !"OntologyAnnotation".equalsIgnoreCase(jointTable)) {
-            //e.g strain -> Sequencefeature
-            Resource objectMap = model.createResource();
-            Resource objectPredicateMap = model.createResource();
-            Resource joinCondition = model.createResource();
-            model.add(basicTableMapping, R2RML.PREDICATE_OBJECT_MAP, objectPredicateMap);
-            model.add(objectPredicateMap, R2RML.PREDICATE, RDFHelper.createProperty(jointTable));
-            model.add(objectPredicateMap, R2RML.OBJECT_MAP, objectMap);
-            model.add(objectMap, R2RML.PARENT_TRIPLE_MAP,
-                    createMappingNameForTable(model, jointTable));
-            model.add(objectMap, R2RML.JOIN_CONDITION, joinCondition);
-            model.add(joinCondition, R2RML.CHILD, "id");
-            model.add(joinCondition, R2RML.PARENT, reverse.getName() + "id");
-        }
-    }*/
 
     private AttributeDescriptor findSubjectMap(ClassDescriptor cd) {
         String tableName = DatabaseUtil.getTableName(cd);
