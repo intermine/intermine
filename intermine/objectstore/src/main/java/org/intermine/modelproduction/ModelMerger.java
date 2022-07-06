@@ -10,13 +10,7 @@ package org.intermine.modelproduction;
  *
  */
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -287,14 +281,16 @@ public final class ModelMerger
             supersStr = null;
         }
 
-        // use the URI from the new class, if it's there
-        String fairUri = merge.getOntologyTerm();
-        if (fairUri == null) {
-            // if not, use original (still might be null!)
-            fairUri = original.getOntologyTerm();
+        // merge the ontology terms
+        Set<String> mergedOntologyTerms = new HashSet<>();
+        if (original.getOntologyTerm() != null) {
+            mergedOntologyTerms.addAll(Arrays.asList(original.getOntologyTerm().split(",")));
+        }
+        if (merge.getOntologyTerm() != null) {
+            mergedOntologyTerms.addAll(Arrays.asList(merge.getOntologyTerm().split(",")));
         }
         return new ClassDescriptor(original.getName(), supersStr,
-                merge.isInterface(), attrs, refs, cols, fairUri);
+                merge.isInterface(), attrs, refs, cols, StringUtils.join(mergedOntologyTerms,","));
     }
 
     /**
