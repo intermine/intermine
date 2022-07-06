@@ -129,7 +129,7 @@ public class RDFObject
                 fieldValue = fieldClob.toString();
             }
             AttributeDescriptor attributeDescriptor = (AttributeDescriptor) fd;
-            resource.addProperty(RDFHelper.createProperty(attributeDescriptor),
+            resource.addProperty(RDFHelper.createIMProperty(attributeDescriptor),
                     fieldValue.toString());
         }
     }
@@ -163,7 +163,7 @@ public class RDFObject
         if (lui != null) {
             resourceURI = baseUrl.concat(lui.toString());
             Resource referenceObjResource = model.createResource(resourceURI);
-            resource.addProperty(RDFHelper.createProperty(ref), referenceObjResource);
+            resource.addProperty(RDFHelper.createIMProperty(ref), referenceObjResource);
         }
     }
 

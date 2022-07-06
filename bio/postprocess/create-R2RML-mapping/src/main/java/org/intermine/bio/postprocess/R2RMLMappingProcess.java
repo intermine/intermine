@@ -255,7 +255,7 @@ public class R2RMLMappingProcess extends PostProcessor
 
         model.add(objectMap, R2RML.DATA_TYPE, getXsdForFullyQualifiedClassName(ad));
         model.add(objectMap, R2RML.COLUMN, columnName);
-        model.add(predicateObjectMap, R2RML.PREDICATE, RDFHelper.createProperty(ad));
+        model.add(predicateObjectMap, R2RML.PREDICATE, RDFHelper.createIMProperty(ad));
     }
 
     private AttributeDescriptor findSubjectMap(ClassDescriptor cd) {
@@ -311,7 +311,7 @@ public class R2RMLMappingProcess extends PostProcessor
             Resource joinCondition = model.createResource();
             model.add(basicTableMapping, R2RML.PREDICATE_OBJECT_MAP, objectPredicateMap);
             model.add(objectPredicateMap, R2RML.PREDICATE,
-                    RDFHelper.createProperty((ReferenceDescriptor) fieldDescriptor));
+                    RDFHelper.createIMProperty((ReferenceDescriptor) fieldDescriptor));
             model.add(objectPredicateMap, R2RML.OBJECT_MAP, objectMap);
             model.add(objectMap, R2RML.PARENT_TRIPLE_MAP,
                     createMappingNameForTable(model, jointTable));
@@ -398,7 +398,7 @@ public class R2RMLMappingProcess extends PostProcessor
                         + toTableName + ".id = " + joinTableName + "." + toJoinColumn);
                 model.add(jointTriplesMap, R2RML.PREDICATE_OBJECT_MAP, objectPredicateMap);
                 model.add(objectPredicateMap, R2RML.PREDICATE,
-                        RDFHelper.createProperty(collection));
+                        RDFHelper.createIMProperty(collection));
                 model.add(objectPredicateMap, R2RML.OBJECT_MAP, objectMap);
                 model.add(objectMap, RDF.type, R2RML.TERM_MAP);
                 model.add(objectMap, RDF.type, R2RML.OBJECT_MAP);
