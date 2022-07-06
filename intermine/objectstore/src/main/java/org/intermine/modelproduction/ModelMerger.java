@@ -10,7 +10,14 @@ package org.intermine.modelproduction;
  *
  */
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.TreeSet;
+import java.util.LinkedHashSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -290,7 +297,8 @@ public final class ModelMerger
             mergedOntologyTerms.addAll(Arrays.asList(merge.getOntologyTerm().split(",")));
         }
         return new ClassDescriptor(original.getName(), supersStr,
-                merge.isInterface(), attrs, refs, cols, StringUtils.join(mergedOntologyTerms,","));
+                merge.isInterface(), attrs, refs, cols,
+                StringUtils.join(mergedOntologyTerms, ","));
     }
 
     /**
