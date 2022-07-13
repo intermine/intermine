@@ -7,6 +7,10 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 5.0.8 (June 2022)
+
+- Improved user input checks
+
 InterMine 5.0.7 (April 2022)
 
 #2419 - Updated the WS /templates to return dataTypes

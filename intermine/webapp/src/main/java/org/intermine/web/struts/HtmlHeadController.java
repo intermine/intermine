@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -138,7 +139,7 @@ public class HtmlHeadController extends TilesAction
                 LOG.warn("Could not correctly set the page title for object ID - " + objectId, e);
             }
         }
-        request.setAttribute("htmlPageTitle", htmlPageTitle);
+        request.setAttribute("htmlPageTitle", StringEscapeUtils.escapeHtml(htmlPageTitle));
 
         // Can we employ user tracking?
         String userTrackingMessage = (String) SessionMethods.getWebProperties(
