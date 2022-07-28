@@ -156,8 +156,12 @@
   <class name="RRTract" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000435" />
   <class name="LongTerminalRepeat" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000286" />
   <class name="PrimerBindingSite" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0005850" />
+  <class name="Pseudogene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000336" />
 
-
+  <!-- Region with isCircular attribute (5.0.8.1) -->
+  <class name="Region" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:SO:0000001">
+    <attribute name="isCircular" type="java.lang.Boolean"/>
+  </class>
 
   <!-- LIS GeneticMarker -->
   <!-- linkageGroupPositions give cM position on linkage groups, populated by a post-processor -->
@@ -240,11 +244,19 @@
     <reference name="dataSet" referenced-type="DataSet"/>
     <collection name="samples" referenced-type="ExpressionSample" reverse-reference="source"/>
   </class>
-  <class name="ExpressionSample" extends="BioEntity" is-interface="true">
+  <class name="ExpressionSample" is-interface="true">
     <attribute name="num" type="java.lang.Integer"/>
+    <attribute name="identifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
+    <attribute name="treatment" type="java.lang.String"/>
+    <attribute name="tissue" type="java.lang.String"/>
+    <attribute name="developmentStage" type="java.lang.String"/>
+    <attribute name="species" type="java.lang.String"/>
+    <attribute name="genotype" type="java.lang.String"/>
+    <attribute name="replicateGroup" type="java.lang.String"/>
     <attribute name="bioSample" type="java.lang.String"/>
+    <attribute name="sraExperiment" type="java.lang.String"/>
     <reference name="source" referenced-type="ExpressionSource" reverse-reference="samples"/>
   </class>
   <class name="ExpressionValue" is-interface="false" extends="java.lang.Object">
