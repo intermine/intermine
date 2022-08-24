@@ -1,103 +1,103 @@
 <?xml version="1.0"?>
 <model name="genomic" package="org.intermine.model.bio">
     <class name="Annotatable" is-interface="true">
-        <attribute name="primaryIdentifier" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000675"/>
-        <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
-        <collection name="publications" referenced-type="Publication" reverse-reference="entities"/>
+        <attribute name="primaryIdentifier" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000673"/>
+        <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject" term="http://semanticscience.org/resource/SIO_000255"/>
+        <collection name="publications" referenced-type="Publication" reverse-reference="entities" term="http://purl.org/dc/terms/bibliographicCitation"/>
     </class>
-    <class name="Author" is-interface="true" term="http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C42781">
-        <attribute name="firstName" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000181"/>
-        <attribute name="lastName" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000182"/>
-        <attribute name="name" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000183"/>
+    <class name="Author" is-interface="true" term="http://purl.obolibrary.org/obo/NCIT_C42781">
+        <attribute name="firstName" type="java.lang.String" term="http://xmlns.com/foaf/0.1/givenname"/>
+        <attribute name="lastName" type="java.lang.String" term="http://xmlns.com/foaf/0.1/family_name"/>
+        <attribute name="name" type="java.lang.String" term="http://xmlns.com/foaf/0.1/name"/>
         <attribute name="initials" type="java.lang.String"/>
         <collection name="publications" referenced-type="Publication" reverse-reference="authors"/>
     </class>
 
     <class name="BioEntity" is-interface="true" extends="Annotatable">
-        <attribute name="secondaryIdentifier" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000675"/>
-        <attribute name="symbol" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000105"/>
-        <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
-        <reference name="organism" referenced-type="Organism"/>
+        <attribute name="secondaryIdentifier" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000673"/>
+        <attribute name="symbol" type="java.lang.String" term="http://www.w3.org/2004/02/skos/core#prefLabel"/>
+        <attribute name="name" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
+        <reference name="organism" referenced-type="Organism" term="http://purl.org/net/orth#organism"/>
         <collection name="locatedFeatures" referenced-type="Location" reverse-reference="locatedOn"/>
         <collection name="locations" referenced-type="Location" reverse-reference="feature" />
-        <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
-        <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
-        <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
+        <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject" term="http://purl.obolibrary.org/obo/synonym"/>
+        <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities" term="http://semanticscience.org/resource/SIO_001278"/>
+        <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject" term="http://www.geneontology.org/formats/oboInOwl#hasDbXref"/>
     </class>
 
     <class name="Chromosome"  extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000340" />
 
     <class name="Comment" is-interface="true" term="http://semanticscience.org/resource/SIO_001167">
-        <attribute name="description" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
+        <attribute name="description" type="java.lang.String" term="http://purl.org/dc/terms/description"/>
         <attribute name="type" type="java.lang.String" term="http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25284"/>
     </class>
 
     <class name="CrossReference" is-interface="true" term="http://semanticscience.org/resource/SIO_001171">
-        <attribute name="identifier" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000675"/>
-        <reference name="source" referenced-type="DataSource"/>
-        <reference name="subject" referenced-type="BioEntity" reverse-reference="crossReferences" />
+        <attribute name="identifier" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000673"/>
+        <reference name="source" referenced-type="DataSource" term="http://semanticscience.org/resource/SIO_001278"/>
+        <reference name="subject" referenced-type="BioEntity" reverse-reference="crossReferences" term="http://www.geneontology.org/formats/oboInOwl#hasDbXref"/>
     </class>
 
-    <class name="DataSource" is-interface="true">
-        <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
+    <class name="DataSource" is-interface="true" term="http://purl.obolibrary.org/obo/NCIT_C25683">
+        <attribute name="name" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
         <attribute name="url" type="java.lang.String" term="http://edamontology.org/data_1052"/>
-        <attribute name="description" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
-        <collection name="publications" referenced-type="Publication"/>
+        <attribute name="description" type="java.lang.String" term="http://purl.org/dc/terms/description"/>
+        <collection name="publications" referenced-type="Publication" term="http://purl.org/dc/terms/bibliographicCitation"/>
         <collection name="dataSets" referenced-type="DataSet" reverse-reference="dataSource"/>
     </class>
 
     <class name="DataSet" is-interface="true" term="http://semanticscience.org/resource/SIO_000089">
-        <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
-        <attribute name="url" type="java.lang.String" term="http://edamontology.org/data_1052"/>
-        <attribute name="description" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
-        <attribute name="version" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000653"/>
+        <attribute name="name" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
+        <attribute name="url" type="java.lang.String" term="https://schema.org/url"/>
+        <attribute name="description" type="java.lang.String" term="http://purl.org/dc/terms/description"/>
+        <attribute name="version" type="java.lang.String" term="http://purl.org/dc/terms/hasVersion"/>
         <attribute name="licence" type="java.lang.String" term="http://purl.org/dc/terms/license"/>
-        <reference name="dataSource" referenced-type="DataSource" reverse-reference="dataSets"/>
-        <reference name="publication" referenced-type="Publication"/>
-        <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="dataSets"/>
+        <reference name="dataSource" referenced-type="DataSource" reverse-reference="dataSets" term="http://purl.org/dc/terms/source"/>
+        <reference name="publication" referenced-type="Publication" term="http://purl.org/dc/terms/bibliographicCitation"/>
+        <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="dataSets" term="http://semanticscience.org/resource/SIO_001277"/>
     </class>
 
-    <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000704">
-        <attribute name="description" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
+    <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000704">
+        <attribute name="description" type="java.lang.String" term="http://purl.org/dc/terms/description"/>
         <attribute name="briefDescription" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
-        <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
+        <collection name="proteins" referenced-type="Protein" reverse-reference="genes" term="https://semanticscience.org/resource/SIO_010078"/>
     </class>
 
     <class name="Location" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000735">
-        <attribute name="start" type="java.lang.Integer" term="http://semanticscience.org/resource/SIO_000943"/>
-        <attribute name="end" type="java.lang.Integer" term="http://semanticscience.org/resource/SIO_000953"/>
-        <attribute name="strand" type="java.lang.String" term="http://semanticscience.org/resource/SIO_001174"/>
+        <attribute name="start" type="java.lang.Integer" term="http://purl.obolibrary.org/obo/RO_0002231"/>
+        <attribute name="end" type="java.lang.Integer" term="http://purl.obolibrary.org/obo/RO_0002232"/>
+        <attribute name="strand" type="java.lang.String" term="http://purl.obolibrary.org/obo/GENO_0000906"/>
         <reference name="feature" referenced-type="BioEntity" reverse-reference="locations"/>
         <reference name="locatedOn" referenced-type="BioEntity" reverse-reference="locatedFeatures"/>
         <collection name="dataSets" referenced-type="DataSet"/>
     </class>
 
     <class name="MeshTerm" is-interface="true" term="http://edamontology.org/data_0966">
-        <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
-        <collection name="publications" referenced-type="Publication" reverse-reference="meshTerms"/>
+        <attribute name="name" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
+        <collection name="publications" referenced-type="Publication" reverse-reference="meshTerms" term="http://purl.org/dc/terms/bibliographicCitation"/>
     </class>
 
     <class name="Ontology" is-interface="true" term="http://semanticscience.org/resource/SIO_001391">
-        <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
+        <attribute name="name" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
         <attribute name="url" type="java.lang.String" term="http://edamontology.org/data_1052"/>
         <collection name="dataSets" referenced-type="DataSet"/>
     </class>
 
     <class name="OntologyAnnotationEvidenceCode" is-interface="true" term="http://purl.obolibrary.org/obo/ECO_0000000">
         <attribute name="code" type="java.lang.String"/>
-        <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
+        <attribute name="name" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
         <attribute name="url" type="java.lang.String" term="http://edamontology.org/data_1052"/>
     </class>
 
     <class name="OntologyEvidence" is-interface="true" term="http://purl.obolibrary.org/obo/ECO_0000000">
         <reference name="code" referenced-type="OntologyAnnotationEvidenceCode"/>
-        <collection name="publications" referenced-type="Publication"/>
+        <collection name="publications" referenced-type="Publication" term="http://purl.org/dc/terms/bibliographicCitation"/>
     </class>
 
     <class name="OntologyTerm" is-interface="true" term="http://semanticscience.org/resource/SIO_000275">
         <attribute name="identifier" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000675"/>
-        <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2099"/>
-        <attribute name="description" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000136"/>
+        <attribute name="name" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
+        <attribute name="description" type="java.lang.String" term="http://purl.org/dc/terms/description"/>
         <attribute name="namespace" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000067"/>
         <attribute name="obsolete" type="java.lang.Boolean" term="http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63553"/>
         <reference name="ontology" referenced-type="Ontology"/>
@@ -119,7 +119,7 @@
 
     <class name="OntologyAnnotation" is-interface="true" term="http://semanticscience.org/resource/SIO_001166">
         <attribute name="qualifier" type="java.lang.String" term="http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C41009"/>
-        <reference name="subject" referenced-type="Annotatable" reverse-reference="ontologyAnnotations"/>
+        <reference name="subject" referenced-type="Annotatable" reverse-reference="ontologyAnnotations" term=""/>
         <reference name="ontologyTerm" referenced-type="OntologyTerm" reverse-reference="ontologyAnnotations"/>
         <collection name="dataSets" referenced-type="DataSet" />
         <collection name="evidence" referenced-type="OntologyEvidence"/>
@@ -136,32 +136,32 @@
         <attribute name="species" type="java.lang.String" term="http://edamontology.org/data_1045"/>
         <attribute name="commonName" type="java.lang.String" term="http://edamontology.org/data_2909"/>
         <attribute name="shortName" type="java.lang.String" term="http://edamontology.org/data_2909"/>
-        <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_2909"/>
+        <attribute name="name" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
         <collection name="strains" referenced-type="Strain"/>
     </class>
 
-    <class name="Protein" extends="BioEntity" is-interface="true" term="http://semanticscience.org/resource/SIO_010043">
-        <attribute name="md5checksum" type="java.lang.String" term="http://edamontology.org/data_2190"/>
-        <attribute name="primaryAccession" type="java.lang.String" term="http://edamontology.org/data_2907" />
-        <attribute name="length" type="java.lang.Integer" term="http://semanticscience.org/resource/SIO_000041"/>
-        <attribute name="molecularWeight" type="java.lang.Double" term="http://purl.bioontology.org/ontology/MESH/D008970"/>
-        <reference name="sequence" referenced-type="Sequence"/>
-        <collection name="genes" referenced-type="Gene" reverse-reference="proteins"/>
+    <class name="Protein" extends="BioEntity" is-interface="true" term="http://purl.uniprot.org/core/Protein,http://semanticscience.org/resource/SIO_010043">
+        <attribute name="md5checksum" type="java.lang.String" term="http://purl.uniprot.org/core/md5Checksum"/>
+        <attribute name="primaryAccession" type="java.lang.String" term="http://purl.obolibrary.org/obo/ERO_0000405"/>
+        <attribute name="length" type="java.lang.Integer" term="http://purl.org/dc/terms/SizeOrDuration"/>
+        <attribute name="molecularWeight" type="java.lang.Double" term="http://purl.uniprot.org/core/mass"/>
+        <reference name="sequence" referenced-type="Sequence" term="http://purl.uniprot.org/core/sequence"/>
+        <collection name="genes" referenced-type="Gene" reverse-reference="proteins" term="http://semanticscience.org/resource/SIO_010079"/>
     </class>
 
-    <class name="Publication" is-interface="true" term="http://semanticscience.org/resource/SIO_000087">
-        <attribute name="title" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000185"/>
-        <attribute name="doi" type="java.lang.String" term="http://edamontology.org/data_1188"/>
-        <attribute name="issue" type="java.lang.String"/>
-        <attribute name="pubMedId" type="java.lang.String" term="http://edamontology.org/data_1187"/>
-        <attribute name="pages" type="java.lang.String"/>
+    <class name="Publication" is-interface="true" term="http://purl.org/ontology/bibo/Article">
+        <attribute name="title" type="java.lang.String" term="http://purl.org/dc/terms/title"/>
+        <attribute name="doi" type="java.lang.String" term="http://purl.org/ontology/bibo/doi"/>
+        <attribute name="issue" type="java.lang.String" term="http://purl.org/ontology/bibo/issuer"/>
+        <attribute name="pubMedId" type="java.lang.String" term="http://purl.obolibrary.org/obo/ERO_0000569"/>
+        <attribute name="pages" type="java.lang.String" term="http://purl.org/ontology/bibo/numPages"/>
         <attribute name="month" type="java.lang.String"/>
-        <attribute name="year" type="java.lang.Integer"/>
-        <attribute name="volume" type="java.lang.String"/>
-        <attribute name="journal" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000160"/>
-        <attribute name="firstAuthor" type="java.lang.String" term="http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C42781"/>
-        <attribute name="abstractText" type="java.lang.String" term="http://edamontology.org/data_2849"/>
-        <collection name="authors" referenced-type="Author" reverse-reference="publications" />
+        <attribute name="year" type="java.lang.Integer" term="http://purl.org/dc/terms/date"/>
+        <attribute name="volume" type="java.lang.String" term="http://purl.org/ontology/bibo/volume"/>
+        <attribute name="journal" type="java.lang.String" term="http://purl.org/dc/terms/publisher"/>
+        <attribute name="firstAuthor" type="java.lang.String" term="http://purl.org/dc/elements/1.1/creator"/>
+        <attribute name="abstractText" type="java.lang.String" term="http://purl.org/ontology/bibo/abstract"/>
+        <collection name="authors" referenced-type="Author" reverse-reference="publications" term="http://purl.org/ontology/bibo/authorList"/>
         <collection name="entities" referenced-type="Annotatable" reverse-reference="publications" />
         <collection name="meshTerms" referenced-type="MeshTerm" reverse-reference="publications" />
     </class>
@@ -169,9 +169,9 @@
     <class name="SOTerm" extends="OntologyTerm" is-interface="true" term="http://edamontology.org/data_0966"/>
 
     <class name="Sequence" is-interface="true" term="http://edamontology.org/data_2044">
-        <attribute name="residues" type="org.intermine.objectstore.query.ClobAccess" term="http://edamontology.org/data_2044"/>
-        <attribute name="length" type="int" term="http://semanticscience.org/resource/SIO_000041"/>
-        <attribute name="md5checksum" type="java.lang.String" term="http://edamontology.org/data_2190"/>
+        <attribute name="residues" type="org.intermine.objectstore.query.ClobAccess" term="http://www.w3.org/1999/02/22-rdf-syntax-ns#value"/>
+        <attribute name="length" type="int" term="http://purl.org/dc/terms/SizeOrDuration"/>
+        <attribute name="md5checksum" type="java.lang.String" term="http://purl.uniprot.org/core/md5Checksum"/>
     </class>
 
     <class name="SequenceCollection" extends="BioEntity" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0001260">
@@ -180,10 +180,10 @@
 
     <class name="SequenceFeature" extends="BioEntity" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000110">
         <attribute name="score" type="java.lang.Double" term="http://edamontology.org/data_1772"/>
-        <attribute name="scoreType" type="java.lang.String" term="http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25284"/>
-        <attribute name="length" type="java.lang.Integer" term="http://semanticscience.org/resource/SIO_000041"/>
+        <attribute name="scoreType" type="java.lang.String" term="http://purl.org/dc/terms/type"/>
+        <attribute name="length" type="java.lang.Integer" term="http://purl.org/dc/terms/SizeOrDuration"/>
         <reference name="sequence" referenced-type="Sequence"/>
-        <reference name="chromosome" referenced-type="Chromosome" />
+        <reference name="chromosome" referenced-type="Chromosome" term="http://purl.org/dc/terms/isPartOf"/>
         <reference name="chromosomeLocation" referenced-type="Location" />
         <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
         <reference name="strain" referenced-type="Strain"  reverse-reference="features" />
@@ -191,22 +191,22 @@
         <collection name="childFeatures" referenced-type="SequenceFeature" />
     </class>
 
-    <class name="Strain" extends="BioEntity" is-interface="true">
+    <class name="Strain" extends="BioEntity" is-interface="true" term="http://semanticscience.org/resource/SIO_010055">
         <attribute name="annotationVersion" type="java.lang.String"/>
         <attribute name="assemblyVersion" type="java.lang.String"/>
         <collection name="features" referenced-type="SequenceFeature" reverse-reference="strain" />
     </class>
 
     <class name="Synonym" is-interface="true" term="http://semanticscience.org/resource/SIO_000122">
-        <attribute name="value" type="java.lang.String" term="http://semanticscience.org/resource/SIO_000122"/>
+        <attribute name="value" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
         <reference name="subject" referenced-type="BioEntity" reverse-reference="synonyms"/>
-        <collection name="dataSets" referenced-type="DataSet"/>
+        <collection name="dataSets" referenced-type="DataSet" term="http://semanticscience.org/resource/SIO_001278"/>
     </class>
 
     <class name="SyntenyBlock" is-interface="true">
         <collection name="syntenicRegions" referenced-type="SyntenicRegion" reverse-reference="syntenyBlock" />
         <collection name="dataSets" referenced-type="DataSet" />
-        <collection name="publications" referenced-type="Publication" />
+        <collection name="publications" referenced-type="Publication"/>
     </class>
     <class name="SyntenicRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0005858">
         <reference name="syntenyBlock" referenced-type="SyntenyBlock" reverse-reference="syntenicRegions"/>

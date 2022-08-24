@@ -154,8 +154,9 @@ public class InterMineModelParser implements ModelParser
                     type = packageName + "." + type;
                 }
                 String reverseReference = attrs.getValue("reverse-reference");
+                String term = attrs.getValue("term");
                 cls.references.add(new ReferenceDescriptor(name, type,
-                                                           reverseReference));
+                                                           reverseReference, term));
             } else if ("collection".equals(qName)) {
                 String name = attrs.getValue("name");
                 String origType = attrs.getValue("referenced-type");
@@ -185,8 +186,9 @@ public class InterMineModelParser implements ModelParser
                 }
 
                 String reverseReference = attrs.getValue("reverse-reference");
+                String term = attrs.getValue("term");
                 cls.collections.add(new CollectionDescriptor(name, type,
-                                                             reverseReference));
+                        reverseReference, term));
             }
         }
 

@@ -13,7 +13,6 @@ package org.intermine.web.filters;
 import org.apache.commons.httpclient.HttpStatus;
 
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.uri.InterMineLUI;
 import org.intermine.web.uri.InterMineLUIConverter;
 import org.intermine.web.uri.InvalidPermanentURLException;
@@ -50,8 +49,7 @@ public class PermanentURLFilter implements Filter
 
         try {
             InterMineLUI permanentURL = new InterMineLUI(request.getRequestURI());
-            InterMineLUIConverter urlConverter =
-                    new InterMineLUIConverter(SessionMethods.getProfile(session));
+            InterMineLUIConverter urlConverter = new InterMineLUIConverter();
             Integer id = urlConverter.getInterMineID(permanentURL);
             if (id == -1) {
                 response.setStatus(HttpStatus.SC_NOT_FOUND);

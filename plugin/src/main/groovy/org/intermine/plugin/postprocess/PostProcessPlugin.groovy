@@ -120,6 +120,10 @@ class PostProcessPlugin implements Plugin<Project> {
                     } else {
                         try {
                             def ant = new AntBuilder()
+                            PostProcess postProcess = intermineProject.postProcesses.get(processName)
+                            postProcess.userProperties.each { prop ->
+                                ant.project.setProperty(prop.name, prop.value)
+                            }
                             String postprocessorClassName = bioSourceProperties.getPostProcesserClassName(processName)
                             ant.taskdef(name: "corePostProcess", classname: "org.intermine.task.PostProcessorTask") {
                                 classpath {

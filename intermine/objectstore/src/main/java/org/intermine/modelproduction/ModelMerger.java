@@ -10,13 +10,14 @@ package org.intermine.modelproduction;
  *
  */
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashSet;
 import java.util.TreeSet;
+import java.util.LinkedHashSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -193,7 +194,7 @@ public final class ModelMerger
                                                 cloneAttributeDescriptors(adescs),
                                                 cloneReferenceDescriptors(rdescs),
                                                 cloneCollectionDescriptors(cdescs),
-                                                cd.getFairTerm()));
+                                                cd.getOntologyTerm()));
         }
 
         return newSet;
@@ -287,14 +288,17 @@ public final class ModelMerger
             supersStr = null;
         }
 
-        // use the URI from the new class, if it's there
-        String fairUri = merge.getFairTerm();
-        if (fairUri == null) {
-            // if not, use original (still might be null!)
-            fairUri = original.getFairTerm();
+        // merge the ontology terms
+        Set<String> mergedOntologyTerms = new HashSet<>();
+        if (original.getOntologyTerm() != null) {
+            mergedOntologyTerms.addAll(Arrays.asList(original.getOntologyTerm().split(",")));
+        }
+        if (merge.getOntologyTerm() != null) {
+            mergedOntologyTerms.addAll(Arrays.asList(merge.getOntologyTerm().split(",")));
         }
         return new ClassDescriptor(original.getName(), supersStr,
-                merge.isInterface(), attrs, refs, cols, fairUri);
+                merge.isInterface(), attrs, refs, cols,
+                StringUtils.join(mergedOntologyTerms, ","));
     }
 
     /**
@@ -447,7 +451,7 @@ public final class ModelMerger
 
     private static ReferenceDescriptor cloneReferenceDescriptor(ReferenceDescriptor ref) {
         return new ReferenceDescriptor(ref.getName(), ref.getReferencedClassName(),
-                ref.getReverseReferenceFieldName());
+                ref.getReverseReferenceFieldName(), ref.getOntologyTerm());
     }
 
     /**
@@ -467,7 +471,7 @@ public final class ModelMerger
 
     private static CollectionDescriptor cloneCollectionDescriptor(CollectionDescriptor ref) {
         return new CollectionDescriptor(ref.getName(), ref.getReferencedClassName(),
-                ref.getReverseReferenceFieldName());
+                ref.getReverseReferenceFieldName(), ref.getOntologyTerm());
     }
 
     /**
@@ -497,7 +501,7 @@ public final class ModelMerger
             Set<AttributeDescriptor> refs) {
         Set<AttributeDescriptor> copy = new HashSet<AttributeDescriptor>();
         for (AttributeDescriptor ref : refs) {
-            copy.add(new AttributeDescriptor(ref.getName(), ref.getType(), ref.getFairTerm()));
+            copy.add(new AttributeDescriptor(ref.getName(), ref.getType(), ref.getOntologyTerm()));
         }
         return copy;
     }
@@ -518,7 +522,7 @@ public final class ModelMerger
         return new ClassDescriptor(cld.getName(), supers, cld.isInterface(),
                 cloneAttributeDescriptors(cld.getAttributeDescriptors()),
                 cloneReferenceDescriptors(cld.getReferenceDescriptors()),
-                cloneCollectionDescriptors(cld.getCollectionDescriptors()), cld.getFairTerm());
+                cloneCollectionDescriptors(cld.getCollectionDescriptors()), cld.getOntologyTerm());
     }
 
     /**

@@ -3,7 +3,7 @@ InterMine
 
 Master: [![InterMine CI](https://github.com/intermine/intermine/workflows/InterMine%20CI/badge.svg?branch=master)](https://github.com/intermine/intermine/actions?query=workflow%3A%22InterMine+CI%22)
 Dev: [![InterMine CI](https://github.com/intermine/intermine/workflows/InterMine%20CI/badge.svg?branch=dev)](https://github.com/intermine/intermine/actions?query=workflow%3A%22InterMine+CI%22)
-[![Version](http://img.shields.io/badge/version-5.0.8-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
+[![Version](http://img.shields.io/badge/version-5.1.0-blue.svg?style=flat)](https://github.com/intermine/intermine/releases)
 [![License](http://img.shields.io/badge/license-LGPL_2.1-blue.svg?style=flat)](https://github.com/intermine/intermine/blob/master/LICENSE)
 [![Research software impact](http://depsy.org/api/package/pypi/intermine/badge.svg)](http://depsy.org/package/python/intermine)
 [![Conda](https://anaconda.org/anaconda/conda-build/badges/installer/conda.svg)](https://anaconda.org/bioconda/intermine)
