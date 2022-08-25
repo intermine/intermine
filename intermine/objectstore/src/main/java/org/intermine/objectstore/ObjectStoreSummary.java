@@ -479,7 +479,7 @@ public class ObjectStoreSummary
         if ("Substitution".equals(cld.getUnqualifiedName()) &&
                 "overlappingFeatures".equals(ref.getName())) {
             LOG.info("Query for empty: " + cld.getUnqualifiedName() + "." + ref.getName()
-            + " not performed.");
+                    + " not performed.");
             return false;
         }
 
