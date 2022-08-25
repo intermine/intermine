@@ -476,8 +476,8 @@ public class ObjectStoreSummary
 
         // hack to avoid long computation for humanmine
         // see https://github.com/intermine/intermine/issues/2423
-        if ("Substitution".equals(cld.getUnqualifiedName()) &&
-                "overlappingFeatures".equals(ref.getName())) {
+        if ("Substitution".equals(cld.getUnqualifiedName())
+                && "overlappingFeatures".equals(ref.getName())) {
             LOG.info("Query for empty: " + cld.getUnqualifiedName() + "." + ref.getName()
                     + " not performed.");
             return false;
