@@ -388,6 +388,9 @@ public class ReportObject
      */
     public String getLUI() {
         InterMineLUI lui = new InterMineLUIConverter().getInterMineLUI(object.getId().intValue());
+        if (lui == null) {
+            return null;
+        }
         return lui.toString();
     }
 
