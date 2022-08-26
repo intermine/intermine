@@ -14,12 +14,15 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.rdf.PurlConfig;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.proxy.ProxyCollection;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.uri.InterMineLUI;
 import org.intermine.web.uri.InterMineLUIConverter;
@@ -47,8 +50,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Properties;
 import java.util.Map;
-
-
+import java.util.Iterator;
 
 /**
  * Class providing schema/bioschemas markups
@@ -56,16 +58,14 @@ import java.util.Map;
  */
 public final class SemanticMarkupFormatter
 {
-    private static final String SCHEMA = "http://schema.org";
-    private static final String BIO_SCHEMA = "http://bioschemas.org";
+    private static final String SCHEMA = "https://schema.org";
     private static final String DATASET_TYPE = "DataSet";
-    //private static final String DATA_RECORD_TYPE = "DataRecord";
-    //private static final String DATA_RECORD_SUFFIX = "#DR";
     private static final String BIOCHEMENTITY_TYPE = "BioChemEntity";
     private static final String PROTEIN_TYPE = "Protein";
     private static final String GENE_TYPE = "Gene";
     private static final String INTERMINE_CITE = "http://www.ncbi.nlm.nih.gov/pubmed/23023984";
     private static final String INTERMINE_REGISTRY = "https://registry.intermine.org/";
+    private static String baseURI = null;
     private static final Logger LOG = Logger.getLogger(SemanticMarkupFormatter.class);
 
     private SemanticMarkupFormatter() {
@@ -78,6 +78,7 @@ public final class SemanticMarkupFormatter
      * @return the identifier
      */
     private static Instance getMineInstance(HttpServletRequest request) {
+        baseURI = new PermanentURIHelper(request).getPermanentBaseURI();
         Instance imInstance = null;
         if (!(request instanceof SessionlessRequest)) {
             HttpSession session = request.getSession();
@@ -139,7 +140,8 @@ public final class SemanticMarkupFormatter
         String identifier = (instance != null)
                 ? INTERMINE_REGISTRY + instance.getNamespace()
                 : url;
-        semanticMarkup.put("@id", identifier);
+        semanticMarkup.put("identifier", identifier);
+        semanticMarkup.put("@id", url);
         semanticMarkup.put("url", url);
 
         //citation
@@ -190,7 +192,8 @@ public final class SemanticMarkupFormatter
                                                             Profile profile) {
         List<Map<String, Object>> dataSets = new ArrayList<>();
         PathQuery pathQuery = new PathQuery(Model.getInstanceByName("genomic"));
-        pathQuery.addViews("DataSet.name", "DataSet.description", "DataSet.url");
+        pathQuery.addViews("DataSet.name", "DataSet.description", "DataSet.url",
+                "DataSet.licence");
         pathQuery.addOrderBy("DataSet.name", OrderDirection.ASC);
         InterMineAPI im = InterMineContext.getInterMineAPI();
         PathQueryExecutor executor = new PathQueryExecutor(im.getObjectStore(),
@@ -202,7 +205,8 @@ public final class SemanticMarkupFormatter
                 String name = (String) elem.get(0).getField();
                 String description = (String) elem.get(1).getField();
                 String url = (String) elem.get(2).getField();
-                dataSets.add(formatDataSet(name, description, url, request));
+                String licence = (String) elem.get(3).getField();
+                dataSets.add(formatDataSet(name, description, url, licence, request));
             }
         } catch (ObjectStoreException ex) {
             //
@@ -215,11 +219,12 @@ public final class SemanticMarkupFormatter
      * @param name the dataset name
      * @param description the dataset description
      * @param url the dataset url
+     * @param licence the dataset licence
      * @param request the HttpServletRequest
      * @return the map representing the dataset
      */
     private static Map<String, Object> formatDataSet(String name, String description, String url,
-                                      HttpServletRequest request) {
+                                      String licence, HttpServletRequest request) {
         Map<String, Object> semanticMarkup = new LinkedHashMap<>();
         semanticMarkup.put("@context", SCHEMA);
         semanticMarkup.put("@type", DATASET_TYPE);
@@ -229,11 +234,16 @@ public final class SemanticMarkupFormatter
         } else {
             semanticMarkup.put("description", name);
         }
+        if (licence != null && !licence.isEmpty()) {
+            semanticMarkup.put("licence", licence);
+        }
 
         PermanentURIHelper helper = new PermanentURIHelper(request);
-        String imUrlPage = helper.getPermanentURL(new InterMineLUI("DataSet", name));
-        semanticMarkup.put("@id", imUrlPage);
+        InterMineLUI lui = new InterMineLUI("DataSet", name);
+        String imUrlPage = helper.getPermanentURL(lui);
+        semanticMarkup.put("identifier", lui.toString());
         semanticMarkup.put("url", imUrlPage);
+        semanticMarkup.put("@id", imUrlPage);
         //we use the dataset's url to set the identifier
         if (url != null && !url.trim().equals("")) {
             semanticMarkup.put("sameAs", url);
@@ -254,7 +264,8 @@ public final class SemanticMarkupFormatter
             String name = (String) entity.getFieldValue("name");
             String description = (String) entity.getFieldValue("description");
             String url = (String) entity.getFieldValue("url");
-            return formatDataSet(name, description, url, request);
+            String licence = (String) entity.getFieldValue("licence");
+            return formatDataSet(name, description, url, licence, request);
         } catch (IllegalAccessException iae) {
             LOG.warn("Failed to access object with id: " + entity.getId(), iae);
             return null;
@@ -291,7 +302,7 @@ public final class SemanticMarkupFormatter
         if (semanticMarkup == null) {
             return null;
         }
-        semanticMarkup.put("@context", BIO_SCHEMA);
+        semanticMarkup.put("@context", SCHEMA);
         Properties props = PropertiesUtil.getProperties();
         semanticMarkup.put("version", props.getProperty("project.releaseVersion"));
         Map<String, String> isPartOf = new LinkedHashMap<>();
@@ -299,46 +310,140 @@ public final class SemanticMarkupFormatter
         isPartOf.put("name", props.getProperty("project.title"));
         isPartOf.put("description", props.getProperty("project.subTitle"));
         semanticMarkup.put("isPartOf", isPartOf);
-        InterMineLUI lui = (new InterMineLUIConverter()).getInterMineLUI(id);
 
-        if (lui != null) {
-            PermanentURIHelper helper = new PermanentURIHelper(request);
-            String permanentURL = helper.getPermanentURL(lui);
-            semanticMarkup.put("url", permanentURL);
-            semanticMarkup.put("@id", permanentURL);
-        }
         return semanticMarkup;
     }
 
     /**
      * Build the dataset markups given the intermine entity
-     * @param entity InterMine ID
+     * @param imObject InterMine object
      * @return the map representing the dataset
      */
-    private static Map<String, Object> formatBioEntity(InterMineObject entity) {
-        Map<String, Object> mainEntity = new LinkedHashMap<>();
-        String type = DynamicUtil.getSimpleClass(entity).getSimpleName();
-        try {
-            String markupType = null;
-            if ("Gene".equalsIgnoreCase(type)) {
-                markupType = GENE_TYPE;
-                mainEntity.put("description", (String) entity.getFieldValue("description"));
-            } else if ("Protein".equalsIgnoreCase(type)) {
-                markupType = PROTEIN_TYPE;
-            } else if (isBioChemEntityType(type)) {
-                markupType = BIOCHEMENTITY_TYPE;
-            } else {
-                return null;
-            }
-            mainEntity.put("type", markupType);
-            String symbol = (String) entity.getFieldValue("symbol");
-            String primaryIdentifier = (String) entity.getFieldValue("primaryIdentifier");
-            mainEntity.put("name", (!StringUtils.isEmpty(symbol)) ? symbol : primaryIdentifier);
-            return mainEntity;
-        }  catch (IllegalAccessException iae) {
-            LOG.warn("Failed to access object with id: " + entity.getId(), iae);
+    private static Map<String, Object> formatBioEntity(InterMineObject imObject) {
+        String type = DynamicUtil.getSimpleClass(imObject).getSimpleName();
+
+        if ("Gene".equalsIgnoreCase(type)) {
+            return formatGene(imObject, false);
+        } else if ("Protein".equalsIgnoreCase(type)) {
+            return formatProtein(imObject, false);
+        } else if (isBioChemEntityType(type)) {
+            return formatBioChemEntity(imObject);
+        } else {
             return null;
         }
+    }
+
+    private static Map<String, Object> formatGene(InterMineObject gene, boolean onlyMinimun) {
+        Map<String, Object> geneMarkups = new LinkedHashMap<>();
+        geneMarkups.put("@type", GENE_TYPE);
+        setBasicProperties(gene.getId(), geneMarkups);
+        setName(gene, geneMarkups);
+        setSameAs(gene, geneMarkups);
+        try {
+            geneMarkups.put("description", (String) gene.getFieldValue("description"));
+            setTaxonomicRange(gene, geneMarkups);
+            if (!onlyMinimun) {
+                //isPartOfBioChemEntity -> chromosome
+                ProxyReference chromRef = (ProxyReference) gene.getFieldProxy("chromosome");
+                if (chromRef != null) {
+                    InterMineObject chromosome = chromRef.getObject();
+                    geneMarkups.put("isPartOfBioChemEntity", formatBioChemEntity(chromosome));
+                }
+                //encodesBioChemEntity -> proteins
+                ProxyCollection proteinsCollections =
+                        (ProxyCollection) gene.getFieldProxy("proteins");
+                if (proteinsCollections != null) {
+                    Iterator it = proteinsCollections.iterator();
+                    while (it.hasNext()) {
+                        InterMineObject protein = (InterMineObject) it.next();
+                        geneMarkups.put("encodesBioChemEntity", formatProtein(protein, true));
+                    }
+                }
+            }
+            return geneMarkups;
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        }
+        return null;
+    }
+
+    private static void setBasicProperties(Integer intermineId, Map<String, Object> entityMarkups) {
+        InterMineLUI lui = (new InterMineLUIConverter()).getInterMineLUI(intermineId);
+        if (lui != null) {
+            String url = baseURI.concat(lui.toString());
+            entityMarkups.put("url", url);
+            entityMarkups.put("@id", url);
+            entityMarkups.put("identifier", lui.toString());
+        }
+    }
+
+    private static void setName(InterMineObject bioEntity, Map<String, Object> entityMarkups) {
+        try {
+            String symbol = (String) bioEntity.getFieldValue("symbol");
+            String primaryIdentifier = (String) bioEntity.getFieldValue("primaryIdentifier");
+            entityMarkups.put("name", (!StringUtils.isEmpty(symbol)) ? symbol : primaryIdentifier);
+        }  catch (IllegalAccessException iae) {
+            LOG.warn("Failed to access object with id: " + bioEntity.getId(), iae);
+        }
+    }
+
+    private static void setSameAs(InterMineObject bioEntity, Map<String, Object> entityMarkups) {
+        String externalIdentifier = PurlConfig.getExternalIdentifier(bioEntity);
+        if (externalIdentifier != null) {
+            entityMarkups.put("sameAs", externalIdentifier);
+        }
+    }
+
+    private static void setTaxonomicRange(InterMineObject imObject, Map<String, Object> markups) {
+        try {
+            ProxyReference organismRef = (ProxyReference) imObject.getFieldProxy("organism");
+            if (organismRef != null) {
+                InterMineObject organism = organismRef.getObject();
+                InterMineLUI lui = new InterMineLUIConverter().getInterMineLUI(organism.getId());
+                if (lui != null) {
+                    markups.put("taxonomicRange", baseURI.concat(lui.toString()));
+                }
+            }
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    private static Map<String, Object> formatProtein(InterMineObject protein, boolean onlyMinimun) {
+        Map<String, Object> proteinMarkups = new LinkedHashMap<>();
+        proteinMarkups.put("@type", PROTEIN_TYPE);
+        setBasicProperties(protein.getId(), proteinMarkups);
+        setName(protein, proteinMarkups);
+        setSameAs(protein, proteinMarkups);
+        setTaxonomicRange(protein, proteinMarkups);
+
+        try {
+            if (!onlyMinimun) {
+                //isEncodedByBioChemEntity -> genes
+                ProxyCollection genesCollections = (ProxyCollection) protein.getFieldProxy("genes");
+                if (genesCollections != null) {
+                    Iterator it = genesCollections.iterator();
+                    while (it.hasNext()) {
+                        InterMineObject gene = (InterMineObject) it.next();
+                        proteinMarkups.put("isEncodedByBioChemEntity", formatGene(gene, true));
+                    }
+                }
+            }
+            return proteinMarkups;
+
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        }
+        return null;
+    }
+
+    private static Map<String, Object> formatBioChemEntity(InterMineObject bioChemEntity) {
+        Map<String, Object> bioChemEntityMarkups = new LinkedHashMap<>();
+        bioChemEntityMarkups.put("@type", BIOCHEMENTITY_TYPE);
+        setBasicProperties(bioChemEntity.getId(), bioChemEntityMarkups);
+        setName(bioChemEntity, bioChemEntityMarkups);
+        setSameAs(bioChemEntity, bioChemEntityMarkups);
+        return bioChemEntityMarkups;
     }
 
     /**

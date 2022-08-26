@@ -52,6 +52,8 @@ import org.intermine.web.logic.config.InlineListConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.intermine.web.uri.InterMineLUI;
+import org.intermine.web.uri.InterMineLUIConverter;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -377,6 +379,19 @@ public class ReportObject
         }
         Map<String, Object> markup = SemanticMarkupFormatter.formatBioEntity(request, getId());
         return new JSONObject(markup).toString(2);
+    }
+
+    /**
+     * Return the lui
+     *
+     * @return the lui or null
+     */
+    public String getLUI() {
+        InterMineLUI lui = new InterMineLUIConverter().getInterMineLUI(object.getId().intValue());
+        if (lui == null) {
+            return null;
+        }
+        return lui.toString();
     }
 
     /**

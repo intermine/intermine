@@ -32,7 +32,7 @@ public class InterMineLUIConverterTest extends InterMineAPITestCase {
             ObjectStoreTestUtils.storeData(osw, data);
 
             //set mock methods
-            converter = new MockInterMineLUIConverter(im.getProfileManager().getSuperuserProfile());
+            converter = new MockInterMineLUIConverter();
             converter.setInterMineAPI(im);
             converter.setObjectStore(os);
 

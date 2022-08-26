@@ -29,12 +29,13 @@ public class CollectionDescriptor extends ReferenceDescriptor
      * @param referencedType the fully qualified name of the business object type in this collection
      * @param reverseRefName name of field in the referenced class that points back to this class
      *                       (may be null)
+     * @param ontologyTerm URI pointing to an ontology term describing this collection. can be null.
      * @throws IllegalArgumentException if arguments are null
      */
     public CollectionDescriptor(String name, String referencedType,
-                                   String reverseRefName) {
+                                   String reverseRefName, String ontologyTerm) {
         // should define type of collection properly somehow
-        super(name, referencedType, reverseRefName);
+        super(name, referencedType, reverseRefName, ontologyTerm);
     }
 
     /**
@@ -85,6 +86,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
         sb.append("<collection name=\"" + name + "\" referenced-type=\""
                 + referencedType.substring(referencedType.lastIndexOf(".") + 1) + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
+            .append(ontologyTerm != null ? " term=\"" + ontologyTerm + "\"" : "")
             .append("/>");
         return sb.toString();
     }

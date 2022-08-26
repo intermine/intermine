@@ -34,7 +34,7 @@
       <collection name="genes" referenced-type="Gene" reverse-reference="introns"/>
     </class>
 
-    <class name="Protein" is-interface="true" term="http://semanticscience.org/resource/SIO_010043">
+    <class name="Protein" is-interface="true" term="http://purl.uniprot.org/core/Protein,http://semanticscience.org/resource/SIO_010043">
       <collection name="CDSs" referenced-type="CDS" reverse-reference="protein"/>
       <collection name="transcripts" referenced-type="Transcript" reverse-reference="protein"/>
     </class>

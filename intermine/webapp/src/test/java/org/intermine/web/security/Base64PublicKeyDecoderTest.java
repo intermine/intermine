@@ -44,7 +44,7 @@ public class Base64PublicKeyDecoderTest {
 	@Test
 	public void testException() throws Exception {
 		try {
-			decoder.decode("not a key");
+			decoder.decode("not a keyA");
 			fail("Should have thrown an exception here");
 		} catch (DecodingException e) {
 			// all good.

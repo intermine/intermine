@@ -12,7 +12,6 @@ package org.intermine.web.logic;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.api.profile.Profile;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.uri.InterMineLUI;
 import org.intermine.web.uri.InterMineLUIConverter;
@@ -51,21 +50,6 @@ public class PermanentURIHelper
     }
 
     /**
-     * Returns the permanent URI given the intermine lui, e.g. protein:P31946
-     * @param lui intermine lui
-     * @return the permanent uri
-     */
-    public String getPermanentURI(InterMineLUI lui) {
-        String permanentURI = null;
-        String baseURI = getPermanentBaseURI();
-        if (!baseURI.endsWith("/")) {
-            baseURI = baseURI + "/";
-        }
-        permanentURI = baseURI + lui.toString();
-        return permanentURI;
-    }
-
-    /**
      * Returns the permanent base URI
      * @return the permanent base uri
      */
@@ -75,19 +59,18 @@ public class PermanentURIHelper
         if (baseURI == null || StringUtils.isEmpty(baseURI)) {
             baseURI = new URLGenerator(request).getPermanentBaseURL();
         }
-        return baseURI;
+        return (!baseURI.endsWith("/")) ? baseURI.concat("/") : baseURI;
     }
 
 
     /**
-     * Returns the permanent URL given the class name and the primary identifier
+     * Returns the permanent URL of th entity given its internal id
      * The permanent URL is used in the Share button, to set the url in Schema.org
      * @param interMineId the internal id
-     * @param profile the profile
      * @return the permanent url or null if can not generate the url
      */
-    public String getPermanentURL(Integer interMineId, Profile profile) {
-        InterMineLUIConverter converter = new InterMineLUIConverter(profile);
+    public String getPermanentURL(Integer interMineId) {
+        InterMineLUIConverter converter = new InterMineLUIConverter();
         InterMineLUI interMineLUI = null;
         interMineLUI = converter.getInterMineLUI(interMineId);
         return getPermanentURL(interMineLUI);
