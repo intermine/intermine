@@ -1,4 +1,4 @@
-package org.intermine.web.uri;
+package org.intermine.api.identifiers;
 
 /*
  * Copyright (C) 2002-2018 FlyMine
@@ -10,26 +10,27 @@ package org.intermine.web.uri;
  *
  */
 
+import org.intermine.api.identifiers.IdentifiersMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ClassNameURIIdentifierMapperTest {
+public class IdentifiersMapperTest {
 
     @Test
     public void getIdentifier() {
-        ClassNameURIIdentifierMapper mapper = ClassNameURIIdentifierMapper.getMapper();
+        IdentifiersMapper mapper = IdentifiersMapper.getMapper();
         Assert.assertEquals("vatNumber", mapper.getIdentifier("Company"));
     }
 
     @Test
     public void getIdentifierKeyTypo() {
-        ClassNameURIIdentifierMapper mapper = ClassNameURIIdentifierMapper.getMapper();
+        IdentifiersMapper mapper = IdentifiersMapper.getMapper();
         Assert.assertNull(mapper.getIdentifier("Bank"));
     }
 
     @Test
     public void getIdentifierWithNoKey() {
-        ClassNameURIIdentifierMapper mapper = ClassNameURIIdentifierMapper.getMapper();
+        IdentifiersMapper mapper = IdentifiersMapper.getMapper();
         Assert.assertNull(mapper.getIdentifier("ThisisNotAKey"));
     }
 }

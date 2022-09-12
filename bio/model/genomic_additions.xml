@@ -51,6 +51,15 @@
     <reference name="protein" referenced-type="Protein" reverse-reference="CDS"/>
   </class>
 
+  <!-- LIS enforces one transcript per protein -->
+  <class name="Protein" is-interface="true" term="http://purl.uniprot.org/core/Protein,http://semanticscience.org/resource/SIO_010043">
+    <reference name="CDS" referenced-type="CDS" reverse-reference="protein"/>
+    <reference name="transcript" referenced-type="Transcript" reverse-reference="protein"/>
+    <reference name="phylonode" referenced-type="Phylonode" reverse-reference="protein"/>
+    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" />
+    <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
+  </class>
+
   <!-- CDSRegion is a type=CDS SequenceFeature from a GFF and is smaller coding regions -->
   <class name="CDSRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000851"/>
 
@@ -97,15 +106,6 @@
   <class name="MRNA" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000234">
     <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
     <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
-  </class>
-
-  <!-- one transcript per protein -->
-  <class name="Protein" is-interface="true" term="http://semanticscience.org/resource/SIO_010043">
-    <reference name="CDS" referenced-type="CDS" reverse-reference="protein"/>
-    <reference name="transcript" referenced-type="Transcript" reverse-reference="protein"/>
-    <reference name="phylonode" referenced-type="Phylonode" reverse-reference="protein"/>
-    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" />
-    <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
   </class>
 
   <class name="SequenceVariant" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0001060">

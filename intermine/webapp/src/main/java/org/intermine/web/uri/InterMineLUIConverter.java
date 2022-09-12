@@ -12,7 +12,7 @@ package org.intermine.web.uri;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
+import org.intermine.api.identifiers.IdentifiersMapper;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
@@ -33,25 +33,12 @@ import org.intermine.web.context.InterMineContext;
 public class InterMineLUIConverter
 {
     private static final Integer INTERMINE_ID_NOT_FOUND = -1;
-    private static final String DEFAULT_IDENTIFIER = "primaryIdentifier";
-    private ClassNameURIIdentifierMapper classNameIdentifierMapper = null;
     private static final Logger LOGGER = Logger.getLogger(InterMineLUIConverter.class);
-    protected Profile profile = null;
-
-    /**
-     * Constructor
-     * @param profile the profile
-     */
-    public InterMineLUIConverter(Profile profile) {
-        this.profile = profile;
-        classNameIdentifierMapper = ClassNameURIIdentifierMapper.getMapper();
-    }
 
     /**
      * Constructor
      */
     public InterMineLUIConverter() {
-        classNameIdentifierMapper = ClassNameURIIdentifierMapper.getMapper();
     }
 
     /**
@@ -69,7 +56,11 @@ public class InterMineLUIConverter
         String className = interMineLUI.getClassName();
         String viewPath =  className + ".id";
         pathQuery.addView(viewPath);
-        String identifier = getIdentifier(className);
+        String identifier = IdentifiersMapper.getMapper().getIdentifier(className);
+        if (identifier == null) {
+            LOGGER.info("No " + className + "_URI defined in the class_key.properties file");
+            return INTERMINE_ID_NOT_FOUND;
+        }
         String constraintPath = className + "." + identifier;
         pathQuery.addConstraint(Constraints.eq(constraintPath, interMineLUI.getIdentifier()));
         if (!pathQuery.isValid()) {
@@ -87,6 +78,48 @@ public class InterMineLUIConverter
             LOGGER.info("InterMineLUIConverter: there are no " + className
                     + " with " + constraintPath + "=" + interMineLUI.getIdentifier());
             return INTERMINE_ID_NOT_FOUND;
+        }
+    }
+
+    /**
+     * Given a InterMineLUI (compact uri, e.g. protein:P27362) returns the internal intermine Id
+     * @param interMineLUI the interMineLUI
+     * @return internal intermine id OR -1 if there is no entity matching with the LUI or if there
+     * is no identifier set in the class_keys.properties file for the class defined in the lui
+     * @throws ObjectStoreException if there are any objectstore issues
+     */
+    public InterMineObject getInterMineObject(InterMineLUI interMineLUI)
+            throws ObjectStoreException {
+        if (interMineLUI == null) {
+            throw new RuntimeException("InterMineLUI is null");
+        }
+        PathQuery pathQuery = new PathQuery(getModel());
+        String className = interMineLUI.getClassName();
+        String viewPath =  className + ".id";
+        pathQuery.addView(viewPath);
+        String identifier = IdentifiersMapper.getMapper().getIdentifier(className);
+        if (identifier == null) {
+            LOGGER.info("No " + className + "_URI defined in the class_key.properties file");
+            return null;
+        }
+        String constraintPath = className + "." + identifier;
+        pathQuery.addConstraint(Constraints.eq(constraintPath, interMineLUI.getIdentifier()));
+        if (!pathQuery.isValid()) {
+            LOGGER.info("The PathQuery :" + pathQuery.toString() + " is not valid. No "
+                    + className + "_URI defined in the class_key.properties file");
+            return null;
+        }
+        LOGGER.info("InterMineLUIConverter: pathQuery to retrieve internal id: "
+                + pathQuery.toString());
+        ExportResultsIterator iterator = getPathQueryExecutor().execute(pathQuery);
+        if (iterator.hasNext()) {
+            ResultElement row = iterator.next().get(0);
+            InterMineAPI im = getInterMineAPI();
+            return im.getObjectStore().getObjectById(row.getId());
+        } else {
+            LOGGER.info("InterMineLUIConverter: there are no " + className
+                    + " with " + constraintPath + "=" + interMineLUI.getIdentifier());
+            return null;
         }
     }
 
@@ -109,11 +142,17 @@ public class InterMineLUIConverter
                 return null;
             }
             type = DynamicUtil.getSimpleClass(entity).getSimpleName();
-            String identifierField = getIdentifier(type);
+            String identifierField = IdentifiersMapper.getMapper().getIdentifier(type);
+            if (identifierField == null) {
+                LOGGER.info("The entity " + interMineID + " has no key configured, "
+                        + "the share link will not be displayed in the report page. "
+                        + "Configure a different key in the class_keys.properties file");
+                return null;
+            }
             identifier = (String) entity.getFieldValue(identifierField);
             if (identifier == null) {
                 LOGGER.info("The entity " + interMineID + " has " + identifierField + " null, "
-                        + "the share link will not displayed in the report page. Configure a "
+                        + "the share link will not be displayed in the report page. Configure a "
                         + "different key in the class_keys.properties file");
                 return null;
             }
@@ -126,16 +165,6 @@ public class InterMineLUIConverter
         }
 
         return new InterMineLUI(type, identifier);
-    }
-
-    /**
-     * Return the identifier's field of the entity with type given in input
-     * @param type the type of the entity,e.g. Protein
-     * @return the identifier's field if specified or primaryIdentifier
-     */
-    private String getIdentifier(String type) {
-        String identifier = classNameIdentifierMapper.getIdentifier(type);
-        return ( identifier != null) ? identifier : DEFAULT_IDENTIFIER;
     }
 
     /**
@@ -158,8 +187,8 @@ public class InterMineLUIConverter
      * Returns the PathQueryExecutor
      * @return the PathQueryExecutor
      */
-    public PathQueryExecutor getPathQueryExecutor() {
+    private PathQueryExecutor getPathQueryExecutor() {
         InterMineAPI im = getInterMineAPI();
-        return new PathQueryExecutor(im.getObjectStore(), profile, null, im.getBagManager());
+        return new PathQueryExecutor(im.getObjectStore(), null, null, im.getBagManager());
     }
 }

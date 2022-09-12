@@ -26,6 +26,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     protected final String reverseRefName; // can be reference, collection or null
     protected ReferenceDescriptor reverseRefDesc;
     private boolean modelSet = false;
+    protected String ontologyTerm;
 
     /**
      * Construct a ReferenceDescriptor.  Requires the name of Class referenced and
@@ -34,9 +35,11 @@ public class ReferenceDescriptor extends FieldDescriptor
      * @param name name of the field
      * @param referencedType fully qualfied class name of another business object
      * @param reverseRefName name of the field in remote object that refers back to this one
+     * @param ontologyTerm URI pointing to an ontology term describing this reference. can be null.
      * @throws IllegalArgumentException if fields are null
      */
-    public ReferenceDescriptor(String name, String referencedType, String reverseRefName) {
+    public ReferenceDescriptor(String name, String referencedType, String reverseRefName,
+            String ontologyTerm) {
         super(name);
         if (referencedType == null || "".equals(referencedType)) {
             throw new IllegalArgumentException("A value must be provided for "
@@ -44,6 +47,7 @@ public class ReferenceDescriptor extends FieldDescriptor
         }
         this.reverseRefName = reverseRefName;
         this.referencedType = referencedType;
+        this.ontologyTerm = ontologyTerm;
     }
 
     /**
@@ -88,6 +92,16 @@ public class ReferenceDescriptor extends FieldDescriptor
                     + ") is not yet part of a metadata Model");
         }
         return reverseRefDesc;
+    }
+
+    /**
+     * Get the term for the attribute - a URI pointing to an ontology term describing this
+     * attribute. Can be null.
+     *
+     * @return term describing this attribute
+     */
+    public String getOntologyTerm() {
+        return ontologyTerm;
     }
 
     /**
@@ -186,6 +200,7 @@ public class ReferenceDescriptor extends FieldDescriptor
         sb.append("<reference name=\"" + name + "\" referenced-type=\""
                 + referencedType.substring(referencedType.lastIndexOf(".") + 1) + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
+            .append(ontologyTerm != null ? " term=\"" + ontologyTerm + "\"" : "")
             .append("/>");
         return sb.toString();
     }
@@ -202,6 +217,7 @@ public class ReferenceDescriptor extends FieldDescriptor
         if (reverseRefName != null) {
             sb.append(",\"reverseReference\":\"" + reverseRefName + "\"");
         }
+        sb.append(ontologyTerm != null ? " term=\"" + ontologyTerm + "\"" : "");
         sb.append("}");
         return sb.toString();
     }

@@ -99,9 +99,9 @@ public class FrictionlessDataPackage
                 columnDetails.put("type", type);
                 columnDetails.put("class path", friendlyPath);
                 columnDetails.put("class ontology link",
-                        p.getLastClassDescriptor().getFairTerm());
+                        p.getLastClassDescriptor().getOntologyTerm());
                 columnDetails.put("attribute ontology link",
-                        ((AttributeDescriptor) p.getEndFieldDescriptor()).getFairTerm());
+                        ((AttributeDescriptor) p.getEndFieldDescriptor()).getOntologyTerm());
 
                 // add the column details object in fields array
                 fields.add(columnDetails);

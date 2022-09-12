@@ -4,5 +4,6 @@
  <suppress checks="EqualsHashCode" files="(AbstractConstraint|ConstraintSet|Constraint|InListConstraint|NotConstraint|SubQueryConstraint|Either)\.java"/>
  <suppress checks="[a-zA-Z0-9]*" files="(Command|CommandRunner|Commands|Config|Endpoint|MapListener|Names|Queries|Segment|ArrayFormatter|NameSpacedProperties|ObjectFormatter)\.java"/>
  <suppress checks="JavadocMethod" files="(RegistryResponse|Instance)\.java"/>
+ <suppress checks="Header" files="(R2RML|R2RMLMappingProcess)\.java"/>
 </suppressions>
 

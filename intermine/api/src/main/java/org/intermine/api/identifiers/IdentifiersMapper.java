@@ -1,4 +1,4 @@
-package org.intermine.web.uri;
+package org.intermine.api.identifiers;
 
 /*
  * Copyright (C) 2002-2022 FlyMine
@@ -30,20 +30,30 @@ import java.util.HashMap;
  * admninistrator can override or add new identifiers
  * @author danielabutano
  */
-public final class ClassNameURIIdentifierMapper
+public final class IdentifiersMapper
 {
-    private static ClassNameURIIdentifierMapper instance = null;
+    private static IdentifiersMapper instance = null;
     private static final String URI_SUFFIX = "_URI";
-    private Properties properties = null;
     //map tp cache the identifier associated to a class Name
     private static Map<String, String> classNameIdentifiersMap = new HashMap();
-    private static final Logger LOGGER = Logger.getLogger(ClassNameURIIdentifierMapper.class);
+    private static final Logger LOGGER = Logger.getLogger(IdentifiersMapper.class);
+    /**
+     * default key used to build uri
+     */
+    public static final String DEFAULT_IDENTIFIER = "primaryIdentifier";
 
     /**
      * Private constructor called by getMapper (singleton)
      */
-    private ClassNameURIIdentifierMapper() {
-        properties = new Properties();
+    private IdentifiersMapper() {
+        //load all classes extending Annotatable
+        String annotatable = "Annotatable";
+        classNameIdentifiersMap.put(annotatable, DEFAULT_IDENTIFIER);
+        Set<String> subClassNames = getSubClassNames(annotatable);
+        for (String subClassName : subClassNames) {
+            classNameIdentifiersMap.put(subClassName, DEFAULT_IDENTIFIER);
+        }
+        Properties properties = new Properties();
         try {
             InputStream inputStream = null;
             try {
@@ -62,7 +72,6 @@ public final class ClassNameURIIdentifierMapper
                 }
                 properties.load(inputStream);
                 String key = null;
-                Set<String> subClassNames = null;
                 for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                     key = (String) entry.getKey();
                     if (key.endsWith(URI_SUFFIX)) {
@@ -86,12 +95,12 @@ public final class ClassNameURIIdentifierMapper
     }
 
     /**
-     * Static method to create the instance of ClassNameURIIdentifierMapper class
-     * @return the ClassNameURIIdentifierMapper instance
+     * Static method to create the instance of IdentifiersMapper class
+     * @return the IdentifiersMapper instance
      */
-    public static ClassNameURIIdentifierMapper getMapper() {
+    public static IdentifiersMapper getMapper() {
         if (instance == null) {
-            instance = new ClassNameURIIdentifierMapper();
+            instance = new IdentifiersMapper();
         }
         return instance;
     }
@@ -104,7 +113,10 @@ public final class ClassNameURIIdentifierMapper
      */
     public String getIdentifier(String className) {
         if (classNameIdentifiersMap != null) {
-            return classNameIdentifiersMap.get(className);
+            String identifier = classNameIdentifiersMap.get(className);
+            if ( identifier != null) {
+                return identifier;
+            }
         }
         return null;
     }
@@ -114,7 +126,7 @@ public final class ClassNameURIIdentifierMapper
         Model model = Model.getInstanceByName("genomic");
         ClassDescriptor cl = model.getClassDescriptorByName(className);
         if (cl != null) {
-            Set<ClassDescriptor> subDescriptors = cl.getSubDescriptors();
+            Set<ClassDescriptor> subDescriptors = model.getAllSubs(cl);
             for (ClassDescriptor descriptor : subDescriptors) {
                 subClassNames.add(descriptor.getSimpleName());
             }
