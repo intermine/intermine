@@ -7,6 +7,21 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+InterMine 5.1.0 (August 2022)
+
+#2025 - FAIR: PURLs come from config file
+#2183 - Improve external links using Identifiers.org
+#2287 - Export query result in RDF format
+#2365 - Setting a property to postprocess in project.xml does not work
+#2366 - Generating intermine R2RML mapping
+#2378 - Update SolrKeywordSearchHandler (thanks @sammyjava)
+#2379 - RDF representation for single entity
+#2381 - Add a new webservice to allow BG to RDF representation
+#2382 - Add reccomended properties to Gene and Protein Bioschemas profiles
+#2389 - Improve term assigned to the intermine entity
+#2390 - Apply ontology terms to the attributes too
+#2391 - Missing term applied to the additions file after merging
+
 InterMine 5.0.8 (June 2022)
 
 - Improved user input checks

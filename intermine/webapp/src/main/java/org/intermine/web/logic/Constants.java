@@ -221,13 +221,14 @@ public final class Constants
      * 32 - Added the mandatory input type to the chart graphs when ids is used
      * 33 - Added precompute and summarize templates
      * 34 - Add alltemplates
+     * 35 - Entity representation
      */
-    public static final int WEB_SERVICE_VERSION = 34;
+    public static final int WEB_SERVICE_VERSION = 35;
 
     /**
      * Current version of the InterMine code
      */
-    public static final String INTERMINE_VERSION = "5.0.8";
+    public static final String INTERMINE_VERSION = "5.1.0";
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

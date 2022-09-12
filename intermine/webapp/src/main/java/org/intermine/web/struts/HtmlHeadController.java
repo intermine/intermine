@@ -133,6 +133,8 @@ public class HtmlHeadController extends TilesAction
 
                 ReportObject reportObject = reportObjects.get(object);
                 markupReportPage(request, reportObject);
+                //can be added later
+                //request.setAttribute("lui", reportObject.getLUI());
                 htmlPageTitle = reportObject.getHtmlHeadTitle();
 
             } catch (Exception e) {
@@ -180,9 +182,13 @@ public class HtmlHeadController extends TilesAction
      * @param reportObject the reportObject
      */
     private void markupReportPage(HttpServletRequest request, ReportObject reportObject) {
-        String semanticMarkup = reportObject.getSemanticMarkup(request);
-        if (semanticMarkup != null) {
-            request.setAttribute("semanticMarkup", reportObject.getSemanticMarkup(request));
+        try {
+            String semanticMarkup = reportObject.getSemanticMarkup(request);
+            if (semanticMarkup != null) {
+                request.setAttribute("semanticMarkup", semanticMarkup);
+            }
+        } catch (RuntimeException ex) {
+            //we do no want to break the page
         }
     }
 }

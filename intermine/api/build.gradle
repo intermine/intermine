@@ -34,6 +34,7 @@ dependencies {
     compile group: 'org.apache.lucene', name: 'lucene-highlighter', version: '3.0.2'
     compile group: 'org.apache.lucene', name: 'lucene-queries', version: '3.0.2'
     compile group: 'org.json', name: 'json', version: '20170516'
+    compile group: "org.apache.jena", name: "apache-jena-libs", version: "3.16.0"
     testCompile project(path: ':intermine-testresources', configuration: 'testArtifacts')
     testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
     testCompile project(':intermine-objectstore').sourceSets.test.output

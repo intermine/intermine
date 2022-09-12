@@ -11,6 +11,9 @@
 <tiles:importAttribute name="pageName" ignore="true"/>
 
 <link href="${WEB_PROPERTIES['project.rss']}" rel="alternate" type="application/rss+xml" title="${WEB_PROPERTIES['project.title']} | News" />
+<c:if test="${pageName == 'report' && lui != null}">
+<link href="<html:rewrite page='/${lui}.rdf'/>" title="RDF" type="application/rdf+xml" rel="alternate"/>
+</c:if>
 
 <im:headResources section="all"/>
 

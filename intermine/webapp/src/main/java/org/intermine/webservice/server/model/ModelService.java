@@ -174,7 +174,7 @@ public class ModelService extends WebService
                 ClassDescriptor cd = model.getClassDescriptorByName(className);
                 // Add the display name for this class.
                 classData.put("displayName", WebUtil.formatClass(cd, config));
-                classData.put("term", cd.getFairTerm());
+                classData.put("term", cd.getOntologyTerm());
                 String fullyQualifiedClassName = cd.getName();
                 try {
                     // Add the count for this class.
@@ -203,7 +203,7 @@ public class ModelService extends WebService
                     FieldDescriptor fd = cd.getAttributeDescriptorByName(attributeName, true);
                     String displayName = getDisplayName(cd, attributeName, fd);
                     attribute.put("displayName", displayName);
-                    attribute.put("term", cd.getFairTerm());
+                    attribute.put("term", cd.getOntologyTerm());
                 }
 
                 // Get the refs for this class.
