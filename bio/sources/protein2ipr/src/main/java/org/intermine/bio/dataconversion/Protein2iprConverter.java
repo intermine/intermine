@@ -64,6 +64,7 @@ public class Protein2iprConverter extends BioFileConverter
 
     private static final Logger LOG = Logger.getLogger(Protein2iprConverter.class);
     private static final String DATASET_TITLE = "InterPro data set";
+    private static final String DATASET_DESCRIPTION = "InterPro data set";
     private static final String DATA_SOURCE_NAME = "InterPro";
 
     private Collection<String> taxonIds = new ArrayList<String>();
@@ -101,7 +102,7 @@ public class Protein2iprConverter extends BioFileConverter
      *            the Model
      */
     public Protein2iprConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, DATASET_DESCRIPTION);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="ProteinDomain" extends="BioEntity" is-interface="true">
+  <class name="ProteinDomain" extends="Annotatable" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="shortName" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>

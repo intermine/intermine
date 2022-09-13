@@ -754,45 +754,6 @@ public class AjaxServices
     }
 
     /**
-     * Return list of disease ontology terms associated with list of provided rat genes.  Returns
-     * JSONObject as string with ID (intermine ID) and name (ontologyTerm.name)
-     *
-     * @param orthologues list of rat genes
-     * @return JSONObject of the shape {status :: string, mineUrl :: string, results :: [[string]]}
-     */
-    public static Map<String, Object> getRatDiseases(String orthologues) {
-        if (StringUtils.isEmpty(orthologues)) {
-            return null;
-        }
-        final HashMap<String, Object> map = new HashMap<String, Object>();
-        final HttpSession session = WebContextFactory.get().getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        final ServletContext servletContext = WebContextFactory.get().getServletContext();
-        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
-        final FriendlyMineManager mines = FriendlyMineManager.getInstance(im, webProperties);
-        final Mine ratMine = mines.getMine("RatMine");
-
-        if (ratMine == null || ratMine.getReleaseVersion() == null) {
-            map.put("status", "offline"); // mine is dead
-            return map;
-        }
-
-        // It lives!
-        map.put("status", "online");
-        map.put("mineURL", ratMine.getUrl());
-
-        final String xmlQuery = getXMLQuery("RatDiseases.xml");
-        // As object rather than string to get proper escaping.
-        PathQuery pq = PathQueryBinding.unmarshalPathQuery(
-                new StringReader(xmlQuery), PathQuery.USERPROFILE_VERSION, ratMine.getModel());
-        pq.addConstraint(Constraints.lookup("Gene", orthologues, null));
-
-        map.put("results", ratMine.getRows(pq));
-
-        return map;
-    }
-
-    /**
      * Saves information, that some element was toggled - displayed or hidden.
      *
      * @param elementId element id

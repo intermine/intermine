@@ -275,6 +275,14 @@ public class GFF3Record
     }
 
     /**
+     * Return the length of this record's sequence.
+     * @return the length of this record's sequence
+     */
+    public int getLength() {
+	return Math.abs(getEnd() - getStart()) + 1;
+    }
+
+    /**
      * Return the score field of this record.
      * @return the score field of this record
      */
@@ -326,8 +334,11 @@ public class GFF3Record
     public List<String> getNames() {
         if (getAttributes().containsKey("Name")) {
             return getAttributes().get("Name");
+        } else if (getAttributes().containsKey("name")) {
+            return getAttributes().get("name");
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**

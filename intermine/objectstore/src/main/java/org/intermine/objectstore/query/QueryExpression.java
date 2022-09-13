@@ -69,6 +69,16 @@ public class QueryExpression implements QueryEvaluable
      */
     public static final int MODULO = 10;
 
+    /**
+     * Return the length of the given string
+     */
+    public static final int LENGTH = 11;
+
+    /**
+     * Concatenate the two given strings
+     */
+    public static final int CONCAT = 12;
+
     private QueryEvaluable arg1;
     private int op;
     private QueryEvaluable arg2;
@@ -77,30 +87,34 @@ public class QueryExpression implements QueryEvaluable
 
     private String getOpName(int op) {
         switch(op) {
-            case ADD:
-                return "ADD";
-            case MULTIPLY:
-                return "MULTIPLY";
-            case SUBTRACT:
-                return "SUBTRACT";
-            case DIVIDE:
-                return "DIVIDE";
-            case SUBSTRING:
-                return "SUBSTRING";
-            case INDEX_OF:
-                return "INDEX OF";
-            case LOWER:
-                return "LOWER";
-            case UPPER:
-                return "UPPER";
-            case GREATEST:
-                return "GREATEST";
-            case LEAST:
-                return "LEAST";
-            case MODULO:
-                return "MOD";
-            default:
-                throw new IllegalStateException("Unknown operator: " + op);
+    case ADD:
+        return "ADD";
+    case MULTIPLY:
+        return "MULTIPLY";
+    case SUBTRACT:
+        return "SUBTRACT";
+    case DIVIDE:
+        return "DIVIDE";
+    case SUBSTRING:
+        return "SUBSTRING";
+    case INDEX_OF:
+        return "INDEX OF";
+    case LOWER:
+        return "LOWER";
+    case UPPER:
+        return "UPPER";
+    case GREATEST:
+        return "GREATEST";
+    case LEAST:
+        return "LEAST";
+    case MODULO:
+        return "MOD";
+    case LENGTH:
+        return "LENGTH";
+    case CONCAT:
+        return "CONCAT";
+    default:
+        throw new IllegalStateException("Unknown operator: " + op);
         }
     }
 
@@ -115,29 +129,29 @@ public class QueryExpression implements QueryEvaluable
      */
     public QueryExpression(QueryEvaluable arg1, int op, QueryEvaluable arg2) {
         if (op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE || op == MODULO
-                || op == GREATEST || op == LEAST) {
+        || op == GREATEST || op == LEAST) {
             if (Number.class.isAssignableFrom(arg1.getType())
-                    && Number.class.isAssignableFrom(arg2.getType())
-                    && arg1.getType().equals(arg2.getType())) {
+        && Number.class.isAssignableFrom(arg2.getType())
+        && arg1.getType().equals(arg2.getType())) {
                 this.type = arg1.getType();
             } else if (arg1.getType().equals(UnknownTypeValue.class)
-                    && (!(arg2.getType().equals(UnknownTypeValue.class)))) {
+               && (!(arg2.getType().equals(UnknownTypeValue.class)))) {
                 arg1.youAreType(arg2.getType());
                 this.type = arg1.getType();
             } else if (arg2.getType().equals(UnknownTypeValue.class)
-                    && (!(arg1.getType().equals(UnknownTypeValue.class)))) {
+               && (!(arg1.getType().equals(UnknownTypeValue.class)))) {
                 arg2.youAreType(arg1.getType());
                 this.type = arg2.getType();
             } else if ((arg1.getType().equals(UnknownTypeValue.class))
-                    && (arg2.getType().equals(UnknownTypeValue.class))) {
+               && (arg2.getType().equals(UnknownTypeValue.class))) {
                 if (arg1.getApproximateType() != arg2.getApproximateType()) {
                     throw new ClassCastException("Incompatible expression with unknown type"
-                            + " values");
+                         + " values");
                 }
                 this.type = UnknownTypeValue.class;
             } else {
                 throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
-                        + arg2.getType() + ") for specified operation (" + getOpName(op) + ")");
+                         + arg2.getType() + ") for specified operation (" + getOpName(op) + ")");
             }
         } else if (op == INDEX_OF) {
             if (arg1.getType().equals(UnknownTypeValue.class)) {
@@ -147,29 +161,43 @@ public class QueryExpression implements QueryEvaluable
                 arg2.youAreType(String.class);
             }
             if (String.class.isAssignableFrom(arg1.getType())
-                    && String.class.isAssignableFrom(arg2.getType())) {
+        && String.class.isAssignableFrom(arg2.getType())) {
                 this.type = Integer.class;
             } else {
                 throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
-                        + arg2.getType() + ") for indexof operation");
+                         + arg2.getType() + ") for indexof operation");
             }
         } else if (op == SUBSTRING) {
             if (arg1.getType().equals(UnknownTypeValue.class)) {
                 arg1.youAreType(String.class);
             } else if (!arg1.getType().equals(String.class)) {
                 throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
-                        + arg2.getType() + ") for substring operation");
+                         + arg2.getType() + ") for substring operation");
             }
             if (arg2.getType().equals(UnknownTypeValue.class)) {
                 arg2.youAreType(Integer.class);
             } else if (!Number.class.isAssignableFrom(arg2.getType())) {
                 throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
-                        + arg2.getType() + ") for substring operation");
+                         + arg2.getType() + ") for substring operation");
             }
             if ((arg2 instanceof QueryValue) && (((Integer) ((QueryValue) arg2).getValue())
-                        .intValue() <= 0)) {
+                         .intValue() <= 0)) {
                 throw (new IllegalArgumentException("Invalid pos argument less than or equal to"
                             + " zero for substring"));
+            }
+            this.type = String.class;
+        } else if (op == CONCAT) {
+            if (arg1.getType().equals(UnknownTypeValue.class)) {
+                arg1.youAreType(String.class);
+            } else if (!arg1.getType().equals(String.class)) {
+                throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
+                         + arg2.getType() + ") for concat operation");
+            }
+            if (arg2.getType().equals(UnknownTypeValue.class)) {
+                arg2.youAreType(String.class);
+            } else if (!arg2.getType().equals(String.class)) {
+                throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
+                         + arg2.getType() + ") for concat operation");
             }
             this.type = String.class;
         } else {
@@ -195,27 +223,27 @@ public class QueryExpression implements QueryEvaluable
             arg.youAreType(String.class);
         } else if (!arg.getType().equals(String.class)) {
             throw new ClassCastException("Invalid arguments (" + arg.getType() + ", "
-                    + pos.getType() + ", " + len.getType() + ") for substring operation");
+                     + pos.getType() + ", " + len.getType() + ") for substring operation");
         }
         if (pos.getType().equals(UnknownTypeValue.class)) {
             pos.youAreType(Integer.class);
         } else if (!Number.class.isAssignableFrom(pos.getType())) {
             throw new ClassCastException("Invalid arguments (" + arg.getType() + ", "
-                    + pos.getType() + ", " + len.getType() + ") for substring operation");
+                     + pos.getType() + ", " + len.getType() + ") for substring operation");
         }
         if (len.getType().equals(UnknownTypeValue.class)) {
             len.youAreType(Integer.class);
         } else if (!Number.class.isAssignableFrom(len.getType())) {
             throw new ClassCastException("Invalid arguments (" + arg.getType() + ", "
-                    + pos.getType() + ", " + len.getType() + ") for substring operation");
+                     + pos.getType() + ", " + len.getType() + ") for substring operation");
         }
         if ((pos instanceof QueryValue) && (((Integer) ((QueryValue) pos).getValue()).intValue()
-                    <= 0)) {
+                        <= 0)) {
             throw (new IllegalArgumentException("Invalid pos argument less than or equal to zero"
                         + " for substring"));
         }
         if ((len instanceof QueryValue) && (((Integer) ((QueryValue) len).getValue()).intValue()
-                    < 0)) {
+                        < 0)) {
             throw (new IllegalArgumentException("Invalid len argument less than zero for "
                         + "substring"));
         }
@@ -227,31 +255,42 @@ public class QueryExpression implements QueryEvaluable
     }
 
     /**
-     * Constructs a String QueryExpression to perform upper and lowercase conversions.
+     * Constructs a String QueryExpression to perform upper and lowercase conversions or length of a string.
      *
      * @param op the required operation
      * @param arg the String argument
      * @throws IllegalArgumentException if there is a mismatch between the argument and operation
      */
     public QueryExpression(int op, QueryEvaluable arg) {
-        if (!(op == UPPER || op == LOWER)) {
-            throw new IllegalArgumentException("Invalid operation for specified arguments");
-        }
+        if (op == UPPER || op == LOWER) {
         if (arg.getType().equals(UnknownTypeValue.class)) {
-            arg.youAreType(String.class);
+        arg.youAreType(String.class);
         } else if (!arg.getType().equals(String.class)
-                && !arg.getType().equals(org.intermine.objectstore.query.ClobAccess.class)) {
-            throw new ClassCastException("Invalid argument (" + arg.getType() + ") for "
-                    + (op == UPPER ? "UPPER()" : "LOWER()") + " operation");
+               && !arg.getType().equals(org.intermine.objectstore.query.ClobAccess.class)) {
+        throw new ClassCastException("Invalid argument (" + arg.getType() + ") for "
+                         + (op == UPPER ? "UPPER()" : "LOWER()") + " operation");
         }
         arg1 = arg;
         this.op = op;
         type = String.class;
+    } else if (op == LENGTH) {
+        if (arg.getType().equals(UnknownTypeValue.class)) {
+        arg.youAreType(String.class);
+        } else if (!arg.getType().equals(String.class)
+               && !arg.getType().equals(org.intermine.objectstore.query.ClobAccess.class)) {
+        throw new ClassCastException("Invalid argument (" + arg.getType() + ") for LENGTH() operation");
+        }
+        arg1 = arg;
+        this.op = op;
+        type = Integer.class;
+    } else {
+        throw new IllegalArgumentException("Invalid operation for specified arguments");
+    }
     }
 
     /**
-       * {@inheritDoc}
-       */
+     * {@inheritDoc}
+     */
     public Class<?> getType() {
         return type;
     }
@@ -303,7 +342,7 @@ public class QueryExpression implements QueryEvaluable
             type = cls;
         } else {
             throw new ClassCastException("youAreType called on QueryExpression that already has "
-                    + "type");
+                     + "type");
         }
     }
 

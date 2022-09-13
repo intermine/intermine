@@ -117,7 +117,6 @@ public abstract class BioSequenceFactory
      * @return a new BioSequence object or null if the BioEntity doesn't have a Sequence
      * @throws CompoundNotFoundException if any of the residues of the BioEntity can't be
      * turned into symbols of the given SequenceType.
-     * @author Sam Hokin
      *
      * NOTE: this has been rewritten by Sam Hokin, NCGR. It didn't formerly use the type parameter,
      * and simply polled the input BioEntity as to whether it was SequenceFeature or Protein, and

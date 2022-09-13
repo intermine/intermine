@@ -35,7 +35,9 @@ import org.intermine.webservice.server.core.Predicate;
 /**
  * Helper class for intermine links generated on report and lists pages
  *
- * @author Julie Sullivan
+ * Modified by SH to glean similar genes from GeneFamily rather than Homologue.
+ *
+ * @author Julie Sullivan, Sam Hokin
  */
 public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
 {
@@ -99,9 +101,9 @@ public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
 
         Collection<PartnerLink> fetch(ObjectRequest req) {
 
-            // Phase one -- query the remote mine for homologues.
+            // Phase one -- query the remote mine for genes in the same gene family.
             Map<String, Set<ObjectDetails>> genes = remoteHomologueStrategy(req);
-            // Phase two -- query this mine for homologues.
+            // Phase two -- query this mine for genes in the same gene family.
             if (genes == null || genes.isEmpty()) {
                 genes = localHomologueStrategy(req);
             }
@@ -138,22 +140,24 @@ public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
             return runQuery(thisMine, q);
         }
 
+        /**
+         * The PathQuery that returns "homologues", defined in this case as genes in the same gene family.
+         */
         private PathQuery getHomologueQuery(Mine mine, ObjectRequest req) {
             PathQuery q = new PathQuery(mine.getModel());
             q.addViews(
-                "Gene.homologues.homologue.primaryIdentifier",
-                "Gene.homologues.homologue.symbol",
-                "Gene.homologues.homologue.organism.shortName"
+                "Gene.geneFamily.genes.primaryIdentifier",
+                "Gene.geneFamily.genes.symbol",
+                "Gene.geneFamily.genes.organism.shortName"
             );
-            q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
+            q.addOrderBy("Gene.geneFamily.genes.organism.shortName", OrderDirection.ASC);
             q.addConstraint(Constraints.lookup("Gene", req.getIdentifier(), req.getDomain()));
-            q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
             return q;
         }
 
         /**
          * Processes the results of queries produced by getHomologueQuery - ie. they
-         * have three views: Gene.primaryIdentifier, Gene.symbol, Organism.shortName
+         * have two views: Gene.primaryIdentifier, Organism.shortName
          * @param mine The data source
          * @param q The query
          * @return
@@ -205,7 +209,7 @@ public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
 
         private PathQuery getGeneQuery(Mine mine, ObjectRequest req) {
             PathQuery q = new PathQuery(mine.getModel());
-            q.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.organism.shortName");
+            q.addViews("Gene.primaryIdentifier", "Gene.organism.shortName");
             q.addOrderBy("Gene.symbol", OrderDirection.ASC);
             q.addConstraint(Constraints.lookup("Gene", req.getIdentifier(), req.getDomain()));
             return q;

@@ -33,6 +33,10 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class InterProConverter extends BioFileConverter
 {
+    private static String DATASOURCE_NAME = "InterPro";
+    private static String DATASET_NAME = "InterPro data set";
+    private static String DATASET_DESCRIPTION = "InterPro provides functional analysis of proteins by classifying them into families and predicting domains and important sites.";
+
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, Item> proteinDomains = new HashMap<String, Item>();
 
@@ -44,7 +48,7 @@ public class InterProConverter extends BioFileConverter
      */
     public InterProConverter(ItemWriter writer, Model model)
         throws SAXException {
-        super(writer, model, "InterPro", "InterPro data set", null, false);
+        super(writer, model, DATASOURCE_NAME, DATASET_NAME, DATASET_DESCRIPTION);
     }
 
     /**
@@ -104,8 +108,9 @@ public class InterProConverter extends BioFileConverter
                 description = new StringBuffer();
             // <publication><db_xref db="PUBMED" dbkey="8606774" />
             }  else if ("db_xref".equals(qName) && "publication".equals(stack.peek())) {
-                String refId = getPub(attrs.getValue("dbkey"));
-                proteinDomain.addToCollection("publications", refId);
+		// commented out by SH -- we don't need 40,000 publications in the mine
+                // String refId = getPub(attrs.getValue("dbkey"));
+                // proteinDomain.addToCollection("publications", refId);
             // <interpro><name>
             } else if ("name".equals(qName) && "interpro".equals(stack.peek())) {
                 attName = "name";

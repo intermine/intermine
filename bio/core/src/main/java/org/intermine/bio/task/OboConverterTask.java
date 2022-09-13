@@ -30,7 +30,7 @@ public class OboConverterTask extends ConverterTask
 {
 //    protected static final Logger LOG = Logger.getLogger(OboConverterTask.class);
 
-    private String file, ontologyName, osName, url, termClass, licence;
+    private String file, ontologyName, osName, url, description, termClass, licence;
 
     /**
      * Set the input file name
@@ -64,6 +64,15 @@ public class OboConverterTask extends ConverterTask
      */
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    /**
+     * Set the description of the ontology
+     *
+     * @param description the description
+     */
+    public void setDescription(String description) {
+	this.description = description;
     }
 
     /**
@@ -112,7 +121,7 @@ public class OboConverterTask extends ConverterTask
 
             OboConverter converter;
             if (file.endsWith(".obo")) {
-                converter = new OboConverter(writer, model, file, ontologyName, url, termClass);
+                converter = new OboConverter(writer, model, file, ontologyName, url, description, termClass);
                 if (licence != null) {
                     converter.setLicence(licence);
                 }

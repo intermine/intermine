@@ -20,10 +20,10 @@ import java.util.Set;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.GOAnnotation;
-import org.intermine.model.bio.GOEvidence;
-import org.intermine.model.bio.GOEvidenceCode;
-import org.intermine.model.bio.GOTerm;
+import org.intermine.model.bio.OntologyAnnotation;
+import org.intermine.model.bio.OntologyEvidence;
+import org.intermine.model.bio.OntologyEvidenceCode;
+import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Protein;
@@ -84,8 +84,8 @@ public class GoPostprocessTest extends XMLTestCase {
 
         for (InterMineObject o : genes) {
             Gene gene = (Gene) o;
-            Set<GOAnnotation> goAnnotations = gene.getGoAnnotation();
-            for (GOAnnotation goa : goAnnotations) {
+            Set<OntologyAnnotation> goAnnotations = gene.getGoAnnotation();
+            for (OntologyAnnotation goa : goAnnotations) {
                 OntologyTerm goterm = goa.getOntologyTerm();
                 assertEquals("FOR " + gene.getName(), goterm.getName());
             }
@@ -103,8 +103,8 @@ public class GoPostprocessTest extends XMLTestCase {
 
         // one annotation instead of two
         assertEquals(1, resGene.getGoAnnotation().size());
-        Set<GOAnnotation> goes = resGene.getGoAnnotation();
-        for (GOAnnotation a : goes) {
+        Set<OntologyAnnotation> goes = resGene.getGoAnnotation();
+        for (OntologyAnnotation a : goes) {
             assertEquals(2, a.getEvidence().size());
         }
     }
@@ -141,12 +141,12 @@ public class GoPostprocessTest extends XMLTestCase {
     }
 
     private List setUpAnnotations(Protein protein, OntologyTerm ontologyTerm) {
-        GOAnnotation go = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
+        OntologyAnnotation go = (OntologyAnnotation) DynamicUtil.createObject(Collections.singleton(OntologyAnnotation.class));
         go.setSubject(protein);
 
         go.setOntologyTerm(ontologyTerm);
-        GOEvidence evidence = (GOEvidence) DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
-        GOEvidenceCode code = (GOEvidenceCode) DynamicUtil.createObject(Collections.singleton(GOEvidenceCode.class));
+        OntologyEvidence evidence = (OntologyEvidence) DynamicUtil.createObject(Collections.singleton(OntologyEvidence.class));
+        OntologyEvidenceCode code = (OntologyEvidenceCode) DynamicUtil.createObject(Collections.singleton(OntologyEvidenceCode.class));
         evidence.setCode(code);
         Publication pub = (Publication) DynamicUtil.createObject(Collections.singleton(Publication.class));
         evidence.addPublications(pub);
@@ -163,22 +163,22 @@ public class GoPostprocessTest extends XMLTestCase {
         Protein protein2 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein2.addGenes(gene);
 
-        GOAnnotation go1 = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
+        OntologyAnnotation go1 = (OntologyAnnotation) DynamicUtil.createObject(Collections.singleton(OntologyAnnotation.class));
         go1.setSubject(protein1);
         OntologyTerm ontologyTerm = (OntologyTerm) DynamicUtil.createObject(Collections.singleton(OntologyTerm.class));
         go1.setOntologyTerm(ontologyTerm);
-        GOEvidence evidence1 = (GOEvidence) DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
-        GOEvidenceCode code1 = (GOEvidenceCode) DynamicUtil.createObject(Collections.singleton(GOEvidenceCode.class));
+        OntologyEvidence evidence1 = (OntologyEvidence) DynamicUtil.createObject(Collections.singleton(OntologyEvidence.class));
+        OntologyEvidenceCode code1 = (OntologyEvidenceCode) DynamicUtil.createObject(Collections.singleton(OntologyEvidenceCode.class));
         evidence1.setCode(code1);
         Publication pub1 = (Publication) DynamicUtil.createObject(Collections.singleton(Publication.class));
         evidence1.addPublications(pub1);
         go1.setEvidence(Collections.singleton(evidence1));
 
-        GOAnnotation go2 = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
+        OntologyAnnotation go2 = (OntologyAnnotation) DynamicUtil.createObject(Collections.singleton(OntologyAnnotation.class));
         go2.setSubject(protein2);
         go2.setOntologyTerm(ontologyTerm);
-        GOEvidence evidence2 = (GOEvidence) DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
-        GOEvidenceCode code2 = (GOEvidenceCode) DynamicUtil.createObject(Collections.singleton(GOEvidenceCode.class));
+        OntologyEvidence evidence2 = (OntologyEvidence) DynamicUtil.createObject(Collections.singleton(OntologyEvidence.class));
+        OntologyEvidenceCode code2 = (OntologyEvidenceCode) DynamicUtil.createObject(Collections.singleton(OntologyEvidenceCode.class));
         evidence2.setCode(code2);
         Publication pub2 = (Publication) DynamicUtil.createObject(Collections.singleton(Publication.class));
         evidence2.addPublications(pub2);

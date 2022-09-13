@@ -58,6 +58,7 @@ public class PsiComplexesConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(PsiComplexesConverter.class);
     private static final String DATASET_TITLE = "IntAct Complexes";
+    private static final String DATASET_DESCRIPTION = "IntAct Complexes";
     private static final String DATA_SOURCE_NAME = "EBI IntAct";
     private static final String COMPLEX_PROPERTIES = "complex-properties";
     private static final String INTERACTION_TYPE = "physical";
@@ -94,7 +95,7 @@ public class PsiComplexesConverter extends BioFileConverter
      * @param model the Model
      */
     public PsiComplexesConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, DATASET_DESCRIPTION);
     }
 
     /**
@@ -400,8 +401,8 @@ public class PsiComplexesConverter extends BioFileConverter
             CvTerm qualifierTerm = xref.getQualifier();
             // String version = xref.getVersion(); -- always null
             if (GENE_ONTOLOGY.equalsIgnoreCase(dbTerm.getShortName())) {
-                String goterm = getTerm("GOTerm", xrefId);
-                Item goAnnotation = createItem("GOAnnotation");
+                String goterm = getTerm("OntologyTerm", xrefId);
+                Item goAnnotation = createItem("OntologyAnnotation");
                 if (qualifierTerm != null) {
                     goAnnotation.setAttribute("qualifier", qualifierTerm.getShortName());
                 }

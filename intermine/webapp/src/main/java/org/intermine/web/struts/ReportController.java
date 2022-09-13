@@ -143,8 +143,10 @@ public class ReportController extends InterMineAction
 
             Map<String, Map<String, DisplayField>> placementRefsAndCollections =
                 new TreeMap<String, Map<String, DisplayField>>();
-            Set<String> aspects =
-                new LinkedHashSet<String>(SessionMethods.getCategories(servletContext));
+            Set<String> aspects = new LinkedHashSet<String>();
+            if (SessionMethods.getCategories(servletContext)!=null) {
+                aspects = new LinkedHashSet<String>(SessionMethods.getCategories(servletContext));
+            }
 
             Set<ClassDescriptor> cds =
                 os.getModel().getClassDescriptorsForClass(requestedObject.getClass());

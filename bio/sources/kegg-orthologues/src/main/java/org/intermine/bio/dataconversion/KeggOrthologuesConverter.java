@@ -42,6 +42,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
     private static final String DATASET_TITLE = "KEGG orthologues data set";
+    private static final String DATASET_DESCRIPTION = "KEGG orthologues data set";
     private static final String DATA_SOURCE_NAME = "GenomeNet";
     private static String evidenceRefId = null;
     //eg.             HSA: 7358(UGDH)
@@ -59,7 +60,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
      * @param model the Model
      */
     public KeggOrthologuesConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, DATASET_DESCRIPTION);
         readConfig();
     }
 
