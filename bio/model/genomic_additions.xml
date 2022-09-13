@@ -262,7 +262,7 @@
 
   <!-- LIS Genetic Map -->
   <!-- A GeneticMap represents a set of LinkageGroups and GeneticMarkers mapped to them -->
-  <class name="GeneticMap" extends="Annotatable" is-interface="true">
+  <class name="GeneticMap" extends="Annotatable" is-interface="true" term="http://purl.bioontology.org/ontology/EDAM?conceptid=http%3A%2F%2Fedamontology.org%2Fdata_1278">
     <attribute name="synopsis" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="genotypes" type="java.lang.String"/>
@@ -294,7 +294,7 @@
     <attribute name="synopsis" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="genotypes" type="java.lang.String"/>
-    <attribute name="geneticMap" type="java.lang.String"/>
+    <reference name="geneticMap" referenced-type="GeneticMap"/>
     <reference name="organism" referenced-type="Organism"/>
     <reference name="dataSet" referenced-type="DataSet"/>
     <collection name="qtls" referenced-type="QTL" reverse-reference="qtlStudy"/>
@@ -346,7 +346,7 @@
   <!-- A Trait is an experimentally measured phenotype for a QTL or association and has ontologyAnnotations. -->
   <!-- Because trait measurement/treatment is specific to an experiment, it has a unique reference to a QTLStudy or a GWAS. -->
   <!-- name is the given name e.g. "Seed weight" and isn't unique - therefore we don't use Annotatable with unique primaryIdentifier. -->
-  <!-- Since Trait isn't Annotatable, we do not have a reverse reference OntologyAnnotations.subject which is Annotatable. -->
+  <!-- Since Trait isn't Annotatable, we just store OntologyTerms, not OntologyAnnotations. -->
   <class name="Trait" is-interface="true" term="https://browser.planteome.org/amigo/term/TO:0000387">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
@@ -355,7 +355,7 @@
     <reference name="gwas" referenced-type="GWAS"/>
     <collection name="qtls" referenced-type="QTL" reverse-reference="trait"/>
     <collection name="gwasResults" referenced-type="GWASResult" reverse-reference="trait"/>
-    <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation"/>
+    <collection name="ontologyTerms" referenced-type="OntologyTerm"/>
   </class>
   
 </classes>
