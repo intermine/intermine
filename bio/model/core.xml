@@ -18,6 +18,7 @@
         <attribute name="symbol" type="java.lang.String" term="http://www.w3.org/2004/02/skos/core#prefLabel"/>
         <attribute name="name" type="java.lang.String" term="http://www.w3.org/2000/01/rdf-schema#label"/>
         <reference name="organism" referenced-type="Organism" term="http://purl.org/net/orth#organism"/>
+        <reference name="strain" referenced-type="Strain" term="http://semanticscience.org/resource/SIO_010055"/>
         <collection name="locatedFeatures" referenced-type="Location" reverse-reference="locatedOn"/>
         <collection name="locations" referenced-type="Location" reverse-reference="feature" />
         <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject" term="http://purl.obolibrary.org/obo/synonym"/>
@@ -197,7 +198,7 @@
       <attribute name="name" type="java.lang.String" term="http://edamontology.org/data_1046"/>
       <attribute name="origin" type="java.lang.String"/>
       <attribute name="accession" type="java.lang.String" term="http://edamontology.org/data_2912"/>
-      <reference name="organism" referenced-type="Organism" reverse-reference="strains"/>
+      <reference name="organism" referenced-type="Organism" reverse-reference="strains" term="http://purl.org/net/orth#organism"/>
       <collection name="dataSets" referenced-type="DataSet"/>
     </class>
 
