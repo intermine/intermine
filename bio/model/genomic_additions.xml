@@ -23,7 +23,7 @@
     <attribute name="synopsis" type="java.lang.String"/>
   </class>
   
-  <!-- NOTE: interpro loader modified to have  ProteinDomain extend Annotatable -->
+  <!-- NOTE: interpro loader modified to have ProteinDomain extend Annotatable -->
   <class name="ProteinDomain" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000417">
     <attribute name="description" type="java.lang.String"/>
     <collection name="geneFamilies" referenced-type="GeneFamily" reverse-reference="proteinDomains"/>
@@ -111,12 +111,6 @@
   <class name="SequenceVariant" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0001060">
     <collection name="genes" referenced-type="Gene"/>
   </class>
-
-  <class name="Strain" is-interface="true">
-    <attribute name="description" type="java.lang.String"/>
-    <attribute name="origin" type="java.lang.String"/>
-    <collection name="dataSets" referenced-type="DataSet" />
-  </class>
   
   <class name="Supercontig" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000148" />
 
@@ -158,7 +152,7 @@
   <class name="PrimerBindingSite" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0005850" />
   <class name="Pseudogene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000336" />
 
-  <!-- Region with isCircular attribute (5.0.8.1) -->
+  <!-- Region with isCircular attribute -->
   <class name="Region" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:SO:0000001">
     <attribute name="isCircular" type="java.lang.Boolean"/>
   </class>
@@ -195,10 +189,10 @@
   
   <!-- LIS Pathway -->
   <class name="Pathway" is-interface="true" >
-     <attribute name="identifier" type="java.lang.String"/>
-     <attribute name="name" type="java.lang.String"/>
-     <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
-     <collection name="dataSets" referenced-type="DataSet"/>
+    <attribute name="identifier" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
   <!-- LIS Phylotree -->
@@ -279,7 +273,8 @@
     <collection name="linkageGroups" referenced-type="LinkageGroup" reverse-reference="geneticMap"/>
   </class>
   <!-- a LinkageGroup is a component of a GeneticMap -->
-  <class name="LinkageGroup" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000018">
+  <class name="LinkageGroup" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000018">
+    <attribute name="identifier" type="java.lang.String"/>
     <attribute name="number" type="java.lang.Integer"/>
     <attribute name="length" type="java.lang.Double"/>
     <reference name="geneticMap" referenced-type="GeneticMap" reverse-reference="linkageGroups"/>
@@ -308,7 +303,8 @@
   <!-- marker names are stored here in a |-delimited markerNames string; -->
   <!-- QTL.markers are loaded by a post-processor from markerNames -->
   <!-- QTL.genes are populated by a post-processor -->
-  <class name="QTL" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001645">
+  <class name="QTL" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001645">
+    <attribute name="identifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <attribute name="lod" type="java.lang.Double"/>
     <attribute name="likelihoodRatio" type="java.lang.Double"/>
@@ -324,18 +320,6 @@
     <reference name="dataSet" referenced-type="DataSet"/>
     <collection name="genes" referenced-type="Gene"/>
   </class>
-  <!-- A Trait is an experimentally measured phenotype for a QTL, which has ontology annotations -->
-  <!-- Because trait measurement/treatment is specific to an experiment, it has a single dataset which keys it along with primaryIdentifier -->
-  <!-- name is the given name "Seed weight" while primaryIdentifier is forced to be unique dataSetName.trait -->
-  <class name="Trait" extends="Annotatable" is-interface="true" term="https://browser.planteome.org/amigo/term/TO:0000387">
-    <attribute name="name" type="java.lang.String"/>
-    <attribute name="description" type="java.lang.String"/>
-    <reference name="dataSet" referenced-type="DataSet"/>
-    <collection name="qtls" referenced-type="QTL" reverse-reference="trait"/>
-    <collection name="gwasResults" referenced-type="GWASResult" reverse-reference="trait"/>
-  </class>
-
-
   <!-- GWAS is a study from a publication containing GWASResults, one per marker association -->
   <class name="GWAS" extends="Annotatable" is-interface="true">
     <attribute name="genotypes" type="java.lang.String"/>
@@ -359,6 +343,19 @@
     <reference name="dataSet" referenced-type="DataSet"/>
   </class>
 
-  
+  <!-- A Trait is an experimentally measured phenotype for a QTL or association and has ontologyAnnotations. -->
+  <!-- Because trait measurement/treatment is specific to an experiment, it has a unique reference to a QTLStudy or a GWAS. -->
+  <!-- name is the given name e.g. "Seed weight" and isn't unique - therefore we don't use Annotatable with unique primaryIdentifier. -->
+  <!-- Since Trait isn't Annotatable, we do not have a reverse reference OntologyAnnotations.subject which is Annotatable. -->
+  <class name="Trait" is-interface="true" term="https://browser.planteome.org/amigo/term/TO:0000387">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+    <reference name="qtlStudy" referenced-type="QTLStudy"/>
+    <reference name="gwas" referenced-type="GWAS"/>
+    <collection name="qtls" referenced-type="QTL" reverse-reference="trait"/>
+    <collection name="gwasResults" referenced-type="GWASResult" reverse-reference="trait"/>
+    <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation"/>
+  </class>
   
 </classes>
