@@ -82,7 +82,7 @@
     <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment"/>
     <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
     <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
-    <collection name="introns" referenced-type="Intron" reverse-reference="gene"/>
+    <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
     <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
     <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
     <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="genes"/>
@@ -101,7 +101,7 @@
   </class>
 
   <class name="Intron" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000188">
-    <reference name="gene" referenced-type="Gene" reverse-reference="introns"/>
+    <collection name="genes" referenced-type="Gene" reverse-reference="introns"/>
   </class>
 
   <class name="MRNA" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000234">
