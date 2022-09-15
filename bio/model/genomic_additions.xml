@@ -10,12 +10,13 @@
 
   <class name="Organism" is-interface="true">
     <attribute name="abbreviation" type="java.lang.String"/>
-    <collection name="dataSets" referenced-type="DataSet" />
+    <attribute name="description" type="java.lang.String"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
   <class name="SequenceFeature" is-interface="true">
-    <reference name="supercontig" referenced-type="Supercontig" />
-    <reference name="supercontigLocation" referenced-type="Location" />
+    <reference name="supercontig" referenced-type="Supercontig"/>
+    <reference name="supercontigLocation" referenced-type="Location"/>
   </class>
 
   <!-- synopsis from README -->
@@ -43,7 +44,7 @@
     <reference name="location" referenced-type="Location"/>
     <reference name="protein" referenced-type="Protein" reverse-reference="proteinMatches"/>
   </class>
-  <class name="ProteinHmmMatch" extends="ProteinMatch" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001831" />
+  <class name="ProteinHmmMatch" extends="ProteinMatch" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001831"/>
 
   <!-- CDS is sourced from a FASTA and contains the full sequence, related to gene and protein by ID matching -->
   <class name="CDS" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000316">
@@ -56,7 +57,7 @@
     <reference name="CDS" referenced-type="CDS" reverse-reference="protein"/>
     <reference name="transcript" referenced-type="Transcript" reverse-reference="protein"/>
     <reference name="phylonode" referenced-type="Phylonode" reverse-reference="protein"/>
-    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" />
+    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment"/>
     <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
   </class>
 
@@ -78,7 +79,7 @@
   <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000704">
     <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
     <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
-    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" />
+    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment"/>
     <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
     <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
     <collection name="introns" referenced-type="Intron" reverse-reference="gene"/>
@@ -112,7 +113,7 @@
     <collection name="genes" referenced-type="Gene"/>
   </class>
   
-  <class name="Supercontig" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000148" />
+  <class name="Supercontig" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000148"/>
 
   <class name="SyntenyBlock" is-interface="true">
     <attribute name="medianKs" type="java.lang.Double"/>
@@ -125,32 +126,32 @@
   <class name="UTR" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000203">
     <reference name="gene" referenced-type="Gene" reverse-reference="UTRs"/>
   </class>
-  <class name="FivePrimeUTR" extends="UTR" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000204" />
-  <class name="ThreePrimeUTR" extends="UTR" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000205" />
+  <class name="FivePrimeUTR" extends="UTR" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000204"/>
+  <class name="ThreePrimeUTR" extends="UTR" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000205"/>
 
   <!-- extra terms in some LIS GFFs -->
-  <class name="TransposableElementGene" extends="Gene" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000111" />
-  <class name="RRNAPrimaryTranscript" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000252" />
-  <class name="TRNAPrimaryTranscript" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000253" />
-  <class name="PreMiRNA" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001244" />
-  <class name="LncRNA" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001877" />
-  <class name="MiRNAPrimaryTranscript" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000647" />
-  <class name="RepeatRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000657" />
-  <class name="InvertedRepeat" extends="RepeatRegion" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000294" />
-  <class name="MobileGeneticElement" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001037" />
-  <class name="TransposableElement" extends="MobileGeneticElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000101" />
-  <class name="Helitron" extends="TransposableElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000544" />
-  <class name="TargetSiteDuplication" extends="TransposableElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000434" />
-  <class name="TerminalInvertedRepeatElement" extends="TransposableElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000208" />
-  <class name="TerminalInvertedRepeat" extends="TerminalInvertedRepeatElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000481" />
-  <class name="Retrotransposon" extends="TransposableElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000180" />
-  <class name="TRIMRetrotransposon" extends="Retrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0002261" />
-  <class name="NonLTRRetrotransposon" extends="Retrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000189" />
-  <class name="LTRRetrotransposon" extends="Retrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000186" />
-  <class name="RRTract" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000435" />
-  <class name="LongTerminalRepeat" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000286" />
-  <class name="PrimerBindingSite" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0005850" />
-  <class name="Pseudogene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000336" />
+  <class name="TransposableElementGene" extends="Gene" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000111"/>
+  <class name="RRNAPrimaryTranscript" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000252"/>
+  <class name="TRNAPrimaryTranscript" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000253"/>
+  <class name="PreMiRNA" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001244"/>
+  <class name="LncRNA" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001877"/>
+  <class name="MiRNAPrimaryTranscript" extends="Transcript" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000647"/>
+  <class name="RepeatRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000657"/>
+  <class name="InvertedRepeat" extends="RepeatRegion" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000294"/>
+  <class name="MobileGeneticElement" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001037"/>
+  <class name="TransposableElement" extends="MobileGeneticElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000101"/>
+  <class name="Helitron" extends="TransposableElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000544"/>
+  <class name="TargetSiteDuplication" extends="TransposableElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000434"/>
+  <class name="TerminalInvertedRepeatElement" extends="TransposableElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000208"/>
+  <class name="TerminalInvertedRepeat" extends="TerminalInvertedRepeatElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000481"/>
+  <class name="Retrotransposon" extends="TransposableElement" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000180"/>
+  <class name="TRIMRetrotransposon" extends="Retrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0002261"/>
+  <class name="NonLTRRetrotransposon" extends="Retrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000189"/>
+  <class name="LTRRetrotransposon" extends="Retrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000186"/>
+  <class name="RRTract" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000435"/>
+  <class name="LongTerminalRepeat" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000286"/>
+  <class name="PrimerBindingSite" extends="LTRRetrotransposon" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0005850"/>
+  <class name="Pseudogene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000336"/>
 
   <!-- Region with isCircular attribute -->
   <class name="Region" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO:SO:0000001">
@@ -269,7 +270,7 @@
     <attribute name="genotypingPlatform" type="java.lang.String"/>
     <attribute name="genotypingMethod" type="java.lang.String"/>
     <reference name="organism" referenced-type="Organism"/>
-    <reference name="dataSet" referenced-type="DataSet"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
     <collection name="linkageGroups" referenced-type="LinkageGroup" reverse-reference="geneticMap"/>
   </class>
   <!-- a LinkageGroup is a component of a GeneticMap -->
@@ -305,7 +306,6 @@
   <!-- QTL.genes are populated by a post-processor -->
   <class name="QTL" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001645">
     <attribute name="identifier" type="java.lang.String"/>
-    <attribute name="name" type="java.lang.String"/>
     <attribute name="lod" type="java.lang.Double"/>
     <attribute name="likelihoodRatio" type="java.lang.Double"/>
     <attribute name="markerR2" type="java.lang.Double"/>
