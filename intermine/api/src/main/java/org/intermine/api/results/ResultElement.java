@@ -130,13 +130,21 @@ public class ResultElement implements Serializable, ResultCell
             // get a 4-digit long from the current time (changes every millisecond)
             long systime = System.currentTimeMillis();
             String syssix = String.valueOf(systime - (systime / 10000) * 10000);
-            // tack on a random number between 0 and 99 for good measure
-            String rando = String.valueOf(ThreadLocalRandom.current().nextInt(0, 100));
-            if (rando.length() < 2) {
-                rando = "0" + rando;
+            // tack on a 4-digit random number between 0 and 9999 for good measure
+            String rando = String.valueOf(ThreadLocalRandom.current().nextInt(0, 10000));
+            if (rando.length()==1) {
+                rando = "000" + rando;
+                if (rando.length()==2) {
+                    rando = "00" + rando;
+                    if (rando.length()==3) {
+                        rando = "0" + rando;
+                    }
+                    int composite = Integer.parseInt(syssix + rando);
+                    simpleCellId = new Integer(composite);
+                    // DEBUG
+                    System.out.println("## simpleCellId="+simpleCellId);
+                }
             }
-            int composite = Integer.parseInt(syssix + rando);
-            simpleCellId = new Integer(composite);
         }
     }
 
@@ -192,10 +200,10 @@ public class ResultElement implements Serializable, ResultCell
                     && Util.equals(imObj, cell.getObject()));
         } catch (ClassCastException e) {
             throw new ClassCastException("Comparing a ResultsElement with a "
-                    + obj.getClass().getName());
+                                         + obj.getClass().getName());
         } catch (NullPointerException e) {
             throw new NullPointerException("field = " + field + ", imObj = " + imObj + ", type = "
-                    + TypeUtil.unqualifiedName(imObj.getClass().getName()));
+                                           + TypeUtil.unqualifiedName(imObj.getClass().getName()));
         }
     }
 
