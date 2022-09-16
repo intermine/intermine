@@ -127,16 +127,8 @@ public class ResultElement implements Serializable, ResultCell
      */
     public void setSimpleCellId() {
         if (simpleCellId == null) {
-            // get a 4-digit long from the current time (changes every millisecond)
-            long systime = System.currentTimeMillis();
-            String syssix = String.valueOf(systime - (systime / 10000) * 10000);
-            // tack on a random number between 0 and 99 for good measure
-            String rando = String.valueOf(ThreadLocalRandom.current().nextInt(0, 100));
-            if (rando.length() < 2) {
-                rando = "0" + rando;
-            }
-            int composite = Integer.parseInt(syssix + rando);
-            simpleCellId = new Integer(composite);
+            // get a random number between 90000000 and 99999999
+            simpleCellId = new Integer(ThreadLocalRandom.current().nextInt(90000000, 100000000));
         }
     }
 

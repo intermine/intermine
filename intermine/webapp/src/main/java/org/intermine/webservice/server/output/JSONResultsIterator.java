@@ -49,6 +49,8 @@ public class JSONResultsIterator implements Iterator<JSONObject>
     protected transient List<Map<String, Object>> currentArray;
     private Model model;
 
+    private List<Integer> idList;
+
     /**
      * Constructor. The JSON Iterator sits on top of the basic export results iterator.
      * @param it An ExportResultsIterator
@@ -61,6 +63,7 @@ public class JSONResultsIterator implements Iterator<JSONObject>
     private void init() {
         model = subIter.getQuery().getModel();
         viewPaths.addAll(subIter.getViewPaths());
+        idList = new ArrayList<>();
     }
 
     /**
@@ -87,10 +90,14 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         }
         while (subIter.hasNext()) {
             List<ResultElement> result = subIter.next();
-            // HACK: create a fake id for simple objects which don't have them
+            // HACK: create a fake id for any simple objects in the result
+            // use while loop with idList to avoid duplicates
             for (ResultElement cell : result) {
                 if (cell != null && cell.getId() == null) {
-                    cell.setSimpleCellId();
+                    while (cell.getId() == null || idList.contains(cell.getId())) {
+                        cell.setSimpleCellId();
+                    }
+                    idList.add(cell.getId());
                 }
             }
 
