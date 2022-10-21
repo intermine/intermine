@@ -24,11 +24,16 @@ public class PfamConverter extends BioFileConverter {
     
     private static final Logger LOG = Logger.getLogger(PfamConverter.class);
 
-    static final String DATASOURCE_NAME = "PFAM";
-    static final String DATASOURCE_URL = "https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/database_files/";
-    static final String DATASOURCE_DESCRIPTION = "Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains.";
+    static final String DATASOURCE_NAME = "EMBL-EBI";
+    static final String DATASOURCE_URL = "https://www.ebi.ac.uk/";
+    static final String DATASOURCE_DESCRIPTION = "EMBL-EBI is international, innovative and interdisciplinary, and a champion of open data in the life sciences. We are part of the European Molecular Biology Laboratory (EMBL), an intergovernmental research organisation funded by over 20 member states, prospect and associate member states.";
+
+    static final String DATASET_NAME = "Pfam";
+    static final String DATASET_URL = "https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/database_files/";
+    static final String DATASET_DESCRIPTION = "Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains.";
 
     Item dataSource;
+    Item dataSet;
     Item ontology;
     Map<String,Item> ontologyTerms = new HashMap<>();
 
@@ -43,6 +48,11 @@ public class PfamConverter extends BioFileConverter {
         dataSource.setAttribute("name", DATASOURCE_NAME);
         dataSource.setAttribute("url", DATASOURCE_URL);
         dataSource.setAttribute("description", DATASOURCE_DESCRIPTION);
+        dataSet = createItem("DataSet");
+        dataSet.setAttribute("name", DATASET_NAME);
+        dataSet.setAttribute("url", DATASET_URL);
+        dataSet.setAttribute("description", DATASET_DESCRIPTION);
+        dataSet.setReference("dataSource", dataSource);
         ontology = createItem("Ontology");
         ontology.setAttribute("name", DATASOURCE_NAME);
         ontology.setAttribute("url", DATASOURCE_URL);
@@ -65,6 +75,7 @@ public class PfamConverter extends BioFileConverter {
     @Override
     public void close() throws ObjectStoreException, RuntimeException {
         store(dataSource);
+        store(dataSet);
         store(ontology);
         store(ontologyTerms.values());
     }
