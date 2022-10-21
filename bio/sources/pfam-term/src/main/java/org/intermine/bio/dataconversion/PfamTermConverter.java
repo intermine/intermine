@@ -20,9 +20,9 @@ import org.intermine.xml.full.Item;
  *
  * @author Sam Hokin
  */
-public class PfamConverter extends BioFileConverter {
+public class PfamTermConverter extends BioFileConverter {
     
-    private static final Logger LOG = Logger.getLogger(PfamConverter.class);
+    private static final Logger LOG = Logger.getLogger(PfamTermConverter.class);
 
     static final String DATASOURCE_NAME = "EMBL-EBI";
     static final String DATASOURCE_URL = "https://www.ebi.ac.uk/";
@@ -38,11 +38,11 @@ public class PfamConverter extends BioFileConverter {
     Map<String,Item> ontologyTerms = new HashMap<>();
 
     /**
-     * Create a new PfamConverter
+     * Create a new PfamTermConverter
      * @param writer the ItemWriter to write out new items
      * @param model the data model
      */
-    public PfamConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public PfamTermConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", DATASOURCE_NAME);
@@ -84,10 +84,9 @@ public class PfamConverter extends BioFileConverter {
      * Process a pfamA.txt file.
      * 0          1         2            3            4             5            6          7           8...
      * pfamA_acc  pfamA_id  previous_id  description  deposited_by  seed_source  type       comment     ....
-     * OntologyTerm.
      * identifier .         .            name         .             .            namespace  description ....
      *
-     * NOTE: LIS prepends Pfam: to the accession/identifier!
+     * NOTE: we prepend Pfam: to the accession/identifier!
      */
     void processPfamFile(Reader reader) throws IOException {
         // spin through the file
