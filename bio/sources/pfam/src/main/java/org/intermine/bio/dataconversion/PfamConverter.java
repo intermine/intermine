@@ -25,7 +25,7 @@ public class PfamConverter extends BioFileConverter {
     private static final Logger LOG = Logger.getLogger(PfamConverter.class);
 
     static final String DATASOURCE_NAME = "PFAM";
-    static final String DATASOURCE_URL = "ftp://ftp.ebi.ac.uk/pub/databases/Pfam/";
+    static final String DATASOURCE_URL = "https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/database_files/";
     static final String DATASOURCE_DESCRIPTION = "Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains.";
 
     Item dataSource;
