@@ -63,6 +63,7 @@ public class PantherTermConverter extends BioFileConverter {
         pantherOntology = createItem("Ontology");
         pantherOntology.setAttribute("name", DATASOURCE_NAME);
         pantherOntology.setAttribute("url", DATASOURCE_URL);
+        pantherOntology.addToCollection("dataSets", dataSet);
     }
     
     /**

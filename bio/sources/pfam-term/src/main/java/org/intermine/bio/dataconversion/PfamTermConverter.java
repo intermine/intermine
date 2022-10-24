@@ -54,6 +54,7 @@ public class PfamTermConverter extends BioFileConverter {
         ontology = createItem("Ontology");
         ontology.setAttribute("name", DATASOURCE_NAME);
         ontology.setAttribute("url", DATASOURCE_URL);
+        ontology.addToCollection("dataSets", dataSet);
     }
     
     /**
