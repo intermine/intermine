@@ -31,7 +31,6 @@ public class PantherTermConverter extends BioFileConverter {
         "and other research by providing comprehensive information about the evolution of protein-coding gene families, " +
         "particularly protein phylogeny, function and genetic variation impacting that function.";
 
-    static final String DATASET_NAME = "PANTHER";
     static final String DATASET_URL = "http://data.pantherdb.org/ftp/hmm_classifications/current_release/";
     static final String DATASET_DESCRIPTION = "PANTHER HMM Classification file. Contains the PANTHER family/subfamily name, " +
         "and the molecular function, biological process, and pathway classifications for every PANTHER protein family " +
@@ -43,6 +42,8 @@ public class PantherTermConverter extends BioFileConverter {
     Map<String,Item> pantherTerms = new HashMap<>();
     Map<String,Item> goTerms = new HashMap<>();
     Map<String,Item>  pcTerms = new HashMap<>();
+
+    String dataSetName; // equals first file processed
 
     /**
      * Create a new PantherTermConverter
@@ -56,7 +57,6 @@ public class PantherTermConverter extends BioFileConverter {
         dataSource.setAttribute("url", DATASOURCE_URL);
         dataSource.setAttribute("description", DATASOURCE_DESCRIPTION);
         dataSet = createItem("DataSet");
-        dataSet.setAttribute("name", DATASET_NAME);
         dataSet.setAttribute("url", DATASET_URL);
         dataSet.setAttribute("description", DATASET_DESCRIPTION);
         dataSet.setReference("dataSource", dataSource);
@@ -71,11 +71,15 @@ public class PantherTermConverter extends BioFileConverter {
     @Override
     public void process(Reader reader) throws IOException {
         if (getCurrentFile().getName().startsWith("PANTHER") && getCurrentFile().getName().endsWith("classifications")) {
-            // PANTHER17.0_HMM_classifications
-            String[] parts = getCurrentFile().getName().split("_");
-            String version = parts[0].substring(7);
-            dataSet.setAttribute("version", version);
             System.out.println("## Processing "+getCurrentFile().getName());
+            if (dataSetName==null) {
+                // PANTHER17.0_HMM_classifications
+                dataSetName = getCurrentFile().getName();
+                dataSet.setAttribute("name", dataSetName);
+                String[] parts = getCurrentFile().getName().split("_");
+                String version = parts[0].substring(7);
+                dataSet.setAttribute("version", version);
+            }
             processPantherFile(reader);
         }
     }
@@ -107,33 +111,32 @@ public class PantherTermConverter extends BioFileConverter {
         String line = null;
         while ((line=br.readLine())!=null) {
             String[] fields = line.split("\t");
-            if (fields.length>1) {
-                String identifier = "PANTHER:" + fields[0];
-                String name = fields[1];
-                if (name.length()>0) {
-                    Item pantherTerm = createItem("OntologyTerm");
-                    pantherTerm.setReference("ontology", pantherOntology);
-                    pantherTerm.setAttribute("identifier", identifier);
-                    pantherTerm.setAttribute("name", name);
-                    pantherTerms.put(identifier, pantherTerm);
-                    // parse GO and PC crossReferences
-                    for (int i=2; i<fields.length; i++) {
-                        // cis-regulatory region sequence-specific DNA binding#GO:0000987;transcription regulatory region nucleic acid binding#GO:0001067;...
-                        // homeodomain transcription factor#PC00119;DNA-binding transcription factor#PC00218;helix-turn-helix transcription factor#PC00116
-                        String[] terms = fields[i].split(";");
-                        for (String term : terms) {
-                            // transcription regulatory region nucleic acid binding#GO:0001067
-                            // helix-turn-helix transcription factor#PC00116
-                            String[] parts = term.split("#");
-                            if (parts.length==2) {
-                                String crName = parts[0];
-                                String crIdentifier = parts[1];
-                                if (i<5) {
-                                    pantherTerm.addToCollection("crossReferences", getGOTerm(crIdentifier));
-                                } else {
-                                    pantherTerm.addToCollection("crossReferences", getPCTerm("PANTHER:"+crIdentifier, crName, pantherOntology));
-                                }
-                            }
+            if (fields.length<2) continue;
+            String identifier = "PANTHER:" + fields[0];
+            String name = fields[1];
+            if (name.length()==0) continue;
+            if (pantherTerms.containsKey(identifier)) continue;
+            Item pantherTerm = createItem("OntologyTerm");
+            pantherTerm.setReference("ontology", pantherOntology);
+            pantherTerm.setAttribute("identifier", identifier);
+            pantherTerm.setAttribute("name", name);
+            pantherTerms.put(identifier, pantherTerm);
+            // parse GO and PC crossReferences
+            for (int i=2; i<fields.length; i++) {
+                // cis-regulatory region sequence-specific DNA binding#GO:0000987;transcription regulatory region nucleic acid binding#GO:0001067;...
+                // homeodomain transcription factor#PC00119;DNA-binding transcription factor#PC00218;helix-turn-helix transcription factor#PC00116
+                String[] terms = fields[i].split(";");
+                for (String term : terms) {
+                    // transcription regulatory region nucleic acid binding#GO:0001067
+                    // helix-turn-helix transcription factor#PC00116
+                    String[] parts = term.split("#");
+                    if (parts.length==2) {
+                        String crName = parts[0];
+                        String crIdentifier = parts[1];
+                        if (i<5) {
+                            pantherTerm.addToCollection("crossReferences", getGOTerm(crIdentifier));
+                        } else {
+                            pantherTerm.addToCollection("crossReferences", getPCTerm("PANTHER:"+crIdentifier, crName, pantherOntology));
                         }
                     }
                 }

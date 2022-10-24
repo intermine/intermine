@@ -28,7 +28,6 @@ public class PfamTermConverter extends BioFileConverter {
     static final String DATASOURCE_URL = "https://www.ebi.ac.uk/";
     static final String DATASOURCE_DESCRIPTION = "EMBL-EBI is international, innovative and interdisciplinary, and a champion of open data in the life sciences. We are part of the European Molecular Biology Laboratory (EMBL), an intergovernmental research organisation funded by over 20 member states, prospect and associate member states.";
 
-    static final String DATASET_NAME = "Pfam";
     static final String DATASET_URL = "https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/database_files/";
     static final String DATASET_DESCRIPTION = "Pfam is a large collection of multiple sequence alignments and hidden Markov models covering many common protein domains.";
 
@@ -49,7 +48,6 @@ public class PfamTermConverter extends BioFileConverter {
         dataSource.setAttribute("url", DATASOURCE_URL);
         dataSource.setAttribute("description", DATASOURCE_DESCRIPTION);
         dataSet = createItem("DataSet");
-        dataSet.setAttribute("name", DATASET_NAME);
         dataSet.setAttribute("url", DATASET_URL);
         dataSet.setAttribute("description", DATASET_DESCRIPTION);
         dataSet.setReference("dataSource", dataSource);
@@ -65,6 +63,7 @@ public class PfamTermConverter extends BioFileConverter {
     public void process(Reader reader) throws IOException {
         if (getCurrentFile().getName().equals("pfamA.txt")) {
             System.out.println("## Processing "+getCurrentFile().getName());
+            dataSet.setAttribute("name", getCurrentFile().getName());
             processPfamFile(reader);
         }
     }
