@@ -27,13 +27,12 @@
   <!-- NOTE: interpro loader modified to have ProteinDomain extend Annotatable -->
   <class name="ProteinDomain" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000417">
     <attribute name="description" type="java.lang.String"/>
-    <collection name="geneFamilies" referenced-type="GeneFamily" reverse-reference="proteinDomains"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="proteinDomains"/>
+    <collection name="geneFamilies" referenced-type="GeneFamily" reverse-reference="proteinDomains"/>
   </class>
 
   <!-- InterPro terms from LIS -->
-  <class name="ProteinMatch" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000349">
-    <attribute name="name" type="java.lang.String"/>
+  <class name="ProteinMatch" extends="BioEntity" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000349">
     <attribute name="accession" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
     <attribute name="status" type="java.lang.String"/>
@@ -41,9 +40,9 @@
     <attribute name="target" type="java.lang.String"/>
     <attribute name="signatureDesc" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Integer"/>
-    <reference name="location" referenced-type="Location"/>
     <reference name="protein" referenced-type="Protein" reverse-reference="proteinMatches"/>
   </class>
+
   <class name="ProteinHmmMatch" extends="ProteinMatch" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001831"/>
 
   <!-- CDS is sourced from a FASTA and contains the full sequence, related to gene and protein by ID matching -->
@@ -168,8 +167,8 @@
 
   <!-- LIS GeneFamily -->
   <!-- GeneFamily.size and tallies are populated by a post-processor since it has multiple annotations contributing -->
-  <class name="GeneFamily" is-interface="true">
-    <attribute name="identifier" type="java.lang.String"/>
+  <!-- Gene and Protein have geneFamilyAssignments so no reverse-reference here -->
+  <class name="GeneFamily" extends="Annotatable" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <attribute name="version" type="java.lang.String"/>
     <attribute name="size" type="java.lang.Integer"/>
@@ -189,27 +188,28 @@
   </class>
   
   <!-- LIS Pathway -->
-  <class name="Pathway" is-interface="true" >
-    <attribute name="identifier" type="java.lang.String"/>
+  <class name="Pathway" extends="Annotatable" is-interface="true" >
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="stableIdentifier" type="java.lang.String"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
   <!-- LIS Phylotree -->
-  <class name="Phylotree" is-interface="true">
-    <attribute name="identifier" type="java.lang.String"/>
+  <class name="Phylotree" extends="Annotatable" is-interface="true">
     <attribute name="numLeaves" type="java.lang.Integer"/>
     <collection name="nodes" referenced-type="Phylonode" reverse-reference="tree"/>
     <reference name="geneFamily" referenced-type="GeneFamily" reverse-reference="phylotree"/>
-    <reference name="dataSet" referenced-type="DataSet"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
+  
   <class name="Newick" is-interface="false" extends="java.lang.Object">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="contents" type="java.lang.String"/>
     <reference name="phylotree" referenced-type="Phylotree"/>
     <reference name="geneFamily" referenced-type="GeneFamily"/>
   </class>
+
   <class name="Phylonode" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Double"/>
@@ -223,19 +223,14 @@
   </class>
   
   <!-- LIS Expression -->
-  <class name="BioProject" is-interface="true">
-    <attribute name="accession" type="java.lang.String"/>
-    <attribute name="title" type="java.lang.String"/>
-    <attribute name="description" type="java.lang.String"/>
-  </class>
   <class name="ExpressionSource" extends="Annotatable" is-interface="true">
     <attribute name="synopsis" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="geoSeries" type="java.lang.String"/>
     <attribute name="sra" type="java.lang.String"/>
+    <attribute name="bioProject" type="java.lang.String"/>
     <reference name="organism" referenced-type="Organism"/>
     <reference name="strain" referenced-type="Strain"/>
-    <reference name="bioProject" referenced-type="BioProject"/>
     <reference name="dataSet" referenced-type="DataSet"/>
     <collection name="samples" referenced-type="ExpressionSample" reverse-reference="source"/>
   </class>
