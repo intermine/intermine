@@ -126,8 +126,10 @@ public class ResultElement implements Serializable, ResultCell
      * Does nothing if simpleCellId has already been set.
      */
     public void setSimpleCellId() {
-        // set to a random number between 90000000 and 99999999
-        simpleCellId = new Integer(ThreadLocalRandom.current().nextInt(90000000, 100000000));
+        if (simpleCellId==null) {
+            // set to a random number between 90000000 and 99999999
+            simpleCellId = new Integer(ThreadLocalRandom.current().nextInt(90000000, 100000000));
+        }
     }
 
     /**
