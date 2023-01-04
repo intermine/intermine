@@ -395,6 +395,7 @@ public class WebConfig
                 } catch (final ClassNotFoundException e) {
                     final String msg = "Invalid web config. '"
                         + typeName + "' doesn't exist in the " + "model.";
+                    System.out.println(msg);
                     LOG.warn(msg);
                     continue;
                 }
@@ -598,6 +599,7 @@ public class WebConfig
                     final String msg = "Invalid web config. " + widgetType + " is not a valid "
                         + "class. Please correct the entry in the webconfig-model.xml for the "
                         + widget.getId() + " widget.";
+                    System.out.println(msg);
                     LOG.warn(msg);
                 } else {
                     type.addWidget(widget);
