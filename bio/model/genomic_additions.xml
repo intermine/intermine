@@ -229,14 +229,14 @@
     <attribute name="geoSeries" type="java.lang.String"/>
     <attribute name="sra" type="java.lang.String"/>
     <attribute name="bioProject" type="java.lang.String"/>
+    <attribute name="unit" type="java.lang.String"/>
     <reference name="organism" referenced-type="Organism"/>
     <reference name="strain" referenced-type="Strain"/>
     <reference name="dataSet" referenced-type="DataSet"/>
     <collection name="samples" referenced-type="ExpressionSample" reverse-reference="source"/>
   </class>
-  <class name="ExpressionSample" is-interface="true">
+  <class name="ExpressionSample" extends="Annotatable" is-interface="true">
     <attribute name="num" type="java.lang.Integer"/>
-    <attribute name="identifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="treatment" type="java.lang.String"/>
@@ -251,7 +251,6 @@
   </class>
   <class name="ExpressionValue" is-interface="false" extends="java.lang.Object">
     <attribute name="value" type="java.lang.Double"/>
-    <attribute name="unit" type="java.lang.String"/>
     <reference name="sample" referenced-type="ExpressionSample"/>
     <reference name="feature" referenced-type="SequenceFeature"/>
   </class>
@@ -290,7 +289,6 @@
     <attribute name="synopsis" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="genotypes" type="java.lang.String"/>
-    <reference name="geneticMap" referenced-type="GeneticMap"/>
     <reference name="organism" referenced-type="Organism"/>
     <reference name="dataSet" referenced-type="DataSet"/>
     <collection name="qtls" referenced-type="QTL" reverse-reference="qtlStudy"/>
@@ -340,9 +338,9 @@
 
   <!-- A Trait is an experimentally measured phenotype for a QTL or association and has ontologyAnnotations. -->
   <!-- Because trait measurement/treatment is specific to an experiment, it has a unique reference to a QTLStudy or a GWAS. -->
-  <!-- name is the given name e.g. "Seed weight" and isn't unique - therefore we don't use Annotatable with unique primaryIdentifier. -->
-  <!-- Since Trait isn't Annotatable, we just store OntologyTerms, not OntologyAnnotations. -->
-  <class name="Trait" is-interface="true" term="https://browser.planteome.org/amigo/term/TO:0000387">
+  <!-- name is the given name e.g. "Seed weight" and isn't unique -->
+  <!-- primaryIdentifier is concocted by the loader -->
+  <class name="Trait" extends="Annotatable" is-interface="true" term="https://browser.planteome.org/amigo/term/TO:0000387">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <reference name="dataSet" referenced-type="DataSet"/>
@@ -350,7 +348,6 @@
     <reference name="gwas" referenced-type="GWAS"/>
     <collection name="qtls" referenced-type="QTL" reverse-reference="trait"/>
     <collection name="gwasResults" referenced-type="GWASResult" reverse-reference="trait"/>
-    <collection name="ontologyTerms" referenced-type="OntologyTerm"/>
   </class>
   
 </classes>
