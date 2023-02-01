@@ -19,8 +19,6 @@
     <reference name="supercontigLocation" referenced-type="Location"/>
   </class>
 
-  <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
-
   <!-- synopsis from README -->
   <class name="DataSet" is-interface="true">
     <attribute name="synopsis" type="java.lang.String"/>
