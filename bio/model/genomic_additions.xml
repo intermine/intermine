@@ -56,7 +56,7 @@
     <reference name="CDS" referenced-type="CDS" reverse-reference="protein"/>
     <reference name="transcript" referenced-type="Transcript" reverse-reference="protein"/>
     <reference name="phylonode" referenced-type="Phylonode" reverse-reference="protein"/>
-    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment"/>
+    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" reverse-reference="protein"/>
     <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
   </class>
 
@@ -73,12 +73,14 @@
     <attribute name="score" type="java.lang.Double"/>
     <attribute name="bestDomainScore" type="java.lang.Double"/>
     <reference name="geneFamily" referenced-type="GeneFamily"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="geneFamilyAssignments"/>
+    <reference name="protein" referenced-type="Protein" reverse-reference="geneFamilyAssignments"/>
   </class>
 
   <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000704">
     <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
     <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
-    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment"/>
+    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" reverse-reference="gene"/>
     <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
     <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
     <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
@@ -182,7 +184,9 @@
 
   <!-- tally of genes per GeneFamily per Organism -->
   <class name="GeneFamilyTally" is-interface="true">
-    <attribute name="tally" type="java.lang.Integer"/>
+    <attribute name="totalCount" type="java.lang.Integer"/>
+    <attribute name="numAnnotations" type="java.lang.Integer"/>
+    <attribute name="averageCount" type="java.lang.Double"/>
     <reference name="geneFamily" referenced-type="GeneFamily" reverse-reference="tallies"/>
     <reference name="organism" referenced-type="Organism"/>
   </class>
@@ -268,7 +272,7 @@
     <collection name="linkageGroups" referenced-type="LinkageGroup" reverse-reference="geneticMap"/>
   </class>
   <!-- a LinkageGroup is a component of a GeneticMap -->
-  <class name="LinkageGroup" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000018">
+  <class name="LinkageGroup" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000018">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="number" type="java.lang.Integer"/>
     <attribute name="length" type="java.lang.Double"/>
@@ -283,7 +287,6 @@
     <reference name="linkageGroup" referenced-type="LinkageGroup"/>
   </class>
 
-
   <!-- a QTLStudy represents a particular QTL study from a DataSet/Publication -->
   <class name="QTLStudy" extends="Annotatable" is-interface="true">
     <attribute name="synopsis" type="java.lang.String"/>
@@ -297,7 +300,7 @@
   <!-- marker names are stored here in a |-delimited markerNames string; -->
   <!-- QTL.markers are loaded by a post-processor from markerNames -->
   <!-- QTL.genes are populated by a post-processor -->
-  <class name="QTL" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001645">
+  <class name="QTL" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001645">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="lod" type="java.lang.Double"/>
     <attribute name="likelihoodRatio" type="java.lang.Double"/>
@@ -327,7 +330,7 @@
   <!-- GWASResult relates a marker to a measured trait with a p-value -->
   <!-- Since a marker may have several genomic mappings, we store markerName here -->
   <!-- GWASResult.markers is populated with a post-processor -->
-  <class name="GWASResult" is-interface="true">
+  <class name="GWASResult" extends="Annotatable" is-interface="true">
     <attribute name="markerName" type="java.lang.String"/>
     <attribute name="pValue" type="java.lang.Double"/>
     <reference name="gwas" referenced-type="GWAS" reverse-reference="results"/>
