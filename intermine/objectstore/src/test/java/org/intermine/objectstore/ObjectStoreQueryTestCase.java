@@ -208,6 +208,8 @@ public abstract class ObjectStoreQueryTestCase {
         queries.put("Upper", upper());
         queries.put("Greatest", greatest());
         queries.put("Least", least());
+	queries.put("Length", length());
+	queries.put("Concat", concat());
 
         // test 'foo' IN bag
         queries.put("LargeBagConstraint", largeBagConstraint(false));
@@ -640,6 +642,14 @@ public abstract class ObjectStoreQueryTestCase {
         r = new Object[][]{{1234},
                 {2000}};
         results.put("Least", ObjectStoreTestUtils.toList(r));
+
+        r = new Object[][]{{new Integer(10)},
+                {new Integer(10)},
+                {new Integer(10)},
+                {new Integer(10)},
+                {new Integer(10)},
+                {new Integer(10)}};
+        results.put("Length", ObjectStoreTestUtils.toList(r));
 
         r = new Object[][]{{data.get("EmployeeA1")},
                 {data.get("EmployeeA2")},
@@ -2149,6 +2159,35 @@ public abstract class ObjectStoreQueryTestCase {
         q.addFrom(qc);
         QueryField f = new QueryField(qc, "vatNumber");
         QueryExpression e = new QueryExpression(new QueryValue(2000), QueryExpression.LEAST, f);
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT LENGTH(a1_.name) AS a2_ FROM Employee AS a1_;
+     */
+    public static Query length() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        QueryExpression e = new QueryExpression(QueryExpression.LENGTH, f);
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT CONCAT(a1_.name, " is an employee") AS a2_ FROM Employee AS a1_;
+     */
+    public static Query concat() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+	QueryValue isAnEmployee = new QueryValue(" is an employee");
+        QueryExpression e = new QueryExpression(f, QueryExpression.CONCAT, isAnEmployee);
         q.addToSelect(e);
         return q;
     }
