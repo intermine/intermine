@@ -162,11 +162,17 @@
   <!-- LIS GeneticMarker -->
   <!-- linkageGroupPositions give cM position on linkage groups, populated by a post-processor -->
   <class name="GeneticMarker" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0001645">
+    <collection name="genotypingPlatforms" referenced-type="GenotypingPlatform" reverse-reference="markers"/>
     <collection name="linkageGroupPositions" referenced-type="LinkageGroupPosition"/>
     <collection name="qtls" referenced-type="QTL" reverse-reference="markers"/>
     <collection name="gwasResults" referenced-type="GWASResult" reverse-reference="markers"/>
   </class>
 
+  <!-- LIS GenotypingPlatform -->
+  <class name="GenotypingPlatform" extends="Annotatable" is-interface="true">
+    <collection name="markers" referenced-type="GeneticMarker" reverse-reference="genotypingPlatforms"/>
+  </class>
+  
   <!-- LIS GeneFamily -->
   <!-- GeneFamily.size and tallies are populated by a post-processor since it has multiple annotations contributing -->
   <!-- Gene and Protein have geneFamilyAssignments so no reverse-reference here -->
@@ -265,8 +271,8 @@
     <attribute name="synopsis" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="genotypes" type="java.lang.String"/>
-    <attribute name="genotypingPlatform" type="java.lang.String"/>
     <attribute name="genotypingMethod" type="java.lang.String"/>
+    <reference name="genotypingPlatform" referenced-type="GenotypingPlatform"/>
     <reference name="organism" referenced-type="Organism"/>
     <collection name="dataSets" referenced-type="DataSet"/>
     <collection name="linkageGroups" referenced-type="LinkageGroup" reverse-reference="geneticMap"/>
@@ -321,8 +327,8 @@
     <attribute name="genotypes" type="java.lang.String"/>
     <attribute name="synopsis" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
-    <attribute name="genotypingPlatform" type="java.lang.String"/>
     <attribute name="genotypingMethod" type="java.lang.String"/>
+    <reference name="genotypingPlatform" referenced-type="GenotypingPlatform"/>
     <reference name="organism" referenced-type="Organism"/>
     <reference name="dataSet" referenced-type="DataSet"/>
     <collection name="results" referenced-type="GWASResult" reverse-reference="gwas"/>
