@@ -21,7 +21,8 @@ include ':bio-source-biogrid',
 ':bio-source-so',
 ':bio-source-obo',
 ':bio-source-pfam-term',
-':bio-source-panther-term'
+':bio-source-panther-term',
+':bio-source-gfa'
 
 project(':bio-source-obo').projectDir = new File(settingsDir, './obo')
 project(':bio-source-isa').projectDir = new File(settingsDir, './isa')
@@ -46,3 +47,4 @@ project(':bio-source-so').projectDir = new File(settingsDir, './so')
 project(':bio-source-obo').projectDir = new File(settingsDir, './obo')
 project(':bio-source-pfam-term').projectDir = new File(settingsDir, './pfam-term')
 project(':bio-source-panther-term').projectDir = new File(settingsDir, './panther-term')
+project(':bio-source-gfa').projectDir = new File(settingsDir, './gfa')
