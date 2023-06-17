@@ -10,10 +10,12 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -30,9 +32,13 @@ import org.intermine.model.bio.Location;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+
 import org.intermine.util.DynamicUtil;
+
 
 import org.intermine.postprocess.PostProcessor;
 
@@ -94,9 +100,7 @@ public class CreateGeneFlankingFeaturesProcess extends PostProcessor
      *
      * @throws ObjectStoreException if the objectstore throws an exception
      */
-    public void postProcess()
-            throws ObjectStoreException {
-
+    public void postProcess() throws ObjectStoreException {
         Results results = BioQueries.findLocationAndObjects(os,
                 Chromosome.class, Gene.class, false, false, false, 1000);
 
@@ -108,10 +112,10 @@ public class CreateGeneFlankingFeaturesProcess extends PostProcessor
         dataSet.setUrl("http://www.intermine.org");
         dataSet.setDataSource(dataSource);
 
+        deleteFlankingRegions();
+
         Iterator<?> resIter = results.iterator();
-
         int count = 0;
-
         osw.beginTransaction();
         while (resIter.hasNext()) {
             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
@@ -125,11 +129,33 @@ public class CreateGeneFlankingFeaturesProcess extends PostProcessor
             count++;
         }
         osw.store(dataSet);
-
         osw.commitTransaction();
     }
 
-
+    /**
+     * Delete existing flanking regions so that we do not store duplicates with a second run.
+     */
+    private void deleteFlankingRegions() throws ObjectStoreException {
+        Query qGeneFlankingRegion = new Query();
+        QueryClass qcGeneFlankingRegion = new QueryClass(GeneFlankingRegion.class);
+        qGeneFlankingRegion.addFrom(qcGeneFlankingRegion);
+        qGeneFlankingRegion.addToSelect(qcGeneFlankingRegion);
+        List<GeneFlankingRegion> gfrList = new ArrayList<>();
+        Results gfrResults = osw.getObjectStore().execute(qGeneFlankingRegion);
+        for (Object o : gfrResults.asList()) {
+            ResultsRow row = (ResultsRow) o;
+            GeneFlankingRegion gfr = (GeneFlankingRegion) row.get(0);
+            gfrList.add(gfr);
+        }
+        for (GeneFlankingRegion gfr : gfrList) {
+            osw.beginTransaction();
+            osw.delete(gfr);
+            osw.commitTransaction();
+        }
+        System.out.println("### Deleted " + gfrList.size() + " GeneFlankingRegion objects.");
+        LOG.info("### Deleted " + gfrList.size() + " GeneFlankingRegion objects.");
+    }
+    
     private void createAndStoreFlankingRegion(Chromosome chr, Location geneLoc, Gene gene)
             throws ObjectStoreException {
         // This code can't cope with chromosomes that don't have a length
