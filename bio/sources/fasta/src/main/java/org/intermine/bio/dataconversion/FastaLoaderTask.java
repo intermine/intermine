@@ -40,6 +40,7 @@ import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.Strain;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.PendingClob;
 import org.intermine.task.FileDirectDataLoaderTask;
@@ -51,6 +52,7 @@ import org.intermine.task.FileDirectDataLoaderTask;
  *
  * @author Kim Rutherford
  * @author Peter Mclaren
+ * @author Sam Hokin
  */
 
 public class FastaLoaderTask extends FileDirectDataLoaderTask
@@ -60,6 +62,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private String sequenceType = "dna";
     private String classAttribute = "primaryIdentifier";
     private Organism org;
+    private Strain strain;
     private String className;
     private int storeCount = 0;
     private String dataSourceName = null;
@@ -77,6 +80,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     private String dataSetTitle;
     private String licence = null;
+    private String strainIdentifier = null;
+    private String assemblyVersion = null;
+    private String annotationVersion = null;
     private Map<String, DataSet> dataSets = new HashMap<String, DataSet>();
 
     /**
@@ -158,6 +164,27 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     public void setLicence(String licence) {
         this.licence = licence;
+    }
+
+    /**
+     * Set the strain identifier from fasta.strainIdentifier in project.xml.
+     */
+    public void setStrainIdentifier(String identifier) {
+        this.strainIdentifier = identifier;
+    }
+
+    /**
+     * Set the assembly version from fasta.assemblyVersion in project.xml.
+     */
+    public void setAssemblyVersion(String version) {
+        this.assemblyVersion = version;
+    }
+
+    /**
+     * Set the annotation version from fasta.annotationVersion in project.xml.
+     */
+    public void setAnnotationVersion(String version) {
+        this.annotationVersion = version;
     }
 
     /**
@@ -407,7 +434,16 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     protected void  extraProcessing(Sequence bioJavaSequence, org.intermine.model.bio.Sequence
             flymineSequence, BioEntity bioEntity, Organism organism, DataSet dataSet)
             throws ObjectStoreException {
-        // default - no extra processing
+        // get and store strain first time
+        if (strain == null && strainIdentifier != null) {
+            strain = getDirectDataLoader().createObject(Strain.class);
+            strain.setIdentifier(strainIdentifier);
+            getDirectDataLoader().store(strain);
+        }
+        // set extra non-null references and attributes
+        if (strain != null) bioEntity.setStrain(strain);
+        if (assemblyVersion != null) bioEntity.setAssemblyVersion(assemblyVersion);
+        if (annotationVersion != null) bioEntity.setAnnotationVersion(annotationVersion);
     }
 
     /**
