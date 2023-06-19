@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
     
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -30,22 +32,24 @@ public class GFAConverter extends BioFileConverter {
 	
     private static final Logger LOG = Logger.getLogger(GFAConverter.class);
 
+    // It's too much of a pain in the ass to get project.xml variables loaded in here since BioFileConverter is designed to use static values.
+    // We'll use the filename as the dataset name.
+    static final String DATA_SOURCE_NAME = "Legume Information System";
+    static final String DATA_SET_DESCRIPTION = "LIS gene family assignments (GFA) file";
+    static final String LICENCE = "public";
+
     // things to store
-    Item dataSource;
-    Item dataSet;
     Item geneSOTerm;
-    List<Item> dataSets = new ArrayList<>();
     List<Item> geneFamilyAssignments = new ArrayList<>();
     Map<String,Item> geneFamilies = new HashMap<>();
     Map<String,Item> genes = new HashMap<>();
     Map<String,Item> proteins = new HashMap<>();
     Map<String,Item> cdses = new HashMap<>();
 
-    // TODO: set in project.xml via plugin
-    String dataSourceName = "Legume Information System";
-    String licence = "public";
+    // store these so we can set the BioStoreHook during file processing.
+    ItemWriter writer;
+    Model model;
     
-
     /**
      * Create a new GFAConverter
      * @param writer the ItemWriter to write out new items
@@ -53,8 +57,8 @@ public class GFAConverter extends BioFileConverter {
      */
     public GFAConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", dataSourceName);
+        this.writer = writer;
+        this.model = model;
         geneSOTerm = createItem("SOTerm");
         geneSOTerm.setAttribute("name", "gene");
     }
@@ -66,12 +70,12 @@ public class GFAConverter extends BioFileConverter {
     public void process(Reader reader) throws IOException {
         if (getCurrentFile().getName().endsWith(".gfa.tsv")) {
             System.out.println("## Processing "+getCurrentFile().getName());
-            // set the DataSet to be the file being read
-            dataSet = createItem("DataSet");
-            dataSet.setAttribute("name", getCurrentFile().getName());
-            dataSet.setAttribute("licence", licence);
-            dataSet.setReference("dataSource", dataSource);
-            dataSets.add(dataSet);
+            // Note: these are RefIDs!
+            String dataSource = getDataSource(DATA_SOURCE_NAME);
+            String dataSet = getDataSet(getCurrentFile().getName(), dataSource, DATA_SET_DESCRIPTION, LICENCE);
+            // String sequenceOntologyRefId = BioConverterUtil.getOntology(this);
+            setStoreHook(new BioStoreHook(model, dataSet, dataSource, null));
+            // now process this GFA file
             processGFAFile();
         }
     }
@@ -82,8 +86,6 @@ public class GFAConverter extends BioFileConverter {
     @Override
     public void close() throws ObjectStoreException, RuntimeException {
         store(geneSOTerm);
-        store(dataSource);
-        store(dataSets);
         store(genes.values());
         store(proteins.values());
         store(geneFamilies.values());
@@ -142,7 +144,6 @@ public class GFAConverter extends BioFileConverter {
             Item gene = createItem("Gene");
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
             gene.setReference("sequenceOntologyTerm", geneSOTerm);
-            gene.addToCollection("dataSets", dataSet);
             genes.put(primaryIdentifier, gene);
             return gene;
         }
@@ -157,7 +158,6 @@ public class GFAConverter extends BioFileConverter {
         } else {
             Item protein = createItem("Protein");
             protein.setAttribute("primaryIdentifier", primaryIdentifier);
-            protein.addToCollection("dataSets", dataSet);
             proteins.put(primaryIdentifier, protein);
             return protein;
         }
