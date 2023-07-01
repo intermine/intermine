@@ -279,7 +279,7 @@
   </class>
   <!-- a LinkageGroup is a component of a GeneticMap -->
   <class name="LinkageGroup" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0000018">
-    <attribute name="identifier" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
     <attribute name="number" type="java.lang.Integer"/>
     <attribute name="length" type="java.lang.Double"/>
     <reference name="geneticMap" referenced-type="GeneticMap" reverse-reference="linkageGroups"/>
@@ -307,7 +307,7 @@
   <!-- QTL.markers are loaded by a post-processor from markerNames -->
   <!-- QTL.genes are populated by a post-processor -->
   <class name="QTL" extends="Annotatable" is-interface="true" term="http://purl.obolibrary.org/obo/SO:0001645">
-    <attribute name="identifier" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
     <attribute name="lod" type="java.lang.Double"/>
     <attribute name="likelihoodRatio" type="java.lang.Double"/>
     <attribute name="markerR2" type="java.lang.Double"/>
