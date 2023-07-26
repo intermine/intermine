@@ -56,7 +56,7 @@
     <reference name="CDS" referenced-type="CDS" reverse-reference="protein"/>
     <reference name="transcript" referenced-type="Transcript" reverse-reference="protein"/>
     <reference name="phylonode" referenced-type="Phylonode" reverse-reference="protein"/>
-    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" reverse-reference="protein"/>
+    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment"/>
     <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
   </class>
 
@@ -80,7 +80,7 @@
   <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000704">
     <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
     <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
-    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" reverse-reference="gene"/>
+    <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" />
     <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
     <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
     <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
