@@ -58,6 +58,7 @@
     <reference name="phylonode" referenced-type="Phylonode" reverse-reference="protein"/>
     <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment"/>
     <collection name="proteinMatches" referenced-type="ProteinMatch" reverse-reference="protein"/>
+    <collection name="panGeneSets" referenced-type="PanGeneSet" reverse-reference="proteins"/>
   </class>
 
   <!-- CDSRegion is a type=CDS SequenceFeature from a GFF and is smaller coding regions -->
@@ -89,6 +90,7 @@
     <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
     <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="genes"/>
     <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
+    <collection name="panGeneSets" referenced-type="PanGeneSet" reverse-reference="genes"/>
   </class>
   
   <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000239">
@@ -358,6 +360,13 @@
     <reference name="gwas" referenced-type="GWAS"/>
     <collection name="qtls" referenced-type="QTL" reverse-reference="trait"/>
     <collection name="gwasResults" referenced-type="GWASResult" reverse-reference="trait"/>
+  </class>
+
+  <!-- a PanGeneSet is a Steven Cannon invention to associate genes in a different way from GeneFamily -->
+  <class name="PanGeneSet" extends="Annotatable" is-interface="true">
+    <collection name="dataSets" referenced-type="DataSet"/>
+    <collection name="genes" referenced-type="Gene" reverse-reference="panGeneSets"/>
+    <collection name="proteins" referenced-type="Protein" reverse-reference="panGeneSets"/>
   </class>
   
 </classes>
