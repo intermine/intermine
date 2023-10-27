@@ -78,6 +78,7 @@
   </class>
 
   <class name="Gene" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000704">
+    <attribute name="ensemblName" type="java.lang.String"/>
     <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
     <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
     <collection name="geneFamilyAssignments" referenced-type="GeneFamilyAssignment" />
@@ -200,7 +201,6 @@
   <!-- LIS Pathway -->
   <class name="Pathway" extends="Annotatable" is-interface="true" >
     <attribute name="name" type="java.lang.String"/>
-    <attribute name="stableIdentifier" type="java.lang.String"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
@@ -352,6 +352,7 @@
   <class name="Trait" extends="Annotatable" is-interface="true" term="https://browser.planteome.org/amigo/term/TO:0000387">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
+    <reference name="organism" referenced-type="Organism"/>
     <reference name="dataSet" referenced-type="DataSet"/>
     <reference name="qtlStudy" referenced-type="QTLStudy"/>
     <reference name="gwas" referenced-type="GWAS"/>
