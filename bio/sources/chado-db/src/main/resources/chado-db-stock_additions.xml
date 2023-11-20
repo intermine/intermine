@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="Allele" extends="BioEntity" is-interface="true">
+    <collection name="stocks" referenced-type="Stock" reverse-reference="alleles"/>
+  </class>
+  <class name="Stock" extends="BioEntity" is-interface="true">
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="stockCenter" type="java.lang.String"/>
+    <collection name="alleles" referenced-type="Allele" reverse-reference="stocks"/>
+  </class>
+</classes>
