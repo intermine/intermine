@@ -1,0 +1,16 @@
+34	4126706	MONKEY	-	-	WormBase:WBGene308375	-	-	Record to support submission of GeneRIFs for a gene not in Entrez Gene (Myxococcus xanthus Beebe 1941.  Use when strain, subtype, isolate, etc. is unspecified, or when different from all specified ones in Gene.).	other	-	-	-	-	20080503
+6239	171593	Y74C9A.5	Y74C9A.5	-	WormBase:WBGene00022279	I	-	Y74C9A.5	protein-coding	-	-	-	-	20080516
+6239	171594	Y48G1C.4	Y48G1C.4	-	WormBase:WBGene00021677	I	-	Y48G1C.4	protein-coding	-	-	-	-	20080515
+6239	171595	Y48G1C.5	Y48G1C.5	-	WormBase:WBGene00021678	I	-	Y48G1C.5	protein-coding	-	-	-	-	20080520
+6239	171597	Y48G1C.6	Y48G1C.6	-	WormBase:WBGene00021679	I	-	Y48G1C.6	protein-coding	-	-	-	-	20080516
+7227	1111	CG1111	Dmel_CG1111	EG:BACR37P7.1	FLYBASE:FBgn001	X	1A1-1A1	CG3038	protein-coding
+7227	1234	CG1234	Dmel_CG1234	EG:BACR37P7.9	FLYBASE:FBgn003	X	1A1-1A1	CG13377	protein-coding
+7227	2222	CG3777	Dmel_CG3777	CK01670|EG:125H10.1	FLYBASE:FBgn002	X	1A1-1A5	CG3777	protein-coding
+7227	9999	CG3777	Dmel_CG3777	CK01670|EG:125H10.1	FLYBASE:FBgn004	X	1A1-1A5	CG3777	protein-coding
+7227	5740175	CG34160	Dmel_CG34160	-	FLYBASE:FBgn0085189	2L	-	CG34160 gene product from transcript CG34160-RA	protein-coding	-	-	-	CG34160-PA	20080515
+10090	567890	mouse_symbol	Dmel_CG34160	-	MGI:895149|Ensembl:ENSMUSG0000001857	2L	-	CG34160 gene product from transcript CG34160-RA	protein-coding	-	-	-	CG34160-PA	20080515
+83333	944909	ffs	b0455	ECK0449|JWR0009	EcoGene:EG30027	-	-	ncRNA	ncRNA	-	-	-	-	20110902
+83333	944880	aspU	b0206	ECK0206|JWR0006	EcoGene:EG30024	-	-	tRNA	tRNA	-	-	-	-	20110902
+83333	944740	yjhR	b4308	ECK4299|JW4271	EcoGene:EG12560	-	-	pseudo	pseudo	-	-	-	-	20110902
+83333	945053	ssrA	b2621	ECK2617|JWR0055|sipB	EcoGene:EG30100	-	-	miscRNA	miscRNA	-	-	-	-	20110924
+83333	947071	rrsG	b2591	ECK2589|JWR0054	EcoGene:EG30089	-	-	16S ribosomal RNA of rrnG operon	rRNA	-	-	-	-	20110902
