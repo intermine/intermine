@@ -1,7 +1,6 @@
 rootProject.name = 'bio-sources'
 
 include ':bio-source-biogrid',
-':bio-source-chado-db',
 ':bio-source-do',
 ':bio-source-delimited',
 ':bio-source-eco',
@@ -27,7 +26,6 @@ include ':bio-source-biogrid',
 project(':bio-source-obo').projectDir = new File(settingsDir, './obo')
 project(':bio-source-isa').projectDir = new File(settingsDir, './isa')
 project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
-project(':bio-source-chado-db').projectDir = new File(settingsDir, './chado-db')
 project(':bio-source-do').projectDir = new File(settingsDir, './do')
 project(':bio-source-delimited').projectDir = new File(settingsDir, './delimited')
 project(':bio-source-eco').projectDir = new File(settingsDir, './eco')
