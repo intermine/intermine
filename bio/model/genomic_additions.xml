@@ -125,6 +125,7 @@
   
   <class name="Transcript" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000673">
     <reference name="protein" referenced-type="Protein" reverse-reference="transcript"/>
+    <collection name="panGeneSets" referenced-type="PanGeneSet" reverse-reference="transcripts"/>
   </class>
   
   <class name="UTR" extends="SequenceFeature" is-interface="true" term="http://purl.obolibrary.org/obo/SO_0000203">
@@ -367,6 +368,7 @@
     <collection name="dataSets" referenced-type="DataSet"/>
     <collection name="genes" referenced-type="Gene" reverse-reference="panGeneSets"/>
     <collection name="proteins" referenced-type="Protein" reverse-reference="panGeneSets"/>
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="panGeneSets"/>
   </class>
   
 </classes>
