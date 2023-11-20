@@ -1,22 +1,11 @@
 rootProject.name = 'bio-sources'
 
-include ':bio-source-biogrid',
-':bio-source-do',
-':bio-source-delimited',
-':bio-source-eco',
-':bio-source-ensembl-compara',
-':bio-source-entrez-organism',
-':bio-source-fasta',
+include ':bio-source-fasta',
 ':bio-source-gff',
 ':bio-source-go',
 ':bio-source-go-annotation',
-':bio-source-hgnc',
-':bio-source-homologene',
-':bio-source-intermine-items-large-xml-file',
-':bio-source-intermine-items-xml-file',
 ':bio-source-interpro',
 ':bio-source-interpro-go',
-':bio-source-isa',
 ':bio-source-so',
 ':bio-source-obo',
 ':bio-source-pfam-term',
@@ -24,25 +13,13 @@ include ':bio-source-biogrid',
 ':bio-source-gfa'
 
 project(':bio-source-obo').projectDir = new File(settingsDir, './obo')
-project(':bio-source-isa').projectDir = new File(settingsDir, './isa')
-project(':bio-source-biogrid').projectDir = new File(settingsDir, './biogrid')
-project(':bio-source-do').projectDir = new File(settingsDir, './do')
-project(':bio-source-delimited').projectDir = new File(settingsDir, './delimited')
-project(':bio-source-eco').projectDir = new File(settingsDir, './eco')
-project(':bio-source-ensembl-compara').projectDir = new File(settingsDir, './ensembl-compara')
-project(':bio-source-entrez-organism').projectDir = new File(settingsDir, './entrez-organism')
 project(':bio-source-fasta').projectDir = new File(settingsDir, './fasta')
 project(':bio-source-gff').projectDir = new File(settingsDir, './gff')
 project(':bio-source-go').projectDir = new File(settingsDir, './go')
 project(':bio-source-go-annotation').projectDir = new File(settingsDir, './go-annotation')
-project(':bio-source-hgnc').projectDir = new File(settingsDir, './hgnc')
-project(':bio-source-homologene').projectDir = new File(settingsDir, './homologene')
-project(':bio-source-intermine-items-large-xml-file').projectDir = new File(settingsDir, './intermine-items-large-xml-file')
-project(':bio-source-intermine-items-xml-file').projectDir = new File(settingsDir, './intermine-items-xml-file')
 project(':bio-source-interpro').projectDir = new File(settingsDir, './interpro')
 project(':bio-source-interpro-go').projectDir = new File(settingsDir, './interpro-go')
 project(':bio-source-so').projectDir = new File(settingsDir, './so')
-project(':bio-source-obo').projectDir = new File(settingsDir, './obo')
 project(':bio-source-pfam-term').projectDir = new File(settingsDir, './pfam-term')
 project(':bio-source-panther-term').projectDir = new File(settingsDir, './panther-term')
 project(':bio-source-gfa').projectDir = new File(settingsDir, './gfa')
