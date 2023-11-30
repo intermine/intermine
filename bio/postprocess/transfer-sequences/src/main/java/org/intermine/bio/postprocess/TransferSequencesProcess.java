@@ -26,6 +26,7 @@ import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.SequenceFeature;
+import org.intermine.model.bio.Supercontig;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -55,11 +56,12 @@ import org.intermine.postprocess.PostProcessor;
  * assemblies and to the objects that the assemblies are located on (eg. Chromosomes).
  *
  * @author Kim Rutherford
+ * @author Sam Hokin
  */
-public class TransferSequencesProcess extends PostProcessor
-{
-    private Model model;
+public class TransferSequencesProcess extends PostProcessor {
     private static final Logger LOG = Logger.getLogger(TransferSequencesProcess.class);
+
+    private Model model; // stored for various methods
 
     /**
      * Create a new instance
@@ -76,28 +78,19 @@ public class TransferSequencesProcess extends PostProcessor
      * Main post-processing routine.
      * @throws ObjectStoreException if the objectstore throws an exception
      */
-    public void postProcess()
-            throws ObjectStoreException {
-
+    public void postProcess() throws IllegalAccessException, MetaDataException, ObjectStoreException {
         model = Model.getInstanceByName("genomic");
-
-        try {
-            transferToLocatedSequenceFeatures();
-            transferToTranscripts();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to transfer sequences " + e);
-        }
+        transferToChromosomeLocatedSequenceFeatures();
+        transferToSupercontigLocatedSequenceFeatures(); 
+        transferToTranscripts();
     }
 
-    private void storeNewSequence(SequenceFeature feature, ClobAccess sequenceString)
-            throws ObjectStoreException {
-        Sequence sequence =
-                (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+    private void storeNewSequence(SequenceFeature feature, ClobAccess sequenceString) throws ObjectStoreException {
+        Sequence sequence = (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         sequence.setResidues(sequenceString);
         sequence.setLength(sequenceString.length());
         osw.store(sequence);
-        feature.proxySequence(new ProxyReference(osw.getObjectStore(),
-                sequence.getId(), Sequence.class));
+        feature.proxySequence(new ProxyReference(osw.getObjectStore(), sequence.getId(), Sequence.class));
         feature.setLength(new Integer(sequenceString.length()));
         osw.store(feature);
     }
@@ -110,11 +103,9 @@ public class TransferSequencesProcess extends PostProcessor
      *
      * @throws Exception if there are problems with the transfer
      */
-    protected void transferToLocatedSequenceFeatures()
-            throws Exception {
+    protected void transferToChromosomeLocatedSequenceFeatures() throws IllegalAccessException, ObjectStoreException {
         long startTime = System.currentTimeMillis();
 
-        ObjectStore os = osw.getObjectStore();
         Query q = new Query();
         QueryClass qcChr = new QueryClass(Chromosome.class);
         q.addFrom(qcChr);
@@ -123,63 +114,106 @@ public class TransferSequencesProcess extends PostProcessor
         ContainsConstraint cc = new ContainsConstraint(seqRef, ConstraintOp.IS_NOT_NULL);
         q.setConstraint(cc);
 
-        SingletonResults res = os.executeSingleton(q);
-        Iterator<?> chrIter = res.iterator();
-
         Set<Chromosome> chromosomes = new HashSet<Chromosome>();
-        while (chrIter.hasNext()) {
-            Chromosome chr = (Chromosome) chrIter.next();
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
+        for (Object obj : res.asList()) {
+            Chromosome chr = (Chromosome) obj;
             chromosomes.add(chr);
         }
-
-        LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took "
-                + (System.currentTimeMillis() - startTime) + " ms.");
+        LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took " + (System.currentTimeMillis() - startTime) + " ms.");
 
         for (Chromosome chr : chromosomes) {
             String organism = "";
             if (chr.getOrganism() != null) {
                 organism = chr.getOrganism().getShortName();
             }
-            LOG.info("Starting transfer for " + organism + " chromosome "
-                    + chr.getPrimaryIdentifier());
-            transferForChromosome(chr);
-
+            LOG.info("Starting transfer for " + organism + " chromosome " + chr.getPrimaryIdentifier());
+            transferForChromosomeOrSupercontig(chr, null);
             // CDS can be discontiguous, process them separately
-            transferToCDSs(chr);
+            transferToCDSs(chr, null);
         }
     }
 
     /**
-     * Transfer sequences one chromosome at a time, commit after each one.
+     * Use the Location relations to copy the sequence from the Supercontigs to every
+     * SequenceFeature that is located on a Supercontig and which doesn't already have a
+     * sequence (ie. don't copy to Assembly).  Uses the ObjectStoreWriter that was passed to the
+     * constructor.
+     *
+     * @throws Exception if there are problems with the transfer
+     */
+    protected void transferToSupercontigLocatedSequenceFeatures() throws IllegalAccessException, ObjectStoreException {
+        long startTime = System.currentTimeMillis();
+
+        Query q = new Query();
+        QueryClass qcSup = new QueryClass(Supercontig.class);
+        q.addFrom(qcSup);
+        q.addToSelect(qcSup);
+        QueryObjectReference seqRef = new QueryObjectReference(qcSup, "sequence");
+        ContainsConstraint cc = new ContainsConstraint(seqRef, ConstraintOp.IS_NOT_NULL);
+        q.setConstraint(cc);
+
+        Set<Supercontig> supercontigs = new HashSet<Supercontig>();
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
+        for (Object obj : res.asList()) {
+            Supercontig sup = (Supercontig) obj;
+            supercontigs.add(sup);
+        }
+        LOG.info("Found " + supercontigs.size() + " supercontigs with sequence, took " + (System.currentTimeMillis() - startTime) + " ms.");
+
+        for (Supercontig sup : supercontigs) {
+            String organism = "";
+            if (sup.getOrganism() != null) {
+                organism = sup.getOrganism().getShortName();
+            }
+            LOG.info("Starting transfer for " + organism + " supercontig " + sup.getPrimaryIdentifier());
+            transferForChromosomeOrSupercontig(null, sup);
+            // CDS can be discontiguous, process them separately
+            transferToCDSs(null, sup);
+        }
+    }
+    
+    /**
+     * Transfer sequences for the given chromosome or supercontig.
      *
      * @param chr chromosome
+     * @param sup supercontig
      * @throws Exception if something goes wrong
      */
-    protected void transferForChromosome(Chromosome chr) throws Exception {
+    protected void transferForChromosomeOrSupercontig(Chromosome chr, Supercontig sup) throws IllegalAccessException, ObjectStoreException {
+
+        boolean isChromosome = (chr != null);
 
         long startTime = System.currentTimeMillis();
 
-        ObjectStore os = osw.getObjectStore();
         Query q = new Query();
         q.setDistinct(false);
-        QueryClass qcChr = new QueryClass(Chromosome.class);
-        QueryField qfChrId = new QueryField(qcChr, "id");
+
+        QueryClass qcChr = null;
+        if (isChromosome) {
+            qcChr = new QueryClass(Chromosome.class);
+        } else {
+            qcChr = new QueryClass(Supercontig.class);
+        }
         q.addFrom(qcChr);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        SimpleConstraint sc = new SimpleConstraint(qfChrId, ConstraintOp.EQUALS,
-                new QueryValue(chr.getId()));
-        cs.addConstraint(sc);
-
+        QueryField qfChrId = new QueryField(qcChr, "id");
+        if (isChromosome) {
+            cs.addConstraint(new SimpleConstraint(qfChrId, ConstraintOp.EQUALS, new QueryValue(chr.getId())));
+        } else {
+            cs.addConstraint(new SimpleConstraint(qfChrId, ConstraintOp.EQUALS, new QueryValue(sup.getId())));
+        }
+        
         QueryClass qcSub = new QueryClass(SequenceFeature.class);
         q.addFrom(qcSub);
         q.addToSelect(qcSub);
-
         q.addToOrderBy(qcSub);
 
         QueryClass qcLoc = new QueryClass(Location.class);
         q.addFrom(qcLoc);
         q.addToSelect(qcLoc);
+
         QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcChr);
         cs.addConstraint(cc1);
@@ -189,54 +223,47 @@ public class TransferSequencesProcess extends PostProcessor
 
         QueryObjectReference lsfSeqRef = new QueryObjectReference(qcSub, "sequence");
         ContainsConstraint lsfSeqRefNull = new ContainsConstraint(lsfSeqRef, ConstraintOp.IS_NULL);
-
         cs.addConstraint(lsfSeqRefNull);
 
         q.setConstraint(cs);
 
-        osw.beginTransaction();
-
         Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);
-        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
-                Constants.PRECOMPUTE_CATEGORY);
-        Results results = os.execute(q, 1000, true, true, true);
+        ((ObjectStoreInterMineImpl) osw.getObjectStore()).precompute(q, indexesToCreate, Constants.PRECOMPUTE_CATEGORY);
 
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> resIter = (Iterator) results.iterator();
-
-        long start = System.currentTimeMillis();
-        int i = 0;
-        while (resIter.hasNext()) {
-            ResultsRow<?> rr = resIter.next();
-
-            SequenceFeature feature = (SequenceFeature) rr.get(0);
-            Location locationOnChr = (Location) rr.get(1);
-
-            if (model == null) {
-                model = Model.getInstanceByName("genomic");
-            }
-            try {
-
+        Results results = osw.getObjectStore().execute(q, 1000, true, true, true);
+        if (results.size() > 0) {
+            long start = System.currentTimeMillis();
+            int i = 0;
+            osw.beginTransaction();
+            for (Object obj : results.asList()) {
+                ResultsRow rr = (ResultsRow) obj;
+                SequenceFeature feature = (SequenceFeature) rr.get(0);
+                Location locationOnChr = (Location) rr.get(1);
+                if (model == null) {
+                    model = Model.getInstanceByName("genomic");
+                }
+                
                 if (PostProcessUtil.isInstance(model, feature, "ChromosomeBand")) {
                     continue;
                 }
-
+                
                 if (PostProcessUtil.isInstance(model, feature, "SNP")) {
                     continue;
                 }
-
+                
                 // if we set here the transcripts, using start and end locations,
                 // we won't be using the transferToTranscripts method (collating the exons)
                 if (PostProcessUtil.isInstance(model, feature, "Transcript")) {
                     continue;
                 }
-
+                
                 // CDSs might have multiple locations, process in transferToCDSs() instead
                 if (PostProcessUtil.isInstance(model, feature, "CDS")) {
                     continue;
                 }
-
+                
                 /**
                  * In human intermine, SNP is not a sequence alteration, which I think is wrong
                  * But here are the kinds of types that are alterations:
@@ -252,25 +279,28 @@ public class TransferSequencesProcess extends PostProcessor
                 if (PostProcessUtil.isInstance(model, feature, "SequenceAlteration")) {
                     continue;
                 }
-
+                
                 if (feature instanceof Gene) {
                     Gene gene = (Gene) feature;
                     if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {
-                        LOG.warn("gene too long in transferToSequenceFeatures() ignoring: "
-                                + gene);
+                        LOG.warn("gene too long in transferToSequenceFeatures() ignoring: " + gene);
                         continue;
                     }
                 }
-
-                ClobAccess featureSeq = getSubSequence(chr.getSequence(), locationOnChr);
-
+                
+                ClobAccess featureSeq = null;
+                if (isChromosome) {
+                    featureSeq = getSubSequence(chr.getSequence(), locationOnChr);
+                } else {
+                    featureSeq = getSubSequence(sup.getSequence(), locationOnChr);
+                }
+                
                 if (featureSeq == null) {
                     // probably the locationOnChr is out of range
                     continue;
                 }
-
-                Sequence sequence =
-                        (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+                
+                Sequence sequence = (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
                 sequence.setResidues(featureSeq);
                 sequence.setLength(featureSeq.length());
                 osw.store(sequence);
@@ -280,32 +310,35 @@ public class TransferSequencesProcess extends PostProcessor
                 osw.store(cloneLsf);
                 i++;
                 if (i % 1000 == 0) {
-                    long now = System.currentTimeMillis();
-                    LOG.info("Set sequences for " + i + " features"
-                            + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
+                    LOG.info("Set sequences for " + i + " features" + " (avg = " + ((60000L * i) / (System.currentTimeMillis() - start)) + " per minute)");
                 }
-            } catch (Exception e) {
-                Exception e2 = new Exception("Exception while processing SequenceFeature "
-                        + feature);
-                e2.initCause(e);
-                throw e2;
             }
-        }
+            osw.commitTransaction();
 
-        osw.commitTransaction();
-
-        String organism = "";
-        if (chr.getOrganism() != null) {
-            organism = chr.getOrganism().getShortName();
+            String blurb = null;
+            if (isChromosome) {
+                String organism = "";
+                if (chr.getOrganism() != null) {
+                    organism = chr.getOrganism().getShortName();
+                }
+                blurb = "Finished setting " + i + " feature sequences for " + organism + " chromosome "
+                    + chr.getPrimaryIdentifier() + " - took "
+                    + (System.currentTimeMillis() - startTime) + " ms.";
+            } else {
+                String organism = "";
+                if (sup.getOrganism() != null) {
+                    organism = sup.getOrganism().getShortName();
+                }
+                blurb = "Finished setting " + i + " feature sequences for " + organism + " supercontig "
+                    + sup.getPrimaryIdentifier() + " - took "
+                    + (System.currentTimeMillis() - startTime) + " ms.";
+            }
+            LOG.info(blurb);
         }
-        LOG.info("Finished setting " + i + " feature sequences for " + organism + " chromosome "
-                + chr.getPrimaryIdentifier() + " - took "
-                + (System.currentTimeMillis() - startTime) + " ms.");
     }
 
     private static ClobAccess getSubSequence(Sequence chromosomeSequence, Location locationOnChr) {
-        int charsToCopy =
-                locationOnChr.getEnd().intValue() - locationOnChr.getStart().intValue() + 1;
+        int charsToCopy = locationOnChr.getEnd().intValue() - locationOnChr.getStart().intValue() + 1;
         ClobAccess chromosomeSequenceString = chromosomeSequence.getResidues();
 
         if (charsToCopy > chromosomeSequenceString.length()) {
@@ -351,28 +384,19 @@ public class TransferSequencesProcess extends PostProcessor
      * object for the Transcript.  Uses the ObjectStoreWriter that was passed to the constructor
      * @throws Exception if there are problems with the transfer
      */
-    protected void transferToTranscripts()
-            throws Exception {
+    protected void transferToTranscripts() throws MetaDataException, ObjectStoreException {
 
-        try {
-            String message = "Not performing TransferSequences.transferToTranscripts ";
-            PostProcessUtil.checkFieldExists(model, "Transcript", "exons", message);
-            PostProcessUtil.checkFieldExists(model, "Exon", null, message);
-        } catch (MetaDataException e) {
-            return;
-        }
+        String message = "Now performing TransferSequences.transferToTranscripts ";
+        PostProcessUtil.checkFieldExists(model, "Transcript", "exons", message);
+        PostProcessUtil.checkFieldExists(model, "Exon", null, message);
 
         long startTime = System.currentTimeMillis();
 
-        osw.beginTransaction();
-
-        ObjectStore os = osw.getObjectStore();
         Query q = new Query();
         q.setDistinct(false);
 
         // Transcript
-        QueryClass qcTranscript =
-                new QueryClass(model.getClassDescriptorByName("Transcript").getType());
+        QueryClass qcTranscript = new QueryClass(model.getClassDescriptorByName("Transcript").getType());
         q.addFrom(qcTranscript);
         q.addToSelect(qcTranscript);
         q.addToOrderBy(qcTranscript);
@@ -400,85 +424,73 @@ public class TransferSequencesProcess extends PostProcessor
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         // Transcript.exons
-        QueryCollectionReference exonsRef =
-                new QueryCollectionReference(qcTranscript, "exons");
-        ContainsConstraint cc1 =
-                new ContainsConstraint(exonsRef, ConstraintOp.CONTAINS, qcExon);
+        QueryCollectionReference exonsRef = new QueryCollectionReference(qcTranscript, "exons");
+        ContainsConstraint cc1 = new ContainsConstraint(exonsRef, ConstraintOp.CONTAINS, qcExon);
         cs.addConstraint(cc1);
 
         // exon.chromosomeLocation
-        QueryObjectReference locRef =
-                new QueryObjectReference(qcExon, "chromosomeLocation");
-        ContainsConstraint cc2 =
-                new ContainsConstraint(locRef, ConstraintOp.CONTAINS, qcExonLocation);
+        QueryObjectReference locRef = new QueryObjectReference(qcExon, "chromosomeLocation");
+        ContainsConstraint cc2 = new ContainsConstraint(locRef, ConstraintOp.CONTAINS, qcExonLocation);
         cs.addConstraint(cc2);
 
         // Exon.sequence
         QueryObjectReference sequenceRef = new QueryObjectReference(qcExon, "sequence");
-        ContainsConstraint cc3 =
-                new ContainsConstraint(sequenceRef, ConstraintOp.CONTAINS, qcExonSequence);
+        ContainsConstraint cc3 = new ContainsConstraint(sequenceRef, ConstraintOp.CONTAINS, qcExonSequence);
         cs.addConstraint(cc3);
 
         // Transcript.sequence IS NULL
         QueryObjectReference transcriptSeqRef = new QueryObjectReference(qcTranscript, "sequence");
-        ContainsConstraint lsfSeqRefNull =
-                new ContainsConstraint(transcriptSeqRef, ConstraintOp.IS_NULL);
-
+        ContainsConstraint lsfSeqRefNull = new ContainsConstraint(transcriptSeqRef, ConstraintOp.IS_NULL);
         cs.addConstraint(lsfSeqRefNull);
 
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
-                .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q, 1000, true, true, true);
-
-        Iterator<?> resIter = res.iterator();
+        ((ObjectStoreInterMineImpl) osw.getObjectStore()).precompute(q, Constants.PRECOMPUTE_CATEGORY);
 
         SequenceFeature currentTranscript = null;
         StringBuffer currentTranscriptBases = new StringBuffer();
 
-        long start = System.currentTimeMillis();
-        int i = 0;
-        while (resIter.hasNext()) {
-            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
-            SequenceFeature transcript =  (SequenceFeature) rr.get(0);
+        Results results = osw.getObjectStore().execute(q, 1000, true, true, true);
+        if (results.size() > 0) {
+            long start = System.currentTimeMillis();
+            int i = 0;
+            osw.beginTransaction();
+            for (Object obj : results.asList()) {
+                ResultsRow rr = (ResultsRow) obj;
+                SequenceFeature transcript =  (SequenceFeature) rr.get(0);
 
-            if (currentTranscript == null || !transcript.equals(currentTranscript)) {
-                if (currentTranscript != null) {
-                    // copy sequence to transcript
-                    storeNewSequence(currentTranscript,
-                            new PendingClob(currentTranscriptBases.toString()));
-                    i++;
-                    if (i % 100 == 0) {
-                        long now = System.currentTimeMillis();
-                        LOG.info("Set sequences for " + i + " Transcripts"
-                                + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
+                if (currentTranscript == null || !transcript.equals(currentTranscript)) {
+                    if (currentTranscript != null) {
+                        // copy sequence to transcript
+                        storeNewSequence(currentTranscript, new PendingClob(currentTranscriptBases.toString()));
+                        i++;
+                        if (i % 100 == 0) {
+                            LOG.info("Set sequences for " + i + " Transcripts" + " (avg = " + ((60000L * i) / (System.currentTimeMillis() - start)) + " per minute)");
+                        }
                     }
+                    currentTranscriptBases = new StringBuffer();
+                    currentTranscript = transcript;
                 }
-                currentTranscriptBases = new StringBuffer();
-                currentTranscript = transcript;
+                
+                Sequence exonSequence = (Sequence) rr.get(2);
+                Location  location = (Location) rr.get(3);
+                
+                // add exon
+                if (location.getStrand() != null && "-1".equals(location.getStrand())) {
+                    currentTranscriptBases.insert(0, exonSequence.getResidues().toString());
+                } else {
+                    currentTranscriptBases.append(exonSequence.getResidues().toString());
+                }
             }
-
-            Sequence exonSequence = (Sequence) rr.get(2);
-            Location  location = (Location) rr.get(3);
-
-            // add exon
-            if (location.getStrand() != null && "-1".equals(location.getStrand())) {
-                currentTranscriptBases.insert(0, exonSequence.getResidues().toString());
+            if (currentTranscript == null) {
+                LOG.info("In transferToTranscripts(): no Transcripts found");
             } else {
-                currentTranscriptBases.append(exonSequence.getResidues().toString());
+                storeNewSequence(currentTranscript, new PendingClob(currentTranscriptBases.toString()));
             }
-        }
-        if (currentTranscript == null) {
-            LOG.error("in transferToTranscripts(): no Transcripts found");
-        } else {
-            storeNewSequence(currentTranscript, new PendingClob(currentTranscriptBases.toString()));
-        }
+            osw.commitTransaction();
 
-        LOG.info("Finished setting " + i + " Trascript sequences - took "
-                + (System.currentTimeMillis() - startTime) + " ms.");
-
-        osw.commitTransaction();
+            LOG.info("Finished setting " + i + " Transcript sequences - took " + (System.currentTimeMillis() - startTime) + " ms.");
+        }
     }
 
     /**
@@ -490,87 +502,99 @@ public class TransferSequencesProcess extends PostProcessor
      *
      * @throws Exception if there are problems with the transfer
      */
-    private void transferToCDSs(Chromosome chr)
-        throws Exception {
+    private void transferToCDSs(Chromosome chr, Supercontig sup) throws ObjectStoreException {
+
+        boolean isChromosome = (chr != null);
 
         long startTime = System.currentTimeMillis();
 
-        osw.beginTransaction();
-
-        ObjectStore os = osw.getObjectStore();
         // get all CDSs for this chromosome
-        Query q = getCDSQuery(chr);
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q, 1000, true, true, true);
-        Iterator<?> resIter = res.iterator();
+        Query q = getCDSQuery(chr, sup);
+        ((ObjectStoreInterMineImpl) osw.getObjectStore()).precompute(q, Constants.PRECOMPUTE_CATEGORY);
 
         SequenceFeature currentCDS = null;
         StringBuffer currentCDSBases = new StringBuffer();
-        Sequence chromosomeSequence = chr.getSequence();
-
-        long start = System.currentTimeMillis();
-        int i = 0;
-        while (resIter.hasNext()) {
-            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
-            SequenceFeature cds =  (SequenceFeature) rr.get(0);
-
-            // if this is a new CDS, store the sequence for the just-processed previous CDS
-            if (currentCDS == null || !cds.equals(currentCDS)) {
-                if (currentCDS != null) {
-                    // copy sequence to CDS
-                    storeNewSequence(currentCDS, new PendingClob(currentCDSBases.toString()));
-                    i++;
-                    if (i % 100 == 0) {
-                        long now = System.currentTimeMillis();
-                        LOG.info("Set sequences for " + i + " CDSs"
-                                + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
-                    }
-                }
-                // reset for current CDS
-                currentCDSBases = new StringBuffer();
-                currentCDS = cds;
-            }
-
-            Location  location = (Location) rr.get(1);
-
-            // add CDS
-            ClobAccess clob = getSubSequence(chromosomeSequence, location);
-            if (location.getStrand() != null && "-1".equals(location.getStrand())) {
-                currentCDSBases.insert(0, clob.toString());
-            } else {
-                currentCDSBases.append(clob.toString());
-            }
-        }
-        if (currentCDS == null) {
-            LOG.error("in transferToCDSs(): no CDSs found");
+        Sequence chromosomeSequence = null;
+        if (isChromosome) {
+            chromosomeSequence = chr.getSequence();
         } else {
-            storeNewSequence(currentCDS, new PendingClob(currentCDSBases.toString()));
+            chromosomeSequence = sup.getSequence();
         }
 
-        LOG.info("Finished setting " + i + " CDS sequences - took "
-                 + (System.currentTimeMillis() - startTime) + " ms.");
+        Results res = osw.getObjectStore().execute(q, 1000, true, true, true);
+        if (res.size() > 0) {
+            long start = System.currentTimeMillis();
+            int i = 0;
+            osw.beginTransaction();
+            for (Object obj : res.asList()) {
+                ResultsRow rr = (ResultsRow) obj;
+                SequenceFeature cds =  (SequenceFeature) rr.get(0);
+                
+                // if this is a new CDS, store the sequence for the just-processed previous CDS
+                if (currentCDS == null || !cds.equals(currentCDS)) {
+                    if (currentCDS != null) {
+                        // copy sequence to CDS
+                        storeNewSequence(currentCDS, new PendingClob(currentCDSBases.toString()));
+                        i++;
+                        if (i % 100 == 0) {
+                            LOG.info("Set sequences for " + i + " CDSs" + " (avg = " + ((60000L * i) / (System.currentTimeMillis() - start)) + " per minute)");
+                        }
+                    }
+                    // reset for current CDS
+                    currentCDSBases = new StringBuffer();
+                    currentCDS = cds;
+                }
+                
+                Location  location = (Location) rr.get(1);
+                
+                // add CDS
+                ClobAccess clob = getSubSequence(chromosomeSequence, location);
+                if (location.getStrand() != null && "-1".equals(location.getStrand())) {
+                    currentCDSBases.insert(0, clob.toString());
+                } else {
+                    currentCDSBases.append(clob.toString());
+                }
+            }
+            if (currentCDS == null) {
+                LOG.info("In transferToCDSs(): no CDSs found");
+            } else {
+                storeNewSequence(currentCDS, new PendingClob(currentCDSBases.toString()));
+            }
+            osw.commitTransaction();
 
-        osw.commitTransaction();
+            LOG.info("Finished setting " + i + " CDS sequences - took " + (System.currentTimeMillis() - startTime) + " ms.");
+        }
     }
 
-    private Query getCDSQuery(Chromosome chr) {
+    private Query getCDSQuery(Chromosome chr, Supercontig sup) {
+        boolean isChromosome = (chr != null);
+        
         Query q = new Query();
         q.setDistinct(false);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        // Chromosome
-        QueryClass qcChr = new QueryClass(Chromosome.class);
-        QueryField qfChrId = new QueryField(qcChr, "id");
+        // Chromosome / Supercontig
+        QueryClass qcChr = null;
+        QueryField qfChrId = null;        
+        if (isChromosome) {
+            qcChr = new QueryClass(Chromosome.class);
+            qfChrId = new QueryField(qcChr, "id");
+        } else {
+            qcChr = new QueryClass(Supercontig.class);
+            qfChrId = new QueryField(qcChr, "id");
+            q.addFrom(qcChr);
+        }
         q.addFrom(qcChr);
 
         // get all CDSs for this chromosome only
-        SimpleConstraint sc = new SimpleConstraint(qfChrId, ConstraintOp.EQUALS,
-                new QueryValue(chr.getId()));
-        cs.addConstraint(sc);
-
+        if (isChromosome) {
+            cs.addConstraint(new SimpleConstraint(qfChrId, ConstraintOp.EQUALS, new QueryValue(chr.getId())));
+        } else {
+            cs.addConstraint(new SimpleConstraint(qfChrId, ConstraintOp.EQUALS, new QueryValue(sup.getId())));
+        }
+        
         // CDS
-        QueryClass qcCDS =
-                new QueryClass(model.getClassDescriptorByName("CDS").getType());
+        QueryClass qcCDS = new QueryClass(model.getClassDescriptorByName("CDS").getType());
         q.addFrom(qcCDS);
         q.addToSelect(qcCDS);
         q.addToOrderBy(qcCDS);
@@ -591,19 +615,17 @@ public class TransferSequencesProcess extends PostProcessor
         cs.addConstraint(cc1);
 
         // CDS.Locations
-        QueryCollectionReference locationsRefs =
-                new QueryCollectionReference(qcCDS, "locations");
-        ContainsConstraint cc2 =
-                new ContainsConstraint(locationsRefs, ConstraintOp.CONTAINS, qcCDSLocation);
+        QueryCollectionReference locationsRefs = new QueryCollectionReference(qcCDS, "locations");
+        ContainsConstraint cc2 = new ContainsConstraint(locationsRefs, ConstraintOp.CONTAINS, qcCDSLocation);
         cs.addConstraint(cc2);
 
         // CDS.sequence IS NULL
         QueryObjectReference transcriptSeqRef = new QueryObjectReference(qcCDS, "sequence");
-        ContainsConstraint lsfSeqRefNull =
-                new ContainsConstraint(transcriptSeqRef, ConstraintOp.IS_NULL);
+        ContainsConstraint lsfSeqRefNull = new ContainsConstraint(transcriptSeqRef, ConstraintOp.IS_NULL);
         cs.addConstraint(lsfSeqRefNull);
 
         q.setConstraint(cs);
+
         return q;
     }
 }
