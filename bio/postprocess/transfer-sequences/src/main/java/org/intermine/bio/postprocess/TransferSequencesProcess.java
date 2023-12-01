@@ -17,6 +17,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.ClobAccessReverseComplement;
 import org.intermine.bio.util.Constants;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.bio.util.PostProcessUtil;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -32,7 +33,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.metadata.ConstraintOp;
+import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.PendingClob;
@@ -47,8 +48,8 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.util.DynamicUtil;
 import org.intermine.postprocess.PostProcessor;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Transfer sequences from the assembly objects to the other objects that are located on the
@@ -166,7 +167,7 @@ public class TransferSequencesProcess extends PostProcessor {
         long startTime = System.currentTimeMillis();
 
         // some constants
-        int id = contig.getId();
+        int contigId = contig.getId();
         String contigIdentifier = contig.getPrimaryIdentifier();
         Sequence contigSequence = contig.getSequence();
 
@@ -181,34 +182,36 @@ public class TransferSequencesProcess extends PostProcessor {
         }
         q.addFrom(qc);
 
-        // Chromosome/Supercontig must have given id
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryField qfId = new QueryField(qc, "id");
-        cs.addConstraint(new SimpleConstraint(qfId, ConstraintOp.EQUALS, new QueryValue(id)));
-        
         // query SequenceFeature
-        QueryClass qcSub = new QueryClass(SequenceFeature.class);
-        q.addFrom(qcSub);
-        q.addToSelect(qcSub);
-        q.addToOrderBy(qcSub);
+        QueryClass qcFeature = new QueryClass(SequenceFeature.class);
+        q.addFrom(qcFeature);
+        q.addToSelect(qcFeature);
+        q.addToOrderBy(qcFeature);
 
         // query Location
-        QueryClass qcLoc = new QueryClass(Location.class);
-        q.addFrom(qcLoc);
-        q.addToSelect(qcLoc);
+        QueryClass qcLocation = new QueryClass(Location.class);
+        q.addFrom(qcLocation);
+        q.addToSelect(qcLocation);
+
+        // we have a boatload of AND constraints
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        // Chromosome/Supercontig must have given contig id
+        QueryField qfId = new QueryField(qc, "id");
+        cs.addConstraint(new SimpleConstraint(qfId, ConstraintOp.EQUALS, new QueryValue(contigId)));
 
         // Location must be located on our Chromosome/Supercontig
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "locatedOn");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLocation, "locatedOn");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qc);
         cs.addConstraint(cc1);
         
         // Location must be for the SequenceFeature
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "feature");
-        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
+        QueryObjectReference ref2 = new QueryObjectReference(qcLocation, "feature");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcFeature);
         cs.addConstraint(cc2);
 
         // the feature sequence must be null
-        QueryObjectReference lsfSeqRef = new QueryObjectReference(qcSub, "sequence");
+        QueryObjectReference lsfSeqRef = new QueryObjectReference(qcFeature, "sequence");
         ContainsConstraint lsfSeqRefNull = new ContainsConstraint(lsfSeqRef, ConstraintOp.IS_NULL);
         cs.addConstraint(lsfSeqRefNull);
 
@@ -217,8 +220,8 @@ public class TransferSequencesProcess extends PostProcessor {
 
         // create precompute indexes on our QueryClass objects to speed things up (?)
         Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
-        indexesToCreate.add(qcLoc);
-        indexesToCreate.add(qcSub);
+        indexesToCreate.add(qcLocation);
+        indexesToCreate.add(qcFeature);
         ((ObjectStoreInterMineImpl) osw.getObjectStore()).precompute(q, indexesToCreate, Constants.PRECOMPUTE_CATEGORY);
 
         // run the query
@@ -236,10 +239,8 @@ public class TransferSequencesProcess extends PostProcessor {
                 if (PostProcessUtil.isInstance(model, feature, "CDS")) continue; // done in transferToCDSes;
                 if (PostProcessUtil.isInstance(model, feature, "Transcript")) continue; // done in transferToTranscripts;
                 // bail on certain types of feature
-                if (PostProcessUtil.isInstance(model, feature, "ChromosomeBand")) continue;
                 if (PostProcessUtil.isInstance(model, feature, "GeneticMarker")) continue;
-                if (PostProcessUtil.isInstance(model, feature, "SNP")) continue;
-                if (PostProcessUtil.isInstance(model, feature, "SequenceAlteration")) continue;
+
                 // bail if Gene too long, boss!
                 if (feature instanceof Gene) {
                     Gene gene = (Gene) feature;
