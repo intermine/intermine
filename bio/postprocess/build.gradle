@@ -16,7 +16,7 @@ ext {
 
 subprojects {
     group = 'org.intermine'
-    version '5.1.0.4'
+    version '5.1.0.3'
 
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -45,6 +45,10 @@ subprojects {
         testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion")
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
+    }
+
+    compileJava {
+        options.deprecation = true
     }
 
     dbModelConfig {
