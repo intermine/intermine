@@ -137,45 +137,38 @@ public class TransferSequencesProcess extends PostProcessor {
         LOG.info("Found " + supercontigs.size() + " supercontigs with sequence, took " + (System.currentTimeMillis() - startTime) + " ms.");
 
         // do the transfer work for Chromosomes
-        // CDS can be discontiguous, process them separately
-        for (Chromosome chr : chromosomes) {
-            int numFeatures = transferForChromosomeOrSupercontig(chr, null);
+        // CDS can be discontiguous, process them separately, and transcripts are separately as well
+        for (Chromosome chromosome : chromosomes) {
+            int numFeatures = transferForContig(chromosome, true);
             if (numFeatures > 0) {
-                transferToCDSs(chr, null);
+                transferToCDSes(chromosome, true);
             }
         }
 
         // do the transfer work for Supercontigs
-        // CDS can be discontiguous, process them separately
-        for (Supercontig sup : supercontigs) {
-            int numFeatures = transferForChromosomeOrSupercontig(null, sup);
+        // CDS can be discontiguous, process them separately, and transcripts are separately as well
+        for (Supercontig supercontig : supercontigs) {
+            int numFeatures = transferForContig(supercontig, false);
             if (numFeatures > 0) {
-                transferToCDSs(null, sup);
+                transferToCDSes(supercontig, false);
             }
         }
     }
 
     /**
-     * Transfer sequences for the given chromosome or supercontig. One or the other must be null.
+     * Transfer sequences for the given contig (chromosome or supercontig).
      *
-     * @param chr chromosome (null to process a Supercontig)
-     * @param sup supercontig (null to process a Chromosome)
-     * @return the number of features that have been updated
+     * @param contig (Chromosome or Supercontig)
+     * @param isChromosome true if contig is Chromosome, false if contig is Supercontig
+     * @return the number of features on this contig that lacked sequences
      */
-    protected int transferForChromosomeOrSupercontig(Chromosome chr, Supercontig sup) throws IllegalAccessException, ObjectStoreException {
+    protected int transferForContig(SequenceFeature contig, boolean isChromosome) throws IllegalAccessException, ObjectStoreException {
         long startTime = System.currentTimeMillis();
 
-        boolean isChromosome = (chr != null);
-
-        int id = 0;
-        String primaryIdentifier = null;
-        if (isChromosome) {
-            id = chr.getId();
-            primaryIdentifier = chr.getPrimaryIdentifier();
-        } else {
-            id = sup.getId();
-            primaryIdentifier = sup.getPrimaryIdentifier();
-        }
+        // some constants
+        int id = contig.getId();
+        String primaryIdentifier = contig.getPrimaryIdentifier();
+        Sequence contigSequence = contig.getSequence();
 
         Query q = new Query();
         q.setDistinct(false);
@@ -239,63 +232,31 @@ public class TransferSequencesProcess extends PostProcessor {
                 ResultsRow rr = (ResultsRow) obj;
                 SequenceFeature feature = (SequenceFeature) rr.get(0);
                 Location location = (Location) rr.get(1);
-                
-                if (PostProcessUtil.isInstance(model, feature, "ChromosomeBand")) {
-                    continue;
-                }
-                
-                if (PostProcessUtil.isInstance(model, feature, "SNP")) {
-                    continue;
-                }
-                
-                // if we set here the transcripts, using start and end locations,
-                // we won't be using the transferToTranscripts method (collating the exons)
-                if (PostProcessUtil.isInstance(model, feature, "Transcript")) {
-                    continue;
-                }
-                
-                // CDSs might have multiple locations, process in transferToCDSs() instead
-                if (PostProcessUtil.isInstance(model, feature, "CDS")) {
-                    continue;
-                }
-                
-                /**
-                 * In human intermine, SNP is not a sequence alteration, which I think is wrong
-                 * But here are the kinds of types that are alterations:
-                 *
-                 *      Deletion
-                 *      Genetic Marker
-                 *      Indel
-                 *      Insertion
-                 *      SNV
-                 *      Substitution
-                 *      Tandem Repeat
-                 */
-                if (PostProcessUtil.isInstance(model, feature, "SequenceAlteration")) {
-                    continue;
-                }
-                
+                // these are done in transfertoCDSes and transferToTranscripts
+                if (PostProcessUtil.isInstance(model, feature, "CDS")) continue; // done in transferToCDSes;
+                if (PostProcessUtil.isInstance(model, feature, "Transcript")) continue; // done in transferToTranscripts;
+                // bail on certain types of feature
+                if (PostProcessUtil.isInstance(model, feature, "ChromosomeBand")) continue;
+                if (PostProcessUtil.isInstance(model, feature, "SNP")) continue;
+                if (PostProcessUtil.isInstance(model, feature, "SequenceAlteration")) continue;
+                // bail if Gene too long, boss!
                 if (feature instanceof Gene) {
                     Gene gene = (Gene) feature;
                     if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {
-                        LOG.warn("gene too long in transferToSequenceFeatures() ignoring: " + gene);
+                        LOG.warn("Gene too long to transfer sequence, ignoring: " + gene);
                         continue;
                     }
                 }
                 
-                ClobAccess featureSeq = null;
-                if (isChromosome) {
-                    featureSeq = getSubSequence(chr.getSequence(), location);
-                } else {
-                    featureSeq = getSubSequence(sup.getSequence(), location);
-                }
-                
+                // get the feature's sequence
+                ClobAccess featureSeq = getSubSequence(contigSequence, location);
                 if (featureSeq == null) {
                     // probably the location is out of range
                     LOG.info("Could not get feature sequence for location: " + location);
                     continue;
                 }
                 
+                // store the feature sequence and the feature clone
                 Sequence sequence = (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
                 sequence.setResidues(featureSeq);
                 sequence.setLength(featureSeq.length());
@@ -307,9 +268,9 @@ public class TransferSequencesProcess extends PostProcessor {
                 count++;
             }
             osw.commitTransaction();
-            LOG.info("Finished setting " + count + " feature sequences for " + primaryIdentifier + ", took " + (System.currentTimeMillis() - startTime) + " ms.");
+            LOG.info("Stored " + count + " feature sequences for " + primaryIdentifier + "; took " + (System.currentTimeMillis() - startTime) + " ms.");
         }
-
+        // return full numResults since we skipped CDSes and transcripts
         return numResults;
     }
 
@@ -364,7 +325,7 @@ public class TransferSequencesProcess extends PostProcessor {
      */
     protected void transferToTranscripts() throws MetaDataException, ObjectStoreException {
 
-        String message = "Now performing TransferSequences.transferToTranscripts ";
+        String message = "Now transfering sequences to CHROMOSOME-LOCATED transcripts...";
         PostProcessUtil.checkFieldExists(model, "Transcript", "exons", message);
         PostProcessUtil.checkFieldExists(model, "Exon", null, message);
 
@@ -405,8 +366,9 @@ public class TransferSequencesProcess extends PostProcessor {
         QueryCollectionReference exonsRef = new QueryCollectionReference(qcTranscript, "exons");
         ContainsConstraint cc1 = new ContainsConstraint(exonsRef, ConstraintOp.CONTAINS, qcExon);
         cs.addConstraint(cc1);
-
+    
         // exon.chromosomeLocation
+        // NOTE: only chromosome-located exons processed!
         QueryObjectReference locRef = new QueryObjectReference(qcExon, "chromosomeLocation");
         ContainsConstraint cc2 = new ContainsConstraint(locRef, ConstraintOp.CONTAINS, qcExonLocation);
         cs.addConstraint(cc2);
@@ -431,7 +393,7 @@ public class TransferSequencesProcess extends PostProcessor {
         Results results = osw.getObjectStore().execute(q, 1000, true, true, true);
         if (results.size() > 0) {
             long start = System.currentTimeMillis();
-            int i = 0;
+            int count = 0;
             osw.beginTransaction();
             for (Object obj : results.asList()) {
                 ResultsRow rr = (ResultsRow) obj;
@@ -441,10 +403,7 @@ public class TransferSequencesProcess extends PostProcessor {
                     if (currentTranscript != null) {
                         // copy sequence to transcript
                         storeNewSequence(currentTranscript, new PendingClob(currentTranscriptBases.toString()));
-                        i++;
-                        if (i % 100 == 0) {
-                            LOG.info("Set sequences for " + i + " Transcripts" + " (avg = " + ((60000L * i) / (System.currentTimeMillis() - start)) + " per minute)");
-                        }
+                        count++;
                     }
                     currentTranscriptBases = new StringBuffer();
                     currentTranscript = transcript;
@@ -461,13 +420,13 @@ public class TransferSequencesProcess extends PostProcessor {
                 }
             }
             if (currentTranscript == null) {
-                LOG.info("In transferToTranscripts(): no Transcripts found");
+                LOG.info("In transferToTranscripts(): no Transcripts found.");
             } else {
                 storeNewSequence(currentTranscript, new PendingClob(currentTranscriptBases.toString()));
             }
             osw.commitTransaction();
 
-            LOG.info("Finished setting " + i + " Transcript sequences - took " + (System.currentTimeMillis() - startTime) + " ms.");
+            LOG.info("Stored " + count + " Transcript sequences; took " + (System.currentTimeMillis() - startTime) + " ms.");
         }
     }
 
@@ -477,21 +436,18 @@ public class TransferSequencesProcess extends PostProcessor {
      *
      * CDS.sequence length is a sum of all locations. CDS.sequence residues should be the
      * combined sequence of all the locations.
+     *
+     * @param contig a Chromosome or Supercontig
+     * @param isChromosome true if Chromosome, false if Supercontig
      */
-    private void transferToCDSs(Chromosome chr, Supercontig sup) throws ObjectStoreException {
+    private void transferToCDSes(SequenceFeature contig, boolean isChromosome) throws ObjectStoreException {
         long startTime = System.currentTimeMillis();
 
-        boolean isChromosome = (chr != null);
+        // constants
+        Sequence sequence = contig.getSequence();
 
-        Sequence sequence = null;
-        if (isChromosome) {
-            sequence = chr.getSequence();
-        } else {
-            sequence = sup.getSequence();
-        }
-
-        // get all CDSs for this chromosome/supercontig
-        Query q = getCDSQuery(chr, sup);
+        // get all CDSes for this chromosome/supercontig
+        Query q = getCDSQuery(contig, isChromosome);
         ((ObjectStoreInterMineImpl) osw.getObjectStore()).precompute(q, Constants.PRECOMPUTE_CATEGORY);
 
         SequenceFeature currentCDS = null;
@@ -500,7 +456,7 @@ public class TransferSequencesProcess extends PostProcessor {
         Results res = osw.getObjectStore().execute(q, 1000, true, true, true);
         if (res.size() > 0) {
             long start = System.currentTimeMillis();
-            int i = 0;
+            int count = 0;
             osw.beginTransaction();
             for (Object obj : res.asList()) {
                 ResultsRow rr = (ResultsRow) obj;
@@ -511,10 +467,7 @@ public class TransferSequencesProcess extends PostProcessor {
                     if (currentCDS != null) {
                         // copy sequence to CDS
                         storeNewSequence(currentCDS, new PendingClob(currentCDSBases.toString()));
-                        i++;
-                        if (i % 100 == 0) {
-                            LOG.info("Set sequences for " + i + " CDSs" + " (avg = " + ((60000L * i) / (System.currentTimeMillis() - start)) + " per minute)");
-                        }
+                        count++;
                     }
                     // reset for current CDS
                     currentCDSBases = new StringBuffer();
@@ -532,28 +485,22 @@ public class TransferSequencesProcess extends PostProcessor {
                 }
             }
             if (currentCDS == null) {
-                LOG.info("In transferToCDSs(): no CDSs found");
+                LOG.info("In transferToCDSes(): no CDSes found");
             } else {
                 storeNewSequence(currentCDS, new PendingClob(currentCDSBases.toString()));
             }
             osw.commitTransaction();
 
-            LOG.info("Finished setting " + i + " CDS sequences - took " + (System.currentTimeMillis() - startTime) + " ms.");
+            LOG.info("Finished setting " + count + " CDS sequences; took " + (System.currentTimeMillis() - startTime) + " ms.");
         }
     }
 
     /**
      * Return a Query for CDSes on a Chromosome or Supercontig.
      */
-    private Query getCDSQuery(Chromosome chr, Supercontig sup) {
-        boolean isChromosome = (chr != null);
-
-        int id = 0;
-        if (isChromosome) {
-            id = chr.getId();
-        } else {
-            id = sup.getId();
-        }
+    private Query getCDSQuery(SequenceFeature contig, boolean isChromosome) {
+        // constants
+        int id = contig.getId();
         
         Query q = new Query();
         q.setDistinct(false);
@@ -569,7 +516,7 @@ public class TransferSequencesProcess extends PostProcessor {
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        // get all CDSs for this chromosome/supercontig only
+        // get all CDSes for this chromosome/supercontig only
         QueryField qfId = new QueryField(qc, "id");
         cs.addConstraint(new SimpleConstraint(qfId, ConstraintOp.EQUALS, new QueryValue(id)));
         
