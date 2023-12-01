@@ -92,7 +92,7 @@ public class TransferSequencesProcess extends PostProcessor {
         sequence.setLength(sequenceString.length());
         osw.store(sequence);
         feature.proxySequence(new ProxyReference(osw.getObjectStore(), sequence.getId(), Sequence.class));
-        feature.setLength(new Integer(sequenceString.length()));
+        feature.setLength(sequenceString.length());
         osw.store(feature);
     }
 
@@ -167,7 +167,7 @@ public class TransferSequencesProcess extends PostProcessor {
 
         // some constants
         int id = contig.getId();
-        String primaryIdentifier = contig.getPrimaryIdentifier();
+        String contigIdentifier = contig.getPrimaryIdentifier();
         Sequence contigSequence = contig.getSequence();
 
         Query q = new Query();
@@ -237,6 +237,7 @@ public class TransferSequencesProcess extends PostProcessor {
                 if (PostProcessUtil.isInstance(model, feature, "Transcript")) continue; // done in transferToTranscripts;
                 // bail on certain types of feature
                 if (PostProcessUtil.isInstance(model, feature, "ChromosomeBand")) continue;
+                if (PostProcessUtil.isInstance(model, feature, "GeneticMarker")) continue;
                 if (PostProcessUtil.isInstance(model, feature, "SNP")) continue;
                 if (PostProcessUtil.isInstance(model, feature, "SequenceAlteration")) continue;
                 // bail if Gene too long, boss!
@@ -247,15 +248,13 @@ public class TransferSequencesProcess extends PostProcessor {
                         continue;
                     }
                 }
-                
                 // get the feature's sequence
                 ClobAccess featureSeq = getSubSequence(contigSequence, location);
                 if (featureSeq == null) {
                     // probably the location is out of range
-                    LOG.info("Could not get feature sequence for location: " + location);
+                    LOG.warn("Could not get feature sequence for location: " + location);
                     continue;
                 }
-                
                 // store the feature sequence and the feature clone
                 Sequence sequence = (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
                 sequence.setResidues(featureSeq);
@@ -263,12 +262,12 @@ public class TransferSequencesProcess extends PostProcessor {
                 osw.store(sequence);
                 SequenceFeature clone = PostProcessUtil.cloneInterMineObject(feature);
                 clone.setSequence(sequence);
-                clone.setLength(new Integer(featureSeq.length()));
+                clone.setLength(featureSeq.length());
                 osw.store(clone);
                 count++;
             }
             osw.commitTransaction();
-            LOG.info("Stored " + count + " feature sequences for " + primaryIdentifier + "; took " + (System.currentTimeMillis() - startTime) + " ms.");
+            LOG.info("Stored " + count + " feature sequences for " + contigIdentifier + "; took " + (System.currentTimeMillis() - startTime) + " ms.");
         }
         // return full numResults since we skipped CDSes and transcripts
         return numResults;
@@ -283,7 +282,7 @@ public class TransferSequencesProcess extends PostProcessor {
 
         if (charsToCopy > chromosomeSequenceString.length()) {
             LOG.warn("SequenceFeature too long, ignoring - Location: "
-                    + location.getId() + "  LSF id: " + location.getFeature());
+                     + location.getId() + "  LSF id: " + location.getFeature());
             return null;
         }
 
@@ -292,14 +291,14 @@ public class TransferSequencesProcess extends PostProcessor {
 
         if (startPos < 0 || endPos < 0) {
             LOG.warn("SequenceFeature has negative coordinate, ignoring Location: "
-                    + location.getId() + "  LSF id: " + location.getFeature());
+                     + location.getId() + "  LSF id: " + location.getFeature());
             return null;
         }
 
         if (endPos > chromosomeSequenceString.length()) {
             LOG.warn(" has end coordinate greater than chromsome length."
-                    + "ignoring Location: "
-                    + location.getId() + "  LSF id: " + location.getFeature());
+                     + "ignoring Location: "
+                     + location.getId() + "  LSF id: " + location.getFeature());
             return null;
         }
 
@@ -420,7 +419,7 @@ public class TransferSequencesProcess extends PostProcessor {
                 }
             }
             if (currentTranscript == null) {
-                LOG.info("In transferToTranscripts(): no Transcripts found.");
+                LOG.warn("In transferToTranscripts(): no Transcripts found.");
             } else {
                 storeNewSequence(currentTranscript, new PendingClob(currentTranscriptBases.toString()));
             }
@@ -485,7 +484,7 @@ public class TransferSequencesProcess extends PostProcessor {
                 }
             }
             if (currentCDS == null) {
-                LOG.info("In transferToCDSes(): no CDSes found");
+                LOG.warn("In transferToCDSes(): no CDSes found");
             } else {
                 storeNewSequence(currentCDS, new PendingClob(currentCDSBases.toString()));
             }
