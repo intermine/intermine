@@ -314,10 +314,8 @@ public class CreateReferencesProcess extends PostProcessor
 
                 if (lastDestObject != null) {
                     try {
-                        InterMineObject tempObject =
-                                PostProcessUtil.cloneInterMineObject(lastDestObject);
-                        Set<InterMineObject> oldCollection
-                                = (Set<InterMineObject>) tempObject.getFieldValue(createFieldName);
+                        InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastDestObject);
+                        Set<InterMineObject> oldCollection = (Set<InterMineObject>) tempObject.getFieldValue(createFieldName);
                         newCollection.addAll(oldCollection);
                         tempObject.setFieldValue(createFieldName, newCollection);
                         count += newCollection.size();

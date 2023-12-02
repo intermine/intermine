@@ -115,7 +115,7 @@ public class CreateChromosomeLocationsProcess extends PostProcessor
             // an alternative is to set according to type of feature.
             if (lsfClone.getLength() == null) {
                 int length = Math.abs(end - start) + 1;
-                lsfClone.setLength(new Integer(length));
+                lsfClone.setLength(length);
             }
         }
         lsfClone.proxyChromosome(new ProxyReference(osw, chrId, Chromosome.class));

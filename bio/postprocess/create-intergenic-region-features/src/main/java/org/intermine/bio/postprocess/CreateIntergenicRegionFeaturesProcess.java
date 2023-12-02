@@ -29,6 +29,7 @@ import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.IntergenicRegion;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
@@ -165,8 +166,8 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
             }
             objectStoreWriter.store(ir);
             objectStoreWriter.store(ir.getChromosomeLocation());
-            Set<Gene> adjacentGenes = (Set<Gene>) ir.getFieldValue("adjacentGenes");
-            Iterator<?> adjacentGenesIter = adjacentGenes.iterator();
+            Set<Gene> adjacentGenes = ((IntergenicRegion) ir).getAdjacentGenes();
+            Iterator<?> adjacentGenesIter = adjacentGenes.iterator(); 
             while (adjacentGenesIter.hasNext()) {
                 objectStoreWriter.store(adjacentGenesIter.next());
             }
@@ -260,8 +261,8 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
                         .createObject(Collections.singleton(igCls));
                 Location location = (Location) DynamicUtil.createObject(
                         Collections.singleton(Location.class));
-                location.setStart(new Integer(newLocStart));
-                location.setEnd(new Integer(newLocEnd));
+                location.setStart(newLocStart);
+                location.setEnd(newLocEnd);
                 location.setStrand("1");
 
                 location.setFeature(intergenicRegion);
@@ -274,7 +275,7 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
                 intergenicRegion.addDataSets(dataSet);
 
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
-                intergenicRegion.setLength(new Integer(length));
+                intergenicRegion.setLength(length);
 
                 String primaryIdentifier = "intergenic_region_chr"
                         + chr.getPrimaryIdentifier() + "_"
@@ -283,7 +284,7 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
 
                 Set<Gene> adjacentGenes = new HashSet<Gene>();
 
-                Set<Gene> nextGenes = locToGeneMap.get(new Integer(newLocEnd + 1));
+                Set<Gene> nextGenes = locToGeneMap.get(newLocEnd + 1);
                 if (nextGenes != null) {
                     Iterator<?> nextGenesIter = nextGenes.iterator();
 
@@ -306,7 +307,7 @@ public class CreateIntergenicRegionFeaturesProcess extends PostProcessor
                     }
                 }
 
-                Set<Gene> prevGenes = locToGeneMap.get(new Integer(newLocStart - 1));
+                Set<Gene> prevGenes = locToGeneMap.get(newLocStart - 1);
                 if (prevGenes != null) {
                     Iterator<?> prevGenesIter = prevGenes.iterator();
 

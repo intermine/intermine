@@ -79,14 +79,12 @@ public class PopulateChildFeaturesProcess extends PostProcessor
         Map<String, SOTerm> soTerms = populateSOTermMap(osw.getObjectStore());
         Query q = getAllParents();
         Results res = osw.getObjectStore().execute(q);
-        Iterator<Object> resIter = res.iterator();
-        osw.beginTransaction();
         int parentCount = 0;
         int childCount = 0;
-
-        while (resIter.hasNext()) {
-            ResultsRow<InterMineObject> rr = (ResultsRow<InterMineObject>) resIter.next();
-            InterMineObject parent = rr.get(0);
+        osw.beginTransaction();
+        for (Object obj : res.asList()) {
+            ResultsRow rr = (ResultsRow) obj;
+            InterMineObject parent = (InterMineObject) rr.get(0);
             SOTerm soTerm = (SOTerm) rr.get(1);
             try {
                 InterMineObject o = PostProcessUtil.cloneInterMineObject(parent);
@@ -268,9 +266,8 @@ public class PopulateChildFeaturesProcess extends PostProcessor
         q.addToOrderBy(qcSOTerm);
 
         Results res = os.execute(q);
-        Iterator it = res.iterator();
-        while (it.hasNext()) {
-            ResultsRow<InterMineObject> rr = (ResultsRow<InterMineObject>) it.next();
+        for (Object obj : res.asList()) {
+            ResultsRow rr = (ResultsRow) obj;
             SOTerm soTerm = (SOTerm) rr.get(0);
             soTerms.put(soTerm.getName(), soTerm);
             LOG.debug("Added SO term: " + soTerm.getName());

@@ -106,7 +106,7 @@ public class CreateIntronFeaturesProcess extends PostProcessor
         if (!StringUtils.isEmpty(organisms)) {
             String[] array = organisms.split(",");
             for (int i = 0; i < array.length; i++) {
-                taxonIds.add(new Integer(array[i].trim()));
+                taxonIds.add(Integer.parseInt(array[i].trim()));
             }
         }
     }
@@ -347,8 +347,8 @@ public class CreateIntronFeaturesProcess extends PostProcessor
                 intron.setPrimaryIdentifier(identifier);
                 intron.setGenes(Collections.singleton(gene));
 
-                location.setStart(new Integer(newLocStart));
-                location.setEnd(new Integer(newLocEnd));
+                location.setStart(newLocStart);
+                location.setEnd(newLocEnd);
                 location.setStrand(tranLoc.getStrand());
                 location.setFeature(intron);
                 location.setLocatedOn(transcript);
@@ -358,7 +358,7 @@ public class CreateIntronFeaturesProcess extends PostProcessor
                 osw.store(location);
 
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
-                intron.setLength(new Integer(length));
+                intron.setLength(length);
                 addToIntronTranscripts(intron, transcript);
                 intronMap.put(identifier, intron);
             } else {

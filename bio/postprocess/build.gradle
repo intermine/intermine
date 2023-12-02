@@ -49,6 +49,7 @@ subprojects {
 
     compileJava {
         options.deprecation = true
+	options.compilerArgs.add("-Xlint:unchecked")
     }
 
     dbModelConfig {
