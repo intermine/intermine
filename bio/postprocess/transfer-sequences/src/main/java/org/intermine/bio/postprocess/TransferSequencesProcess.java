@@ -1,8 +1,6 @@
 package org.intermine.bio.postprocess;
 
-/*
- * Copyright (C) 2002-2022 FlyMine
- *
+/**
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
  * be distributed with the code.  See the LICENSE file for more
@@ -11,7 +9,9 @@ package org.intermine.bio.postprocess;
  */
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -52,20 +52,19 @@ import org.intermine.postprocess.PostProcessor;
 import org.intermine.util.DynamicUtil;
 
 /**
- * Transfer sequences from the assembly objects to the other objects that are located on the
- * assemblies and to the objects that the assemblies are located on (eg. Chromosomes).
+ * Transfer sequences from the contigs (Chromosome and Supercontig) to the SequenceFeature objects
+ * which lack sequence.
  *
  * @author Kim Rutherford
  * @author Sam Hokin
  */
 public class TransferSequencesProcess extends PostProcessor {
+
     private static final Logger LOG = Logger.getLogger(TransferSequencesProcess.class);
 
     private Model model; // stored for various methods
 
     /**
-     * Create a new instance
-     *
      * @param osw object store writer
      */
     public TransferSequencesProcess(ObjectStoreWriter osw) {
@@ -74,112 +73,119 @@ public class TransferSequencesProcess extends PostProcessor {
 
     /**
      * {@inheritDoc}
-     * <br/>
-     * Main post-processing routine.
-     * @throws ObjectStoreException if the objectstore throws an exception
      */
     public void postProcess() throws IllegalAccessException, MetaDataException, ObjectStoreException {
         model = Model.getInstanceByName("genomic");
-        transferToChromosomeOrSupercontigLocatedSequenceFeatures();
+        transferToChromosomeFeatures();
+        transferToSupercontigFeatures();
         transferToTranscripts();
     }
 
     /**
-     * Store a new Sequence along with its updated SequenceFeature.
+     * Use the Location relations to copy the sequence from the Chromosomes to the
+     * SequenceFeatures located on them and which don't already have a sequence.
+     * This method queries chromosomes, then populate features on them one by one.
      */
-    private void storeNewSequence(SequenceFeature feature, ClobAccess sequenceString) throws ObjectStoreException {
-        Sequence sequence = (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        sequence.setResidues(sequenceString);
-        sequence.setLength(sequenceString.length());
-        osw.store(sequence);
-        feature.proxySequence(new ProxyReference(osw.getObjectStore(), sequence.getId(), Sequence.class));
-        feature.setLength(sequenceString.length());
-        osw.store(feature);
-    }
-
-    /**
-     * Use the Location relations to copy the sequence from the Chromosomes and Supercontigs to every
-     * SequenceFeature that is located on them and which doesn't already have a sequence.
-     * Uses the ObjectStoreWriter that was passed to the constructor.
-     */
-    protected void transferToChromosomeOrSupercontigLocatedSequenceFeatures() throws IllegalAccessException, ObjectStoreException {
-        // get the Chromosomes
+    protected void transferToChromosomeFeatures() throws IllegalAccessException, ObjectStoreException {
         long startTime = System.currentTimeMillis();
-        Query qChr = new Query();
-        QueryClass qcChr = new QueryClass(Chromosome.class);
-        qChr.addFrom(qcChr);
-        qChr.addToSelect(qcChr);
-        QueryObjectReference seqRefChr = new QueryObjectReference(qcChr, "sequence");
-        ContainsConstraint ccChr = new ContainsConstraint(seqRefChr, ConstraintOp.IS_NOT_NULL);
-        qChr.setConstraint(ccChr);
-        Set<Chromosome> chromosomes = new HashSet<Chromosome>();
-        SingletonResults resChr = osw.getObjectStore().executeSingleton(qChr);
-        for (Object obj : resChr.asList()) {
+        // query Chromosomes
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Chromosome.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryObjectReference seqRef = new QueryObjectReference(qc, "sequence");
+        ContainsConstraint cc = new ContainsConstraint(seqRef, ConstraintOp.IS_NOT_NULL);
+        q.setConstraint(cc);
+        Set<Chromosome> chromosomes = new HashSet<>();
+        SingletonResults results = osw.getObjectStore().executeSingleton(q);
+        for (Object obj : results.asList()) {
             Chromosome chr = (Chromosome) obj;
             chromosomes.add(chr);
         }
         LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took " + (System.currentTimeMillis() - startTime) + " ms.");
-
-        // get the Supercontigs
-        startTime = System.currentTimeMillis();
-        Query qSup = new Query();
-        QueryClass qcSup = new QueryClass(Supercontig.class);
-        qSup.addFrom(qcSup);
-        qSup.addToSelect(qcSup);
-        QueryObjectReference seqRefSup = new QueryObjectReference(qcSup, "sequence");
-        ContainsConstraint ccSup = new ContainsConstraint(seqRefSup, ConstraintOp.IS_NOT_NULL);
-        qSup.setConstraint(ccSup);
-        Set<Supercontig> supercontigs = new HashSet<Supercontig>();
-        SingletonResults resSup = osw.getObjectStore().executeSingleton(qSup);
-        for (Object obj : resSup.asList()) {
-            Supercontig sup = (Supercontig) obj;
-            supercontigs.add(sup);
-        }
-        LOG.info("Found " + supercontigs.size() + " supercontigs with sequence, took " + (System.currentTimeMillis() - startTime) + " ms.");
-
         // do the transfer work for Chromosomes
         // CDS can be discontiguous, process them separately, and transcripts are separately as well
         for (Chromosome chromosome : chromosomes) {
-            int numFeatures = transferForContig(chromosome, true);
+            int numFeatures = transferForChromosome(chromosome);
             if (numFeatures > 0) {
                 transferToCDSes(chromosome, true);
-            }
-        }
-
-        // do the transfer work for Supercontigs
-        // CDS can be discontiguous, process them separately, and transcripts are separately as well
-        for (Supercontig supercontig : supercontigs) {
-            int numFeatures = transferForContig(supercontig, false);
-            if (numFeatures > 0) {
-                transferToCDSes(supercontig, false);
             }
         }
     }
 
     /**
-     * Transfer sequences for the given contig (chromosome or supercontig).
-     *
-     * @param contig (Chromosome or Supercontig)
-     * @param isChromosome true if contig is Chromosome, false if contig is Supercontig
-     * @return the number of features on this contig that lacked sequences
+     * Use the Location relations to copy the sequence from Supercontigs to the
+     * SequenceFeatures located on them and which don't already have a sequence.
+     * This method queries features on supercontigs and populates them en masse since a given
+     * Supercontig typically has zero to a few features.
      */
-    protected int transferForContig(SequenceFeature contig, boolean isChromosome) throws IllegalAccessException, ObjectStoreException {
+    protected void transferToSupercontigFeatures() throws IllegalAccessException, ObjectStoreException {
+        long startTime = System.currentTimeMillis();
+        // query features on supercontigs
+        Query q = new Query();
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryClass qcFeature = new QueryClass(SequenceFeature.class);
+        q.addFrom(qcFeature);
+        q.addToSelect(qcFeature);
+        // only features with null sequence
+        QueryObjectReference seqRef = new QueryObjectReference(qcFeature, "sequence");
+        ContainsConstraint seqNullConstraint = new ContainsConstraint(seqRef, ConstraintOp.IS_NULL);
+        cs.addConstraint(seqNullConstraint);
+        // only features on Supercontigs
+        QueryObjectReference scRef = new QueryObjectReference(qcFeature, "supercontig");
+        ContainsConstraint scNotNullConstraint = new ContainsConstraint(scRef, ConstraintOp.IS_NOT_NULL);
+        cs.addConstraint(scNotNullConstraint);
+        q.setConstraint(cs);
+        // run the query, storing the feature sequences as we go
+        int count = 0;
+        SingletonResults results = osw.getObjectStore().executeSingleton(q);
+        osw.beginTransaction();
+        for (Object obj : results.asList()) {
+            SequenceFeature feature = (SequenceFeature) obj;
+            if (PostProcessUtil.isInstance(model, feature, "CDS")) continue; // TO DO?
+            if (PostProcessUtil.isInstance(model, feature, "Transcript")) continue; // TO DO?
+            Supercontig supercontig = feature.getSupercontig();
+            Location location = feature.getSupercontigLocation();
+            // extract the feature's sequence from the supercontig
+            ClobAccess featureSeq = getSubSequence(supercontig.getSequence(), location);
+            if (featureSeq == null) {
+                LOG.warn("Could not get feature sequence for location: " + location);
+                continue;
+            }
+            // store the feature sequence and the feature clone
+            Sequence sequence = (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+            sequence.setResidues(featureSeq);
+            sequence.setLength(featureSeq.length());
+            osw.store(sequence);
+            SequenceFeature clone = PostProcessUtil.cloneInterMineObject(feature);
+            clone.setSequence(sequence);
+            clone.setLength(featureSeq.length());
+            osw.store(clone);
+            count++;
+        }
+        osw.commitTransaction();
+        LOG.info("Stored " + count + " sequences for features on supercontigs; took " + (System.currentTimeMillis() - startTime) + " ms.");
+    }
+    
+    /**
+     * Transfer sequences to features on the given Chromosome.
+     *
+     * @param chromosome
+     * @return the number of features on this chromosome that lacked sequences
+     */
+    protected int transferForChromosome(Chromosome chromosome) throws IllegalAccessException, ObjectStoreException {
         long startTime = System.currentTimeMillis();
 
         // some constants
-        int contigId = contig.getId();
-        String contigIdentifier = contig.getPrimaryIdentifier();
-        Sequence contigSequence = contig.getSequence();
+        int chromosomeId = chromosome.getId();
+        String chromosomeIdentifier = chromosome.getPrimaryIdentifier();
+        Sequence chromosomeSequence = chromosome.getSequence();
 
         Query q = new Query();
         q.setDistinct(false);
 
         QueryClass qc = null;
-        if (isChromosome) {
-            qc = new QueryClass(Chromosome.class);
-        } else {
-            qc = new QueryClass(Supercontig.class);
-        }
+        qc = new QueryClass(Chromosome.class);
         q.addFrom(qc);
 
         // query SequenceFeature
@@ -196,11 +202,11 @@ public class TransferSequencesProcess extends PostProcessor {
         // we have a boatload of AND constraints
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        // Chromosome/Supercontig must have given contig id
+        // Chromosome must have given chromosome id
         QueryField qfId = new QueryField(qc, "id");
-        cs.addConstraint(new SimpleConstraint(qfId, ConstraintOp.EQUALS, new QueryValue(contigId)));
+        cs.addConstraint(new SimpleConstraint(qfId, ConstraintOp.EQUALS, new QueryValue(chromosomeId)));
 
-        // Location must be located on our Chromosome/Supercontig
+        // Location must be located on our Chromosome
         QueryObjectReference ref1 = new QueryObjectReference(qcLocation, "locatedOn");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qc);
         cs.addConstraint(cc1);
@@ -219,7 +225,7 @@ public class TransferSequencesProcess extends PostProcessor {
         q.setConstraint(cs);
 
         // create precompute indexes on our QueryClass objects to speed things up (?)
-        Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
+        Set<QueryNode> indexesToCreate = new HashSet<>();
         indexesToCreate.add(qcLocation);
         indexesToCreate.add(qcFeature);
         ((ObjectStoreInterMineImpl) osw.getObjectStore()).precompute(q, indexesToCreate, Constants.PRECOMPUTE_CATEGORY);
@@ -250,7 +256,7 @@ public class TransferSequencesProcess extends PostProcessor {
                     }
                 }
                 // get the feature's sequence
-                ClobAccess featureSeq = getSubSequence(contigSequence, location);
+                ClobAccess featureSeq = getSubSequence(chromosomeSequence, location);
                 if (featureSeq == null) {
                     // probably the location is out of range
                     LOG.warn("Could not get feature sequence for location: " + location);
@@ -268,7 +274,7 @@ public class TransferSequencesProcess extends PostProcessor {
                 count++;
             }
             osw.commitTransaction();
-            LOG.info("Stored " + count + " feature sequences for " + contigIdentifier + "; took " + (System.currentTimeMillis() - startTime) + " ms.");
+            LOG.info("Stored " + count + " feature sequences for " + chromosomeIdentifier + "; took " + (System.currentTimeMillis() - startTime) + " ms.");
         }
         // return full numResults since we skipped CDSes and transcripts
         return numResults;
@@ -555,4 +561,19 @@ public class TransferSequencesProcess extends PostProcessor {
 
         return q;
     }
+
+    /**
+     * Store a new Sequence along with its updated SequenceFeature.
+     * Utility method used by transferToCDSes and transferToTranscripts.
+     */
+    private void storeNewSequence(SequenceFeature feature, ClobAccess sequenceString) throws ObjectStoreException {
+        Sequence sequence = (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+        sequence.setResidues(sequenceString);
+        sequence.setLength(sequenceString.length());
+        osw.store(sequence);
+        feature.proxySequence(new ProxyReference(osw.getObjectStore(), sequence.getId(), Sequence.class));
+        feature.setLength(sequenceString.length());
+        osw.store(feature);
+    }
+    
 }
