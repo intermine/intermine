@@ -1,8 +1,19 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-if [ -z $(which wget) ]; then
+if [ "$#" != "5" ]; then
+   echo "Usage: $0 <workspace_dir> <python executable> <test_suite> <client> <testmodel_url>"
+   exit 1
+fi
+
+WORKSPACE_DIR=$1
+PYTHON=$2
+TEST_SUITE=$3
+CLIENT=$4
+TESTMODEL_URL=$5
+
+if [ -z "$(which wget)" ]; then
     # use curl
     GET='curl'
 else
@@ -11,14 +22,20 @@ fi
 
 GIT_GET="git clone --single-branch --depth 1"
 
-BUILD_LOG=${HOME}/build.log
-
 export PSQL_USER=test
 export PSQL_PWD=test
 export KEYSTORE=${PWD}/keystore.jks
 
 echo "#---> Running $TEST_SUITE tests"
 
+sudo -u postgres dropdb --if-exists flatmodetest
+sudo -u postgres dropdb --if-exists fulldatatest
+sudo -u postgres dropdb --if-exists notxmltest
+sudo -u postgres dropdb --if-exists truncunittest
+sudo -u postgres dropdb --if-exists unittest
+sudo -u postgres dropdb --if-exists userprofile-test
+
+sudo -u postgres dropuser --if-exists test
 sudo -u postgres createuser test
 sudo -u postgres psql -c "alter user test with encrypted password 'test';"
 
@@ -26,27 +43,27 @@ if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
 else
     # Set up properties
-    source config/create-ci-properties-files.sh
+    source "${WORKSPACE_DIR}"/config/create-ci-properties-files.sh
 
     echo '#---> Installing python requirements'
     # Install lib requirements
-    pip install -r config/lib/requirements.txt
+    ${PYTHON} -m pip install -r "${WORKSPACE_DIR}"/config/lib/requirements.txt
 
     if [[ "$TEST_SUITE" = "ws" ]]; then
 
         # install everything first. we don't want to test what's in maven
-        (cd plugin && ./gradlew install)
-        (cd intermine && ./gradlew install)
-        (cd bio && ./gradlew install)
-        (cd bio/sources && ./gradlew install)
-        (cd bio/postprocess && ./gradlew install)
+        (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
+        (cd "${WORKSPACE_DIR}"/intermine && ./gradlew install)
+        (cd "${WORKSPACE_DIR}"/bio && ./gradlew install)
+        (cd "${WORKSPACE_DIR}"/bio/sources && ./gradlew install)
+        (cd "${WORKSPACE_DIR}"/bio/postprocess && ./gradlew install)
 
         # set up database for testing
-        (cd intermine && ./gradlew createUnitTestDatabases)
+        (cd "${WORKSPACE_DIR}"/intermine && ./gradlew createUnitTestDatabases)
 
         # We will need a fully operational web-application
         echo '#---> Building and releasing web application to test against'
-        (cd testmine && ./setup.sh)
+        (cd "${WORKSPACE_DIR}"/testmine && ./setup.sh)
 
         sleep 60 # let webapp startup
 
@@ -55,6 +72,7 @@ else
         # Start any list upgrades
         $GET "$TESTMODEL_URL/service/lists?token=test-user-token" > /dev/null
 
+        cd "${WORKSPACE_DIR}"
         if [[ "$CLIENT" = "JS" ]]; then
             # We need the imjs code to exercise the webservices
             $GIT_GET https://github.com/intermine/imjs.git client

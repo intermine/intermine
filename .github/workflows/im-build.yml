@@ -24,7 +24,6 @@ jobs:
         ports:
           - 5432/tcp
     env:
-      TESTMODEL_URL: http://localhost:8080/intermine-demo
       TESTMODEL_PATH: intermine-demo
       TERM: dumb
     strategy:
@@ -43,13 +42,15 @@ jobs:
         python-version: '3.10'
     - name: Install PostgreSQL client
       run: |
+        set -euo pipefail
         sudo apt-get update -y
         sudo apt-get install -y libpq-dev postgresql-client
         sudo service postgresql start
     - name: Run unit tests
-      env:
-        TEST_SUITE: ${{ matrix.testSuite }}
-      run: ./config/ci/init.sh && ./config/ci/run.sh
+      run: |
+        set -euo pipefail
+        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
+        ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
 
   ws-tests:
     runs-on: ubuntu-latest
@@ -70,8 +71,6 @@ jobs:
         ports:
           - 5432/tcp
     env:
-      TESTMODEL_URL: http://localhost:8080/intermine-demo
-      TESTMODEL_PATH: intermine-demo
       TERM: dumb
     strategy:
       fail-fast: false
@@ -89,11 +88,13 @@ jobs:
         python-version: '3.10'
     - name: Install PostgreSQL client
       run: |
+        set -euo pipefail
         sudo apt-get update -y
         sudo apt-get install -y libpq-dev postgresql-client
         sudo service postgresql start
     - name: Run webservices tests
-      env:
-        TEST_SUITE: ws
-        CLIENT: ${{ matrix.client }}
-      run: ./config/ci/init-solr.sh && ./config/ci/init.sh && ./config/ci/run.sh
+      run: |
+        set -euo pipefail
+        ./config/ci/init-solr.sh
+        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo
+        ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo

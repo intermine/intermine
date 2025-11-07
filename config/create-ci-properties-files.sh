@@ -8,13 +8,13 @@ SED_SCRIPT='s/PSQL_USER/test/'
 
 mkdir -p $PROPDIR
 echo "#--- creating $TEST_PROPS"
-cp config/ci.properties $TEST_PROPS
-sed -i -e $SED_SCRIPT $TEST_PROPS
+cp "${WORKSPACE_DIR}"/config/ci.properties "$TEST_PROPS"
+sed -i -e $SED_SCRIPT "$TEST_PROPS"
 
 echo "#--- creating $TESTMODEL_PROPS"
-cp config/testmodel.properties $TESTMODEL_PROPS
-sed -i -e $SED_SCRIPT $TESTMODEL_PROPS
+cp "${WORKSPACE_DIR}"/config/testmodel.properties "$TESTMODEL_PROPS"
+sed -i -e $SED_SCRIPT "$TESTMODEL_PROPS"
 
 echo "#--- creating $BIO_PROPS"
-cp config/ci-bio.properties $BIO_PROPS
-sed -i -e "$SED_SCRIPT" $BIO_PROPS
+cp "${WORKSPACE_DIR}"/config/ci-bio.properties "$BIO_PROPS"
+sed -i -e "$SED_SCRIPT" "$BIO_PROPS"
