@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
@@ -173,17 +174,20 @@ public class ProfileManagerTest extends InterMineAPITestCase
             ProfileBinding.marshal(sallyProfile, os, writer,
                                    PathQuery.USERPROFILE_VERSION, classKeys);
             writer.writeEndElement();
+
+            writer.close();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
 
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTest.xml");
-        String expectedXml = IOUtils.toString(is);
+        String expectedXml = normalise(IOUtils.toString(is));
 
-        String actualXml = sw.toString().trim();
+        String actualXml = normalise(sw.toString().trim());
 
-        assertEquals(normalise(expectedXml), normalise(actualXml));
+        Diff diff = XMLUnit.compareXML(expectedXml, actualXml);
+        assertTrue("XML differs: " + diff.toString(), diff.similar());
     }
 
     private static String normalise(String x) {
