@@ -65,7 +65,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
         System.out.println(t.getConstraintLogic() + " -> " + tc.getConstraintLogic());
         System.out.println(TemplateQueryBinding.marshal(t, 2));
-        String expected = "<template name=\"flibble\" title=\"flobble\" comment=\"wibble\">"
+        String expected = "<template name=\"flibble\" title=\"flobble\" comment=\"wibble\" dataTypes=\"java.lang.String\">"
             + "<query name=\"flibble\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\" constraintLogic=\"A and B and C and D\">"
             + "<constraint path=\"Employee.age\" code=\"C\" editable=\"false\" op=\"!=\" value=\"30\"/>"
             + "<constraint path=\"Employee.age\" code=\"A\" editable=\"false\" op=\"!=\" value=\"10\"/>"

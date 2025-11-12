@@ -179,6 +179,7 @@ public class TemplateQueryBinding extends PathQueryBinding
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             marshal(template, writer, version);
+            writer.close();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
