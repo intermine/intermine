@@ -24,7 +24,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class ObjectStoreTestCase {
+public abstract class ObjectStoreTestCase {
 
     private static ObjectStore osForOsTests;
     protected static ObjectStoreWriter storeDataWriter;

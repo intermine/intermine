@@ -14,7 +14,7 @@ import org.intermine.objectstore.query.Query;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase {
+public abstract class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase {
 
     private static ObjectStoreAbstractImpl osForOsaiTests;
 

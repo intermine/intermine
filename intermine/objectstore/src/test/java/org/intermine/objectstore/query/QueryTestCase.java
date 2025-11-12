@@ -12,7 +12,7 @@ package org.intermine.objectstore.query;
 
 import org.intermine.testing.OneTimeTestCase;
 
-public class QueryTestCase extends OneTimeTestCase
+public abstract class QueryTestCase extends OneTimeTestCase
 {
     public QueryTestCase(String arg1) {
         super(arg1);

@@ -31,7 +31,7 @@ import java.util.*;
  * We test this way instead of putting these in the ancestor class of an infrastucture for clarity of
  * test code.
  */
-public class ObjectStoreInterMineImplTestCase extends ObjectStoreAbstractImplTestCase {
+public abstract class ObjectStoreInterMineImplTestCase extends ObjectStoreAbstractImplTestCase {
     protected static ObjectStoreInterMineImpl os;
 
     public static void oneTimeSetUp(

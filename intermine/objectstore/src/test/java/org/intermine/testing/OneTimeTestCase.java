@@ -29,7 +29,7 @@ import java.lang.reflect.*;
  *
  * @author Matthew Wakeling
  */
-public class OneTimeTestCase extends TestCase
+public abstract class OneTimeTestCase extends TestCase
 {
     private static Method oneTimeTearDownMethod = null;
     private static Exception exception = null;
