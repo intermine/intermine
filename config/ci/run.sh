@@ -20,7 +20,7 @@ export ANT_OPTS='-server'
 if [ "$TEST_SUITE" = "intermine" ]; then
     echo "RUNNING intermine unit tests"
     (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew build)
+    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew build --info --rerun-tasks)
 
     echo CHECKING results
     "${WORKSPACE_DIR}"/config/lib/parse_test_report.py "${WORKSPACE_DIR}/intermine"
