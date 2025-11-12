@@ -48,6 +48,9 @@ public class XMLReadTest extends InterMineAPITestCase
     }
 
     public void testXMLRead() throws Exception {
+        // Currently failing because the savedQueries do not get stored in the database
+        // for Unmarshall-2 ???
+
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
