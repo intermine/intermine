@@ -2549,6 +2549,7 @@ public class PathQuery implements Cloneable
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             PathQueryBinding.marshal(this, "query", model.getName(), writer, version);
+            writer.close();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
