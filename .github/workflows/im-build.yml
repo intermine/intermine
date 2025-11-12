@@ -27,7 +27,7 @@ jobs:
       TESTMODEL_PATH: intermine-demo
       TERM: dumb
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         testSuite: [intermine, bio]
     steps:
@@ -73,7 +73,7 @@ jobs:
     env:
       TERM: dumb
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         client: [JS, PY]
     steps:
