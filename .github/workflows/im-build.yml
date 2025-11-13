@@ -44,7 +44,7 @@ jobs:
         set -euo pipefail
         sudo apt-get update -y
         sudo apt-get install -y libpq-dev postgresql-client
-        sudo service postgresql start
+        # sudo service postgresql start
     - name: Run unit tests
       run: |
         set -euo pipefail
