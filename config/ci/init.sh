@@ -30,6 +30,8 @@ export KEYSTORE=${PWD}/keystore.jks
 
 echo "#---> Running $TEST_SUITE tests"
 
+export PGPASSWORD=postgres
+
 sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists flatmodetest
 sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists fulldatatest
 sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists notxmltest
