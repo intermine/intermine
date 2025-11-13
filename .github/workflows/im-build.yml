@@ -14,6 +14,7 @@ jobs:
         image: postgres:11
         # Provide the password for postgres
         env:
+          POSTGRES_HOST: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -49,5 +50,5 @@ jobs:
     - name: Run unit tests
       run: |
         set -euo pipefail
-        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
+        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo postgres
         ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo

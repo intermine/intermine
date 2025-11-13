@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-if [ "$#" != "5" ]; then
-   echo "Usage: $0 <workspace_dir> <python executable> <test_suite> <client> <testmodel_url>"
+if [ "$#" != "6" ]; then
+   echo "Usage: $0 <workspace_dir> <python executable> <test_suite> <client> <testmodel_url> <postgres_host>"
    exit 1
 fi
 
@@ -24,6 +24,7 @@ GIT_GET="git clone --single-branch --depth 1"
 
 export PSQL_USER=test
 export PSQL_PWD=test
+export PSQL_HOST=$6
 export KEYSTORE=${PWD}/keystore.jks
 
 echo "#---> Running $TEST_SUITE tests"

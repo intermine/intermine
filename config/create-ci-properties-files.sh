@@ -4,17 +4,20 @@ PROPDIR=$HOME/.intermine
 TEST_PROPS=$PROPDIR/intermine-test.properties
 TESTMODEL_PROPS=$PROPDIR/testmodel.properties
 BIO_PROPS=$PROPDIR/intermine-bio-test.properties
-SED_SCRIPT='s/PSQL_USER/test/'
 
-mkdir -p $PROPDIR
-echo "#--- creating $TEST_PROPS"
-cp "${WORKSPACE_DIR}"/config/ci.properties "$TEST_PROPS"
-sed -i -e $SED_SCRIPT "$TEST_PROPS"
+copy_properties() {
+    local source=$1
+    local target=$2
 
-echo "#--- creating $TESTMODEL_PROPS"
-cp "${WORKSPACE_DIR}"/config/testmodel.properties "$TESTMODEL_PROPS"
-sed -i -e $SED_SCRIPT "$TESTMODEL_PROPS"
+    echo "#--- creating $target"
+    cp "$source" "$target"
+    sed -i -e "s/PSQL_HOST/${PSQL_HOST}/" "$target"
+    sed -i -e "s/PSQL_USER/${PSQL_USER}/" "$target"
+    sed -i -e "s/PSQL_PWD/${PSQL_PWD}/" "$target"
 
-echo "#--- creating $BIO_PROPS"
-cp "${WORKSPACE_DIR}"/config/ci-bio.properties "$BIO_PROPS"
-sed -i -e "$SED_SCRIPT" "$BIO_PROPS"
+}
+
+mkdir -p "$PROPDIR"
+copy_properties "${WORKSPACE_DIR}"/config/ci.properties "$TEST_PROPS"
+copy_properties "${WORKSPACE_DIR}"/config/testmodel.properties "$TESTMODEL_PROPS"
+copy_properties "${WORKSPACE_DIR}"/config/ci-bio.properties "$BIO_PROPS"

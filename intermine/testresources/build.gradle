@@ -89,17 +89,43 @@ task buildTestModelJar(type: Jar) {
 
 void createDbInternal(dbName) {
     println 'Creating database ' + dbName
+    def resultStream = new ByteArrayOutputStream()
     exec {
         ignoreExitValue true
         commandLine 'sudo', '-u', 'postgres', 'psql', '-c', "create database \"" + dbName + "\";"
+        standardOutput = resultStream
+        errorOutput = resultStream
+    }
+
+    def result = resultStream.toString().trim()
+
+    if (result.contains('database "' + dbName + '" already exists')) {
+        println 'Already exists.'
+    } else if (result.contains("CREATE DATABASE")) {
+        println 'Created.'
+    } else {
+        throw new GradleException("FAILED:\n${result}")
     }
 }
 
 void grantPrivileges(dbName) {
     println 'Grant privileges on database ' + dbName
+    def resultStream = new ByteArrayOutputStream()
     exec {
         ignoreExitValue true
         commandLine 'sudo', '-u', 'postgres', 'psql', '-c', "grant all privileges on database \"" + dbName + "\" to test;"
+        standardOutput = resultStream
+        errorOutput = resultStream
+    }
+
+    def result = resultStream.toString().trim()
+
+    if (result.contains('flooble do')) {
+        println 'Already exists.'
+    } else if (result.contains("GRANT")) {
+        println 'Created.'
+    } else {
+        throw new GradleException("FAILED:\n${result}")
     }
 }
 
@@ -108,7 +134,7 @@ void checkMetadataTableExists() {
     def result = new ByteArrayOutputStream()
     exec {
         environment PGPASSWORD: "test"
-        commandLine 'psql', '-h', 'localhost', '--username', 'test', 'unittest', '-tAc', '\\dt intermine_metadata;'
+        commandLine 'psql', '-h', 'postgres', '--username', 'test', 'unittest', '-tAc', '\\dt intermine_metadata;'
         standardOutput = result
         errorOutput = result
     }
