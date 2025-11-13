@@ -90,8 +90,8 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install -y libpq-dev postgresql-client
     - name: Run webservices tests
-      set -euo pipefail
       run: |
+        set -euo pipefail
         ./config/ci/init-solr.sh
         ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo
         ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo
