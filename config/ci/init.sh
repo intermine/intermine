@@ -13,6 +13,10 @@ TEST_SUITE=$3
 CLIENT=$4
 TESTMODEL_URL=$5
 
+export PSQL_USER=test
+export PSQL_PWD=test
+export PSQL_HOST=$6
+
 if [ -z "$(which wget)" ]; then
     # use curl
     GET='curl'
@@ -22,23 +26,20 @@ fi
 
 GIT_GET="git clone --single-branch --depth 1"
 
-export PSQL_USER=test
-export PSQL_PWD=test
-export PSQL_HOST=$6
 export KEYSTORE=${PWD}/keystore.jks
 
 echo "#---> Running $TEST_SUITE tests"
 
-sudo -u postgres dropdb --if-exists flatmodetest
-sudo -u postgres dropdb --if-exists fulldatatest
-sudo -u postgres dropdb --if-exists notxmltest
-sudo -u postgres dropdb --if-exists truncunittest
-sudo -u postgres dropdb --if-exists unittest
-sudo -u postgres dropdb --if-exists userprofile-test
+sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists flatmodetest
+sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists fulldatatest
+sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists notxmltest
+sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists truncunittest
+sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists unittest
+sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists userprofile-test
 
-sudo -u postgres dropuser --if-exists test
-sudo -u postgres createuser test
-sudo -u postgres psql -c "alter user test with encrypted password 'test';"
+sudo -h "$PSQL_HOST" -u postgres dropuser --if-exists test
+sudo -h "$PSQL_HOST" -u postgres createuser test
+sudo -h "$PSQL_HOST" -u postgres psql -c "alter user test with encrypted password 'test';"
 
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
