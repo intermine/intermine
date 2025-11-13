@@ -22,7 +22,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432/tcp
+          - 5432:5432
     env:
       TESTMODEL_PATH: intermine-demo
     strategy:
