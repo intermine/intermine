@@ -49,5 +49,5 @@ jobs:
       run: |
         set -euo pipefail
         docker ps
-        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo localhost
+        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo 0.0.0.0
         ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
