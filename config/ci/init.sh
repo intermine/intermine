@@ -30,16 +30,16 @@ export KEYSTORE=${PWD}/keystore.jks
 
 echo "#---> Running $TEST_SUITE tests"
 
-sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists flatmodetest
-sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists fulldatatest
-sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists notxmltest
-sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists truncunittest
-sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists unittest
-sudo -h "$PSQL_HOST" -u postgres dropdb --if-exists userprofile-test
+sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists flatmodetest
+sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists fulldatatest
+sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists notxmltest
+sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists truncunittest
+sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists unittest
+sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-test
 
-sudo -h "$PSQL_HOST" -u postgres dropuser --if-exists test
-sudo -h "$PSQL_HOST" -u postgres createuser test
-sudo -h "$PSQL_HOST" -u postgres psql -c "alter user test with encrypted password 'test';"
+sudo -u postgres dropuser -h "$PSQL_HOST" --if-exists test
+sudo -u postgres createuser -h "$PSQL_HOST" test
+sudo -u postgres psql -h "$PSQL_HOST" -c "alter user test with encrypted password 'test';"
 
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
