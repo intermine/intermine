@@ -168,8 +168,6 @@ task createUnitTestDatabases {
         grantPrivileges('userprofile-test')
         createDbInternal('unittest')
         grantPrivileges('unittest')
-
-        checkMetadataTableExists()
     }
 }
 
@@ -272,6 +270,8 @@ task buildDB {
 
         // don't need to generate schema, never changes
         createTables('fulldatatest', 'fulldata')
+
+        checkMetadataTableExists()
     }
 }
 
