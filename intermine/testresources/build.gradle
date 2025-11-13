@@ -93,7 +93,7 @@ void createDbInternal(dbName) {
     exec {
         ignoreExitValue true
         environment PGPASSWORD: "postgres"
-        commandLine 'sudo', '-u', 'postgres', 'psql', '-h', 'localhost', '-c', "create database \"" + dbName + "\";"
+        commandLine 'sudo', '-E', '-u', 'postgres', 'psql', '-h', 'localhost', '-c', "create database \"" + dbName + "\";"
         standardOutput = resultStream
         errorOutput = resultStream
     }
@@ -115,7 +115,7 @@ void grantPrivileges(dbName) {
     exec {
         ignoreExitValue true
         environment PGPASSWORD: "postgres"
-        commandLine 'sudo', '-u', 'postgres', 'psql', '-h', 'localhost', '-c', "grant all privileges on database \"" + dbName + "\" to test;"
+        commandLine 'sudo', '-E', '-u', 'postgres', 'psql', '-h', 'localhost', '-c', "grant all privileges on database \"" + dbName + "\" to test;"
         standardOutput = resultStream
         errorOutput = resultStream
     }
