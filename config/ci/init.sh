@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-if [ "$#" != "6" ]; then
-   echo "Usage: $0 <workspace_dir> <python executable> <test_suite> <client> <testmodel_url> <postgres_host>"
+if [ "$#" != "5" ]; then
+   echo "Usage: $0 <workspace_dir> <python executable> <test_suite> <client> <testmodel_url>"
    exit 1
 fi
 
@@ -15,7 +15,6 @@ TESTMODEL_URL=$5
 
 export PSQL_USER=test
 export PSQL_PWD=test
-export PSQL_HOST=$6
 
 if [ -z "$(which wget)" ]; then
     # use curl
@@ -30,18 +29,16 @@ export KEYSTORE=${PWD}/keystore.jks
 
 echo "#---> Running $TEST_SUITE tests"
 
-export PGPASSWORD=postgres
+sudo -u postgres dropdb --if-exists flatmodetest
+sudo -u postgres dropdb --if-exists fulldatatest
+sudo -u postgres dropdb --if-exists notxmltest
+sudo -u postgres dropdb --if-exists truncunittest
+sudo -u postgres dropdb --if-exists unittest
+sudo -u postgres dropdb --if-exists userprofile-test
 
-sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists flatmodetest
-sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists fulldatatest
-sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists notxmltest
-sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists truncunittest
-sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists unittest
-sudo -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-test
-
-sudo -u postgres dropuser -h "$PSQL_HOST" --if-exists test
-sudo -u postgres createuser -h "$PSQL_HOST" test
-sudo -u postgres psql -h "$PSQL_HOST" -c "alter user test with encrypted password 'test';"
+sudo -u postgres dropuser --if-exists test
+sudo -u postgres createuser test
+sudo -u postgres psql -c "alter user test with encrypted password 'test';"
 
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
