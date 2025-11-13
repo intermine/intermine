@@ -92,7 +92,8 @@ void createDbInternal(dbName) {
     def resultStream = new ByteArrayOutputStream()
     exec {
         ignoreExitValue true
-        commandLine 'sudo', '-u', 'postgres', 'psql', '-c', "create database \"" + dbName + "\";"
+        environment PGPASSWORD: "postgres"
+        commandLine 'sudo', '-u', 'postgres', 'psql', '-h', 'localhost', '-c', "create database \"" + dbName + "\";"
         standardOutput = resultStream
         errorOutput = resultStream
     }
@@ -113,7 +114,8 @@ void grantPrivileges(dbName) {
     def resultStream = new ByteArrayOutputStream()
     exec {
         ignoreExitValue true
-        commandLine 'sudo', '-u', 'postgres', 'psql', '-c', "grant all privileges on database \"" + dbName + "\" to test;"
+        environment PGPASSWORD: "postgres"
+        commandLine 'sudo', '-u', 'postgres', 'psql', '-h', 'localhost', '-c', "grant all privileges on database \"" + dbName + "\" to test;"
         standardOutput = resultStream
         errorOutput = resultStream
     }
