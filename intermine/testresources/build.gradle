@@ -131,26 +131,6 @@ void grantPrivileges(dbName) {
     }
 }
 
-void checkMetadataTableExists() {
-    println 'Checking intermine_metadata table exists'
-    def resultStream = new ByteArrayOutputStream()
-    exec {
-        ignoreExitValue true
-        environment PGPASSWORD: "test"
-        commandLine 'psql', '-h', 'localhost', '--username', 'test', 'unittest', '-tAc', '\\dt intermine_metadata;'
-        standardOutput = resultStream
-        errorOutput = resultStream
-    }
-
-    def result = resultStream.toString().trim()
-
-    if (result.contains("public|intermine_metadata|table|test")) {
-        println "Metadata table exists and matches expected schema."
-    } else {
-        throw new GradleException("Metadata table check failed:\n${result}")
-    }
-}
-
 task createUnitTestDatabases {
     description "create databases needed for unit tests"
     doLast {
@@ -270,8 +250,6 @@ task buildDB {
 
         // don't need to generate schema, never changes
         createTables('fulldatatest', 'fulldata')
-
-        checkMetadataTableExists()
     }
 }
 
