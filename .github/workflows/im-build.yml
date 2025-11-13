@@ -48,7 +48,6 @@ jobs:
     - name: Run unit tests
       run: |
         set -euo pipefail
-        env
         docker ps
         ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo 0.0.0.0
         ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
