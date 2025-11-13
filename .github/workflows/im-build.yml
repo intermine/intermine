@@ -26,7 +26,6 @@ jobs:
           - 5432/tcp
     env:
       TESTMODEL_PATH: intermine-demo
-      TERM: dumb
     strategy:
       fail-fast: true
       matrix:
