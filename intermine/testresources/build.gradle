@@ -131,18 +131,20 @@ void grantPrivileges(dbName) {
 
 void checkMetadataTableExists() {
     println 'Checking intermine_metadata table exists'
-    def result = new ByteArrayOutputStream()
+    def resultStream = new ByteArrayOutputStream()
     exec {
         environment PGPASSWORD: "test"
         commandLine 'psql', '-h', 'postgres', '--username', 'test', 'unittest', '-tAc', '\\dt intermine_metadata;'
-        standardOutput = result
-        errorOutput = result
+        standardOutput = resultStream
+        errorOutput = resultStream
     }
 
-    if (result.toString().contains("public|intermine_metadata|table|test")) {
+    def result = resultStream.toString().trim()
+
+    if (result.contains("public|intermine_metadata|table|test")) {
         println "Metadata table exists and matches expected schema."
     } else {
-        throw new GradleException("Metadata table check failed:\n${result.toString()}")
+        throw new GradleException("Metadata table check failed:\n${result}")
     }
 }
 
