@@ -13,6 +13,7 @@ TEST_SUITE=$3
 CLIENT=$4
 TESTMODEL_URL=$5
 
+export PSQL_HOST=localhost
 export PSQL_USER=test
 export PSQL_PWD=test
 
