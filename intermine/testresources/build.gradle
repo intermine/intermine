@@ -133,6 +133,7 @@ void checkMetadataTableExists() {
     println 'Checking intermine_metadata table exists'
     def resultStream = new ByteArrayOutputStream()
     exec {
+        ignoreExitValue true
         environment PGPASSWORD: "test"
         commandLine 'psql', '-h', 'postgres', '--username', 'test', 'unittest', '-tAc', '\\dt intermine_metadata;'
         standardOutput = resultStream
