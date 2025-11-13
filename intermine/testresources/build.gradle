@@ -103,6 +103,23 @@ void grantPrivileges(dbName) {
     }
 }
 
+void checkMetadataTableExists() {
+    println 'Checking intermine_metadata table exists'
+    def result = new ByteArrayOutputStream()
+    exec {
+        environment PGPASSWORD: "test"
+        commandLine 'psql', '-h', 'localhost', '--username', 'test', 'unittest', '-tAc', '\\dt intermine_metadata;'
+        standardOutput = result
+        errorOutput = result
+    }
+
+    if (result.toString().contains("public|intermine_metadata|table|test")) {
+        println "Metadata table exists and matches expected schema."
+    } else {
+        throw new GradleException("Metadata table check failed:\n${result.toString()}")
+    }
+}
+
 task createUnitTestDatabases {
     description "create databases needed for unit tests"
     doLast {
@@ -120,6 +137,8 @@ task createUnitTestDatabases {
         grantPrivileges('userprofile-test')
         createDbInternal('unittest')
         grantPrivileges('unittest')
+
+        checkMetadataTableExists()
     }
 }
 
