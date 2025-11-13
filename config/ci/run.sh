@@ -21,7 +21,8 @@ if [ "$TEST_SUITE" = "intermine" ]; then
     echo "RUNNING intermine unit tests"
     (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
     # Add --rerun-tasks below to force rebuild
-    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew build --info --stacktrace)
+    # Add --info --stacktrace for more useful information when debugging
+    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew build)
 
     echo CHECKING results
     "${WORKSPACE_DIR}"/config/lib/parse_test_report.py "${WORKSPACE_DIR}/intermine"
