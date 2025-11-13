@@ -135,7 +135,7 @@ void checkMetadataTableExists() {
     exec {
         ignoreExitValue true
         environment PGPASSWORD: "test"
-        commandLine 'psql', '-h', 'postgres', '--username', 'test', 'unittest', '-tAc', '\\dt intermine_metadata;'
+        commandLine 'psql', '-h', 'localhost', '--username', 'test', 'unittest', '-tAc', '\\dt intermine_metadata;'
         standardOutput = resultStream
         errorOutput = resultStream
     }
