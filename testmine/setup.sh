@@ -5,38 +5,30 @@
 #  * psql (createdb, psql) - your user should have a postgres
 #    role with password authentication set up.
 
-set -e # Errors are fatal.
+set -euo pipefail # Errors are fatal.
 
+if [ "$#" != "1" ]; then
+   echo "Usage: $0 <workspace_dir>"
+   exit 2
+fi
+
+WORKSPACE_DIR=$1
+TESTMINE_DIR=${WORKSPACE_DIR}/testmine
 USERPROFILEDB=userprofile-demo
 PRODDB=intermine-demo
-MINENAME=testmine
-DIR="$(cd $(dirname "$0"); pwd)"
 IMDIR=$HOME/.intermine
-LOG=$DIR/build.log
 PROP_FILE=$IMDIR/testmodel.properties
 
 # Inherit SERVER, PORT, PSQL_USER, PSQL_PWD, TOMCAT_USER and TOMCAT_PWD if in env.
-if test -z $SERVER; then
-    SERVER=localhost
-fi
-if test -z $PORT; then
-    PORT=8080
-fi
-if test -z $PSQL_USER; then
-    PSQL_USER=$USER
-fi
-if test -z $PSQL_PWD; then
-    PSQL_PWD=$USER;
-fi
-if test -z $TOMCAT_USER; then
-    TOMCAT_USER=manager
-fi
-if test -z $TOMCAT_PWD; then
-    TOMCAT_PWD=manager
-fi
+SERVER=${SERVER:-localhost}
+PORT=${PORT:-8080}
+PSQL_USER=${PSQL_USER:-$USER}
+PSQL_PWD=${PSQL_PWD:-$USER}
+TOMCAT_USER=${TOMCAT_USER:-manager}
+TOMCAT_PWD=${TOMCAT_PWD:-manager}
 
 for dep in psql createdb; do
-  if test -z $(which $dep); then
+  if test -z "$(which $dep)"; then
     echo "ERROR: $dep not found - please make sure $dep is installed and configured correctly"
     exit 1
   fi
@@ -62,7 +54,7 @@ echo "------> Checking config..."
 if test ! -f $PROP_FILE; then
     echo "-- $PROP_FILE not found. Providing default properties file."
     cd $IMDIR
-    cp $DIR/dbmodel/resources/testmodel.properties $PROP_FILE
+    cp "$TESTMINE_DIR"/dbmodel/resources/testmodel.properties $PROP_FILE
     sed -i=bak -e "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
     sed -i=bak -e "s/PSQL_PWD/$PSQL_PWD/g" $PROP_FILE
     sed -i=bak -e "s/USERPROFILEDB/$USERPROFILEDB/g" $PROP_FILE
@@ -72,18 +64,10 @@ if test ! -f $PROP_FILE; then
     sed -i=bak -e "s/USER/$USER/g" $PROP_FILE
 fi
 
-echo "------> Checking databases..."
+echo "------> Creating databases..."
 for db in $USERPROFILEDB $PRODDB; do
-    if psql --list | egrep -q '\s'$db'\s'; then
-        echo $db exists.
-    else
-        echo Creating $db
-        if [ "$PSQL_USER" = "test" ]; then
-            sudo -u postgres createdb $db
-        else
-            createdb $db
-        fi
-    fi
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists ${db}
+    sudo -E -u postgres createdb -h "$PSQL_HOST" ${db}
 done
 
 ##########
@@ -95,12 +79,12 @@ done
 # This is the first point at which we need to refer to the InterMine jars previous built
 # So we need to install them to Maven so that the testmine Gradle can fetch them
 echo "------> Installing InterMine Gradle project JARs to local Maven..."
-cd $DIR/../intermine
-(cd ../plugin && ./gradlew install --no-daemon)
+cd "${WORKSPACE_DIR}"/intermine
+(cd "${WORKSPACE_DIR}"/plugin && ./gradlew install --no-daemon)
 ./gradlew install  --no-daemon
 
 echo "------> Loading demo data set..."
-cd $DIR
+cd "${TESTMINE_DIR}"
 
 echo "------> Running ./gradlew clean (just in case you ran this before and made a misbake"
 ./gradlew clean --stacktrace --no-daemon

@@ -66,7 +66,7 @@ else
 
         # We will need a fully operational web-application
         echo '#---> Building and releasing web application to test against'
-        (cd "${WORKSPACE_DIR}"/testmine && ./setup.sh)
+        (cd "${WORKSPACE_DIR}"/testmine && ./setup.sh "${WORKSPACE_DIR}")
 
         sleep 60 # let webapp startup
 
