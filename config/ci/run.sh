@@ -4,7 +4,7 @@ set -euo pipefail
 
 if [ "$#" != "5" ]; then
    echo "Usage: $0 <workspace_dir> <python executable> <test_suite> <client> <testmodel_url>"
-   exit 1
+   exit 2
 fi
 
 WORKSPACE_DIR=$1
