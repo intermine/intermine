@@ -213,3 +213,8 @@ failures.list
 *.iml
 out/
 .gradle/
+
+# solr (CI)
+
+solr-*.tgz
+solr-*/
