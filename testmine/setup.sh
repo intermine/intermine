@@ -27,6 +27,8 @@ PSQL_PWD=${PSQL_PWD:-$USER}
 TOMCAT_USER=${TOMCAT_USER:-manager}
 TOMCAT_PWD=${TOMCAT_PWD:-manager}
 
+DEBUG=${DEBUG:-0}
+
 for dep in psql createdb; do
   if test -z "$(which $dep)"; then
     echo "ERROR: $dep not found - please make sure $dep is installed and configured correctly"
@@ -34,34 +36,34 @@ for dep in psql createdb; do
   fi
 done
 
-if test ! -z $DEBUG; then
+if [ "$DEBUG" -eq 1 ]; then
   echo "------> CONFIGURATION SETTINGS:"
-  echo '# $IMDIR       = '$IMDIR
-  echo '# $SERVER      = '$SERVER
-  echo '# $PORT        = '$PORT
-  echo '# $PSQL_USER   = '$PSQL_USER
-  echo '# $PSQL_PWD    = '$PSQL_PWD
+  echo "# $IMDIR       = $IMDIR"
+  echo "# $SERVER      = $SERVER"
+  echo "# $PORT        = $PORT"
+  echo "# $PSQL_USER   = $PSQL_USER"
+  echo "# $PSQL_PWD    = $PSQL_PWD"
 fi
 
-cd $HOME
+cd "$HOME"
 
-if test ! -d $IMDIR; then
+if test ! -d "$IMDIR"; then
     echo Making .intermine configuration directory.
-    mkdir $IMDIR
+    mkdir "$IMDIR"
 fi
 
 echo "------> Checking config..."
-if test ! -f $PROP_FILE; then
+if test ! -f "$PROP_FILE"; then
     echo "-- $PROP_FILE not found. Providing default properties file."
-    cd $IMDIR
-    cp "$TESTMINE_DIR"/dbmodel/resources/testmodel.properties $PROP_FILE
-    sed -i=bak -e "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
-    sed -i=bak -e "s/PSQL_PWD/$PSQL_PWD/g" $PROP_FILE
-    sed -i=bak -e "s/USERPROFILEDB/$USERPROFILEDB/g" $PROP_FILE
-    sed -i=bak -e "s/PRODDB/$PRODDB/g" $PROP_FILE
-    sed -i=bak -e "s/SERVER/$SERVER/g" $PROP_FILE
-    sed -i=bak -e "s/8080/$PORT/g" $PROP_FILE
-    sed -i=bak -e "s/USER/$USER/g" $PROP_FILE
+    cd "$IMDIR"
+    cp "$TESTMINE_DIR"/dbmodel/resources/testmodel.properties "$PROP_FILE"
+    sed -i=bak -e "s/PSQL_USER/$PSQL_USER/g" "$PROP_FILE"
+    sed -i=bak -e "s/PSQL_PWD/$PSQL_PWD/g" "$PROP_FILE"
+    sed -i=bak -e "s/USERPROFILEDB/$USERPROFILEDB/g" "$PROP_FILE"
+    sed -i=bak -e "s/PRODDB/$PRODDB/g" "$PROP_FILE"
+    sed -i=bak -e "s/SERVER/$SERVER/g" "$PROP_FILE"
+    sed -i=bak -e "s/8080/$PORT/g" "$PROP_FILE"
+    sed -i=bak -e "s/USER/$USER/g" "$PROP_FILE"
 fi
 
 echo "------> Creating databases..."
@@ -86,7 +88,7 @@ cd "${WORKSPACE_DIR}"/intermine
 echo "------> Loading demo data set..."
 cd "${TESTMINE_DIR}"
 
-echo "------> Running ./gradlew clean (just in case you ran this before and made a misbake"
+echo "------> Running ./gradlew clean (just in case you ran this before and made a mistake)"
 ./gradlew clean --stacktrace --no-daemon
 
 echo "------> Running ./gradlew loadsadata"
