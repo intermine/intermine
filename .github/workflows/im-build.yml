@@ -92,6 +92,6 @@ jobs:
     - name: Run webservices tests
       run: |
         set -euo pipefail
-        ./config/ci/init-solr.sh
+        ./config/ci/init-solr.sh ${GITHUB_WORKSPACE}
         ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo
         ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo
