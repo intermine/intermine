@@ -12,7 +12,7 @@ PYTHON=$2
 CLIENT=$3
 export TESTMODEL_URL=$4
 
-cd "${WORKSPACE_DIR}"/client
+cd "${WORKSPACE_DIR}"/client-${CLIENT}
 
 # client tests expect TESTMODEL_URL to be set up correctly.
 

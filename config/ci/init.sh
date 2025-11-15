@@ -78,9 +78,9 @@ else
         cd "${WORKSPACE_DIR}"
         if [[ "$CLIENT" = "JS" ]]; then
             # We need the imjs code to exercise the webservices
-            $GIT_GET https://github.com/intermine/imjs.git client
+            $GIT_GET https://github.com/intermine/imjs.git client-JS
         elif [[ "$CLIENT" = "PY" ]]; then
-            $GIT_GET -b python310-dev https://github.com/ucam-department-of-psychiatry/intermine-ws-python client
+            $GIT_GET -b python310-dev https://github.com/ucam-department-of-psychiatry/intermine-ws-python client-PY
         fi
     fi
 fi
