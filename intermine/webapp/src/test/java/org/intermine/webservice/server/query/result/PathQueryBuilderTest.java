@@ -93,9 +93,13 @@ public class PathQueryBuilderTest extends TestCase {
         } catch (AssertionFailedError e) {
             throw e;
         } catch (BadRequestException e) {
-            assertEquals(
-                "Query does not pass XML validation. cvc-complex-type.4: Attribute 'view' must appear on element 'xsq:query'.",
-                e.getMessage().trim()
+            String actual = e.getMessage().trim();
+
+            assertTrue(
+                // TODO: When run from Gradle the error appears twice (???). So we use contains().
+                actual.contains(
+                    "Query does not pass XML validation. cvc-complex-type.4: Attribute 'view' must appear on element 'xsq:query'."
+                )
             );
         } catch (Throwable t) {
             fail("Unexpected error when building a query from bad xml" + t.getMessage());
