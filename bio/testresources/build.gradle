@@ -33,7 +33,7 @@ void grantPrivileges(dbName) {
 
     def result = resultStream.toString().trim()
 
-    } if (result.contains("GRANT")) {
+    if (result.contains("GRANT")) {
         println 'Granted.'
     } else {
         throw new GradleException("FAILED:\n${result}")
