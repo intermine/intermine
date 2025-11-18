@@ -231,6 +231,25 @@ public class JSONFormatter extends Formatter
      */
     @Override
     public String formatFooter(String errorMessage, int errorCode) {
+        Date now = Calendar.getInstance().getTime();
+
+        return formatFooter(errorMessage, errorCode, now);
+    }
+
+    /**
+     * Version of formatFooter() that takes a Date for displaying the execution
+     * time. Useful when testing to avoid failures across a second/minute etc
+     * boundary.
+     *
+     * @param errorMessage The message reporting the problem encountered
+     *      in processing this request, or null if there was none
+     * @param errorCode The status code for the request (200 on success)
+     * @param now The execution time to be displayed
+     *
+     * @see org.intermine.webservice.server.output.Formatter#formatFooter()
+     * @return The formatted footer string.
+     */
+    public String formatFooter(String errorMessage, int errorCode, Date now) {
         StringBuilder sb = new StringBuilder(outro);
         if (!hasPrintedSomething && isExpectingPrimitive) {
             sb.append("null");
@@ -242,7 +261,6 @@ public class JSONFormatter extends Formatter
             sb.append(',');
         }
 
-        Date now = Calendar.getInstance().getTime();
         DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
         String executionTime = dateFormatter.format(now);
         sb.append("\"" + KEY_TIME + "\":\"" + executionTime + "\",");
