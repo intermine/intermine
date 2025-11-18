@@ -557,7 +557,9 @@ public class TemplateQuery extends PathQuery
                 Path path = super.makePath(v);
                 AttributeDescriptor attributeDescriptor =
                         (AttributeDescriptor) path.getEndFieldDescriptor();
-                dataTypes.add(attributeDescriptor.getType());
+                if (attributeDescriptor != null) {
+                    dataTypes.add(attributeDescriptor.getType());
+                }
             } catch (PathException ex ) {
                 dataTypes.add(StringUtils.EMPTY);
             }
