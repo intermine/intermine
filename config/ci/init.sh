@@ -37,6 +37,8 @@ sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists notxmltest
 sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists truncunittest
 sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists unittest
 sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-test
+sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-test
+sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-fulldata-test
 
 sudo -E -u postgres dropuser -h "$PSQL_HOST" --if-exists test
 sudo -E -u postgres createuser -h "$PSQL_HOST" test
