@@ -657,28 +657,21 @@ public class Item implements Comparable<Item>
     public String fooEquals(Item other) {
         StringBuilder message = new StringBuilder("");
 
-        if (!identifier.equals(other.identifier)) {
-            message.append("identifier '" + identifier + "' != '" + other.identifier + "'\n");
-        }
+        String keyA = attributes.keySet().iterator().next();
+        String keyB = other.attributes.keySet().iterator().next();
+        Attribute a = attributes.get(keyA);
+        Attribute b = attributes.get(keyB);
 
-        if (!className.equals(other.className)) {
-            message.append("className '" + className + "' != '" + other.className + "'\n");
-        }
-
-        if (!implementations.equals(other.implementations)) {
-            message.append("implementations '" + implementations + "' != '" + other.implementations + "'\n");
-        }
-
-        if (!attributes.equals(other.attributes)) {
-            message.append("attributes '" + attributes + "' != '" + other.attributes + "'\n");
-        }
-
-        if (!references.equals(other.references)) {
-            message.append("references '" + references + "' != '" + other.references + "'\n");
-        }
-
-        if (!collections.equals(other.collections)) {
-            message.append("collections '" + collections + "' != '" + other.collections + "'\n");
+        if (!a.equals(b)) {
+            message.append("attribute names for '");
+            message.append(keyA);
+            message.append("' and '");
+            message.append(keyB);
+            message.append("':\n'");
+            message.append(a.getName());
+            message.append("' != '");
+            message.append(b.getName());
+            message.append("'\n");
         }
 
         return message.toString();
