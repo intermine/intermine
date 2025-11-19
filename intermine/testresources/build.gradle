@@ -70,8 +70,13 @@ processTestResources {
     dependsOn "copyDefaultProperties"
 
     def intermineTestPropertiesPath = "${System.env.HOME}/.intermine/intermine-test.properties"
+    def intermineTestProperties = file(intermineTestPropertiesPath)
 
     doFirst {
+        if (!intermineTestProperties.exists()) {
+            throw new GradleException("Required file not found: $intermineTestPropertiesPath")
+        }
+
         println "Using InterMine test properties path: '$intermineTestPropertiesPath'"
     }
 
@@ -79,8 +84,6 @@ processTestResources {
     rename { fileName ->
         fileName.replace('intermine-test.properties', 'intermine.properties')
     }
-
-    inputs.sourceFiles.stopExecutionIfEmpty()
 }
 
 task buildTestModelJar(type: Jar) {
