@@ -657,29 +657,29 @@ public class Item implements Comparable<Item>
     public String fooEquals(Item other) {
         StringBuilder message = new StringBuilder("");
 
-        if (!identifier.equals(other.identifier) {
+        if (!identifier.equals(other.identifier)) {
             message.append("identifier '" + identifier + "' != '" + other.identifier + "'\n");
         }
 
-        if (!className.equals(other.className) {
+        if (!className.equals(other.className)) {
             message.append("className '" + className + "' != '" + other.className + "'\n");
-        )
+        }
 
-        if (!implementations.equals(other.implementations) {
+        if (!implementations.equals(other.implementations)) {
             message.append("implementations '" + implementations + "' != '" + other.implementations + "'\n");
-        )
+        }
 
-        if (!attributes.equals(other.attributes) {
+        if (!attributes.equals(other.attributes)) {
             message.append("attributes '" + attributes + "' != '" + other.attributes + "'\n");
-        )
+        }
 
-        if (!references.equals(other.references) {
+        if (!references.equals(other.references)) {
             message.append("references '" + references + "' != '" + other.references + "'\n");
-        )
+        }
 
-        if (!collections.equals(other.collections) {
+        if (!collections.equals(other.collections)) {
             message.append("collections '" + collections + "' != '" + other.collections + "'\n");
-        )
+        }
 
         return message.toString();
     }
