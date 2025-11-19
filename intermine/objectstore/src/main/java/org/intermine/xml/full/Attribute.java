@@ -94,4 +94,12 @@ public class Attribute
     public int hashCode() {
         return name.hashCode() + 3 * value.hashCode();
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String toString() {
+        return "name: " + name + ", value: " + value;
+    }
 }

@@ -657,6 +657,14 @@ public class Item implements Comparable<Item>
     public String fooEquals(Item other) {
         StringBuilder message = new StringBuilder("");
 
+        if (!attributes.equals(other.attributes)) {
+            message.append("Attributes are different:\n");
+            message.append(attributes + "\n");
+            message.append(other.attributes + "\n");
+        } else {
+            message.append("Somehow attributes are the same");
+        }
+
         String keyA = attributes.keySet().iterator().next();
         String keyB = other.attributes.keySet().iterator().next();
         Attribute a = attributes.get(keyA);

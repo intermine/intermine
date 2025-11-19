@@ -104,7 +104,7 @@ public class GoConverterTest extends ItemsTestCase
 
         String message = diffA.iterator().next().fooEquals(diffB.iterator().next());
 
-        assertEquals("", message);
+        assertEquals(expected, actual, message);
     }
 
     public void testCreateWithObjects() throws Exception {
