@@ -654,37 +654,6 @@ public class Item implements Comparable<Item>
         return false;
     }
 
-    public String fooEquals(Item other) {
-        StringBuilder message = new StringBuilder("");
-
-        if (!attributes.equals(other.attributes)) {
-            message.append("Attributes are different:\n");
-            message.append(attributes + "\n");
-            message.append(other.attributes + "\n");
-        } else {
-            message.append("Somehow attributes are the same");
-        }
-
-        String keyA = attributes.keySet().iterator().next();
-        String keyB = other.attributes.keySet().iterator().next();
-        Attribute a = attributes.get(keyA);
-        Attribute b = attributes.get(keyB);
-
-        if (!a.equals(b)) {
-            message.append("attribute names for '");
-            message.append(keyA);
-            message.append("' and '");
-            message.append(keyB);
-            message.append("':\n'");
-            message.append(a.getName());
-            message.append("' != '");
-            message.append(b.getName());
-            message.append("'\n");
-        }
-
-        return message.toString();
-    }
-
     /**
      * Compare items first by class, then by identifier, intended for creating
      * ordered output files.

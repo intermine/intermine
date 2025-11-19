@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -85,27 +84,7 @@ public class GoConverterTest extends ItemsTestCase
         // uncomment to write a new target items file
         //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
 
-        Set<Item> expected = readItemSet("GoConverterOboTest_tgt.xml");
-        Set<Item> actual = writer.getItems();
-
-        assertEquals(expected.size(), actual.size());
-
-        Set<Item> diffA = new HashSet(expected);
-        Set<Item> diffB = new HashSet(actual);
-
-        for(Item itemA : expected) {
-            for(Item itemB : actual) {
-                if (itemA.equals(itemB)) {
-                    diffA.remove(itemA);
-                    diffB.remove(itemB);
-                }
-            }
-        }
-
-        String message = diffA.iterator().next().fooEquals(diffB.iterator().next());
-        assertEquals("", message);
-
-        assertEquals(expected, actual);
+        assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
 
     public void testCreateWithObjects() throws Exception {
