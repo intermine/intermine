@@ -90,19 +90,21 @@ public class GoConverterTest extends ItemsTestCase
 
         assertEquals(expected.size(), actual.size());
 
-        Iterator<Item> expectedIterator = expected.iterator();
-        Iterator<Item> actualIterator = actual.iterator();
+        Set<Item> diffA = new HashSet(a);
+        Set<Item> diffB = new HashSet(b);
 
-        while(expectedIterator.hasNext()) {
-            Item expectedItem = expectedIterator.next();
-            Item actualItem = actualIterator.next();
-
-            assertEquals(expectedItem, actualItem);
-
-            // Diff diff = XMLUnit.compareXML(expectedXml, actualXml);
+        for(Item itemA : a) {
+            for(Item itemB : b) {
+                if (itemA.equals(itemB)) {
+                    diffA.remove(itemA);
+                    diffB.remove(itemB);
+                }
+            }
         }
 
-        // assertTrue("actual and expected XML should be the same: " + diff.toString(), diff.similar());
+        String message = diffA.iterator().next().fooEquals(diffB.iterator().next());
+
+        assertEquals("", message);
     }
 
     public void testCreateWithObjects() throws Exception {
