@@ -90,11 +90,11 @@ public class GoConverterTest extends ItemsTestCase
 
         assertEquals(expected.size(), actual.size());
 
-        Set<Item> diffA = new HashSet(a);
-        Set<Item> diffB = new HashSet(b);
+        Set<Item> diffA = new HashSet(expected);
+        Set<Item> diffB = new HashSet(actual);
 
-        for(Item itemA : a) {
-            for(Item itemB : b) {
+        for(Item itemA : expected) {
+            for(Item itemB : actual) {
                 if (itemA.equals(itemB)) {
                     diffA.remove(itemA);
                     diffB.remove(itemB);
