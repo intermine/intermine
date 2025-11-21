@@ -194,8 +194,8 @@
     </item>
     <item id="1_5" class="GOEvidenceCode">
         <attribute name="code" value="HMP"/>
-        <attribute name="name" value="Inferred from Hight Throughput Mutant Phenotype"/>
-        <attribute name="url" value="http://wiki.geneontology.org/index.php/Inferred_from_Hight_Throughput_Mutant_Phenotype_(HMP)"/>
+        <attribute name="name" value="Inferred from High Throughput Mutant Phenotype"/>
+        <attribute name="url" value="http://wiki.geneontology.org/index.php/Inferred_from_High_Throughput_Mutant_Phenotype_(HMP)"/>
     </item>
     <item id="1_4" class="GOEvidenceCode">
         <attribute name="code" value="HGI"/>

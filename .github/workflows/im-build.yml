@@ -7,13 +7,13 @@ on:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
-    
+
     services:
       # Label used to access the service container
       postgres:
         image: postgres:11
         # Provide the password for postgres
-        env: 
+        env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -22,44 +22,43 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432/tcp
+          - 5432:5432
     env:
-      TESTMODEL_URL: http://localhost:8080/intermine-demo
       TESTMODEL_PATH: intermine-demo
-      TERM: dumb
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         testSuite: [intermine, bio]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
         java-version: '11'
-    - name: Set up python 3.7
-      uses: actions/setup-python@v2
+    - name: Set up python 3.10
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.7'
+        python-version: '3.10'
     - name: Install PostgreSQL client
       run: |
+        set -euo pipefail
         sudo apt-get update -y
         sudo apt-get install -y libpq-dev postgresql-client
-        sudo service postgresql start
     - name: Run unit tests
-      env:
-        TEST_SUITE: ${{ matrix.testSuite }} 
-      run: ./config/ci/init.sh && ./config/ci/run.sh
-  
+      run: |
+        set -euo pipefail
+        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
+        ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
+
   ws-tests:
     runs-on: ubuntu-latest
-    
+
     services:
       # Label used to access the service container
       postgres:
         image: postgres:12
         # Provide the password for postgres
-        env: 
+        env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -68,34 +67,31 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432/tcp
+          - 5432:5432
     env:
-      TESTMODEL_URL: http://localhost:8080/intermine-demo
       TESTMODEL_PATH: intermine-demo
-      TERM: dumb
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         client: [JS, PY]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
         java-version: '11'
-    - name: Set up python 3.7
-      uses: actions/setup-python@v2
+    - name: Set up python 3.10
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.7'
+        python-version: '3.10'
     - name: Install PostgreSQL client
       run: |
+        set -euo pipefail
         sudo apt-get update -y
         sudo apt-get install -y libpq-dev postgresql-client
-        sudo service postgresql start
     - name: Run webservices tests
-      env:
-        TEST_SUITE: ws
-        CLIENT: ${{ matrix.client }}  
-      run: ./config/ci/init-solr.sh && ./config/ci/init.sh && ./config/ci/run.sh
-
-
+      run: |
+        set -euo pipefail
+        ./config/ci/init-solr.sh ${GITHUB_WORKSPACE}
+        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo
+        ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo

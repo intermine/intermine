@@ -111,7 +111,9 @@ public class TemplateQueryBindingTest extends TestCase
     }
 
     public void testAllCompanies() throws Exception {
-        assertEquals(expected.get("allCompanies").toXml(), savedTemplates.get("allCompanies").toXml());
+        String expectedXml = expected.get("allCompanies").toXml();
+        String actualXml = savedTemplates.get("allCompanies").toXml();
+        assertEquals(expectedXml, actualXml);
     }
 
     public void testEmployeesWithOldManagers() throws Exception {

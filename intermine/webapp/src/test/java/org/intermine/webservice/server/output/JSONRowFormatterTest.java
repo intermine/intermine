@@ -228,13 +228,13 @@ public class JSONRowFormatterTest extends TestCase {
            + "\",\"wasSuccessful\":false,\"error\":\"Not feeling like it\","
            + "\"statusCode\":400}";
 
-        assertEquals(expected, fmtr.formatFooter("Not feeling like it", 400));
+        assertEquals(expected, fmtr.formatFooter("Not feeling like it", 400, now));
 
         expected += ");";
         attributes.put(JSONRowFormatter.KEY_CALLBACK, "should_not_appear_in_footer");
 
         fmtr.formatHeader(attributes); // needs to be called to set the callback parameter
-        assertEquals(expected, fmtr.formatFooter("Not feeling like it", 400));
+        assertEquals(expected, fmtr.formatFooter("Not feeling like it", 400, now));
     }
 
     public void testFormatAll() throws IOException, JSONException {

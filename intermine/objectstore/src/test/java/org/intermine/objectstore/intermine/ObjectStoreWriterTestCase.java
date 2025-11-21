@@ -23,7 +23,7 @@ import org.junit.*;
 
 import static org.junit.Assert.fail;
 
-public class ObjectStoreWriterTestCase
+public abstract class ObjectStoreWriterTestCase
 {
     protected static ObjectStoreWriter writer;
     protected static ObjectStore os;

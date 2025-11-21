@@ -23,7 +23,7 @@ void generateModel(model, destination, type) {
             dirset(dir: 'src/test/resources/')
             pathelement(path: configurations.testCompile.asPath)
         }
-    }   
+    }
 
     ant.modelOutputTask(model: model, destDir: destination, type: type)
 }
@@ -89,17 +89,43 @@ task buildTestModelJar(type: Jar) {
 
 void createDbInternal(dbName) {
     println 'Creating database ' + dbName
+    def resultStream = new ByteArrayOutputStream()
     exec {
         ignoreExitValue true
-        commandLine 'sudo', '-u', 'postgres', 'psql', '-c', "create database \"" + dbName + "\";"
+        environment PGPASSWORD: "postgres"
+        commandLine 'sudo', '-E', '-u', 'postgres', 'psql', '-h', 'localhost', '-c', "create database \"" + dbName + "\";"
+        standardOutput = resultStream
+        errorOutput = resultStream
+    }
+
+    def result = resultStream.toString().trim()
+
+    if (result.contains('database "' + dbName + '" already exists')) {
+        println 'Already exists.'
+    } else if (result.contains("CREATE DATABASE")) {
+        println 'Created.'
+    } else {
+        throw new GradleException("FAILED:\n${result}")
     }
 }
 
 void grantPrivileges(dbName) {
     println 'Grant privileges on database ' + dbName
+    def resultStream = new ByteArrayOutputStream()
     exec {
         ignoreExitValue true
-        commandLine 'sudo', '-u', 'postgres', 'psql', '-c', "grant all privileges on database \"" + dbName + "\" to test;"
+        environment PGPASSWORD: "postgres"
+        commandLine 'sudo', '-E', '-u', 'postgres', 'psql', '-h', 'localhost', '-c', "grant all privileges on database \"" + dbName + "\" to test;"
+        standardOutput = resultStream
+        errorOutput = resultStream
+    }
+
+    def result = resultStream.toString().trim()
+
+    if (result.contains("GRANT")) {
+        println 'Granted.'
+    } else {
+        throw new GradleException("FAILED:\n${result}")
     }
 }
 

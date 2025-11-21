@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.ProfileManager;
@@ -98,11 +99,12 @@ public class TagBindingTest extends InterMineAPITestCase
 
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("TagBindingTest.xml");
-        String expectedXml = IOUtils.toString(is);
+        String expectedXml = normalise(IOUtils.toString(is));
 
-        String actualXml = sw.toString().trim();
-        System.out.println(normalise(actualXml));
-        assertEquals("actual and expected XML should be the same", normalise(expectedXml), normalise(actualXml));
+        String actualXml = normalise(sw.toString().trim());
+        Diff diff = XMLUnit.compareXML(expectedXml, actualXml);
+
+        assertTrue("actual and expected XML should be the same: " + diff.toString(), diff.similar());
     }
 
     private static String normalise(String x) {

@@ -15,7 +15,7 @@
       </saved-query>
     </queries>
     <template-queries>
-      <template name="template" title="ttitle" comment="tcomment">
+      <template name="template" title="ttitle" comment="tcomment" dataTypes="">
         <query name="template" model="testmodel" view="" longDescription=""></query>
       </template>
     </template-queries>
@@ -28,7 +28,7 @@
     </tags>
     <preferences></preferences><invitations></invitations>
   </userprofile>
-  <userprofile username="sally" password="sally_pass" 
+  <userprofile username="sally" password="sally_pass"
     localAccount="true" superUser="false">
     <bags>
       <bag name="bag2" type="Employee" date-created="1322666095854"
@@ -43,7 +43,7 @@
       </saved-query>
     </queries>
     <template-queries>
-      <template name="template" title="ttitle" comment="tcomment">
+      <template name="template" title="ttitle" comment="tcomment" dataTypes="">
         <query name="template" model="testmodel" view="" longDescription=""></query>
       </template>
     </template-queries>

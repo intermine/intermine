@@ -50,4 +50,4 @@ print(total_test_count, 'tests were run')
 
 if total_failure_count:
     print(total_failure_count, 'TESTS FAILED')
-    sys.exit(total_failure_count)
+    sys.exit(1)
