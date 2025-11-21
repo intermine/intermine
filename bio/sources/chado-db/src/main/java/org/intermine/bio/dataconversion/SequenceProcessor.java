@@ -1887,7 +1887,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting matches from the featureloc and feature tables.
-     * feature<->featureloc<->match_feature<->featureloc<->feature
+     * feature&lt;-&gt;featureloc&lt;-&gt;match_feature&lt;-&gt;featureloc&lt;-&gt;feature
      * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
