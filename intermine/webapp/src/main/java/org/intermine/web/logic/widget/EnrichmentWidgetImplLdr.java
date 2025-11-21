@@ -63,7 +63,6 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
      * @param filter An optional filter value.
      * @param extraCorrectionCoefficient if true correction coefficient has been selected
      * @param correctionCoefficient a instance of correction coefficient
-     * @param applyCorrectionCoefficient
      * @param ids list of IDs to analyse, use instead of intermine bag if bag is NULL
      * @param populationIds use instead of populationBag
      */

@@ -40,7 +40,7 @@ subprojects {
         bioModel
         mergeModel
     }
-    
+
     dependencies {
         compile group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.17.1'
         compile group: 'org.intermine', name: 'bio-core', version: System.getProperty("bioVersion"), transitive: false
@@ -50,7 +50,7 @@ subprojects {
         testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
-	
+
 	    // JAX-B dependencies for JDK 9+
     implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
     implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
@@ -74,7 +74,7 @@ subprojects {
             }
         }
     }
- 
+
     jar {
         exclude "intermine.properties"
     }
@@ -82,6 +82,15 @@ subprojects {
     // see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
+
+        // https://github.com/gradle/gradle/issues/2354
+        // The '-quiet' as second argument is actually a hack,
+        // since the one paramater addStringOption doesn't seem to
+        // work, we extra add '-quiet', which is added anyway by
+        // gradle. See https://github.com/gradle/gradle/issues/2354
+        // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
+        // for information about the -Xwerror option.
+        options.addStringOption('Xwerror', '-quiet')
     }
 
     if (it.name != 'bio-source-malaria-gff') {
@@ -115,7 +124,7 @@ subprojects {
             ]
         }
     }
-    
+
 
     checkstyleMain {
         source = fileTree('src/main') {

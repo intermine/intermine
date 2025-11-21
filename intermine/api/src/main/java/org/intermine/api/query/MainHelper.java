@@ -1082,7 +1082,7 @@ public final class MainHelper
 
     /**
      * Add a constraint code to a logic expression, ANDed with any constraints already in the
-     * expression, e.g. 'A OR B' + code C -> '(A OR B) AND C'. If the expression is null a new
+     * expression, e.g. 'A OR B' + code C -&gt; '(A OR B) AND C'. If the expression is null a new
      * expression is created.
      * @param logic an existing constraint logic
      * @param code the code to add
@@ -1099,7 +1099,7 @@ public final class MainHelper
     }
 
     /**
-     * Remove a constraint code from a logic expression, e.g. '(A OR B) AND C' -> 'B AND C'. If
+     * Remove a constraint code from a logic expression, e.g. '(A OR B) AND C' -&gt; 'B AND C'. If
      * there is only one code in the expression return null.
      * @param logic an existing constraint logic
      * @param code the code to remove

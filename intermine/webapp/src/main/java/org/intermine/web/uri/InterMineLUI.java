@@ -22,8 +22,8 @@ import java.util.Set;
  * InterMineLUI schema: className:identifier  where the identifier is the id
  * provided by the data source provider, in some cases, adapted with a prefix e.g.RGD:62030
  * Some examples:
- * humanmine.org/humanmine/protein:P31946-> InterMineLUI=protein:P31946
- * humanmine.org/humanmine/gene:RGD:62030-> InterMineLUI=gene:RGD:62030
+ * humanmine.org/humanmine/protein:P31946-&gt; InterMineLUI=protein:P31946
+ * humanmine.org/humanmine/gene:RGD:62030-&gt; InterMineLUI=gene:RGD:62030}
  *
  * @author danielabutano
  */
@@ -127,7 +127,7 @@ public class InterMineLUI
     }
 
     /**
-     * Returns the String which represents the InterMineLUI -> className:identifier
+     * Returns the String which represents the InterMineLUI -&gt; className:identifier
      * @return the string in the format className:identifier
      */
     public String toString() {

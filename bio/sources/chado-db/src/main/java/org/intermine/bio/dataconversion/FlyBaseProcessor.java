@@ -390,7 +390,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     /**
-     * Create a temporary table from pairs of insertions (eg. "FBti0027974" => "FBti0023081")
+     * Create a temporary table from pairs of insertions (eg. "FBti0027974" =&gt; "FBti0023081")
      * containing the feature_ids of the  pair (the object_id, subject_id in the relation table)
      * and the fmin and fmax of the first insertion in the pair (ie. the progenitor / object from
      * the feature_relationship table).
@@ -1648,7 +1648,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
 
     /**
-     * Return a result set containing pairs of insertion feature_ids (eg. for "FBti0027974" =>
+     * Return a result set containing pairs of insertion feature_ids (eg. for "FBti0027974" =&gt;
      * "FBti0023081") and the fmin and fmax of the first insertion in the pair (ie. the progenitor).
      * The second in the pair is the "Modified descendant of" the first.  The pairs are found using
      * the 'modified_descendant_of' relation type.  All insertions are from DrosDel.

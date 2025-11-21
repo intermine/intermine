@@ -288,7 +288,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * Return the interesting feature (EST, UST, RST, other?) matches
      * from the featureloc and feature tables.
      *
-     * feature<->featureloc<->match_feature<->featureloc<->feature
+     * feature&lt;-&gt;featureloc&lt;-&gt;match_feature&lt;-&gt;featureloc&lt;-&gt;feature
      * This is a protected method so that it can be overridden for testing
      * @param connection the database connection
      * @param featType the type of feature (EST,UST, etc)

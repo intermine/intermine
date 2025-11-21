@@ -373,14 +373,14 @@ public class Type
     }
 
     /**
-     * @see unused getter for WebConfig to work
+     * Unused getter for WebConfig to work
      * @return null
      */
     public String getMainTitles() {
         return null;
     }
     /**
-     * @see unused getter for WebConfig to work
+     * Unused getter for WebConfig to work
      * @return null
      */
     public String getSubTitles() {

@@ -325,7 +325,7 @@ public class TemplateAction extends InterMineAction
      * constraint defined in the current template
      * @param tf the actionform containing the value from the requst
      * @param template the current template
-     * @return Map<String, List<TemplateValue>
+     * @return Map&lt;String, List&lt;TemplateValue&gt;&gt;
      */
     protected Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
             TemplateQuery template) {

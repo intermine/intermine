@@ -13,10 +13,11 @@ package org.intermine.api.bag;
 import org.intermine.model.InterMineObject;
 
 /**
- * A class to represent the mapping between an object before type conversion and the converted
- * object.  This is returned when the key of the Map returned by getIssues() is TYPE_CONVERTED.
- * ie. getIssues() returns ["TYPE_CONVERTED" -> ["some message" -> ["input string" -> List of
- * ConvertedObjectPair objects]]].
+ * A class to represent the mapping between an object before type conversion and
+ * the converted object.  This is returned when the key of the Map returned by
+ * getIssues() is TYPE_CONVERTED.  ie. getIssues() returns ["TYPE_CONVERTED"
+ * -&gt; ["some message" -&gt; ["input string" -&gt; List of ConvertedObjectPair
+ * objects]]].
  * @author Kim Rutherford
  */
 public class ConvertedObjectPair

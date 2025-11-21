@@ -28,7 +28,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 /**
  * Web service that returns a table widget for a given list.
  * URL examples: get a TableWidget
- * /service/list/table?list=copy&widget=interactions
+ * /service/list/table?list=copy&amp;widget=interactions
  *
  * @author dbutano
  */

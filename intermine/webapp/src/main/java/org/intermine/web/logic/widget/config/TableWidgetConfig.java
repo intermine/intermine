@@ -133,28 +133,28 @@ public class TableWidgetConfig extends WidgetConfig
     }
 
     /**
-     * {@inheritDoc}
+     * @return the external link for this widget.
      */
     public String getExternalLink() {
         return externalLink;
     }
 
     /**
-     * {@inheritDoc}
+     * @parm externalLink
      */
     public void setExternalLink(String externalLink) {
         this.externalLink = externalLink;
     }
 
     /**
-     * {@inheritDoc}
+     * @return externalLinkLabel
      */
     public String getExternalLinkLabel() {
         return externalLinkLabel;
     }
 
     /**
-    * {@inheritDoc}
+    * @param externalLinkLabel
      */
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;

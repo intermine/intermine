@@ -49,8 +49,8 @@ public class InlineListConfig
     }
 
     /**
-     * Sets the amount of entries to show based on their total length
-     * @see the number is approximate as we do not break inside the text
+     * Sets the amount of entries to show based on their total length.
+     * The number is approximate as we do not break inside the text.
      * @param lineLength total character length (spaces, commas included!)
      */
     public void setLineLength(Integer lineLength) {
@@ -59,7 +59,7 @@ public class InlineListConfig
 
     /**
      *
-     * @see our JavaScript (jQuery) expects non set values to be "0"
+     * Our JavaScript (jQuery) expects non set values to be "0"
      * @return total character length (spaces, commas included) to show
      */
     public Integer getLineLength() {

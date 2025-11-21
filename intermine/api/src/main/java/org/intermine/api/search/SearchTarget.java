@@ -46,7 +46,7 @@ public final class SearchTarget
     /**
      * Constructor.
      *
-     * @see Scope.SCOPES
+     * @see Scope#SCOPES
      * @see TagTypes
      *
      * @param s One of the valid Scope.SCOPES

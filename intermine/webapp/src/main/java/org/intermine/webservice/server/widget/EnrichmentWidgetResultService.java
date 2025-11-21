@@ -43,7 +43,7 @@ import org.intermine.webservice.server.output.XMLFormatter;
  * Web service that returns the result of an enrichment calculation over a list
  * of objects.
  *
- * {@link WidgetsRequestProcessor} for parameter description
+ * {@link WidgetResultProcessor} for parameter description
  *
  * @author Alex Kalderimis
  * @author Xavier Watkins

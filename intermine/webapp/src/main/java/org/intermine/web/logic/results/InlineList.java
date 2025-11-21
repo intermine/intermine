@@ -121,7 +121,7 @@ public class InlineList
 
     /**
      *
-     * @see our JavaScript (jQuery) expects non set values to be "0"
+     * Our JavaScript (jQuery) expects non set values to be "0".
      * @return total character length (spaces, commas included) to show
      */
     public Integer getLineLength() {

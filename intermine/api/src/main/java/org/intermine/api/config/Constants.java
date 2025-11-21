@@ -35,7 +35,7 @@ public final class Constants
 
     /**
     * template to run to get map of values associated with this mine
-    * gene.organism --> gene.homologue.organism
+    * gene.organism --&gt; gene.homologue.organism
     */
     public static final String MAP_TEMPLATE = "im_available_homologues";
 

@@ -11,7 +11,7 @@ package org.intermine.webservice.server.core;
  */
 
 /**
- * A type for a function from A -> B.
+ * A type for a function from A -&gt; B.
  * @author Alex Kalderimis
  *
  * @param <A> The input type.

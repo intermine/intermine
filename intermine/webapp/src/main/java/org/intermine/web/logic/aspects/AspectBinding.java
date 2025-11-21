@@ -27,7 +27,7 @@ import org.xml.sax.SAXException;
 /**
  * Routines for unmarshaling Aspect objects from XML.
  *
- * @see org.intermine.web.dataset.Aspect
+ * @see org.intermine.web.logic.aspects.Aspect
  * @author Thomas Riley
  */
 public final class AspectBinding

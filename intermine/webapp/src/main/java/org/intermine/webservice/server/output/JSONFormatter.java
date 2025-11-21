@@ -63,7 +63,7 @@ public class JSONFormatter extends Formatter
     public static final String KEY_HEADER_OBJS = "headerObjs";
     /**
      * A map of optional key value pairs that should go in the header of the object.
-     * The map should be of type Map<String, String> - woe betide you if you violate
+     * The map should be of type Map&lt;String, String&gt; - woe betide you if you violate
      * this stern imprecation.
      */
     public static final String KEY_KV_PAIRS = "key_value_pairs";
@@ -226,7 +226,7 @@ public class JSONFormatter extends Formatter
      *      in processing this request, or null if there was none
      * @param errorCode The status code for the request (200 on success)
      *
-     * @see org.intermine.webservice.server.output.Formatter#formatFooter()
+     * @see org.intermine.webservice.server.output.Formatter#formatFooter(String, int)
      * @return The formatted footer string.
      */
     @Override
@@ -246,7 +246,7 @@ public class JSONFormatter extends Formatter
      * @param errorCode The status code for the request (200 on success)
      * @param now The execution time to be displayed
      *
-     * @see org.intermine.webservice.server.output.Formatter#formatFooter()
+     * @see org.intermine.webservice.server.output.Formatter#formatFooter(String, int)
      * @return The formatted footer string.
      */
     public String formatFooter(String errorMessage, int errorCode, Date now) {

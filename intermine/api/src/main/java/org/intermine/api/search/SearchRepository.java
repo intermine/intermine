@@ -129,7 +129,7 @@ public abstract class SearchRepository implements WebSearchWatcher
     }
 
     /**
-     * Get a map from name -> object for all the websearchables of the given type.
+     * Get a map from name -&gt; object for all the websearchables of the given type.
      * @param type A valid TagType.
      * @return A new unmodifiable map containing the requested information.
      */

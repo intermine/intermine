@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Configuration of an object (Type) header when displayed on report
- * @see bear in mind that we can apply special formatting to the paths, by adding [] or **
+ * Configuration of an object (Type) header when displayed on report.
+ * Bear in mind that we can apply special formatting to the paths, by adding [] or **
  * characters towards the beginning/end of the path and ReportObject needs to deal with that!
  * @author radek
  *
@@ -49,7 +49,8 @@ public class HeaderConfigTitle
     public static final String[] TYPES = new String[] {MAIN, SUB};
 
     /**
-     * Set main title(s) path(s) for the object, e.g.: symbol, primaryIdentifier => eve FBgn0000606
+     * Set main title(s) path(s) for the object, e.g.:
+     * symbol, primaryIdentifier=&gt; eve FBgn0000606
      * @param mainTitles a '|' delineated string of paths
      */
     public void setMainTitles(String mainTitles) {
@@ -57,7 +58,7 @@ public class HeaderConfigTitle
     }
 
     /**
-     * Set subtitle(s) path(s) for the object, e.g.: organism.shortName => D. melanogaster
+     * Set subtitle(s) path(s) for the object, e.g.: organism.shortName =&gt; D. melanogaster
      * @param subTitles a '|' delineated string of paths
      */
     public void setSubTitles(String subTitles) {
@@ -75,7 +76,7 @@ public class HeaderConfigTitle
     /**
      *
      * @return number of main titles to show at the maximum
-     * @see one might not want to show primaryId if we have a symbol etc.
+     * one might not want to show primaryId if we have a symbol etc.
      */
     public Integer getNumberOfMainTitlesToShow() {
         return this.numberOfMainTitlesToShow;

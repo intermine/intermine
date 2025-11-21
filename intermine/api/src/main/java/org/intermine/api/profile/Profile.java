@@ -230,7 +230,6 @@ public class Profile
 
     /**
      * Return a first part of the username before the "@" sign (used in metabolicMine)
-     * @author radek
      *
      * @return String
      */

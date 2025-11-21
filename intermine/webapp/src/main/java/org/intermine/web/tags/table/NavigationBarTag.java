@@ -48,7 +48,7 @@ public class NavigationBarTag extends SimpleTagSupport
      * According pageSize and currentPage parameter navigation bar
      * computes link to following and previous page.
      * example of base link: http://localhost:8080/query/data/template/results?name=
-     *      AllGene_Chromosome&op1=eq&value1=Drosophila+melanogaster&size=10
+     *      AllGene_Chromosome&amp;op1=eq&amp;value1=Drosophila+melanogaster&amp;size=10
      * <b>Important:</b> baseLink can't contain size or start parameter
      * @throws IOException if some error happens
      */

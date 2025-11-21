@@ -49,7 +49,6 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Mark Woodbridge
  * @author Thomas Riley
  * @see org.intermine.web.struts.QueryBuilderConstraintController
- * @see org.intermine.web.struts.QueryBuilderPathsController
  */
 public class QueryBuilderController extends TilesAction
 {

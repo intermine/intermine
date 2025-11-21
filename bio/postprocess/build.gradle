@@ -36,7 +36,7 @@ subprojects {
     configurations {
         mergeModel
     }
-    
+
     dependencies {
         compile group: 'org.intermine', name: 'bio-core', version: System.getProperty("bioVersion"), transitive: false
         compile group : "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion") // log4j
@@ -63,7 +63,7 @@ subprojects {
             }
         }
     }
- 
+
     jar {
         exclude "intermine.properties"
     }
@@ -71,6 +71,15 @@ subprojects {
     // see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
+
+        // https://github.com/gradle/gradle/issues/2354
+        // The '-quiet' as second argument is actually a hack,
+        // since the one paramater addStringOption doesn't seem to
+        // work, we extra add '-quiet', which is added anyway by
+        // gradle. See https://github.com/gradle/gradle/issues/2354
+        // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
+        // for information about the -Xwerror option.
+        options.addStringOption('Xwerror', '-quiet')
     }
 
     checkstyle {

@@ -71,7 +71,8 @@ public class InlineResultsTableRow
     /**
      * Used from JSP
      *
-     * @see getResultElementRows() in InlineResultsTable as to how this is set
+     * @see org.intermine.web.logic.results.InlineResultsTable#getResultElementRows()
+     * as to how this is set.
      * @return InterMine Object id
      */
     public Object getObjectId() {

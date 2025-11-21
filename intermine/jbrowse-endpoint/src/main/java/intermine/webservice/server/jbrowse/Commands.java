@@ -50,8 +50,8 @@ public final class Commands
     /**
      *  return null if not a suitable command.
      *
-     * Interprets commands such as: /7227/features/X?start=100&end=200&type=Gene
-     * as /(domain)/(action)/(section)?start=(start)&end=(end)&type=(featureType)
+     * Interprets commands such as: /7227/features/X?start=100&amp;end=200&amp;type=Gene
+     * as /(domain)/(action)/(section)?start=(start)&amp;end=(end)&amp;type=(featureType)}
      * See: http://gmod.org/wiki/JBrowse_Configuration_Guide
      * #Writing_JBrowse-compatible_Web_Services
      *

@@ -34,7 +34,7 @@ public class TableTag extends SimpleTagSupport
 
     /**
      * @return true if column names should be formatted from
-     * 'Gene.name' to 'Gene > name' else false
+     * {@code Gene.name} to {@code Gene &gt; name} else false
      */
     public boolean isTreatColNames() {
         return treatColNames;
