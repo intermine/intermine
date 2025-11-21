@@ -58,7 +58,7 @@ public class HeaderConfigTitle
     }
 
     /**
-     * Set subtitle(s) path(s) for the object, e.g.: organism.shortName => D. melanogaster
+     * Set subtitle(s) path(s) for the object, e.g.: organism.shortName =&gt; D. melanogaster
      * @param subTitles a '|' delineated string of paths
      */
     public void setSubTitles(String subTitles) {

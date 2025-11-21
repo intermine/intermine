@@ -402,12 +402,13 @@ public final class PathQueryResultHelper
     }
 
     /**
-     * Get the view for a path query reformatted to obey the labels given in webconfig.
-     * So if Employee has the alias "Arbeitnehmer", department the alias "Abteilung", then
-     * Employee.department.name would become "Arbeitnehmer > Abteilung > Name". Also,
-     * camel-cased names will be decamelised, so "Contractor.oldCompanys.vatNumber" would become
-     * "Contractor > Old Companys > Vat Number". ("VAT Number" can be achieved if that field is
-     * labelled as such).
+     * Get the view for a path query reformatted to obey the labels given in
+     * webconfig.  So if {@code Employee} has the alias {@code Arbeitnehmer},
+     * department the alias {@code Abteilung}, then Employee.department.name
+     * would become {@code Arbeitnehmer &gt; Abteilung &gt; Name}. Also, camel-cased
+     * names will be decamelised, so {@code Contractor.oldCompanys.vatNumber}
+     * would become {@code Contractor &gt; Old Companys &gt; Vat Number}. {@code VAT
+     * Number} can be achieved if that field is labelled as such).
      *
      * @param pq The pathquery whose views to get.
      * @param webConfig The Web-Configuration

@@ -63,7 +63,7 @@ public class JSONFormatter extends Formatter
     public static final String KEY_HEADER_OBJS = "headerObjs";
     /**
      * A map of optional key value pairs that should go in the header of the object.
-     * The map should be of type Map<String, String> - woe betide you if you violate
+     * The map should be of type Map&lt;String, String&gt; - woe betide you if you violate
      * this stern imprecation.
      */
     public static final String KEY_KV_PAIRS = "key_value_pairs";
