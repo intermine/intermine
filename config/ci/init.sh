@@ -82,7 +82,7 @@ else
             # We need the imjs code to exercise the webservices
             $GIT_GET https://github.com/intermine/imjs.git client-JS
         elif [[ "$CLIENT" = "PY" ]]; then
-            $GIT_GET -b python310-dev https://github.com/ucam-department-of-psychiatry/intermine-ws-python client-PY
+            $GIT_GET -b dev https://github.com/ucam-department-of-psychiatry/intermine-ws-python client-PY
         fi
     fi
 fi
