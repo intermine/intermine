@@ -190,7 +190,7 @@ public final class TypeConverter
 
     /**
      * Return a Map from typeB to a TemplateQuery that will convert from typeA to typeB.
-     * TODO: return a map of Class<InterMineObject> -> ApiTemplates
+     * TODO: return a map of {@code Class<InterMineObject>} -&gt; {@code ApiTemplate}
      *
      * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
