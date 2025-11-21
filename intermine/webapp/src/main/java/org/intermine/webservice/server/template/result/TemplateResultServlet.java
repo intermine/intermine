@@ -17,7 +17,7 @@ import org.intermine.webservice.server.core.WebServiceServlet;
 /**
  * Runs TemplateResultService web service.
  *
- * @see org.intermine.webservice.query.result.TemplateResultService
+ * @see org.intermine.webservice.server.template.result.TemplateResultService
  * @author Alex Kalderimis
  */
 public class TemplateResultServlet extends WebServiceServlet

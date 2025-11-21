@@ -31,7 +31,7 @@ import java.io.IOException;
 /**
  * Filter applied to all the requests to the InterMine server in order
  * to catch the requests with permanent URL and redirect to the report page.
- * Example: humanmine.org/humanmine/protein:P31946 -> humanmine.org/humanmine/report.do?id=1234567
+ * e.g. humanmine.org/humanmine/protein:P31946 -&gt; humanmine.org/humanmine/report.do?id=1234567
  *
  * @author danielabutano
  */

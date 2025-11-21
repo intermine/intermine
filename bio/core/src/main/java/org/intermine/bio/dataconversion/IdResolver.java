@@ -349,7 +349,7 @@ public class IdResolver
 
     /**
      * Get a set of keys (taxon id + class name) resolver holds
-     * @return a set of MultiKey, parse it to use, e.g. Map<taxonid, Set<clsName>>
+     * @return a set of MultiKey, parse it to use, e.g. {@code Map<taxonid, Set<clsName>>}
      */
     public Map<String, Set<String>> getTaxonsAndClassNames() {
         Map<String, Set<String>> taxonIdAndClsNameMap = new HashMap<String, Set<String>>();

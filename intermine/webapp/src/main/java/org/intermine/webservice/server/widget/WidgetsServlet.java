@@ -18,8 +18,8 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
 
 /**
- * Servlet running WidgetsService.
- * @see org.intermine.webservice.lists.WidgetsService for more information.
+ * Servlet running EnrichmentWidgetResultService.
+ * @see org.intermine.webservice.server.widget.EnrichmentWidgetResultService for more information.
  * @author "Xavier Watkins"
  *
  */

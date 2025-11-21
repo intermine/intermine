@@ -486,7 +486,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * {@inheritDoc}
+     * Get the maximum time in milliseconds that the optimiser should spend parsing a query from
+     * SQL string to an org.intermine.sql.Query object.
+     * @return the max query parse time
      */
     public Long getMaxQueryParseTime() {
         return maxQueryParseTime;

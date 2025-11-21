@@ -552,7 +552,8 @@ public class IsaConverter extends BioFileConverter
 
 
     /**
-     * {@inheritDoc}
+     * storeProtocols
+     * @throws ObjectStoreException if something goes wrong
      */
     public void storeProtocols() throws ObjectStoreException {
         // to move with protocols probably, in line with other cases

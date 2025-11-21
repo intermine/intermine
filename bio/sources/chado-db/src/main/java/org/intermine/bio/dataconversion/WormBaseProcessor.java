@@ -122,7 +122,7 @@ public class WormBaseProcessor extends SequenceProcessor
 
     /**
      * Process the identifier and return a "cleaned" version.  For WormBase, remove the class name
-     * prefix on identifiers from the uniqueName in the feature table ("Gene:WBGene00023466" ->
+     * prefix on identifiers from the uniqueName in the feature table ("Gene:WBGene00023466" -&gt;
      * "WBGene00023466")
      * @param fdat the FeatureData object
      * @param identifier the identifier

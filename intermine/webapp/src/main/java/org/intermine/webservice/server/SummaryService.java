@@ -46,8 +46,7 @@ public class SummaryService extends JSONService
     }
 
     /**
-     * @see org.intermine.webservice.server.WebService#execute(
-     * javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.intermine.webservice.server.WebService#execute()
      * @throws Exception if anything goes wrong
      */
     @Override
@@ -94,4 +93,3 @@ public class SummaryService extends JSONService
     }
 
 }
-

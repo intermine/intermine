@@ -226,7 +226,7 @@ public class JSONFormatter extends Formatter
      *      in processing this request, or null if there was none
      * @param errorCode The status code for the request (200 on success)
      *
-     * @see org.intermine.webservice.server.output.Formatter#formatFooter()
+     * @see org.intermine.webservice.server.output.Formatter#formatFooter(String, int)
      * @return The formatted footer string.
      */
     @Override
@@ -246,7 +246,7 @@ public class JSONFormatter extends Formatter
      * @param errorCode The status code for the request (200 on success)
      * @param now The execution time to be displayed
      *
-     * @see org.intermine.webservice.server.output.Formatter#formatFooter()
+     * @see org.intermine.webservice.server.output.Formatter#formatFooter(String, int)
      * @return The formatted footer string.
      */
     public String formatFooter(String errorMessage, int errorCode, Date now) {

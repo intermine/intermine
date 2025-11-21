@@ -205,9 +205,9 @@ public class ModelUpdate
 
     /**
      * Update bags, savedquery and savedtemplatequery
-     * if class has been renamed -> update type bags, update savedquery and savedtemplatequery
-     * if a field has been renamed -> update savedquery and savedtemplatequery
-     * if class has been deleted -> delete bags with that type
+     * if class has been renamed: update type bags, update savedquery and savedtemplatequery
+     * if a field has been renamed: update savedquery and savedtemplatequery
+     * if class has been deleted: delete bags with that type
      * @throws PathException if path is wrong
      */
     public void update() throws PathException {

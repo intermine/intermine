@@ -216,7 +216,7 @@ public final class Constants
      * 27 - Renamed xml parameter to query #1676
      * 28 - Added system templates #1726
      * 29 - Add template tagging
-     * 30 - Jaccard Index,  Add semantic markup endpoints & permanent URL
+     * 30 - Jaccard Index,  Add semantic markup endpoints and permanent URL
      * 31 - Login/Logout/Change password, simplified markup endpoints
      * 32 - Added the mandatory input type to the chart graphs when ids is used
      * 33 - Added precompute and summarize templates

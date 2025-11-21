@@ -15,7 +15,7 @@ package org.intermine.web.logic.aspects;
  * hyperlinks are displayed on data set homepages.
  *
  * @author Thomas Riley
- * @see org.intermine.web.dataset.Aspect
+ * @see org.intermine.web.logic.aspects.Aspect
  */
 public class AspectSource
 {

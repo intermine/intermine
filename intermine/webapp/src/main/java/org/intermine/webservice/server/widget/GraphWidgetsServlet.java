@@ -19,7 +19,7 @@ import org.intermine.web.context.InterMineContext;
 
 /**
  * Servlet running WidgetsService.
- * @see org.intermine.webservice.lists.WidgetsService for more information.
+ * @see org.intermine.webservice.server.widget.GraphService for more information.
  * @author Alex Kalderimis
  *
  */

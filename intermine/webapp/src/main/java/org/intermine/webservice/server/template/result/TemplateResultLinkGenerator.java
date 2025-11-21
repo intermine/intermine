@@ -89,7 +89,6 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
 
     /**
      * Returns link which gives results as lines, where values are tab separated.
-      @see #getLink(String, TemplateQuery)
      * @param baseUrl base url
      * @param template template
      * @return a url

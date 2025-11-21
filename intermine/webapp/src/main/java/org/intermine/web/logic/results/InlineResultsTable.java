@@ -167,7 +167,7 @@ public class InlineResultsTable
     }
 
     /**
-    * @see the reason for retrieving types for Reference here is that
+    *  The reason for retrieving types for Reference here is that
     *  PathQueryResultHelper.queryForTypesInCollection() does not work
     *  for References (obviously)
     *
@@ -191,8 +191,8 @@ public class InlineResultsTable
     /**
      *
      * @return true if the table has more than one Type of object
-     * @see bear in mind that this method will return true if there are different Types in the
-     *  whole table, not just the "30" odd rows subset!
+     * Bear in mind that this method will return true if there are different
+     * Types in the whole table, not just the "30" odd rows subset!
      */
     public Boolean getHasMoreThanOneType() {
         return (getListOfTypes().size() > 1);
@@ -289,9 +289,9 @@ public class InlineResultsTable
     /**
      * Main method used from report to resolve a tablefull of ResultElements
      *
-     * @see this method partly uses Template Pattern, check that calls to table row objects are
-     *  made generic as BagUploadConfirm AND ReportPage both use this method while using different
-     *  types of table row objects
+     * This method partly uses Template Pattern, check that calls to table row objects are
+     * made generic as BagUploadConfirm AND ReportPage both use this method while using different
+     * types of table row objects
      * @return a list of lists of ResultElements
      */
     public List<Object> getResultElementRows() {

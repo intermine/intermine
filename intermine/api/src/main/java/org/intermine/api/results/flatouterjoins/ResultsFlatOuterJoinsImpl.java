@@ -91,7 +91,11 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
     }
 
     /**
-     * {@inheritDoc}
+     * Returns an iterator over the List, starting from the given position.
+     * This method is mainly useful for testing.
+     *
+     * @param index the index of the first object to be fetched
+     * @return an Interator
      */
     public Iterator<MultiRow<ResultsRow<MultiRowValue>>> iteratorFrom(int index) {
         if (((List) orig) instanceof Results) {
