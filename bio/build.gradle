@@ -11,7 +11,6 @@ subprojects {
     targetCompatibility = 1.8
 
     repositories {
-        mavenLocal()
         mavenCentral()
         maven {
             url 'https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/'

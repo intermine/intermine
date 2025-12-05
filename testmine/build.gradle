@@ -13,7 +13,6 @@ subprojects {
     targetCompatibility = 1.8
 
     repositories {
-        mavenLocal()
         mavenCentral()
         maven {
             url 'http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'

@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
     }
     dependencies {
@@ -73,5 +72,3 @@ jar {
     }
     exclude 'genomic_model.xml'
 }
-
-
