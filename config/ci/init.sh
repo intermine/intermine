@@ -56,7 +56,7 @@ else
 
     if [[ "$TEST_SUITE" = "bio" ]]; then
         (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install --info)
-        (cd "${WORKSPACE_DIR}"/intermine && ./gradlew install --info)
+        (cd "${WORKSPACE_DIR}"/intermine && ./gradlew intermine-webapp:war --info)
     fi
 
     if [[ "$TEST_SUITE" = "ws" ]]; then
