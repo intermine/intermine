@@ -54,6 +54,10 @@ else
     # Install lib requirements
     ${PYTHON} -m pip install -r "${WORKSPACE_DIR}"/config/lib/requirements.txt
 
+    if [[ "$TEST_SUITE" = "bio" ]]; then
+        (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
+    fi
+
     if [[ "$TEST_SUITE" = "ws" ]]; then
 
         # install everything first. we don't want to test what's in maven
