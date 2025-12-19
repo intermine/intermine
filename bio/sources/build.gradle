@@ -23,10 +23,6 @@ ext {
     // set here to make available to individual bio-sources
     bioVersion = System.getProperty("bioVersion")
     imVersion = System.getProperty("imVersion")
-
-    propertyFileName = "intermine-bio.properties"
-    propertyFile = "${System.env.HOME}/.intermine/$propertyFileName"
-    println "Using properties file: '$propertyFile'"
 }
 
 subprojects {
@@ -43,19 +39,13 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
-    // java.utils.Properties so getProperty() returns null if it doesn't exist
-    def props = new Properties()
-
-    // read in mine.properties to get the contextPath
-    file(propertyFile).withInputStream { props.load(it) }
-
     // -------------------------
     // Build localDirs list
     // -------------------------
 
     def intermineLocalDirs = []
-    def intermineRootDir = props.getProperty("development.intermineRootDir")
-    def intermineModules = props.getProperty("development.intermineModules")
+    def intermineRootDir = intermine.development.intermineRootDir
+    def intermineModules = intermine.development.intermineModules
 
     if (intermineRootDir && intermineModules) {
         println "Using intermineRootDir: $intermineRootDir"
@@ -69,8 +59,8 @@ subprojects {
     }
 
     def bioLocalDirs = []
-    def bioRootDir = props.getProperty("development.bioRootDir")
-    def bioModules = props.getProperty("development.bioModules")
+    def bioRootDir = intermine.development.bioRootDir
+    def bioModules = intermine.development.bioModules
 
     if (bioRootDir && bioModules) {
         def modules = bioModules.split(',').collect { it.trim() }.findAll { it }
