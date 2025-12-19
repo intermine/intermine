@@ -218,3 +218,6 @@ out/
 
 solr-*.tgz
 solr-*/
+
+# Silver searcher
+.ignore
