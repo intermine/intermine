@@ -56,6 +56,7 @@ else
 
     if [[ "$TEST_SUITE" = "bio" ]]; then
         (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install --info)
+        (cd "${WORKSPACE_DIR}"/plugin && ./gradlew war --info)
         echo "Plugin built."
         echo "${WORKSPACE_DIR}"/plugin/build/libs
         ls -l "${WORKSPACE_DIR}"/plugin/build/libs
