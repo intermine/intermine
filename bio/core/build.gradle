@@ -1,7 +1,9 @@
 buildscript {
     repositories {
         ivy {
-            url "file:///home/martinb/workspace/intermine/plugin/build/libs"
+            // define in ~/.gradle/gradle.properties
+            // intermine.plugin.repo=file:///your/intermine/repo/plugin/build/libs
+            url intermine.plugin.repo
             layout "pattern", {
                 artifact "[artifact]-[revision].[ext]"
             }
