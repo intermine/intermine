@@ -17,12 +17,26 @@ echo "RUNNING test suite $TEST_SUITE"
 
 export ANT_OPTS='-server'
 
-if [ "$TEST_SUITE" = "intermine" ]; then
-    echo "RUNNING intermine unit tests"
-    (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
+gradlew_install() {
+    local dir=$1
+
+    (cd "${WORKSPACE_DIR}/$dir" && ./gradlew install)
+}
+
+gradlew_build() {
     # Add --rerun-tasks below to force rebuild
     # Add --info --stacktrace for more useful information when debugging
-    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew build)
+    # && ./gradlew clean if things look a bit broken (also killall java and rm -r ~/.gradle/caches)
+
+    local dir=$1
+
+    (cd "${WORKSPACE_DIR}/$dir" && ./gradlew build --warning-mode all --stacktrace)
+}
+
+if [ "$TEST_SUITE" = "intermine" ]; then
+    echo "RUNNING intermine unit tests"
+    gradlew_install plugin
+    gradlew_install intermine
 
     echo CHECKING results
     "${WORKSPACE_DIR}"/config/lib/parse_test_report.py "${WORKSPACE_DIR}/intermine"
@@ -30,16 +44,16 @@ if [ "$TEST_SUITE" = "intermine" ]; then
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "bio" ]; then
     echo "RUNNING bio unit tests"
-    (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/bio && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/bio/sources && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/bio/postprocess && ./gradlew install)
+    gradlew_install plugin
+    gradlew_install intermine
+    gradlew_install bio
+    gradlew_install bio/sources
+    gradlew_install /bio/postprocess
 
-    (cd "${WORKSPACE_DIR}"/bio && ./gradlew build)
-    (cd "${WORKSPACE_DIR}"/bio/sources && ./gradlew build)
-    (cd "${WORKSPACE_DIR}"/bio/postprocess && ./gradlew build)
-    (cd "${WORKSPACE_DIR}"/bio/postprocess-test && ./gradlew build)
+    gradlew_build bio
+    gradlew_build bio/sources
+    gradlew_build bio/postprocess
+    gradlew_build bio/postprocess-test
 
     echo CHECKING results
     "${WORKSPACE_DIR}"/config/lib/parse_test_report.py "${WORKSPACE_DIR}/bio"
