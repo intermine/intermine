@@ -1,6 +1,13 @@
+ext {
+  propertyFileName = "intermine-bio.properties"
+  propertyFile = "${System.env.HOME}/.intermine/$propertyFileName"
+  println "Using properties file: '$propertyFile'"
+}
+
+
 subprojects {
     group = 'org.intermine'
-    version '5.1.0'
+    version '5.1.1'
 
     apply plugin: "java"
     apply plugin: "maven"
@@ -10,7 +17,47 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+    // java.utils.Properties so getProperty() returns null if it doesn't exist
+    def props = new Properties()
+
+    // read in mine.properties to get the contextPath
+    file(propertyFile).withInputStream { props.load(it) }
+
+    // -------------------------
+    // Build localDirs list
+    // -------------------------
+
+    def intermineLocalDirs = []
+    def intermineRootDir = props.getProperty("development.intermineRootDir")
+    def intermineModules = props.getProperty("development.intermineModules")
+
+    if (intermineRootDir && intermineModules) {
+        println "Using intermineRootDir: $intermineRootDir"
+
+        def modules = intermineModules.split(',').collect { it.trim() }.findAll { it }
+        intermineLocalDirs = modules.collect {
+            module -> "${intermineRootDir}/${module}/build/libs"
+        }
+
+        println "Using intermineLocalDirs: $intermineLocalDirs"
+    }
+
+    def localDirs = intermineLocalDirs
+    println "Using localDirs: $localDirs"
+
     repositories {
+        // Prefer locally-built InterMine artifacts
+        localDirs.each { dir ->
+            ivy {
+                url "file://" + dir
+                layout "pattern", {
+                    artifact  "[artifact]-[revision].[ext]"
+                }
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
         mavenCentral()
         maven {
             url 'https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/'

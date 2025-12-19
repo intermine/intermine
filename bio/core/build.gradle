@@ -1,5 +1,15 @@
 buildscript {
     repositories {
+        ivy {
+            url "file:///home/martinb/workspace/intermine/plugin/build/libs"
+            layout "pattern", {
+                artifact "[artifact]-[revision].[ext]"
+            }
+            metadataSources {
+                artifact()
+            }
+        }
+
         mavenCentral()
     }
     dependencies {
@@ -36,9 +46,15 @@ configurations {
 }
 
 dependencies {
-    compile group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")
-    compile group: "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion") // idresolver needs db
     compile group: "org.intermine", name: "intermine-api", version: System.getProperty("imVersion")
+    compile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion")
+    compile group: "org.intermine", name: "intermine-model", version: System.getProperty("imVersion")
+    compile group: "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion") // idresolver needs db
+    compile group: "org.intermine", name: "intermine-pathquery", version: System.getProperty("imVersion")
+    compile group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.17.1'
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 
     provided fileTree(dir: 'libs', include: '*.jar') // obo and bbop not available in the public maven repo
     testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
