@@ -55,7 +55,10 @@ else
     ${PYTHON} -m pip install -r "${WORKSPACE_DIR}"/config/lib/requirements.txt
 
     if [[ "$TEST_SUITE" = "bio" ]]; then
-        (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
+        (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install --info)
+        echo "Plugin built."
+        echo "${WORKSPACE_DIR}"/plugin/build/libs
+        ls -l "${WORKSPACE_DIR}"/plugin/build/libs
     fi
 
     if [[ "$TEST_SUITE" = "ws" ]]; then
