@@ -44,8 +44,8 @@ subprojects {
     // -------------------------
 
     def intermineLocalDirs = []
-    def intermineRootDir = intermine.development.intermineRootDir
-    def intermineModules = intermine.development.intermineModules
+    def intermineRootDir = project.getProperty("intermine.development.intermineRootDir")
+    def intermineModules = project.getProperty("intermine.development.intermineModules")
 
     if (intermineRootDir && intermineModules) {
         println "Using intermineRootDir: $intermineRootDir"
@@ -59,8 +59,8 @@ subprojects {
     }
 
     def bioLocalDirs = []
-    def bioRootDir = intermine.development.bioRootDir
-    def bioModules = intermine.development.bioModules
+    def bioRootDir = project.getProperty("intermine.development.bioRootDir")
+    def bioModules = project.getProperty("intermine.development.bioModules")
 
     if (bioRootDir && bioModules) {
         def modules = bioModules.split(',').collect { it.trim() }.findAll { it }

@@ -15,8 +15,8 @@ subprojects {
     // -------------------------
 
     def intermineLocalDirs = []
-    def intermineRootDir = project.findProperty("intermine.development.intermineRootDir")
-    def intermineModules = project.findProperty("intermine.development.intermineModules")
+    def intermineRootDir = project.getProperty("intermine.development.intermineRootDir")
+    def intermineModules = project.getProperty("intermine.development.intermineModules")
 
     if (intermineRootDir && intermineModules) {
         println "Using intermineRootDir: $intermineRootDir"
