@@ -38,7 +38,7 @@ subprojects {
             ivy {
                 url "file://" + dir
                 layout "pattern", {
-                    artifact  "[artifact]-[revision].[ext]"
+                    artifact  "[artifact]-[revision](-[classifier]).[ext]"
                 }
                 metadataSources {
                     artifact()
