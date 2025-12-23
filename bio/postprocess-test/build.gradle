@@ -48,14 +48,10 @@ subprojects {
     def intermineModules = project.getProperty("intermine.development.intermineModules")
 
     if (intermineRootDir && intermineModules) {
-        println "Using intermineRootDir: $intermineRootDir"
-
         def modules = intermineModules.split(',').collect { it.trim() }.findAll { it }
         intermineLocalDirs = modules.collect {
             module -> "${intermineRootDir}/${module}/build/libs"
         }
-
-        println "Using intermineLocalDirs: $intermineLocalDirs"
     }
 
     def bioLocalDirs = []
@@ -70,8 +66,6 @@ subprojects {
     }
 
     def localDirs = intermineLocalDirs + bioLocalDirs
-    println "Using localDirs: $localDirs"
-
     repositories {
         // Prefer locally-built InterMine artifacts
         localDirs.each { dir ->
