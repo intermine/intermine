@@ -1,5 +1,17 @@
 buildscript {
     repositories {
+        ivy {
+            // define in ~/.gradle/gradle.properties
+            // intermine.plugin.repo=file:///your/intermine/repo/plugin/build/libs
+            url project.getProperty("intermine.plugin.repo")
+            layout "pattern", {
+                artifact  "[artifact]-[revision].[ext]"
+            }
+            metadataSources {
+                artifact()
+            }
+        }
+
         mavenCentral()
     }
     dependencies {
