@@ -39,7 +39,52 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+    // -------------------------
+    // Build localDirs list
+    // -------------------------
+
+    def intermineLocalDirs = []
+    def intermineRootDir = project.getProperty("intermine.development.intermineRootDir")
+    def intermineModules = project.getProperty("intermine.development.intermineModules")
+
+    if (intermineRootDir && intermineModules) {
+        println "Using intermineRootDir: $intermineRootDir"
+
+        def modules = intermineModules.split(',').collect { it.trim() }.findAll { it }
+        intermineLocalDirs = modules.collect {
+            module -> "${intermineRootDir}/${module}/build/libs"
+        }
+
+        println "Using intermineLocalDirs: $intermineLocalDirs"
+    }
+
+    def bioLocalDirs = []
+    def bioRootDir = project.getProperty("intermine.development.bioRootDir")
+    def bioModules = project.getProperty("intermine.development.bioModules")
+
+    if (bioRootDir && bioModules) {
+        def modules = bioModules.split(',').collect { it.trim() }.findAll { it }
+        bioLocalDirs = modules.collect {
+            module -> "${bioRootDir}/${module}/build/libs"
+        }
+    }
+
+    def localDirs = intermineLocalDirs + bioLocalDirs
+    println "Using localDirs: $localDirs"
+
     repositories {
+        // Prefer locally-built InterMine artifacts
+        localDirs.each { dir ->
+            ivy {
+                url "file://" + dir
+                layout "pattern", {
+                    artifact  "[artifact]-[revision](-[classifier]).[ext]"
+                }
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
         mavenCentral()
     }
 
