@@ -186,7 +186,7 @@ task insertUserData() {
 
 
 task createSearchIndex {
-    description "Generate the lucene keyword serach index"
+    description "Generate the lucene keyword search index"
     dependsOn 'copyDefaultProperties', 'copyMineProperties', 'copyTestModel'
 
     doLast {
