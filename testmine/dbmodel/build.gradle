@@ -19,6 +19,7 @@ dependencies {
     compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
     compile group: 'antlr', name: 'antlr', version: '2.7.6'
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0', transitive: false
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
     testModelProps group: "org.intermine", name: "intermine-testresources", version: imVersion, transitive: false
 }
