@@ -13,6 +13,7 @@ configurations {
 }
 
 dependencies {
+    compile group: "org.intermine", name: "intermine-model", version: imVersion
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     compile group: "org.intermine", name: "intermine-api", version: imVersion
     compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
@@ -78,7 +79,7 @@ void insertDataUnitTest() {
             dirset(dir: "$buildDir") // intermine.properties
             dirset(dir: 'build/resources/main') // intermine.properties
         }
-    }   
+    }
     ant.insertDataUnittest(integrationWriter: 'integration.unittestmulti', xmlResource: "testmodel_webapp_data.xml", sourceName: "testsource", sourceType: "testsource")
 }
 
