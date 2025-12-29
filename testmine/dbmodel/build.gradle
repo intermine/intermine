@@ -18,6 +18,7 @@ dependencies {
     compile group: "org.intermine", name: "intermine-api", version: imVersion
     compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
     compile group: 'antlr', name: 'antlr', version: '2.7.6'
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
     testModelProps group: "org.intermine", name: "intermine-testresources", version: imVersion, transitive: false
 }
 
