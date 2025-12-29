@@ -12,14 +12,42 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+    // -------------------------
+    // Build localDirs list
+    // -------------------------
+
+    def intermineLocalDirs = []
+    def intermineRootDir = project.getProperty("intermine.development.intermineRootDir")
+    def intermineModules = project.getProperty("intermine.development.intermineModules")
+
+    if (intermineRootDir && intermineModules) {
+        def modules = intermineModules.split(',').collect { it.trim() }.findAll { it }
+        intermineLocalDirs = modules.collect {
+            module -> "${intermineRootDir}/${module}/build/libs"
+        }
+    }
+
+    def localDirs = intermineLocalDirs
+
     repositories {
+        // Prefer locally-built InterMine artifacts
+        localDirs.each { dir ->
+            ivy {
+                url "file://" + dir
+                layout "pattern", {
+                    artifact  "[artifact]-[revision](-[classifier]).[ext]"
+                }
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
         mavenCentral()
         maven {
             url 'http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
         }
         maven { url 'https://clojars.org/repo' }
     }
-
 
     configurations {
         commonResources
