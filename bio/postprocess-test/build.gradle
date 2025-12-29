@@ -87,6 +87,7 @@ subprojects {
     }
 
     dependencies {
+        compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0', transitive: false
         compile group: 'org.intermine', name: 'bio-core', version: System.getProperty("bioVersion"), transitive: false
         compile group : "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion") // log4j
         compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
