@@ -18,6 +18,7 @@ dependencies {
     compile group: "org.intermine", name: "intermine-api", version: imVersion
     compile group: "org.intermine", name: "intermine-webtasks", version: imVersion
     compile group: 'antlr', name: 'antlr', version: '2.7.6'
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     compile group: 'commons-io', name: 'commons-io', version: '1.2'
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
     compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0', transitive: false
