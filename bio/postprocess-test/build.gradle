@@ -91,6 +91,7 @@ subprojects {
         compile group: 'org.intermine', name: 'bio-core', version: System.getProperty("bioVersion"), transitive: false
         compile group : "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion") // log4j
         compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+        compile group: 'commons-io', name: 'commons-io', version: '1.2'
         compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
         compile group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
         compile group: "org.intermine", name: "intermine-model", version: System.getProperty("imVersion")
