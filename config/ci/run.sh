@@ -43,7 +43,7 @@ gradlew_build() {
 if [ "$TEST_SUITE" = "intermine" ]; then
     echo "RUNNING intermine unit tests"
     gradlew_install plugin
-    gradlew_install intermine
+    gradlew_build intermine
 
     echo CHECKING results
     "${WORKSPACE_DIR}"/config/lib/parse_test_report.py "${WORKSPACE_DIR}/intermine"
