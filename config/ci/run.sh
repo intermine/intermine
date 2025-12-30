@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -euxo pipefail
 
 if [ "$#" != "5" ]; then
    echo "Usage: $0 <workspace_dir> <python executable> <test_suite> <client> <testmodel_url>"
@@ -17,10 +17,17 @@ echo "RUNNING test suite $TEST_SUITE"
 
 export ANT_OPTS='-server'
 
+
+run_gradle() {
+    local dir=$1
+
+    (cd "${WORKSPACE_DIR}/$dir" && ./gradlew -Dorg.gradle.jvmargs=-Xmx4g --max-workers=4 --no-daemon "${@: -1}")
+}
+
 gradlew_install() {
     local dir=$1
 
-    (cd "${WORKSPACE_DIR}/$dir" && ./gradlew install)
+    run_gradle "$dir" install
 }
 
 gradlew_build() {
@@ -30,7 +37,7 @@ gradlew_build() {
 
     local dir=$1
 
-    (cd "${WORKSPACE_DIR}/$dir" && ./gradlew build --warning-mode all --stacktrace)
+    run_gradle "$dir" build --warning-mode all --stacktrace
 }
 
 if [ "$TEST_SUITE" = "intermine" ]; then
@@ -48,7 +55,7 @@ elif [ "$TEST_SUITE" = "bio" ]; then
     gradlew_install intermine
     gradlew_install bio
     gradlew_install bio/sources
-    gradlew_install /bio/postprocess
+    gradlew_install bio/postprocess
 
     gradlew_build bio
     gradlew_build bio/sources
