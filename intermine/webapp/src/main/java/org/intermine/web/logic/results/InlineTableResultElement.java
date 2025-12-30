@@ -24,7 +24,7 @@ import org.intermine.web.logic.config.FieldConfig;
  */
 public class InlineTableResultElement extends ResultElement
 {
-    /** @FieldConfig used to determine if the said field has a displayer defined */
+    /** FieldConfig used to determine if the said field has a displayer defined */
     private FieldConfig fc = null;
 
     /**
