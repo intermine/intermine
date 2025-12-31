@@ -13,6 +13,7 @@ configurations {
 }
 
 dependencies {
+    compile group: "org.intermine", name: "intermine-integrate", version: imVersion
     compile group: "org.intermine", name: "intermine-model", version: imVersion
     compile group: "org.intermine", name: "intermine-objectstore", version: imVersion
     compile group: "org.intermine", name: "intermine-api", version: imVersion
