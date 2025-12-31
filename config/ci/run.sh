@@ -20,8 +20,9 @@ export ANT_OPTS='-server'
 
 run_gradle() {
     local dir=$1
+    local command=$2
 
-    (cd "${WORKSPACE_DIR}/$dir" && ./gradlew -Dorg.gradle.jvmargs=-Xmx4g --max-workers=4 --no-daemon "${@: -1}")
+    (cd "${WORKSPACE_DIR}/$dir" && ./gradlew -Dorg.gradle.jvmargs=-Xmx4g --max-workers=4 --no-daemon  --warning-mode all --stacktrace "$command")
 }
 
 gradlew_install() {
@@ -37,7 +38,7 @@ gradlew_build() {
 
     local dir=$1
 
-    run_gradle "$dir" build --warning-mode all --stacktrace
+    run_gradle "$dir" build
 }
 
 if [ "$TEST_SUITE" = "intermine" ]; then
