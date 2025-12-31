@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -euxo pipefail
 
 if [ "$#" != "5" ]; then
    echo "Usage: $0 <workspace_dir> <python executable> <test_suite> <client> <testmodel_url>"
@@ -39,6 +39,8 @@ sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists unittest
 sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-test
 sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-test
 sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-fulldata-test
+sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists intermine-demo
+sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-demo
 
 sudo -E -u postgres dropuser -h "$PSQL_HOST" --if-exists test
 sudo -E -u postgres createuser -h "$PSQL_HOST" test
