@@ -103,5 +103,8 @@ echo "------> Loading userprofile..."
 
 echo "------> Running webapp"
 echo "------> Running ./gradlew cargoRunLocal"
-./gradlew cargoRunLocal --no-daemon &
+./gradlew cargoRunLocal --stacktrace --debug --no-daemon &
+
+wait-for-it "${SERVER}:${PORT}" --timeout=300
+
 echo "------> Finished"

@@ -77,8 +77,6 @@ else
         echo '#---> Building and releasing web application to test against'
         (cd "${WORKSPACE_DIR}"/testmine && ./setup.sh "${WORKSPACE_DIR}")
 
-        sleep 60 # let webapp startup
-
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET "$TESTMODEL_URL/service/search" > /dev/null
         # Start any list upgrades
