@@ -5,7 +5,7 @@
 #  * psql (createdb, psql) - your user should have a postgres
 #    role with password authentication set up.
 
-set -euo pipefail # Errors are fatal.
+set -euxo pipefail # Errors are fatal.
 
 if [ "$#" != "1" ]; then
    echo "Usage: $0 <workspace_dir>"
