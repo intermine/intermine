@@ -69,7 +69,7 @@ war {
 }
 
 task mergeProperties(type: Copy) {
-    description "Appendes intermine.properties to web.properties file"
+    description "Appends intermine.properties to web.properties file"
     dependsOn 'copyModelProperties'
     from "${webAppDirName}/WEB-INF/web.properties"
     into "${mergePropsDir}"
