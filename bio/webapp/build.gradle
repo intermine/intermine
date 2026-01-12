@@ -44,6 +44,8 @@ dependencies {
     compile group: "org.biojava", name: "biojava-ontology", version: "4.2.0"
     compile group: 'org.json', name: 'json', version: '20170516'
 
+    runtime group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.2'
+
     imWebApp group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), transitive: false, ext: "war"
 }
 
