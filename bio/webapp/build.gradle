@@ -45,7 +45,6 @@ dependencies {
     compile group: 'org.json', name: 'json', version: '20170516'
 
     runtime group: 'org.apache.lucene', name: 'lucene-snowball', version: '3.0.2'
-    runtime group: 'cglib', name: 'cglib', version: '3.1'
 
     imWebApp group: "org.intermine", name: "intermine-webapp", version: System.getProperty("imVersion"), transitive: false, ext: "war"
 }

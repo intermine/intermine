@@ -111,6 +111,7 @@ subprojects {
         testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion"), classifier: "testClasses"
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
         testCompile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven
+        testCompile group: 'cglib', name: 'cglib', version: '3.1'
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
         mergeModel group : "org.intermine", name: "intermine-model", version: System.getProperty("imVersion")
         mergeModel group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.17.1'
