@@ -102,6 +102,7 @@ subprojects {
         testCompile group: 'junit', name: 'junit', version: '4.8.2'
         testCompile group: "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion")
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
+        testCompile group: 'cglib', name: 'cglib', version: '3.1'
         mergeModel group : "org.intermine", name: "intermine-objectstore", version: System.getProperty("imVersion")
         compile group: 'org.intermine', name: 'bio-postprocess-create-chromosome-locations-and-lengths', version: bioVersion
         testCompile group: 'org.intermine', name: 'bio-postprocess-create-chromosome-locations-and-lengths', version: bioVersion
