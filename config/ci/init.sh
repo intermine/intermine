@@ -30,9 +30,7 @@ GIT_GET="git clone --single-branch --depth 1"
 export KEYSTORE=${PWD}/keystore.jks
 
 if [ "$TEST_SUITE" = "checkstyle" ]; then
-    # TODO: It's pretty pointless to run this script with this suite
-    # Better to have custom scripts with shared common functions
-    # and fewer conditionals
+    (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install --info)
     exit 0 # nothing to do
 fi
 
