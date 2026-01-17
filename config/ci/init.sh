@@ -30,8 +30,12 @@ GIT_GET="git clone --single-branch --depth 1"
 export KEYSTORE=${PWD}/keystore.jks
 
 if [ "$TEST_SUITE" = "checkstyle" ]; then
-    (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install --info)
-    exit 0 # nothing to do
+    (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
+    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew install)
+    (cd "${WORKSPACE_DIR}"/bio && ./gradlew install)
+    (cd "${WORKSPACE_DIR}"/bio/sources && ./gradlew install)
+    (cd "${WORKSPACE_DIR}"/bio/postprocess && ./gradlew install)
+    exit 0 # nothing more to do
 fi
 
 sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists flatmodetest
