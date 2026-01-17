@@ -29,43 +29,55 @@ GIT_GET="git clone --single-branch --depth 1"
 
 export KEYSTORE=${PWD}/keystore.jks
 
+setup_postgres() {
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists flatmodetest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists fulldatatest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists notxmltest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists truncunittest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists unittest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-test
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-test
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-fulldata-test
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists intermine-demo
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-demo
+
+    sudo -E -u postgres dropuser -h "$PSQL_HOST" --if-exists test
+    sudo -E -u postgres createuser -h "$PSQL_HOST" test
+    sudo -E -u postgres psql -h "$PSQL_HOST" -c "alter user test with encrypted password 'test';"
+}
+
+# Set up properties
+source "${WORKSPACE_DIR}"/config/create-ci-properties-files.sh
+
+setup_python() {
+    echo '#---> Installing python requirements'
+    # Install lib requirements
+    ${PYTHON} -m pip install -r "${WORKSPACE_DIR}"/config/lib/requirements.txt
+}
+
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
     (cd "${WORKSPACE_DIR}"/intermine && ./gradlew install)
     (cd "${WORKSPACE_DIR}"/bio && ./gradlew install)
     (cd "${WORKSPACE_DIR}"/bio/sources && ./gradlew install)
     (cd "${WORKSPACE_DIR}"/bio/postprocess && ./gradlew install)
-    exit 0 # nothing more to do
 fi
 
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists flatmodetest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists fulldatatest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists notxmltest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists truncunittest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists unittest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-test
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-test
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-fulldata-test
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists intermine-demo
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-demo
-
-sudo -E -u postgres dropuser -h "$PSQL_HOST" --if-exists test
-sudo -E -u postgres createuser -h "$PSQL_HOST" test
-sudo -E -u postgres psql -h "$PSQL_HOST" -c "alter user test with encrypted password 'test';"
-
-# Set up properties
-source "${WORKSPACE_DIR}"/config/create-ci-properties-files.sh
-
-echo '#---> Installing python requirements'
-# Install lib requirements
-${PYTHON} -m pip install -r "${WORKSPACE_DIR}"/config/lib/requirements.txt
+if [[ "$TEST_SUITE" = "intermine" ]]; then
+    setup_postgres
+    setup_python
+fi
 
 if [[ "$TEST_SUITE" = "bio" ]]; then
+    setup_postgres
+    setup_python
     (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install --info)
     (cd "${WORKSPACE_DIR}"/intermine && ./gradlew intermine-webapp:war --info)
 fi
 
 if [[ "$TEST_SUITE" = "ws" ]]; then
+    setup_postgres
+    setup_python
 
     # install everything first. we don't want to test what's in maven
     (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
