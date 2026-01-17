@@ -29,8 +29,6 @@ GIT_GET="git clone --single-branch --depth 1"
 
 export KEYSTORE=${PWD}/keystore.jks
 
-echo "#---> Running $TEST_SUITE tests"
-
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     # TODO: It's pretty pointless to run this script with this suite
     # Better to have custom scripts with shared common functions
