@@ -49,8 +49,8 @@ jobs:
         set -euo pipefail
         mkdir -p ${HOME}/.gradle
         cp config/ci/gradle.properties ${HOME}/.gradle
-        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
-        ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
+        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none none
+        ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none none
 
   ws-tests:
     runs-on: ubuntu-latest
