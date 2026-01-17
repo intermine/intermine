@@ -70,23 +70,12 @@ elif [ "$TEST_SUITE" = "bio" ]; then
 
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "checkstyle" ]; then
-    (cd intermine && ./gradlew checkstyleMain)
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/intermine/model/build/reports/checkstyle/main.xml"
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/intermine/objectstore/build/reports/checkstyle/main.xml"
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/intermine/pathquery/build/reports/checkstyle/main.xml"
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/intermine/integrate/build/reports/checkstyle/main.xml"
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/intermine/api/build/reports/checkstyle/main.xml"
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/intermine/webapp/build/reports/checkstyle/main.xml"
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/intermine/webtasks/build/reports/checkstyle/main.xml"
+    run_gradle intermine checkstyleMain
+    run_gradle bio checkstyleMain
+    run_gradle bio/sources checkstyleMain
+    run_gradle bio/postprocess checkstyleMain
 
-    #ant -f 'bio/test-all/build.xml' checkstyle
-    (cd "${WORKSPACE_DIR}"/bio && ./gradlew checkstyleMain)
-    (cd "${WORKSPACE_DIR}"/bio/sources && ./gradlew checkstyleMain)
-    (cd "${WORKSPACE_DIR}"/bio/postprocess && ./gradlew checkstyleMain)
-
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/bio/build/reports/checkstyle/checkstyle_report.xml"
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/bio/postprocess/build/reports/checkstyle/checkstyle_report.xml"
-    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}/bio/sources/build/reports/checkstyle/checkstyle_report.xml"
+    "${WORKSPACE_DIR}"/config/lib/parse_checkstyle_report.py "${WORKSPACE_DIR}"
 elif [ "$TEST_SUITE" = "ws" ]; then
     "${WORKSPACE_DIR}"/config/run-ws-tests.sh "${WORKSPACE_DIR}" "${PYTHON}" "${CLIENT}" "${TESTMODEL_URL}"
 fi

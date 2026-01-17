@@ -49,7 +49,7 @@ for project_directory in next(os.walk(directory))[1]:
 print(total_test_count, 'tests were run')
 
 if total_failure_count:
-    print(total_failure_count, 'TESTS FAILED')
+    print(f"{total_failure_count} TESTS FAILED")
     sys.exit(1)
 
 if not total_test_count:
