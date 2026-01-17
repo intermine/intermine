@@ -2,7 +2,16 @@
 # yamllint disable rule:line-length
 name: Checkstyle
 # yamllint disable-line rule:truthy
-on: push
+on:
+    push:
+        paths:
+            - .github/workflows/checkstyle.yml
+            - 'bio/**'
+            - 'config/**'
+            - 'docs/**'
+            - 'intermine/**'
+            - 'plugin/**'
+            - 'testmine/**'
 
 jobs:
     checkstyle:

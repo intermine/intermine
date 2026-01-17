@@ -1,7 +1,17 @@
+---
+# yamllint disable rule:line-length
 name: InterMine CI
-
-on: push
-
+# yamllint disable-line rule:truthy
+on:
+    push:
+        paths:
+            - .github/workflows/im-build.yml
+            - 'bio/**'
+            - 'config/**'
+            - 'docs/**'
+            - 'intermine/**'
+            - 'plugin/**'
+            - 'testmine/**'
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
