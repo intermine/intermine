@@ -29,7 +29,5 @@ jobs:
             - name: Check style
               run: |
                   set -euxo pipefail
-                  mkdir -p ${HOME}/.gradle
-                  cp config/ci/gradle.properties ${HOME}/.gradle
                   ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) checkstyle none none
                   ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) checkstyle none none
