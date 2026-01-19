@@ -43,7 +43,6 @@ gradlew_build() {
 
 if [ "$TEST_SUITE" = "intermine" ]; then
     echo "RUNNING intermine unit tests"
-    gradlew_install plugin
     gradlew_build intermine
 
     echo CHECKING results
@@ -52,12 +51,6 @@ if [ "$TEST_SUITE" = "intermine" ]; then
     echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "bio" ]; then
     echo "RUNNING bio unit tests"
-    gradlew_install plugin
-    gradlew_install intermine
-    gradlew_install bio
-    gradlew_install bio/sources
-    gradlew_install bio/postprocess
-
     gradlew_build bio
     gradlew_build bio/sources
     gradlew_build bio/postprocess

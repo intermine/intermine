@@ -46,46 +46,29 @@ setup_postgres() {
     sudo -E -u postgres psql -h "$PSQL_HOST" -c "alter user test with encrypted password 'test';"
 }
 
-# Set up properties
-source "${WORKSPACE_DIR}"/config/create-ci-properties-files.sh
-
 setup_python() {
     echo '#---> Installing python requirements'
     # Install lib requirements
     ${PYTHON} -m pip install -r "${WORKSPACE_DIR}"/config/lib/requirements.txt
 }
 
-if [ "$TEST_SUITE" = "checkstyle" ]; then
-    (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/bio && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/bio/sources && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/bio/postprocess && ./gradlew install)
-fi
+setup_python
 
 if [[ "$TEST_SUITE" = "intermine" ]]; then
     setup_postgres
-    setup_python
 fi
 
 if [[ "$TEST_SUITE" = "bio" ]]; then
     setup_postgres
-    setup_python
-    (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install --info)
-    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew intermine-webapp:war --info)
 fi
 
 if [[ "$TEST_SUITE" = "ws" ]]; then
     setup_postgres
-    setup_python
+fi
 
-    # install everything first. we don't want to test what's in maven
-    (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/bio && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/bio/sources && ./gradlew install)
-    (cd "${WORKSPACE_DIR}"/bio/postprocess && ./gradlew install)
+${PYTHON} "${WORKSPACE_DIR}"/config/lib/install_intermine.py
 
+if [[ "$TEST_SUITE" = "ws" ]]; then
     # set up database for testing
     (cd "${WORKSPACE_DIR}"/intermine && ./gradlew createUnitTestDatabases)
 

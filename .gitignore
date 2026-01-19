@@ -221,3 +221,6 @@ solr-*/
 
 # Silver searcher
 .ignore
+
+# Generated from gradle.properties.in
+gradle.properties
