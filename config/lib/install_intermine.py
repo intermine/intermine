@@ -74,7 +74,7 @@ class IntermineBuilder:
         with open(dest_file, "w") as f_out:
             f_out.write(
                 "# FILE AUTOMATICALLY GENERATED FROM "
-                f"{source_file}. DO NOT EDIT!"
+                f"{source_file}. DO NOT EDIT!\n"
             )
             with open(source_file) as f_in:
                 for line in f_in:
