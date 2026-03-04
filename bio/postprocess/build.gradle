@@ -92,7 +92,7 @@ subprojects {
         compile group: 'ch.qos.reload4j', name: 'reload4j', version: '1.2.22'
         compile group: 'org.slf4j', name: 'slf4j-reload4j', version: '1.7.36'
         compile group: 'org.apache.ant', name: 'ant', version: '1.7.0'
-        compile group: 'org.apache.solr', name: 'solr-solrj', version: '7.2.1'
+        compile group: 'org.apache.solr', name: 'solr-solrj', version: '8.11.4'
         compile group: 'org.intermine', name: 'bio-core', version: System.getProperty("bioVersion"), transitive: false
         compile group : "org.intermine", name: "intermine-integrate", version: System.getProperty("imVersion")
         compile group : "org.intermine", name: "intermine-model", version: System.getProperty("imVersion")

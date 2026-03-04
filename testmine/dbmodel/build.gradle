@@ -37,7 +37,7 @@ dependencies {
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
     testModelProps group: "org.intermine", name: "intermine-testresources", version: imVersion, transitive: false
     compile group: 'cglib', name: 'cglib', version: '3.1'
-    compile group: 'org.apache.solr', name: 'solr-solrj', version: '7.2.1'
+    compile group: 'org.apache.solr', name: 'solr-solrj', version: '8.11.4'
 }
 
 // the JAR file has an intermine.properties files for unit tests. if we put the JAR on the classpath
