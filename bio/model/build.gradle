@@ -11,8 +11,9 @@ buildscript {
                 artifact()
             }
         }
-
-        mavenCentral()
+        maven {
+            url project.getProperty("intermine.maven.central")
+        }
     }
     dependencies {
         classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")

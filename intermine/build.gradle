@@ -12,7 +12,9 @@ subprojects {
     targetCompatibility = 1.8
 
     repositories {
-        mavenCentral()
+        maven {
+            url project.getProperty("intermine.maven.central")
+        }
         flatDir {
             dirs '../libs'
         }

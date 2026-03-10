@@ -42,11 +42,15 @@ subprojects {
                 }
             }
         }
-        mavenCentral()
         maven {
-            url 'http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
+            url project.getProperty("intermine.maven.central")
         }
-        maven { url 'https://clojars.org/repo' }
+        maven {
+            url project.getProperty("intermine.maven.ebi")
+        }
+        maven {
+            url project.getProperty("intermine.maven.clojars")
+        }
     }
 
     configurations {

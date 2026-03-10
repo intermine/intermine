@@ -11,8 +11,9 @@ buildscript {
                 artifact()
             }
         }
-
-        mavenCentral()
+        maven {
+            url project.getProperty("intermine.maven.central")
+        }
     }
     dependencies {
         classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")
@@ -80,9 +81,12 @@ subprojects {
                 }
             }
         }
-        mavenCentral()
+
         maven {
-            url 'https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/'
+            url project.getProperty("intermine.maven.central")
+        }
+        maven {
+            url project.getProperty("intermine.maven.ebi")
         }
     }
 

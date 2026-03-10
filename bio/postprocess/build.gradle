@@ -12,7 +12,9 @@ buildscript {
             }
         }
 
-        mavenCentral()
+        maven {
+            url project.getProperty("intermine.maven.central")
+        }
     }
     dependencies {
         classpath group: 'org.intermine', name: 'plugin', version: System.getProperty("imVersion")
@@ -80,7 +82,9 @@ subprojects {
                 }
             }
         }
-        mavenCentral()
+        maven {
+            url project.getProperty("intermine.maven.central")
+        }
     }
 
     configurations {
