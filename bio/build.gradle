@@ -1,6 +1,6 @@
 subprojects {
     group = 'org.intermine'
-    version '5.1.0'
+    version '5.1.1'
 
     apply plugin: "java"
     apply plugin: "maven"
@@ -10,17 +10,50 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+    // -------------------------
+    // Build localDirs list
+    // -------------------------
+
+    def intermineLocalDirs = []
+    def intermineRootDir = project.getProperty("intermine.development.intermineRootDir")
+    def intermineModules = project.getProperty("intermine.development.intermineModules")
+
+    if (intermineRootDir && intermineModules) {
+        def modules = intermineModules.split(',').collect { it.trim() }.findAll { it }
+        intermineLocalDirs = modules.collect {
+            module -> "${intermineRootDir}/${module}/build/libs"
+        }
+    }
+
+    def localDirs = intermineLocalDirs
+
     repositories {
-        mavenLocal()
-        mavenCentral()
+        // Prefer locally-built InterMine artifacts
+        localDirs.each { dir ->
+            ivy {
+                url "file://" + dir
+                layout "pattern", {
+                    artifact  "[artifact]-[revision](-[classifier]).[ext]"
+                }
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
         maven {
-            url 'https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/'
+            url project.getProperty("intermine.maven.central")
+        }
+        maven {
+            url project.getProperty("intermine.maven.ebi")
         }
     }
 
     dependencies {
         compile group: 'ant', name: 'ant', version: '1.6.5'
         compile group: "org.intermine", name: "intermine-webtasks", version: System.getProperty("imVersion")
+        testCompile group: 'org.apache.lucene', name: 'lucene-analyzers', version: '3.0.2'
+        testCompile group: 'au.com.bytecode', name: 'opencsv', version: '2.4'
+        testCompile group: 'cglib', name: 'cglib', version: '3.1'
         testCompile group: 'junit', name: 'junit', version: '4.8.2'
         testCompile group: 'xmlunit', name: 'xmlunit', version: '1.0'
     }

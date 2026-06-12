@@ -1,0 +1,27 @@
+systemProp.imVersion=5.1.1
+systemProp.bioVersion=5.1.1
+
+# some unit tests need additional classes that aren't in the core model.
+# we use flymine's model. don't touch!
+systemProp.flymineVersion=4.2.0
+
+systemProp.javax.xml.stream.XMLOutputFactory = com.sun.xml.internal.stream.XMLOutputFactoryImpl
+
+#don't touch. to install locally without the 'unknown property'error
+ossrhUsername=
+ossrhPassword=
+
+# Install from internet or local Sonatype Nexus repo
+intermine.maven.central=@@im_central_url@@
+intermine.maven.clojars=@@im_clojars_url@@
+intermine.maven.ebi=@@im_ebi_url@@
+intermine.maven.plugins=@@im_plugins_url@@
+
+
+# Where to find the Intermine plugin locally on file system
+intermine.plugin.repo=file://@@im_checkout@@/plugin/build/libs
+intermine.development.intermineRootDir=@@im_checkout@@/intermine
+intermine.development.intermineModules=api,integrate,jbrowse-endpoint,model,objectstore,pathquery,resources,testresources,webapp,webtasks
+
+intermine.development.bioRootDir=@@im_checkout@@/bio
+intermine.development.bioModules=core,model,tools,webapp,postprocess/create-attribute-indexes,postprocess/create-autocomplete-index,postprocess/create-chromosome-locations,postprocess/create-gene-flanking-features,postprocess/create-intergenic-region-features,postprocess/create-intron-features,postprocess/create-location-overlap-index,postprocess/create-overlap-view,postprocess/create-R2RML-mapping,postprocess/create-references,postprocess/create-search-index,postprocess/create-utr-references,postprocess/make-spanning-locations,postprocess/populate-child-features,postprocess/summarise-objectstore,postprocess/transfer-sequences,sources/delimited

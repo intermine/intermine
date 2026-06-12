@@ -107,8 +107,9 @@ public class TorqueModelOutput
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" + ENDL)
             // ignore DTD - could get copy from classpath and write to tempfile adds a
             // lot of hassle
+
             .append("<!DOCTYPE database SYSTEM \""
-                    + "http://db.apache.org/torque/dtd/database_3_3.dtd\">" + ENDL)
+                    + "http://db.apache.org/torque/dtd/database_3_2.dtd\">" + ENDL)
             .append("<database name=\"\">" + ENDL);
 
         for (ClassDescriptor cld : schema.getModel().getClassDescriptors()) {

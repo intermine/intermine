@@ -140,7 +140,7 @@ public class TableWidgetConfig extends WidgetConfig
     }
 
     /**
-     * @parm externalLink
+     * @param externalLink
      */
     public void setExternalLink(String externalLink) {
         this.externalLink = externalLink;

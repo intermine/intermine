@@ -14,6 +14,10 @@ sourceSets {
 configurations {
     provided
     compile.extendsFrom provided
+
+    all {
+        exclude group: 'org.apache.logging.log4j'
+    }
 }
 
 tasks.test.dependsOn(':intermine-testresources:buildDB')
@@ -24,7 +28,8 @@ dependencies {
     compile group: 'commons-io', name: 'commons-io', version: '1.2'
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
     compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0', transitive: false // conflict with log4j library this JAR needs
-    //compile 'org.slf4j:slf4j-jdk14:1.7.10' // hikari needs this
+    compile group: 'ch.qos.reload4j', name: 'reload4j', version: '1.2.22'
+    compile group: 'org.slf4j', name: 'slf4j-reload4j', version: '1.7.36'
 
     compile group: 'net.iharder', name: 'base64', version: '2.3.8' //not clear wich version is currently used
     compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4' //version 2.3 not available in maven
@@ -45,4 +50,3 @@ jar {
         }
     }
 }
-

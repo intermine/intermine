@@ -117,7 +117,7 @@ public final class PortalHelper
      * @param im the InterMineApi
      * @param request the request object
      * @return a portal URL to the object or null
-     * @see generatePermaLink
+     * @see #generatePermaLink
      */
     public static String generatePortalLink(FastPathObject obj, InterMineAPI im,
             HttpServletRequest request) {
@@ -131,7 +131,7 @@ public final class PortalHelper
      * @param obj The object to link to.
      * @param im The InterMine API configuration bundle.
      * @return A path, beginning with "/" suitable for appending to a base URL.
-     * @see generatePermaPath
+     * @see #generatePermaPath
      */
     public static String generatePortalPath(FastPathObject obj, InterMineAPI im) {
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();

@@ -94,7 +94,6 @@ import org.intermine.webservice.server.output.XMLFormatter;
  *
  * @author Jakub Kulaviak
  * @author Alex Kalderimis
- * @version
  */
 public abstract class WebService
 {
@@ -253,7 +252,7 @@ public abstract class WebService
      * @param name The name of the parameter.
      * @param defaultValue The value to return if none is provided by the user.
      * @return An integer
-     * @throw BadRequestException if the user provided a mal-formed value.
+     * @throws BadRequestException if the user provided a mal-formed value.
      */
     protected Integer getIntParameter(String name, Integer defaultValue) {
         try {

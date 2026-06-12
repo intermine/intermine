@@ -14,6 +14,7 @@ productionLog
 *~
 .project
 .classpath
+gradle-*.zip
 
 !/intermine/webservice/client/download/dist/
 
@@ -218,3 +219,14 @@ out/
 
 solr-*.tgz
 solr-*/
+
+# Silver searcher
+.ignore
+
+# Generated files (from *.in)
+gradle.properties
+gradle-wrapper.properties
+
+# Sub-projects loaded by CI
+client-JS/
+client-PY/

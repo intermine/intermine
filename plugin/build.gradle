@@ -4,13 +4,14 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group 'org.intermine'
-version '5.1.0'
+version '5.1.1'
 
 sourceCompatibility = 1.8
 
 repositories {
-    mavenLocal()
-    mavenCentral()
+    maven {
+        url project.getProperty("intermine.maven.central")
+    }
 }
 
 dependencies {

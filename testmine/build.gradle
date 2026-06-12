@@ -1,5 +1,5 @@
 ext {
-    imVersion = "5.1.0"
+    imVersion = "5.1.1"
     taskGroup = "InterMine"
     minePropertyFileName = "testmodel.properties"
     minePropertyFile = "${System.env.HOME}/.intermine/$minePropertyFileName"
@@ -12,15 +12,46 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven {
-            url 'http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/'
+    // -------------------------
+    // Build localDirs list
+    // -------------------------
+
+    def intermineLocalDirs = []
+    def intermineRootDir = project.getProperty("intermine.development.intermineRootDir")
+    def intermineModules = project.getProperty("intermine.development.intermineModules")
+
+    if (intermineRootDir && intermineModules) {
+        def modules = intermineModules.split(',').collect { it.trim() }.findAll { it }
+        intermineLocalDirs = modules.collect {
+            module -> "${intermineRootDir}/${module}/build/libs"
         }
-        maven { url 'https://clojars.org/repo' }
     }
 
+    def localDirs = intermineLocalDirs
+
+    repositories {
+        // Prefer locally-built InterMine artifacts
+        localDirs.each { dir ->
+            ivy {
+                url "file://" + dir
+                layout "pattern", {
+                    artifact  "[artifact]-[revision](-[classifier]).[ext]"
+                }
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
+        maven {
+            url project.getProperty("intermine.maven.central")
+        }
+        maven {
+            url project.getProperty("intermine.maven.ebi")
+        }
+        maven {
+            url project.getProperty("intermine.maven.clojars")
+        }
+    }
 
     configurations {
         commonResources
@@ -28,7 +59,8 @@ subprojects {
 
     dependencies {
         compile group: 'ant', name: 'ant', version: '1.6.5'
-        compile group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: '2.17.1'
+        compile group: 'ch.qos.reload4j', name: 'reload4j', version: '1.2.22'
+        compile group: 'org.slf4j', name: 'slf4j-reload4j', version: '1.7.36'
         commonResources group: "org.intermine", name: "intermine-resources", version: imVersion
     }
 

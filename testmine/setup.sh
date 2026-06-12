@@ -5,7 +5,7 @@
 #  * psql (createdb, psql) - your user should have a postgres
 #    role with password authentication set up.
 
-set -euo pipefail # Errors are fatal.
+set -euxo pipefail # Errors are fatal.
 
 if [ "$#" != "1" ]; then
    echo "Usage: $0 <workspace_dir>"
@@ -103,5 +103,8 @@ echo "------> Loading userprofile..."
 
 echo "------> Running webapp"
 echo "------> Running ./gradlew cargoRunLocal"
-./gradlew cargoRunLocal --no-daemon &
+./gradlew cargoRunLocal --stacktrace --debug --no-daemon &
+
+wait-for-it "${SERVER}:${PORT}" --timeout=300
+
 echo "------> Finished"

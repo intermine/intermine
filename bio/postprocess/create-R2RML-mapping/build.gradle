@@ -10,7 +10,9 @@ sourceSets {
 }
 
 repositories {
-    mavenCentral()
+    maven {
+        url project.getProperty("intermine.maven.central")
+    }
 }
 
 dependencies {
@@ -24,4 +26,3 @@ dependencies {
 processResources {
     from('.') { include ("*.properties")}
 }
-

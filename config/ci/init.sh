@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -euxo pipefail
 
 if [ "$#" != "5" ]; then
    echo "Usage: $0 <workspace_dir> <python executable> <test_suite> <client> <testmodel_url>"
@@ -29,60 +29,63 @@ GIT_GET="git clone --single-branch --depth 1"
 
 export KEYSTORE=${PWD}/keystore.jks
 
-echo "#---> Running $TEST_SUITE tests"
+setup_postgres() {
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists flatmodetest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists fulldatatest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists notxmltest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists truncunittest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists unittest
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-test
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-test
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-fulldata-test
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists intermine-demo
+    sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-demo
 
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists flatmodetest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists fulldatatest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists notxmltest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists truncunittest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists unittest
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists userprofile-test
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-test
-sudo -E -u postgres dropdb -h "$PSQL_HOST" --if-exists bio-fulldata-test
+    sudo -E -u postgres dropuser -h "$PSQL_HOST" --if-exists test
+    sudo -E -u postgres createuser -h "$PSQL_HOST" test
+    sudo -E -u postgres psql -h "$PSQL_HOST" -c "alter user test with encrypted password 'test';"
+}
 
-sudo -E -u postgres dropuser -h "$PSQL_HOST" --if-exists test
-sudo -E -u postgres createuser -h "$PSQL_HOST" test
-sudo -E -u postgres psql -h "$PSQL_HOST" -c "alter user test with encrypted password 'test';"
-
-if [ "$TEST_SUITE" = "checkstyle" ]; then
-    exit 0 # nothing to do
-else
-    # Set up properties
-    source "${WORKSPACE_DIR}"/config/create-ci-properties-files.sh
-
+setup_python() {
     echo '#---> Installing python requirements'
     # Install lib requirements
     ${PYTHON} -m pip install -r "${WORKSPACE_DIR}"/config/lib/requirements.txt
+}
 
-    if [[ "$TEST_SUITE" = "ws" ]]; then
+setup_python
 
-        # install everything first. we don't want to test what's in maven
-        (cd "${WORKSPACE_DIR}"/plugin && ./gradlew install)
-        (cd "${WORKSPACE_DIR}"/intermine && ./gradlew install)
-        (cd "${WORKSPACE_DIR}"/bio && ./gradlew install)
-        (cd "${WORKSPACE_DIR}"/bio/sources && ./gradlew install)
-        (cd "${WORKSPACE_DIR}"/bio/postprocess && ./gradlew install)
+if [[ "$TEST_SUITE" = "intermine" ]]; then
+    setup_postgres
+fi
 
-        # set up database for testing
-        (cd "${WORKSPACE_DIR}"/intermine && ./gradlew createUnitTestDatabases)
+if [[ "$TEST_SUITE" = "bio" ]]; then
+    setup_postgres
+fi
 
-        # We will need a fully operational web-application
-        echo '#---> Building and releasing web application to test against'
-        (cd "${WORKSPACE_DIR}"/testmine && ./setup.sh "${WORKSPACE_DIR}")
+if [[ "$TEST_SUITE" = "ws" ]]; then
+    setup_postgres
+fi
 
-        sleep 60 # let webapp startup
+${PYTHON} "${WORKSPACE_DIR}"/config/lib/install_intermine.py
 
-        # Warm up the keyword search by requesting results, but ignoring the results
-        $GET "$TESTMODEL_URL/service/search" > /dev/null
-        # Start any list upgrades
-        $GET "$TESTMODEL_URL/service/lists?token=test-user-token" > /dev/null
+if [[ "$TEST_SUITE" = "ws" ]]; then
+    # set up database for testing
+    (cd "${WORKSPACE_DIR}"/intermine && ./gradlew createUnitTestDatabases)
 
-        cd "${WORKSPACE_DIR}"
-        if [[ "$CLIENT" = "JS" ]]; then
-            # We need the imjs code to exercise the webservices
-            $GIT_GET https://github.com/intermine/imjs.git client-JS
-        elif [[ "$CLIENT" = "PY" ]]; then
-            $GIT_GET -b dev https://github.com/intermine/intermine-ws-python client-PY
-        fi
+    # We will need a fully operational web-application
+    echo '#---> Building and releasing web application to test against'
+    (cd "${WORKSPACE_DIR}"/testmine && ./setup.sh "${WORKSPACE_DIR}")
+
+    # Warm up the keyword search by requesting results, but ignoring the results
+    $GET "$TESTMODEL_URL/service/search" > /dev/null
+    # Start any list upgrades
+    $GET "$TESTMODEL_URL/service/lists?token=test-user-token" > /dev/null
+
+    cd "${WORKSPACE_DIR}"
+    if [[ "$CLIENT" = "JS" ]]; then
+        # We need the imjs code to exercise the webservices
+        $GIT_GET https://github.com/intermine/imjs.git client-JS
+    elif [[ "$CLIENT" = "PY" ]]; then
+        $GIT_GET -b dev https://github.com/intermine/intermine-ws-python client-PY
     fi
 fi

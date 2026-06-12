@@ -1,9 +1,17 @@
+---
+# yamllint disable rule:line-length
 name: InterMine CI
-
+# yamllint disable-line rule:truthy
 on:
-  push:
-  pull_request:
-
+    push:
+        paths:
+            - .github/workflows/im-build.yml
+            - 'bio/**'
+            - 'config/**'
+            - 'docs/**'
+            - 'intermine/**'
+            - 'plugin/**'
+            - 'testmine/**'
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
@@ -11,7 +19,7 @@ jobs:
     services:
       # Label used to access the service container
       postgres:
-        image: postgres:11
+        image: postgres:14
         # Provide the password for postgres
         env:
           POSTGRES_USER: postgres
@@ -31,10 +39,10 @@ jobs:
         testSuite: [intermine, bio]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 11
+    - name: Set up JDK 8
       uses: actions/setup-java@v1
       with:
-        java-version: '11'
+        java-version: '8'
     - name: Set up python 3.10
       uses: actions/setup-python@v5
       with:
@@ -47,8 +55,8 @@ jobs:
     - name: Run unit tests
       run: |
         set -euo pipefail
-        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
-        ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none http://localhost:8080/intermine-demo
+        ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none none
+        ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ${{ matrix.testSuite }} none none
 
   ws-tests:
     runs-on: ubuntu-latest
@@ -56,7 +64,7 @@ jobs:
     services:
       # Label used to access the service container
       postgres:
-        image: postgres:12
+        image: postgres:14
         # Provide the password for postgres
         env:
           POSTGRES_USER: postgres
@@ -76,19 +84,19 @@ jobs:
         client: [JS, PY]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 11
+    - name: Set up JDK 8
       uses: actions/setup-java@v1
       with:
-        java-version: '11'
+        java-version: '8'
     - name: Set up python 3.10
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    - name: Install PostgreSQL client
+    - name: Install Ubuntu packages
       run: |
         set -euo pipefail
         sudo apt-get update -y
-        sudo apt-get install -y libpq-dev postgresql-client
+        sudo apt-get install -y libpq-dev postgresql-client wait-for-it
     - name: Run webservices tests
       run: |
         set -euo pipefail

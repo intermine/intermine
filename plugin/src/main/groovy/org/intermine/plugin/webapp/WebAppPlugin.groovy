@@ -25,7 +25,7 @@ class WebAppPlugin implements Plugin<Project> {
 
             doLast {
                 project.dependencies.add("commonResources", [group: "org.intermine", name: "intermine-resources", version: System.getProperty("imVersion")])
-                project.dependencies.add("bioWebApp", [group: "org.intermine", name: "bio-webapp", version: System.getProperty("bioVersion"), transitive: false])
+                project.dependencies.add("bioWebApp", [group: "org.intermine", name: "bio-webapp", version: System.getProperty("bioVersion"), transitive: false, ext: "war"])
             }
         }
 
@@ -234,4 +234,3 @@ class WebAppPlugin implements Plugin<Project> {
         }
     }
 }
-
