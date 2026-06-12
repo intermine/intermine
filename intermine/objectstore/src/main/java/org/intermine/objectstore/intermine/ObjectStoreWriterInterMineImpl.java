@@ -464,20 +464,24 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     abortTransactionWithConnection(c);
                     LOG.error("ObjectStoreWriterInterMineImpl closed in unfinished transaction"
                             + " - transaction aborted");
+                    System.out.println("one");
                 }
             } catch (Exception e) {
                 LOG.error("Exception caught when destroying transaction while closing"
                         + " ObjectStoreWriter", e);
+                System.out.println("two");
             }
             try {
                 batch.close(c);
             } catch (Exception e) {
                 LOG.error("Exception caught when closing Batch while closing ObjectStoreWriter", e);
+                System.out.println("three");
             }
             try {
                 os.releaseConnection(c);
             } catch (Exception e) {
-                // ignore
+                System.out.println("four");
+                e.printStackTrace(System.out);
             }
         } else if (c == conn) {
             connInUse = false;
@@ -487,6 +491,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             Exception trace = new Exception();
             trace.fillInStackTrace();
             LOG.warn("Attempt made to release the wrong connection", trace);
+            System.out.println("five");
         }
     }
 

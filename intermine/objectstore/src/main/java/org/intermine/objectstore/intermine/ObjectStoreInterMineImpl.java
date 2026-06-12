@@ -262,6 +262,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         if (!retval.getAutoCommit()) {
             retval.setAutoCommit(true);
         }
+        System.out.println("ObjectStoreIntermineImpl:" + retval + " getConnection()");
         return retval;
     }
 
@@ -299,6 +300,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public void releaseConnection(Connection c) {
         if (c != null) {
+            System.out.println("ObjectStoreIntermineImpl:" + c + " releaseConnection()");
             try {
                 if (!c.getAutoCommit()) {
                     Exception e = new Exception();

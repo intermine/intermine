@@ -172,6 +172,8 @@ public abstract class WebService
      *             If the value of the parameter is blank or null.
      */
     protected String getRequiredParameter(String name) {
+        System.out.println("getRequiredParameter:" + name);
+        System.out.println("parameters:" +  requestParametersToString());
         String value = request.getParameter(name);
         if (StringUtils.isBlank(value)) {
             throw new MissingParameterException(name);

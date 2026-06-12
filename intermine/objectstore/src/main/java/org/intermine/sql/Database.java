@@ -120,7 +120,7 @@ public class Database implements Shutdownable
 
             HikariConfig conf = new HikariConfig(dsProps);
             datasource = new HikariDataSource(conf);
-
+            System.out.println("CREATED HIKARI POOL " + System.identityHashCode(datasource));
         } else {
             // this is the original PGPoolingDataSource configured by reflection
             LOG.warn("This database connection is configured to use the "
@@ -224,6 +224,8 @@ public class Database implements Shutdownable
         LOG.info("Database " + getURL() + "(" + toString() + ") has " + totalConnections
                 + " connections, of which " + activeConnections + " are active");*/
         if (datasource instanceof com.zaxxer.hikari.HikariDataSource) {
+            System.out.println("CLOSING HIKARI POOL (shutdown)" + System.identityHashCode(datasource));
+
             LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString());
             ((com.zaxxer.hikari.HikariDataSource) datasource).close();
         } else if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
@@ -248,6 +250,7 @@ public class Database implements Shutdownable
     public void finalize() throws Throwable {
         super.finalize();
         if (datasource instanceof com.zaxxer.hikari.HikariDataSource) {
+            System.out.println("CLOSING HIKARI POOL (finalize)" + System.identityHashCode(datasource));
             LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());
             ((com.zaxxer.hikari.HikariDataSource) datasource).close();

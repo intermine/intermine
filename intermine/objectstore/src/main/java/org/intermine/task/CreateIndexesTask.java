@@ -358,8 +358,12 @@ public class CreateIndexesTask extends Task
     private void compressNames(Map<String, IndexStatement> statements) {
         Set<String> statementNames = new HashSet<String>(statements.keySet());
 
+        System.out.println("compressNames");
+
         for (String origIndexName : statementNames) {
+            System.out.println("Processing:" + origIndexName);
             if (origIndexName.length() > POSTGRESQL_INDEX_NAME_LIMIT) {
+                System.out.println(origIndexName + " is too long!");
                 String indexName = origIndexName;
 
                 // Don't compress the class names too match - start by shortening the longest parts
@@ -368,6 +372,8 @@ public class CreateIndexesTask extends Task
                     Pattern pattern = Pattern.compile("([A-Z][a-z]{1," + i + "})[a-z]*");
                     Matcher matcher = pattern.matcher(indexName);
                     String newIndexName = matcher.replaceAll("$1");
+
+                    System.out.println("New name: " +  newIndexName);
 
                     if (newIndexName.length() <= POSTGRESQL_INDEX_NAME_LIMIT) {
                         IndexStatement indexStatement = statements.get(origIndexName);
