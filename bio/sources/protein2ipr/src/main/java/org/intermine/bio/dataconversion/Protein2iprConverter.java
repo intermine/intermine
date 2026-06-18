@@ -202,6 +202,8 @@ public class Protein2iprConverter extends BioFileConverter
             dbName = "HAMAP";
         } else if (dbId.startsWith("cd")) {
             dbName = "Conserved Domain Database";
+        } else if (dbId.startsWith("NF")) {
+            dbName = "NCBIfam";
         } else {
             throw new RuntimeException("Unknown DB found. ID: " + dbId);
         }
