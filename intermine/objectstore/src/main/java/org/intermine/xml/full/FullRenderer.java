@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -60,6 +61,17 @@ public final class FullRenderer
      */
     public static String render(FastPathObject obj, Model model) {
         return render(new ItemFactory(model).makeItem(obj));
+    }
+
+    /**
+     * Render an Object as Xml in Full Data format, writing the fields provided in includeFields.
+     * @param obj an object to render
+     * @param model the parent model
+     * @param includeFields names of the fields to write
+     * @return the XML for object
+     */
+    public static String render(FastPathObject obj, Model model, Set<String> includeFields) {
+        return render(new ItemFactory(model).makeItemImpl(obj, includeFields));
     }
 
     /**
