@@ -134,6 +134,8 @@ public class WebServiceRequestParser
     /** Value of parameter when user wants N-triples output to be returned. **/
     public static final String FORMAT_PARAMETER_N_TRIPLES = "ntriples";
 
+    public static final String FORMAT_PARAMETER_ITEMS_XML = "itemsxml";
+
     /**Name of format parameter that specifies format of returned results. */
     public static final String OUTPUT_PARAMETER = "format";
 
@@ -212,6 +214,7 @@ public class WebServiceRequestParser
             put(FORMAT_PARAMETER_JSON_COUNT, Format.JSON);
             put(FORMAT_PARAMETER_RDF, Format.RDF);
             put(FORMAT_PARAMETER_N_TRIPLES, Format.N_TRIPLES);
+            put(FORMAT_PARAMETER_ITEMS_XML, Format.ITEMS_XML);
         }
     };
 

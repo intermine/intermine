@@ -67,6 +67,7 @@ import org.intermine.webservice.server.output.JSONRowResultProcessor;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
 import org.intermine.webservice.server.output.RDFProcessor;
 import org.intermine.webservice.server.output.JSONSummaryProcessor;
+import org.intermine.webservice.server.output.ItemsXMLProcessor;
 import org.intermine.webservice.server.query.AbstractQueryService;
 
 /**
@@ -423,6 +424,9 @@ public class QueryResultService extends AbstractQueryService
                 break;
             case N_TRIPLES:
                 processor = new RDFProcessor(request, im);
+                break;
+            case ITEMS_XML:
+                processor = new ItemsXMLProcessor(im);
                 break;
             default:
                 processor = new ResultProcessor();

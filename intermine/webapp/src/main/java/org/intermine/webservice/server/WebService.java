@@ -65,6 +65,7 @@ import org.intermine.webservice.server.output.RDFOutput;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
+import org.intermine.webservice.server.output.ItemsXMLFormatter;
 import org.intermine.webservice.server.output.TabFormatter;
 import org.intermine.webservice.server.output.XMLFormatter;
 
@@ -912,6 +913,12 @@ public abstract class WebService
             case RDF:
                 output = new RDFOutput(out);
                 ResponseUtil.setRDFHeader(response, "result.xml");
+                break;
+            case ITEMS_XML:
+                output = new StreamedOutput(out, new ItemsXMLFormatter(), separator);
+                filename += ".xml";
+                ResponseUtil.setXMLHeader(response, filename);
+
                 break;
             default:
                 output = getDefaultOutput(out, os, separator);

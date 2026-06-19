@@ -42,12 +42,13 @@ public enum Format {
     ROWS("application/json;format=rows"),
     /** RDF format constant **/
     RDF("application/rdf+xml"),
-    /** N_TRIPLESformat constant **/
-    N_TRIPLES("text/plain");
+    /** N_TRIPLES format constant **/
+    N_TRIPLES("text/plain"),
+    ITEMS_XML("application/xml");
 
     /** The basic formats: HTML, TEXT, XML, JSON **/
     public static final Set<Format> BASIC_FORMATS = new HashSet<Format>(Arrays.asList(
-        HTML, TEXT, XML, JSON, RDF, N_TRIPLES
+        HTML, TEXT, XML, JSON, RDF, N_TRIPLES, ITEMS_XML
     ));
 
     /** The JSON formats: JSON, OBJECTS, TABLE, ROWS **/
