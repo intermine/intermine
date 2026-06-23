@@ -44,6 +44,7 @@ public enum Format {
     RDF("application/rdf+xml"),
     /** N_TRIPLES format constant **/
     N_TRIPLES("text/plain"),
+    /** Items XML **/
     ITEMS_XML("application/xml");
 
     /** The basic formats: HTML, TEXT, XML, JSON **/

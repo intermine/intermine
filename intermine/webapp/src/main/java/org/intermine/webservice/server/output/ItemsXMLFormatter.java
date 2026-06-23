@@ -1,7 +1,23 @@
 package org.intermine.webservice.server.output;
 
+/*
+ * Copyright (C) 2002-2022 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+
 import java.util.List;
 
+/**
+ * Formats data to Items XML format.
+ * @author See version control
+ *
+ **/
 public class ItemsXMLFormatter extends XMLFormatter
 {
     /** {@inheritDoc}} **/
@@ -17,9 +33,6 @@ public class ItemsXMLFormatter extends XMLFormatter
         for (String item: resultRow) {
             sb.append(item);
         }
-
-        // System.out.println("formatResult: ");
-        // System.out.println(sb.toString());
 
         return sb.toString();
     }

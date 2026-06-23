@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.output;
 
+/*
+ * Copyright (C) 2002-2022 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.ClassDescriptor;
@@ -11,7 +21,6 @@ import org.intermine.pathquery.PathException;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.Item;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,10 +30,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
+/**
+ * A result processor for Items XML.
+ * @author See version control
+ *
+ */
 public class ItemsXMLProcessor extends ResultProcessor
 {
     private final InterMineAPI im;
 
+    /**
+     * Constructor
+     * @param im API object used to access data model
+     *
+     */
     public ItemsXMLProcessor(InterMineAPI im) {
         this.im = im;
     }
@@ -47,7 +67,6 @@ public class ItemsXMLProcessor extends ResultProcessor
             // Iterate over cells in the row
             for (ResultElement element : elements) {
                 Path path = element.getPath();
-                // System.out.println("Processing: " + path);
 
                 ClassDescriptor classDescriptor = path.getLastClassDescriptor();
 
@@ -55,15 +74,11 @@ public class ItemsXMLProcessor extends ResultProcessor
                     currentClassDesc = classDescriptor;
                     currentClassName = currentClassDesc.getName();
 
-                    // System.out.println("New currentClass: " + currentClassName);
-
                     FastPathObject obj = element.getObject();
 
                     // putIfAbsent may not be necessary here
                     objMap.putIfAbsent(currentClassName, obj);
-                    // System.out.println("Added " + currentClassName + " to objMap");
                     fieldsMap.putIfAbsent(currentClassName, new HashSet<>());
-                    // System.out.println("Added " + currentClassName + " to fieldsMap");
 
                     String stringPath = path.toString();
                     stringPath = stringPath.substring(0, stringPath.lastIndexOf("."));
@@ -74,7 +89,6 @@ public class ItemsXMLProcessor extends ResultProcessor
                             FieldDescriptor fd = partialPath.getEndFieldDescriptor();
                             String parentClassName =
                                     partialPath.getSecondLastClassDescriptor().getName();
-                            // System.out.println("Adding " + fd.getName() + " to " + parentClassName + " properties");
                             Set<String> parentFields = fieldsMap.get(parentClassName);
                             parentFields.add(fd.getName());
                         }
@@ -84,7 +98,6 @@ public class ItemsXMLProcessor extends ResultProcessor
                 }
 
                 FieldDescriptor fd = path.getEndFieldDescriptor();
-                // System.out.println("Adding " + fd.getName() + " to " + currentClassName + " properties");
                 fieldsMap.get(currentClassName).add(fd.getName());
             }
 
@@ -95,13 +108,10 @@ public class ItemsXMLProcessor extends ResultProcessor
 
                 String xml = FullRenderer.render(obj, model, includeFields);
 
-                // System.out.println("Adding XML for: " + name);
-                // System.out.println(xml);
+                List<String> xmlList = new ArrayList<String>();
+                xmlList.add(xml);
 
-                List<String> xml_list = new ArrayList<String>();
-                xml_list.add(xml);
-
-                output.addResultItem(xml_list);
+                output.addResultItem(xmlList);
             }
         }
     }
