@@ -76,7 +76,6 @@ public class ItemsXMLProcessor extends ResultProcessor
 
                     FastPathObject obj = element.getObject();
 
-                    // putIfAbsent may not be necessary here
                     objMap.putIfAbsent(currentClassName, obj);
                     fieldsMap.putIfAbsent(currentClassName, new HashSet<>());
 
@@ -87,13 +86,11 @@ public class ItemsXMLProcessor extends ResultProcessor
                         Path partialPath = new Path(im.getModel(), stringPath);
                         if (partialPath.endIsReference() || partialPath.endIsCollection()) {
                             FieldDescriptor fd = partialPath.getEndFieldDescriptor();
-
-                            if (fd != null) {
-                                String parentClassName =
-                                    partialPath.getSecondLastClassDescriptor().getName();
-                                Set<String> parentFields = fieldsMap.get(parentClassName);
-                                parentFields.add(fd.getName());
-                            }
+                            String parentClassName =
+                                partialPath.getSecondLastClassDescriptor().getName();
+                            fieldsMap.putIfAbsent(parentClassName, new HashSet<>());
+                            Set<String> parentFields = fieldsMap.get(parentClassName);
+                            parentFields.add(fd.getName());
                         }
                     } catch (PathException pe) {
                         throw new BadRequestException(stringPath + " is not a valid path");
