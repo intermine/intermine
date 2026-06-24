@@ -87,10 +87,13 @@ public class ItemsXMLProcessor extends ResultProcessor
                         Path partialPath = new Path(im.getModel(), stringPath);
                         if (partialPath.endIsReference() || partialPath.endIsCollection()) {
                             FieldDescriptor fd = partialPath.getEndFieldDescriptor();
-                            String parentClassName =
+
+                            if (fd != null) {
+                                String parentClassName =
                                     partialPath.getSecondLastClassDescriptor().getName();
-                            Set<String> parentFields = fieldsMap.get(parentClassName);
-                            parentFields.add(fd.getName());
+                                Set<String> parentFields = fieldsMap.get(parentClassName);
+                                parentFields.add(fd.getName());
+                            }
                         }
                     } catch (PathException pe) {
                         throw new BadRequestException(stringPath + " is not a valid path");
