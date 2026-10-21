@@ -96,8 +96,8 @@ jobs:
     - name: Setup Apache Solr
       uses: DhavalGojiya/setup-solr-action@v1.2.0
       with:
-        solr-version "8.6.2"
-        solr-core-name "intermine-search"
+        solr-version: '8.6.2'
+        solr-core-name: 'intermine-search'
     - name: Install Ubuntu packages
       run: |
         set -euo pipefail
