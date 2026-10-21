@@ -98,7 +98,7 @@ jobs:
     - name: Setup Apache Solr
       uses: DhavalGojiya/setup-solr-action@v1.2.0
       with:
-        solr-version: $SOLR_VERSION
+        solr-version: ${{ env.SOLR_VERSION }}
         solr-core-name: 'intermine-search'
     - name: Install Ubuntu packages
       run: |
