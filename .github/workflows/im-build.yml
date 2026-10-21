@@ -93,14 +93,26 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
+    - name: Setup Apache Solr
+      uses: DhavalGojiya/setup-solr-action@v1.2.0
+      with:
+        solr-version "8.6.2"
+        solr-core-name "intermine-search"
     - name: Install Ubuntu packages
       run: |
         set -euo pipefail
         sudo apt-get update -y
         sudo apt-get install -y libpq-dev postgresql-client wait-for-it
+    - name: Create additional Solr core
+      run: |
+        set -euo pipefail
+        wait-for-it localhost:8983
+        docker ps
+        SOLR_CONTAINER=$(docker ps -f ancestor=solr:"$SOLR_VERSION" --format '{{.ID}}' | head -n1)
+        docker exec "$SOLR_CONTAINER" /opt/solr/bin/solr create -c intermine-autocomplete
+
     - name: Run webservices tests
       run: |
         set -euo pipefail
-        ./config/ci/init-solr.sh ${GITHUB_WORKSPACE}
         ./config/ci/init.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo
         ./config/ci/run.sh ${GITHUB_WORKSPACE} $(which python3) ws ${{ matrix.client }} http://localhost:8080/intermine-demo
