@@ -12,6 +12,8 @@ on:
             - 'intermine/**'
             - 'plugin/**'
             - 'testmine/**'
+env:
+  SOLR_VERSION: 8.6.2
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
@@ -96,7 +98,7 @@ jobs:
     - name: Setup Apache Solr
       uses: DhavalGojiya/setup-solr-action@v1.2.0
       with:
-        solr-version: '8.6.2'
+        solr-version: $SOLR_VERSION
         solr-core-name: 'intermine-search'
     - name: Install Ubuntu packages
       run: |
