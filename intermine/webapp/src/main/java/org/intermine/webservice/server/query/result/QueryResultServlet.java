@@ -40,6 +40,8 @@ public class QueryResultServlet extends HttpServlet
      * {@inheritDoc}}
      */
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        System.out.println("**** SENDING POST REQUEST ****");
+        System.out.println(req.getRequestURL());
         runService(req, resp);
     }
 

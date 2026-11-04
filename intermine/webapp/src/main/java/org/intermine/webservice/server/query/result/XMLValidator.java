@@ -62,21 +62,31 @@ public class XMLValidator
                 xml = xml.replaceAll(Pattern.quote("</query>"), "</xsq:query>");
             }
 
+            System.out.println("validate: 1");
+
             // changed to use baseURL instead of current URL because tomcat uses a different
             // URL when in docker. There is no way this could not work.
             //LOG.debug("Using the xmlSchemaUrl " + xmlSchemaUrl);
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            System.out.println("validate: 2");
             URL schemaLocation = new URL(xmlSchemaUrl);
+            System.out.println("validate: 3 " + schemaLocation);
             Reader schemaReader = new InputStreamReader(schemaLocation.openStream());
+            System.out.println("validate: 4");
             Schema schema = factory.newSchema(new StreamSource(schemaReader));
 
+            System.out.println("validate: 5");
             Validator validator = schema.newValidator();
             validator.setErrorHandler(errorHandler);
+
+            System.out.println("Calling validator.validate()");
+
             validator.validate(new StreamSource(new StringReader(xml)));
 
         } catch (SAXParseException e) {
             LOG.debug(e);
         } catch (Exception e) {
+            System.out.println(e);
             throw new ServiceException("XML validation failed. " + xmlSchemaUrl, e);
         }
     }
