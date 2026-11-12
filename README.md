@@ -13,18 +13,14 @@ A powerful open source data warehouse system. InterMine allows users
 to integrate diverse data sources with a minimum of effort, providing
 powerful web-services and an elegant web-application with minimal
 configuration. InterMine powers some of the largest data-warehouses in
-the life sciences, including:
-  * [FlyMine](https://www.flymine.org)
+the life sciences including:
   * [HumanMine](https://www.humanmine.org)
-  * [MouseMine](http://www.mousemine.org)
-  * [YeastMine](https://yeastmine.yeastgenome.org)
-  * [ZebrafishMine](http://zebrafishmine.org)
-  * [RatMine](http://ratmine.mcw.edu/ratmine/begin.do)
+  * [FlyMine](https://www.flymine.org)
   * [TargetMine](http://targetmine.mizuguchilab.org/)
-  * [ThaleMine](https://apps.araport.org/thalemine)
-  * [PhytoMine](https://phytozome.jgi.doe.gov/phytomine)
+  * [MouseMine](http://www.mousemine.org)
+  * [ThaleMine](https://bar.utoronto.ca/thalemine/begin.do)
 
-For the full list of InterMines, please see the [registry](http://registry.intermine.org)
+For a more complete list of public InterMine instances, please see the [registry](http://registry.intermine.org)
 
 For details, please visit: [InterMine Documentation][readthedocs]
 
